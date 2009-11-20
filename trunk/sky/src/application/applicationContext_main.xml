@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+				http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"
+	default-autowire="byName" default-init-method="init">
+
+	<bean name="/buffaloConfigBean"
+		class="net.buffalo.service.BuffaloServiceConfigurer">
+		<property name="services">
+			<map>
+				<entry key="userManager">
+                    <ref bean="userManager" />
+                </entry>
+                <entry key="orgManager">
+                    <ref bean="orgManager" />
+                </entry>
+                <entry key="commonManager">
+                    <ref bean="commonManager" />
+                </entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="dbOprTrigger"
+		class="com.china.center.oa.publics.trigger.DBOprTrigger">
+		<property name="user">
+			<value>${jdbc.username}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password}</value>
+		</property>
+		<property name="script">
+			<value>${script}</value>
+		</property>
+		<property name="db_bak">
+			<value>${db_bak}</value>
+		</property>
+		<property name="mysql_root">
+			<value>${mysql_root}</value>
+		</property>
+		<property name="db_name">
+			<value>${db_name}</value>
+		</property>
+	</bean>
+</beans>
