@@ -558,9 +558,6 @@ public class OutManager
                     relation.setProductId(element.getProductId());
 
                     relation.setLocationId(outBean.getLocation());
-
-                    // throw new RuntimeException("区域下仓区[" + db.getName() + "]缺少产品:"
-                    // + pro.getName());
                 }
 
                 int old = relation.getAmount();
@@ -711,7 +708,6 @@ public class OutManager
         // 如果是良品仓的发生了变动，需要同步到库存里面
         if (temp.getType() == Constant.TYPE_DEPOTPART_OK)
         {
-
             int count = current + change;
 
             if (count < 0)
