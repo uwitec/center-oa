@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="OutDAO">
+
+	<select id="sumPreassignAmount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+		<![CDATA[
+            select sum(t2.amount) from t_center_out t1, t_center_base t2 
+            where t1.fullid = t2.outid 
+            and t1.outType = #outType# 
+            and t1.location = #location# 
+            and t2.productId = #productId# 
+            and t1.outtime >= #beginDate# 
+            AND t1.outtime <= #endDate# 
+            AND t1.status in (1, 6, 7)
+        ]]>
+	</select>
+
+</sqlMap>

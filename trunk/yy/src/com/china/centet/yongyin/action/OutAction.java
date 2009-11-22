@@ -2110,7 +2110,13 @@ public class OutAction extends DispatchAction
         {
             String locationId = Helper.getCurrentLocationId(request);
 
-            List<DepotpartBean> list = depotpartManager.queryDepotpartByLocationId(locationId);
+            ConditionParse condition = new ConditionParse();
+
+            condition.addCondition("locationId", "=", locationId);
+
+            condition.addIntCondition("type", "=", Constant.TYPE_DEPOTPART_OK);
+
+            List<DepotpartBean> list = depotpartManager.queryDepotpartByCondition(condition);
 
             request.setAttribute("depotpartList", list);
 

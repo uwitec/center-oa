@@ -207,7 +207,7 @@ function sub()
 							<c:forEach items="${depotpartList}" var="item">
 								<option value="${item.id}">${item.name}</option>
 							</c:forEach>
-						</select><font color="blue">(«Î—°‘Ò)</font></td>
+						</select><font color="blue">(«Î—°‘Ò¡º∆∑≤÷)</font></td>
 					</tr>
 				</table>
 				</td>

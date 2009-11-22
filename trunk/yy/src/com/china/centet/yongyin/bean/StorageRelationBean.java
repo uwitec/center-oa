@@ -58,6 +58,18 @@ public class StorageRelationBean implements Serializable
     private int mayAmount = 0;
 
     /**
+     * 预先分配的,即销售单未审批的
+     */
+    @Ignore
+    private int preassignAmount = 0;
+
+    /**
+     * 差误的数量
+     */
+    @Ignore
+    private int errorAmount = 0;
+
+    /**
      * default constructor
      */
     public StorageRelationBean()
@@ -248,5 +260,39 @@ public class StorageRelationBean implements Serializable
     public void setMayAmount(int mayAmount)
     {
         this.mayAmount = mayAmount;
+    }
+
+    /**
+     * @return the preassignAmount
+     */
+    public int getPreassignAmount()
+    {
+        return preassignAmount;
+    }
+
+    /**
+     * @param preassignAmount
+     *            the preassignAmount to set
+     */
+    public void setPreassignAmount(int preassignAmount)
+    {
+        this.preassignAmount = preassignAmount;
+    }
+
+    /**
+     * @return the errorAmount
+     */
+    public int getErrorAmount()
+    {
+        return errorAmount;
+    }
+
+    /**
+     * @param errorAmount
+     *            the errorAmount to set
+     */
+    public void setErrorAmount(int errorAmount)
+    {
+        this.errorAmount = errorAmount;
     }
 }

@@ -2,6 +2,7 @@ package com.china.centet.yongyin.dao;
 
 
 import java.util.List;
+import java.util.Map;
 
 import com.china.center.common.ConditionParse;
 import com.china.center.jdbc.inter.JdbcOperation;
@@ -126,6 +127,19 @@ public class OutDAO
         String sql = "select count(1) from t_center_base where outId = ? and productId = ?";
 
         return jdbcOperation2.queryForInt(sql, new Object[] {fullId, productId});
+
+    }
+
+    /**
+     * sumPreassignAmount
+     * 
+     * @param parMap
+     * @return
+     */
+    public Integer sumPreassignAmount(Map parMap)
+    {
+        return (Integer)jdbcOperation2.getIbatisDaoSupport().queryForObject(
+            "OutDAO.sumPreassignAmount", parMap);
 
     }
 

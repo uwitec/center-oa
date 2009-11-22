@@ -8,5 +8,6 @@
 		maxSessions="150" maxTransactions="60" useStatementNamespaces="true" />
 
 	<sqlMap resource="ibatisSqlConf/UserDAO.xml" />
+	<sqlMap resource="ibatisSqlConf/OutDAO.xml" />
 	<sqlMap resource="ibatisSqlConf/CustmoerDAO.xml" />
 </sqlMapConfig>

@@ -1,7 +1,9 @@
 package com.china.centet.yongyin.action;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import com.china.center.common.MYException;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.StringTools;
+import com.china.center.tools.TimeTools;
 import com.china.centet.yongyin.Helper;
 import com.china.centet.yongyin.bean.DepotpartBean;
 import com.china.centet.yongyin.bean.Product;
@@ -32,6 +35,7 @@ import com.china.centet.yongyin.bean.User;
 import com.china.centet.yongyin.bean.helper.LocationHelper;
 import com.china.centet.yongyin.constant.Constant;
 import com.china.centet.yongyin.dao.DepotpartDAO;
+import com.china.centet.yongyin.dao.OutDAO;
 import com.china.centet.yongyin.dao.ProductDAO;
 import com.china.centet.yongyin.dao.StorageDAO;
 import com.china.centet.yongyin.manager.DepotpartManager;
@@ -63,6 +67,8 @@ public class DepotpartAndStorageAction extends DispatchAction
     private StorageDAO storageDAO = null;
 
     private ProductDAO productDAO = null;
+
+    private OutDAO outDAO = null;
 
     /**
      * Description: 查询区域下的仓区
@@ -734,13 +740,7 @@ public class DepotpartAndStorageAction extends DispatchAction
 
             for (StorageRelationBean storageRelationBean : list)
             {
-                ProductAmount amount = productDAO.findProductAmount(
-                    storageRelationBean.getProductId(), Constant.SYSTEM_LOCATION);
-
-                if (amount != null)
-                {
-                    storageRelationBean.setMayAmount(amount.getNum());
-                }
+                handlerAmount(storageRelationBean);
             }
 
             // 分页的关键对象，把list塞进去形成页面list
@@ -793,6 +793,48 @@ public class DepotpartAndStorageAction extends DispatchAction
         }
 
         return mapping.findForward("productList");
+    }
+
+    /**
+     * handlerAmount
+     * 
+     * @param storageRelationBean
+     */
+    private void handlerAmount(StorageRelationBean storageRelationBean)
+    {
+        ProductAmount amount = productDAO.findProductAmount(storageRelationBean.getProductId(),
+            Constant.SYSTEM_LOCATION);
+
+        if (amount != null)
+        {
+            storageRelationBean.setMayAmount(amount.getNum());
+        }
+
+        Map map = new HashMap();
+
+        map.put("outType", Constant.OUT_TYPE_OUTBILL);
+
+        map.put("location", Constant.SYSTEM_LOCATION);
+
+        map.put("productId", storageRelationBean.getProductId());
+
+        map.put("beginDate", TimeTools.getDateString( -120, "yyyy-MM-dd"));
+
+        map.put("endDate", TimeTools.now_short());
+
+        // 查询预先占用的
+        Integer sum = outDAO.sumPreassignAmount(map);
+
+        if (sum != null)
+        {
+            storageRelationBean.setPreassignAmount(sum);
+        }
+
+        // 差异的
+        int errorAmount = storageRelationBean.getAmount() - storageRelationBean.getMayAmount()
+                          - storageRelationBean.getPreassignAmount();
+
+        storageRelationBean.setErrorAmount(errorAmount);
     }
 
     /**
@@ -891,5 +933,22 @@ public class DepotpartAndStorageAction extends DispatchAction
     public void setProductDAO(ProductDAO productDAO)
     {
         this.productDAO = productDAO;
+    }
+
+    /**
+     * @return the outDAO
+     */
+    public OutDAO getOutDAO()
+    {
+        return outDAO;
+    }
+
+    /**
+     * @param outDAO
+     *            the outDAO to set
+     */
+    public void setOutDAO(OutDAO outDAO)
+    {
+        this.outDAO = outDAO;
     }
 }

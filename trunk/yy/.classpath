@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="j2src"/>
-	<classpathentry kind="var" path="TOMCAT_HOME/bin/bootstrap.jar"/>
 	<classpathentry kind="var" path="TOMCAT_HOME/common/lib/servlet-api.jar"/>
 	<classpathentry kind="var" path="TOMCAT_HOME/common/lib/jsp-api.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
@@ -98,7 +97,6 @@
 	<classpathentry kind="lib" path="yongyin/WEB-INF/lib/xfire-all-1.2.6.jar"/>
 	<classpathentry kind="lib" path="yongyin/WEB-INF/lib/activation.jar"/>
 	<classpathentry kind="lib" path="yongyin/WEB-INF/lib/jdom-1.0.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX"/>
 	<classpathentry kind="lib" path="yongyin/WEB-INF/lib/hessian-3.1.6.jar"/>
 	<classpathentry kind="lib" path="yongyin/WEB-INF/lib/backport-util-concurrent-3.0.jar"/>
 	<classpathentry kind="lib" path="yongyin/WEB-INF/lib/ehcache-1.4.1.jar"/>

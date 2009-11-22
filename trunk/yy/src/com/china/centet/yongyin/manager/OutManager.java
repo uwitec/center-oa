@@ -1075,6 +1075,18 @@ public class OutManager
                             // 修改仓区的产品数量
                             List<BaseBean> baseList = outDAO.queryBaseByOutFullId(outBean.getFullId());
 
+                            DepotpartBean depotpartBean = depotpartDAO.findDepotpartById(depotpartId);
+
+                            if (depotpartBean == null)
+                            {
+                                throw new RuntimeException("仓区不存在");
+                            }
+
+                            if (depotpartBean.getType() != Constant.TYPE_DEPOTPART_OK)
+                            {
+                                throw new RuntimeException("只能从良品仓中出货");
+                            }
+
                             // 循环处理，修改仓区对应的产品数量
                             StorageRelationBean relation = null;
                             Product product = null;

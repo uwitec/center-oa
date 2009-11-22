@@ -228,9 +228,10 @@ function listlog()
 						<td align="center" onclick="tableSort(this, true)" class="td_class"><B>产品索引</B></td>
 						<td align="center" onclick="tableSort(this)" class="td_class"><B>产品名称</B></td>
 						<td align="center" onclick="tableSort(this)" class="td_class"><B>产品编码</B></td>
-						<td align="center" onclick="tableSort(this)" class="td_class"><B>可发货数量</B></td>
-						<td align="center" onclick="tableSort(this, true)"
-							class="td_class"><B>实际库存</B></td>
+						<td align="center" onclick="tableSort(this, true)" class="td_class"><B>可发货数量</B></td>
+						<td align="center" onclick="tableSort(this, true)" class="td_class"><B>实际库存</B></td>
+						<td align="center" onclick="tableSort(this, true)" class="td_class"><B>预占库存</B></td>
+						<td align="center" onclick="tableSort(this, true)" class="td_class"><B>差额</B></td>
 					</tr>
 
 					<c:forEach items="${productList}" var="item" varStatus="vs">
@@ -246,6 +247,8 @@ function listlog()
 							<td onclick="hrefAndSelect(this)" align="center">${item.productCode}</td>
 							<td onclick="hrefAndSelect(this)" align="center">${item.mayAmount}</td>
 							<td onclick="hrefAndSelect(this)" align="center">${item.amount}</td>
+							<td onclick="hrefAndSelect(this)" align="center">${item.preassignAmount}</td>
+							<td onclick="hrefAndSelect(this)" align="center">${item.errorAmount}</td>
 						</tr>
 					</c:forEach>
 				</table>
