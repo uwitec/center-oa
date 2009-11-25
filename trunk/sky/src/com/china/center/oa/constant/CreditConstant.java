@@ -69,4 +69,9 @@ public interface CreditConstant
      */
     @Defined(key = "creditItemSub", value = "直接设值")
     int CREDIT_ITEM_SUB_NO = 1;
+
+    /**
+     * 直接设置(总经理设置)
+     */
+    String SET_DRECT = "10000000000000009999";
 }

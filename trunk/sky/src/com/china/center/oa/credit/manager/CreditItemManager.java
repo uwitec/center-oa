@@ -22,9 +22,11 @@ import com.china.center.oa.constant.CreditConstant;
 import com.china.center.oa.credit.bean.CreditItemBean;
 import com.china.center.oa.credit.bean.CreditItemSecBean;
 import com.china.center.oa.credit.bean.CreditItemThrBean;
+import com.china.center.oa.credit.bean.CreditLevelBean;
 import com.china.center.oa.credit.dao.CreditItemDAO;
 import com.china.center.oa.credit.dao.CreditItemSecDAO;
 import com.china.center.oa.credit.dao.CreditItemThrDAO;
+import com.china.center.oa.credit.dao.CreditLevelDAO;
 import com.china.center.oa.publics.User;
 import com.china.center.oa.publics.dao.CommonDAO2;
 import com.china.center.tools.JudgeTools;
@@ -49,6 +51,8 @@ public class CreditItemManager
     private CreditItemSecDAO creditItemSecDAO = null;
 
     private CreditItemThrDAO creditItemThrDAO = null;
+
+    private CreditLevelDAO creditLevelDAO = null;
 
     /**
      * default constructor
@@ -75,6 +79,25 @@ public class CreditItemManager
         bean.setPid(old.getPid());
 
         creditItemSecDAO.updateEntityBean(bean);
+
+        return true;
+    }
+
+    /**
+     * updateCreditLevel
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean updateCreditLevel(User user, CreditLevelBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, bean);
+
+        creditLevelDAO.updateEntityBean(bean);
 
         return true;
     }
@@ -416,5 +439,22 @@ public class CreditItemManager
     public void setCommonDAO2(CommonDAO2 commonDAO2)
     {
         this.commonDAO2 = commonDAO2;
+    }
+
+    /**
+     * @return the creditLevelDAO
+     */
+    public CreditLevelDAO getCreditLevelDAO()
+    {
+        return creditLevelDAO;
+    }
+
+    /**
+     * @param creditLevelDAO
+     *            the creditLevelDAO to set
+     */
+    public void setCreditLevelDAO(CreditLevelDAO creditLevelDAO)
+    {
+        this.creditLevelDAO = creditLevelDAO;
     }
 }

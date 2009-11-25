@@ -18,6 +18,7 @@ import com.china.center.oa.constant.AuthConstant;
 import com.china.center.oa.credit.bean.CreditItemBean;
 import com.china.center.oa.credit.bean.CreditItemSecBean;
 import com.china.center.oa.credit.bean.CreditItemThrBean;
+import com.china.center.oa.credit.bean.CreditLevelBean;
 import com.china.center.oa.credit.manager.CreditItemManager;
 import com.china.center.oa.credit.manager.CustomerCreditManager;
 import com.china.center.oa.customer.bean.AssignApplyBean;
@@ -867,6 +868,33 @@ public class CustomerFacade extends AbstarctFacade
         if (containAuth(user, AuthConstant.CUSTOMER_CREDIT_CHECK))
         {
             return customerCreditManager.doRejectApplyConfigStaticCustomerCredit(user, cid);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
+     * updateCreditLevel
+     * 
+     * @param userId
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    public boolean updateCreditLevel(String userId, CreditLevelBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CREDIT_LEVEL_OPR))
+        {
+            return creditItemManager.updateCreditLevel(user, bean);
         }
         else
         {

@@ -312,6 +312,8 @@ public class CustomerCreditAction extends DispatchAction
             return mapping.findForward("querySelfCustomer");
         }
 
+        request.setAttribute(KeyConstant.MESSAGE, "≥…π¶…Í«Î");
+
         return mapping.findForward("querySelfCustomer");
     }
 

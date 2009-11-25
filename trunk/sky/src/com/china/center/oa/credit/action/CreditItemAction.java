@@ -32,6 +32,7 @@ import com.china.center.oa.constant.SysConfigConstant;
 import com.china.center.oa.credit.bean.CreditItemBean;
 import com.china.center.oa.credit.bean.CreditItemSecBean;
 import com.china.center.oa.credit.bean.CreditItemThrBean;
+import com.china.center.oa.credit.bean.CreditLevelBean;
 import com.china.center.oa.credit.dao.CreditItemDAO;
 import com.china.center.oa.credit.dao.CreditItemSecDAO;
 import com.china.center.oa.credit.dao.CreditItemThrDAO;
@@ -385,6 +386,51 @@ public class CreditItemAction extends DispatchAction
         CommonTools.removeParamers(request);
 
         return mapping.findForward("queryCreditItemThr");
+    }
+
+    /**
+     * updateCreditLevel
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward updateCreditLevel(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        String newMoney = request.getParameter("newMoney");
+
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            CreditLevelBean bean = creditLevelDAO.find(id);
+
+            bean.setMoney(CommonTools.parseFloat(newMoney));
+
+            User user = Helper.getUser(request);
+
+            customerFacade.updateCreditLevel(user.getId(), bean);
+
+            ajax.setSuccess("成功修改额度:" + bean.getName());
+
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("修改额度失败:" + e.getMessage());
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "修改额度失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
     }
 
     /**

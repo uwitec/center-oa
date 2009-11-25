@@ -37,6 +37,8 @@ public class CreditLevelBean implements Serializable
 
     private double max = 0.0d;
 
+    private double money = 0.0d;
+
     /**
      * default constructor
      */
@@ -109,5 +111,22 @@ public class CreditLevelBean implements Serializable
     public void setMax(double max)
     {
         this.max = max;
+    }
+
+    /**
+     * @return the money
+     */
+    public double getMoney()
+    {
+        return money;
+    }
+
+    /**
+     * @param money
+     *            the money to set
+     */
+    public void setMoney(double money)
+    {
+        this.money = money;
     }
 }

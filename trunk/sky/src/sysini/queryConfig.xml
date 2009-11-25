@@ -55,11 +55,11 @@
 			<type>select</type>
 			<option>$101</option>
 		</condtion>
-		<condtion name="qqtype" caption="客户等级">
+		<condtion name="creditLevelId" caption="客户等级">
 			<opr>=</opr>
 			<datatype>0</datatype>
 			<type>select</type>
-			<option>$104</option>
+			<option>$creditLevel</option>
 		</condtion>
 		<condtion name="htype" caption="行业属性">
 			<opr>=</opr>
@@ -86,12 +86,12 @@
 			<type>select</type>
 			<option>$101</option>
 		</condtion>
-		<condtion name="qqtype" caption="客户等级">
-			<opr>=</opr>
-			<datatype>0</datatype>
-			<type>select</type>
-			<option>$104</option>
-		</condtion>
+		<condtion name="creditLevelId" caption="客户等级">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$creditLevel</option>
+        </condtion>
 		<condtion name="mtype" caption="客户性质">
 			<opr>=</opr>
 			<datatype>0</datatype>

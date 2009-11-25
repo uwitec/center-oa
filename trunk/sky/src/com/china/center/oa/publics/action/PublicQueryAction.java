@@ -34,7 +34,9 @@ import com.china.center.oa.budget.dao.BudgetDAO;
 import com.china.center.oa.budget.dao.BudgetItemDAO;
 import com.china.center.oa.budget.dao.FeeItemDAO;
 import com.china.center.oa.budget.vo.BudgetVO;
+import com.china.center.oa.credit.bean.CreditLevelBean;
 import com.china.center.oa.credit.dao.CreditItemSecDAO;
+import com.china.center.oa.credit.dao.CreditLevelDAO;
 import com.china.center.oa.credit.vo.CreditItemSecVO;
 import com.china.center.oa.helper.Helper;
 import com.china.center.oa.helper.LocationHelper;
@@ -96,6 +98,8 @@ public class PublicQueryAction extends DispatchAction
     private RoleDAO roleDAO = null;
 
     private ProvinceDAO provinceDAO = null;
+
+    private CreditLevelDAO creditLevelDAO = null;
 
     private QueryConfig queryConfig = null;
 
@@ -443,6 +447,15 @@ public class PublicQueryAction extends DispatchAction
             return;
         }
 
+        if ("$creditLevel".equals(key))
+        {
+            List<CreditLevelBean> list = creditLevelDAO.listEntityBeans();
+
+            selectMap.put(key, list);
+
+            return;
+        }
+
         if ("$creditItemSecList".equals(key))
         {
             List<CreditItemSecVO> list = creditItemSecDAO.listEntityVOs();
@@ -730,5 +743,22 @@ public class PublicQueryAction extends DispatchAction
     public void setCreditItemSecDAO(CreditItemSecDAO creditItemSecDAO)
     {
         this.creditItemSecDAO = creditItemSecDAO;
+    }
+
+    /**
+     * @return the creditLevelDAO
+     */
+    public CreditLevelDAO getCreditLevelDAO()
+    {
+        return creditLevelDAO;
+    }
+
+    /**
+     * @param creditLevelDAO
+     *            the creditLevelDAO to set
+     */
+    public void setCreditLevelDAO(CreditLevelDAO creditLevelDAO)
+    {
+        this.creditLevelDAO = creditLevelDAO;
     }
 }

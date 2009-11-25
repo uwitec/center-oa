@@ -72,6 +72,22 @@ public class CustomerCreditManager
     {}
 
     /**
+     * 设置客户等级
+     * 
+     * @param user
+     * @param cid
+     * @param creditList
+     * @return
+     * @throws MYException
+     */
+    @Transactional(rollbackFor = MYException.class)
+    public boolean configSpecialCredit(User user, String ccode, List<CustomerCreditBean> creditList)
+        throws MYException
+    {
+        return false;
+    }
+
+    /**
      * configCustomerCredit
      * 
      * @param user
