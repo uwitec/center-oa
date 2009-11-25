@@ -16,6 +16,7 @@ import com.china.center.tools.StringTools;
 import com.china.centet.yongyin.bean.StorageBean;
 import com.china.centet.yongyin.bean.StorageLogBean;
 import com.china.centet.yongyin.bean.StorageRelationBean;
+import com.china.centet.yongyin.constant.Constant;
 import com.china.centet.yongyin.vo.StorageBeanVO;
 
 
@@ -77,6 +78,13 @@ public class StorageDAO
         return jdbcOperation2.queryForInt(
             "select count(1) from T_CENTER_STORAGERALATION where depotpartId = ? and productId = ?",
             new Object[] {depotpartId, productId});
+    }
+
+    public int sumProcutInOKDepotpart(String productId)
+    {
+        return jdbcOperation2.queryForInt(
+            "select sum(t1.amount) from T_CENTER_STORAGERALATION t1 , T_CENTER_DEPOTPART t2 where t1.DEPOTPARTID = t2.ID and t1.productId = ? and t2.type = ?",
+            productId, Constant.TYPE_DEPOTPART_OK);
     }
 
     public boolean modfiyStorage(StorageBean bean)

@@ -799,6 +799,7 @@ public class DepotpartAndStorageAction extends DispatchAction
      * handlerAmount
      * 
      * @param storageRelationBean
+     * @throws MYException
      */
     private void handlerAmount(StorageRelationBean storageRelationBean)
     {
@@ -810,31 +811,45 @@ public class DepotpartAndStorageAction extends DispatchAction
             storageRelationBean.setMayAmount(amount.getNum());
         }
 
-        Map map = new HashMap();
+        DepotpartBean depotpartBean = depotpartDAO.findDepotpartById(storageRelationBean.getDepotpartId());
 
-        map.put("outType", Constant.OUT_TYPE_OUTBILL);
-
-        map.put("location", Constant.SYSTEM_LOCATION);
-
-        map.put("productId", storageRelationBean.getProductId());
-
-        map.put("beginDate", TimeTools.getDateString( -120, "yyyy-MM-dd"));
-
-        map.put("endDate", TimeTools.now_short());
-
-        // 查询预先占用的
-        Integer sum = outDAO.sumPreassignAmount(map);
-
-        if (sum != null)
+        if (depotpartBean == null)
         {
-            storageRelationBean.setPreassignAmount(sum);
+            return;
         }
 
-        // 差异的
-        int errorAmount = storageRelationBean.getAmount() - storageRelationBean.getMayAmount()
-                          - storageRelationBean.getPreassignAmount();
+        // 只有良品仓
+        if (depotpartBean.getType() == Constant.TYPE_DEPOTPART_OK)
+        {
+            Map map = new HashMap();
 
-        storageRelationBean.setErrorAmount(errorAmount);
+            map.put("outType", Constant.OUT_TYPE_OUTBILL);
+
+            map.put("location", Constant.SYSTEM_LOCATION);
+
+            map.put("productId", storageRelationBean.getProductId());
+
+            map.put("beginDate", TimeTools.getDateString( -120, "yyyy-MM-dd"));
+
+            map.put("endDate", TimeTools.now_short());
+
+            // 查询预先占用的
+            Integer sum = outDAO.sumPreassignAmount(map);
+
+            if (sum != null)
+            {
+                storageRelationBean.setPreassignAmount(sum);
+            }
+
+            // 实际存在是从所有的良品仓中获得
+            int realAmount = storageDAO.sumProcutInOKDepotpart(storageRelationBean.getProductId());
+
+            // 差异的
+            int errorAmount = realAmount - storageRelationBean.getMayAmount()
+                              - storageRelationBean.getPreassignAmount();
+
+            storageRelationBean.setErrorAmount(errorAmount);
+        }
     }
 
     /**
