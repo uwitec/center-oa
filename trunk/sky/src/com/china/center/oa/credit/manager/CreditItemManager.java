@@ -143,6 +143,8 @@ public class CreditItemManager
 
         bean.setId(commonDAO2.getSquenceString20());
 
+        bean.setName(bean.getName().trim());
+
         creditItemThrDAO.saveEntityBean(bean);
 
         return true;

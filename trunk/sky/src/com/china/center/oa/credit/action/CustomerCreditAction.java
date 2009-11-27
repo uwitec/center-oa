@@ -29,9 +29,13 @@ import com.china.center.common.ConditionParse;
 import com.china.center.common.KeyConstant;
 import com.china.center.common.MYException;
 import com.china.center.common.json.AjaxResult;
+import com.china.center.fileReader.ReaderFile;
+import com.china.center.fileReader.ReaderFileFactory;
+import com.china.center.oa.constant.AuthConstant;
 import com.china.center.oa.constant.CreditConstant;
 import com.china.center.oa.constant.SysConfigConstant;
 import com.china.center.oa.credit.bean.CreditItemBean;
+import com.china.center.oa.credit.bean.CreditItemSecBean;
 import com.china.center.oa.credit.bean.CreditItemThrBean;
 import com.china.center.oa.credit.dao.CreditItemDAO;
 import com.china.center.oa.credit.dao.CreditItemSecDAO;
@@ -45,6 +49,7 @@ import com.china.center.oa.credit.vo.CustomerCreditApplyVO;
 import com.china.center.oa.credit.vo.CustomerCreditVO;
 import com.china.center.oa.credit.vs.AbstractCustomerCredit;
 import com.china.center.oa.credit.vs.CustomerCreditApplyBean;
+import com.china.center.oa.credit.vs.CustomerCreditBean;
 import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.customer.dao.CustomerDAO;
 import com.china.center.oa.customer.manager.CustomerManager;
@@ -52,10 +57,13 @@ import com.china.center.oa.facade.CustomerFacade;
 import com.china.center.oa.helper.Helper;
 import com.china.center.oa.publics.User;
 import com.china.center.oa.publics.dao.ParameterDAO;
+import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.JSONTools;
 import com.china.center.tools.ListTools;
+import com.china.center.tools.RequestDataStream;
 import com.china.center.tools.StringTools;
+import com.china.center.tools.TimeTools;
 
 
 /**
@@ -89,6 +97,8 @@ public class CustomerCreditAction extends DispatchAction
     private CustomerFacade customerFacade = null;
 
     private ParameterDAO parameterDAO = null;
+
+    private UserManager userManager = null;
 
     /**
      * default constructor
@@ -431,6 +441,238 @@ public class CustomerCreditAction extends DispatchAction
     }
 
     /**
+     * 导入
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward uploadCustomerCredit(ActionMapping mapping, ActionForm form,
+                                              HttpServletRequest request,
+                                              HttpServletResponse response)
+        throws ServletException
+    {
+        User user = Helper.getUser(request);
+
+        if ( !userManager.containAuth(user, AuthConstant.CREDIT_IMPOTR))
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "没有权限");
+
+            return mapping.findForward("uploadCustomerCredit");
+        }
+
+        RequestDataStream rds = new RequestDataStream(request);
+
+        try
+        {
+            rds.parser();
+        }
+        catch (Exception e1)
+        {
+            _logger.error(e1, e1);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "解析失败");
+
+            return mapping.findForward("uploadCustomerCredit");
+        }
+
+        int success = 0;
+
+        int fault = 0;
+
+        final int staticAmount = parameterDAO.getInt(SysConfigConstant.CREDIT_STATIC);
+
+        StringBuilder builder = new StringBuilder();
+
+        if (rds.haveStream())
+        {
+            try
+            {
+                ReaderFile reader = ReaderFileFactory.getXLSReader();
+
+                reader.readFile(rds.getUniqueInputStream());
+
+                while (reader.hasNext())
+                {
+                    String[] obj = (String[])reader.next();
+
+                    // 第一行忽略
+                    if (reader.getCurrentLineNumber() == 1)
+                    {
+                        continue;
+                    }
+
+                    int currentNumber = reader.getCurrentLineNumber();
+
+                    String ccode = obj[0];
+
+                    if (StringTools.isNullOrNone(ccode))
+                    {
+                        builder.append("第[" + currentNumber + "]错误:").append("客户编码为空").append(
+                            "<br>");
+
+                        fault++ ;
+
+                        continue;
+                    }
+
+                    boolean addSucess = false;
+
+                    if (obj.length >= 21)
+                    {
+                        addSucess = innerAdd(user, builder, obj, ccode, currentNumber,
+                            staticAmount);
+                    }
+                    else
+                    {
+                        builder.append("第[" + currentNumber + "]错误:").append("数据长度不足21格,数据不足").append(
+                            "<br>");
+                    }
+
+                    if (addSucess)
+                    {
+                        success++ ;
+                    }
+                    else
+                    {
+                        fault++ ;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.error(e, e);
+
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "导入失败");
+
+                return mapping.findForward("uploadCustomerCredit");
+            }
+        }
+
+        rds.close();
+
+        StringBuilder result = new StringBuilder();
+
+        result.append("导入成功:").append(success).append("条,失败:").append(fault).append("条<br>");
+
+        result.append(builder.toString());
+
+        request.setAttribute(KeyConstant.MESSAGE, result.toString());
+
+        return mapping.findForward("uploadCustomerCredit");
+    }
+
+    /**
+     * innerAdd
+     * 
+     * @param user
+     * @param builder
+     * @param obj
+     * @param stafferId
+     * @param currentNumber
+     * @return
+     */
+    private boolean innerAdd(User user, StringBuilder builder, String[] obj, String stafferId,
+                             int currentNumber, int staticAmount)
+    {
+        boolean addSucess = false;
+
+        try
+        {
+            CustomerBean customer = customerDAO.findCustomerByCode(obj[0].trim());
+
+            if (customer == null)
+            {
+                builder.append("<font color=red>第[" + currentNumber + "]行错误:").append("客户不存在").append(
+                    "</font><br>");
+
+                return false;
+            }
+
+            // 定向解析
+            String[] keys = new String[] {"80000000000000000001", "80000000000000000002",
+                "80000000000000000003", "80000000000000000004", "80000000000000000011",
+                "80000000000000000012", "80000000000000000013", "80000000000000000014",
+                "80000000000000000021", "80000000000000000022", "80000000000000000023",
+                "80000000000000000024", "80000000000000000031", "80000000000000000032",
+                "80000000000000000033", "80000000000000000034", "80000000000000000035",
+                "80000000000000000036", "80000000000000000037", "80000000000000000038"};
+
+            List<CustomerCreditBean> ccList = new ArrayList();
+
+            for (int i = 0; i < keys.length; i++ )
+            {
+                String str = keys[i];
+
+                String valieName = obj[i + 1];
+
+                if (StringTools.isNullOrNone(valieName))
+                {
+                    continue;
+                }
+
+                CreditItemThrBean creditItemThr = creditItemThrDAO.findByUnique(valieName.trim(),
+                    str);
+
+                if (creditItemThr == null)
+                {
+                    continue;
+                }
+
+                CreditItemSecBean creditItemSec = creditItemSecDAO.find(str);
+
+                if (creditItemSec == null)
+                {
+                    continue;
+                }
+
+                CreditItemBean creditItem = creditItemDAO.find(creditItemSec.getPid());
+
+                if (creditItem == null)
+                {
+                    continue;
+                }
+
+                CustomerCreditBean each = new CustomerCreditBean();
+
+                each.setCid(customer.getId());
+
+                each.setLogTime(TimeTools.now());
+
+                each.setItemId(str);
+
+                each.setValueId(creditItemThr.getId());
+
+                each.setVal( (staticAmount * creditItem.getPer() * creditItemSec.getPer() * creditItemThr.getPer()) / 1000000.0d);
+
+                each.setLog(user.getStafferName() + "导入修改:" + each.getVal());
+
+                each.setPitemId(creditItem.getId());
+
+                each.setPtype(CreditConstant.CREDIT_TYPE_STATIC);
+
+                ccList.add(each);
+            }
+
+            customerCreditManager.configCustomerCredit(user, customer.getId(), ccList);
+
+            addSucess = true;
+        }
+        catch (Exception e)
+        {
+            addSucess = false;
+
+            builder.append("<font color=red>第[" + currentNumber + "]行错误:").append(e.getMessage()).append(
+                "</font><br>");
+        }
+
+        return addSucess;
+    }
+
+    /**
      * @return the customerCreditManager
      */
     public CustomerCreditManager getCustomerCreditManager()
@@ -598,5 +840,22 @@ public class CustomerCreditAction extends DispatchAction
     public void setCustomerCreditApplyDAO(CustomerCreditApplyDAO customerCreditApplyDAO)
     {
         this.customerCreditApplyDAO = customerCreditApplyDAO;
+    }
+
+    /**
+     * @return the userManager
+     */
+    public UserManager getUserManager()
+    {
+        return userManager;
+    }
+
+    /**
+     * @param userManager
+     *            the userManager to set
+     */
+    public void setUserManager(UserManager userManager)
+    {
+        this.userManager = userManager;
     }
 }

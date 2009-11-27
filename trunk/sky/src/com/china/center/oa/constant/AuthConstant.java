@@ -297,4 +297,9 @@ public interface AuthConstant
      * 强制修改
      */
     String CREDIT_FORCE_UPDATE = "0903";
+
+    /**
+     * 导入
+     */
+    String CREDIT_IMPOTR = "0904";
 }

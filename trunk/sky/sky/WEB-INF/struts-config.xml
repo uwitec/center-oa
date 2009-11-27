@@ -412,6 +412,7 @@
             <forward name="detailCustomerCredit" path="/credit/detailCustomerCredit.jsp" />
             <forward name="interposeCredit" path="/credit/interposeCredit.jsp" />
             <forward name="querySelfCustomer" path="/customer/querySelfCustomer.jsp" />
+            <forward name="uploadCustomerCredit" path="/credit/uploadCustomerCredit.jsp" />
             <forward name="queryApplyCustomerForCredit" path="/customer/queryApplyCustomerForCredit.jsp" />
         </action>
 
