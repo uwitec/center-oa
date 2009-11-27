@@ -903,6 +903,34 @@ public class CustomerFacade extends AbstarctFacade
     }
 
     /**
+     * interposeCredit
+     * 
+     * @param userId
+     * @param cid
+     * @param newCreditVal
+     * @return
+     * @throws MYException
+     */
+    public boolean interposeCredit(String userId, String cid, double newCreditVal)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, cid);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CREDIT_FORCE_UPDATE))
+        {
+            return customerCreditManager.interposeCredit(user, cid, newCreditVal);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
      * @return the customerManager
      */
     public CustomerManager getCustomerManager()

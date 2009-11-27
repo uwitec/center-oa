@@ -15,6 +15,7 @@ import net.sourceforge.sannotations.annotation.Bean;
 
 import com.china.center.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.impl.BaseDAO2;
+import com.china.center.oa.constant.CreditConstant;
 import com.china.center.oa.credit.vo.CustomerCreditVO;
 import com.china.center.oa.credit.vs.CustomerCreditBean;
 
@@ -34,5 +35,12 @@ public class CustomerCreditDAO extends BaseDAO2<CustomerCreditBean, CustomerCred
     {
         return this.jdbcOperation.queryForDouble(BeanTools.getSumHead(claz, "val")
                                                  + "where cid = ?", cid);
+    }
+
+    public double sumValExceptPersonByFK(Serializable cid)
+    {
+        return this.jdbcOperation.queryForDouble(BeanTools.getSumHead(claz, "val")
+                                                 + "where cid = ? and itemId <> ?", cid,
+            CreditConstant.SET_DRECT);
     }
 }

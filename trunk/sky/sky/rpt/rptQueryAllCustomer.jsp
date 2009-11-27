@@ -91,16 +91,18 @@ function press()
 			id="result">
 			<tr align=center class="content0">
 				<td align="center" width="5%">选择</td>
-				<td align="center" width="50%"><strong>名称</strong></td>
-				<td align="center" width="40%"><strong>编码</strong></td>
+				<td align="center" width="40%"><strong>名称</strong></td>
+				<td align="center" width="30%"><strong>编码</strong></td>
+				<td align="center" width="30%"><strong>信用分</strong></td>
 			</tr>
 
 			<c:forEach items="${list}" var="item" varStatus="vs">
 				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
-					<td align="center"><input type="radio" name="beans"
+					<td align="center"><input type="radio" name="beans" pval="${my:formatNum(item.creditVal)}"
 						pname="${item.name}" value="${item.id}" ${vs.index== 0 ? "checked" : ""}/></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.name}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.code}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.creditVal)}</td>
 				</tr>
 			</c:forEach>
 		</table>

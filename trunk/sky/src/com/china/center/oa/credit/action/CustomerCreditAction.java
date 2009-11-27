@@ -52,6 +52,7 @@ import com.china.center.oa.facade.CustomerFacade;
 import com.china.center.oa.helper.Helper;
 import com.china.center.oa.publics.User;
 import com.china.center.oa.publics.dao.ParameterDAO;
+import com.china.center.tools.CommonTools;
 import com.china.center.tools.JSONTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.StringTools;
@@ -188,6 +189,42 @@ public class CustomerCreditAction extends DispatchAction
         }
 
         return mapping.findForward("configCustomerCredit");
+    }
+
+    /**
+     * 人为干预等级
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward interposeCredit(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        String cid = request.getParameter("cid");
+
+        String newcval = request.getParameter("newcval");
+
+        User user = Helper.getUser(request);
+
+        try
+        {
+            customerFacade.interposeCredit(user.getId(), cid, CommonTools.parseFloat(newcval));
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功人为干预");
+        }
+        catch (MYException e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+            return mapping.findForward("error");
+        }
+
+        return mapping.findForward("interposeCredit");
     }
 
     /**

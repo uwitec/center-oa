@@ -36,6 +36,7 @@ import com.china.center.oa.customer.dao.CustomerDAO;
 import com.china.center.oa.publics.User;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.MathTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -145,6 +146,77 @@ public class CustomerCreditManager
     }
 
     /**
+     * interposeCredit
+     * 
+     * @param user
+     * @param cid
+     * @param creditList
+     * @return
+     * @throws MYException
+     */
+    @Transactional(rollbackFor = MYException.class)
+    public boolean interposeCredit(User user, String cid, double newCreditVal)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, cid);
+
+        // less than 100
+        newCreditVal = Math.min(100.0d, newCreditVal);
+
+        CustomerCreditBean customerCreditBean = new CustomerCreditBean();
+
+        // sum value
+        double sum = Math.ceil(customerCreditDAO.sumValExceptPersonByFK(cid));
+
+        customerCreditBean.setCid(cid);
+
+        customerCreditBean.setVal(newCreditVal - sum);
+
+        customerCreditBean.setLogTime(TimeTools.now());
+
+        customerCreditBean.setPtype(CreditConstant.CREDIT_TYPE_DYNAMIC);
+
+        customerCreditBean.setItemId(CreditConstant.SET_DRECT);
+
+        customerCreditBean.setLog(user.getStafferName() + "人为干预等级,直接加分到:"
+                                  + MathTools.formatNum(newCreditVal));
+
+        customerCreditBean.setPitemId("0");
+        customerCreditBean.setValueId("0");
+
+        CustomerCreditBean drectBean = customerCreditDAO.findByUnique(cid,
+            customerCreditBean.getItemId());
+
+        if (drectBean == null)
+        {
+            customerCreditDAO.saveEntityBean(customerCreditBean);
+        }
+        else
+        {
+            customerCreditBean.setId(drectBean.getId());
+
+            customerCreditDAO.updateEntityBean(customerCreditBean);
+        }
+
+        // dynamic add log
+        saveLog(user, customerCreditBean);
+
+        CreditLevelBean findByVal = creditLevelDAO.findByVal((int)Math.ceil(newCreditVal));
+
+        String level = CustomerConstant.CREDITLEVELID_DEFAULT;
+
+        if (findByVal != null)
+        {
+            level = findByVal.getId();
+        }
+
+        // update customer
+        customerDAO.updateCustomerCredit(cid, level, (int)Math.ceil(newCreditVal));
+
+        return true;
+    }
+
+    /**
      * saveLog
      * 
      * @param user
@@ -159,6 +231,7 @@ public class CustomerCreditManager
             log.setStafferId(user.getStafferId());
             log.setLocationId(user.getLocationId());
             log.setLog(customerCreditBean.getLog());
+            log.setCid(customerCreditBean.getCid());
             log.setLogTime(TimeTools.now());
             log.setVal(customerCreditBean.getVal());
 
