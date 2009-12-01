@@ -110,6 +110,19 @@
         <property name="startDelay" value="30000" />
         <property name="repeatInterval" value="15000" />
     </bean>
+    
+    <bean id="modifyProductAmountInSystemLocationJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="trigger" />
+        <property name="targetMethod" value="modifyProductAmountInSystemLocation" />
+        <property name="concurrent" value="false" />
+    </bean>
+
+    <bean id="modifyProductAmountInSystemLocationTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="modifyProductAmountInSystemLocationJob" />
+        <property name="cronExpression" value="0 45 3 * * ?" />
+    </bean>
 	
 	<bean
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -123,6 +136,7 @@
 				<ref bean="effTrigger" />
 				<ref bean="checkPriceAskOverTimeTrigger" />
 				<ref bean="handleMessageTrigger" />
+				<ref bean="modifyProductAmountInSystemLocationTrigger" />
 			</list>
 		</property>
 	</bean>

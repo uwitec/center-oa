@@ -54,6 +54,8 @@ public class LogBean implements Serializable
 
     private int afterStatus = 0;
 
+    private String log = "";
+
     /**
      * default constructor
      */
@@ -92,7 +94,9 @@ public class LogBean implements Serializable
 
         buffer.append(afterStatus).append(',');
 
-        buffer.append(getLogString(this.locationId));
+        buffer.append(getLogString(this.locationId)).append(',');
+
+        buffer.append(log);
 
         return buffer.toString();
     }
@@ -132,6 +136,11 @@ public class LogBean implements Serializable
         if (this.type == OutConstanst.OUT_TYPE_MOVE)
         {
             return "仓区移动";
+        }
+
+        if (this.type == OutConstanst.OUT_TYPE_MODIFY)
+        {
+            return "自动修正";
         }
 
         return "未知类型";
@@ -192,6 +201,11 @@ public class LogBean implements Serializable
         if (this.outType == OutConstanst.OUT_TYPE_MOVE)
         {
             return "仓区移动";
+        }
+
+        if (this.outType == OutConstanst.OUT_TYPE_MODIFY)
+        {
+            return "自动修正";
         }
 
         return "未知类型";
@@ -463,6 +477,23 @@ public class LogBean implements Serializable
     public void setUser(String user)
     {
         this.user = user;
+    }
+
+    /**
+     * @return the log
+     */
+    public String getLog()
+    {
+        return log;
+    }
+
+    /**
+     * @param log
+     *            the log to set
+     */
+    public void setLog(String log)
+    {
+        this.log = log;
     }
 
 }

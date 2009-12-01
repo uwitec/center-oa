@@ -41,6 +41,9 @@ public class DepotpartBean implements Serializable
 
     private String locationId = "";
 
+    /**
+     * 1可发 0and2不可以
+     */
     @Html(title = "仓区类型", type = Element.SELECT)
     private int type = 0;
 

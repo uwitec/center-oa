@@ -47,4 +47,9 @@ public interface OutConstanst
      * 仓区移动
      */
     int OUT_TYPE_MOVE = 8;
+
+    /**
+     * 自动修正
+     */
+    int OUT_TYPE_MODIFY = 9;
 }

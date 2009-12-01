@@ -11,11 +11,17 @@ package com.china.centet.yongyin.trigger.impl;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.china.center.cache.CacheBootstrap;
 import com.china.center.common.ConditionParse;
@@ -25,11 +31,14 @@ import com.china.center.tools.TimeTools;
 import com.china.centet.yongyin.bean.BankBean;
 import com.china.centet.yongyin.bean.Bill;
 import com.china.centet.yongyin.bean.LocationBean;
+import com.china.centet.yongyin.bean.LogBean;
 import com.china.centet.yongyin.bean.Product;
 import com.china.centet.yongyin.bean.ProductAmount;
 import com.china.centet.yongyin.bean.StatBankBean;
 import com.china.centet.yongyin.bean.StatBean;
 import com.china.centet.yongyin.constant.Constant;
+import com.china.centet.yongyin.constant.LockConstant;
+import com.china.centet.yongyin.constant.OutConstanst;
 import com.china.centet.yongyin.dao.BankDAO;
 import com.china.centet.yongyin.dao.BillDAO;
 import com.china.centet.yongyin.dao.CommonDAO;
@@ -38,6 +47,7 @@ import com.china.centet.yongyin.dao.LocationDAO;
 import com.china.centet.yongyin.dao.OutDAO;
 import com.china.centet.yongyin.dao.ProductDAO;
 import com.china.centet.yongyin.dao.StatDAO;
+import com.china.centet.yongyin.dao.StorageDAO;
 import com.china.centet.yongyin.trigger.Trigger;
 
 
@@ -57,6 +67,8 @@ public class TriggerImpl implements Trigger
 
     private final Log effLogger = LogFactory.getLog("eff");
 
+    private final Log monitorLog = LogFactory.getLog("bill");
+
     private StatDAO statDAO = null;
 
     private CommonDAO commonDAO = null;
@@ -73,9 +85,13 @@ public class TriggerImpl implements Trigger
 
     private ProductDAO productDAO = null;
 
+    private StorageDAO storageDAO = null;
+
     private PublicSQL publicSQL = null;
 
     private CacheBootstrap cacheBootstrap = null;
+
+    private DataSourceTransactionManager transactionManager = null;
 
     public void statBankEveryDay()
     {
@@ -408,6 +424,166 @@ public class TriggerImpl implements Trigger
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.china.centet.yongyin.trigger.Trigger#modifyProductAmountInSystemLocation()
+     */
+    public void modifyProductAmountInSystemLocation()
+    {
+        List<String> productList = storageDAO.listProductIdListInOKDepotpart();
+
+        for (final String productId : productList)
+        {
+            int yuSum = 0;
+
+            Integer sum = getMay(productId);
+
+            if (sum != null)
+            {
+                yuSum = sum;
+            }
+
+            // 真实的
+            int realAmount = storageDAO.sumProcutInOKDepotpart(productId);
+
+            ProductAmount amount = productDAO.findProductAmount(productId,
+                Constant.SYSTEM_LOCATION);
+
+            if (amount == null)
+            {
+                logger.error(productId + "不存在(产品ID)");
+
+                continue;
+            }
+
+            Product product = productDAO.findProductById(productId);
+
+            if (product == null)
+            {
+                logger.error(productId + "不存在(产品ID)");
+
+                continue;
+            }
+
+            int maySum = amount.getNum();
+
+            final int realMaySum = realAmount - yuSum;
+
+            if ( (realMaySum != maySum) && realMaySum > 0)
+            {
+                // 修正库存
+                synchronized (LockConstant.CENTER_PRODUCT_AMOUNT_LOCK)
+                {
+                    // 执行修正库存
+                    if (doModify(productId, realMaySum))
+                    {
+                        addLog(product, maySum, realMaySum);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * addLog
+     * 
+     * @param product
+     * @param maySum
+     * @param realMaySum
+     */
+    private void addLog(Product product, int maySum, final int realMaySum)
+    {
+        // 记录文本日志
+        LogBean logBean = new LogBean();
+
+        logBean.setOprType(0);
+
+        logBean.setOutId("YY000000000000000");
+
+        logBean.setType(OutConstanst.OUT_TYPE_MODIFY);
+
+        logBean.setOutType(OutConstanst.OUT_TYPE_MODIFY);
+
+        logBean.setProductName(product.getName());
+
+        logBean.setCurrent(realMaySum - maySum);
+
+        logBean.setValue(0.0d);
+
+        logBean.setStaffer("SYSTEM");
+
+        logBean.setRefId("");
+
+        logBean.setBeforCount(maySum);
+
+        logBean.setAfterCount(realMaySum);
+
+        logBean.setLocationId(Constant.SYSTEM_LOCATION);
+
+        logBean.setLog("系统自动修正库存:" + logBean.getCurrent());
+
+        System.out.println(logBean);
+
+        monitorLog.info(logBean);
+    }
+
+    /**
+     * doModify
+     * 
+     * @param productId
+     * @param realMaySum
+     */
+    private boolean doModify(final String productId, final int realMaySum)
+    {
+        TransactionTemplate tran = new TransactionTemplate(transactionManager);
+        try
+        {
+            tran.execute(new TransactionCallback()
+            {
+                public Object doInTransaction(TransactionStatus arg0)
+                {
+                    productDAO.modifyTatol(productId, realMaySum, Constant.SYSTEM_LOCATION);
+
+                    return Boolean.TRUE;
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            _logger.error(e, e);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * getMay
+     * 
+     * @param productId
+     * @return
+     */
+    private Integer getMay(String productId)
+    {
+        Map map = new HashMap();
+
+        map.put("outType", Constant.OUT_TYPE_OUTBILL);
+
+        map.put("location", Constant.SYSTEM_LOCATION);
+
+        map.put("productId", productId);
+
+        map.put("beginDate", TimeTools.getDateString( -120, "yyyy-MM-dd"));
+
+        map.put("endDate", TimeTools.now_short());
+
+        // 查询预先占用的
+        Integer sum = outDAO.sumPreassignAmount(map);
+        return sum;
+    }
+
     /**
      * @return the statDAO
      */
@@ -589,5 +765,39 @@ public class TriggerImpl implements Trigger
     public void setCacheBootstrap(CacheBootstrap cacheBootstrap)
     {
         this.cacheBootstrap = cacheBootstrap;
+    }
+
+    /**
+     * @return the storageDAO
+     */
+    public StorageDAO getStorageDAO()
+    {
+        return storageDAO;
+    }
+
+    /**
+     * @param storageDAO
+     *            the storageDAO to set
+     */
+    public void setStorageDAO(StorageDAO storageDAO)
+    {
+        this.storageDAO = storageDAO;
+    }
+
+    /**
+     * @return the transactionManager
+     */
+    public DataSourceTransactionManager getTransactionManager()
+    {
+        return transactionManager;
+    }
+
+    /**
+     * @param transactionManager
+     *            the transactionManager to set
+     */
+    public void setTransactionManager(DataSourceTransactionManager transactionManager)
+    {
+        this.transactionManager = transactionManager;
     }
 }

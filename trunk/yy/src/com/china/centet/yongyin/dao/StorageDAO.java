@@ -6,7 +6,12 @@
 package com.china.centet.yongyin.dao;
 
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.jdbc.core.RowCallbackHandler;
 
 import com.china.center.annosql.tools.BeanTools;
 import com.china.center.common.ConditionParse;
@@ -139,6 +144,13 @@ public class StorageDAO
         return lList;
     }
 
+    /**
+     * queryStorageRelationByCondition
+     * 
+     * @param condition
+     * @param isLimit
+     * @return
+     */
     public List<StorageRelationBean> queryStorageRelationByCondition(ConditionParse condition,
                                                                      boolean isLimit)
     {
@@ -161,6 +173,50 @@ public class StorageDAO
         }
     }
 
+    /**
+     * queryProductIdListInOKDepotpart
+     * 
+     * @return
+     */
+    public List<String> listProductIdListInOKDepotpart()
+    {
+        final List<String> result = new ArrayList();
+
+        String sql = "select DISTINCT(t1.productid) from T_CENTER_STORAGERALATION t1, "
+                     + "t_center_depotpart t2 where t1.depotpartid= t2.id and t2.type = 1";
+
+        jdbcOperation2.query(sql, new RowCallbackHandler()
+        {
+            public void processRow(ResultSet rs)
+                throws SQLException
+            {
+                result.add(rs.getString(1));
+            }
+        });
+
+        return result;
+    }
+
+    /**
+     * 当前仓库里面的库存
+     * 
+     * @param productId
+     * @return
+     */
+    public int sumProductInOKDepotpart(String productId)
+    {
+        String sql = "select sum(t1.amount) from T_CENTER_STORAGERALATION t1, t_center_depotpart t2 "
+                     + "where t1.depotpartid= t2.id and t2.type = 1 and t1.productid = ?";
+
+        return jdbcOperation2.queryForInt(sql, productId);
+    }
+
+    /**
+     * queryStorageLogByCondition
+     * 
+     * @param condition
+     * @return
+     */
     public List<StorageLogBean> queryStorageLogByCondition(ConditionParse condition)
     {
         condition.addWhereStr();
