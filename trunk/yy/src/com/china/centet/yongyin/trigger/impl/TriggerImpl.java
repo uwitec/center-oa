@@ -569,7 +569,7 @@ public class TriggerImpl implements Trigger
     {
         Map map = new HashMap();
 
-        map.put("outType", Constant.OUT_TYPE_OUTBILL);
+        map.put("type", Constant.OUT_TYPE_OUTBILL);
 
         map.put("location", Constant.SYSTEM_LOCATION);
 

@@ -730,6 +730,8 @@ public class OutManager
 
             log.setBeforCount(current);
 
+            log.setLog("入库到非良品仓区");
+
             log.setLocationId(bean.getLocationId());
         }
     }
@@ -1506,9 +1508,9 @@ public class OutManager
 
     private String getAll(int i)
     {
-        String s = "00000" + i;
+        String s = "00000000" + i;
 
-        return s.substring(s.length() - 6);
+        return s.substring(s.length() - 9);
     }
 
     /**

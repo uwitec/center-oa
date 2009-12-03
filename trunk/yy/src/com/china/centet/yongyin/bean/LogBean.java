@@ -165,7 +165,7 @@ public class LogBean implements Serializable
 
         if (this.outType == 1)
         {
-            return "调出";
+            return "调出/个人领样";
         }
 
         if (this.outType == 2)

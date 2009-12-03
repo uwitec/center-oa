@@ -7,7 +7,7 @@
 		<![CDATA[
             select sum(t2.amount) from t_center_out t1, t_center_base t2 
             where t1.fullid = t2.outid 
-            and t1.outType = #outType# 
+            and t1.type = #type# 
             and t1.location = #location# 
             and t2.productId = #productId# 
             and t1.outtime >= #beginDate# 

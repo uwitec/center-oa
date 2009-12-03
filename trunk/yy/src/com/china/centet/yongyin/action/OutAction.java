@@ -863,7 +863,7 @@ public class OutAction extends DispatchAction
         }
         catch (MYException e)
         {
-            _logger.error(e, e);
+            _logger.warn(e, e);
 
             request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
 
@@ -1597,7 +1597,7 @@ public class OutAction extends DispatchAction
             }
             catch (MYException e)
             {
-                _logger.error(e, e);
+                _logger.warn(e, e);
 
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "流程异常，请重新操作:" + e.toString());
 
@@ -1952,9 +1952,9 @@ public class OutAction extends DispatchAction
                 }
                 catch (MYException e)
                 {
-                    _logger.error("fullId:" + fullId);
+                    _logger.warn("fullId:" + fullId);
 
-                    _logger.error(e, e);
+                    _logger.warn(e, e);
 
                     request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
 
@@ -1972,7 +1972,7 @@ public class OutAction extends DispatchAction
                 }
                 catch (MYException e)
                 {
-                    _logger.error(e, e);
+                    _logger.warn(e, e);
 
                     request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
 
@@ -1989,7 +1989,7 @@ public class OutAction extends DispatchAction
                 }
                 catch (MYException e)
                 {
-                    _logger.error(e, e);
+                    _logger.warn(e, e);
 
                     request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
 
