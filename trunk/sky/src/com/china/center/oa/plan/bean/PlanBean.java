@@ -28,7 +28,7 @@ import com.china.center.oa.constant.PlanConstant;
  */
 
 @Entity
-@Table(name = "t_center_plan")
+@Table(name = "T_CENTER_PLAN")
 public class PlanBean implements Serializable
 {
     @Id
@@ -47,17 +47,17 @@ public class PlanBean implements Serializable
     private int status = PlanConstant.PLAN_STATUS_INIT;
 
     private String logTime = "";
-    
+
     /**
      * 执行顺序 数字越小越先 越大越靠后执行
      */
     private int orderIndex = 0;
-    
+
     /**
      * 开始时间 yyyy-MM-dd HH:mm:ss
      */
     private String beginTime = "";
-    
+
     /**
      * 结束时间 yyyy-MM-dd HH:mm:ss
      */
@@ -71,7 +71,6 @@ public class PlanBean implements Serializable
     private String realCarryTime = "";
 
     private String description = "";
-
 
     /**
      * default constructor
@@ -241,7 +240,8 @@ public class PlanBean implements Serializable
     }
 
     /**
-     * @param beginTime the beginTime to set
+     * @param beginTime
+     *            the beginTime to set
      */
     public void setBeginTime(String beginTime)
     {
@@ -257,7 +257,8 @@ public class PlanBean implements Serializable
     }
 
     /**
-     * @param endTime the endTime to set
+     * @param endTime
+     *            the endTime to set
      */
     public void setEndTime(String endTime)
     {
@@ -273,7 +274,8 @@ public class PlanBean implements Serializable
     }
 
     /**
-     * @param orderIndex the orderIndex to set
+     * @param orderIndex
+     *            the orderIndex to set
      */
     public void setOrderIndex(int orderIndex)
     {

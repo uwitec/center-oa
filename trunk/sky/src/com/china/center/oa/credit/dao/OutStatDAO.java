@@ -1,0 +1,176 @@
+/**
+ * File Name: OutStatDAO.java<br>
+ * CopyRight: Copyright by www.center.china<br>
+ * Description:<br>
+ * CREATER: ZHUACHEN<br>
+ * CreateTime: 2009-12-3<br>
+ * Grant: open source to everybody
+ */
+package com.china.center.oa.credit.dao;
+
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
+
+import net.sourceforge.sannotations.annotation.Bean;
+
+import org.springframework.jdbc.core.RowCallbackHandler;
+
+import com.china.center.common.ConditionParse;
+import com.china.center.jdbc.inter.impl.BaseDAO2;
+import com.china.center.oa.constant.CreditConstant;
+import com.china.center.tools.ListTools;
+import com.china.center.tools.TimeTools;
+import com.china.centet.yongyin.bean.OutBean;
+
+
+/**
+ * OutStatDAO
+ * 
+ * @author ZHUZHU
+ * @version 2009-12-3
+ * @see OutStatDAO
+ * @since 1.0
+ */
+@Bean(name = "outStatDAO")
+public class OutStatDAO extends BaseDAO2<OutBean, OutBean>
+{
+    /**
+     * 2009-12-01开始使用
+     */
+    private static final String BEGINDATE = "2009-06-01";
+
+    /**
+     * 查询没有进行统计的销售单(2009-12-01开始统计的)
+     * 
+     * @param cid
+     * @param beginTime
+     * @return
+     */
+    public List<OutBean> queryNoneStatByCid(String cid)
+    {
+        ConditionParse condtition = new ConditionParse();
+
+        condtition.addWhereStr();
+
+        String beginDate = BEGINDATE;
+
+        // 只统计前6个月的数据
+        String fbeginDate = TimeTools.getDateShortString( -6 * 30);
+
+        if (beginDate.compareTo(fbeginDate) < 0)
+        {
+            beginDate = fbeginDate;
+        }
+
+        condtition.addCondition("outTime", ">=", beginDate);
+
+        // 销售单
+        condtition.addIntCondition("type", "=", 0);
+
+        // 只能是销售出库
+        condtition.addIntCondition("outType", "=", 0);
+
+        // 未信用处理的单子
+        condtition.addIntCondition("reserve1", "=", CreditConstant.CREDIT_OUT_INIT);
+
+        condtition.addCondition("customerId", "=", cid);
+
+        condtition.addCondition("and status in (3, 4)");
+
+        condtition.addCondition("order by id asc");
+
+        return this.queryEntityBeansByCondition(condtition);
+    }
+
+    /**
+     * listCustomerIdList
+     * 
+     * @return
+     */
+    public List<String> listCustomerIdList()
+    {
+        ConditionParse condtition = new ConditionParse();
+
+        condtition.addWhereStr();
+
+        String beginDate = BEGINDATE;
+
+        // 只统计前13个月的数据
+        String fbeginDate = TimeTools.getDateShortString( -13 * 30);
+
+        if (beginDate.compareTo(fbeginDate) < 0)
+        {
+            beginDate = fbeginDate;
+        }
+
+        condtition.addCondition("outTime", ">=", beginDate);
+
+        // 销售单
+        condtition.addIntCondition("type", "=", 0);
+
+        // 只能是销售出库
+        condtition.addIntCondition("outType", "=", 0);
+
+        final List<String> list = new LinkedList<String>();
+
+        this.jdbcOperation.query("select distinct(t.customerId) from t_center_out t "
+                                 + condtition.toString(), new RowCallbackHandler()
+        {
+            public void processRow(ResultSet rs)
+                throws SQLException
+            {
+                list.add(rs.getString(1));
+            }
+        });
+
+        return list;
+    }
+
+    /**
+     * findNearestById
+     * 
+     * @param fullId
+     * @param cid
+     * @return
+     */
+    public OutBean findNearestById(String id, String cid)
+    {
+        // 查询销售单且最近的一个
+        List<OutBean> list = this.jdbcOperation.queryObjects(
+            "where 1= 1 and type = ? and outType = ? and customerId = ? and id < ? order by id desc",
+            claz, 0, 0, cid, id).setMaxResults(1).list(claz);
+
+        if (ListTools.isEmptyOrNull(list))
+        {
+            return null;
+        }
+
+        return list.get(0);
+    }
+
+    /**
+     * updateReserve1ByFullId
+     * 
+     * @param fullId
+     * @param reserve1
+     * @param reserve4
+     * @return
+     */
+    public boolean updateReserve1ByFullId(String fullId, int reserve1, String reserve4)
+    {
+        this.jdbcOperation.update("set reserve1 = ? , reserve4 = ? where fullid = ?", claz,
+            reserve1, reserve4, fullId);
+
+        return true;
+    }
+
+    public boolean updateReserve5ByFullId(String fullId, String reserve5)
+    {
+        this.jdbcOperation.update("set reserve5 = ? where fullid = ?", claz, reserve5, fullId);
+
+        return true;
+    }
+}

@@ -200,6 +200,19 @@
         <property name="startDelay" value="30000" />
         <property name="repeatInterval" value="15000" />
     </bean>
+    
+    <bean id="statOutJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="curOutManager" />
+        <property name="targetMethod" value="statOut" />
+        <property name="concurrent" value="false" />
+    </bean>
+
+    <bean id="statOutTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="statOutJob" />
+        <property name="cronExpression" value="0 45 1 * * ?" />
+    </bean>
 
 	<bean
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -220,6 +233,7 @@
 				<ref bean="handleMessageTrigger" />
 				<ref bean="sendMessageTrigger" />
 				<ref bean="changeInitToWaitSendTrigger" />
+				<ref bean="statOutTrigger" />
 			</list>
 		</property>
 	</bean>

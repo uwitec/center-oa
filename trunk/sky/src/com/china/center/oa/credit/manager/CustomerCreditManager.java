@@ -127,8 +127,32 @@ public class CustomerCreditManager
             saveLog(user, customerCreditBean);
         }
 
+        updateLevel(cid);
+
+        return true;
+    }
+
+    /**
+     * updateLevel
+     * 
+     * @param cid
+     */
+    private void updateLevel(String cid)
+    {
         // sum value
         int sum = (int)Math.ceil(customerCreditDAO.sumValByFK(cid));
+
+        // 不能是负数
+        if (sum < 0)
+        {
+            sum = 0;
+        }
+
+        // 不能超过100
+        if (sum >= 100)
+        {
+            sum = 100;
+        }
 
         CreditLevelBean findByVal = creditLevelDAO.findByVal(sum);
 
@@ -141,8 +165,6 @@ public class CustomerCreditManager
 
         // update customer
         customerDAO.updateCustomerCredit(cid, level, sum);
-
-        return true;
     }
 
     /**
@@ -182,10 +204,64 @@ public class CustomerCreditManager
                                   + MathTools.formatNum(newCreditVal));
 
         customerCreditBean.setPitemId("0");
+
         customerCreditBean.setValueId("0");
+
+        return interposeCredit(user, cid, customerCreditBean);
+    }
+
+    /**
+     * interposeCredit
+     * 
+     * @param user
+     * @param cid
+     * @param customerCreditBean
+     * @return boolean
+     * @throws MYException
+     */
+    @Transactional(rollbackFor = MYException.class)
+    public boolean interposeCredit(User user, String cid, CustomerCreditBean customerCreditBean)
+        throws MYException
+    {
+        return interposeCreditInner(user, cid, customerCreditBean);
+    }
+
+    /**
+     * interposeCreditInner(None Transaction)
+     * 
+     * @param user
+     * @param cid
+     * @param customerCreditBean
+     * @return
+     * @throws MYException
+     */
+    public boolean interposeCreditInner(User user, String cid,
+                                        CustomerCreditBean customerCreditBean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, cid, customerCreditBean);
 
         CustomerCreditBean drectBean = customerCreditDAO.findByUnique(cid,
             customerCreditBean.getItemId());
+
+        double sumVal = customerCreditDAO.sumValExceptionByFK(cid, customerCreditBean.getItemId());
+
+        double total = sumVal + customerCreditBean.getVal();
+
+        // 越界了
+        if (total < 0.0)
+        {
+            // 防止越界
+            customerCreditBean.setVal( -sumVal);
+        }
+
+        if (total > 100.0)
+        {
+            double minus = 100.0d - sumVal;
+
+            // 防止越界
+            customerCreditBean.setVal(minus);
+        }
 
         if (drectBean == null)
         {
@@ -201,17 +277,7 @@ public class CustomerCreditManager
         // dynamic add log
         saveLog(user, customerCreditBean);
 
-        CreditLevelBean findByVal = creditLevelDAO.findByVal((int)Math.ceil(newCreditVal));
-
-        String level = CustomerConstant.CREDITLEVELID_DEFAULT;
-
-        if (findByVal != null)
-        {
-            level = findByVal.getId();
-        }
-
-        // update customer
-        customerDAO.updateCustomerCredit(cid, level, (int)Math.ceil(newCreditVal));
+        updateLevel(cid);
 
         return true;
     }

@@ -37,6 +37,20 @@ public class CustomerCreditDAO extends BaseDAO2<CustomerCreditBean, CustomerCred
                                                  + "where cid = ?", cid);
     }
 
+    /**
+     * лчЁЩ
+     * 
+     * @param cid
+     * @param exceptionId
+     * @return
+     */
+    public double sumValExceptionByFK(Serializable cid, String exceptionId)
+    {
+        return this.jdbcOperation.queryForDouble(BeanTools.getSumHead(claz, "val")
+                                                 + "where cid = ? and itemId <> ?", cid,
+            exceptionId);
+    }
+
     public double sumValExceptPersonByFK(Serializable cid)
     {
         return this.jdbcOperation.queryForDouble(BeanTools.getSumHead(claz, "val")

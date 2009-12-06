@@ -105,5 +105,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="sky/WEB-INF/lib/bill.jar"/>
 	<classpathentry kind="lib" path="sky/WEB-INF/lib/commons-httpclient-3.1.jar"/>
+	<classpathentry kind="lib" path="sky/WEB-INF/lib/center_out.jar"/>
 	<classpathentry kind="output" path="sky/WEB-INF/classes"/>
 </classpath>

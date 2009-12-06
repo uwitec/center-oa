@@ -12,6 +12,7 @@ package com.china.center.oa.credit.bean;
 import java.io.Serializable;
 
 import com.china.center.annotation.Entity;
+import com.china.center.annotation.FK;
 import com.china.center.annotation.Id;
 import com.china.center.annotation.Table;
 
@@ -31,9 +32,15 @@ public class CurOutBean implements Serializable
     @Id(autoIncrement = true)
     private String id = "";
 
+    @FK
     private String cid = "";
 
+    /**
+     * fullId
+     */
     private String outId = "";
+
+    private String outsId = "";
 
     private String logTime = "";
 
@@ -147,5 +154,42 @@ public class CurOutBean implements Serializable
     public void setVal(double val)
     {
         this.val = val;
+    }
+
+    /**
+     * @return the outsId
+     */
+    public String getOutsId()
+    {
+        return outsId;
+    }
+
+    /**
+     * @param outsId
+     *            the outsId to set
+     */
+    public void setOutsId(String outsId)
+    {
+        this.outsId = outsId;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String tab = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue.append("CurOutBean ( ").append(super.toString()).append(tab).append("id = ").append(
+            this.id).append(tab).append("cid = ").append(this.cid).append(tab).append("outId = ").append(
+            this.outId).append(tab).append("outsId = ").append(this.outsId).append(tab).append(
+            "logTime = ").append(this.logTime).append(tab).append("delay = ").append(this.delay).append(
+            tab).append("val = ").append(this.val).append(tab).append(" )");
+
+        return retValue.toString();
     }
 }

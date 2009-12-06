@@ -35,7 +35,7 @@ function load()
          },
          buttons : [
             {id: 'add', bclass: 'add', caption: '增加子指标项', onpress : addBean, auth: 'true'},
-            {id: 'update', bclass: 'update', caption: '修改比例', onpress : updateBean, auth: 'true'},
+            {id: 'update', bclass: 'update', caption: '修改比例/分值', onpress : updateBean, auth: 'true'},
             {id: 'search', bclass: 'search', onpress : doSearch, auth: 'true'}
              ],
          usepager: true,

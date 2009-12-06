@@ -74,4 +74,44 @@ public interface CreditConstant
      * 直接设置(总经理设置)
      */
     String SET_DRECT = "10000000000000009999";
+
+    /**
+     * 未逾期加分
+     */
+    String OUT_COMMON_ITEM = "80000000000000000042";
+
+    /**
+     * 未逾期加分的父项
+     */
+    String OUT_COMMON_ITEM_PARENT = "90000000000000000005";
+
+    /**
+     * 逾期减分档次
+     */
+    String OUT_DELAY_ITEM = "80000000000000000041";
+
+    /**
+     * 逾期减分档次的父项
+     */
+    String OUT_DELAY_ITEM_PARENT = OUT_COMMON_ITEM_PARENT;
+
+    /**
+     * 未付款
+     */
+    int PAY_NOT = 0;
+
+    /**
+     * 付款
+     */
+    int PAY_YES = 1;
+
+    /**
+     * 销售单未处理
+     */
+    int CREDIT_OUT_INIT = 0;
+
+    /**
+     * 销售单已经处理
+     */
+    int CREDIT_OUT_END = 1;
 }

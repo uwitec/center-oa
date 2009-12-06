@@ -43,8 +43,8 @@ public class DBOprTrigger
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
-    private final Log logger1 = LogFactory.getLog("sec");
-    
+    private final Log logger1 = LogFactory.getLog("core");
+
     private final Log triggerLog = LogFactory.getLog("trigger");
 
     private CustomerDAO customerDAO = null;
