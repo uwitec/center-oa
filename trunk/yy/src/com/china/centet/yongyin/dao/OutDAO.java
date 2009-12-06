@@ -185,6 +185,13 @@ public class OutDAO
         return i != 0;
     }
 
+    public boolean modifyTempType(String fullId, int tempType)
+    {
+        int i = jdbcOperation2.updateField("tempType", tempType, fullId, OutBean.class);
+
+        return i != 0;
+    }
+
     public boolean mark2(String fullId, boolean status)
     {
         int i = jdbcOperation2.updateField("mark", status, fullId, OutBean.class);

@@ -111,7 +111,7 @@ public class OutBean implements Serializable
     private int inway = 0;
 
     /**
-     * 0:正式保存 1：临时保存
+     * 超期天数 如果未超期就是0
      */
     private int tempType = 0;
 
@@ -136,6 +136,18 @@ public class OutBean implements Serializable
      * 调出的时候强制需要运单号
      */
     private String tranNo = "";
+
+    private int reserve1 = 0;
+
+    private int reserve2 = 0;
+
+    private int reserve3 = 0;
+
+    private String reserve4 = "";
+
+    private String reserve5 = "";
+
+    private String reserve6 = "";
 
     @Ignore
     private List<BaseBean> baseList = null;
@@ -742,5 +754,107 @@ public class OutBean implements Serializable
     public void setStafferId(String stafferId)
     {
         this.stafferId = stafferId;
+    }
+
+    /**
+     * @return the reserve1
+     */
+    public int getReserve1()
+    {
+        return reserve1;
+    }
+
+    /**
+     * @param reserve1
+     *            the reserve1 to set
+     */
+    public void setReserve1(int reserve1)
+    {
+        this.reserve1 = reserve1;
+    }
+
+    /**
+     * @return the reserve2
+     */
+    public int getReserve2()
+    {
+        return reserve2;
+    }
+
+    /**
+     * @param reserve2
+     *            the reserve2 to set
+     */
+    public void setReserve2(int reserve2)
+    {
+        this.reserve2 = reserve2;
+    }
+
+    /**
+     * @return the reserve3
+     */
+    public int getReserve3()
+    {
+        return reserve3;
+    }
+
+    /**
+     * @param reserve3
+     *            the reserve3 to set
+     */
+    public void setReserve3(int reserve3)
+    {
+        this.reserve3 = reserve3;
+    }
+
+    /**
+     * @return the reserve4
+     */
+    public String getReserve4()
+    {
+        return reserve4;
+    }
+
+    /**
+     * @param reserve4
+     *            the reserve4 to set
+     */
+    public void setReserve4(String reserve4)
+    {
+        this.reserve4 = reserve4;
+    }
+
+    /**
+     * @return the reserve5
+     */
+    public String getReserve5()
+    {
+        return reserve5;
+    }
+
+    /**
+     * @param reserve5
+     *            the reserve5 to set
+     */
+    public void setReserve5(String reserve5)
+    {
+        this.reserve5 = reserve5;
+    }
+
+    /**
+     * @return the reserve6
+     */
+    public String getReserve6()
+    {
+        return reserve6;
+    }
+
+    /**
+     * @param reserve6
+     *            the reserve6 to set
+     */
+    public void setReserve6(String reserve6)
+    {
+        this.reserve6 = reserve6;
     }
 }

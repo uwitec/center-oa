@@ -1366,10 +1366,31 @@ public class OutManager
         return true;
     }
 
-    @Transactional(rollbackFor = {MYException.class})
     @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
     public boolean modifyPay(String fullId, int pay)
     {
+        // 需要增加是否超期 flowId
+        OutBean out = outDAO.findOutById(fullId);
+
+        if (out == null)
+        {
+            return false;
+        }
+
+        int delay = TimeTools.cdate(TimeTools.now(), out.getRedate());
+
+        if (delay > 0)
+        {
+            outDAO.modifyTempType(fullId, delay);
+        }
+        else
+        {
+            outDAO.modifyTempType(fullId, 0);
+        }
+
+        outDAO.modifyReDate2(fullId, TimeTools.now());
+
         return outDAO.modifyPay2(fullId, pay);
     }
 
@@ -1387,8 +1408,8 @@ public class OutManager
         return outDAO.modifyReDate2(fullId, reDate);
     }
 
-    @Transactional(rollbackFor = {MYException.class})
     @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
     public boolean modifyOutHadPay(String fullId, String hadPay)
     {
         return outDAO.modifyOutHadPay2(fullId, hadPay);

@@ -725,8 +725,6 @@ public class BillAction extends DispatchAction
                     {
                         outManager.modifyPay(fullId, Constant.PAY_YES);
 
-                        outManager.modifyReDate(fullId, TimeTools.now_short());
-
                         other = ",且库单:" + fullId + "已经回款";
                     }
                 }

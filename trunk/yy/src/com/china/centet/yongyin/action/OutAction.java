@@ -1869,7 +1869,6 @@ public class OutAction extends DispatchAction
         if ("1".equals(pay))
         {
             outManager.modifyPay(fullId, Integer.parseInt(pay));
-            outManager.modifyReDate(fullId, TimeTools.now_short());
         }
 
         CommonTools.saveParamers(request);
