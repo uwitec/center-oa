@@ -86,6 +86,26 @@ public interface CreditConstant
     String OUT_COMMON_ITEM_PARENT = "90000000000000000005";
 
     /**
+     * 财务年度最大单比交易额
+     */
+    String OUT_MAX_BUSINESS = "80000000000000000051";
+
+    /**
+     * 财务年度最大单比交易额-父项
+     */
+    String OUT_MAX_BUSINESS_PARENT = "90000000000000000006";
+
+    /**
+     * 财务年度交易总额
+     */
+    String OUT_TOTAL_BUSINESS = "80000000000000000061";
+
+    /**
+     * 财务年度交易总额-父项
+     */
+    String OUT_TOTAL_BUSINESS_PARENT = "90000000000000000007";
+
+    /**
      * 逾期减分档次
      */
     String OUT_DELAY_ITEM = "80000000000000000041";

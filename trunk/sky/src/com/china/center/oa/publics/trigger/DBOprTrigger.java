@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.china.center.common.MYException;
 import com.china.center.oa.constant.SysConfigConstant;
+import com.china.center.oa.credit.dao.CreditCoreDAO;
 import com.china.center.oa.customer.dao.CustomerDAO;
 import com.china.center.oa.examine.dao.ExamineDAO;
 import com.china.center.oa.plan.dao.PlanDAO;
@@ -52,6 +53,8 @@ public class DBOprTrigger
     private ParameterDAO parameterDAO = null;
 
     private ExamineDAO examineDAO = null;
+
+    private CreditCoreDAO creditCoreDAO = null;
 
     private PlanDAO planDAO = null;
 
@@ -175,7 +178,7 @@ public class DBOprTrigger
      * @throws MYException
      */
     @Transactional(rollbackFor = {MYException.class})
-    public void synCustomerNewTypeYear()
+    public void synInFinanceBegin()
         throws MYException
     {
         String dataOfYear = parameterDAO.getString(SysConfigConstant.DATE_OF_YEAR);
@@ -193,6 +196,20 @@ public class DBOprTrigger
             int count = customerDAO.synCustomerNewTypeYear(begin, end);
 
             triggerLog.info("一年一度的同步拓展用户的新老状态更新了" + count + "个属性状态");
+        }
+        catch (Exception e)
+        {
+            _logger.error(e, e);
+
+            throw new MYException("同步失败");
+        }
+
+        // 客户信用最大历史交易过户
+        try
+        {
+            int count = creditCoreDAO.synMaxBusinessToOld(TimeTools.getYeay() - 1);
+
+            triggerLog.info("一年一度的客户信用-最大单比交易额过户" + count + "个属性状态");
         }
         catch (Exception e)
         {
@@ -443,5 +460,22 @@ public class DBOprTrigger
     public void setExamineDAO(ExamineDAO examineDAO)
     {
         this.examineDAO = examineDAO;
+    }
+
+    /**
+     * @return the creditCoreDAO
+     */
+    public CreditCoreDAO getCreditCoreDAO()
+    {
+        return creditCoreDAO;
+    }
+
+    /**
+     * @param creditCoreDAO
+     *            the creditCoreDAO to set
+     */
+    public void setCreditCoreDAO(CreditCoreDAO creditCoreDAO)
+    {
+        this.creditCoreDAO = creditCoreDAO;
     }
 }

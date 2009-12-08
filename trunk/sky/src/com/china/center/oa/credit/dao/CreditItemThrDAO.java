@@ -80,4 +80,80 @@ public class CreditItemThrDAO extends BaseDAO2<CreditItemThrBean, CreditItemThrV
 
         return list.get(0);
     }
+
+    /**
+     * findMaxDelayItem
+     * 
+     * @return
+     */
+    public CreditItemThrBean findMaxBusiness()
+    {
+        List<CreditItemThrBean> list = this.queryEntityBeansByCondition(
+            "where pid = ? order by indexPos desc", CreditConstant.OUT_MAX_BUSINESS);
+
+        if (ListTools.isEmptyOrNull(list))
+        {
+            return null;
+        }
+
+        return list.get(0);
+    }
+
+    /**
+     * findSingleMaxBusinessByValue
+     * 
+     * @param sigleMax
+     * @return
+     */
+    public CreditItemThrBean findSingleMaxBusinessByValue(double sigleMax)
+    {
+        // 单位是万元
+        int level = (int) (sigleMax / 10000.0d);
+
+        List<CreditItemThrBean> list = this.queryEntityBeansByCondition(
+            "where pid = ? and indexPos >= ? order by indexPos asc",
+            CreditConstant.OUT_MAX_BUSINESS, level);
+
+        if (ListTools.isEmptyOrNull(list))
+        {
+            return findMaxBusiness();
+        }
+
+        return list.get(0);
+    }
+
+    /**
+     * findTotalBusiness
+     * 
+     * @return
+     */
+    public CreditItemThrBean findTotalBusiness()
+    {
+        List<CreditItemThrBean> list = this.queryEntityBeansByCondition(
+            "where pid = ? order by indexPos desc", CreditConstant.OUT_TOTAL_BUSINESS);
+
+        if (ListTools.isEmptyOrNull(list))
+        {
+            return null;
+        }
+
+        return list.get(0);
+    }
+
+    public CreditItemThrBean findTotalBusinessByValue(double sumBusiness)
+    {
+        // 单位是万元
+        int level = (int) (sumBusiness / 10000.0d);
+
+        List<CreditItemThrBean> list = this.queryEntityBeansByCondition(
+            "where pid = ? and indexPos >= ? order by indexPos asc",
+            CreditConstant.OUT_TOTAL_BUSINESS, level);
+
+        if (ListTools.isEmptyOrNull(list))
+        {
+            return findTotalBusiness();
+        }
+
+        return list.get(0);
+    }
 }

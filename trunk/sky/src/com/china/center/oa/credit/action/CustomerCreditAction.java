@@ -40,6 +40,7 @@ import com.china.center.oa.credit.bean.CreditItemThrBean;
 import com.china.center.oa.credit.dao.CreditItemDAO;
 import com.china.center.oa.credit.dao.CreditItemSecDAO;
 import com.china.center.oa.credit.dao.CreditItemThrDAO;
+import com.china.center.oa.credit.dao.CreditlogDAO;
 import com.china.center.oa.credit.dao.CustomerCreditApplyDAO;
 import com.china.center.oa.credit.dao.CustomerCreditDAO;
 import com.china.center.oa.credit.manager.CustomerCreditManager;
@@ -58,6 +59,7 @@ import com.china.center.oa.helper.Helper;
 import com.china.center.oa.publics.User;
 import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.manager.UserManager;
+import com.china.center.tools.ActionTools;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.JSONTools;
 import com.china.center.tools.ListTools;
@@ -96,9 +98,13 @@ public class CustomerCreditAction extends DispatchAction
 
     private CustomerFacade customerFacade = null;
 
+    private CreditlogDAO creditlogDAO = null;
+
     private ParameterDAO parameterDAO = null;
 
     private UserManager userManager = null;
+
+    private static final String QUERYCUSTOMERCREDITLOG = "queryCustomerCreditLog";
 
     /**
      * default constructor
@@ -238,6 +244,39 @@ public class CustomerCreditAction extends DispatchAction
     }
 
     /**
+     * queryCustomerCreditLog
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryCustomerCreditLog(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
+                                                HttpServletResponse response)
+        throws ServletException
+    {
+        String cid = request.getParameter("cid");
+
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        condtion.addCondition("CreditlogBean.cid", "=", cid);
+
+        ActionTools.processJSONQueryCondition(QUERYCUSTOMERCREDITLOG, request, condtion);
+
+        condtion.addCondition("order by CreditlogBean.logTime desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCUSTOMERCREDITLOG, request,
+            condtion, this.creditlogDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
      * queryStaticAndSelectItem
      * 
      * @return
@@ -254,6 +293,7 @@ public class CustomerCreditAction extends DispatchAction
         condition.addIntCondition("CreditItemSecBean.sub", "=", CreditConstant.CREDIT_ITEM_SUB_YES);
 
         List<CreditItemSecVO> itemList = creditItemSecDAO.queryEntityVOsByCondition(condition);
+
         return itemList;
     }
 
@@ -857,5 +897,22 @@ public class CustomerCreditAction extends DispatchAction
     public void setUserManager(UserManager userManager)
     {
         this.userManager = userManager;
+    }
+
+    /**
+     * @return the creditlogDAO
+     */
+    public CreditlogDAO getCreditlogDAO()
+    {
+        return creditlogDAO;
+    }
+
+    /**
+     * @param creditlogDAO
+     *            the creditlogDAO to set
+     */
+    public void setCreditlogDAO(CreditlogDAO creditlogDAO)
+    {
+        this.creditlogDAO = creditlogDAO;
     }
 }

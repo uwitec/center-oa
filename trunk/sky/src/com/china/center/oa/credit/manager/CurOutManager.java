@@ -22,9 +22,11 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.china.center.common.MYException;
 import com.china.center.oa.constant.CreditConstant;
+import com.china.center.oa.credit.bean.CreditCoreBean;
 import com.china.center.oa.credit.bean.CreditItemSecBean;
 import com.china.center.oa.credit.bean.CreditItemThrBean;
 import com.china.center.oa.credit.bean.CurOutBean;
+import com.china.center.oa.credit.dao.CreditCoreDAO;
 import com.china.center.oa.credit.dao.CreditItemSecDAO;
 import com.china.center.oa.credit.dao.CreditItemThrDAO;
 import com.china.center.oa.credit.dao.CreditlogDAO;
@@ -35,6 +37,7 @@ import com.china.center.oa.credit.vs.CustomerCreditBean;
 import com.china.center.oa.customer.dao.CustomerDAO;
 import com.china.center.oa.publics.User;
 import com.china.center.oa.publics.helper.UserHelper;
+import com.china.center.oa.tools.OATools;
 import com.china.center.tools.MathTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
@@ -59,6 +62,8 @@ public class CurOutManager
     private final Log triggerLog = LogFactory.getLog("trigger");
 
     private CurOutDAO curOutDAO = null;
+
+    private CreditCoreDAO creditCoreDAO = null;
 
     private OutStatDAO outStatDAO = null;
 
@@ -109,12 +114,16 @@ public class CurOutManager
             return;
         }
 
+        CreditItemThrBean maxBusiness = creditItemThrDAO.findMaxBusiness();
+
+        CreditItemThrBean totalBusiness = creditItemThrDAO.findTotalBusiness();
+
         // iterator to handle
         for (String cid : customerIdList)
         {
             try
             {
-                handleEachCustomer(user, outItem, maxDelayThrItem, cid);
+                handleEachCustomer(user, outItem, maxDelayThrItem, cid, maxBusiness, totalBusiness);
             }
             catch (Throwable e)
             {
@@ -134,15 +143,11 @@ public class CurOutManager
      * @param customerBean
      */
     private void handleEachCustomer(User user, CreditItemSecBean outItem,
-                                    CreditItemThrBean maxDelayThrItem, String cid)
+                                    CreditItemThrBean maxDelayThrItem, String cid,
+                                    CreditItemThrBean maxBusiness, CreditItemThrBean totalBusiness)
     {
         // 从2009-12-01开始分析客户的行为
         List<OutBean> outList = outStatDAO.queryNoneStatByCid(cid);
-
-        if (outList.size() == 0)
-        {
-            return;
-        }
 
         // 开始分析
         for (OutBean outBean : outList)
@@ -174,6 +179,38 @@ public class CurOutManager
                 // 处理延期
                 handleDelay(user, cid, outBean, maxDelayThrItem, false);
             }
+
+        }
+
+        // 单比最大交易额
+        if (maxBusiness != null)
+        {
+            double maxBusinessAmount = outStatDAO.queryMaxBusiness(cid,
+                OATools.getFinanceBeginDate(), OATools.getFinanceEndDate());
+
+            CreditCoreBean old = creditCoreDAO.findByUnique(cid);
+
+            // 这里如果历史过户,以最大的为基准
+            if (old != null)
+            {
+                maxBusinessAmount = Math.max(old.getOldMaxBusiness(), maxBusinessAmount);
+            }
+
+            CreditItemThrBean sigleItem = creditItemThrDAO.findSingleMaxBusinessByValue(maxBusinessAmount);
+
+            handleSingle(user, cid, sigleItem, maxBusinessAmount);
+        }
+
+        // 总交易额
+        if (totalBusiness != null)
+        {
+            // 这里到了新的财务年度就会重新计算了
+            double sumBusiness = outStatDAO.sumBusiness(cid, OATools.getFinanceBeginDate(),
+                OATools.getFinanceEndDate());
+
+            CreditItemThrBean sumItem = creditItemThrDAO.findTotalBusinessByValue(sumBusiness);
+
+            handleTotal(user, cid, sumItem, sumBusiness);
         }
     }
 
@@ -198,12 +235,15 @@ public class CurOutManager
 
             customerCreditBean.setVal(outItem.getPer());
 
-            customerCreditBean.setLog("销售单正常付款,加分:" + MathTools.formatNum(outItem.getPer())
-                                      + ".加分后:" + MathTools.formatNum(outItem.getPer()));
+            customerCreditBean.setLog("销售单[" + outBean.getFullId() + "]正常付款,加分:"
+                                      + MathTools.formatNum(outItem.getPer()) + ".加分后:"
+                                      + MathTools.formatNum(outItem.getPer()));
         }
         else
         {
-            customerCreditBean.setLog("销售单正常付款,加分:"
+            customerCreditBean.setLog("销售单["
+                                      + outBean.getFullId()
+                                      + "]正常付款,加分:"
                                       + MathTools.formatNum(outItem.getPer())
                                       + ".加分后:"
                                       + MathTools.formatNum(customerCreditBean.getVal()
@@ -268,6 +308,154 @@ public class CurOutManager
     }
 
     /**
+     * handleSingle
+     * 
+     * @param user
+     * @param cid
+     * @param sigleItem
+     * @param maxBusinessAmount
+     */
+    private void handleSingle(final User user, final String cid,
+                              final CreditItemThrBean sigleItem, final double maxBusinessAmount)
+    {
+        CustomerCreditBean customerCreditBean = customerCreditDAO.findByUnique(cid,
+            CreditConstant.OUT_MAX_BUSINESS);
+
+        // 单比最大交易额
+        if (customerCreditBean == null)
+        {
+            customerCreditBean = new CustomerCreditBean();
+
+            customerCreditBean.setVal(sigleItem.getPer());
+        }
+
+        customerCreditBean.setLog("单比最大交易额[" + MathTools.formatNum(maxBusinessAmount) + "],加分:"
+                                  + MathTools.formatNum(sigleItem.getPer()));
+
+        customerCreditBean.setCid(cid);
+
+        customerCreditBean.setLogTime(TimeTools.now());
+
+        customerCreditBean.setPtype(CreditConstant.CREDIT_TYPE_DYNAMIC);
+
+        customerCreditBean.setItemId(CreditConstant.OUT_MAX_BUSINESS);
+
+        customerCreditBean.setPitemId(CreditConstant.OUT_MAX_BUSINESS_PARENT);
+
+        customerCreditBean.setValueId(sigleItem.getId());
+
+        final CustomerCreditBean fcustomerCreditBean = customerCreditBean;
+
+        // 操作在数据库事务中完成
+        TransactionTemplate tranTemplate = new TransactionTemplate(transactionManager);
+
+        try
+        {
+            // must send each item in Transaction(may be wait)
+            tranTemplate.execute(new TransactionCallback()
+            {
+                public Object doInTransaction(TransactionStatus arg0)
+                {
+                    try
+                    {
+                        customerCreditManager.interposeCreditInner(user, cid, fcustomerCreditBean);
+                    }
+                    catch (MYException e)
+                    {
+                        _logger.warn(e, e);
+                        throw new RuntimeException(e.getErrorContent());
+                    }
+
+                    triggerLog.info("handle single max stat[" + cid + "]:" + maxBusinessAmount);
+
+                    // 记入日志
+                    saveCore(cid, maxBusinessAmount, true);
+
+                    return Boolean.TRUE;
+                }
+            });
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+        }
+    }
+
+    /**
+     * handleSingle
+     * 
+     * @param user
+     * @param cid
+     * @param sumItem
+     * @param amount
+     */
+    private void handleTotal(final User user, final String cid, final CreditItemThrBean sumItem,
+                             final double amount)
+    {
+        CustomerCreditBean customerCreditBean = customerCreditDAO.findByUnique(cid,
+            CreditConstant.OUT_TOTAL_BUSINESS);
+
+        // 单比最大交易额
+        if (customerCreditBean == null)
+        {
+            customerCreditBean = new CustomerCreditBean();
+
+            customerCreditBean.setVal(sumItem.getPer());
+        }
+
+        customerCreditBean.setLog("财务年度总交易额[" + MathTools.formatNum(amount) + "],加分:"
+                                  + MathTools.formatNum(sumItem.getPer()));
+
+        customerCreditBean.setCid(cid);
+
+        customerCreditBean.setLogTime(TimeTools.now());
+
+        customerCreditBean.setPtype(CreditConstant.CREDIT_TYPE_DYNAMIC);
+
+        customerCreditBean.setItemId(CreditConstant.OUT_TOTAL_BUSINESS);
+
+        customerCreditBean.setPitemId(CreditConstant.OUT_TOTAL_BUSINESS_PARENT);
+
+        customerCreditBean.setValueId(sumItem.getId());
+
+        final CustomerCreditBean fcustomerCreditBean = customerCreditBean;
+
+        // 操作在数据库事务中完成
+        TransactionTemplate tranTemplate = new TransactionTemplate(transactionManager);
+
+        try
+        {
+            // must send each item in Transaction(may be wait)
+            tranTemplate.execute(new TransactionCallback()
+            {
+                public Object doInTransaction(TransactionStatus arg0)
+                {
+                    try
+                    {
+                        customerCreditManager.interposeCreditInner(user, cid, fcustomerCreditBean);
+                    }
+                    catch (MYException e)
+                    {
+                        _logger.warn(e, e);
+                        throw new RuntimeException(e.getErrorContent());
+                    }
+
+                    triggerLog.info("handle sum Total stat[" + cid + "]:" + amount);
+
+                    // 记入日志
+                    saveCore(cid, amount, false);
+
+                    return Boolean.TRUE;
+                }
+            });
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+        }
+    }
+
+    /**
      * 处理延期的销售单
      * 
      * @param user
@@ -317,13 +505,16 @@ public class CurOutManager
             // 负向指标
             customerCreditBean.setVal( -currentMinus);
 
-            customerCreditBean.setLog("销售单延期[" + outBean.getTempType() + "天]付款,减分:"
+            customerCreditBean.setLog("销售单[" + outBean.getFullId() + "]延期["
+                                      + outBean.getTempType() + "天]付款,减分:"
                                       + MathTools.formatNum(currentMinus) + ".减分后:"
                                       + MathTools.formatNum( -currentMinus));
         }
         else
         {
-            customerCreditBean.setLog("销售单延期["
+            customerCreditBean.setLog("销售单["
+                                      + outBean.getFullId()
+                                      + "]延期["
                                       + outBean.getTempType()
                                       + "天]付款,减分:"
                                       + MathTools.formatNum(currentMinus)
@@ -613,5 +804,71 @@ public class CurOutManager
         log.setVal(minus);
 
         curOutDAO.saveEntityBean(log);
+    }
+
+    /**
+     * @return the creditCoreDAO
+     */
+    public CreditCoreDAO getCreditCoreDAO()
+    {
+        return creditCoreDAO;
+    }
+
+    /**
+     * @param creditCoreDAO
+     *            the creditCoreDAO to set
+     */
+    public void setCreditCoreDAO(CreditCoreDAO creditCoreDAO)
+    {
+        this.creditCoreDAO = creditCoreDAO;
+    }
+
+    /**
+     * saveCore
+     * 
+     * @param cid
+     * @param amount
+     * @param isMax
+     */
+    private void saveCore(final String cid, final double amount, boolean isMax)
+    {
+        CreditCoreBean core = new CreditCoreBean();
+
+        core.setCid(cid);
+
+        if (isMax)
+        {
+            core.setMaxBusiness(amount);
+        }
+        else
+        {
+            core.setSumTotal(amount);
+        }
+
+        core.setYear(TimeTools.getYeay());
+
+        core.setLogTime(TimeTools.now());
+
+        CreditCoreBean old = creditCoreDAO.findByUnique(cid);
+
+        if (old == null)
+        {
+            creditCoreDAO.saveEntityBean(core);
+        }
+        else
+        {
+            core.setId(old.getId());
+
+            if (isMax)
+            {
+                core.setSumTotal(old.getSumTotal());
+            }
+            else
+            {
+                core.setMaxBusiness(old.getMaxBusiness());
+            }
+
+            creditCoreDAO.updateEntityBean(core);
+        }
     }
 }

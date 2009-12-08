@@ -11,8 +11,10 @@ package com.china.center.oa.credit.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.sannotations.annotation.Bean;
 
@@ -172,5 +174,59 @@ public class OutStatDAO extends BaseDAO2<OutBean, OutBean>
         this.jdbcOperation.update("set reserve5 = ? where fullid = ?", claz, reserve5, fullId);
 
         return true;
+    }
+
+    /**
+     * queryMaxBusiness
+     * 
+     * @param cid
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    public double queryMaxBusiness(String cid, String beginDate, String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("customerId", cid);
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("endDate", endDate);
+
+        Object max = this.jdbcOperation.getIbatisDaoSupport().queryForObject(
+            "OutStatDAO.queryMaxBusiness", paramterMap);
+
+        if (max == null)
+        {
+            return 0.0d;
+        }
+
+        return (Double)max;
+    }
+
+    /**
+     * sumBusiness(统计一段时间内的销售额)
+     * 
+     * @param cid
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    public double sumBusiness(String cid, String beginDate, String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("customerId", cid);
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("endDate", endDate);
+
+        Object max = this.jdbcOperation.getIbatisDaoSupport().queryForObject(
+            "OutStatDAO.sumBusiness", paramterMap);
+
+        if (max == null)
+        {
+            return 0.0d;
+        }
+
+        return (Double)max;
     }
 }

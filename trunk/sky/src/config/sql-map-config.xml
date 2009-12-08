@@ -13,4 +13,5 @@
 	<sqlMap resource="ibatisSqlConf/Budget.xml" />
 	<sqlMap resource="ibatisSqlConf/WorkLogDAO.xml" />
 	<sqlMap resource="ibatisSqlConf/SnapshotDAO.xml" />
+	<sqlMap resource="ibatisSqlConf/OutStatDAO.xml" />
 </sqlMapConfig>

@@ -50,6 +50,18 @@ public class TimeTools
     }
 
     /**
+     * getYeay
+     * 
+     * @return
+     */
+    public static int getYeay()
+    {
+        Calendar cal = Calendar.getInstance();
+
+        return cal.get(Calendar.YEAR);
+    }
+
+    /**
      * 获得星期几
      * 
      * @param dateStr
@@ -85,6 +97,35 @@ public class TimeTools
             date = null;
         }
         return date;
+    }
+
+    /**
+     * 获得当前的季节数(从1开始 1就是春季)
+     * 
+     * @return
+     */
+    public int getCurrentSeason()
+    {
+        Calendar cal = Calendar.getInstance();
+
+        int month = cal.get(Calendar.MONTH) + 1;
+
+        if (month <= 3)
+        {
+            return 1;
+        }
+
+        if (month <= 6)
+        {
+            return 2;
+        }
+
+        if (month <= 9)
+        {
+            return 3;
+        }
+
+        return 4;
     }
 
     /**
@@ -364,9 +405,10 @@ public class TimeTools
     {
         return getString(new Date());
     }
-    
+
     /**
      * get current time(before or after days)
+     * 
      * @param days
      * @return
      */

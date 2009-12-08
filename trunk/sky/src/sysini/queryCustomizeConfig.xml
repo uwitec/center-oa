@@ -59,4 +59,21 @@
     </item>
     
     <item name="queryAllMake" alias="queryHandlerMake"/>
+    
+    <item name="queryCustomerCreditLog" deaultpfix="CreditlogBean">
+        <condtion name="alogTime" filed="logTime" caption="开始时间">
+            <opr>&gt;=</opr>
+            <type>datetime</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="blogTime" filed="logTime" caption="结束时间">
+            <opr>&lt;=</opr>
+            <type>datetime</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="log" caption="日志内容">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+    </item>
 </query>
