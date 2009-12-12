@@ -1,6 +1,7 @@
 package com.china.centet.yongyin.dao;
 
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -197,6 +198,33 @@ public class OutDAO
         int i = jdbcOperation2.updateField("mark", status, fullId, OutBean.class);
 
         return i != 0;
+    }
+
+    /**
+     * sumNoPayBusiness
+     * 
+     * @param cid
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    public double sumNoPayBusiness(String cid, String beginDate, String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("customerId", cid);
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("endDate", endDate);
+
+        Object max = this.jdbcOperation2.getIbatisDaoSupport().queryForObject(
+            "OutDAO.sumNoPayBusiness", paramterMap);
+
+        if (max == null)
+        {
+            return 0.0d;
+        }
+
+        return (Double)max;
     }
 
     /**

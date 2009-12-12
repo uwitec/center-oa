@@ -1033,9 +1033,18 @@ public class OutManager
     {
         final OutBean outBean = outDAO.findOutById(fullId);
 
+        final int oldStatus = outBean.getStatus();
+
         if (outBean == null)
         {
             throw new MYException("销售单不存在，请重新操作");
+        }
+
+        // 检查pass的条件
+        if (outBean.getStatus() == Constant.STATUS_SAVE
+            || outBean.getStatus() == Constant.STATUS_REJECT)
+        {
+            throw new MYException("状态不可以通过!");
         }
 
         final String location = outBean.getLocation();
@@ -1125,7 +1134,7 @@ public class OutManager
                     }
 
                     importLog.info(outBean.getFullId() + ":" + user.getStafferName() + ":"
-                                   + nextStatus + ":redrect");
+                                   + nextStatus + ":redrectFrom:" + oldStatus);
                     // 出库单
                     try
                     {
