@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- $Id: test1.html,v 1.1 2008/11/24 14:35:47 admin Exp $ -->
+
+<head>
+<meta http-equiv="content-type" content="text/xml; charset=utf-8" />
+<title>TEST</title>
+
+
+<!-- import the calendar script -->
+<script type="text/javascript" src="calendar_debug.js"></script>
+
+</head>
+<body>
+
+<b>Date #1:</b> <input type="text" name="date1" id="sel1" size="30"
+>
+<input type="reset" value=" ... "
+onclick="return showCalendar('sel1', '%Y-%m-%d %H:%M:%S', '24', true);"> %Y-%m-%d [%W] %H:%M -- single
+click<br />
+
+<b>Date #2:</b> <input type="text" name="date2" id="sel2" size="30"
+><input type="reset" value=" ... "
+onclick="return calDate('sel2');"> %a, %b %e, %Y [%I:%M %p]
+-- double click
+
+
+<b>Date #3:</b> <input type="text" name="date3" id="sel3" size="30"
+><input type="reset" value=" ... "
+onclick="return calDate('sel3');"> %d/%m/%Y
+-- single click
+<br />
+
+<b>Date #4:</b> <input type="text" name="date4" id="sel4" size="30"
+><input type="reset" value=" ... "
+onclick="return showCalendar('sel4', '%A, %B %e, %Y');"> %A, %B %e, %Y --
+double click
+
+<br /><br />
+
+
+</body></html>
