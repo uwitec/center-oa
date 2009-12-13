@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>cache的配置</comment>
+	<entry key="cache">true</entry>
+	<entry key="cluster">false</entry>
+	<entry key="group">230.0.0.1</entry>
+	<entry key="mprot">10221</entry>
+	<entry key="timeToLive">32</entry>
+	<entry key="cacheConfig">config/template_ehcache.xml</entry>
+</properties>
