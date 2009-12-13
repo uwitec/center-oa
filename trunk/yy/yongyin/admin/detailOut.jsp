@@ -205,10 +205,15 @@ function pagePrint()
 						<td colspan="3">${out.depotpartName}</td>
 					</tr>
 
-					<tr class="content2">
+					<tr class="content1">
 						<td>${ff}单描述：</td>
 						<td colspan="3">${out.description}</td>
 					</tr>
+					
+					<tr class="content2">
+                        <td>${ff}单信用说明：</td>
+                        <td colspan="3"><font color=red>${out.reserve6}</font></td>
+                    </tr>
 
 					<tr class="content1">
 						<td>${ff}单核对：</td>

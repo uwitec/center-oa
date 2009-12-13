@@ -386,6 +386,7 @@ function load()
 						<td align="center" onclick="tableSort(this, true)" class="td_class">金额</td>
 						<td align="center" onclick="tableSort(this, true)" class="td_class">付款</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">出库人</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">信用</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">发货单</td>
 					</tr>
 
@@ -412,6 +413,7 @@ function load()
 							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.hadPay}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.reserve2 == 0 ? "<font color=blue><b>正常</b></font>" : "<font color=red><b>超支</b></font>"}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.consign == 1 ? "未通过" : ""}${item.consign == 2 ? "<font color=blue><b>通过</b></font>" : ""}</td>
 						</tr>
 					</c:forEach>

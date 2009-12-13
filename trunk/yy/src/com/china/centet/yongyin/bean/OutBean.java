@@ -14,6 +14,7 @@ import com.china.center.annotation.Id;
 import com.china.center.annotation.Ignore;
 import com.china.center.annotation.Table;
 import com.china.center.tools.StringTools;
+import com.china.centet.yongyin.constant.OutConstanst;
 
 
 /**
@@ -137,16 +138,31 @@ public class OutBean implements Serializable
      */
     private String tranNo = "";
 
+    /**
+     * 销售单是否处理
+     */
     private int reserve1 = 0;
 
-    private int reserve2 = 0;
+    /**
+     * 客户是否超支(0:没有 1:超支)
+     */
+    private int reserve2 = OutConstanst.OUT_CREDIT_COMMON;
 
     private int reserve3 = 0;
 
+    /**
+     * 上次已经扣除了一部分了
+     */
     private String reserve4 = "";
 
+    /**
+     * 当前已经延期级别
+     */
     private String reserve5 = "";
 
+    /**
+     * 信用超支日志
+     */
     private String reserve6 = "";
 
     @Ignore

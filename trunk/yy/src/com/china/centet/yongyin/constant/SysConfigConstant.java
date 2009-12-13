@@ -48,4 +48,9 @@ public interface SysConfigConstant
      */
     String NEED_SUPER_ENC_LOCK = "NEED_SUPER_ENC_LOCK";
 
+    /**
+     * 是否启动客户信用额度
+     */
+    String OUT_CREDIT = "OUT_CREDIT";
+
 }

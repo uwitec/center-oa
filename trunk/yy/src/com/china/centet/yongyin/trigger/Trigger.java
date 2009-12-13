@@ -35,4 +35,9 @@ public interface Trigger
     int synchronizedProduct();
 
     void printCacheEfficiency();
+
+    /**
+     * 修正物流的仓区和可发数量
+     */
+    void modifyProductAmountInSystemLocation();
 }

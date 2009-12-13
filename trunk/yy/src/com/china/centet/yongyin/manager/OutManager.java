@@ -28,11 +28,14 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.china.center.common.ConditionParse;
 import com.china.center.common.MYException;
 import com.china.center.eltools.ElTools;
+import com.china.center.oa.credit.bean.CreditLevelBean;
+import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.note.bean.ShortMessageConstant;
 import com.china.center.oa.note.bean.ShortMessageTaskBean;
 import com.china.center.oa.note.dao.ShortMessageTaskDAO;
 import com.china.center.oa.note.manager.HandleMessage;
 import com.china.center.tools.BeanUtil;
+import com.china.center.tools.CommonTools;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
@@ -57,16 +60,21 @@ import com.china.centet.yongyin.bean.helper.LocationHelper;
 import com.china.centet.yongyin.bean.helper.LogBeanHelper;
 import com.china.centet.yongyin.constant.Constant;
 import com.china.centet.yongyin.constant.LockConstant;
+import com.china.centet.yongyin.constant.OutConstanst;
+import com.china.centet.yongyin.constant.SysConfigConstant;
 import com.china.centet.yongyin.dao.CommonDAO;
 import com.china.centet.yongyin.dao.CommonDAO2;
 import com.china.centet.yongyin.dao.ConsignDAO;
 import com.china.centet.yongyin.dao.DepotpartDAO;
 import com.china.centet.yongyin.dao.LocationDAO;
 import com.china.centet.yongyin.dao.OutDAO;
+import com.china.centet.yongyin.dao.ParameterDAO;
 import com.china.centet.yongyin.dao.ProductDAO;
 import com.china.centet.yongyin.dao.StafferDAO2;
 import com.china.centet.yongyin.dao.StorageDAO;
 import com.china.centet.yongyin.dao.UserDAO;
+import com.china.centet.yongyin.ext.dao.CreditLevelDAO;
+import com.china.centet.yongyin.ext.dao.CustomerBaseDAO;
 
 
 /**
@@ -102,6 +110,12 @@ public class OutManager
     private ConsignDAO consignDAO = null;
 
     private StorageDAO storageDAO = null;
+
+    private CustomerBaseDAO customerBaseDAO = null;
+
+    private ParameterDAO parameterDAO = null;
+
+    private CreditLevelDAO creditLevelDAO = null;
 
     private DepotpartDAO depotpartDAO = null;
 
@@ -377,7 +391,7 @@ public class OutManager
 
         int preStatus = outBean.getStatus();
 
-        if (preStatus != 0)
+        if (preStatus != 0 && preStatus != 2)
         {
             throw new MYException("单据已经提交,请重新操作");
         }
@@ -478,6 +492,38 @@ public class OutManager
                 outDAO.modifyOutStatus2(fullId, 1);
 
                 result = 1;
+
+                // 这里需要计算客户的信用金额-是否报送物流中心经理审批
+                boolean outCredit = parameterDAO.getBoolean(SysConfigConstant.OUT_CREDIT);
+
+                CustomerBean cbean = customerBaseDAO.find(outBean.getCustomerId());
+
+                // 进行逻辑处理
+                if (outCredit && cbean != null
+                    && !StringTools.isNullOrNone(cbean.getCreditLevelId()))
+                {
+                    double noPayBusiness = outDAO.sumNoPayBusiness(outBean.getCustomerId(),
+                        CommonTools.getFinanceBeginDate(), CommonTools.getFinanceEndDate());
+
+                    // query customer credit
+                    CreditLevelBean clevel = creditLevelDAO.find(cbean.getCreditLevelId());
+
+                    if (clevel != null)
+                    {
+                        // 超过了客户信用警戒线--报送物流中心经理审批
+                        if (noPayBusiness > clevel.getMoney())
+                        {
+                            outBean.setReserve6("客户信用最大额度是:"
+                                                + MathTools.formatNum(clevel.getMoney())
+                                                + ".当前未付款金额(包括此单):"
+                                                + MathTools.formatNum(noPayBusiness));
+
+                            outDAO.updateOutReserve2(fullId, OutConstanst.OUT_CREDIT_OVER,
+                                outBean.getReserve6());
+
+                        }
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -1876,5 +1922,56 @@ public class OutManager
     public void setInternal(int internal)
     {
         this.internal = internal;
+    }
+
+    /**
+     * @return the parameterDAO
+     */
+    public ParameterDAO getParameterDAO()
+    {
+        return parameterDAO;
+    }
+
+    /**
+     * @param parameterDAO
+     *            the parameterDAO to set
+     */
+    public void setParameterDAO(ParameterDAO parameterDAO)
+    {
+        this.parameterDAO = parameterDAO;
+    }
+
+    /**
+     * @return the creditLevelDAO
+     */
+    public CreditLevelDAO getCreditLevelDAO()
+    {
+        return creditLevelDAO;
+    }
+
+    /**
+     * @param creditLevelDAO
+     *            the creditLevelDAO to set
+     */
+    public void setCreditLevelDAO(CreditLevelDAO creditLevelDAO)
+    {
+        this.creditLevelDAO = creditLevelDAO;
+    }
+
+    /**
+     * @return the customerBaseDAO
+     */
+    public CustomerBaseDAO getCustomerBaseDAO()
+    {
+        return customerBaseDAO;
+    }
+
+    /**
+     * @param customerBaseDAO
+     *            the customerBaseDAO to set
+     */
+    public void setCustomerBaseDAO(CustomerBaseDAO customerBaseDAO)
+    {
+        this.customerBaseDAO = customerBaseDAO;
     }
 }

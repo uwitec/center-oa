@@ -63,11 +63,13 @@ import com.china.centet.yongyin.bean.helper.LocationHelper;
 import com.china.centet.yongyin.bean.helper.OutBeanHelper;
 import com.china.centet.yongyin.constant.Constant;
 import com.china.centet.yongyin.constant.OutConstanst;
+import com.china.centet.yongyin.constant.SysConfigConstant;
 import com.china.centet.yongyin.dao.CommonDAO;
 import com.china.centet.yongyin.dao.ConsignDAO;
 import com.china.centet.yongyin.dao.CustomerDAO;
 import com.china.centet.yongyin.dao.DepotpartDAO;
 import com.china.centet.yongyin.dao.OutDAO;
+import com.china.centet.yongyin.dao.ParameterDAO;
 import com.china.centet.yongyin.dao.ProductDAO;
 import com.china.centet.yongyin.dao.ProviderDAO;
 import com.china.centet.yongyin.dao.StorageDAO;
@@ -105,6 +107,8 @@ public class OutAction extends DispatchAction
     private CustomerDAO customerDAO = null;
 
     private ProviderDAO providerDAO = null;
+
+    private ParameterDAO parameterDAO = null;
 
     private LocationManager locationManager = null;
 
@@ -1965,6 +1969,22 @@ public class OutAction extends DispatchAction
             if (statuss == Constant.STATUS_MANAGER_PASS || statuss == Constant.STATUS_FLOW_PASS
                 || statuss == Constant.STATUS_PASS)
             {
+                // 这里需要计算客户的信用金额-是否报送物流中心经理审批
+                boolean outCredit = parameterDAO.getBoolean(SysConfigConstant.OUT_CREDIT);
+
+                // 客户超支了(必须是销售单且是总经理通过这个环节设卡)
+                if (outCredit && out.getReserve2() == OutConstanst.OUT_CREDIT_OVER
+                    && out.getType() == Constant.OUT_TYPE_OUTBILL
+                    && statuss == Constant.STATUS_MANAGER_PASS)
+                {
+                    // 总部的管理员
+                    if ( !LocationHelper.isSystemLocation(user.getLocationID()))
+                    {
+                        request.setAttribute(KeyConstant.ERROR_MESSAGE, "只有物流的总经理可以审批此销售单");
+
+                        return mapping.findForward("error");
+                    }
+                }
                 try
                 {
                     outManager.pass(fullId, user, statuss, reason, depotpartId);
@@ -2773,6 +2793,23 @@ public class OutAction extends DispatchAction
     public void setProviderDAO(ProviderDAO providerDAO)
     {
         this.providerDAO = providerDAO;
+    }
+
+    /**
+     * @return the parameterDAO
+     */
+    public ParameterDAO getParameterDAO()
+    {
+        return parameterDAO;
+    }
+
+    /**
+     * @param parameterDAO
+     *            the parameterDAO to set
+     */
+    public void setParameterDAO(ParameterDAO parameterDAO)
+    {
+        this.parameterDAO = parameterDAO;
     }
 
 }

@@ -123,6 +123,22 @@ public class OutDAO
         return i != 0;
     }
 
+    /**
+     * updateOutReserve4
+     * 
+     * @param fullId
+     * @param reserve4
+     * @return
+     */
+    public boolean updateOutReserve2(String fullId, int reserve4, String reserve6)
+    {
+        jdbcOperation2.updateField("reserve2", reserve4, fullId, OutBean.class);
+
+        jdbcOperation2.updateField("reserve6", reserve6, fullId, OutBean.class);
+
+        return true;
+    }
+
     public int countBaseByIds(String fullId, String productId)
     {
         String sql = "select count(1) from t_center_base where outId = ? and productId = ?";

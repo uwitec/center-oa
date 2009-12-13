@@ -25,8 +25,40 @@ import java.util.Date;
  * @see TimeTools
  * @since
  */
-public class TimeTools
+public abstract class TimeTools
 {
+    /**
+     * 平年每月日期
+     */
+    private static int[] daysInMonth = new int[] {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    /**
+     * 获得指定月份的天数
+     * 
+     * @param year
+     *            年
+     * @param month
+     *            月份,从1开始到12(如果越界默认为1)
+     * @return days
+     */
+    public static int getDaysOfMonth(int year, int month)
+    {
+        if (month < 1 || month > 12)
+        {
+            month = 1;
+        }
+
+        if (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0))
+        {
+            if (month == 2)
+            {
+                return 29;
+            }
+        }
+
+        return daysInMonth[month - 1];
+    }
+
     /**
      * Description: 通过"yyyy-MM-dd HH:mm:ss"字符串获得时间<br>
      * 

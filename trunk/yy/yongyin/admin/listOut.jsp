@@ -447,7 +447,7 @@ function load()
 							<td align="center" onclick="hrefAndSelect(this)"><font color=blue>${item.redate}</font></td>
 							</c:if>
 							</c:if>
-							<td align="center" onclick="hrefAndSelect(this)">${item.total}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
 							<%
 								String[] sss1 = new String[]{"" , "<font color=red>ÔÚÍ¾</font>", "ÔÚÍ¾½áÊø"};
 								request.setAttribute("sss1", sss1);

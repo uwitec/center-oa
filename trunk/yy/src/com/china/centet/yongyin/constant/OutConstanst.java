@@ -52,4 +52,14 @@ public interface OutConstanst
      * 自动修正
      */
     int OUT_TYPE_MODIFY = 9;
+
+    /**
+     * 信用正常
+     */
+    int OUT_CREDIT_COMMON = 0;
+
+    /**
+     * 信用超支
+     */
+    int OUT_CREDIT_OVER = 1;
 }

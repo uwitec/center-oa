@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,10 +34,37 @@ import javax.servlet.http.HttpServletRequest;
  * @see
  * @since
  */
-public class CommonTools
+public abstract class CommonTools
 {
-    private CommonTools()
-    {}
+    /**
+     * 获得财务年度的开始日期
+     * 
+     * @return
+     */
+    public static String getFinanceBeginDate()
+    {
+        Calendar cal = Calendar.getInstance();
+
+        int year = cal.get(Calendar.YEAR);
+
+        return year + "-03-01";
+    }
+
+    /**
+     * 获得财务年度的结束日期
+     * 
+     * @return
+     */
+    public static String getFinanceEndDate()
+    {
+        Calendar cal = Calendar.getInstance();
+
+        int year = cal.get(Calendar.YEAR) + 1;
+
+        int daysOfMonth = TimeTools.getDaysOfMonth(year, 2);
+
+        return year + "-02-" + daysOfMonth;
+    }
 
     /**
      * 自动保存paramers到Attribute里面
