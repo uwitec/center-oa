@@ -46,6 +46,7 @@ function load()
 		     {id: 'syn', caption: '客户分公司同步', bclass: 'table', onpress : synAll, auth: '0210'},
 		     {id: 'configCredit', caption: '配置客户信用', bclass: 'update', onpress : configCredit},
 		     {id: 'queryCreditLog', caption: '信用变更日志', bclass: 'search', onpress : queryCreditLog},
+		     {id: 'queryCredit', caption: '信用明细', bclass: 'search', onpress : queryCredit},
 		     {id: 'queryVistor', caption: '拜访记录', bclass: 'search', onpress : queryVistor},
 		     {id: 'search', bclass: 'search', onpress : doSearch}
 		     ],
@@ -113,6 +114,18 @@ function queryCreditLog()
     if (getRadio('checkb') && getRadioValue('checkb'))
     {
          $l('../credit/queryCustomerCreditLog.jsp?targerId=' + getRadioValue('checkb'));
+    }
+    else
+    {
+        $error();
+    }
+}
+
+function queryCredit()
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {
+         $l('../credit/queryCustomerCredit.jsp?targerId=' + getRadioValue('checkb'));
     }
     else
     {

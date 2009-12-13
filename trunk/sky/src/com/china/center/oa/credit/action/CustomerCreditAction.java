@@ -106,6 +106,8 @@ public class CustomerCreditAction extends DispatchAction
 
     private static final String QUERYCUSTOMERCREDITLOG = "queryCustomerCreditLog";
 
+    private static final String QUERYCUSTOMERCREDIT = "queryCustomerCredit";
+
     /**
      * default constructor
      */
@@ -272,6 +274,39 @@ public class CustomerCreditAction extends DispatchAction
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCUSTOMERCREDITLOG, request,
             condtion, this.creditlogDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryCustomerCredit
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryCustomerCredit(ActionMapping mapping, ActionForm form,
+                                             HttpServletRequest request,
+                                             HttpServletResponse response)
+        throws ServletException
+    {
+        String cid = request.getParameter("cid");
+
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        condtion.addCondition("CustomerCreditBean.cid", "=", cid);
+
+        ActionTools.processJSONQueryCondition(QUERYCUSTOMERCREDIT, request, condtion);
+
+        condtion.addCondition("order by CustomerCreditBean.logTime desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCUSTOMERCREDIT, request,
+            condtion, this.customerCreditDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }

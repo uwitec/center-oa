@@ -15,6 +15,7 @@ import com.china.center.annotation.FK;
 import com.china.center.annotation.Id;
 import com.china.center.annotation.Join;
 import com.china.center.annotation.Unique;
+import com.china.center.annotation.enums.JoinType;
 import com.china.center.oa.constant.CreditConstant;
 import com.china.center.oa.credit.bean.CreditItemBean;
 import com.china.center.oa.credit.bean.CreditItemSecBean;
@@ -46,7 +47,7 @@ public abstract class AbstractCustomerCredit implements Serializable
     @Join(tagClass = CreditItemBean.class)
     private String pitemId = "";
 
-    @Join(tagClass = CreditItemThrBean.class)
+    @Join(tagClass = CreditItemThrBean.class, type = JoinType.LEFT)
     private String valueId = "";
 
     /**
