@@ -178,7 +178,7 @@ function pagePrint()
 							<td>回款日期：</td>
 							<td colspan="1">${out.redate}</td>
 							<td>是否回款：</td>
-							<td>${out.pay == 0 ? "否" : "是"}</td>
+							<td>${out.pay == 0 ? "否" : "<font color=blue>是</font>"}</td>
 						</tr>
 					</c:if>
 
@@ -199,23 +199,28 @@ function pagePrint()
 						%>
 						<td>${my:getValue(out.inway, sss1)}</td>
 					</tr>
-
+					
 					<tr class="content2">
+                        <td>付款方式：</td>
+                        <td colspan="3">${out.reserve3 == 0 ? "货到收款" : "<font color=red>款到发货</font>"}</td>
+                    </tr>
+
+					<tr class="content1">
 						<td>产品仓区：</td>
 						<td colspan="3">${out.depotpartName}</td>
 					</tr>
 
-					<tr class="content1">
+					<tr class="content2">
 						<td>${ff}单描述：</td>
 						<td colspan="3">${out.description}</td>
 					</tr>
 					
-					<tr class="content2">
+					<tr class="content1">
                         <td>${ff}单信用说明：</td>
                         <td colspan="3"><font color=red>${out.reserve6}</font></td>
                     </tr>
 
-					<tr class="content1">
+					<tr class="content2">
 						<td>${ff}单核对：</td>
 						<td colspan="3">${out.checks}</td>
 					</tr>

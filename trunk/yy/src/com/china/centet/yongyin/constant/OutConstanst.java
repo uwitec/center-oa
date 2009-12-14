@@ -62,4 +62,19 @@ public interface OutConstanst
      * 信用超支
      */
     int OUT_CREDIT_OVER = 1;
+
+    /**
+     * 货到收款
+     */
+    int OUT_SAIL_TYPE_COMMON = 0;
+
+    /**
+     * 款到发货
+     */
+    int OUT_SAIL_TYPE_MONEY = 1;
+
+    /**
+     * 黑名单客户
+     */
+    String BLACK_LEVEL = "90000000000000000000";
 }

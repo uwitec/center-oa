@@ -498,9 +498,10 @@ public class OutManager
 
                 CustomerBean cbean = customerBaseDAO.find(outBean.getCustomerId());
 
-                // 进行逻辑处理
+                // 进行逻辑处理(必须是货到收款才能有此逻辑)
                 if (outCredit && cbean != null
-                    && !StringTools.isNullOrNone(cbean.getCreditLevelId()))
+                    && !StringTools.isNullOrNone(cbean.getCreditLevelId())
+                    && outBean.getReserve3() == OutConstanst.OUT_SAIL_TYPE_COMMON)
                 {
                     double noPayBusiness = outDAO.sumNoPayBusiness(outBean.getCustomerId(),
                         CommonTools.getFinanceBeginDate(), CommonTools.getFinanceEndDate());
@@ -1433,18 +1434,22 @@ public class OutManager
             return false;
         }
 
-        int delay = TimeTools.cdate(TimeTools.now(), out.getRedate());
-
-        if (delay > 0)
+        // 如果getRedate为空说明已经超前回款了
+        if ( !StringTools.isNullOrNone(out.getRedate()))
         {
-            outDAO.modifyTempType(fullId, delay);
-        }
-        else
-        {
-            outDAO.modifyTempType(fullId, 0);
-        }
+            int delay = TimeTools.cdate(TimeTools.now(), out.getRedate());
 
-        outDAO.modifyReDate2(fullId, TimeTools.now());
+            if (delay > 0)
+            {
+                outDAO.modifyTempType(fullId, delay);
+            }
+            else
+            {
+                outDAO.modifyTempType(fullId, 0);
+            }
+
+            outDAO.modifyReDate2(fullId, TimeTools.now());
+        }
 
         return outDAO.modifyPay2(fullId, pay);
     }

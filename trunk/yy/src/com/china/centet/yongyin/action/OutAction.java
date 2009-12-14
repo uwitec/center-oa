@@ -722,6 +722,9 @@ public class OutAction extends DispatchAction
 
         String saves = request.getParameter("saves");
 
+        // 客户信用级别
+        String customercreditlevel = request.getParameter("customercreditlevel");
+
         String fullId = request.getParameter("fullId");
 
         if ("saves".equals(saves))
@@ -771,6 +774,12 @@ public class OutAction extends DispatchAction
         ActionForward action = null;
         if (outBean.getType() == Constant.OUT_TYPE_OUTBILL)
         {
+            // 强制设置成OUT_SAIL_TYPE_MONEY
+            if (OutConstanst.BLACK_LEVEL.equals(customercreditlevel))
+            {
+                outBean.setReserve3(OutConstanst.OUT_SAIL_TYPE_MONEY);
+            }
+
             action = processCommonOut(mapping, request, user, saves, fullId, outBean, map);
         }
         else
@@ -1472,7 +1481,7 @@ public class OutAction extends DispatchAction
         // 会计可以查询3 4
         if (user.getRole() == Role.SEC)
         {
-            condtion.addCondition("and status in (3, 4)");
+            condtion.addCondition("and status in (1, 3, 4)");
         }
         else
         {
@@ -1837,6 +1846,16 @@ public class OutAction extends DispatchAction
         return queryOut(mapping, form, request, reponse);
     }
 
+    /**
+     * 付款标记
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
     public ActionForward checks(ActionMapping mapping, ActionForm form,
                                 HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
@@ -1985,6 +2004,16 @@ public class OutAction extends DispatchAction
                         return mapping.findForward("error");
                     }
                 }
+
+                // 如果是黑名单的客户(且没有付款)
+                if (outCredit && out.getReserve3() == OutConstanst.OUT_SAIL_TYPE_MONEY
+                    && out.getType() == Constant.OUT_TYPE_OUTBILL && out.getPay() == 0)
+                {
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "只有出纳确定已经回款后才可以审批此销售单");
+
+                    return mapping.findForward("error");
+                }
+
                 try
                 {
                     outManager.pass(fullId, user, statuss, reason, depotpartId);
@@ -2118,6 +2147,7 @@ public class OutAction extends DispatchAction
 
             if ("2".equals(request.getParameter("flag")))
             {
+                // 往来核对
                 return mapping.findForward("detailOut3");
             }
 

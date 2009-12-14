@@ -25,7 +25,7 @@ function add()
 		return;
 	}
 	
-    opener.getCustmeor(oo.value, oo.customername, oo.customerconnector, oo.customerphone);
+    opener.getCustmeor(oo.value, oo.customername, oo.customerconnector, oo.customerphone, oo.customercreditlevel);
     //opener.getProduct(oo.value, oo.productName, oo.num);
     opener = null;
     window.close();
@@ -173,11 +173,11 @@ function query()
 					<c:forEach items="${customerList}" var="item" varStatus="vs">
 						<tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
 							<td align="center"><input type="radio" name="customer" customerconnector="${item.connector}"
-								customerphone=""
+								customerphone="" customercreditlevel="${item.creditLevelId}"
 								customername="${item.name}" value="${item.id}" ${vs.index== 0 ? "checked" : ""}/></td>
-							<td align="center">${item.name}</td>
-							<td align="center">${item.code}</td>
-							<td align="center">${item.connector}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.name}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.code}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.connector}</td>
 						</tr>
 					</c:forEach>
 				</table>

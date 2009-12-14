@@ -385,6 +385,7 @@ function showDiv(id, obj)
 						<td align="center" width="5%" align="center">选择</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">单据编号</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">客户</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">状态</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">库单类型</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">填写时间</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">回款日期</td>
@@ -408,6 +409,7 @@ function showDiv(id, obj)
 							</c:if>
 							>${item.fullId}</a></td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.customerName}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:status(item.status)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.type == 0 ? "销售单" : "入库单"}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.outTime}</td>
 							<c:if test="${item.pay == 0}">
@@ -416,7 +418,7 @@ function showDiv(id, obj)
 							<c:if test="${item.pay == 1}">
 							<td align="center" onclick="hrefAndSelect(this)"><font color=blue>${item.redate}</font></td>
 							</c:if>
-							<td align="center" onclick="hrefAndSelect(this)">${item.total}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.hadPay}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.checks == "" ? "未核对" : "<font color=blue><B>已核对</B></font>"}</td>

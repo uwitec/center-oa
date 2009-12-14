@@ -53,13 +53,31 @@ function selectCustomer()
     window.common.modal("./out.do?method=queryCustomer");
 }
 
+//默认黑名单
+var BLACK_LEVEL = '90000000000000000000';
 
-function getCustmeor(id, name, conn, phone)
+
+function getCustmeor(id, name, conn, phone, customercreditlevel)
 {
 	$("connector").value = conn;
 	$("phone").value = phone;
 	$("customerName").value = name;
 	$("customerId").value = id;
+	$("customercreditlevel").value = customercreditlevel;
+	
+	if (customercreditlevel == BLACK_LEVEL)
+	{
+	    removeAllItem($('reserve3'));
+	    
+	    setOption($('reserve3'), '1', '款到发货(黑名单客户)');   
+	}
+	else
+	{
+	    removeAllItem($('reserve3'));
+        
+        setOption($('reserve3'), '0', '货到收款');  
+        setOption($('reserve3'), '1', '款到发货(黑名单客户)');  
+	}
 }
 
 function total()
@@ -419,6 +437,7 @@ function selectOut()
 	type=hidden name="customerId" /> <input type=hidden name="type"
 	value='${ff ? "1" : "0"}' /> <input type=hidden name="saves" value="" />
 <input type=hidden name="desList" value="" />
+<input type=hidden name="customercreditlevel" value="" />
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td height="22" valign="bottom">
@@ -624,6 +643,16 @@ function selectOut()
 						<td></td>
 					</tr>
 					</c:if>
+					
+					<tr class="content2">
+                        <td align="right">付款方式：</td>
+                        <td colspan="3">
+                        <select name="reserve3" class="select_class" oncheck="notNone;" head="付款方式">
+                            <option value='0'>货到收款</option>
+                            <option value='1'>款到发货(黑名单客户)</option>
+                        </select>
+                        <font color="#FF0000">*</font></td>
+                    </tr>
 
 					<tr class="content1">
 						<td align="right">${ff ? "入库单" : "销售单"}备注：</td>
