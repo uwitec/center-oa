@@ -37,8 +37,7 @@ function load()
 		     {id: 'add', caption: '申请增加', bclass: 'add', auth: '0202', onpress : addBean},
 		     {id: 'del',  caption: '删除申请', bclass: 'delete', auth: '0202', onpress : delBean},
 		     {id: 'pass', caption: '通过',bclass: 'pass', auth: '0203', onpress : doPass},
-		     {id: 'reject', caption: '驳回',bclass: 'reject', auth: '0203', onpress : doReject},
-		     {id: 'assign', caption: '分配编码',bclass: 'update', auth: '0214', onpress : doAssignCode}
+		     {id: 'reject', caption: '驳回',bclass: 'reject', auth: '0203', onpress : doReject}
 		     ],
 		 usepager: true,
 		 useRp: true,
