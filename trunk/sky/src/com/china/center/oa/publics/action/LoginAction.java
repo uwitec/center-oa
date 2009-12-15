@@ -108,7 +108,7 @@ public class LoginAction extends DispatchAction
         //  «∑Ò∆Ù”√º”√‹À¯
         boolean hasEncLock = parameterDAO.getBoolean(SysConfigConstant.NEED_SUPER_ENC_LOCK);
 
-        boolean real = false;
+        boolean real = true;
 
         ActionForward checkCommonResult = checkCommon(mapping, request, rand, real);
 
