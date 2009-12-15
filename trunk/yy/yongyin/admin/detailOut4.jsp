@@ -27,7 +27,8 @@ function sub()
 <form name="outForm" method=post action="./out.do?"><input
 	type=hidden name="method" value="modifyOutStatus" /> <input
 	type=hidden name="outId" value="${out.fullId}" /> <input type="hidden"
-	value="3" name="statuss">
+	value="3" name="statuss"><input type="hidden"
+    value="${out.status}" name="oldStatus">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td height="22" valign="bottom">

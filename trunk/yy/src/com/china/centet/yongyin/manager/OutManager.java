@@ -979,7 +979,8 @@ public class OutManager
         if (outBean.getType() == Constant.OUT_TYPE_OUTBILL)
         {
             if (outBean.getStatus() == Constant.STATUS_SAVE
-                || outBean.getStatus() == Constant.STATUS_REJECT)
+                || outBean.getStatus() == Constant.STATUS_REJECT
+                || outBean.getStatus() == Constant.STATUS_PASS)
             {
                 throw new MYException("状态不可以驳回!");
             }
@@ -1447,9 +1448,9 @@ public class OutManager
             {
                 outDAO.modifyTempType(fullId, 0);
             }
-
-            outDAO.modifyReDate2(fullId, TimeTools.now());
         }
+
+        outDAO.modifyReDate2(fullId, TimeTools.now_short());
 
         return outDAO.modifyPay2(fullId, pay);
     }

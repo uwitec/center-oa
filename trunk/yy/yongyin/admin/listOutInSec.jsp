@@ -146,19 +146,6 @@ function del()
 	}
 }
 
-function sub()
-{
-	if (getRadio('fullId').statuss == '0' || getRadio('fullId').statuss == '2')
-	{
-		 if (window.confirm("确定提交${ff ? "入" : "出"}库单?"))
-		document.location.href = '../admin/out.do?method=modifyOutStatus&outId=' + getRadioValue("fullId") + "&status=1";
-	}
-	else
-	{
-		alert('只有保存态和驳回态的出库单可以删除!');
-	}
-}
-
 function query()
 {
 	if (comp())

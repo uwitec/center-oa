@@ -52,6 +52,7 @@ function check()
 			$('method').value = 'modifyOutStatus';
 
 		 	$('statuss').value = dirs['${user.role}'];
+		 	$('oldStatus').value = getRadio('fullId').statuss;
 
 		 	$('outId').value = getRadioValue("fullId");
 
@@ -104,6 +105,7 @@ function reject()
 			$Dbuttons(true);
 			$('method').value = 'modifyOutStatus';
 		 	$('statuss').value = '2';
+		 	$('oldStatus').value = getRadio('fullId').statuss;
 		 	$('outId').value = getRadioValue("fullId");
 
 		 	$('radioIndex').value = $Index('fullId');
@@ -142,6 +144,7 @@ function prints()
 
 function query()
 {
+    $('method').value = 'queryOut2';
 	adminForm.submit();
 }
 
@@ -194,6 +197,8 @@ function load()
 	name="outId">
 	<input type="hidden" value=""
 	name="statuss">
+	<input type="hidden" value=""
+    name="oldStatus">
 	<input type="hidden" value=""
 	name="radioIndex">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

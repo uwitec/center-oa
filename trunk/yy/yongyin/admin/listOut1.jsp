@@ -151,9 +151,9 @@ function sub()
 		 if (window.confirm("确定提交${ff ? "入" : "出"}库单?"))
 		 {
 		 	$('method').value = 'modifyOutStatus';
+		 	$('oldStatus').value = getRadio('fullId').statuss;
 		 	$('statuss').value = '1';
 		 	$('outId').value = getRadioValue("fullId");
-		 	//document.location.href = '../admin/out.do?method=modifyOutStatus&outId=' + getRadioValue("fullId") + "&status=1";
 		 	
 		 	disableAllButton();
 		 	
@@ -220,6 +220,8 @@ function load()
 	name="flagg">
 	<input type="hidden" value=""
 	name="outId">
+	<input type="hidden" value=""
+    name="oldStatus">
 	<input type="hidden" value=""
 	name="statuss">
 <c:set var="fg" value='${ff ? "入库" : "销售"}'/>

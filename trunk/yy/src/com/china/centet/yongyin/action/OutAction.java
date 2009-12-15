@@ -1921,6 +1921,17 @@ public class OutAction extends DispatchAction
 
         int statuss = Integer.parseInt(request.getParameter("statuss"));
 
+        String oldStatus = request.getParameter("oldStatus");
+
+        if (StringTools.isNullOrNone(oldStatus))
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "没有历史状态,请重新操作!");
+
+            return mapping.findForward("error");
+        }
+
+        int ioldStatus = Integer.parseInt(oldStatus);
+
         String reason = request.getParameter("reason");
 
         String depotpartId = request.getParameter("depotpartId");
@@ -1943,6 +1954,13 @@ public class OutAction extends DispatchAction
         if (out == null)
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不存在，请重新操作!");
+
+            return mapping.findForward("error");
+        }
+
+        if (out.getStatus() != ioldStatus)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "单据已经被审批,请重新操作!");
 
             return mapping.findForward("error");
         }
