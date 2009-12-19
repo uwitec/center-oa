@@ -12,6 +12,7 @@
             and t1.type = 0 
             and t1.outtype = 0
             and t1.pay = 1
+            and t1.tempType = 0
             and t1.outTime >= #beginDate#
             and t1.outTime <= #endDate#
         ]]>
@@ -24,6 +25,7 @@
             and t1.type = 0 
             and t1.outtype = 0
             and t1.pay = 1
+            and t1.tempType = 0
             and t1.outTime >= #beginDate#
             and t1.outTime <= #endDate#
         ]]>
