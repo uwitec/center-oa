@@ -27,6 +27,7 @@ import com.china.center.oa.credit.dao.CreditItemDAO;
 import com.china.center.oa.credit.dao.CreditItemSecDAO;
 import com.china.center.oa.credit.dao.CreditItemThrDAO;
 import com.china.center.oa.credit.dao.CreditLevelDAO;
+import com.china.center.oa.credit.dao.CustomerCreditDAO;
 import com.china.center.oa.publics.User;
 import com.china.center.oa.publics.dao.CommonDAO2;
 import com.china.center.tools.JudgeTools;
@@ -51,6 +52,8 @@ public class CreditItemManager
     private CreditItemSecDAO creditItemSecDAO = null;
 
     private CreditItemThrDAO creditItemThrDAO = null;
+
+    private CustomerCreditDAO customerCreditDAO = null;
 
     private CreditLevelDAO creditLevelDAO = null;
 
@@ -205,7 +208,10 @@ public class CreditItemManager
     private void checkDelThr(Serializable id)
         throws MYException
     {
-    // TODO check FK
+        if (customerCreditDAO.countByValueId(id) > 0)
+        {
+            throw new MYException("此指标项已经被使用,不能删除");
+        }
     }
 
     /**
@@ -458,5 +464,22 @@ public class CreditItemManager
     public void setCreditLevelDAO(CreditLevelDAO creditLevelDAO)
     {
         this.creditLevelDAO = creditLevelDAO;
+    }
+
+    /**
+     * @return the customerCreditDAO
+     */
+    public CustomerCreditDAO getCustomerCreditDAO()
+    {
+        return customerCreditDAO;
+    }
+
+    /**
+     * @param customerCreditDAO
+     *            the customerCreditDAO to set
+     */
+    public void setCustomerCreditDAO(CustomerCreditDAO customerCreditDAO)
+    {
+        this.customerCreditDAO = customerCreditDAO;
     }
 }

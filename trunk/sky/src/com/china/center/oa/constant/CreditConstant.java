@@ -71,9 +71,14 @@ public interface CreditConstant
     int CREDIT_ITEM_SUB_NO = 1;
 
     /**
+     * 直接设置-parent
+     */
+    String SET_DRECT_PARENT = "90000000000000009999";
+
+    /**
      * 直接设置(总经理设置)
      */
-    String SET_DRECT = "10000000000000009999";
+    String SET_DRECT = "80000000000000000099";
 
     /**
      * 未逾期加分

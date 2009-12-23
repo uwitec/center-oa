@@ -203,7 +203,7 @@ public class CustomerCreditManager
         customerCreditBean.setLog(user.getStafferName() + "人为干预等级,直接加分到:"
                                   + MathTools.formatNum(newCreditVal));
 
-        customerCreditBean.setPitemId("0");
+        customerCreditBean.setPitemId(CreditConstant.SET_DRECT_PARENT);
 
         customerCreditBean.setValueId("0");
 

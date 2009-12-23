@@ -57,4 +57,16 @@ public class CustomerCreditDAO extends BaseDAO2<CustomerCreditBean, CustomerCred
                                                  + "where cid = ? and itemId <> ?", cid,
             CreditConstant.SET_DRECT);
     }
+
+    /**
+     * countByValueId
+     * 
+     * @param valueId
+     * @return
+     */
+    public int countByValueId(Serializable valueId)
+    {
+        return this.jdbcOperation.queryForInt(BeanTools.getCountHead(claz) + "where valueid = ?",
+            valueId);
+    }
 }

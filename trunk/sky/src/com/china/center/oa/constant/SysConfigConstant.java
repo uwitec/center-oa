@@ -83,4 +83,9 @@ public interface SysConfigConstant
      */
     String CREDIT_DYNAMIC = "CREDIT_DYNAMIC";
 
+    /**
+     * 是否启动客户信用额度
+     */
+    String OUT_CREDIT = "OUT_CREDIT";
+
 }

@@ -29,7 +29,7 @@ import com.china.center.annotation.Unique;
  * @see CreditItemThrBean
  * @since 1.0
  */
-@Entity
+@Entity(cache = true)
 @Table(name = "T_CENTER_CREDIT_ITEM03")
 public class CreditItemThrBean implements Serializable
 {

@@ -9,6 +9,7 @@
 package com.china.center.oa.credit.manager;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.sannotations.annotation.Bean;
@@ -20,13 +21,17 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.china.center.common.ConditionParse;
 import com.china.center.common.MYException;
 import com.china.center.oa.constant.CreditConstant;
+import com.china.center.oa.constant.SysConfigConstant;
 import com.china.center.oa.credit.bean.CreditCoreBean;
+import com.china.center.oa.credit.bean.CreditItemBean;
 import com.china.center.oa.credit.bean.CreditItemSecBean;
 import com.china.center.oa.credit.bean.CreditItemThrBean;
 import com.china.center.oa.credit.bean.CurOutBean;
 import com.china.center.oa.credit.dao.CreditCoreDAO;
+import com.china.center.oa.credit.dao.CreditItemDAO;
 import com.china.center.oa.credit.dao.CreditItemSecDAO;
 import com.china.center.oa.credit.dao.CreditItemThrDAO;
 import com.china.center.oa.credit.dao.CreditlogDAO;
@@ -36,6 +41,7 @@ import com.china.center.oa.credit.dao.OutStatDAO;
 import com.china.center.oa.credit.vs.CustomerCreditBean;
 import com.china.center.oa.customer.dao.CustomerDAO;
 import com.china.center.oa.publics.User;
+import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.helper.UserHelper;
 import com.china.center.oa.tools.OATools;
 import com.china.center.tools.MathTools;
@@ -67,9 +73,13 @@ public class CurOutManager
 
     private OutStatDAO outStatDAO = null;
 
+    private ParameterDAO parameterDAO = null;
+
     private CreditlogDAO creditlogDAO = null;
 
     private CustomerDAO customerDAO = null;
+
+    private CreditItemDAO creditItemDAO = null;
 
     private CustomerCreditDAO customerCreditDAO = null;
 
@@ -93,6 +103,15 @@ public class CurOutManager
     public void statOut()
     {
         triggerLog.info("统计客户信用开始.....");
+
+        boolean outCredit = parameterDAO.getBoolean(com.china.center.oa.constant.SysConfigConstant.OUT_CREDIT);
+
+        if ( !outCredit)
+        {
+            triggerLog.info("统计客户信用结束(开关没有开启).....");
+
+            return;
+        }
 
         List<String> customerIdList = outStatDAO.listCustomerIdList();
 
@@ -118,12 +137,15 @@ public class CurOutManager
 
         CreditItemThrBean totalBusiness = creditItemThrDAO.findTotalBusiness();
 
+        final int staticAmount = parameterDAO.getInt(SysConfigConstant.CREDIT_STATIC);
+
         // iterator to handle
         for (String cid : customerIdList)
         {
             try
             {
-                handleEachCustomer(user, outItem, maxDelayThrItem, cid, maxBusiness, totalBusiness);
+                handleEachCustomer(user, outItem, maxDelayThrItem, cid, maxBusiness,
+                    totalBusiness, staticAmount);
             }
             catch (Throwable e)
             {
@@ -144,7 +166,8 @@ public class CurOutManager
      */
     private void handleEachCustomer(User user, CreditItemSecBean outItem,
                                     CreditItemThrBean maxDelayThrItem, String cid,
-                                    CreditItemThrBean maxBusiness, CreditItemThrBean totalBusiness)
+                                    CreditItemThrBean maxBusiness,
+                                    CreditItemThrBean totalBusiness, int staticAmount)
     {
         // 从2009-12-01开始分析客户的行为
         List<OutBean> outList = outStatDAO.queryNoneStatByCid(cid);
@@ -211,6 +234,95 @@ public class CurOutManager
             CreditItemThrBean sumItem = creditItemThrDAO.findTotalBusinessByValue(sumBusiness);
 
             handleTotal(user, cid, sumItem, sumBusiness);
+        }
+
+        // 这里重新估计静态交易总额
+        handleStaticCredit(user, cid, staticAmount);
+    }
+
+    /**
+     * handleStaticCredit
+     * 
+     * @param user
+     * @param cid
+     * @param staticAmount
+     */
+    private void handleStaticCredit(User user, String cid, int staticAmount)
+    {
+        ConditionParse condition = new ConditionParse();
+        condition.addWhereStr();
+
+        condition.addCondition("cid", "=", cid);
+        condition.addIntCondition("ptype", "=", CreditConstant.CREDIT_TYPE_STATIC);
+
+        List<CustomerCreditBean> ccList = customerCreditDAO.queryEntityBeansByCondition(condition);
+
+        List<CustomerCreditBean> modfiyList = new ArrayList();
+
+        for (CustomerCreditBean customerCreditBean : ccList)
+        {
+            CreditItemThrBean creditItemThr = creditItemThrDAO.find(customerCreditBean.getValueId());
+
+            if (creditItemThr == null)
+            {
+                continue;
+            }
+
+            CreditItemBean creditItem = creditItemDAO.find(customerCreditBean.getPitemId());
+
+            if (creditItem == null)
+            {
+                continue;
+            }
+
+            CreditItemSecBean creditItemSec = creditItemSecDAO.find(customerCreditBean.getItemId());
+
+            if (creditItemSec == null)
+            {
+                continue;
+            }
+
+            double itemValue = (staticAmount * creditItem.getPer() * creditItemSec.getPer() * creditItemThr.getPer()) / 1000000.0d;
+
+            if (customerCreditBean.getVal() == itemValue)
+            {
+                continue;
+            }
+
+            // 更新静态指标
+            CustomerCreditBean each = new CustomerCreditBean();
+
+            each.setCid(cid);
+
+            each.setLogTime(TimeTools.now());
+
+            each.setItemId(creditItemSec.getId());
+
+            each.setValueId(creditItemThr.getId());
+
+            each.setVal(itemValue);
+
+            each.setLog("系统自动修正:" + each.getVal());
+
+            each.setPitemId(creditItem.getId());
+
+            each.setPtype(CreditConstant.CREDIT_TYPE_STATIC);
+
+            modfiyList.add(each);
+        }
+
+        if (modfiyList.size() > 0)
+        {
+            try
+            {
+                customerCreditManager.configCustomerCredit(user, cid, ccList);
+
+                triggerLog.info("系统自动修正客户的静态指标:" + cid);
+            }
+            catch (MYException e)
+            {
+                _logger.error(e, e);
+            }
         }
     }
 
@@ -870,5 +982,39 @@ public class CurOutManager
 
             creditCoreDAO.updateEntityBean(core);
         }
+    }
+
+    /**
+     * @return the parameterDAO
+     */
+    public ParameterDAO getParameterDAO()
+    {
+        return parameterDAO;
+    }
+
+    /**
+     * @param parameterDAO
+     *            the parameterDAO to set
+     */
+    public void setParameterDAO(ParameterDAO parameterDAO)
+    {
+        this.parameterDAO = parameterDAO;
+    }
+
+    /**
+     * @return the creditItemDAO
+     */
+    public CreditItemDAO getCreditItemDAO()
+    {
+        return creditItemDAO;
+    }
+
+    /**
+     * @param creditItemDAO
+     *            the creditItemDAO to set
+     */
+    public void setCreditItemDAO(CreditItemDAO creditItemDAO)
+    {
+        this.creditItemDAO = creditItemDAO;
     }
 }

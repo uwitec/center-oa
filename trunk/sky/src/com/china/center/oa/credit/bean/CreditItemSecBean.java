@@ -27,7 +27,7 @@ import com.china.center.oa.constant.CreditConstant;
  * @see CreditItemSecBean
  * @since 1.0
  */
-@Entity
+@Entity(cache = true)
 @Table(name = "T_CENTER_CREDIT_ITEM02")
 public class CreditItemSecBean implements Serializable
 {

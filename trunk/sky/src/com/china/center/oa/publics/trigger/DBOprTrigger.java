@@ -204,7 +204,7 @@ public class DBOprTrigger
             throw new MYException("同步失败");
         }
 
-        // 客户信用最大历史交易过户
+        // 客户信用最大历史交易过户(还有需要清空 应收账款逾期次数 直接加分 未逾期加分 逾期减分档次)
         try
         {
             int count = creditCoreDAO.synMaxBusinessToOld(TimeTools.getYeay() - 1);
@@ -217,6 +217,8 @@ public class DBOprTrigger
 
             throw new MYException("同步失败");
         }
+
+        // 清空 应收账款逾期次数 直接加分 未逾期加分 逾期减分档次 TODO
     }
 
     /**
