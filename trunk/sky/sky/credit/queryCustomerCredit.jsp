@@ -28,7 +28,7 @@ function load()
 		     {display: '子项', name : 'valueName', width : '10%'},
 		     {display: '日志', name : 'log', width : 'auto'},
 		     {display: '指标类型', name : 'ptype', width : '10%', cc: 'creditType'},
-		     {display: '指标值', name : 'val', width : '10%', toFixed: 2}
+		     {display: '指标值', name : 'val', width : '10%', toFixed: 2, sortable : true}
 		     ],
 		 extAtt: {
 		 },

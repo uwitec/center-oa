@@ -51,14 +51,15 @@ function addBean1()
 		<p:table cells="1">
 		    
 		    <p:cell title="评价项标题">
-		      ${parent.name}(${my:get('creditItemType', parent.type)})
+		      ${parent.name}<font color="blue"><b>(${my:get('creditItemType', parent.type)})</b></font>
 		    </p:cell>  
 			
 			<p:pro field="name"/>
 			
 			<p:pro field="per"/>
 			
-			<p:pro field="indexPos" outString="${parent.type == 0 ? '(排序值)' : parent.unit}"/>
+			<c:set var="unit" value="<font color=blue><b>${parent.unit}(注意这里的单位)</b></font>"/>
+			<p:pro field="indexPos" outString="${parent.type == 0 ? '(排序值)' : unit}"/>
 			
 		</p:table>
 	</p:subBody>
