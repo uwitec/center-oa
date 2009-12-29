@@ -26,6 +26,7 @@ import com.china.center.oa.customer.bean.CustomerApplyBean;
 import com.china.center.oa.customer.bean.CustomerCheckBean;
 import com.china.center.oa.customer.bean.CustomerCheckItemBean;
 import com.china.center.oa.customer.bean.ProviderBean;
+import com.china.center.oa.customer.bean.ProviderUserBean;
 import com.china.center.oa.customer.manager.CustomerCheckManager;
 import com.china.center.oa.customer.manager.CustomerManager;
 import com.china.center.oa.customer.manager.ProviderManager;
@@ -463,6 +464,33 @@ public class CustomerFacade extends AbstarctFacade
         if (containAuth(user, AuthConstant.CUSTOMER_OPR_PROVIDER))
         {
             return providerManager.addBean(user, bean);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
+     * addOrUpdateUserBean
+     * 
+     * @param userId
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    public boolean addOrUpdateUserBean(String userId, ProviderUserBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CUSTOMER_OPR_PROVIDER))
+        {
+            return providerManager.addOrUpdateUserBean(user, bean);
         }
         else
         {

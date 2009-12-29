@@ -86,6 +86,16 @@ public class LoginAction extends DispatchAction
 
     private CityDAO cityDAO = null;
 
+    /**
+     * login
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
     public ActionForward login(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                HttpServletResponse reponse)
         throws ServletException
@@ -498,6 +508,16 @@ public class LoginAction extends DispatchAction
         return false;
     }
 
+    /**
+     * modifyPassword
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
     public ActionForward modifyPassword(ActionMapping mapping, ActionForm form,
                                         HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException

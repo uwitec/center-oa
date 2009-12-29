@@ -167,7 +167,6 @@
 				path="/customer/queryCustomerDistribute.jsp" />
 		</action>
 
-
 		<action path="/customer/provider" parameter="method"
 			type="org.springframework.web.struts.DelegatingActionProxy"
 			validate="false">
@@ -177,6 +176,8 @@
 				path="/customer/updateProvider.jsp" />
 			<forward name="detailProvider"
 				path="/customer/detailProvider.jsp" />
+			<forward name="addOrUpdateUser"
+                path="/customer/addOrUpdateUser.jsp" />
 		</action>
 
 		<action path="/budget/budget" parameter="method"

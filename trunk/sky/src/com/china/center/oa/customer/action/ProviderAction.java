@@ -9,6 +9,8 @@
 package com.china.center.oa.customer.action;
 
 
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,8 +30,10 @@ import com.china.center.common.query.QueryConfig;
 import com.china.center.oa.constant.CustomerConstant;
 import com.china.center.oa.customer.bean.ProviderBean;
 import com.china.center.oa.customer.bean.ProviderHisBean;
+import com.china.center.oa.customer.bean.ProviderUserBean;
 import com.china.center.oa.customer.dao.ProviderDAO;
 import com.china.center.oa.customer.dao.ProviderHisDAO;
+import com.china.center.oa.customer.dao.ProviderUserDAO;
 import com.china.center.oa.facade.CustomerFacade;
 import com.china.center.oa.helper.Helper;
 import com.china.center.oa.publics.User;
@@ -51,6 +55,8 @@ public class ProviderAction extends DispatchAction
     private CustomerFacade customerFacade = null;
 
     private ProviderHisDAO providerHisDAO = null;
+
+    private ProviderUserDAO providerUserDAO = null;
 
     private static String QUERYPROVIDER = "queryProvider";
 
@@ -119,6 +125,45 @@ public class ProviderAction extends DispatchAction
             _logger.warn(e, e);
 
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "增加供应商失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        return mapping.findForward("queryProvider");
+    }
+
+    /**
+     * addOrUpdateUserBean
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward addOrUpdateUserBean(ActionMapping mapping, ActionForm form,
+                                             HttpServletRequest request,
+                                             HttpServletResponse response)
+        throws ServletException
+    {
+        ProviderUserBean bean = new ProviderUserBean();
+
+        try
+        {
+            BeanUtil.getBean(bean, request);
+
+            User user = Helper.getUser(request);
+
+            customerFacade.addOrUpdateUserBean(user.getId(), bean);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功处理供应商登录用户:" + bean.getName());
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理供应商登录用户失败:" + e.getMessage());
         }
 
         CommonTools.removeParamers(request);
@@ -238,6 +283,44 @@ public class ProviderAction extends DispatchAction
 
         // detailProvider
         return mapping.findForward("detailProvider");
+    }
+
+    /**
+     * findProviderUser
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward findProviderUser(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        List<ProviderUserBean> list = providerUserDAO.queryEntityVOsByFK(id);
+
+        if (list.size() > 1)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+
+            return mapping.findForward("querySelfCustomer");
+        }
+
+        ProviderUserBean bean = null;
+
+        if (list.size() == 1)
+        {
+            bean = list.get(0);
+        }
+
+        request.setAttribute("bean", bean);
+
+        // detailProvider
+        return mapping.findForward("addOrUpdateUser");
     }
 
     /**
@@ -410,5 +493,22 @@ public class ProviderAction extends DispatchAction
     public void setProviderHisDAO(ProviderHisDAO providerHisDAO)
     {
         this.providerHisDAO = providerHisDAO;
+    }
+
+    /**
+     * @return the providerUserDAO
+     */
+    public ProviderUserDAO getProviderUserDAO()
+    {
+        return providerUserDAO;
+    }
+
+    /**
+     * @param providerUserDAO
+     *            the providerUserDAO to set
+     */
+    public void setProviderUserDAO(ProviderUserDAO providerUserDAO)
+    {
+        this.providerUserDAO = providerUserDAO;
     }
 }

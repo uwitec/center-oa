@@ -29,6 +29,29 @@
         </condtion>
     </item>
     
+    <item name="queryMakeView" deaultpfix="MakeViewBean">
+        <condtion name="alogTime" filed="logTime" caption="开始时间">
+            <opr>&gt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="blogTime" filed="logTime" caption="结束时间">
+            <opr>&lt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="title" caption="主题" pfix="MakeBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="createrId" caption="创建人">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$staffer</option>
+        </condtion>
+    </item>
+    
     <item name="queryHandlerMake" deaultpfix="MakeBean">
         <condtion name="alogTime" filed="logTime" caption="开始时间">
             <opr>&gt;=</opr>

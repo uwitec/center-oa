@@ -6,24 +6,20 @@
  * CreateTime: 2007-3-25
  * Grant: open source to everybody
  */
-package com.china.center.oa.publics.bean;
+package com.china.center.oa.customer.bean;
 
 
 import java.io.Serializable;
-import java.util.List;
 
 import com.china.center.annotation.Entity;
 import com.china.center.annotation.FK;
 import com.china.center.annotation.Html;
 import com.china.center.annotation.Id;
-import com.china.center.annotation.Ignore;
 import com.china.center.annotation.Join;
 import com.china.center.annotation.Table;
 import com.china.center.annotation.Unique;
 import com.china.center.annotation.enums.Element;
-import com.china.center.annotation.enums.JoinType;
 import com.china.center.oa.constant.PublicConstant;
-import com.china.center.oa.publics.vs.RoleAuthBean;
 
 
 /**
@@ -35,13 +31,13 @@ import com.china.center.oa.publics.vs.RoleAuthBean;
  * @since
  */
 @Entity
-@Table(name = "T_CENTER_OAUSER")
-public class UserBean implements Serializable
+@Table(name = "T_CENTER_PROVIDEUSER")
+public class ProviderUserBean implements Serializable
 {
     @Id(autoIncrement = true)
     private String id = "";
 
-    @Unique
+    @Unique(dependFields = "provideId")
     @Html(title = "登录名", must = true, maxLength = 16)
     private String name = "";
 
@@ -49,16 +45,11 @@ public class UserBean implements Serializable
     private String password = "";
 
     @FK
-    @Join(tagClass = StafferBean.class)
-    @Html(title = "职员", must = true, type = Element.SELECT)
-    private String stafferId = "";
+    @Join(tagClass = ProviderBean.class)
+    private String provideId = "";
 
-    @Join(tagClass = LocationBean.class, type = JoinType.LEFT)
-    @Html(title = "分公司", must = true, type = Element.SELECT)
     private String locationId = "";
 
-    @Join(tagClass = RoleBean.class)
-    @Html(title = "角色", must = true, type = Element.SELECT)
     private String roleId = "";
 
     /**
@@ -73,13 +64,10 @@ public class UserBean implements Serializable
 
     private String loginTime = "";
 
-    @Ignore
-    private List<RoleAuthBean> auth = null;
-
     /**
      * default constructor
      */
-    public UserBean()
+    public ProviderUserBean()
     {}
 
     /**
@@ -134,20 +122,20 @@ public class UserBean implements Serializable
     }
 
     /**
-     * @return the stafferId
+     * @return the provideId
      */
-    public String getStafferId()
+    public String getProvideId()
     {
-        return stafferId;
+        return provideId;
     }
 
     /**
-     * @param stafferId
-     *            the stafferId to set
+     * @param provideId
+     *            the provideId to set
      */
-    public void setStafferId(String stafferId)
+    public void setProvideId(String provideId)
     {
-        this.stafferId = stafferId;
+        this.provideId = provideId;
     }
 
     /**
@@ -233,22 +221,5 @@ public class UserBean implements Serializable
     public void setLoginTime(String loginTime)
     {
         this.loginTime = loginTime;
-    }
-
-    /**
-     * @return the auth
-     */
-    public List<RoleAuthBean> getAuth()
-    {
-        return auth;
-    }
-
-    /**
-     * @param auth
-     *            the auth to set
-     */
-    public void setAuth(List<RoleAuthBean> auth)
-    {
-        this.auth = auth;
     }
 }

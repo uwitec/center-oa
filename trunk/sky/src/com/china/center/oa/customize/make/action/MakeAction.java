@@ -31,7 +31,9 @@ import org.apache.struts.actions.DispatchAction;
 import com.china.center.common.ConditionParse;
 import com.china.center.common.KeyConstant;
 import com.china.center.common.MYException;
+import com.china.center.common.PageSeparateTools;
 import com.china.center.common.json.AjaxResult;
+import com.china.center.common.query.HandleResult;
 import com.china.center.oa.constant.MakeConstant;
 import com.china.center.oa.customize.make.bean.FileAliasBean;
 import com.china.center.oa.customize.make.bean.Make01Bean;
@@ -44,9 +46,11 @@ import com.china.center.oa.customize.make.dao.Make01DAO;
 import com.china.center.oa.customize.make.dao.MakeDAO;
 import com.china.center.oa.customize.make.dao.MakeFileDAO;
 import com.china.center.oa.customize.make.dao.MakeTokenItemDAO;
+import com.china.center.oa.customize.make.dao.MakeViewDAO;
 import com.china.center.oa.customize.make.helper.MakeHelper;
 import com.china.center.oa.customize.make.manager.MakeManager;
 import com.china.center.oa.customize.make.vo.MakeVO;
+import com.china.center.oa.customize.make.vo.MakeViewVO;
 import com.china.center.oa.customize.make.wrap.MakeFileWrap;
 import com.china.center.oa.group.dao.GroupVSStafferDAO;
 import com.china.center.oa.group.vs.GroupVSStafferBean;
@@ -100,6 +104,8 @@ public class MakeAction extends DispatchAction
 
     private MakeFileDAO makeFileDAO = null;
 
+    private MakeViewDAO makeViewDAO = null;
+
     /**
      * defined the edit server name
      */
@@ -115,6 +121,8 @@ public class MakeAction extends DispatchAction
     private static String QUERYSELFMAKE = "querySelfMake";
 
     private static String QUERYALLMAKE = "queryAllMake";
+
+    private static String QUERYMAKEVIEW = "queryMakeView";
 
     private static String QUERYMAKETEMPLATE = "queryMakeTemplate";
 
@@ -959,6 +967,58 @@ public class MakeAction extends DispatchAction
     }
 
     /**
+     * queryMakeView
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryMakeView(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        User user = Helper.getUser(request);
+
+        condtion.addCondition("MakeViewBean.stafferId", "=", user.getStafferId());
+
+        ActionTools.processJSONQueryCondition(QUERYMAKEVIEW, request, condtion);
+
+        condtion.addCondition("order by MakeViewBean.logTime desc");
+
+        List<MakeViewVO> list = new ArrayList<MakeViewVO>();
+
+        final List<MakeVO> result = new ArrayList();
+
+        ActionTools.queryVOByJSON(QUERYMAKEVIEW, request, list, condtion, this.makeViewDAO,
+            new HandleResult()
+            {
+                public void handle(Object obj)
+                {
+                    MakeViewVO vo = (MakeViewVO)obj;
+
+                    MakeVO make = makeDAO.findVO(vo.getMakeId());
+
+                    if (make != null)
+                    {
+                        result.add(make);
+                    }
+                }
+            });
+
+        String jsonstr = JSONTools.getJSONString(result, PageSeparateTools.getPageSeparate(
+            request, QUERYMAKEVIEW));
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
      * querySelfMake
      * 
      * @param mapping
@@ -1273,5 +1333,22 @@ public class MakeAction extends DispatchAction
     public void setSystemAtt(String systemAtt)
     {
         this.systemAtt = systemAtt;
+    }
+
+    /**
+     * @return the makeViewDAO
+     */
+    public MakeViewDAO getMakeViewDAO()
+    {
+        return makeViewDAO;
+    }
+
+    /**
+     * @param makeViewDAO
+     *            the makeViewDAO to set
+     */
+    public void setMakeViewDAO(MakeViewDAO makeViewDAO)
+    {
+        this.makeViewDAO = makeViewDAO;
     }
 }

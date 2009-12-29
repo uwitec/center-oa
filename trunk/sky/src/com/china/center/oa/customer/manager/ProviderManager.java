@@ -18,12 +18,16 @@ import com.china.center.common.MYException;
 import com.china.center.oa.constant.CustomerConstant;
 import com.china.center.oa.customer.bean.ProviderBean;
 import com.china.center.oa.customer.bean.ProviderHisBean;
+import com.china.center.oa.customer.bean.ProviderUserBean;
 import com.china.center.oa.customer.dao.ProviderDAO;
 import com.china.center.oa.customer.dao.ProviderHisDAO;
+import com.china.center.oa.customer.dao.ProviderUserDAO;
 import com.china.center.oa.publics.User;
 import com.china.center.oa.publics.dao.CommonDAO2;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.Security;
+import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -42,6 +46,8 @@ public class ProviderManager
     private ProviderDAO providerDAO = null;
 
     private ProviderHisDAO providerHisDAO = null;
+
+    private ProviderUserDAO providerUserDAO = null;
 
     private CommonDAO2 commonDAO2 = null;
 
@@ -65,14 +71,82 @@ public class ProviderManager
         checkAddBean(bean);
 
         bean.setLogTime(TimeTools.now());
-        
+
         bean.setId(commonDAO2.getSquenceString());
-        
+
         providerDAO.saveEntityBean(bean);
-        
+
         addHis(bean);
 
         return true;
+    }
+
+    /**
+     * addUserBean
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean addOrUpdateUserBean(User user, ProviderUserBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, bean, bean.getName());
+
+        boolean isAdd = StringTools.isNullOrNone(bean.getId());
+
+        checkUser(bean, isAdd);
+
+        if (isAdd)
+        {
+            providerUserDAO.saveEntityBean(bean);
+        }
+        else
+        {
+            providerUserDAO.updateEntityBean(bean);
+        }
+
+        return true;
+    }
+
+    /**
+     * checkUser
+     *
+     * @param bean
+     * @param isAdd
+     * @throws MYException
+     */
+    private void checkUser(ProviderUserBean bean, boolean isAdd)
+        throws MYException
+    {
+        if (isAdd)
+        {
+            if (providerUserDAO.countByUnique(bean.getName(), bean.getProvideId()) > 0)
+            {
+                throw new MYException("名称重复,请确认操作");
+            }
+
+            String md5 = Security.getSecurity(bean.getPassword());
+
+            bean.setPassword(md5);
+
+            bean.setLoginTime(TimeTools.now());
+        }
+        else
+        {
+            ProviderUserBean old = providerUserDAO.find(bean.getId());
+
+            if (old == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            bean.setPassword(old.getPassword());
+
+            bean.setName(old.getName());
+        }
     }
 
     /**
@@ -92,12 +166,20 @@ public class ProviderManager
         checkUpdateBean(bean);
 
         providerDAO.updateEntityBean(bean);
-        
+
         addHis(bean);
 
         return true;
     }
 
+    /**
+     * delBean
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
     @Transactional(rollbackFor = {MYException.class})
     public boolean delBean(User user, String id)
         throws MYException
@@ -255,5 +337,22 @@ public class ProviderManager
     public void setProviderHisDAO(ProviderHisDAO providerHisDAO)
     {
         this.providerHisDAO = providerHisDAO;
+    }
+
+    /**
+     * @return the providerUserDAO
+     */
+    public ProviderUserDAO getProviderUserDAO()
+    {
+        return providerUserDAO;
+    }
+
+    /**
+     * @param providerUserDAO
+     *            the providerUserDAO to set
+     */
+    public void setProviderUserDAO(ProviderUserDAO providerUserDAO)
+    {
+        this.providerUserDAO = providerUserDAO;
     }
 }

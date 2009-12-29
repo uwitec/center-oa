@@ -66,7 +66,7 @@ import com.url.ajax.json.JSONObject;
 /**
  * ¹«¹²²éÑ¯ PublicQueryAction
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2009-2-17
  * @see PublicQueryAction
  * @since 1.0

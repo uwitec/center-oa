@@ -34,6 +34,7 @@ function load()
 		 buttons : [
 		     {id: 'add', bclass: 'add', onpress : addBean, auth: '0213'},
 		     {id: 'update', bclass: 'update', onpress : updateBean, auth: '0213'},
+		     {id: 'update1', bclass: 'update', caption: '更新登录用户', onpress : updateUserBean, auth: '0213'},
 		     {id: 'del', bclass: 'delete', onpress : delBean, auth: '0213'},
 		     {id: 'search', bclass: 'search', onpress : doSearch}
 		     ],
@@ -84,6 +85,15 @@ function updateBean(opr, grid)
        $l('../customer/provider.do?method=findProvider&update=1&id=' + getRadioValue('checkb'));
     }
 }
+
+function updateUserBean(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {
+       $l('../customer/provider.do?method=findProviderUser&update=1&id=' + getRadioValue('checkb'));
+    }
+}
+
 
 function addBean(opr, grid)
 {

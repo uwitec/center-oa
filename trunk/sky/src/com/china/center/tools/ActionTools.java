@@ -259,16 +259,61 @@ public abstract class ActionTools
         list.addAll(commonQueryBeanInner(key, request, condtion, dao, size));
     }
 
+    /**
+     * queryBeanByJSON
+     * 
+     * @param key
+     * @param request
+     * @param list
+     * @param condtion
+     * @param dao
+     */
     public static void queryBeanByJSON(String key, HttpServletRequest request, List list,
                                        ConditionParse condtion, DAO dao)
     {
         list.addAll(commonQueryBeanInnerByJSON(key, request, condtion, dao, true));
     }
 
+    /**
+     * queryVOByJSON
+     * 
+     * @param key
+     * @param request
+     * @param list
+     * @param condtion
+     * @param dao
+     */
     public static void queryVOByJSON(String key, HttpServletRequest request, List list,
                                      ConditionParse condtion, DAO dao)
     {
         list.addAll(commonQueryBeanInnerByJSON(key, request, condtion, dao, false));
+    }
+
+    /**
+     * queryVOByJSON
+     * 
+     * @param <T>
+     * @param <V>
+     * @param key
+     * @param request
+     * @param condtion
+     * @param dao
+     * @param handle
+     */
+    public static <T extends Serializable, V extends Serializable> void queryVOByJSON(
+                                                                                      String key,
+                                                                                      HttpServletRequest request,
+                                                                                      List<V> list,
+                                                                                      ConditionParse condtion,
+                                                                                      DAO<T, V> dao,
+                                                                                      HandleResult<V> handle)
+    {
+        list.addAll((List<V>)commonQueryBeanInnerByJSON(key, request, condtion, dao, false));
+
+        for (V object : list)
+        {
+            handle.handle(object);
+        }
     }
 
     /**
@@ -345,6 +390,18 @@ public abstract class ActionTools
         return JSONTools.getJSONString(list, PageSeparateTools.getPageSeparate(request, key));
     }
 
+    /**
+     * queryVOByJSONAndToString
+     * 
+     * @param <T>
+     * @param <V>
+     * @param key
+     * @param request
+     * @param condtion
+     * @param dao
+     * @param handle
+     * @return
+     */
     public static <T extends Serializable, V extends Serializable> String queryVOByJSONAndToString(
                                                                                                    String key,
                                                                                                    HttpServletRequest request,

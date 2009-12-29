@@ -31,12 +31,14 @@ import com.china.center.oa.customize.make.bean.MakeExtBean;
 import com.china.center.oa.customize.make.bean.MakeFileBean;
 import com.china.center.oa.customize.make.bean.MakeTokenBean;
 import com.china.center.oa.customize.make.bean.MakeTokenItemBean;
+import com.china.center.oa.customize.make.bean.MakeViewBean;
 import com.china.center.oa.customize.make.dao.Make01DAO;
 import com.china.center.oa.customize.make.dao.MakeDAO;
 import com.china.center.oa.customize.make.dao.MakeExtDAO;
 import com.china.center.oa.customize.make.dao.MakeFileDAO;
 import com.china.center.oa.customize.make.dao.MakeTokenDAO;
 import com.china.center.oa.customize.make.dao.MakeTokenItemDAO;
+import com.china.center.oa.customize.make.dao.MakeViewDAO;
 import com.china.center.oa.publics.User;
 import com.china.center.oa.publics.bean.LogBean;
 import com.china.center.oa.publics.dao.CommonDAO2;
@@ -74,6 +76,8 @@ public class MakeManager
     private MakeTokenItemDAO makeTokenItemDAO = null;
 
     private MakeFileDAO makeFileDAO = null;
+
+    private MakeViewDAO makeViewDAO = null;
 
     /**
      * ÎÄ¼þ¸úÄ¿Â¼
@@ -286,6 +290,8 @@ public class MakeManager
         makeFileDAO.deleteEntityBeansByFK(make.getId());
 
         logDAO.deleteEntityBeansByFK(make.getId());
+
+        makeViewDAO.deleteEntityBeansByFK(make.getId());
 
         return true;
     }
@@ -733,6 +739,46 @@ public class MakeManager
         log.setLog(logs);
 
         logDAO.saveEntityBean(log);
+
+        saveViewLog(user, fid);
+    }
+
+    /**
+     * saveViewLog
+     * 
+     * @param user
+     * @param fid
+     */
+    private void saveViewLog(User user, String fid)
+    {
+        // save view
+        MakeViewBean viewLog = new MakeViewBean();
+
+        viewLog.setMakeId(fid);
+
+        viewLog.setStafferId(user.getStafferId());
+
+        viewLog.setLogTime(TimeTools.now());
+
+        MakeBean make = makeDAO.find(fid);
+
+        if (make != null)
+        {
+            viewLog.setCreaterId(make.getCreaterId());
+        }
+
+        MakeViewBean old = makeViewDAO.findByUnique(viewLog.getStafferId(), viewLog.getMakeId());
+
+        if (old == null)
+        {
+            makeViewDAO.saveEntityBean(viewLog);
+        }
+        else
+        {
+            viewLog.setId(old.getId());
+
+            makeViewDAO.updateEntityBean(viewLog);
+        }
     }
 
     /**
@@ -886,5 +932,22 @@ public class MakeManager
     public void setMakeFileDAO(MakeFileDAO makeFileDAO)
     {
         this.makeFileDAO = makeFileDAO;
+    }
+
+    /**
+     * @return the makeViewDAO
+     */
+    public MakeViewDAO getMakeViewDAO()
+    {
+        return makeViewDAO;
+    }
+
+    /**
+     * @param makeViewDAO
+     *            the makeViewDAO to set
+     */
+    public void setMakeViewDAO(MakeViewDAO makeViewDAO)
+    {
+        this.makeViewDAO = makeViewDAO;
     }
 }
