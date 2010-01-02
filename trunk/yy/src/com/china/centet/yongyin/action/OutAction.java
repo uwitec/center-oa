@@ -55,6 +55,7 @@ import com.china.centet.yongyin.bean.LocationBean;
 import com.china.centet.yongyin.bean.OutBean;
 import com.china.centet.yongyin.bean.ProviderBean;
 import com.china.centet.yongyin.bean.Role;
+import com.china.centet.yongyin.bean.StafferBean2;
 import com.china.centet.yongyin.bean.StorageBean;
 import com.china.centet.yongyin.bean.TransportBean;
 import com.china.centet.yongyin.bean.User;
@@ -72,6 +73,7 @@ import com.china.centet.yongyin.dao.OutDAO;
 import com.china.centet.yongyin.dao.ParameterDAO;
 import com.china.centet.yongyin.dao.ProductDAO;
 import com.china.centet.yongyin.dao.ProviderDAO;
+import com.china.centet.yongyin.dao.StafferDAO2;
 import com.china.centet.yongyin.dao.StorageDAO;
 import com.china.centet.yongyin.dao.UserDAO;
 import com.china.centet.yongyin.manager.DepotpartManager;
@@ -107,6 +109,8 @@ public class OutAction extends DispatchAction
     private CustomerDAO customerDAO = null;
 
     private ProviderDAO providerDAO = null;
+
+    private StafferDAO2 stafferDAO2 = null;
 
     private ParameterDAO parameterDAO = null;
 
@@ -183,6 +187,17 @@ public class OutAction extends DispatchAction
         List<DepotpartBean> list = depotpartDAO.queryDepotpartByCondition(condition);
 
         request.setAttribute("depotpartList", list);
+
+        double noPayBusiness = outDAO.sumNoPayAndAvouchBusinessByStafferId(user.getStafferId(),
+            CommonTools.getFinanceBeginDate(), CommonTools.getFinanceEndDate());
+
+        StafferBean2 sb2 = stafferDAO2.find(user.getStafferId());
+
+        if (sb2 != null)
+        {
+            // 设置其剩余的信用额度
+            request.setAttribute("credit", ElTools.formatNum(sb2.getCredit() - noPayBusiness));
+        }
 
         // 增加入库单
         if ("1".equals(flag))
@@ -1481,7 +1496,17 @@ public class OutAction extends DispatchAction
         // 会计可以查询3 4
         if (user.getRole() == Role.SEC)
         {
-            condtion.addCondition("and status in (1, 3, 4)");
+            // 这里需要计算客户的信用金额-是否报送物流中心经理审批
+            boolean outCredit = parameterDAO.getBoolean(SysConfigConstant.OUT_CREDIT);
+
+            if (outCredit)
+            {
+                condtion.addCondition("and status in (1, 3, 4)");
+            }
+            else
+            {
+                condtion.addCondition("and status in (3, 4)");
+            }
         }
         else
         {
@@ -2858,6 +2883,23 @@ public class OutAction extends DispatchAction
     public void setParameterDAO(ParameterDAO parameterDAO)
     {
         this.parameterDAO = parameterDAO;
+    }
+
+    /**
+     * @return the stafferDAO2
+     */
+    public StafferDAO2 getStafferDAO2()
+    {
+        return stafferDAO2;
+    }
+
+    /**
+     * @param stafferDAO2
+     *            the stafferDAO2 to set
+     */
+    public void setStafferDAO2(StafferDAO2 stafferDAO2)
+    {
+        this.stafferDAO2 = stafferDAO2;
     }
 
 }

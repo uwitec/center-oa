@@ -110,6 +110,9 @@ public class StafferBean2 implements Serializable
 
     private String logTime = "";
 
+    @Html(title = "信用额度", oncheck = JCheck.ONLY_FLOAT, maxLength = 20)
+    private double credit = 0.0d;
+
     @Html(title = "其他", type = Element.TEXTAREA, maxLength = 200)
     private String description = "";
 
@@ -586,5 +589,22 @@ public class StafferBean2 implements Serializable
     public void setStatus(int status)
     {
         this.status = status;
+    }
+
+    /**
+     * @return the credit
+     */
+    public double getCredit()
+    {
+        return credit;
+    }
+
+    /**
+     * @param credit
+     *            the credit to set
+     */
+    public void setCredit(double credit)
+    {
+        this.credit = credit;
     }
 }

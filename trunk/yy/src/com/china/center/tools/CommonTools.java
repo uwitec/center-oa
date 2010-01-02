@@ -45,7 +45,15 @@ public abstract class CommonTools
     {
         Calendar cal = Calendar.getInstance();
 
+        int month = cal.get(Calendar.MONTH);
+
         int year = cal.get(Calendar.YEAR);
+
+        // 上一年的
+        if (month >= 0 && month <= 1)
+        {
+            return (year - 1) + "-03-01";
+        }
 
         return year + "-03-01";
     }
@@ -59,11 +67,25 @@ public abstract class CommonTools
     {
         Calendar cal = Calendar.getInstance();
 
-        int year = cal.get(Calendar.YEAR) + 1;
+        int year = cal.get(Calendar.YEAR);
 
-        int daysOfMonth = TimeTools.getDaysOfMonth(year, 2);
+        int month = cal.get(Calendar.MONTH);
 
-        return year + "-02-" + daysOfMonth;
+        // 0-2月份
+        if (month >= 0 && month <= 1)
+        {
+            int realYear = year;
+
+            int daysOfMonth = TimeTools.getDaysOfMonth(realYear, 2);
+
+            return realYear + "-02-" + daysOfMonth;
+        }
+
+        int realYear = year + 1;
+
+        int daysOfMonth = TimeTools.getDaysOfMonth(realYear, 2);
+
+        return realYear + "-02-" + daysOfMonth;
     }
 
     /**

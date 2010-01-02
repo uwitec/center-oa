@@ -3,7 +3,7 @@
 <%@ page import="com.china.centet.yongyin.constant.DefinedCommon"%>
 <html>
 <head>
-<title>-=SKY·财务系统[V3.22.20091215]=-</title>
+<title>-=SKY·财务系统[V3.23.20100102]=-</title>
 <meta http-equiv="Content-Type" content="text/html; charset=GBK">
 <style type="text/css">
 a:link {

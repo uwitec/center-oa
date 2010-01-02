@@ -74,6 +74,11 @@ public interface OutConstanst
     int OUT_SAIL_TYPE_MONEY = 1;
 
     /**
+     * 使用业务员信用额度
+     */
+    int OUT_SAIL_TYPE_CREDIT = 2;
+
+    /**
      * 黑名单客户
      */
     String BLACK_LEVEL = "90000000000000000000";

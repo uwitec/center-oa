@@ -525,6 +525,26 @@ public class OutManager
                         }
                     }
                 }
+
+                // 使用业务员的信用额度
+                if (outCredit && outBean.getReserve3() == OutConstanst.OUT_SAIL_TYPE_CREDIT)
+                {
+                    StafferBean2 sb2 = stafferDAO2.find(outBean.getStafferId());
+
+                    if (sb2 == null)
+                    {
+                        throw new MYException("数据不完备,请重新操作");
+                    }
+
+                    double noPayBusiness = outDAO.sumNoPayAndAvouchBusinessByStafferId(
+                        outBean.getStafferId(), CommonTools.getFinanceBeginDate(),
+                        CommonTools.getFinanceEndDate());
+
+                    if (noPayBusiness > sb2.getCredit())
+                    {
+                        throw new MYException(sb2.getName() + "的信用额度已经超支,请重新操作");
+                    }
+                }
             }
             catch (Exception e)
             {

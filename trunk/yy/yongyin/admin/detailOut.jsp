@@ -202,7 +202,11 @@ function pagePrint()
 					
 					<tr class="content2">
                         <td>付款方式：</td>
-                        <td colspan="3">${out.reserve3 == 0 ? "货到收款" : "<font color=red>款到发货</font>"}</td>
+                        <%
+                                String[] sss2 = new String[]{"货到收款" , "<font color=red>款到发货</font>", "<font color=blue>业务员信用额度担保</font>"};
+                                request.setAttribute("sss2", sss2);
+                        %>
+                        <td colspan="3">${my:getValue(out.reserve3, sss2)}</td>
                     </tr>
 
 					<tr class="content1">

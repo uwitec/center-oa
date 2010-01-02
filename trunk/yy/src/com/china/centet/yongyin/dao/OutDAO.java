@@ -244,6 +244,34 @@ public class OutDAO
     }
 
     /**
+     * 业务员担保没有回款的
+     * 
+     * @param stafferId
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    public double sumNoPayAndAvouchBusinessByStafferId(String stafferId, String beginDate,
+                                                       String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("stafferId", stafferId);
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("endDate", endDate);
+
+        Object max = this.jdbcOperation2.getIbatisDaoSupport().queryForObject(
+            "OutDAO.sumNoPayAndAvouchBusinessByStafferId", paramterMap);
+
+        if (max == null)
+        {
+            return 0.0d;
+        }
+
+        return (Double)max;
+    }
+
+    /**
      * @return the jdbcOperation2
      */
     public JdbcOperation getJdbcOperation2()

@@ -530,7 +530,6 @@ function locationChange()
 					<tr class="content1">
 						<td align="right" id="outd">${out.type == 1 ? "供应商" : "客户"}：</td>
 						<td><input type="text" name="customerName" maxlength="14" value="${out.customerName}"
-							onclick="selectCustomer()" style="cursor: hand"
 							readonly="readonly"><font color="#FF0000">*</font></td>
 						<td align="right">调${ff}部门：</td>
 						<td><select name="department" class="select_class">
@@ -604,6 +603,17 @@ function locationChange()
 						<td></td>
 					</tr>
 					</c:if>
+					
+					<tr class="content2">
+                        <td align="right">付款方式：</td>
+                        <td colspan="3">
+                        <select name="reserve3" class="select_class" oncheck="notNone;" head="付款方式" values="${out.reserve3}" readonly="true">
+                            <option value='0'>货到收款</option>
+                            <option value='1'>款到发货(黑名单客户)</option>
+                            <option value='2'>业务员信用额度担保</option>
+                        </select>
+                        <font color="#FF0000">*</font></td>
+                    </tr>
 					
 					
 					<tr class="content1">

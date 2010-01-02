@@ -77,6 +77,7 @@ function getCustmeor(id, name, conn, phone, customercreditlevel)
         
         setOption($('reserve3'), '0', '货到收款');  
         setOption($('reserve3'), '1', '款到发货(黑名单客户)');  
+        //setOption($('reserve3'), '2', '业务员信用额度担保');  
 	}
 }
 
@@ -501,7 +502,7 @@ function selectOut()
 								<td width="35">&nbsp;</td>
 								<td width="6"><img src="../images/dot_r.gif" width="6"
 									height="6"></td>
-								<td class="caption"><strong>填写销售单信息:<font color=red>${hasOver}</font></strong>
+								<td class="caption"><strong>填写销售单信息:<font color=red>${hasOver}</font> 您的信用额度还剩下:${credit}</strong>
 								<c:if test="${!ff}">
 								<font color="blue">产品区域：</font>
 								<select name="location" class="select_class" values="${currentLocationId}">
@@ -650,6 +651,9 @@ function selectOut()
                         <select name="reserve3" class="select_class" oncheck="notNone;" head="付款方式">
                             <option value='0'>货到收款</option>
                             <option value='1'>款到发货(黑名单客户)</option>
+                            <!-- 
+                            <option value='2'>业务员信用额度担保</option>
+                             -->
                         </select>
                         <font color="#FF0000">*</font></td>
                     </tr>
