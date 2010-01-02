@@ -1,17 +1,32 @@
 <%@ page contentType="text/html;charset=GBK" language="java"
 	errorPage="../common/error.jsp"%>
 <%@include file="../common/common.jsp"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<p:link title="定制产品" />
+<p:link title="定制产品" cal="true"/>
+<link rel="stylesheet" href="../js/plugin/accordion/accordion.css" />
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/jquery/jquery.js"></script>
+<script src="../js/plugin/accordion/jquery.accordion.js"></script>
 <script language="JavaScript" src="../js/plugin/dialog/jquery.dialog.js"></script>
-<link rel="stylesheet" type="text/css" href="../js/plugin/dialog/css/dialog.css">
+<link rel="stylesheet" type="text/css" href="../js/plugin/dialog/css/dialog.css"/>
 <script language="JavaScript" src="../js/oa/make/02.js"></script>
 <script language="javascript">
+
+jQuery().ready(function(){
+    
+    jQuery('#flowDiv').accordion({
+        autoheight: false
+    });
+    
+    var accordions = jQuery('#flowDiv');
+    
+    accordions.accordion("activate", 2);
+    
+});
 
 var makePosition = ${make.position};
 
@@ -30,51 +45,39 @@ var baseURL = '${eurl}';
 <input type="hidden" name="rejectTokenId" value=""> 
 <input type="hidden" name="id" value="${make.id}"> 
 
+<div class="basic" id="flowDiv">
 
-<p:navigation
-	height="22">
-	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javascript:history.go(-1)">定制产品管理</span> &gt;&gt; 审批定制产品(第${make.status}环)</td>
-	<td width="85"></td>
-</p:navigation> <br>
+<div id="title_div">
+<a><font color=blue>【第${make.status}环${token.name}】--${position.name}(${position.ends == 1 ? "<font color=red>结束环</font>" : "中间环"})</font></a>
+</div>
 
-<p:body width="100%">
+        <p:class value="com.china.center.oa.customize.make.bean.Make01Bean" opr="1"/>
 
-	<p:title>
-		<td class="caption"><strong>定制产品：(第${make.status}环--${position.name})(${position.ends == 1 ? "<font color=red>结束环</font>" : "中间环"})</strong></td>
-	</p:title>
-
-	<p:line flag="0" />
-
-	<p:subBody width="98%">
-		<p:class value="com.china.center.oa.customize.make.bean.Make01Bean" opr="1"/>
-
-		<p:table cells="1">
-		
-		    <p:cell title="编号">
-             ${make.id}
+        
+        <div id="base_div">
+        <a><font>定制产品信息</font></a>
+        <table width='100% border=' 0' cellpadding='0' cellspacing='0'
+        class='table1'>
+        <tr>
+        <td>
+        <p:table cells="1">
+            
+            <p:cell title="标题">
+             ${make.title}
             </p:cell>  
             
-            <p:cell title="业务员">
-             ${make.createrName}
-            </p:cell> 
-		    
-		    <p:cell title="标题">
-		     ${make.title}
-		    </p:cell>  
-		    
-		    <p:cell title="类型">
+            <p:cell title="类型">
               <select class="select_class" name="type" values="${make.type}">
                   <p:option type="makeType"></p:option> 
               </select>
             </p:cell> 
 
-			<p:pro field="cname" innerString="size=40">
-			    <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+            <p:pro field="cname" innerString="size=40">
+                <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
                     class="button_class" onclick="selectCus()">&nbsp;&nbsp; 
-			</p:pro>
+            </p:pro>
 
-			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
+            <p:pro field="description" cell="0" innerString="rows=3 cols=55" />
             
             <p:pro field="endTime"/>
             <p:pro field="flowTypeName"/>
@@ -118,8 +121,22 @@ var baseURL = '${eurl}';
                 <option value="">--</option>
                 <p:option type="mappType"></p:option>
             </p:pro>
-            
-            <p:cell title="附件处理">
+
+        </p:table>
+        </td>
+        </tr>
+        </table>
+        
+        </div>
+        
+        <div id="apply_div">
+            <a><font color=red>我的处理</font></a>
+            <table width='100%' border='0' cellpadding='0' cellspacing='0'
+            class='table1'>
+            <tr>
+            <td>
+            <p:table cells="1">
+                <p:cell title="附件处理">
             <c:forEach items="${makeFileLWrapList}" var="item" varStatus="vs">
             <c:if test="${item.edit == true}">
                ${item.name}：<input type="button" value="&nbsp;在线编辑&nbsp;" name="log_g${vs.index}" id="log_g${vs.index}"
@@ -134,21 +151,21 @@ var baseURL = '${eurl}';
                </c:forEach>
             </p:cell> 
             
-            <p:cell title="意见">
-              <textarea name="reason" rows=2 cols=55 oncheck="notNone;" head="意见"></textarea>  
-              <font color="red">*</font>
-            </p:cell> 
-            
-            <c:if test="${listNext ==  false}">
-	            <p:cell title="提交到">
-	              <input name="handerName" id="handerName" readonly="readonly">&nbsp;&nbsp; 
-	              <input type="hidden" name="handerId" value=""> 
-	              <input type="button" value="&nbsp;...&nbsp;" name="qout1" id="qout1"
-	                    class="button_class" onclick="selectNext()">&nbsp;&nbsp; 
-	              <font color="red">*</font>
-	              <input type="button" value="&nbsp;审批日志&nbsp;" name="log_b" id="log_b"
-	                    class="button_class" onclick="queryLog()">
-	            </p:cell> 
+                <p:cell title="意见">
+                  <textarea name="reason" rows=3 cols=55 oncheck="notNone;" head="意见"></textarea>  
+                  <font color="red">*</font>
+                </p:cell> 
+                
+               <c:if test="${listNext ==  false}">
+                <p:cell title="提交到">
+                  <input name="handerName" id="handerName" readonly="readonly">&nbsp;&nbsp; 
+                  <input type="hidden" name="handerId" value=""> 
+                  <input type="button" value="&nbsp;...&nbsp;" name="qout1" id="qout1"
+                        class="button_class" onclick="selectNext()">&nbsp;&nbsp; 
+                  <font color="red">*</font>
+                  <input type="button" value="&nbsp;审批日志&nbsp;" name="log_b" id="log_b"
+                        class="button_class" onclick="queryLog()">
+                </p:cell> 
             </c:if>
             
             <c:if test="${listNext ==  true}">
@@ -165,20 +182,13 @@ var baseURL = '${eurl}';
                         class="button_class" onclick="queryLog()">
                 </p:cell> 
             </c:if>
-
-		</p:table>
-		
-		
-	</p:subBody>
-
-	<p:line flag="1" />
-
-	<p:button leftWidth="99%" rightWidth="1%">
-		<div align="right"><input type="button" class="button_class" id="ok_b" name="ok_b"
-		 value="&nbsp;&nbsp;通 过&nbsp;&nbsp;" accesskey="O"
-			onclick="addBean()">&nbsp;&nbsp;
-		<c:if test="${position.ends != 1}">
-		<input type="button" class="button_class" id="reject_b" name="reject_b"
+                 
+                 <p:tr>
+                <input type="button" class="button_class" id="ok_b" name="ok_b"
+         value="&nbsp;&nbsp;通 过&nbsp;&nbsp;" accesskey="O"
+            onclick="addBean()">&nbsp;&nbsp;
+        <c:if test="${position.ends != 1}">
+        <input type="button" class="button_class" id="reject_b" name="reject_b"
          value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;" accesskey="R"
             onclick="rejectMake()">&nbsp;&nbsp;
         </c:if>
@@ -187,9 +197,16 @@ var baseURL = '${eurl}';
          value="&nbsp;&nbsp;环节驳回&nbsp;&nbsp;" accesskey="E"
             onclick="rejectTokenMake()">
         </c:if>
-		</div>
-	</p:button>
-</p:body>
+                 </p:tr>
+    
+            </p:table>
+            </td>
+            </tr>
+            </table>
+        </div>
+        
+</div>
+
 <div id="dlg1" title="选择驳回到的历史环节" style="width:320px;">
     <div style="padding:20px;height:200px;" id="dialog_inner" title="">
        

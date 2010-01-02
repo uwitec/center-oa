@@ -45,6 +45,7 @@ import com.china.center.oa.customize.make.dao.FileAliasDAO;
 import com.china.center.oa.customize.make.dao.Make01DAO;
 import com.china.center.oa.customize.make.dao.MakeDAO;
 import com.china.center.oa.customize.make.dao.MakeFileDAO;
+import com.china.center.oa.customize.make.dao.MakeTokenDAO;
 import com.china.center.oa.customize.make.dao.MakeTokenItemDAO;
 import com.china.center.oa.customize.make.dao.MakeViewDAO;
 import com.china.center.oa.customize.make.helper.MakeHelper;
@@ -91,6 +92,8 @@ public class MakeAction extends DispatchAction
     private SystemTemplateFileDAO systemTemplateFileDAO = null;
 
     private MakeDAO makeDAO = null;
+
+    private MakeTokenDAO makeTokenDAO = null;
 
     private FileAliasDAO fileAliasDAO = null;
 
@@ -305,7 +308,16 @@ public class MakeAction extends DispatchAction
             return ActionTools.toError("请重新操作", "queryHandlerMake", mapping, request);
         }
 
+        MakeTokenBean token = makeTokenDAO.find(make.getStatus());
+
+        if (token == null)
+        {
+            return ActionTools.toError("请重新操作", "queryHandlerMake", mapping, request);
+        }
+
         request.setAttribute("make", make);
+
+        request.setAttribute("token", token);
 
         // handler update
         if ("1".equals(update))
@@ -1350,5 +1362,22 @@ public class MakeAction extends DispatchAction
     public void setMakeViewDAO(MakeViewDAO makeViewDAO)
     {
         this.makeViewDAO = makeViewDAO;
+    }
+
+    /**
+     * @return the makeTokenDAO
+     */
+    public MakeTokenDAO getMakeTokenDAO()
+    {
+        return makeTokenDAO;
+    }
+
+    /**
+     * @param makeTokenDAO
+     *            the makeTokenDAO to set
+     */
+    public void setMakeTokenDAO(MakeTokenDAO makeTokenDAO)
+    {
+        this.makeTokenDAO = makeTokenDAO;
     }
 }

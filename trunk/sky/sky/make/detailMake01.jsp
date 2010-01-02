@@ -1,13 +1,30 @@
 <%@ page contentType="text/html;charset=GBK" language="java"
 	errorPage="../common/error.jsp"%>
 <%@include file="../common/common.jsp"%>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="定制产品" />
+<p:link title="定制产品" cal="true"/>
+<link rel="stylesheet" href="../js/plugin/accordion/accordion.css" />
+<script type="text/javascript" src="../js/jquery/jquery.js"></script>
+<script src="../js/plugin/accordion/jquery.accordion.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="javascript">
+
+jQuery().ready(function(){
+    
+    jQuery('#flowDiv').accordion({
+        autoheight: false
+    });
+    
+    var accordions = jQuery('#flowDiv');
+    
+    accordions.accordion("activate", 2);
+    
+});
+
 function addBean()
 {
     $O('method').value = 'passMake';
@@ -86,26 +103,23 @@ function load()
 <form name="formEntry" action="../make/make.do" method="post"><input
 	type="hidden" name="method" value="passMake">
 <input type="hidden" name="cid" value=""> 
-<input type="hidden" name="handerId" value=""> 
 <input type="hidden" name="id" value="${make.id}"> 
-<p:navigation
-	height="22">
-	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javascript:history.go(-1)">定制产品管理</span> &gt;&gt; 审批定制产品(第一环)</td>
-	<td width="85"></td>
-</p:navigation> <br>
 
-<p:body width="100%">
+<div class="basic" id="flowDiv">
 
-	<p:title>
-		<td class="caption"><strong>定制产品基本信息：</strong></td>
-	</p:title>
+<div id="title_div">
+<a><font color=blue>【第${make.status}环${token.name}】--${position.name}(${position.ends == 1 ? "<font color=red>结束环</font>" : "中间环"})</font></a>
+</div>
 
-	<p:line flag="0" />
-
-	<p:subBody width="98%">
 		<p:class value="com.china.center.oa.customize.make.bean.Make01Bean" opr="1"/>
 
+        
+        <div id="base_div">
+        <a><font>定制产品信息</font></a>
+        <table width='100% border=' 0' cellpadding='0' cellspacing='0'
+	    class='table1'>
+	    <tr>
+        <td>
 		<p:table cells="1">
 		    
 		    <p:cell title="标题">
@@ -167,39 +181,53 @@ function load()
                 <option value="">--</option>
                 <p:option type="mappType"></p:option>
             </p:pro>
-            
-            <p:cell title="意见">
-              <textarea name="reason" rows=3 cols=55 oncheck="notNone;" head="意见"></textarea>  
-              <font color="red">*</font>
-            </p:cell> 
-            
-            <p:cell title="提交到">
-                  <input name="handerName" id="handerName" readonly="readonly">&nbsp;&nbsp; 
-                  <input type="hidden" name="handerId" value=""> 
-                  <input type="button" value="&nbsp;...&nbsp;" name="qout1" id="qout1"
-                        class="button_class" onclick="selectNext()">&nbsp;&nbsp; 
-                  <font color="red">*</font>
-                  <input type="button" value="&nbsp;审批日志&nbsp;" name="log_b" id="log_b"
-                        class="button_class" onclick="queryLog()">
-             </p:cell> 
 
 		</p:table>
+		</td>
+		</tr>
+		</table>
 		
-		
-	</p:subBody>
-
-	<p:line flag="1" />
-
-	<p:button leftWidth="99%" rightWidth="1%">
-		<div align="right"><input type="button" class="button_class" id="ok_b" name="ok_b"
-		 value="&nbsp;&nbsp;通 过&nbsp;&nbsp;" accesskey="O"
-			onclick="addBean()">&nbsp;&nbsp;
-		<input type="button" class="button_class" id="reject_b" name="reject_b"
-         value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;" accesskey="R"
-            onclick="rejectMake()">	
 		</div>
-	</p:button>
-</p:body></form>
+		
+		<div id="apply_div">
+	        <a><font color=red>我的处理</font></a>
+	        <table width='100%' border='0' cellpadding='0' cellspacing='0'
+	        class='table1'>
+	        <tr>
+	        <td>
+			<p:table cells="1">
+	            <p:cell title="意见">
+	              <textarea name="reason" rows=3 cols=55 oncheck="notNone;" head="意见"></textarea>  
+	              <font color="red">*</font>
+	            </p:cell> 
+	            
+	            <p:cell title="提交到">
+	                  <input name="handerName" id="handerName" readonly="readonly">&nbsp;&nbsp; 
+	                  <input type="hidden" name="handerId" value=""> 
+	                  <input type="button" value="&nbsp;...&nbsp;" name="qout1" id="qout1"
+	                        class="button_class" onclick="selectNext()">&nbsp;&nbsp; 
+	                  <font color="red">*</font>
+	                  <input type="button" value="&nbsp;审批日志&nbsp;" name="log_b" id="log_b"
+	                        class="button_class" onclick="queryLog()">
+	             </p:cell> 
+	             
+	             <p:tr>
+	             <input type="button" class="button_class" id="ok_b" name="ok_b"
+		         value="&nbsp;&nbsp;通 过&nbsp;&nbsp;" accesskey="O"
+		            onclick="addBean()">&nbsp;&nbsp;
+		        <input type="button" class="button_class" id="reject_b" name="reject_b"
+		         value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;" accesskey="R"
+		            onclick="rejectMake()"> 
+	             </p:tr>
+	
+	        </p:table>
+	        </td>
+	        </tr>
+	        </table>
+	    </div>
+        
+		</div>
+</form>
 </body>
 </html>
 

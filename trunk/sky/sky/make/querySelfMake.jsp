@@ -27,7 +27,7 @@ function load()
              {display: '环节', name : 'statusName', width : '10%'},
              {display: '位置', name : 'positionName', width : '8%'},
              {display: '创建人', name : 'createrName', width : '8%'},
-             {display: '处理人', name : 'handerName', width : '8%'},
+             {display: '当前处理人', name : 'handerName', width : '8%'},
              {display: '类型', name : 'type', width : '8%', cc: 'makeType'},
              {display: '申请时间', name : 'logTime', sortable : true, width : 'auto'}
              ],

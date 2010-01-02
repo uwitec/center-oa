@@ -105,7 +105,8 @@ function setOrgFromPop(id, name)
             <p:pro field="birthday" />
             <p:pro field="handphone" />
             
-            <p:pro field="subphone" cell="0"/>
+            <p:pro field="subphone"/>
+            <p:pro field="credit" value="0.0"/>
             
             <p:pro field="address" cell="0" innerString="size=80"/>
 

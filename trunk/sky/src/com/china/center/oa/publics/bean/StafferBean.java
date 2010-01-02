@@ -120,6 +120,12 @@ public class StafferBean implements Serializable
      */
     private String pwkey = "";
 
+    /**
+     * 信用额度
+     */
+    @Html(title = "信用额度", oncheck = JCheck.ONLY_FLOAT, maxLength = 20)
+    private double credit = 0.0d;
+
     @Html(title = "其他", type = Element.TEXTAREA, maxLength = 200)
     private String description = "";
 
@@ -613,5 +619,22 @@ public class StafferBean implements Serializable
     public void setPwkey(String pwkey)
     {
         this.pwkey = pwkey;
+    }
+
+    /**
+     * @return the credit
+     */
+    public double getCredit()
+    {
+        return credit;
+    }
+
+    /**
+     * @param credit
+     *            the credit to set
+     */
+    public void setCredit(double credit)
+    {
+        this.credit = credit;
     }
 }

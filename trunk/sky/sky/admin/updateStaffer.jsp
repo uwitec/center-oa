@@ -109,7 +109,8 @@ function setOrgFromPop(id, name)
 			<p:pro field="birthday" value="${bean.birthday}" />
 			<p:pro field="handphone" value="${bean.handphone}" />
 
-			<p:pro field="subphone" cell="0" value="${bean.subphone}" />
+			<p:pro field="subphone" value="${bean.subphone}" />
+			<p:pro field="credit" value="${bean.credit}" />
 
 			<p:pro field="address" cell="0" innerString="size=80"
 				value="${bean.address}" />

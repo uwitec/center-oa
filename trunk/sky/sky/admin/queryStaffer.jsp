@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="人员管理" link="true" guid="true" cal="false"/>
+<p:link title="人员管理" link="true" guid="true" cal="false" dialog="true"/>
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
@@ -17,6 +17,8 @@ var allDef = window.top.topFrame.allDef;
 
 function load()
 {
+     preload();
+    
 	 guidMap = {
 		 title: '人员列表',
 		 url: '../admin/staffer.do?method=queryStaffer',
@@ -30,6 +32,7 @@ function load()
 		     {display: '类型', name : 'examType', width : '5%', sortable : false, align: 'left', cc : 'examType'},
 		     {display: '状态', name : 'status', width : '5%', sortable : false, align: 'left', cc : 'stafferStatus'},
 		     {display: '加密', name : 'enc', width : '8%'},
+		     {display: '额度', name : 'credit', width : '8%',  toFixed: 2},
 		     {display: '电话', name : 'handphone', width : 'auto', sortable : false, align: 'left'}
 		     ],
 		 extAtt: {
@@ -67,7 +70,7 @@ function $callBack()
  
 function doSearch()
 {
-    window.common.qmodal('../admin/query.do?method=popCommonQuery&key=queryStaffer');
+    $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryStaffer');
 }
 
 function addBean()
@@ -122,4 +125,5 @@ function commonQuery(par)
 </form>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
+<p:query/>
 </body>
