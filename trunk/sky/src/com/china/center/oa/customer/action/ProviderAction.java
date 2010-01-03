@@ -9,7 +9,9 @@
 package com.china.center.oa.customer.action;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
+import com.china.center.annosql.constant.AnoConstant;
 import com.china.center.common.ConditionParse;
 import com.china.center.common.KeyConstant;
 import com.china.center.common.MYException;
@@ -29,13 +32,18 @@ import com.china.center.common.json.AjaxResult;
 import com.china.center.common.query.HandleResult;
 import com.china.center.common.query.QueryConfig;
 import com.china.center.oa.constant.CustomerConstant;
+import com.china.center.oa.customer.bean.ProductTypeBean;
 import com.china.center.oa.customer.bean.ProviderBean;
 import com.china.center.oa.customer.bean.ProviderHisBean;
 import com.china.center.oa.customer.bean.ProviderUserBean;
+import com.china.center.oa.customer.dao.ProductTypeDAO;
+import com.china.center.oa.customer.dao.ProductTypeVSCustomerDAO;
 import com.china.center.oa.customer.dao.ProviderDAO;
 import com.china.center.oa.customer.dao.ProviderHisDAO;
 import com.china.center.oa.customer.dao.ProviderUserDAO;
+import com.china.center.oa.customer.vo.ProductTypeVSCustomerVO;
 import com.china.center.oa.customer.vo.ProviderVO;
+import com.china.center.oa.customer.vs.ProductTypeVSCustomer;
 import com.china.center.oa.facade.CustomerFacade;
 import com.china.center.oa.helper.Helper;
 import com.china.center.oa.publics.User;
@@ -60,6 +68,10 @@ public class ProviderAction extends DispatchAction
     private ProviderHisDAO providerHisDAO = null;
 
     private ProviderUserDAO providerUserDAO = null;
+
+    private ProductTypeDAO productTypeDAO = null;
+
+    private ProductTypeVSCustomerDAO productTypeVSCustomerDAO = null;
 
     private static String QUERYPROVIDER = "queryProvider";
 
@@ -104,10 +116,108 @@ public class ProviderAction extends DispatchAction
                     {
                         vo.setLoginName(list.get(0).getName());
                     }
+
+                    // 获取分类
+                    List<ProductTypeVSCustomerVO> typeList = productTypeVSCustomerDAO.queryEntityVOsByFK(
+                        vo.getId(), AnoConstant.FK_FIRST);
+
+                    StringBuilder sb = new StringBuilder();
+                    for (ProductTypeVSCustomerVO productTypeVSCustomerVO : typeList)
+                    {
+                        sb.append(productTypeVSCustomerVO.getProductTypeName() + "/");
+                    }
+
+                    vo.setTypeName(sb.toString());
                 }
             });
 
         return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * 客户绑定产品类型(前置)
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward preForBing(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        String pid = request.getParameter("id");
+
+        List<ProductTypeBean> ptype = productTypeDAO.listEntityBeans();
+
+        request.setAttribute("list", ptype);
+
+        // 供应商
+        ProviderBean bean = providerDAO.find(pid);
+
+        if (bean == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "供应商不存在");
+
+            return mapping.findForward("queryProvider");
+        }
+
+        request.setAttribute("bean", bean);
+
+        List<ProductTypeVSCustomer> list = productTypeVSCustomerDAO.queryVSByCustomerId(pid);
+
+        Map<String, String> ps = new HashMap<String, String>();
+
+        for (ProductTypeVSCustomer productTypeVSCustomer : list)
+        {
+            ps.put(productTypeVSCustomer.getProductTypeId(), productTypeVSCustomer.getCustomerId());
+        }
+
+        request.setAttribute("mapVS", ps);
+
+        return mapping.findForward("bingProductType");
+    }
+
+    /**
+     * bingProductTypeToProvider
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward bingProductTypeToProvider(ActionMapping mapping, ActionForm form,
+                                                   HttpServletRequest request,
+                                                   HttpServletResponse reponse)
+        throws ServletException
+    {
+        String pid = request.getParameter("pid");
+
+        String[] productTypeIds = request.getParameterValues("productTypeId");
+
+        if (productTypeIds == null)
+        {
+            productTypeIds = new String[0];
+        }
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            customerFacade.bingProductTypeToCustmer(user.getId(), pid, productTypeIds);
+
+            request.setAttribute(KeyConstant.MESSAGE, "绑定类型成功");
+        }
+        catch (MYException e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "绑定类型失败:" + e.getMessage());
+        }
+
+        return mapping.findForward("queryProvider");
     }
 
     /**
@@ -591,5 +701,39 @@ public class ProviderAction extends DispatchAction
     public void setProviderUserDAO(ProviderUserDAO providerUserDAO)
     {
         this.providerUserDAO = providerUserDAO;
+    }
+
+    /**
+     * @return the productTypeDAO
+     */
+    public ProductTypeDAO getProductTypeDAO()
+    {
+        return productTypeDAO;
+    }
+
+    /**
+     * @param productTypeDAO
+     *            the productTypeDAO to set
+     */
+    public void setProductTypeDAO(ProductTypeDAO productTypeDAO)
+    {
+        this.productTypeDAO = productTypeDAO;
+    }
+
+    /**
+     * @return the productTypeVSCustomerDAO
+     */
+    public ProductTypeVSCustomerDAO getProductTypeVSCustomerDAO()
+    {
+        return productTypeVSCustomerDAO;
+    }
+
+    /**
+     * @param productTypeVSCustomerDAO
+     *            the productTypeVSCustomerDAO to set
+     */
+    public void setProductTypeVSCustomerDAO(ProductTypeVSCustomerDAO productTypeVSCustomerDAO)
+    {
+        this.productTypeVSCustomerDAO = productTypeVSCustomerDAO;
     }
 }

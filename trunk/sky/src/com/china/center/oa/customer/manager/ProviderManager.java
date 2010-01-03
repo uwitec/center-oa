@@ -19,9 +19,12 @@ import com.china.center.oa.constant.CustomerConstant;
 import com.china.center.oa.customer.bean.ProviderBean;
 import com.china.center.oa.customer.bean.ProviderHisBean;
 import com.china.center.oa.customer.bean.ProviderUserBean;
+import com.china.center.oa.customer.dao.ProductTypeDAO;
+import com.china.center.oa.customer.dao.ProductTypeVSCustomerDAO;
 import com.china.center.oa.customer.dao.ProviderDAO;
 import com.china.center.oa.customer.dao.ProviderHisDAO;
 import com.china.center.oa.customer.dao.ProviderUserDAO;
+import com.china.center.oa.customer.vs.ProductTypeVSCustomer;
 import com.china.center.oa.publics.User;
 import com.china.center.oa.publics.dao.CommonDAO2;
 import com.china.center.tools.BeanUtil;
@@ -48,6 +51,10 @@ public class ProviderManager
     private ProviderHisDAO providerHisDAO = null;
 
     private ProviderUserDAO providerUserDAO = null;
+
+    private ProductTypeDAO productTypeDAO = null;
+
+    private ProductTypeVSCustomerDAO productTypeVSCustomerDAO = null;
 
     private CommonDAO2 commonDAO2 = null;
 
@@ -77,6 +84,36 @@ public class ProviderManager
         providerDAO.saveEntityBean(bean);
 
         addHis(bean);
+
+        return true;
+    }
+
+    /**
+     * bingProductTypeToCustmer
+     * 
+     * @param pid
+     * @param productTypeIds
+     * @return
+     * @throws MYException
+     */
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean bingProductTypeToCustmer(User user, String pid, String[] productTypeIds)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, pid, productTypeIds);
+
+        productTypeVSCustomerDAO.delVSByCustomerId(pid);
+
+        for (String item : productTypeIds)
+        {
+            ProductTypeVSCustomer bean = new ProductTypeVSCustomer();
+
+            bean.setCustomerId(pid);
+
+            bean.setProductTypeId(item);
+
+            productTypeVSCustomerDAO.saveEntityBean(bean);
+        }
 
         return true;
     }
@@ -386,5 +423,39 @@ public class ProviderManager
     public void setProviderUserDAO(ProviderUserDAO providerUserDAO)
     {
         this.providerUserDAO = providerUserDAO;
+    }
+
+    /**
+     * @return the productTypeDAO
+     */
+    public ProductTypeDAO getProductTypeDAO()
+    {
+        return productTypeDAO;
+    }
+
+    /**
+     * @param productTypeDAO
+     *            the productTypeDAO to set
+     */
+    public void setProductTypeDAO(ProductTypeDAO productTypeDAO)
+    {
+        this.productTypeDAO = productTypeDAO;
+    }
+
+    /**
+     * @return the productTypeVSCustomerDAO
+     */
+    public ProductTypeVSCustomerDAO getProductTypeVSCustomerDAO()
+    {
+        return productTypeVSCustomerDAO;
+    }
+
+    /**
+     * @param productTypeVSCustomerDAO
+     *            the productTypeVSCustomerDAO to set
+     */
+    public void setProductTypeVSCustomerDAO(ProductTypeVSCustomerDAO productTypeVSCustomerDAO)
+    {
+        this.productTypeVSCustomerDAO = productTypeVSCustomerDAO;
     }
 }

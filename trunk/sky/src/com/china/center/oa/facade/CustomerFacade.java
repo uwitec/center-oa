@@ -479,6 +479,33 @@ public class CustomerFacade extends AbstarctFacade
      * @return
      * @throws MYException
      */
+    public boolean bingProductTypeToCustmer(String userId, String pid, String[] productTypeIds)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, pid, productTypeIds);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CUSTOMER_OPR_PROVIDER))
+        {
+            return providerManager.bingProductTypeToCustmer(user, pid, productTypeIds);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
+     * addOrUpdateUserBean
+     * 
+     * @param userId
+     * @param bean
+     * @return
+     * @throws MYException
+     */
     public boolean addOrUpdateUserBean(String userId, ProviderUserBean bean)
         throws MYException
     {

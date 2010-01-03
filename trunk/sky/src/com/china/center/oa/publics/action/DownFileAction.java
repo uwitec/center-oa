@@ -151,6 +151,8 @@ public class DownFileAction extends DispatchAction
 
         OutputStream out = response.getOutputStream();
 
+        response.setContentLength((int)file.length());
+
         response.setContentType("application/x-dbf");
 
         response.setHeader("Content-Disposition", "attachment; filename="

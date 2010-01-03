@@ -21,7 +21,7 @@ import com.china.center.annotation.Table;
 /**
  * EnumBean
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2008-11-9
  * @see EnumBean
  * @since 1.0
@@ -54,7 +54,8 @@ public class EnumBean implements Serializable
     }
 
     /**
-     * @param id the id to set
+     * @param id
+     *            the id to set
      */
     public void setId(String id)
     {
@@ -70,7 +71,8 @@ public class EnumBean implements Serializable
     }
 
     /**
-     * @param type the type to set
+     * @param type
+     *            the type to set
      */
     public void setType(int type)
     {
@@ -86,7 +88,8 @@ public class EnumBean implements Serializable
     }
 
     /**
-     * @param key the key to set
+     * @param key
+     *            the key to set
      */
     public void setKey(String key)
     {
@@ -102,7 +105,8 @@ public class EnumBean implements Serializable
     }
 
     /**
-     * @param value the value to set
+     * @param value
+     *            the value to set
      */
     public void setValue(String value)
     {

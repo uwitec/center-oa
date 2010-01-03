@@ -27,7 +27,8 @@ function load()
 		     {display: '名称', name : 'name', width : '20%', sortable : false, align: 'left'},
 		     {display: '编码', name : 'code', width : '10%', sortable : false, align: 'left'},
 		     {display: '类型', name : 'type', width : '10%', sortable : false, align: 'left', cc: 109},
-		     {display: '询价用户', name : 'loginName', width : '10%'},
+		     {display: '询价用户', name : 'loginName', width : '8%'},
+		     {display: '分类', name : 'typeName', width : '20%'},
 		     {display: '时间', name : 'logTime', width : 'auto', sortable : true, align: 'left'}
 		     ],
 		 extAtt: {
@@ -36,8 +37,9 @@ function load()
 		 buttons : [
 		     {id: 'add', bclass: 'add', onpress : addBean, auth: '0213'},
 		     {id: 'update', bclass: 'update', onpress : updateBean, auth: '0213'},
-		     {id: 'update1', bclass: 'update', caption: '更新登录用户', onpress : updateUserBean, auth: '0213'},
-		     {id: 'update2', bclass: 'update', caption: '重置密码', onpress : updateUserPassword, auth: '0213'},
+		     {id: 'update0', bclass: 'edit', caption: '绑定分类', onpress : bingType, auth: '0213'},
+		     {id: 'update1', bclass: 'edit', caption: '更新登录用户', onpress : updateUserBean, auth: '0213'},
+		     {id: 'update2', bclass: 'edit', caption: '重置密码', onpress : updateUserPassword, auth: '0213'},
 		     {id: 'del', bclass: 'delete', onpress : delBean, auth: '0213'},
 		     {id: 'search', bclass: 'search', onpress : doSearch}
 		     ],
@@ -72,14 +74,6 @@ function delBean()
     }
 }
 
-function callBackFun(data)
-{
-    reloadTip(data.msg, data.ret == 0);
-
-    if (data.ret == 0)
-    commonQuery();
-}
-
 function updateBean(opr, grid)
 {
     if (getRadio('checkb') && getRadioValue('checkb'))
@@ -107,6 +101,13 @@ function updateUserPassword()
     }
 }
 
+function bingType()
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {
+       $l('../customer/provider.do?method=preForBing&id=' + getRadioValue('checkb'));
+    }
+}
 
 function addBean(opr, grid)
 {

@@ -28,6 +28,9 @@ public class ProviderVO extends ProviderBean
     @Ignore
     private String loginName = "";
 
+    @Ignore
+    private String typeName = "";
+
     /**
      * default constructor
      */
@@ -49,5 +52,22 @@ public class ProviderVO extends ProviderBean
     public void setLoginName(String loginName)
     {
         this.loginName = loginName;
+    }
+
+    /**
+     * @return the typeName
+     */
+    public String getTypeName()
+    {
+        return typeName;
+    }
+
+    /**
+     * @param typeName
+     *            the typeName to set
+     */
+    public void setTypeName(String typeName)
+    {
+        this.typeName = typeName;
     }
 }
