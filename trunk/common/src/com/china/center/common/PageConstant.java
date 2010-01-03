@@ -23,12 +23,12 @@ public interface PageConstant
     String PAREXT = "parExt_";
 
     String JUST = "just";
-    
+
     /**
      * 0:memery 1:init
      */
     String JSON_QUERYMODE = "queryMode";
-    
+
     /**
      * 0:init(memery) 1:chage page size to init 2:turning page(pagesize无效) 3:flush init(pagesize无效)
      */
@@ -41,6 +41,8 @@ public interface PageConstant
     String PAGE = "page";
 
     String PARAMETER_MAP = "pmap";
+
+    String TURN = "turn";
 
     String PAGE_ATTRIBUTE_NAME = "A_page";
 
