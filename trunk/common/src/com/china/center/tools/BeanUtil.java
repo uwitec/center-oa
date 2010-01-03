@@ -9,9 +9,11 @@ package com.china.center.tools;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,18 +38,64 @@ public class BeanUtil extends BeanUtils
     private BeanUtil()
     {}
 
+    /**
+     * getBean
+     * 
+     * @param obj
+     * @param request
+     */
     public static void getBean(Object obj, HttpServletRequest request)
     {
         try
         {
-            BeanUtils.populate(obj, request.getParameterMap());
+            Map pMap = request.getParameterMap();
+
+            Map newMap = new HashMap();
+
+            Set<Map.Entry<Object, Object>> entrySet = pMap.entrySet();
+
+            for (Map.Entry<Object, Object> entry : entrySet)
+            {
+                Object value = entry.getValue();
+
+                if (value != null && value instanceof String)
+                {
+                    newMap.put(entry.getKey(), value.toString().trim());
+                }
+                else if (value != null && value instanceof String[])
+                {
+                    String[] ss = (String[])value;
+
+                    for (int i = 0; i < ss.length; i++ )
+                    {
+                        if (ss[i] != null)
+                        {
+                            ss[i] = ss[i].trim();
+                        }
+                    }
+
+                    newMap.put(entry.getKey(), ss);
+                }
+                else
+                {
+                    newMap.put(entry.getKey(), value);
+                }
+            }
+
+            BeanUtils.populate(obj, newMap);
         }
         catch (IllegalAccessException e)
-        {}
+        {
+            _logger.error(e, e);
+        }
         catch (InvocationTargetException e)
-        {}
+        {
+            _logger.error(e, e);
+        }
         catch (Exception e)
-        {}
+        {
+            _logger.error(e, e);
+        }
     }
 
     public static void getBean(Object obj, Map map)

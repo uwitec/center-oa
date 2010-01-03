@@ -128,7 +128,7 @@ public class CommonTools
                 {
                     if (oo[0] != null)
                     {
-                        result.put(element.getKey().toString(), oo[0].toString());
+                        result.put(element.getKey().toString(), oo[0].toString().trim());
 
                         request.setAttribute(element.getKey().toString(), oo[0]);
                     }
@@ -139,6 +139,14 @@ public class CommonTools
                 }
                 else
                 {
+                    for (int i = 0; i < oo.length; i++ )
+                    {
+                        if (oo[i] != null)
+                        {
+                            oo[i] = oo[i].trim();
+                        }
+                    }
+
                     request.setAttribute(element.getKey().toString(), oo);
                 }
             }

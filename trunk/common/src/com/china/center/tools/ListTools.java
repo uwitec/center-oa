@@ -205,6 +205,12 @@ public abstract class ListTools
 
         return result;
     }
+
+    /**
+     * randomList
+     * 
+     * @param list
+     */
     public static void randomList(List list)
     {
         if (list == null || list.size() == 0)
