@@ -47,12 +47,6 @@
 
 	<listener>
 		<listener-class>
-			com.china.center.common.taglib.TagServletContextListener
-		</listener-class>
-	</listener>
-
-	<listener>
-		<listener-class>
 			org.springframework.web.util.Log4jConfigListener
 		</listener-class>
 	</listener>
