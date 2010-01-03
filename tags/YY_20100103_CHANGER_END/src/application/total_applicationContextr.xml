@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:sa="http://sannotations.sourceforge.net/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://sannotations.sourceforge.net/context http://sannotations.sourceforge.net/context.xsd"
+	default-autowire="byName">
+	<import resource="classpath:application/app*.xml" />
+	<sa:annotation-autoload scanDirs="true">
+		<sa:includePackage>com.china.centet.yongyin.*</sa:includePackage>
+	</sa:annotation-autoload>
+</beans>

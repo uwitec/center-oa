@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-diagram name="sale" width="771" height="742">
+  <node name="开始" x="244" y="37" width="140" height="40">
+    <transition name="填写销售单">
+      <label x="5" y="-10"/>
+    </transition>
+  </node>
+  <node name="销售单正常关闭" x="243" y="701" width="140" height="40"/>
+  <node name="保存提交" x="245" y="163" width="140" height="40">
+    <transition name="保存">
+      <label x="-62" y="3"/>
+    </transition>
+    <transition name="提交">
+      <label x="5" y="-10"/>
+    </transition>
+  </node>
+  <node name="保存销售单" x="6" y="271" width="140" height="40">
+    <transition name="提交">
+      <label x="5" y="-10"/>
+    </transition>
+    <transition name="删除">
+      <label x="5" y="-10"/>
+    </transition>
+    <transition name="修改">
+      <label x="26" y="-34"/>
+    </transition>
+  </node>
+  <node name="总经理审核" x="247" y="270" width="140" height="40">
+    <transition name="驳回">
+      <label x="1" y="-17"/>
+    </transition>
+    <transition name="通过">
+      <label x="5" y="-10"/>
+    </transition>
+  </node>
+  <node name="驳回" x="543" y="264" width="140" height="40">
+    <transition name="删除">
+      <label x="5" y="-10"/>
+    </transition>
+    <transition name="修改">
+      <label x="5" y="-10"/>
+    </transition>
+    <transition name="提交">
+      <label x="-49" y="8"/>
+    </transition>
+  </node>
+  <node name="销售单结束" x="543" y="134" width="140" height="40"/>
+  <node name="物流管理员审核" x="548" y="374" width="140" height="40">
+    <transition name="驳回">
+      <label x="5" y="-10"/>
+    </transition>
+    <transition name="通过">
+      <label x="5" y="-10"/>
+    </transition>
+  </node>
+  <node name="库管审核" x="247" y="512" width="140" height="40">
+    <transition name="通过">
+      <label x="5" y="-10"/>
+    </transition>
+    <transition name="驳回">
+      <label x="5" y="-10"/>
+    </transition>
+  </node>
+  <node name="会计核对" x="243" y="602" width="140" height="40">
+    <transition name="核对">
+      <label x="5" y="-10"/>
+    </transition>
+  </node>
+  <node name="是否总部物流审核" x="245" y="384" width="140" height="40">
+    <transition name="否">
+      <label x="5" y="-10"/>
+    </transition>
+    <transition name="是">
+      <label x="-52" y="-15"/>
+    </transition>
+  </node>
+</process-diagram>
