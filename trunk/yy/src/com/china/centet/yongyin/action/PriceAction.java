@@ -23,11 +23,11 @@ import org.apache.struts.actions.DispatchAction;
 import com.china.center.common.ConditionParse;
 import com.china.center.common.KeyConstant;
 import com.china.center.common.MYException;
-import com.china.center.common.PageSeparateTools;
+import com.china.center.common.OldPageSeparateTools;
+import com.china.center.common.query.QueryTools;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
-import com.china.center.tools.QueryTools;
 import com.china.center.tools.RequestTools;
 import com.china.center.tools.SequenceTools;
 import com.china.center.tools.StringTools;
@@ -781,7 +781,7 @@ public class PriceAction extends DispatchAction
         List<PriceBeanVO> list = null;
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 setCondition(request, condtion);
 
@@ -789,16 +789,16 @@ public class PriceAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_SIZE - 10);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request, "queryPrice");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryPrice");
 
                 list = priceDAO.queryEntityVOsBycondition(condtion, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "queryPrice");
+                OldPageSeparateTools.processSeparate(request, "queryPrice");
 
-                list = priceDAO.queryEntityVOsBycondition(PageSeparateTools.getCondition(request,
-                    "queryPrice"), PageSeparateTools.getPageSeparate(request, "queryPrice"));
+                list = priceDAO.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(request,
+                    "queryPrice"), OldPageSeparateTools.getPageSeparate(request, "queryPrice"));
             }
 
             request.setAttribute("list", list);
@@ -933,7 +933,7 @@ public class PriceAction extends DispatchAction
         List<PriceAskBeanVO> list = new ArrayList<PriceAskBeanVO>();;
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 setConditionForAsk(request, condtion);
             }
@@ -1173,7 +1173,7 @@ public class PriceAction extends DispatchAction
 
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 setConditionForPriceTemplate(request, condtion);
 
@@ -1181,16 +1181,16 @@ public class PriceAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_COMMON_SIZE);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request, "queryPriceTemplate");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryPriceTemplate");
 
                 list = priceTemplateDAO.queryEntityVOsBycondition(condtion, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "queryPriceTemplate");
+                OldPageSeparateTools.processSeparate(request, "queryPriceTemplate");
 
-                list = priceTemplateDAO.queryEntityVOsBycondition(PageSeparateTools.getCondition(
-                    request, "queryPriceTemplate"), PageSeparateTools.getPageSeparate(request,
+                list = priceTemplateDAO.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(
+                    request, "queryPriceTemplate"), OldPageSeparateTools.getPageSeparate(request,
                     "queryPriceTemplate"));
             }
 

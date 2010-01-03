@@ -16,8 +16,8 @@ import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.china.center.cache.bean.MoreHashMap;
 import com.china.center.common.MYException;
-import com.china.center.common.storage.MoreHashMap;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;

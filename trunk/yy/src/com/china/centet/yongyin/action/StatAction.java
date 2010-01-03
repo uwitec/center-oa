@@ -29,7 +29,7 @@ import org.apache.struts.actions.DispatchAction;
 
 import com.china.center.common.ConditionParse;
 import com.china.center.common.KeyConstant;
-import com.china.center.common.PageSeparateTools;
+import com.china.center.common.OldPageSeparateTools;
 import com.china.center.eltools.ElTools;
 import com.china.center.jdbc.inter.PublicSQL;
 import com.china.center.jdbc.util.PageSeparate;
@@ -199,7 +199,7 @@ public class StatAction extends DispatchAction
 
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 if (StringTools.isNullOrNone(beginTime))
                 {
@@ -219,20 +219,20 @@ public class StatAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_COMMON_SIZE);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request, "stacProvider");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, "stacProvider");
 
                 list = stockItemDAO.queryStatStockItemVO(beginTime, endTime, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "stacProvider");
+                OldPageSeparateTools.processSeparate(request, "stacProvider");
 
                 beginTime = (String)request.getSession().getAttribute("StockItemBeanVO_beginTime");
 
                 endTime = (String)request.getSession().getAttribute("StockItemBeanVO_endTime");
 
                 list = stockItemDAO.queryStatStockItemVO(beginTime, endTime,
-                    PageSeparateTools.getPageSeparate(request, "stacProvider"));
+                    OldPageSeparateTools.getPageSeparate(request, "stacProvider"));
             }
 
             for (StockItemBeanVO stockItemBeanVO : list)
@@ -441,7 +441,7 @@ public class StatAction extends DispatchAction
 
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 setConditionForStacProvider(condtion, request);
 
@@ -449,17 +449,17 @@ public class StatAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_SIZE * 2);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request,
+                OldPageSeparateTools.initPageSeparate(condtion, page, request,
                     "queryStockItemForStacProvider");
 
                 list = stockItemDAO.queryEntityVOsBycondition(condtion, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "queryStockItemForStacProvider");
+                OldPageSeparateTools.processSeparate(request, "queryStockItemForStacProvider");
 
-                list = stockItemDAO.queryEntityVOsBycondition(PageSeparateTools.getCondition(
-                    request, "queryStockItemForStacProvider"), PageSeparateTools.getPageSeparate(
+                list = stockItemDAO.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(
+                    request, "queryStockItemForStacProvider"), OldPageSeparateTools.getPageSeparate(
                     request, "queryStockItemForStacProvider"));
             }
 
@@ -509,7 +509,7 @@ public class StatAction extends DispatchAction
 
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 setConditionForStacProvider(condtion, request);
 
@@ -518,17 +518,17 @@ public class StatAction extends DispatchAction
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_SIZE
                                                             + Constant.PAGE_SIZE);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request,
+                OldPageSeparateTools.initPageSeparate(condtion, page, request,
                     "queryStockItemForStacBase");
 
                 list = stockItemDAO.queryEntityVOsBycondition(condtion, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "queryStockItemForStacBase");
+                OldPageSeparateTools.processSeparate(request, "queryStockItemForStacBase");
 
-                list = stockItemDAO.queryEntityVOsBycondition(PageSeparateTools.getCondition(
-                    request, "queryStockItemForStacBase"), PageSeparateTools.getPageSeparate(
+                list = stockItemDAO.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(
+                    request, "queryStockItemForStacBase"), OldPageSeparateTools.getPageSeparate(
                     request, "queryStockItemForStacBase"));
             }
 

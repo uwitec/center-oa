@@ -5,8 +5,8 @@ package com.china.centet.yongyin.wokflow.plugin;
 
 
 import com.china.center.common.MYException;
-import com.china.centet.yongyin.bean.FlowViewerBean;
 import com.china.centet.yongyin.bean.FlowTokenBean;
+import com.china.centet.yongyin.bean.FlowViewerBean;
 
 
 /**

@@ -9,11 +9,13 @@
 	<shortname>type</shortname>
 	<uri>http://center.org/jsp-page-taglib</uri>
 
+    <!--  
 	<listener>
 		<listener-class>
 			com.china.center.common.taglib.TagServletContextListener
 		</listener-class>
 	</listener>
+	-->
 
 	<tag>
 		<name>navigation</name>

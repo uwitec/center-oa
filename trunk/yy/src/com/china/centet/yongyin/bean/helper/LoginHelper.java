@@ -11,7 +11,7 @@ package com.china.centet.yongyin.bean.helper;
 
 import com.china.center.tools.DecSecurity;
 import com.china.center.tools.Security;
-import com.china.center.tools.SoftKey;
+import com.china.centet.yongyin.enc.SoftKey;
 
 
 /**

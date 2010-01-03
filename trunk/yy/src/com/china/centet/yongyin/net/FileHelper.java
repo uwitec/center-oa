@@ -18,7 +18,6 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import com.china.center.fileWriter.WriteFile;
 import com.china.center.fileWriter.WriteFileFactory;
 import com.china.center.tools.FileTools;
-
 import com.china.center.tools.UtilStream;
 
 

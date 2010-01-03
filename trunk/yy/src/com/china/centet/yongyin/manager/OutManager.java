@@ -35,7 +35,6 @@ import com.china.center.oa.note.bean.ShortMessageTaskBean;
 import com.china.center.oa.note.dao.ShortMessageTaskDAO;
 import com.china.center.oa.note.manager.HandleMessage;
 import com.china.center.tools.BeanUtil;
-import com.china.center.tools.CommonTools;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
@@ -75,6 +74,7 @@ import com.china.centet.yongyin.dao.StorageDAO;
 import com.china.centet.yongyin.dao.UserDAO;
 import com.china.centet.yongyin.ext.dao.CreditLevelDAO;
 import com.china.centet.yongyin.ext.dao.CustomerBaseDAO;
+import com.china.centet.yongyin.tools.YYTools;
 
 
 /**
@@ -504,7 +504,7 @@ public class OutManager
                     && outBean.getReserve3() == OutConstanst.OUT_SAIL_TYPE_COMMON)
                 {
                     double noPayBusiness = outDAO.sumNoPayBusiness(outBean.getCustomerId(),
-                        CommonTools.getFinanceBeginDate(), CommonTools.getFinanceEndDate());
+                        YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
 
                     // query customer credit
                     CreditLevelBean clevel = creditLevelDAO.find(cbean.getCreditLevelId());
@@ -537,8 +537,8 @@ public class OutManager
                     }
 
                     double noPayBusiness = outDAO.sumNoPayAndAvouchBusinessByStafferId(
-                        outBean.getStafferId(), CommonTools.getFinanceBeginDate(),
-                        CommonTools.getFinanceEndDate());
+                        outBean.getStafferId(), YYTools.getFinanceBeginDate(),
+                        YYTools.getFinanceEndDate());
 
                     if (noPayBusiness > sb2.getCredit())
                     {

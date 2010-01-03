@@ -125,5 +125,6 @@
 	<classpathentry kind="lib" path="yongyin/WEB-INF/lib/center_note_sms.jar"/>
 	<classpathentry kind="lib" path="yongyin/WEB-INF/lib/center_curout.jar"/>
 	<classpathentry kind="lib" path="yongyin/WEB-INF/lib/center_sustomer.jar"/>
+	<classpathentry kind="lib" path="yongyin/WEB-INF/lib/center_all_common_0.9.jar" sourcepath="/common"/>
 	<classpathentry kind="output" path="yongyin/WEB-INF/classes"/>
 </classpath>

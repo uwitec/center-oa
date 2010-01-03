@@ -28,12 +28,12 @@ import org.apache.struts.actions.DispatchAction;
 import com.china.center.common.ConditionParse;
 import com.china.center.common.KeyConstant;
 import com.china.center.common.MYException;
-import com.china.center.common.PageSeparateTools;
+import com.china.center.common.OldPageSeparateTools;
+import com.china.center.common.query.QueryTools;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.FileTools;
-import com.china.center.tools.QueryTools;
 import com.china.center.tools.RequestDataStream;
 import com.china.center.tools.SequenceTools;
 import com.china.center.tools.StringTools;
@@ -120,7 +120,7 @@ public class WorkFlowAction extends DispatchAction
         List<FlowDefineBeanVO> list = null;
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 setCondition(request, condtion);
 
@@ -128,16 +128,16 @@ public class WorkFlowAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_COMMON_SIZE);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request, "queryFlowDefine");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryFlowDefine");
 
                 list = flowDefineDAO.queryEntityVOsBycondition(condtion, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "queryFlowDefine");
+                OldPageSeparateTools.processSeparate(request, "queryFlowDefine");
 
-                list = flowDefineDAO.queryEntityVOsBycondition(PageSeparateTools.getCondition(
-                    request, "queryFlowDefine"), PageSeparateTools.getPageSeparate(request,
+                list = flowDefineDAO.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(
+                    request, "queryFlowDefine"), OldPageSeparateTools.getPageSeparate(request,
                     "queryFlowDefine"));
             }
 
@@ -268,7 +268,7 @@ public class WorkFlowAction extends DispatchAction
         ConditionParse condtion = new ConditionParse();
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 setConditionForInstance(request, condtion);
 
@@ -276,18 +276,18 @@ public class WorkFlowAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_COMMON_SIZE);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request,
+                OldPageSeparateTools.initPageSeparate(condtion, page, request,
                     "querySelfInstanceInner");
 
                 list.addAll(flowInstanceDAO.queryEntityVOsBycondition(condtion, page));
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "querySelfInstanceInner");
+                OldPageSeparateTools.processSeparate(request, "querySelfInstanceInner");
 
                 list.addAll(flowInstanceDAO.queryEntityVOsBycondition(
-                    PageSeparateTools.getCondition(request, "querySelfInstanceInner"),
-                    PageSeparateTools.getPageSeparate(request, "querySelfInstanceInner")));
+                    OldPageSeparateTools.getCondition(request, "querySelfInstanceInner"),
+                    OldPageSeparateTools.getPageSeparate(request, "querySelfInstanceInner")));
             }
         }
         catch (Exception e)
@@ -316,7 +316,7 @@ public class WorkFlowAction extends DispatchAction
         List<FlowBelongBeanVO> belong = new ArrayList<FlowBelongBeanVO>();
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 ConditionParse condtion = new ConditionParse();
 
@@ -326,17 +326,17 @@ public class WorkFlowAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_COMMON_SIZE);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request,
+                OldPageSeparateTools.initPageSeparate(condtion, page, request,
                     "queryProcessInstanceInner");
 
                 belong = flowBelongDAO.queryEntityVOsBycondition(condtion, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "queryProcessInstanceInner");
+                OldPageSeparateTools.processSeparate(request, "queryProcessInstanceInner");
 
-                belong = flowBelongDAO.queryEntityVOsBycondition(PageSeparateTools.getCondition(
-                    request, "queryProcessInstanceInner"), PageSeparateTools.getPageSeparate(
+                belong = flowBelongDAO.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(
+                    request, "queryProcessInstanceInner"), OldPageSeparateTools.getPageSeparate(
                     request, "queryProcessInstanceInner"));
             }
 
@@ -371,7 +371,7 @@ public class WorkFlowAction extends DispatchAction
         List<FlowInstanceLogBeanVO> belong = new ArrayList<FlowInstanceLogBeanVO>();
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 ConditionParse condtion = new ConditionParse();
 
@@ -381,18 +381,18 @@ public class WorkFlowAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_COMMON_SIZE);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request,
+                OldPageSeparateTools.initPageSeparate(condtion, page, request,
                     "queryProcessHisInstanceInner");
 
                 belong = flowInstanceLogDAO.queryEntityVOsBycondition(condtion, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "queryProcessHisInstanceInner");
+                OldPageSeparateTools.processSeparate(request, "queryProcessHisInstanceInner");
 
                 belong = flowInstanceLogDAO.queryEntityVOsBycondition(
-                    PageSeparateTools.getCondition(request, "queryProcessHisInstanceInner"),
-                    PageSeparateTools.getPageSeparate(request, "queryProcessHisInstanceInner"));
+                    OldPageSeparateTools.getCondition(request, "queryProcessHisInstanceInner"),
+                    OldPageSeparateTools.getPageSeparate(request, "queryProcessHisInstanceInner"));
             }
 
             for (FlowInstanceLogBeanVO flowBelongBean : belong)
@@ -428,7 +428,7 @@ public class WorkFlowAction extends DispatchAction
         {
             ConditionParse condtion = null;
 
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 condtion = new ConditionParse();
 

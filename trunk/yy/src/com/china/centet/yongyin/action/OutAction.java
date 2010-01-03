@@ -33,7 +33,7 @@ import org.jbpm.JbpmConfiguration;
 import com.china.center.common.ConditionParse;
 import com.china.center.common.KeyConstant;
 import com.china.center.common.MYException;
-import com.china.center.common.PageSeparateTools;
+import com.china.center.common.OldPageSeparateTools;
 import com.china.center.eltools.ElTools;
 import com.china.center.fileWriter.WriteFile;
 import com.china.center.fileWriter.WriteFileFactory;
@@ -80,6 +80,7 @@ import com.china.centet.yongyin.manager.DepotpartManager;
 import com.china.centet.yongyin.manager.FlowManager;
 import com.china.centet.yongyin.manager.LocationManager;
 import com.china.centet.yongyin.manager.OutManager;
+import com.china.centet.yongyin.tools.YYTools;
 import com.china.centet.yongyin.vo.CustomerVO2;
 import com.china.centet.yongyin.vo.FlowLogBeanVO;
 import com.china.centet.yongyin.vo.OutBeanVO;
@@ -189,7 +190,7 @@ public class OutAction extends DispatchAction
         request.setAttribute("depotpartList", list);
 
         double noPayBusiness = outDAO.sumNoPayAndAvouchBusinessByStafferId(user.getStafferId(),
-            CommonTools.getFinanceBeginDate(), CommonTools.getFinanceEndDate());
+            YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
 
         StafferBean2 sb2 = stafferDAO2.find(user.getStafferId());
 
@@ -407,14 +408,14 @@ public class OutAction extends DispatchAction
 
         if ("1".equals(ff))
         {
-            if (PageSeparateTools.getPageSeparate(request, "queryOut").getRowCount() > 1500)
+            if (OldPageSeparateTools.getPageSeparate(request, "queryOut").getRowCount() > 1500)
             {
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "导出的记录数不能超过1500");
 
                 return mapping.findForward("error");
             }
 
-            outList = outDAO.queryOutBeanByCondtion(PageSeparateTools.getCondition(request,
+            outList = outDAO.queryOutBeanByCondtion(OldPageSeparateTools.getCondition(request,
                 "queryOut"));
 
             filenName = flag + TimeTools.now("MMddHHmmss") + ".xls";
@@ -422,14 +423,14 @@ public class OutAction extends DispatchAction
 
         if ("2".equals(ff))
         {
-            if (PageSeparateTools.getPageSeparate(request, "queryOut2").getRowCount() > 1500)
+            if (OldPageSeparateTools.getPageSeparate(request, "queryOut2").getRowCount() > 1500)
             {
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "导出的记录数不能超过1500");
 
                 return mapping.findForward("error");
             }
 
-            outList = outDAO.queryOutBeanByCondtion(PageSeparateTools.getCondition(request,
+            outList = outDAO.queryOutBeanByCondtion(OldPageSeparateTools.getCondition(request,
                 "queryOut2"));
 
             filenName = flag + TimeTools.now("MMddHHmmss") + ".xls";
@@ -969,7 +970,7 @@ public class OutAction extends DispatchAction
         try
         {
 
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 String locationId = (String)request.getSession().getAttribute("flag");
 
@@ -1095,16 +1096,16 @@ public class OutAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(tatol, Constant.PAGE_SIZE - 5);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request, "queryOut");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryOut");
 
                 list = outDAO.queryOutBeanByCondtion(condtion, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "queryOut");
+                OldPageSeparateTools.processSeparate(request, "queryOut");
 
-                list = outDAO.queryOutBeanByCondtion(PageSeparateTools.getCondition(request,
-                    "queryOut"), PageSeparateTools.getPageSeparate(request, "queryOut"));
+                list = outDAO.queryOutBeanByCondtion(OldPageSeparateTools.getCondition(request,
+                    "queryOut"), OldPageSeparateTools.getPageSeparate(request, "queryOut"));
             }
         }
         catch (Exception e)
@@ -1201,7 +1202,7 @@ public class OutAction extends DispatchAction
                 condtion.addCondition("location", "=", user.getLocationID());
             }
 
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 if ("1".equals(load))
                 {
@@ -1269,16 +1270,16 @@ public class OutAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(tatol, Constant.PAGE_SIZE - 5);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request, "queryOut2");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryOut2");
 
                 list = outDAO.queryOutBeanByCondtion(condtion, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "queryOut2");
+                OldPageSeparateTools.processSeparate(request, "queryOut2");
 
-                list = outDAO.queryOutBeanByCondtion(PageSeparateTools.getCondition(request,
-                    "queryOut2"), PageSeparateTools.getPageSeparate(request, "queryOut2"));
+                list = outDAO.queryOutBeanByCondtion(OldPageSeparateTools.getCondition(request,
+                    "queryOut2"), OldPageSeparateTools.getPageSeparate(request, "queryOut2"));
 
             }
         }
@@ -1386,7 +1387,7 @@ public class OutAction extends DispatchAction
             preCondition(request, user, condtion);
 
             // 分页处理
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 if ("1".equals(load))
                 {
@@ -1407,16 +1408,16 @@ public class OutAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(tatol, Constant.PAGE_SIZE - 5);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request, "queryOut3");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryOut3");
 
                 list = outDAO.queryOutBeanByCondtion(condtion, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "queryOut3");
+                OldPageSeparateTools.processSeparate(request, "queryOut3");
 
-                list = outDAO.queryOutBeanByCondtion(PageSeparateTools.getCondition(request,
-                    "queryOut3"), PageSeparateTools.getPageSeparate(request, "queryOut3"));
+                list = outDAO.queryOutBeanByCondtion(OldPageSeparateTools.getCondition(request,
+                    "queryOut3"), OldPageSeparateTools.getPageSeparate(request, "queryOut3"));
             }
         }
         catch (Exception e)

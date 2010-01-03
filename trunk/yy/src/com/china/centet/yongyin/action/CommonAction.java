@@ -29,7 +29,7 @@ import org.apache.struts.actions.DispatchAction;
 import com.china.center.common.ConditionParse;
 import com.china.center.common.KeyConstant;
 import com.china.center.common.MYException;
-import com.china.center.common.PageSeparateTools;
+import com.china.center.common.OldPageSeparateTools;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -633,17 +633,17 @@ public class CommonAction extends DispatchAction
 
             PageSeparate page = new PageSeparate(tatol, Constant.PAGE_SIZE);
 
-            PageSeparateTools.initPageSeparate(condition, page, request, "queryProvider");
+            OldPageSeparateTools.initPageSeparate(condition, page, request, "queryProvider");
 
             customerList = providerDAO.queryEntityBeansBycondition(condition, page);
         }
         else
         {
-            PageSeparateTools.processSeparate(request, "queryProvider");
+            OldPageSeparateTools.processSeparate(request, "queryProvider");
 
             // 处理下上一页
-            customerList = providerDAO.queryEntityBeansBycondition(PageSeparateTools.getCondition(
-                request, "queryProvider"), PageSeparateTools.getPageSeparate(request,
+            customerList = providerDAO.queryEntityBeansBycondition(OldPageSeparateTools.getCondition(
+                request, "queryProvider"), OldPageSeparateTools.getPageSeparate(request,
                 "queryProvider"));
         }
 
@@ -756,7 +756,7 @@ public class CommonAction extends DispatchAction
 
         List<ProviderBean> customerList = null;
 
-        if (PageSeparateTools.isFirstLoad(request))
+        if (OldPageSeparateTools.isFirstLoad(request))
         {
             setCustomerCondition(request, condition);
 
@@ -768,19 +768,19 @@ public class CommonAction extends DispatchAction
 
             PageSeparate page = new PageSeparate(tatol, Constant.PAGE_SIZE);
 
-            PageSeparateTools.initPageSeparate(condition, page, request, "rptQueryCustmerInVS");
+            OldPageSeparateTools.initPageSeparate(condition, page, request, "rptQueryCustmerInVS");
 
             customerList = customerDAO.queryCustomerByCondtionInProductTypeVSCustomer(condition,
                 page);
         }
         else
         {
-            PageSeparateTools.processSeparate(request, "rptQueryCustmerInVS");
+            OldPageSeparateTools.processSeparate(request, "rptQueryCustmerInVS");
 
             // 处理下上一页
             customerList = customerDAO.queryCustomerByCondtionInProductTypeVSCustomer(
-                PageSeparateTools.getCondition(request, "rptQueryCustmerInVS"),
-                PageSeparateTools.getPageSeparate(request, "rptQueryCustmerInVS"));
+                OldPageSeparateTools.getCondition(request, "rptQueryCustmerInVS"),
+                OldPageSeparateTools.getPageSeparate(request, "rptQueryCustmerInVS"));
         }
 
         request.setAttribute("list", customerList);
@@ -807,7 +807,7 @@ public class CommonAction extends DispatchAction
         List<BaseUserVO> list = null;
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 ConditionParse condtion = new ConditionParse();
 
@@ -817,16 +817,16 @@ public class CommonAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_COMMON_SIZE);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request, "rptUser");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, "rptUser");
 
                 list = userDAO.queryEntityVOsBycondition(condtion, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "rptUser");
+                OldPageSeparateTools.processSeparate(request, "rptUser");
 
-                list = userDAO.queryEntityVOsBycondition(PageSeparateTools.getCondition(request,
-                    "rptUser"), PageSeparateTools.getPageSeparate(request, "rptUser"));
+                list = userDAO.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(request,
+                    "rptUser"), OldPageSeparateTools.getPageSeparate(request, "rptUser"));
             }
 
             for (BaseUser user : list)

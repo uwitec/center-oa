@@ -31,7 +31,7 @@ import org.apache.struts.actions.DispatchAction;
 
 import com.china.center.common.ConditionParse;
 import com.china.center.common.KeyConstant;
-import com.china.center.common.PageSeparateTools;
+import com.china.center.common.OldPageSeparateTools;
 import com.china.center.jdbc.inter.PublicSQL;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.tools.BeanUtil;
@@ -116,7 +116,7 @@ public class BillAction extends DispatchAction
         List<Bill> list = null;
 
         // ∑÷“≥¥¶¿Ì
-        if (PageSeparateTools.isFirstLoad(request))
+        if (OldPageSeparateTools.isFirstLoad(request))
         {
             if ("1".equals(firstLoad))
             {
@@ -148,16 +148,16 @@ public class BillAction extends DispatchAction
 
             PageSeparate page = new PageSeparate(count, 15);
 
-            PageSeparateTools.initPageSeparate(condtion, page, request, "queryBill");
+            OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryBill");
 
             list = billDAO.queryBillByCondition(condtion, page);
         }
         else
         {
-            PageSeparateTools.processSeparate(request, "queryBill");
+            OldPageSeparateTools.processSeparate(request, "queryBill");
 
-            list = billDAO.queryBillByCondition(PageSeparateTools.getCondition(request,
-                "queryBill"), PageSeparateTools.getPageSeparate(request, "queryBill"));
+            list = billDAO.queryBillByCondition(OldPageSeparateTools.getCondition(request,
+                "queryBill"), OldPageSeparateTools.getPageSeparate(request, "queryBill"));
         }
 
         for (Bill bill : list)

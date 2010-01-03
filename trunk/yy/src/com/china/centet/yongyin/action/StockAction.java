@@ -32,7 +32,7 @@ import org.apache.struts.actions.DispatchAction;
 import com.china.center.common.ConditionParse;
 import com.china.center.common.KeyConstant;
 import com.china.center.common.MYException;
-import com.china.center.common.PageSeparateTools;
+import com.china.center.common.OldPageSeparateTools;
 import com.china.center.eltools.ElTools;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.tools.BeanUtil;
@@ -826,7 +826,7 @@ public class StockAction extends DispatchAction
         List<StockBeanVO> list = null;
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 setCondition(request, condtion);
 
@@ -834,16 +834,16 @@ public class StockAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_COMMON_SIZE);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request, "queryStock");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryStock");
 
                 list = stockDAO.queryEntityVOsBycondition(condtion, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "queryStock");
+                OldPageSeparateTools.processSeparate(request, "queryStock");
 
-                list = stockDAO.queryEntityVOsBycondition(PageSeparateTools.getCondition(request,
-                    "queryStock"), PageSeparateTools.getPageSeparate(request, "queryStock"));
+                list = stockDAO.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(request,
+                    "queryStock"), OldPageSeparateTools.getPageSeparate(request, "queryStock"));
             }
 
             // “≥√Êœ‘ ædiv”√
@@ -1097,9 +1097,9 @@ public class StockAction extends DispatchAction
     {
         OutputStream out = null;
 
-        PageSeparate oldPage = PageSeparateTools.getPageSeparate(request, "queryStock");
+        PageSeparate oldPage = OldPageSeparateTools.getPageSeparate(request, "queryStock");
 
-        final ConditionParse condition = PageSeparateTools.getCondition(request, "queryStock");
+        final ConditionParse condition = OldPageSeparateTools.getCondition(request, "queryStock");
 
         PageSeparate page = (PageSeparate)CommonTools.deepCopy(oldPage);
 

@@ -25,7 +25,7 @@ import org.apache.struts.actions.DispatchAction;
 import com.china.center.common.ConditionParse;
 import com.china.center.common.KeyConstant;
 import com.china.center.common.MYException;
-import com.china.center.common.PageSeparateTools;
+import com.china.center.common.OldPageSeparateTools;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -94,7 +94,7 @@ public class MemberAction extends DispatchAction
         List<MemberBean> list = null;
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 setCondition(request, condtion);
 
@@ -102,16 +102,16 @@ public class MemberAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_SIZE - 10);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request, "queryMembers");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryMembers");
 
                 list = memeberManager.queryMemberByCondtion(condtion, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "queryMembers");
+                OldPageSeparateTools.processSeparate(request, "queryMembers");
 
-                list = memeberManager.queryMemberByCondtion(PageSeparateTools.getCondition(
-                    request, "queryMembers"), PageSeparateTools.getPageSeparate(request,
+                list = memeberManager.queryMemberByCondtion(OldPageSeparateTools.getCondition(
+                    request, "queryMembers"), OldPageSeparateTools.getPageSeparate(request,
                     "queryMembers"));
             }
         }
@@ -150,7 +150,7 @@ public class MemberAction extends DispatchAction
         List<MemberBean> list = null;
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 setCondition(request, condtion);
 
@@ -158,16 +158,16 @@ public class MemberAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_SIZE - 10);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request, "rptQueryMember");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, "rptQueryMember");
 
                 list = memeberManager.queryMemberByCondtion(condtion, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "rptQueryMember");
+                OldPageSeparateTools.processSeparate(request, "rptQueryMember");
 
-                list = memeberManager.queryMemberByCondtion(PageSeparateTools.getCondition(
-                    request, "rptQueryMember"), PageSeparateTools.getPageSeparate(request,
+                list = memeberManager.queryMemberByCondtion(OldPageSeparateTools.getCondition(
+                    request, "rptQueryMember"), OldPageSeparateTools.getPageSeparate(request,
                     "rptQueryMember"));
             }
         }
@@ -466,7 +466,7 @@ public class MemberAction extends DispatchAction
         List<ConsumeBeanVO> list = null;
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 setConsumesCondition(request, condtion);
 
@@ -474,16 +474,16 @@ public class MemberAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_SIZE - 10);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request, "queryConsumes");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryConsumes");
 
                 list = consumeManager.queryConsumesByCondtion(condtion, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "queryConsumes");
+                OldPageSeparateTools.processSeparate(request, "queryConsumes");
 
-                list = consumeManager.queryConsumesByCondtion(PageSeparateTools.getCondition(
-                    request, "queryConsumes"), PageSeparateTools.getPageSeparate(request,
+                list = consumeManager.queryConsumesByCondtion(OldPageSeparateTools.getCondition(
+                    request, "queryConsumes"), OldPageSeparateTools.getPageSeparate(request,
                     "queryConsumes"));
             }
         }
@@ -532,7 +532,7 @@ public class MemberAction extends DispatchAction
         List<ExchangeBeanVO> list = null;
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 setExchangeCondition(request, condtion);
 
@@ -540,17 +540,17 @@ public class MemberAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_SIZE - 10);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request, "queryExchanges");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryExchanges");
 
                 list = consumeManager.queryExchangeBeanVOsByCondtion(condtion, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "queryExchanges");
+                OldPageSeparateTools.processSeparate(request, "queryExchanges");
 
                 list = consumeManager.queryExchangeBeanVOsByCondtion(
-                    PageSeparateTools.getCondition(request, "queryExchanges"),
-                    PageSeparateTools.getPageSeparate(request, "queryExchanges"));
+                    OldPageSeparateTools.getCondition(request, "queryExchanges"),
+                    OldPageSeparateTools.getPageSeparate(request, "queryExchanges"));
             }
         }
         catch (Exception e)

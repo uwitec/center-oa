@@ -43,13 +43,13 @@
 		</listener-class>
 	</listener>
 
-	<listener>
-		<listener-class>
-			com.china.center.common.taglib.TagServletContextListener
-		</listener-class>
-	</listener>
-
 	<!--
+	<listener>
+        <listener-class>
+            com.china.center.common.taglib.TagServletContextListener
+        </listener-class>
+    </listener>
+    
 	<listener>
 		<listener-class>
 			com.china.centet.yongyin.jms.JMSListener

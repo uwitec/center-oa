@@ -38,7 +38,7 @@ import org.springframework.beans.support.PagedListHolder;
 import com.china.center.common.ConditionParse;
 import com.china.center.common.KeyConstant;
 import com.china.center.common.MYException;
-import com.china.center.common.PageSeparateTools;
+import com.china.center.common.OldPageSeparateTools;
 import com.china.center.fileWriter.WriteFile;
 import com.china.center.fileWriter.WriteFileFactory;
 import com.china.center.jdbc.inter.PublicSQL;
@@ -344,7 +344,7 @@ public class ProductAction extends DispatchAction
         CommonTools.saveParamers(request);
 
         List<Product> list = null;
-        if (PageSeparateTools.isFirstLoad(request))
+        if (OldPageSeparateTools.isFirstLoad(request))
         {
             ConditionParse condtion = new ConditionParse();
 
@@ -354,16 +354,16 @@ public class ProductAction extends DispatchAction
 
             PageSeparate page = new PageSeparate(total, Constant.PAGE_SIZE);
 
-            PageSeparateTools.initPageSeparate(condtion, page, request, "rptInQueryProduct2");
+            OldPageSeparateTools.initPageSeparate(condtion, page, request, "rptInQueryProduct2");
 
             list = productDAO.queryProductByCondtion(condtion, page);
         }
         else
         {
-            PageSeparateTools.processSeparate(request, "rptInQueryProduct2");
+            OldPageSeparateTools.processSeparate(request, "rptInQueryProduct2");
 
-            list = productDAO.queryProductByCondtion(PageSeparateTools.getCondition(request,
-                "rptInQueryProduct2"), PageSeparateTools.getPageSeparate(request,
+            list = productDAO.queryProductByCondtion(OldPageSeparateTools.getCondition(request,
+                "rptInQueryProduct2"), OldPageSeparateTools.getPageSeparate(request,
                 "rptInQueryProduct2"));
         }
 
@@ -390,7 +390,7 @@ public class ProductAction extends DispatchAction
 
         List<Product> list = null;
 
-        if (PageSeparateTools.isFirstLoad(request))
+        if (OldPageSeparateTools.isFirstLoad(request))
         {
             ConditionParse condtion = new ConditionParse();
 
@@ -400,16 +400,16 @@ public class ProductAction extends DispatchAction
 
             PageSeparate page = new PageSeparate(total, Constant.PAGE_COMMON_SIZE);
 
-            PageSeparateTools.initPageSeparate(condtion, page, request, "rptInQueryProduct3");
+            OldPageSeparateTools.initPageSeparate(condtion, page, request, "rptInQueryProduct3");
 
             list = productDAO.queryProductByCondtion(condtion, page);
         }
         else
         {
-            PageSeparateTools.processSeparate(request, "rptInQueryProduct3");
+            OldPageSeparateTools.processSeparate(request, "rptInQueryProduct3");
 
-            list = productDAO.queryProductByCondtion(PageSeparateTools.getCondition(request,
-                "rptInQueryProduct3"), PageSeparateTools.getPageSeparate(request,
+            list = productDAO.queryProductByCondtion(OldPageSeparateTools.getCondition(request,
+                "rptInQueryProduct3"), OldPageSeparateTools.getPageSeparate(request,
                 "rptInQueryProduct3"));
         }
 
@@ -1476,7 +1476,7 @@ public class ProductAction extends DispatchAction
         List<HotProductBeanVO> list = null;
         try
         {
-            if (PageSeparateTools.isFirstLoad(request))
+            if (OldPageSeparateTools.isFirstLoad(request))
             {
                 String beginTime = request.getParameter("alogTime");
 
@@ -1500,20 +1500,20 @@ public class ProductAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_COMMON_SIZE);
 
-                PageSeparateTools.initPageSeparate(condtion, page, request, "queryStatHotProduct");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryStatHotProduct");
 
                 list = hotProductDAO.queryStatHotProduct(beginTime, endTime, page);
             }
             else
             {
-                PageSeparateTools.processSeparate(request, "queryStatHotProduct");
+                OldPageSeparateTools.processSeparate(request, "queryStatHotProduct");
 
                 String beginTime = (String)request.getSession().getAttribute("alogTime");
 
                 String endTime = (String)request.getSession().getAttribute("blogTime");
 
                 list = hotProductDAO.queryStatHotProduct(beginTime, endTime,
-                    PageSeparateTools.getPageSeparate(request, "queryStatHotProduct"));
+                    OldPageSeparateTools.getPageSeparate(request, "queryStatHotProduct"));
             }
 
             request.setAttribute("list", list);
