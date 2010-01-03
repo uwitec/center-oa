@@ -706,6 +706,11 @@ public class PriceAction extends DispatchAction
         {
             bean.setProcessTime(TimeTools.getDateTimeString(1800 * 1000));
         }
+
+        if (bean.getInstancy() == PriceConstant.PRICE_INSTANCY_NETWORK)
+        {
+            bean.setProcessTime(TimeTools.getDateTimeString(4 * 3600 * 1000));
+        }
     }
 
     /**
@@ -1074,6 +1079,10 @@ public class PriceAction extends DispatchAction
         {
             // request.setAttribute("readonly", "true");
             condtion.addCondition("PriceAskBean.userId", "=", user.getId());
+        }
+        else
+        {
+            condtion.addIntCondition("PriceAskBean.type", "=", PriceConstant.PRICE_ASK_TYPE_INNER);
         }
 
         String productId = request.getParameter("productId");

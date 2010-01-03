@@ -16,9 +16,9 @@ import com.china.centet.yongyin.bean.ProviderBean;
 
 
 /**
- * 供应商的dao
+ * 供应商的DAO
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2007-12-15
  * @see
  * @since

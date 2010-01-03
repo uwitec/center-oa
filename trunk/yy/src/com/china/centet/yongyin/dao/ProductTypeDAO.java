@@ -14,9 +14,9 @@ import com.china.centet.yongyin.bean.ProductTypeBean;
 
 
 /**
- * ÒøÐÐµÄdao
+ * ProductTypeDAO
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2007-12-15
  * @see
  * @since

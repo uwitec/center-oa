@@ -57,17 +57,23 @@ function getProduct(oo)
 		<p:class value="com.china.centet.yongyin.bean.PriceAskBean" />
 
 		<p:table cells="1">
-			<p:pro field="productId">&nbsp;&nbsp;<input type="button"
+			<p:pro field="productId" innerString="size=60">&nbsp;&nbsp;<input type="button"
 					value="&nbsp;...&nbsp;" name="qout" class="button_class"
 					onclick="selectProduct()">
 			</p:pro>
 
 			<p:pro field="amount" />
+			
+			<p:pro field="type">
+                <option value="0">内部询价</option>
+                <option value="1">外网询价</option>
+            </p:pro>
 
 			<p:pro field="instancy">
-				<option value="0">一般</option>
-				<option value="1">紧急</option>
-				<option value="2">非常紧急</option>
+				<option value="0">一般(2小时)</option>
+				<option value="1">紧急(1小时)</option>
+				<option value="2">非常紧急(30分钟)</option>
+				<option value="3">外网询价(4小时)</option>
 			</p:pro>
 		</p:table>
 	</p:subBody>

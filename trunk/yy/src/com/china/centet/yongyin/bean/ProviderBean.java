@@ -19,7 +19,7 @@ import com.china.center.annotation.Table;
 /**
  * ProviderBean
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2008-12-19
  * @see ProviderBean
  * @since 1.0

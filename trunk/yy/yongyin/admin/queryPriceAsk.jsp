@@ -211,7 +211,7 @@ function showDiv(id)
 				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="15%"><strong>询价单号</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
-					width="10%"><strong>操作</strong></td>
+					width="5%"><strong>操作</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="15%"><strong>产品</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this, true)"
@@ -220,6 +220,8 @@ function showDiv(id)
 					width="5%"><strong>价格</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="5%"><strong>状态</strong></td>
+				<td align="center" class="td_class" onclick="tableSort(this)"
+                    width="5%"><strong>类型</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="5%"><strong>紧急程度</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
@@ -265,8 +267,8 @@ function showDiv(id)
 					<a href="../admin/product.do?method=findProduct&productId=${item.productId}&detail=1">${item.productName}</a></td>
 					<td align="center" onclick="hrefAndSelect(this, true)">${item.amount}</td>
 					<td align="center" onclick="hrefAndSelect(this, true)">${item.price}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskStatus',
-					item.status)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskStatus', item.status)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskType', item.type)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskInstancy',
 					item.instancy)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.locationName}</td>

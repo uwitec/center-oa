@@ -43,10 +43,12 @@ public abstract class DefinedCommon
 
         definedMap.put("priceStatus", new Object[] {"发布", "驳回"});
 
-        definedMap.put("priceAskStatus", new Object[] {colorationToGold("开始"),
-            colorationToBlue("询价中"), colorationToRed("驳回"), "结束"});
+        definedMap.put("priceAskStatus", new Object[] {"开始", colorationToBlue("询价中"),
+            colorationToRed("驳回"), "结束"});
 
         definedMap.put("priceAskInstancy", new Object[] {"一般", "紧急", "非常紧急"});
+
+        definedMap.put("priceAskType", new Object[] {"内部询价", "外网询价"});
 
         definedMap.put("stockStatus", new Object[] {colorationToGold("保存"), "提交",
             colorationToRed("驳回"), "区域经理通过", "核价员通过", "采购主管通过", "采购经理通过", colorationToBlue("采购中"),

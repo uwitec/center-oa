@@ -41,6 +41,16 @@ public interface PriceConstant
     int PRICE_ASK_STATUS_END = 3;
 
     /**
+     * 询价类型-内网
+     */
+    int PRICE_ASK_TYPE_INNER = 0;
+
+    /**
+     * 询价类型-外网
+     */
+    int PRICE_ASK_TYPE_NET = 1;
+
+    /**
      * 没有逾期
      */
     int OVERTIME_NO = 0;
@@ -74,5 +84,10 @@ public interface PriceConstant
      * 询价紧急程度-非常紧急(30分钟)
      */
     int PRICE_INSTANCY_VERYINSTANCY = 2;
+
+    /**
+     * 询价紧急程度-外网询价(4小时)
+     */
+    int PRICE_INSTANCY_NETWORK = 3;
 
 }

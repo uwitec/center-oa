@@ -53,10 +53,13 @@ public class PriceAskBean implements Serializable
     @Join(tagClass = User.class, type = JoinType.LEFT, alias = "user1")
     private String puserId = "";
 
-    @Html(title = "紧急程度", type = Element.SELECT, must = true, maxLength = 255)
+    @Html(title = "紧急程度", type = Element.SELECT, must = true)
     private int instancy = 0;
 
     private int status = PriceConstant.PRICE_ASK_STATUS_INIT;
+
+    @Html(title = "询价方式", type = Element.SELECT, must = true)
+    private int type = PriceConstant.PRICE_ASK_TYPE_INNER;
 
     private int overTime = PriceConstant.OVERTIME_NO;
 
@@ -347,5 +350,22 @@ public class PriceAskBean implements Serializable
     public void setReason(String reason)
     {
         this.reason = reason;
+    }
+
+    /**
+     * @return the type
+     */
+    public int getType()
+    {
+        return type;
+    }
+
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(int type)
+    {
+        this.type = type;
     }
 }

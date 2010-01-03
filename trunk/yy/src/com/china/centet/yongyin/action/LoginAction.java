@@ -106,7 +106,7 @@ public class LoginAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        boolean real = true;
+        boolean real = false;
 
         if (real && rand == null)
         {
