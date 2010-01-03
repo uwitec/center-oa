@@ -105,6 +105,6 @@
 	<classpathentry kind="lib" path="sky/WEB-INF/lib/center_out.jar"/>
 	<classpathentry kind="lib" path="extlib/jsp-api.jar"/>
 	<classpathentry kind="lib" path="extlib/servlet-api.jar"/>
-	<classpathentry kind="lib" path="sky/WEB-INF/lib/center_all_common_0.9.jar"/>
+	<classpathentry kind="lib" path="sky/WEB-INF/lib/center_all_common_0.9.jar" sourcepath="/common"/>
 	<classpathentry kind="output" path="sky/WEB-INF/classes"/>
 </classpath>
