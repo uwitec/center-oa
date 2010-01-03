@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+          "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<struts-config>
+	<form-beans>
+		<form-bean name="uploadFileForm"
+			type="com.china.centet.yongyin.bean.UploadFileForm" />
+	</form-beans>
+
+	<global-forwards>
+		<forward name="failure" path="/admin/error.jsp"
+			redirect="false" />
+
+		<forward name="error" path="/admin/error.jsp" redirect="false" />
+
+		<forward name="success" path="/admin/success.jsp"
+			redirect="false" />
+
+		<forward name="admin/timeout" path="/admin/timeout.jsp"
+			redirect="true" />
+	</global-forwards>
+
+	<action-mappings>
+		<action path="/admin/checkuser" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="success" path="/admin/main.jsp"
+				redirect="true" />
+			<forward name="modifyPassword"
+				path="/admin/modifyPassword.jsp?firstLoad=1" />
+			<forward name="remindModPwd" path="/admin/remindModPwd.jsp"
+				redirect="false" />
+			<forward name="password" path="/admin/modifyPassword.jsp"
+				redirect="false" />
+			<forward name="addAdmin" path="/admin/addAdmin.jsp"
+				redirect="false" />
+			<forward name="addAdmins" path="/admin/addAdmin.jsp"
+				redirect="false" />
+			<forward name="listCommon" path="/admin/listAdmin.jsp"
+				redirect="false" />
+			<forward name="addFlag" path="/admin/addFlag.jsp"
+				redirect="false" />
+			<forward name="index" path="/admin/index.jsp"
+				redirect="false" />
+			<forward name="error" path="/admin/index.jsp"
+				redirect="true" />
+		</action>
+
+		<action path="/admin/product" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="productList" path="/admin/listProduct.jsp" />
+			<forward name="detailProduct" path="/admin/detailProduct.jsp" />
+			<forward name="addProduct" path="/admin/addProduct.jsp" />
+			<forward name="composeProduct" path="/admin/composeProduct.jsp" />
+			<forward name="decomposeProduct" path="/admin/decomposeProduct.jsp" />
+			<forward name="productListTwo"
+				path="/admin/listProductTwo.jsp" />
+			<forward name="rptProductList" path="/admin/rptProduct.jsp" />
+			<forward name="rptProductList2"
+				path="/admin/rptProduct2.jsp" />
+			<forward name="rptProductList3"
+				path="/admin/rptProduct3.jsp" />
+			<forward name="updateProduct"
+				path="/admin/updateProduct.jsp" />
+			<forward name="queryProductAmount"
+				path="/admin/queryProductAmount.jsp" />
+			<forward name="remindModPwd" path="/admin/remindModPwd.jsp"
+				redirect="false" />
+			<forward name="password" path="/admin/modifyPassword.jsp"
+				redirect="false" />
+			<forward name="addAdmin" path="/admin/addAdmin.jsp"
+				redirect="false" />
+			<forward name="listCommon" path="/admin/listAdmin.jsp"
+				redirect="false" />
+			<forward name="error" path="/admin/error.jsp"
+				redirect="false" />
+			<forward name="productTempList"
+				path="/admin/listTempProduct.jsp" redirect="false" />
+			<forward name="modifyTempProduct"
+				path="/admin/modifyTempProduct.jsp" redirect="false" />
+			<forward name="queryHotProduct"
+				path="/admin/queryHotProduct.jsp" />
+			<forward name="queryStatHotProduct"
+				path="/admin/queryStatHotProduct.jsp" />
+		</action>
+
+		<action path="/admin/logout"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="success" path="/admin/index.jsp"
+				redirect="true" />
+		</action>
+
+		<action path="/admin/proException" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="addProctException"
+				path="/admin/addProductException.jsp" />
+			<forward name="queryProctException"
+				path="/admin/queryProctException.jsp" />
+			<forward name="detailProductException"
+				path="/admin/detailProductException.jsp" />
+			<forward name="updateProductException"
+				path="/admin/updateProductException.jsp" />
+		</action>
+
+		<action path="/admin/out" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="addOut" path="/admin/addOut.jsp" />
+			<forward name="addOut1" path="/admin/addOut1.jsp" />
+			<forward name="listOut" path="/admin/listOut.jsp" />
+			<forward name="listOut1" path="/admin/listOut1.jsp" />
+			<forward name="error" path="/admin/error.jsp" />
+			<forward name="detailOut" path="/admin/detailOut.jsp" />
+			<forward name="print" path="/admin/print.jsp" />
+			<forward name="detailOut2" path="/admin/detailOut2.jsp" />
+			<forward name="detailOut3" path="/admin/detailOut3.jsp" />
+			<forward name="detailOut4" path="/admin/detailOut4.jsp" />
+			<forward name="processOut" path="/admin/processOut.jsp" />
+			<forward name="modifyOut" path="/admin/modifyOut.jsp" />
+			<forward name="modifyOut1" path="/admin/modifyOut1.jsp" />
+			<forward name="listOut2" path="/admin/listOutInAdmin.jsp" />
+			<forward name="listOut3" path="/admin/listOutInSec.jsp" />
+			<forward name="rptProvider" path="/admin/rptProvider.jsp" />
+			<forward name="rptAllCustomer" path="/admin/rptAllCustomer.jsp" />
+			<forward name="rptCustomerList"
+				path="/admin/rptCustomer.jsp" />
+			<forward name="warnOutList"
+				path="/admin/flagOutInCommon.jsp" redirect="false" />
+		</action>
+
+		<action path="/admin/bill" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="billList" path="/admin/listBill.jsp" />
+			<forward name="rptBill" path="/admin/rptBill.jsp" />
+			<forward name="addBill" path="/admin/addBill.jsp" />
+			<forward name="detailBill" path="/admin/detailBill.jsp" />
+			<forward name="addBill" path="/admin/addBill.jsp" />
+			<forward name="error" path="/admin/error.jsp" />
+		</action>
+
+		<action path="/admin/common" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="readd" path="/admin/addCommon.jsp" />
+			<forward name="bingProductType"
+				path="/admin/bingProductType.jsp" />
+			<forward name="recustomer" path="/admin/addCustmer.jsp" />
+			<forward name="tempcustomers"
+				path="/admin/listTempCustmer.jsp" />
+			<forward name="addLocation" path="/admin/addLocation.jsp" />
+			<forward name="listLocation" path="/admin/listLocation.jsp" />
+			<forward name="listBank" path="/admin/queryBank.jsp" />
+			<forward name="addBank" path="/admin/addBank.jsp" />
+			<forward name="rptCustomerInVS"
+				path="/admin/rptCustomerInVS.jsp" />
+			<forward name="queryCustomer"
+				path="/admin/queryCustomer.jsp" />
+			<forward name="updateCustomer"
+				path="/admin/updateCustomer.jsp" />
+			<forward name="modifyMoney" path="/admin/modifyMoney.jsp" />
+			<forward name="rptUser" path="/admin/rptUser.jsp" />
+			<forward name="rptRole" path="/admin/rptRole.jsp" />
+			<forward name="rptStaffer" path="/admin/rptStaffer.jsp" />
+			<forward name="error" path="/admin/error.jsp" />
+		</action>
+
+		<action path="/admin/das" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="addDepotpart" path="/admin/addDepotpart.jsp" />
+			<forward name="listDepotpart"
+				path="/admin/listDepotpart.jsp" />
+			<forward name="addStorage" path="/admin/addStorage.jsp" />
+			<forward name="updateStorage" path="/admin/addStorage.jsp" />
+			<forward name="defaultStorage"
+				path="/admin/defaultStorage.jsp" />
+			<forward name="updateDepotpart"
+				path="/admin/addDepotpart.jsp" />
+			<forward name="listStorage" path="/admin/listStorage.jsp" />
+			<forward name="rptProductList1"
+				path="/admin/rptProduct1.jsp" />
+			<forward name="listProductFour"
+				path="/admin/listProductFour.jsp" />
+			<forward name="moveDepotpart"
+				path="/admin/moveDepotpart.jsp" />
+			<forward name="productList"
+				path="/admin/listProductThr.jsp" />
+		</action>
+
+		<action path="/admin/transport" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="transportList"
+				path="/admin/listTransport.jsp" />
+			<forward name="addTransport" path="/admin/addTransport.jsp" />
+			<forward name="queryConsign" path="/admin/queryConsign.jsp" />
+			<forward name="print1" path="/admin/print1.jsp" />
+			<forward name="detailOut5" path="/admin/detailOut5.jsp" />
+			<forward name="listOut2" path="/admin/listOutInAdmin.jsp" />
+		</action>
+
+
+		<action path="/admin/stat" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="statList" path="/admin/listStat.jsp" />
+			<forward name="statProvider" path="/stat/statProvider.jsp" />
+			<forward name="listStockItemForStat"
+				path="/stat/listStockItemForStat.jsp" />
+			<forward name="statHistoryList"
+				path="/admin/listHistoryStat.jsp" />
+			<forward name="error" path="/admin/error.jsp" />
+		</action>
+
+		<action path="/admin/reports" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="queryReports" path="/admin/queryReports.jsp" />
+			<forward name="listStorageLog"
+				path="/admin/listStorageLog.jsp" />
+		</action>
+
+		<action path="/admin/net" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="updateNetAccess"
+				path="/admin/updateNetAccess.jsp" />
+		</action>
+
+		<action path="/member/member" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="queryMembers" path="/member/queryMember.jsp" />
+			<forward name="rptQueryMember"
+				path="/member/rptQueryMember.jsp" />
+			<forward name="detailConsume"
+				path="/member/detailConsume.jsp" />
+			<forward name="queryExchanges"
+				path="/member/queryExchanges.jsp" />
+			<forward name="addExchange" path="/member/addExchange.jsp" />
+			<forward name="updateMember"
+				path="/member/updateMember.jsp" />
+			<forward name="detailMember"
+				path="/member/detailMember.jsp" />
+			<forward name="queryConsumes"
+				path="/member/queryConsumes.jsp" />
+		</action>
+
+		<action path="/admin/price" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="listPriceWeb" path="/admin/listPriceWeb.jsp" />
+			<forward name="queryPrice" path="/admin/queryPrice.jsp" />
+			<forward name="queryNearlyPrice"
+				path="/admin/queryNearlyPrice.jsp" />
+			<forward name="queryPriceAsk"
+				path="/admin/queryPriceAsk.jsp" />
+			<forward name="addPrice" path="/price/addPrice.jsp" />
+			<forward name="addPriceAsk" path="/admin/addPriceAsk.jsp" />
+			<forward name="detailPriceAsk"
+				path="/admin/detailPriceAsk.jsp" />
+			<forward name="processAskPrice"
+				path="/admin/processAskPrice.jsp" />
+			<forward name="queryPriceTemplate"
+				path="/price/queryPriceTemplate.jsp" />
+			<forward name="addPriceTemplate"
+				path="/price/addPriceTemplate.jsp" />
+		</action>
+
+		<action path="/stock/stock" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="queryStock" path="/stock/queryStock.jsp" />
+			<forward name="addStock" path="/stock/addStock.jsp" />
+			<forward name="updateStock" path="/stock/updateStock.jsp" />
+			<forward name="detailStock" path="/stock/detailStock.jsp" />
+			<forward name="processStock" path="/stock/processStock.jsp" />
+			<forward name="addStock" path="/stock/addStock.jsp" />
+			<forward name="stockAskPrice"
+				path="/stock/stockAskPrice.jsp" />
+			<forward name="stockAskChange"
+				path="/stock/stockAskChange.jsp" />
+		</action>
+
+		<action path="/flow/flow" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="queryFlowDefine" path="/flow/queryFlowDefine.jsp" />
+			<forward name="addFlowDefine" path="/flow/FlowDefine.jsp" />
+			<forward name="updateFlowDefine" path="/flow/updateFlowDefine.jsp" />
+			<forward name="detailFlowDefine" path="/flow/detailFlowDefine.jsp" />
+
+			<forward name="queryFlowInstance" path="/flow/queryFlowInstance.jsp" />
+			<forward name="addFlowInstance" path="/flow/addFlowInstance.jsp" />
+			<forward name="updateFlowInstance" path="/flow/updateFlowInstance.jsp" />
+			<forward name="processFlowInstanceView" path="/flow/processFlowInstanceView.jsp" />
+			<forward name="detailFlowInstance" path="/flow/detailFlowInstance.jsp" />
+		</action>
+	</action-mappings>
+
+
+	<plug-in
+		className="org.springframework.web.struts.ContextLoaderPlugIn">
+		<set-property property="contextConfigLocation"
+			value="classpath:application/actionContext.xml" />
+	</plug-in>
+</struts-config>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+	default-autowire="byName" default-init-method="init">
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:config/config.xml</value>
+				<value>classpath:config/cacheConfig.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource">
+			<ref bean="dataSource_affair" />
+		</property>
+	</bean>
+
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>${jdbc.driverClassName}</value>
+		</property>
+		<property name="url">
+			<value>${jdbc.url}</value>
+		</property>
+		<property name="username">
+			<value>${jdbc.username}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password}</value>
+		</property>
+		<property name="maxActive">
+			<value>150</value>
+		</property>
+		<property name="maxIdle">
+			<value>50</value>
+		</property>
+		<property name="maxWait">
+			<value>18000</value>
+		</property>
+		<property name="defaultAutoCommit">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="dataSource_affair"
+		class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>${jdbc.driverClassName}</value>
+		</property>
+		<property name="url">
+			<value>${jdbc.url}</value>
+		</property>
+		<property name="username">
+			<value>${jdbc.username}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password}</value>
+		</property>
+		<property name="maxActive">
+			<value>150</value>
+		</property>
+		<property name="maxIdle">
+			<value>50</value>
+		</property>
+		<property name="maxWait">
+			<value>18000</value>
+		</property>
+		<property name="defaultAutoCommit">
+			<value>false</value>
+		</property>
+	</bean>
+
+	<bean id="jdbcTemplate_affair"
+		class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="dataSource_affair" />
+		</property>
+	</bean>
+
+	<bean id="jdbcOperation2"
+		class="com.china.center.jdbc.inter.impl.MyJdbcTemplate">
+		<property name="jdbcTemplate">
+			<ref bean="jdbcTemplate_affair" />
+		</property>
+		<property name="show_sql">
+			<value>${show_sql}</value>
+		</property>
+		<property name="cache">
+			<value>${cache}</value>
+		</property>
+	</bean>
+
+	<bean id="jdbcTemplate"
+		class="org.springframework.jdbc.core.JdbcTemplate">
+	</bean>
+
+	<bean id="jdbcOperation"
+		class="com.china.center.jdbc.inter.impl.MyJdbcTemplate">
+		<property name="show_sql">
+			<value>${show_sql}</value>
+		</property>
+		<property name="cache">
+			<value>${cache}</value>
+		</property>
+	</bean>
+
+	<bean id="baseDAO" class="com.china.center.jdbc.inter.impl.BaseDAO"
+		abstract="true">
+	</bean>
+
+	<bean id="convertEncode"
+		class="com.china.center.jdbc.inter.impl.ConvertEncode">
+		<property name="databaseEncoding">
+			<value>${databaseEncoding}</value>
+		</property>
+		<property name="systemEncoding">
+			<value>${systemEncoding}</value>
+		</property>
+	</bean>
+
+	<bean id="cacheBootstrap"
+		class="com.china.center.cache.impl.EhcacheBootstrapImpl" />
+
+	<bean id="cacheManager"
+		class="com.china.center.cache.impl.EhcacheCacheManagerImpl"
+		init-method="init" destroy-method="destory">
+		<property name="cluster">
+			<value>${cluster}</value>
+		</property>
+		<property name="group">
+			<value>${group}</value>
+		</property>
+		<property name="mprot">
+			<value>${mprot}</value>
+		</property>
+		<property name="timeToLive">
+			<value>${timeToLive}</value>
+		</property>
+	</bean>
+
+	<bean id="adapterCache"
+		class="com.china.center.jdbc.inter.adapter.AdapterCacheImpl"
+		init-method="bootstrap">
+		<property name="cacheConfig">
+			<value>${cacheConfig}</value>
+		</property>
+	</bean>
+
+	<bean id="sqlMapClient"
+		class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocation">
+			<value>classpath:${sqlMap}</value>
+		</property>
+		<property name="dataSource" ref="dataSource_affair" />
+	</bean>
+
+	<bean id="ibatisDaoSupport"
+		class="com.china.center.jdbc.inter.impl.IbatisDaoSupportImpl" />
+
+	<bean id="exceptionalManager"
+		class="com.china.center.common.ex.MyExceptionalManager">
+		<property name="unifyException">
+			<value>com.china.center.common.MYException</value>
+		</property>
+	</bean>
+</beans>

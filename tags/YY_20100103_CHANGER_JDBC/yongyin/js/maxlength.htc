@@ -1,0 +1,38 @@
+<PUBLIC:COMPONENT id="bhvMaxlength" urn="maf:Maxlength">
+<PUBLIC:PROPERTY name="maxLength" />
+<PUBLIC:ATTACH event="onkeypress" handler="doKeypress" />
+<PUBLIC:ATTACH event="onbeforepaste" handler="doBeforePaste" />
+<PUBLIC:ATTACH event="onpaste" handler="doPaste" />
+
+<SCRIPT language="JScript">
+// Keep user from entering more than maxLength characters
+function doKeypress(){
+if(!isNaN(maxLength)){
+maxLength = parseInt(maxLength);
+var oTR = element.document.selection.createRange();
+// Allow user to type character if at least one character is selected
+if(oTR.text.length >= 1)
+event.returnValue = true;
+else if(value.length > maxLength-1)
+event.returnValue = false;
+}
+}
+// Cancel default behavior
+function doBeforePaste(){
+if(!isNaN(maxLength))
+event.returnValue = false;
+}
+// Cancel default behavior and create a new paste routine
+function doPaste(){
+if(!isNaN(maxLength)){
+event.returnValue = false;
+maxLength = parseInt(maxLength);
+var oTR = element.document.selection.createRange();
+var iInsertLength = maxLength - value.length + oTR.text.length;
+var sData = window.clipboardData.getData("Text").substr(0,iInsertLength);
+oTR.text = sData;
+}
+}
+</SCRIPT>
+
+</PUBLIC:COMPONENT>
