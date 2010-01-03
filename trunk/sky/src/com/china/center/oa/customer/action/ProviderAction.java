@@ -26,6 +26,7 @@ import com.china.center.common.ConditionParse;
 import com.china.center.common.KeyConstant;
 import com.china.center.common.MYException;
 import com.china.center.common.json.AjaxResult;
+import com.china.center.common.query.HandleResult;
 import com.china.center.common.query.QueryConfig;
 import com.china.center.oa.constant.CustomerConstant;
 import com.china.center.oa.customer.bean.ProviderBean;
@@ -34,6 +35,7 @@ import com.china.center.oa.customer.bean.ProviderUserBean;
 import com.china.center.oa.customer.dao.ProviderDAO;
 import com.china.center.oa.customer.dao.ProviderHisDAO;
 import com.china.center.oa.customer.dao.ProviderUserDAO;
+import com.china.center.oa.customer.vo.ProviderVO;
 import com.china.center.oa.facade.CustomerFacade;
 import com.china.center.oa.helper.Helper;
 import com.china.center.oa.publics.User;
@@ -41,6 +43,7 @@ import com.china.center.tools.ActionTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.JSONTools;
+import com.china.center.tools.RandomTools;
 import com.china.center.tools.StringTools;
 
 
@@ -88,8 +91,21 @@ public class ProviderAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYPROVIDER, request, condtion);
 
-        String jsonstr = ActionTools.queryBeanByJSONAndToString(QUERYPROVIDER, request, condtion,
-            this.providerDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPROVIDER, request, condtion,
+            this.providerDAO, new HandleResult()
+            {
+                public void handle(Object obj)
+                {
+                    ProviderVO vo = (ProviderVO)obj;
+
+                    List<ProviderUserBean> list = providerUserDAO.queryEntityVOsByFK(vo.getId());
+
+                    if (list.size() > 0)
+                    {
+                        vo.setLoginName(list.get(0).getName());
+                    }
+                }
+            });
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -155,9 +171,27 @@ public class ProviderAction extends DispatchAction
 
             User user = Helper.getUser(request);
 
+            bean.setLocationId(user.getLocationId());
+
+            boolean isAdd = StringTools.isNullOrNone(bean.getId());
+
+            String password = RandomTools.getRandomString(10);
+
+            if (isAdd)
+            {
+                bean.setPassword(password);
+            }
+
             customerFacade.addOrUpdateUserBean(user.getId(), bean);
 
-            request.setAttribute(KeyConstant.MESSAGE, "成功处理供应商登录用户:" + bean.getName());
+            if (isAdd)
+            {
+                request.setAttribute(KeyConstant.MESSAGE, "成功增加供应商登录用户,密码:" + password);
+            }
+            else
+            {
+                request.setAttribute(KeyConstant.MESSAGE, "成功修改供应商登录用户");
+            }
         }
         catch (MYException e)
         {
@@ -246,6 +280,52 @@ public class ProviderAction extends DispatchAction
     }
 
     /**
+     * updateUserPassword
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward updateUserPassword(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request,
+                                            HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            List<ProviderUserBean> list = providerUserDAO.queryEntityBeansByFK(id);
+
+            if (list.size() == 0)
+            {
+                throw new MYException("没有供应商用户");
+            }
+
+            String password = RandomTools.getRandomString(10);
+
+            customerFacade.updateUserPassword(user.getId(), list.get(0).getId(), password);
+
+            ajax.setSuccess("重置用户密码成功:" + password);
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("重置用户密码失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
      * 查看供应商详细
      * 
      * @param mapping
@@ -318,9 +398,10 @@ public class ProviderAction extends DispatchAction
         }
 
         request.setAttribute("bean", bean);
+        request.setAttribute("provideId", id);
 
         // detailProvider
-        return mapping.findForward("addOrUpdateUser");
+        return mapping.findForward("addOrUpdateProviderUser");
     }
 
     /**

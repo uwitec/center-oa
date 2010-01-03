@@ -57,7 +57,7 @@ import com.url.ajax.json.JSONObject;
 /**
  * LoginAction
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2009-7-14
  * @see LoginAction
  * @since 1.0
@@ -118,7 +118,7 @@ public class LoginAction extends DispatchAction
         //  «∑Ò∆Ù”√º”√‹À¯
         boolean hasEncLock = parameterDAO.getBoolean(SysConfigConstant.NEED_SUPER_ENC_LOCK);
 
-        boolean real = true;
+        boolean real = false;
 
         ActionForward checkCommonResult = checkCommon(mapping, request, rand, real);
 

@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="供应商管理" link="true" guid="true" cal="false"/>
+<p:link title="供应商管理" link="true" guid="true" cal="true" dialog="true" />
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
@@ -17,6 +17,8 @@ var thisObj;
 var updatFlag = window.top.topFrame.containAuth('0213') ? '1' : '0';
 function load()
 {
+     preload();
+     
 	 guidMap = {
 		 title: '供应商列表',
 		 url: '../customer/provider.do?method=queryProvider',
@@ -24,8 +26,8 @@ function load()
 		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lname={name}>', width : 40, sortable : false, align: 'center'},
 		     {display: '名称', name : 'name', width : '20%', sortable : false, align: 'left'},
 		     {display: '编码', name : 'code', width : '10%', sortable : false, align: 'left'},
-		     {display: '联系人', name : 'connector', width : '20%', sortable : false, align: 'left'},
 		     {display: '类型', name : 'type', width : '10%', sortable : false, align: 'left', cc: 109},
+		     {display: '询价用户', name : 'loginName', width : '10%'},
 		     {display: '时间', name : 'logTime', width : 'auto', sortable : true, align: 'left'}
 		     ],
 		 extAtt: {
@@ -35,6 +37,7 @@ function load()
 		     {id: 'add', bclass: 'add', onpress : addBean, auth: '0213'},
 		     {id: 'update', bclass: 'update', onpress : updateBean, auth: '0213'},
 		     {id: 'update1', bclass: 'update', caption: '更新登录用户', onpress : updateUserBean, auth: '0213'},
+		     {id: 'update2', bclass: 'update', caption: '重置密码', onpress : updateUserPassword, auth: '0213'},
 		     {id: 'del', bclass: 'delete', onpress : delBean, auth: '0213'},
 		     {id: 'search', bclass: 'search', onpress : doSearch}
 		     ],
@@ -54,9 +57,8 @@ function load()
  
 function doSearch()
 {
-    window.common.qmodal('../admin/query.do?method=popCommonQuery&key=queryProvider');
+    $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryProvider');
 }
-
 
 
 function delBean()
@@ -94,17 +96,21 @@ function updateUserBean(opr, grid)
     }
 }
 
+function updateUserPassword()
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {
+        if (window.confirm('确定重置' + getRadio('checkb').lname + '的用户密码?'))
+        {
+            $ajax('../customer/provider.do?method=updateUserPassword&id=' + getRadioValue('checkb'), callBackFun);
+        }
+    }
+}
+
 
 function addBean(opr, grid)
 {
    $l('../customer/addProvider.jsp');
-}
-
-function commonQuery(par)
-{
-    gobal_guid.p.queryCondition = par;
-    
-    gobal_guid.grid.populate(true);
 }
 </script>
 </head>
@@ -114,4 +120,5 @@ function commonQuery(par)
 </form>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
+<p:query/>
 </body>

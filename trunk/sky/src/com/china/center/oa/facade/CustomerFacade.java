@@ -499,6 +499,34 @@ public class CustomerFacade extends AbstarctFacade
     }
 
     /**
+     * updateUserPassword
+     * 
+     * @param userId
+     * @param id
+     * @param newpwd
+     * @return
+     * @throws MYException
+     */
+    public boolean updateUserPassword(String userId, String id, String newpwd)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id, newpwd);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CUSTOMER_OPR_PROVIDER))
+        {
+            return providerManager.updateUserPassword(user, id, newpwd);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
      * addCheckBean
      * 
      * @param userId

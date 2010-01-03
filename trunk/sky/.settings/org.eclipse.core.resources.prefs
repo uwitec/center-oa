@@ -1,4 +1,4 @@
-#Sun Nov 01 10:01:27 CST 2009
+#Sun Jan 03 14:38:43 CST 2010
 eclipse.preferences.version=1
 encoding//sky/admin/image.jsp=GBK
 encoding//sky/admin/index.jsp=GBK
@@ -48,9 +48,4 @@ encoding//sky/js/title_div.js=GBK
 encoding//sky/js/title_div_debug.js=GBK
 encoding//sky/js/tree.js=GBK
 encoding//sky/make/querySelfMake.jsp=GBK
-encoding//src/com/china/center/common/taglib/center_cal/calendar.js=GBK
-encoding//src/com/china/center/common/taglib/center_cal/calendar_debug.js=GBK
-encoding//src/com/china/center/common/taglib/lang/eng/public_resources.js=GBK
-encoding//src/com/china/center/common/taglib/lang/utf8/public_resources.js=GBK
-encoding//src/com/china/center/common/taglib/lang/zh/public_resources.js=GBK
 encoding//src/com/url/ajax/json/JSONArray.java=GBK

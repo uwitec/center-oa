@@ -112,8 +112,40 @@ public class ProviderManager
     }
 
     /**
+     * updateUserPassword
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean updateUserPassword(User user, String id, String newpwd)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id, newpwd);
+
+        String md5 = Security.getSecurity(newpwd);
+
+        providerUserDAO.updatePassword(id, md5);
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean updateUserPwkey(User user, String id, String newpwkey)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id, newpwkey);
+
+        providerUserDAO.updatePwkey(id, newpwkey);
+
+        return true;
+    }
+
+    /**
      * checkUser
-     *
+     * 
      * @param bean
      * @param isAdd
      * @throws MYException

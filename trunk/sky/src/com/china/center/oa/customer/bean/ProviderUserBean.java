@@ -44,6 +44,9 @@ public class ProviderUserBean implements Serializable
     @Html(title = "√‹¬Î", must = true, maxLength = 16, type = Element.PASSWORD)
     private String password = "";
 
+    @Html(title = "º”√‹¬Î", maxLength = 40)
+    private String pwkey = "";
+
     @FK
     @Join(tagClass = ProviderBean.class)
     private String provideId = "";
@@ -221,5 +224,22 @@ public class ProviderUserBean implements Serializable
     public void setLoginTime(String loginTime)
     {
         this.loginTime = loginTime;
+    }
+
+    /**
+     * @return the pwkey
+     */
+    public String getPwkey()
+    {
+        return pwkey;
+    }
+
+    /**
+     * @param pwkey
+     *            the pwkey to set
+     */
+    public void setPwkey(String pwkey)
+    {
+        this.pwkey = pwkey;
     }
 }

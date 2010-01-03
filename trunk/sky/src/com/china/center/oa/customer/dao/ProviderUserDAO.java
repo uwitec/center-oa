@@ -26,5 +26,31 @@ import com.china.center.oa.customer.bean.ProviderUserBean;
 @Bean(name = "providerUserDAO")
 public class ProviderUserDAO extends BaseDAO2<ProviderUserBean, ProviderUserBean>
 {
+    /**
+     * updatePassword
+     * 
+     * @param id
+     * @param newPassword
+     * @return
+     */
+    public boolean updatePassword(String id, String newPassword)
+    {
+        this.jdbcOperation.updateField("password", newPassword, id, claz);
 
+        return true;
+    }
+
+    /**
+     * updatePwkey
+     * 
+     * @param id
+     * @param newPwkey
+     * @return
+     */
+    public boolean updatePwkey(String id, String newPwkey)
+    {
+        this.jdbcOperation.updateField("pwkey", newPwkey, id, claz);
+
+        return true;
+    }
 }

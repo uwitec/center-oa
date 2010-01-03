@@ -170,8 +170,8 @@
 		<action path="/customer/provider" parameter="method"
 			type="org.springframework.web.struts.DelegatingActionProxy"
 			validate="false">
-			<forward name="queryProvider"
-				path="/customer/queryProvider.jsp" />
+			<forward name="queryProvider" path="/customer/queryProvider.jsp" />
+			<forward name="addOrUpdateProviderUser" path="/customer/addOrUpdateProviderUser.jsp" />
 			<forward name="updateProvider"
 				path="/customer/updateProvider.jsp" />
 			<forward name="detailProvider"

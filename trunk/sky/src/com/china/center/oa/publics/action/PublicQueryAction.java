@@ -271,9 +271,9 @@ public class PublicQueryAction extends DispatchAction
 
             sb.append("<tr class='content1'>");
 
-            sb.append(StringTools.format("<td width='15%%' align='left'>%s£º</td>",
+            sb.append(StringTools.format("<td width='20%%' align='left'>%s£º</td>",
                 eachItem.getCaption()));
-            sb.append("<td width=85% >");
+            sb.append("<td width=80% >");
 
             if ("text".equals(eachItem.getType()))
             {
