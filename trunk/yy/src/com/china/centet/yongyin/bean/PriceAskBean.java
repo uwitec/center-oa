@@ -76,6 +76,18 @@ public class PriceAskBean implements Serializable
 
     private String reason = "";
 
+    /**
+     * 询价日期yyyyHHmmdd
+     */
+    private String askDate = "";
+
+    private String parentAsk = "";
+
+    /**
+     * 保存类型
+     */
+    private int saveType = PriceConstant.PRICE_ASK_SAVE_TYPE_COMMON;
+
     @Ignore
     private List<PriceAskProviderBean> item = null;
 
@@ -389,5 +401,56 @@ public class PriceAskBean implements Serializable
     public void setProductType(int productType)
     {
         this.productType = productType;
+    }
+
+    /**
+     * @return the askDate
+     */
+    public String getAskDate()
+    {
+        return askDate;
+    }
+
+    /**
+     * @param askDate
+     *            the askDate to set
+     */
+    public void setAskDate(String askDate)
+    {
+        this.askDate = askDate;
+    }
+
+    /**
+     * @return the parentAsk
+     */
+    public String getParentAsk()
+    {
+        return parentAsk;
+    }
+
+    /**
+     * @param parentAsk
+     *            the parentAsk to set
+     */
+    public void setParentAsk(String parentAsk)
+    {
+        this.parentAsk = parentAsk;
+    }
+
+    /**
+     * @return the saveType
+     */
+    public int getSaveType()
+    {
+        return saveType;
+    }
+
+    /**
+     * @param saveType
+     *            the saveType to set
+     */
+    public void setSaveType(int saveType)
+    {
+        this.saveType = saveType;
     }
 }

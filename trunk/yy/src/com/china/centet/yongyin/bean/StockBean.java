@@ -15,6 +15,7 @@ import com.china.center.annotation.Join;
 import com.china.center.annotation.Table;
 import com.china.center.annotation.enums.Element;
 import com.china.center.annotation.enums.JoinType;
+import com.china.centet.yongyin.constant.PriceConstant;
 import com.china.centet.yongyin.constant.StockConstant;
 
 
@@ -40,6 +41,9 @@ public class StockBean implements Serializable
 
     @Html(title = "到货时间", type = Element.DATE, must = true, maxLength = 100)
     private String needTime = "";
+
+    @Html(title = "询价方式", type = Element.SELECT, must = true)
+    private int type = PriceConstant.PRICE_ASK_TYPE_INNER;
 
     private String logTime = "";
 
@@ -267,6 +271,23 @@ public class StockBean implements Serializable
     public void setPay(int pay)
     {
         this.pay = pay;
+    }
+
+    /**
+     * @return the type
+     */
+    public int getType()
+    {
+        return type;
+    }
+
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(int type)
+    {
+        this.type = type;
     }
 
 }

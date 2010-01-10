@@ -16,6 +16,7 @@ function addBean()
 function load()
 {
 	//alert('load');
+	init();
 }
 
 function selectProduct()
@@ -32,6 +33,25 @@ function getProduct(oo)
 	$('productName').value = obj.productname;
 }
 
+function init()
+{
+    var ss = $O('instancy');
+    removeAllItem(ss);
+    if ($$('type') == '0')
+    {
+        setOption(ss, '0', '一般(2小时)');
+        setOption(ss, '1', '紧急(1小时)');
+        setOption(ss, '2', '非常紧急(30分钟)');
+    }
+    
+    if ($$('type') == '1')
+    {
+        setOption(ss, '3', '外网询价(中午11点结束)');
+        setOption(ss, '4', '外网询价(下午2点结束)');
+        setOption(ss, '5', '外网询价(下午6点结束)');
+        setOption(ss, '6', '外网询价(晚间23点结束)');
+    }
+}
 </script>
 
 </head>
@@ -53,7 +73,7 @@ function getProduct(oo)
 
 	<p:line flag="0" />
 
-	<p:subBody width="100%">
+	<p:subBody width="98%">
 		<p:class value="com.china.centet.yongyin.bean.PriceAskBean" />
 
 		<p:table cells="1">
@@ -64,17 +84,21 @@ function getProduct(oo)
 
 			<p:pro field="amount" />
 			
-			<p:pro field="type">
+			<p:pro field="type" innerString="onchange=init()">
                 <option value="0">内部询价</option>
                 <option value="1">外网询价</option>
             </p:pro>
 
-			<p:pro field="instancy">
+			<p:pro field="instancy" innerString="style='width: 240px'">
 				<option value="0">一般(2小时)</option>
 				<option value="1">紧急(1小时)</option>
 				<option value="2">非常紧急(30分钟)</option>
-				<option value="3">外网询价(4小时)</option>
+				<option value="3">外网询价(中午11点结束)</option>
+				<option value="4">外网询价(下午2点结束)</option>
+				<option value="5">外网询价(下午6点结束)</option>
+				<option value="6">外网询价(晚间23点结束)</option>
 			</p:pro>
+			
 		</p:table>
 	</p:subBody>
 
@@ -89,10 +113,7 @@ function getProduct(oo)
 			value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>
 	</p:button>
 
-	<tr>
-		<td colspan='2' align="center"><FONT color="blue">${MESSAGE_INFO}</FONT><FONT
-			color="red">${errorInfo}</FONT></td>
-	</tr>
+	<p:message/>
 </p:body></form>
 </body>
 </html>

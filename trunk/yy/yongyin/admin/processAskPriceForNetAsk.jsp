@@ -139,7 +139,7 @@ function rejectBean()
 	<td width="85"></td>
 </p:navigation> <br>
 
-<p:body width="100%">
+<p:body width="98%">
 
 	<p:title>
 		<td class="caption"><strong>询价信息：</strong></td>
@@ -192,6 +192,8 @@ function rejectBean()
 							type="text" name="customerName_0" value="${GProvider.name}" size="20" readonly="readonly">&nbsp;
 							单价:<input
 							type="text" name="price_0" value="${my:formatNum(paskBean.price)}" size="6" oncheck="isFloat;">&nbsp;
+							具体数量<input
+                            type="text" name="supportAmount_0" value="${paskBean.supportAmount}" size="6" oncheck="isFloat;notNone">&nbsp;
 							数量是否满足:<input type="radio" name="hasAmount_0" value="0" ${paskBean.hasAmount == 0 ? 'checked=checked' : ''}>满足
 							&nbsp;&nbsp;<input type="radio" name="hasAmount_0" value="1" ${paskBean.hasAmount == 1 ? 'checked=checked' : ''}>不满足
 							<br>

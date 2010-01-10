@@ -44,6 +44,7 @@ public abstract class PriceAskHelper
         buffer.append("<tr align='center' class='content0'>");
         buffer.append("<td width='30%' align='center'>" + display + "</td>");
         buffer.append("<td width='15%' align='center'>价格</td>");
+        buffer.append("<td width='5%' align='center'>数量</td>");
         buffer.append("<td width='15%' align='center'>数量满足</td>");
         buffer.append("<td width='20%' align='center'>备注</td>");
         buffer.append("<td width='30%' align='center'>时间</td>");
@@ -79,6 +80,7 @@ public abstract class PriceAskHelper
 
             buffer.append("<td  align='center'>" + displayName + "</td>");
             buffer.append("<td  align='center'>" + bean.getPrice() + "</td>");
+            buffer.append("<td  align='center'>" + bean.getSupportAmount() + "</td>");
             buffer.append("<td  align='center'>" + str + "</td>");
 
             buffer.append("<td  align='center'>" + bean.getDescription() + "</td>");

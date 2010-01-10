@@ -574,8 +574,16 @@ public class PriceAction extends DispatchAction
                 bean.setHasAmount(CommonTools.parseInt(request.getParameter("hasAmount_"
                                                                             + providers[i])));
 
+                bean.setSupportAmount(CommonTools.parseInt(request.getParameter("supportAmount_"
+                                                                                + providers[i])));
+
                 bean.setDescription(request.getParameter("description_" + providers[i]));
 
+                // 内网询价而且是满足，自动补足数量
+                if (bean.getHasAmount() == PriceConstant.HASAMOUNT_OK)
+                {
+                    bean.setSupportAmount(pbean.getAmount());
+                }
                 item.add(bean);
             }
         }
@@ -691,6 +699,8 @@ public class PriceAction extends DispatchAction
 
             bean.setLogTime(TimeTools.now());
 
+            bean.setAskDate(TimeTools.now("yyyyMMdd"));
+
             bean.setStatus(PriceConstant.PRICE_COMMON);
 
             bean.setLocationId(user.getLocationID());
@@ -745,9 +755,25 @@ public class PriceAction extends DispatchAction
             bean.setProcessTime(TimeTools.getDateTimeString(1800 * 1000));
         }
 
-        if (bean.getInstancy() == PriceConstant.PRICE_INSTANCY_NETWORK)
+        if (bean.getInstancy() == PriceConstant.PRICE_INSTANCY_NETWORK_11)
         {
-            bean.setProcessTime(TimeTools.getDateTimeString(4 * 3600 * 1000));
+            bean.setProcessTime(TimeTools.now_short() + " 11:00:00");
+        }
+
+        if (bean.getInstancy() == PriceConstant.PRICE_INSTANCY_NETWORK_14)
+        {
+            bean.setProcessTime(TimeTools.now_short() + " 14:00:00");
+        }
+
+        if (bean.getInstancy() == PriceConstant.PRICE_INSTANCY_NETWORK_16)
+        {
+            bean.setProcessTime(TimeTools.now_short() + " 16:00:00");
+        }
+
+        // 测试使用的
+        if (bean.getInstancy() == 6)
+        {
+            bean.setProcessTime(TimeTools.now_short() + " 23:00:00");
         }
     }
 
@@ -1169,7 +1195,12 @@ public class PriceAction extends DispatchAction
 
             condtion.addIntCondition("PriceAskBean.type", "=", PriceConstant.PRICE_ASK_TYPE_NET);
 
+            // 只能看到虚拟存储的
+            condtion.addIntCondition("PriceAskBean.saveType", "=",
+                PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
+
             condtion.addCondition("AND PriceAskBean.status in (0, 1)");
+
             condtion.addCondition("AND PriceAskBean.productType in " + sb.toString());
         }
         else

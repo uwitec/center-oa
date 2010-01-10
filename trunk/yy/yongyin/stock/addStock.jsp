@@ -147,6 +147,11 @@ function getProduct(oo)
 
 		<p:table cells="1">
 			<p:pro field="needTime"/>
+			
+			<p:pro field="type">
+                <option value="0">内部询价</option>
+                <option value="1">外网询价</option>
+            </p:pro>
 
 			<p:pro field="flow" innerString="quick='true'" outString="支持简拼选择">
 			<option value="">--</option>

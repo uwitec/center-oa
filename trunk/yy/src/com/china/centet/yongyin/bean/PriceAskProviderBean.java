@@ -44,6 +44,11 @@ public class PriceAskProviderBean implements Serializable
      */
     private int hasAmount = PriceConstant.HASAMOUNT_NO;
 
+    /**
+     * 可以提供的数量
+     */
+    private int supportAmount = 0;
+
     private double price = 0.0d;
 
     private String logTime = "";
@@ -210,6 +215,23 @@ public class PriceAskProviderBean implements Serializable
     public void setUserId(String userId)
     {
         this.userId = userId;
+    }
+
+    /**
+     * @return the supportAmount
+     */
+    public int getSupportAmount()
+    {
+        return supportAmount;
+    }
+
+    /**
+     * @param supportAmount
+     *            the supportAmount to set
+     */
+    public void setSupportAmount(int supportAmount)
+    {
+        this.supportAmount = supportAmount;
     }
 
 }

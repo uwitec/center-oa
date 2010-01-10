@@ -51,6 +51,16 @@ public interface PriceConstant
     int PRICE_ASK_TYPE_NET = 1;
 
     /**
+     * 普通存储
+     */
+    int PRICE_ASK_SAVE_TYPE_COMMON = 0;
+
+    /**
+     * 虚拟存储
+     */
+    int PRICE_ASK_SAVE_TYPE_ABS = 1;
+
+    /**
      * 没有逾期
      */
     int OVERTIME_NO = 0;
@@ -86,8 +96,18 @@ public interface PriceConstant
     int PRICE_INSTANCY_VERYINSTANCY = 2;
 
     /**
-     * 询价紧急程度-外网询价(4小时)
+     * 询价紧急程度-定点11点
      */
-    int PRICE_INSTANCY_NETWORK = 3;
+    int PRICE_INSTANCY_NETWORK_11 = 3;
+
+    /**
+     * 询价紧急程度-定点14点
+     */
+    int PRICE_INSTANCY_NETWORK_14 = 4;
+
+    /**
+     * 询价紧急程度-定点16点
+     */
+    int PRICE_INSTANCY_NETWORK_16 = 5;
 
 }

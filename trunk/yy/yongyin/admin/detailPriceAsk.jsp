@@ -88,6 +88,7 @@
 				<td width="10%" align="center">报价员</td>
 				</c:if>
 				<td width="10%" align="center" onclick="tableSort(this, true)" class="td_class">价格</td>
+				<td width="10%" align="center">数量</td>
 				<td width="10%" align="center">数量满足</td>
 				<td width="30%" align="center">备注</td>
 				<td width="10%" align="center" onclick="tableSort(this)" class="td_class">时间</td>
@@ -103,6 +104,7 @@
 					</c:if>
 
 					<td  align="center">${item.price}</td>
+					<td  align="center">${item.supportAmount}</td>
 
 					<td  align="center">${item.hasAmount == 0 ? "满足" : "<font color=red>不满足</font>"}</td>
 					

@@ -252,7 +252,7 @@ function showDiv(id)
 							src="../images/change.gif" border="0" height="15" width="15"></a>
 					</c:if>
 
-					<c:if test="${user.role == 'COMMON' && item.status != 1}">
+					<c:if test="${user.role == 'COMMON' && (item.status == 0 || item.status == 2)}">
 						<a title="É¾³ýÑ¯¼Û" href="javascript:del('${item.id}')"> <img
 							src="../images/del.gif" border="0" height="15" width="15"></a>
 					</c:if>

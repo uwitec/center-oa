@@ -6,9 +6,9 @@
 package com.china.centet.yongyin.constant;
 
 /**
- * <ÃèÊö>
+ * Constant
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2007-8-16
  * @see
  * @since
@@ -360,4 +360,6 @@ public interface Constant
     int OPRMODE_REJECT = 1;
 
     int ROLE_TOP = 3;
+
+    String SYSTEM_USER = "999999";
 }

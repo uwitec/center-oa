@@ -328,7 +328,7 @@
 	<tag>
 		<name>message</name>
 		<tagclass>
-			com.china.center.common.taglib.PageMessage
+			com.china.center.common.taglib.PageMessage2
 		</tagclass>
 		<bodycontent>JSP</bodycontent>
 		<attribute>

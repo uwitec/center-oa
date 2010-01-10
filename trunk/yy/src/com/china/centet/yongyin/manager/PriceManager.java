@@ -21,8 +21,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.china.center.common.MYException;
+import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.SequenceTools;
+import com.china.center.tools.StringTools;
 import com.china.centet.yongyin.bean.PriceAskBean;
 import com.china.centet.yongyin.bean.PriceAskProviderBean;
 import com.china.centet.yongyin.bean.PriceBean;
@@ -30,6 +33,7 @@ import com.china.centet.yongyin.bean.PriceTemplateBean;
 import com.china.centet.yongyin.bean.PriceWebBean;
 import com.china.centet.yongyin.bean.Role;
 import com.china.centet.yongyin.bean.User;
+import com.china.centet.yongyin.constant.Constant;
 import com.china.centet.yongyin.constant.PriceConstant;
 import com.china.centet.yongyin.dao.CommonDAO;
 import com.china.centet.yongyin.dao.PriceAskDAO;
@@ -110,9 +114,52 @@ public class PriceManager
     {
         JudgeTools.judgeParameterIsNull(bean);
 
+        // 如果是外网询价这里需要归并在一起
+        handleNetAsk(bean);
+
         priceAskDAO.saveEntityBean(bean);
 
         return true;
+    }
+
+    /**
+     * handleNetAsk
+     * 
+     * @param bean
+     */
+    private void handleNetAsk(final PriceAskBean bean)
+    {
+        if (bean.getType() == PriceConstant.PRICE_ASK_TYPE_NET)
+        {
+            // 查看当天的产品外网询价是否存在
+            PriceAskBean absAsk = priceAskDAO.findAbsByProductIdAndProcessTime(
+                bean.getProductId(), bean.getProcessTime());
+
+            if (absAsk == null)
+            {
+                // create a new ABS ask
+                absAsk = new PriceAskBean();
+
+                BeanUtil.copyProperties(absAsk, bean);
+
+                absAsk.setId(SequenceTools.getSequence("ASK", 5));
+
+                absAsk.setSaveType(PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
+
+                absAsk.setUserId(Constant.SYSTEM_USER);
+
+                priceAskDAO.saveEntityBean(absAsk);
+            }
+            else
+            {
+                // 补充数量
+                absAsk.setAmount(bean.getAmount() + absAsk.getAmount());
+
+                priceAskDAO.updateEntityBean(absAsk);
+            }
+
+            bean.setParentAsk(absAsk.getId());
+        }
     }
 
     /**
@@ -232,7 +279,10 @@ public class PriceManager
         {
             bean.setStatus(PriceConstant.PRICE_ASK_STATUS_PROCESSING);
 
-            item.addAll(priceAskProviderDAO.queryEntityBeansByFK(bean.getId()));
+            if ( !StringTools.isNullOrNone(bean.getParentAsk()))
+            {
+                item.addAll(priceAskProviderDAO.queryEntityBeansByFK(bean.getId()));
+            }
         }
 
         double min = (double)Integer.MAX_VALUE;
@@ -253,10 +303,25 @@ public class PriceManager
 
         for (PriceAskProviderBean priceAskProviderBean : items)
         {
-            priceAskProviderDAO.deleteByProviderId(priceAskProviderBean.getAskId(),
+            priceAskProviderBean.setAskId(bean.getId());
+
+            priceAskProviderDAO.deleteByProviderId(bean.getId(),
                 priceAskProviderBean.getProviderId());
 
             priceAskProviderDAO.saveEntityBean(priceAskProviderBean);
+        }
+
+        // 如果是ABS的询价就反映到各个子询价单据上
+        if (bean.getSaveType() == PriceConstant.PRICE_ASK_SAVE_TYPE_ABS)
+        {
+            List<PriceAskBean> subList = priceAskDAO.queryByParentId(bean.getId());
+
+            for (PriceAskBean subAskBean : subList)
+            {
+                subAskBean.setItem(item);
+
+                processPriceAskBean(user, subAskBean);
+            }
         }
 
         return true;
@@ -454,12 +519,12 @@ public class PriceManager
 
         if (bean == null)
         {
-            throw new MYException("不存在");
+            throw new MYException("数据错误,请重新操作");
         }
 
         if ( ! (bean.getStatus() == PriceConstant.PRICE_ASK_STATUS_INIT || bean.getStatus() == PriceConstant.PRICE_ASK_STATUS_EXCEPTION))
         {
-            throw new MYException("不能删除");
+            throw new MYException("已经询价,不能删除");
         }
 
         priceAskDAO.deleteEntityBean(id);
