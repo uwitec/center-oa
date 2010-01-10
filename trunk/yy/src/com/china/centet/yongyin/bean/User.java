@@ -21,13 +21,13 @@ import com.china.center.annotation.Table;
 /**
  * »À‘±¿‡
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2007-3-25
  * @see
  * @since
  */
-@Entity(cache = true)
-@Table(name = "t_center_user")
+@Entity
+@Table(name = "T_CENTER_USER")
 public class User implements Serializable
 {
     @Id
@@ -253,5 +253,4 @@ public class User implements Serializable
     {
         this.stafferId = stafferId;
     }
-
 }

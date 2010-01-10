@@ -33,4 +33,18 @@ public class PriceAskProviderDAO extends BaseDAO2<PriceAskProviderBean, PriceAsk
         return this.jdbcOperation.queryObjects("where askId = ? and providerId = ?", this.claz,
             askId, providerId).uniqueResult(this.claz);
     }
+
+    /**
+     * deleteByProviderId
+     * 
+     * @param askId
+     * @param providerId
+     * @return
+     */
+    public boolean deleteByProviderId(String askId, String providerId)
+    {
+        this.jdbcOperation.delete("where askId = ? and providerId = ?", claz, askId, providerId);
+
+        return true;
+    }
 }

@@ -53,6 +53,7 @@ import com.china.centet.yongyin.dao.PriceDAO;
 import com.china.centet.yongyin.dao.PriceTemplateDAO;
 import com.china.centet.yongyin.dao.PriceWebDAO;
 import com.china.centet.yongyin.dao.ProductDAO;
+import com.china.centet.yongyin.dao.ProductTypeVSCustomerDAO;
 import com.china.centet.yongyin.dao.StockItemDAO;
 import com.china.centet.yongyin.dao.UserDAO;
 import com.china.centet.yongyin.manager.PriceManager;
@@ -61,6 +62,7 @@ import com.china.centet.yongyin.vo.PriceAskProviderBeanVO;
 import com.china.centet.yongyin.vo.PriceBeanVO;
 import com.china.centet.yongyin.vo.PriceTemplateBeanVO;
 import com.china.centet.yongyin.vo.StockItemBeanVO;
+import com.china.centet.yongyin.vs.ProductTypeVSCustomer;
 import com.china.centet.yongyin.wrap.PriceTemplateWrap;
 
 
@@ -93,6 +95,8 @@ public class PriceAction extends DispatchAction
     private ParameterDAO parameterDAO = null;
 
     private PriceAskProviderDAO priceAskProviderDAO = null;
+
+    private ProductTypeVSCustomerDAO productTypeVSCustomerDAO = null;
 
     private PriceTemplateDAO priceTemplateDAO = null;
 
@@ -322,6 +326,8 @@ public class PriceAction extends DispatchAction
 
         PriceAskBeanVO bean = priceAskDAO.findVO(id);
 
+        User user = Helper.getUser(request);
+
         request.setAttribute("bean", bean);
 
         if (bean == null)
@@ -345,6 +351,16 @@ public class PriceAction extends DispatchAction
         }
 
         request.setAttribute("product", product);
+
+        if (user.getRole() == Role.NETASK)
+        {
+            PriceAskProviderBean paskBean = priceAskProviderDAO.findBeanByAskIdAndProviderId(id,
+                user.getId());
+
+            request.setAttribute("paskBean", paskBean);
+
+            return mapping.findForward("processAskPriceForNetAsk");
+        }
 
         return mapping.findForward("processAskPrice");
     }
@@ -496,6 +512,17 @@ public class PriceAction extends DispatchAction
                 }
             }
 
+            if (user.getRole() == Role.NETASK)
+            {
+                for (int i = items.size() - 1; i >= 0; i-- )
+                {
+                    if ( !items.get(i).getProviderId().equals(user.getId()))
+                    {
+                        items.remove(i);
+                    }
+                }
+            }
+
             request.setAttribute("bean", bean);
         }
         catch (MYException e)
@@ -546,6 +573,8 @@ public class PriceAction extends DispatchAction
 
                 bean.setHasAmount(CommonTools.parseInt(request.getParameter("hasAmount_"
                                                                             + providers[i])));
+
+                bean.setDescription(request.getParameter("description_" + providers[i]));
 
                 item.add(bean);
             }
@@ -665,6 +694,15 @@ public class PriceAction extends DispatchAction
             bean.setStatus(PriceConstant.PRICE_COMMON);
 
             bean.setLocationId(user.getLocationID());
+
+            Product product = productDAO.findProductById(bean.getProductId());
+
+            if (product == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            bean.setProductType(product.getGenre());
 
             setPriceAskProcessTime(bean);
 
@@ -797,8 +835,9 @@ public class PriceAction extends DispatchAction
             {
                 OldPageSeparateTools.processSeparate(request, "queryPrice");
 
-                list = priceDAO.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(request,
-                    "queryPrice"), OldPageSeparateTools.getPageSeparate(request, "queryPrice"));
+                list = priceDAO.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(
+                    request, "queryPrice"), OldPageSeparateTools.getPageSeparate(request,
+                    "queryPrice"));
             }
 
             request.setAttribute("list", list);
@@ -961,7 +1000,21 @@ public class PriceAction extends DispatchAction
                         }
                     }
 
-                    map.put(priceAskBeanVO.getId(), PriceAskHelper.createTable(items, user));
+                    if (user.getRole() == Role.NETASK)
+                    {
+                        for (int i = items.size() - 1; i >= 0; i-- )
+                        {
+                            if ( !items.get(i).getProviderId().equals(user.getId()))
+                            {
+                                items.remove(i);
+                            }
+                        }
+                    }
+
+                    if (items.size() > 0)
+                    {
+                        map.put(priceAskBeanVO.getId(), PriceAskHelper.createTable(items, user));
+                    }
                 }
             }
 
@@ -981,6 +1034,12 @@ public class PriceAction extends DispatchAction
         return mapping.findForward("queryPriceAsk");
     }
 
+    /**
+     * setCondition
+     * 
+     * @param request
+     * @param condtion
+     */
     private void setCondition(HttpServletRequest request, ConditionParse condtion)
     {
         condtion.addWhereStr();
@@ -1068,6 +1127,12 @@ public class PriceAction extends DispatchAction
         condtion.addCondition("group by PriceTemplateBean.productId order by PriceTemplateBean.id desc");
     }
 
+    /**
+     * setConditionForAsk
+     * 
+     * @param request
+     * @param condtion
+     */
     private void setConditionForAsk(HttpServletRequest request, ConditionParse condtion)
     {
         condtion.addWhereStr();
@@ -1077,8 +1142,35 @@ public class PriceAction extends DispatchAction
         // 只能看到通过的
         if (user.getRole() == Role.COMMON)
         {
-            // request.setAttribute("readonly", "true");
             condtion.addCondition("PriceAskBean.userId", "=", user.getId());
+        }
+        else if (user.getRole() == Role.NETASK)
+        {
+            List<ProductTypeVSCustomer> typeList = (List<ProductTypeVSCustomer>)request.getSession().getAttribute(
+                "typeList");
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.append("(");
+
+            for (int i = 0; i < typeList.size(); i++ )
+            {
+                if (i != typeList.size() - 1)
+                {
+                    sb.append(typeList.get(i).getProductTypeId()).append(",");
+                }
+                else
+                {
+                    sb.append(typeList.get(i).getProductTypeId());
+                }
+            }
+
+            sb.append(")");
+
+            condtion.addIntCondition("PriceAskBean.type", "=", PriceConstant.PRICE_ASK_TYPE_NET);
+
+            condtion.addCondition("AND PriceAskBean.status in (0, 1)");
+            condtion.addCondition("AND PriceAskBean.productType in " + sb.toString());
         }
         else
         {
@@ -1181,7 +1273,8 @@ public class PriceAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_COMMON_SIZE);
 
-                OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryPriceTemplate");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request,
+                    "queryPriceTemplate");
 
                 list = priceTemplateDAO.queryEntityVOsBycondition(condtion, page);
             }
@@ -1189,9 +1282,9 @@ public class PriceAction extends DispatchAction
             {
                 OldPageSeparateTools.processSeparate(request, "queryPriceTemplate");
 
-                list = priceTemplateDAO.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(
-                    request, "queryPriceTemplate"), OldPageSeparateTools.getPageSeparate(request,
-                    "queryPriceTemplate"));
+                list = priceTemplateDAO.queryEntityVOsBycondition(
+                    OldPageSeparateTools.getCondition(request, "queryPriceTemplate"),
+                    OldPageSeparateTools.getPageSeparate(request, "queryPriceTemplate"));
             }
 
             // 处理list
@@ -1541,5 +1634,22 @@ public class PriceAction extends DispatchAction
     public void setPriceTemplateDAO(PriceTemplateDAO priceTemplateDAO)
     {
         this.priceTemplateDAO = priceTemplateDAO;
+    }
+
+    /**
+     * @return the productTypeVSCustomerDAO
+     */
+    public ProductTypeVSCustomerDAO getProductTypeVSCustomerDAO()
+    {
+        return productTypeVSCustomerDAO;
+    }
+
+    /**
+     * @param productTypeVSCustomerDAO
+     *            the productTypeVSCustomerDAO to set
+     */
+    public void setProductTypeVSCustomerDAO(ProductTypeVSCustomerDAO productTypeVSCustomerDAO)
+    {
+        this.productTypeVSCustomerDAO = productTypeVSCustomerDAO;
     }
 }

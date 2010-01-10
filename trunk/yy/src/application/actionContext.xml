@@ -17,6 +17,9 @@
 
 	<bean name="/admin/logout"
 		class="com.china.centet.yongyin.action.LogoutAction" scope="request" />
+		
+	<bean name="/admin/logoutAsk"
+        class="com.china.centet.yongyin.action.LogoutAskAction" scope="request" />
 
 	<bean name="/admin/common"
 		class="com.china.centet.yongyin.action.CommonAction" scope="request" />

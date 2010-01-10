@@ -214,8 +214,8 @@ public class PriceManager
      * @return
      * @throws MYException
      */
-    @Transactional(rollbackFor = {MYException.class})
     @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
     public boolean processPriceAskBean(final User user, final PriceAskBean bean)
         throws MYException
     {
@@ -253,6 +253,9 @@ public class PriceManager
 
         for (PriceAskProviderBean priceAskProviderBean : items)
         {
+            priceAskProviderDAO.deleteByProviderId(priceAskProviderBean.getAskId(),
+                priceAskProviderBean.getProviderId());
+
             priceAskProviderDAO.saveEntityBean(priceAskProviderBean);
         }
 

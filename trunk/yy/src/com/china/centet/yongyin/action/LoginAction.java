@@ -23,6 +23,7 @@ import org.apache.struts.actions.DispatchAction;
 
 import com.china.center.common.ConditionParse;
 import com.china.center.common.KeyConstant;
+import com.china.center.oa.customer.bean.ProviderUserBean;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.DecSecurity;
 import com.china.center.tools.ListTools;
@@ -35,6 +36,7 @@ import com.china.centet.yongyin.bean.ConsignBean;
 import com.china.centet.yongyin.bean.LocationBean;
 import com.china.centet.yongyin.bean.MenuItemBean;
 import com.china.centet.yongyin.bean.OutBean;
+import com.china.centet.yongyin.bean.ProviderBean;
 import com.china.centet.yongyin.bean.Role;
 import com.china.centet.yongyin.bean.RoleBean;
 import com.china.centet.yongyin.bean.StafferBean;
@@ -48,6 +50,9 @@ import com.china.centet.yongyin.dao.CommonDAO;
 import com.china.centet.yongyin.dao.ConsignDAO;
 import com.china.centet.yongyin.dao.OutDAO;
 import com.china.centet.yongyin.dao.ParameterDAO;
+import com.china.centet.yongyin.dao.ProductTypeVSCustomerDAO;
+import com.china.centet.yongyin.dao.ProviderDAO;
+import com.china.centet.yongyin.dao.ProviderUserDAO;
 import com.china.centet.yongyin.dao.StafferDAO;
 import com.china.centet.yongyin.dao.UserDAO;
 import com.china.centet.yongyin.manager.CommonMamager;
@@ -55,6 +60,7 @@ import com.china.centet.yongyin.manager.EhcacheManager;
 import com.china.centet.yongyin.manager.LocationManager;
 import com.china.centet.yongyin.manager.MenuItemManager;
 import com.china.centet.yongyin.vo.UserVO;
+import com.china.centet.yongyin.vs.ProductTypeVSCustomer;
 
 
 public class LoginAction extends DispatchAction
@@ -69,6 +75,8 @@ public class LoginAction extends DispatchAction
 
     private ParameterDAO parameterDAO = null;
 
+    private ProviderDAO providerDAO = null;
+
     private CommonDAO commonDAO = null;
 
     private LocationManager locationManager = null;
@@ -77,12 +85,26 @@ public class LoginAction extends DispatchAction
 
     private EhcacheManager ehcacheManager = null;
 
+    private ProviderUserDAO providerUserDAO = null;
+
+    private ProductTypeVSCustomerDAO productTypeVSCustomerDAO = null;
+
     private OutDAO outDAO = null;
 
     private ConsignDAO consignDAO = null;
 
     private CommonMamager commonMamager = null;
 
+    /**
+     * login
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
     public ActionForward login(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                HttpServletResponse reponse)
         throws ServletException
@@ -180,7 +202,7 @@ public class LoginAction extends DispatchAction
         }
 
         // 验证密码
-        boolean enc = handleEncLock(key, randKey, randVal, hasEncLock, stafferBean);
+        boolean enc = handleEncLock(key, randKey, randVal, hasEncLock, stafferBean.getPwkey());
 
         // 验证密码
         if ( !real || (user.getPassword().equals(Security.getSecurity(password)) && enc))
@@ -214,6 +236,8 @@ public class LoginAction extends DispatchAction
             }
 
             request.getSession().setAttribute(Constant.CURRENTLOCATIONID, flag);
+
+            request.getSession().setAttribute("SN", "财务系统");
 
             request.getSession().setAttribute("flag", flag);
 
@@ -269,6 +293,126 @@ public class LoginAction extends DispatchAction
     }
 
     /**
+     * loginAsk
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward loginAsk(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        String longinName = request.getParameter("userName");
+
+        String password = request.getParameter("password");
+
+        String rand = request.getParameter("rand");
+
+        String key = request.getParameter("key");
+
+        String randKey = request.getParameter("jiamiRand");
+
+        boolean real = false;
+
+        if (real && rand == null)
+        {
+            request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "验证码错误");
+            return mapping.findForward("errorAsk");
+        }
+
+        Object oo = request.getSession().getAttribute("rand");
+
+        if (real && oo == null)
+        {
+            request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "验证码错误");
+            return mapping.findForward("errorAsk");
+        }
+
+        if (real && !rand.equalsIgnoreCase(oo.toString()))
+        {
+            request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "验证码错误");
+            return mapping.findForward("errorAsk");
+        }
+
+        String randVal = rand.toUpperCase();
+
+        ProviderUserBean puser = providerUserDAO.findByUnique(longinName);
+
+        if (puser == null)
+        {
+            request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "用户名或密码错误");
+            return mapping.findForward("errorAsk");
+        }
+
+        User user = LoginHelper.getUser(puser);
+
+        ProviderBean provider = providerDAO.find(puser.getProvideId());
+
+        if (provider == null)
+        {
+            request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "供应商不存在");
+
+            return mapping.findForward("errorAsk");
+        }
+
+        // 是否启用加密锁
+        boolean hasEncLock = (false && parameterDAO.getBoolean(SysConfigConstant.NEED_SUPER_ENC_LOCK));
+
+        // 验证密码
+        boolean enc = true || handleEncLock(key, randKey, randVal, hasEncLock, "");
+
+        // 验证密码
+        if ( !real || (puser.getPassword().equals(Security.getSecurity(password)) && enc))
+        {
+
+            request.getSession().setAttribute("user", user);
+
+            request.getSession().setAttribute("GLocationName", "系统");
+
+            request.getSession().setAttribute("GProvider", provider);
+
+            request.getSession().setAttribute("SN", "询价系统");
+
+            request.getSession().setAttribute("GTime", TimeTools.now("yyyy-MM-dd"));
+
+            List<ProductTypeVSCustomer> list = productTypeVSCustomerDAO.queryEntityBeansByFK(
+                user.getId(), 1);
+
+            Map<String, List<MenuItemBean>> menuItemMap = new HashMap<String, List<MenuItemBean>>();
+
+            List<MenuItemBean> result = filterMenuItem(user, menuItemMap);
+
+            request.getSession().setAttribute("menuRootList", result);
+
+            request.getSession().setAttribute("typeList", list);
+
+            request.getSession().setAttribute("menuItemMap", menuItemMap);
+        }
+        else
+        {
+            request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "用户名或密码错误");
+
+            return mapping.findForward("errorAsk");
+        }
+
+        // processUser(request, user);
+
+        request.getSession().setAttribute("gkey", key);
+
+        request.getSession().setAttribute("hasEncLock", hasEncLock);
+
+        ActionForward forward = mapping.findForward("success");
+
+        String path = forward.getPath();
+
+        return new ActionForward(path, true);
+    }
+
+    /**
      * handleEncLock
      * 
      * @param key
@@ -279,10 +423,9 @@ public class LoginAction extends DispatchAction
      * @return
      */
     private boolean handleEncLock(String key, String randKey, String randVal, boolean hasEncLock,
-                                  StafferBean stafferBean)
+                                  String pwkey)
     {
-        return !hasEncLock
-               || LoginHelper.encRadomStr(stafferBean.getPwkey(), key, randVal).equals(randKey);
+        return !hasEncLock || LoginHelper.encRadomStr(pwkey, key, randVal).equals(randKey);
     }
 
     /**
@@ -405,6 +548,8 @@ public class LoginAction extends DispatchAction
 
         int index = RoleHelper.getIndexFromRole(user);
 
+        // Role role = user.getRole();
+
         for (int i = 0; i < list.size(); i++ )
         {
             MenuItemBean item = list.get(i);
@@ -427,6 +572,10 @@ public class LoginAction extends DispatchAction
             {
                 continue;
             }
+
+            /*
+             * if (role == Role.NETASK) { if ( !item.getParentId().equals("08")) { continue; } }
+             */
 
             if (Constant.AUTH_PASS == auth.charAt(index))
             {
@@ -943,6 +1092,57 @@ public class LoginAction extends DispatchAction
     public void setStafferDAO(StafferDAO stafferDAO)
     {
         this.stafferDAO = stafferDAO;
+    }
+
+    /**
+     * @return the providerUserDAO
+     */
+    public ProviderUserDAO getProviderUserDAO()
+    {
+        return providerUserDAO;
+    }
+
+    /**
+     * @param providerUserDAO
+     *            the providerUserDAO to set
+     */
+    public void setProviderUserDAO(ProviderUserDAO providerUserDAO)
+    {
+        this.providerUserDAO = providerUserDAO;
+    }
+
+    /**
+     * @return the productTypeVSCustomerDAO
+     */
+    public ProductTypeVSCustomerDAO getProductTypeVSCustomerDAO()
+    {
+        return productTypeVSCustomerDAO;
+    }
+
+    /**
+     * @param productTypeVSCustomerDAO
+     *            the productTypeVSCustomerDAO to set
+     */
+    public void setProductTypeVSCustomerDAO(ProductTypeVSCustomerDAO productTypeVSCustomerDAO)
+    {
+        this.productTypeVSCustomerDAO = productTypeVSCustomerDAO;
+    }
+
+    /**
+     * @return the providerDAO
+     */
+    public ProviderDAO getProviderDAO()
+    {
+        return providerDAO;
+    }
+
+    /**
+     * @param providerDAO
+     *            the providerDAO to set
+     */
+    public void setProviderDAO(ProviderDAO providerDAO)
+    {
+        this.providerDAO = providerDAO;
     }
 
 }

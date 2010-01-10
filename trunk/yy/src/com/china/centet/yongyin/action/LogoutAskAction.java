@@ -13,9 +13,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 
-public class LogoutAction extends Action
+public class LogoutAskAction extends Action
 {
-    private static Log logger = LogFactory.getLog(LogoutAction.class);
+    private static Log logger = LogFactory.getLog(LogoutAskAction.class);
 
     /*
      * (non-Javadoc)
@@ -28,6 +28,7 @@ public class LogoutAction extends Action
                                  HttpServletRequest request, HttpServletResponse response)
     {
         HttpSession session = request.getSession(false);
+
         if (logger.isDebugEnabled())
         {
             logger.debug("LogoutAction.execute. session ==" + session);

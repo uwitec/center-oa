@@ -78,7 +78,8 @@ public class ServletFilter implements Filter
             if ( (user == null) && ! ("/admin/index.jsp".equals(request.getServletPath()))
                 && ! ("/admin/checkuser.do".equals(request.getServletPath()))
                 && ! ("/admin/image.jsp".equals(request.getServletPath()))
-                && ! ("/admin/logout.do".equals(request.getServletPath())))
+                && ! ("/admin/logout.do".equals(request.getServletPath()))
+                && ! ("/admin/ask.jsp".equals(request.getServletPath())))
             {
                 dispatch.forward(request, response);
                 return;
@@ -112,5 +113,4 @@ public class ServletFilter implements Filter
         // È¥µôtry {} finally{}
         chain.doFilter(request, response);
     }
-
 }

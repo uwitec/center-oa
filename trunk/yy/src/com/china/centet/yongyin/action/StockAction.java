@@ -781,6 +781,7 @@ public class StockAction extends DispatchAction
             {
                 PriceAskProviderBean bean = new PriceAskProviderBean();
 
+                // 询价ID
                 bean.setAskId(pbean.getId());
 
                 bean.setLogTime(TimeTools.now());
@@ -842,8 +843,9 @@ public class StockAction extends DispatchAction
             {
                 OldPageSeparateTools.processSeparate(request, "queryStock");
 
-                list = stockDAO.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(request,
-                    "queryStock"), OldPageSeparateTools.getPageSeparate(request, "queryStock"));
+                list = stockDAO.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(
+                    request, "queryStock"), OldPageSeparateTools.getPageSeparate(request,
+                    "queryStock"));
             }
 
             // 页面显示div用

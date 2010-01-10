@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=GBK" language="java"%>
-<html:html>
+<html>
 <HEAD>
 <TITLE>-=重新登录提示=-</TITLE>
 <META http-equiv=Content-Type content="text/html; charset=gb2312">
@@ -17,7 +17,6 @@
 			<center>
 			<p>对不起,因为太长时间未操作,</p>
 			<p>出于安全性考虑，您必须重新登录才能继续使用</p>
-			<p><a href="./index.jsp" target="_parent">登 录</a></p>
 			</center>
 			</TD>
 			<TD width=64>&nbsp;</TD>

@@ -164,10 +164,6 @@ TD {
 	HEIGHT: 16px
 }
 
-SELECT {
-	FONT-SIZE: 12px;
-	WIDTH: 120px;
-}
 
 .lSelect {
 	FONT-SIZE: 12px;
@@ -192,7 +188,6 @@ SELECT {
 }
 
 .background {
-	background-image: url(../images/index_sp_welcome_center_13.jpg);
 	background-repeat: repeat-x;
 }
 
@@ -211,7 +206,6 @@ BUTTON {
 	height: 18px;
 	CURSOR: pointer;
 	vertical-align: middle;
-	visibility: visible;
 }
 
 .time_input {
@@ -249,7 +243,7 @@ BUTTON {
 }
 
 .body_class {
-	background-image: url(../images/special/bg.gif);
+	background-image: url(../images/bg.gif);
 	background-color: #FFFFFF;
 	background-repeat: repeat;
 	SCROLLBAR-FACE-COLOR: #f2f2f2;
@@ -260,7 +254,7 @@ BUTTON {
 	SCROLLBAR-3DLIGHT-COLOR: #999999;
 	LINE-HEIGHT: 18px;
 	SCROLLBAR-ARROW-COLOR: #999999;
-	FONT-FAMILY: Dotum, Dotumche;
+	FONT-FAMILY: Arial, Helvetica, sans-serif;
 	SCROLLBAR-DARKSHADOW-COLOR: #ffffff;
 	SCROLLBAR-BASE-COLOR: #f2f2f2;
 }
@@ -574,52 +568,88 @@ A:link {
 	TEXT-DECORATION: none
 }
 
+* {margin:0px;padding:0px;}
 
-.bt_ReSet {
-	background-image:  url(../images/b1.gif);
-	cursor:hand;
-	width:60;
-	height:20;
+#g_center_tip {
+ position: absolute;
+ right: 0px;
+ bottom: 0px;
+ height: 0px;
+ width: 200px;
+ border: 1px solid #CCCCCC;
+ background-color: #eeeeee;
+ padding: 1px;
+ overflow:hidden;
+ display:none;
+ font-size:12px;
+ z-index:10;
 }
-.bt_Search {
-	background-image:  url(../images/b2.gif);
-	cursor:hand;
-	width:60;
-	height:20;
+#g_center_tip p { padding:6px;}
+#g_center_tip h1,#detail h1 {
+ font-size:14px;
+ height:25px;
+ line-height:25px;
+ background-color:#0066CC;
+ color:#FFFFFF;
+ padding:0px 3px 0px 3px;
+ filter: Alpha(Opacity=100);
+}
+#g_center_tip h1 a,#detail h1 a {
+ float:right;
+ text-decoration:none;
+ color:#FFFFFF;
 }
 
-.INPUT_Btn {
-	BORDER-RIGHT: #FFFFFF 1px solid; BORDER-TOP: #FFFFFF 1px solid; BORDER-LEFT: #FFFFFF 1px solid;
-	BORDER-BOTTOM: #FFFFFF 1px solid; HEIGHT: 20px; FONT-FAMILY: SimSun; FONT-SIZE: 12px;
-	padding-top: 1px; padding-left: 2px; BACKGROUND-COLOR: #4A9EDA; color: #FFFFFF; cursor:hand;
+.Node
+{
+    
 }
-.skin0 {
-position:absolute;
-padding-top:4px;
-text-align:left;
-width:100px;               /*宽度，可以根据实际的菜单项目名称的长度进行适当地调整*/
-border:2px solid black;
-background-color:menu;     /*菜单的背景颜色方案，这里选择了系统默认的菜单颜色*/
-font-family:"宋体";
-line-height:20px;
-cursor:default;
-visibility:hidden;        /*初始时，设置为不可见*/
+.Node span
+{
+    font-size:12px;
+    font-family:Verdana;
+    cursor:default;
+    margin-left:3px;
+    height:17px;
+    width:1px;
 }
-/*定义菜单方框的样式2*/
-.skin1 {
-padding-top:4px;
-cursor:default;
-font:menutext;
-position:absolute;
-text-align:left;
-font-family: "宋体";
-font-size: 10pt;
-width:100px;              /*宽度，可以根据实际的菜单项目名称的长度进行适当地调整*/
-background-color:menu;    /*菜单的背景颜色方案，这里选择了系统默认的菜单颜色*/
-border:1 solid buttonface;
-visibility:hidden;        /*初始时，设置为不可见*/
-border:2 outset buttonhighlight;
+.Node span a
+{
+    padding:1 4;
+    width:100%;
+    height:100%;
 }
-.menuitems {
-padding:2px 1px 2px 10px;
+.Node-unselect
+{
+    border:0px solid #EAEAEA;
+    background-color:transparent;
+    color:windowText;
+}
+.Node-selected
+{
+    border:1px solid windowText;
+    background-color:HighLight;
+    color:HighLightText;
+}
+.Node-unselect a
+{
+    text-decoration:none;
+    color:windowtext;
+}
+.Node-unselect a:hover
+{
+    color:#3366cc;
+    text-decoration:underline;
+}
+.Node-selected a
+{
+    color:#FFFFFF;
+    text-decoration:none;
+    width:100%;
+    height:100%;
+}
+.Node-selected a:hover
+{
+    color:HighLightText;
+    text-decoration:underline;
 }

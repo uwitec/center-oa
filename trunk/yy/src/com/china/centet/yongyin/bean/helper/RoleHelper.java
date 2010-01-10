@@ -98,6 +98,11 @@ public abstract class RoleHelper
             return 13;
         }
 
+        if (role == Role.NETASK)
+        {
+            return 14;
+        }
+
         return -1;
     }
 
@@ -181,6 +186,11 @@ public abstract class RoleHelper
         {
             bean.setRole(Role.WORKFLOW);
         }
+
+        if (i == 14)
+        {
+            bean.setRole(Role.NETASK);
+        }
     }
 
     /**
@@ -262,6 +272,11 @@ public abstract class RoleHelper
         if (i == 13)
         {
             bean.setBaseRole(Role.WORKFLOW);
+        }
+
+        if (i == 14)
+        {
+            bean.setBaseRole(Role.NETASK);
         }
     }
 }

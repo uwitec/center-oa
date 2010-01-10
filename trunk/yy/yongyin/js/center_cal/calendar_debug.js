@@ -12,7 +12,7 @@
 * Read the entire license text here: http://www.gnu.org/licenses/lgpl.html
 */
 
-// $Id: calendar_debug.js,v 1.1 2008/07/25 08:53:28 admin Exp $
+// $Id: calendar_debug.js,v 1.4 2009/02/22 09:52:06 admin Exp $
 
 /** The Calendar object constructor. */
 // This function gets called when the end-user clicks on some date.
@@ -31,32 +31,31 @@ var tagObject;
 
 function calDate(id)
 {
-	if (typeof id == 'string')
-	{
-    	showCalendar(id, '%Y-%m-%d');
-	}
+    if (typeof id == 'string')
+    {
+        showCalendar(id, '%Y-%m-%d');
+    }
     else
     {
-    	showCalendar(id.name, '%Y-%m-%d');
+        showCalendarInner(id, '%Y-%m-%d');
     }
 }
 
 
 function calDateTime(id)
 {
-	if (typeof id != 'string')
-	{
-    	id = id.name;
-	}
-
-
-    showCalendar(id, '%Y-%m-%d %H:%M:%S', '24', true);
+    if (typeof id != 'string')
+    {
+        showCalendarInner(id, '%Y-%m-%d %H:%M:%S', '24', true);
+    }
+    else
+    {
+        showCalendar(id, '%Y-%m-%d %H:%M:%S', '24', true);
+    }
 }
 
-function showCalendar(id, format, showsTime, showsOtherMonths)
+function showCalendarInner(el, format, showsTime, showsOtherMonths)
 {
-    var el = document.getElementById(id);
-
     tagObject = el;
 
     if (_dynarch_popupCalendar != null)
@@ -99,6 +98,13 @@ function showCalendar(id, format, showsTime, showsOtherMonths)
     // show the calendar
 
     return false;
+}
+
+function showCalendar(id, format, showsTime, showsOtherMonths)
+{
+    var el = document.getElementById(id);
+
+    return showCalendarInner(el, format, showsTime, showsOtherMonths);
 }
 
 function getNextButton(el)
@@ -1120,6 +1126,7 @@ Calendar.prototype.create = function (_par)
     if (this.isPopup)
     {
         div.style.position = "absolute";
+        div.style.zIndex  = 9998;
         div.style.display = "none";
     }
     div.appendChild(table);

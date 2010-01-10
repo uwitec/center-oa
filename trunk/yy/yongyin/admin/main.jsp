@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core"%>
 <html>
 <head>
-<title>财务平台-${user.role}</title>
+<title>${SN}-${user.role}</title>
 <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
 <script language="JavaScript" type="text/JavaScript">
 function Logout()

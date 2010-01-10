@@ -17,6 +17,9 @@
 
 		<forward name="success" path="/admin/success.jsp"
 			redirect="false" />
+			
+		<forward name="successAsk" path="/admin/ask.jsp"
+            redirect="false" />
 
 		<forward name="admin/timeout" path="/admin/timeout.jsp"
 			redirect="true" />
@@ -46,6 +49,10 @@
 				redirect="false" />
 			<forward name="error" path="/admin/index.jsp"
 				redirect="true" />
+			<forward name="errorAsk" path="/admin/ask.jsp"
+                redirect="true" />
+            <forward name="successAsk" path="/admin/ask.jsp"
+                redirect="false" />
 		</action>
 
 		<action path="/admin/product" parameter="method"
@@ -93,6 +100,13 @@
 			<forward name="success" path="/admin/index.jsp"
 				redirect="true" />
 		</action>
+		
+		<action path="/admin/logoutAsk"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+            <forward name="success" path="/admin/ask.jsp"
+                redirect="true" />
+        </action>
 
 		<action path="/admin/proException" parameter="method"
 			type="org.springframework.web.struts.DelegatingActionProxy"
@@ -265,8 +279,8 @@
 			<forward name="addPriceAsk" path="/admin/addPriceAsk.jsp" />
 			<forward name="detailPriceAsk"
 				path="/admin/detailPriceAsk.jsp" />
-			<forward name="processAskPrice"
-				path="/admin/processAskPrice.jsp" />
+			<forward name="processAskPrice" path="/admin/processAskPrice.jsp" />
+			<forward name="processAskPriceForNetAsk" path="/admin/processAskPriceForNetAsk.jsp" />
 			<forward name="queryPriceTemplate"
 				path="/price/queryPriceTemplate.jsp" />
 			<forward name="addPriceTemplate"

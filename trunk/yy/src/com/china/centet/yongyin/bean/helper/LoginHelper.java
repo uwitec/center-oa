@@ -9,8 +9,11 @@
 package com.china.centet.yongyin.bean.helper;
 
 
+import com.china.center.oa.customer.bean.ProviderUserBean;
+import com.china.center.tools.CommonTools;
 import com.china.center.tools.DecSecurity;
 import com.china.center.tools.Security;
+import com.china.centet.yongyin.bean.User;
 import com.china.centet.yongyin.enc.SoftKey;
 
 
@@ -44,5 +47,31 @@ public abstract class LoginHelper
         SoftKey mysoftkey = new SoftKey();
 
         return mysoftkey.StrEnc(random, realKey);
+    }
+
+    /**
+     * getUser
+     * 
+     * @param puser
+     * @return
+     */
+    public static User getUser(ProviderUserBean puser)
+    {
+        User user = new User();
+
+        user.setName(puser.getName());
+
+        user.setType(CommonTools.parseInt(puser.getRoleId()));
+
+        user.setStafferId(puser.getId());
+
+        // 供应商的ID
+        user.setId(puser.getProvideId());
+
+        user.setStafferName(puser.getName());
+
+        RoleHelper.setRole(user, user.getType());
+
+        return user;
     }
 }

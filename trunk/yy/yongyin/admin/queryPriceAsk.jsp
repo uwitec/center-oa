@@ -137,7 +137,7 @@ function showDiv(id)
 
 <p:body width="100%">
 
-	<p:subBody width="100%">
+	<p:subBody width="98%">
 		<table width="100%" align="center" cellspacing='1' class="table0">
 			<tr align=center class="content0">
 				<td align="center">开始时间</td>
@@ -204,7 +204,7 @@ function showDiv(id)
 
 	<p:line flag="0" />
 
-	<p:subBody width="100%">
+	<p:subBody width="98%">
 		<table width="100%" align="center" cellspacing='1' class="table0"
 			id="result">
 			<tr align=center class="content0">
@@ -246,7 +246,7 @@ function showDiv(id)
 							src="../images/realse.gif" border="0" height="15" width="15"></a>
 					</c:if>
 					
-					<c:if test="${(user.role == 'PRICE' || user.role == 'STOCK' ) && (item.status == 0 || item.status == 1 )}">
+					<c:if test="${(user.role == 'PRICE' || user.role == 'STOCK' || user.role == 'NETASK') && (item.status == 0 || item.status == 1 )}">
 
 						<a title="处理询价" href="javascript:process('${item.id}')"> <img
 							src="../images/change.gif" border="0" height="15" width="15"></a>
@@ -257,7 +257,7 @@ function showDiv(id)
 							src="../images/del.gif" border="0" height="15" width="15"></a>
 					</c:if>
 
-					<c:if test="${item.status == 1}">
+					<c:if test="${item.status == 1 && user.role != 'NETASK'}">
 						<a title="询价详细" href="javascript:detail('${item.id}')"> <img
 							src="../images/edit.gif" border="0" height="15" width="15"></a>
 					</c:if>
@@ -266,7 +266,12 @@ function showDiv(id)
 					<td align="center" onclick="hrefAndSelect(this)">
 					<a href="../admin/product.do?method=findProduct&productId=${item.productId}&detail=1">${item.productName}</a></td>
 					<td align="center" onclick="hrefAndSelect(this, true)">${item.amount}</td>
+					<c:if test="${user.role != 'NETASK'}">
 					<td align="center" onclick="hrefAndSelect(this, true)">${item.price}</td>
+					</c:if>
+					<c:if test="${user.role == 'NETASK'}">
+                    <td align="center" onclick="hrefAndSelect(this, true)"></td>
+                    </c:if>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskStatus', item.status)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskType', item.type)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskInstancy',

@@ -125,32 +125,19 @@ function load()
 		</ul>
 		</li>
 	</c:forEach>
+	
 	<li><a href="../admin/modifyPassword.jsp" target="main">修改密码</a></li>
-	<li><a href="../admin/logout.do" target="_parent">退出</a></li>
+	<c:if test="${user.role == 'NETASK'}">
+	 <li><a href="../admin/logoutAsk.do" target="_parent">退出</a></li>
+	</c:if>
+	
+	<c:if test="${user.role != 'NETASK'}">
+   
+    <li><a href="../admin/logout.do" target="_parent">退出</a></li>
+    </c:if>
 </ul>
 </div>
-<table>
-	<tr height="10">
-		<td colspan="2"></td>
-	</tr>
 
-	<tr height="10">
-		<td width="15"></td>
-		<%
-		Random random = new Random(System.currentTimeMillis());
-
-		int ran = random.nextInt(1000);
-
-		request.setAttribute("colock", (ran % 4) + 1);
-		%>
-		<td><EMBED SRC="../swf/co-0${colock}.swf" WIDTH=165 HEIGHT=165
-			wmode=transparent quality=high loop=true menu=false></td>
-	</tr>
-
-	<tr height="10">
-		<td colspan="2"></td>
-	</tr>
-</table>
 
 </body>
 </html>

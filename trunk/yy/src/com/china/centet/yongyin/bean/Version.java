@@ -17,7 +17,7 @@ import com.china.centet.yongyin.constant.Constant;
 /**
  * °æ±¾bean
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2007-8-17
  * @see
  * @since

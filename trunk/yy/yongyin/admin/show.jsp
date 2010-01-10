@@ -19,7 +19,7 @@
 				<div align="center">
 				<table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0">
 				  <tr>
-				    <td width="100%" height="100%" align="center" valign="middle"><font color="blue" size="3"><b>欢迎进入财务系统</b></font></td>
+				    <td width="100%" height="100%" align="center" valign="middle"><font color="blue" size="3"><b>欢迎进入${SN}</b></font></td>
 				  </tr>
 				</table>
 				</div>

@@ -26,7 +26,7 @@
 
 	<p:line flag="0" />
 
-	<p:subBody width="100%">
+	<p:subBody width="98%">
 		<p:table cells="2">
 			<p:cell title="产品名称">
 			${bean.productName}
@@ -65,7 +65,9 @@
 			</p:cells>
 			
 			<p:cell title="最终价格">
+			<c:if test="${user.role != 'NETASK'}">
 			${bean.price}
+			</c:if>
 			</p:cell>
 			
 			<p:cells title="驳回原因" celspan="2">
@@ -76,7 +78,7 @@
 
 	<p:tr/>
 
-	<p:subBody width="100%">
+	<p:subBody width="98%">
 		<table width="100%" border="0" cellspacing='1' id="tables">
 			<tr align="center" class="content0">
 				<c:if test="${user.role != 'PRICE'}">
@@ -87,6 +89,7 @@
 				</c:if>
 				<td width="10%" align="center" onclick="tableSort(this, true)" class="td_class">价格</td>
 				<td width="10%" align="center">数量满足</td>
+				<td width="30%" align="center">备注</td>
 				<td width="10%" align="center" onclick="tableSort(this)" class="td_class">时间</td>
 			</tr>
 
@@ -103,6 +106,7 @@
 
 					<td  align="center">${item.hasAmount == 0 ? "满足" : "<font color=red>不满足</font>"}</td>
 					
+					<td  align="center">${item.description}</td>
 					<td  align="center">${item.logTime}</td>
 				</tr>
 			</c:forEach>

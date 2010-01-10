@@ -61,6 +61,11 @@ public class PriceAskBean implements Serializable
     @Html(title = "询价方式", type = Element.SELECT, must = true)
     private int type = PriceConstant.PRICE_ASK_TYPE_INNER;
 
+    /**
+     * 询价产品类型
+     */
+    private int productType = 0;
+
     private int overTime = PriceConstant.OVERTIME_NO;
 
     @Join(tagClass = LocationBean.class)
@@ -367,5 +372,22 @@ public class PriceAskBean implements Serializable
     public void setType(int type)
     {
         this.type = type;
+    }
+
+    /**
+     * @return the productType
+     */
+    public int getProductType()
+    {
+        return productType;
+    }
+
+    /**
+     * @param productType
+     *            the productType to set
+     */
+    public void setProductType(int productType)
+    {
+        this.productType = productType;
     }
 }
