@@ -113,7 +113,7 @@ function load1()
             
             
             <p:cell title="附件处理">
-            <c:forEach items="${makeFileLWrapList}" var="item" varStatus="vs">
+            <c:forEach items="${makeFileLWrapList_All}" var="item" varStatus="vs">
             【第${item.tokenId}环节】${item.name}：<input type="button" value="&nbsp;在线查看&nbsp;" name="log_g${vs.index}" id="log_g${vs.index}"
                    class="button_class" onclick="viewTemplate('${item.path}')"><br> 
                </c:forEach>

@@ -24,7 +24,7 @@ jQuery().ready(function(){
     
     var accordions = jQuery('#flowDiv');
     
-    accordions.accordion("activate", 2);
+    accordions.accordion("activate", 3);
     
 });
 
@@ -127,6 +127,26 @@ var baseURL = '${eurl}';
         </tr>
         </table>
         
+        </div>
+        
+        <div id="attchment_div">
+            <a><font color=red>附件查看</font></a>
+            <table width='100%' border='0' cellpadding='0' cellspacing='0'
+            class='table1'>
+            <tr>
+            <td>
+            <p:table cells="1">
+                <p:cell title="附件查看">
+            <c:forEach items="${makeFileLWrapList_All}" var="item" varStatus="vs">
+            【第${item.tokenId}环节】${item.name}：<input type="button" value="&nbsp;在线查看&nbsp;" name="log_g${vs.index}" id="log_g${vs.index}"
+                   class="button_class" onclick="viewTemplate('${item.path}')"><br> 
+               </c:forEach>
+            </p:cell> 
+    
+            </p:table>
+            </td>
+            </tr>
+            </table>
         </div>
         
         <div id="apply_div">

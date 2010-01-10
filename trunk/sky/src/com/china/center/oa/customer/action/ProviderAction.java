@@ -32,6 +32,7 @@ import com.china.center.common.json.AjaxResult;
 import com.china.center.common.query.HandleResult;
 import com.china.center.common.query.QueryConfig;
 import com.china.center.oa.constant.CustomerConstant;
+import com.china.center.oa.constant.RoleConstant;
 import com.china.center.oa.customer.bean.ProductTypeBean;
 import com.china.center.oa.customer.bean.ProviderBean;
 import com.china.center.oa.customer.bean.ProviderHisBean;
@@ -55,6 +56,14 @@ import com.china.center.tools.RandomTools;
 import com.china.center.tools.StringTools;
 
 
+/**
+ * ProviderAction
+ * 
+ * @author ZHUZHU
+ * @version 2010-1-5
+ * @see ProviderAction
+ * @since 1.0
+ */
 public class ProviderAction extends DispatchAction
 {
     private final Log _logger = LogFactory.getLog(getClass());
@@ -282,6 +291,8 @@ public class ProviderAction extends DispatchAction
             User user = Helper.getUser(request);
 
             bean.setLocationId(user.getLocationId());
+
+            bean.setRoleId(RoleConstant.ROLE_NET_ASK);
 
             boolean isAdd = StringTools.isNullOrNone(bean.getId());
 

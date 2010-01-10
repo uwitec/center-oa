@@ -192,7 +192,7 @@ public class ProviderManager
     {
         if (isAdd)
         {
-            if (providerUserDAO.countByUnique(bean.getName(), bean.getProvideId()) > 0)
+            if (providerUserDAO.countByUnique(bean.getName()) > 0)
             {
                 throw new MYException("名称重复,请确认操作");
             }
@@ -212,9 +212,15 @@ public class ProviderManager
                 throw new MYException("数据错误,请确认操作");
             }
 
-            bean.setPassword(old.getPassword());
+            if ( !old.getName().equals(bean.getName()))
+            {
+                if (providerUserDAO.countByUnique(bean.getName()) > 0)
+                {
+                    throw new MYException("名称重复,请确认操作");
+                }
+            }
 
-            bean.setName(old.getName());
+            bean.setPassword(old.getPassword());
         }
     }
 

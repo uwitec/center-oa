@@ -17,4 +17,9 @@ package com.china.center.oa.constant;
  * @since 1.0
  */
 public interface RoleConstant
-{}
+{
+    /**
+     * ÍâÍøÑ¯¼ÛÔ±
+     */
+    String ROLE_NET_ASK = "14";
+}

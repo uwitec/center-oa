@@ -380,6 +380,9 @@ public class MakeAction extends DispatchAction
 
         hanleAttachment(request, make, templateList);
 
+        // query all attachment
+        handleAllAttachment(request, make);
+
         if ("1".equals(hanlerMode))
         {
             if (make.getStatus() == MakeConstant.STATUS_END)
@@ -394,9 +397,6 @@ public class MakeAction extends DispatchAction
 
             return mapping.findForward(MakeHelper.findForwardHandler(make.getStatus()));
         }
-
-        // query all attachment
-        handleAllAttachment(request, make);
 
         return mapping.findForward("detailMake");
     }
@@ -468,7 +468,7 @@ public class MakeAction extends DispatchAction
             makeFileLWrapList.add(wrap);
         }
 
-        request.setAttribute("makeFileLWrapList", makeFileLWrapList);
+        request.setAttribute("makeFileLWrapList_All", makeFileLWrapList);
     }
 
     /**

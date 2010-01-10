@@ -37,7 +37,7 @@ public class ProviderUserBean implements Serializable
     @Id(autoIncrement = true)
     private String id = "";
 
-    @Unique(dependFields = "provideId")
+    @Unique
     @Html(title = "µÇÂ¼Ãû", must = true, maxLength = 16)
     private String name = "";
 
