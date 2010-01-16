@@ -207,23 +207,28 @@ public class BeanUtil extends BeanUtils
         }
     }
 
-    public static List<?> getListBean(List<Map> list, Class claz)
+    public static <T> List<T> getListBean(List<Map> list, Class<T> claz)
     {
-        List result = new ArrayList();
+        List<T> result = new ArrayList();
+
         for (Map map : list)
         {
             try
             {
-                Object o = claz.newInstance();
+                T o = claz.newInstance();
 
                 getBeanInner(o, map);
 
                 result.add(o);
             }
             catch (InstantiationException e)
-            {}
+            {
+                _logger.error(e, e);
+            }
             catch (IllegalAccessException e)
-            {}
+            {
+                _logger.error(e, e);
+            }
         }
 
         return result;
