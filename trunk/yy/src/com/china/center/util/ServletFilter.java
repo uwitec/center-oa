@@ -72,8 +72,8 @@ public class ServletFilter implements Filter
             return;
         }
 
-        if ("/adm".equals(path) || "/mem".equals(path) || "/sto".equals(path)
-            || "/flo".equals(path) || "/pri".equals(path))
+        if ("/adm".equals(path) || "/mem".equals(path) || "/hel".equals(path)
+            || "/sto".equals(path) || "/flo".equals(path) || "/pri".equals(path))
         {
             if ( (user == null) && ! ("/admin/index.jsp".equals(request.getServletPath()))
                 && ! ("/admin/checkuser.do".equals(request.getServletPath()))

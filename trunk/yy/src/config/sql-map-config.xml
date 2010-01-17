@@ -10,4 +10,5 @@
 	<sqlMap resource="ibatisSqlConf/UserDAO.xml" />
 	<sqlMap resource="ibatisSqlConf/OutDAO.xml" />
 	<sqlMap resource="ibatisSqlConf/CustmoerDAO.xml" />
+	<sqlMap resource="ibatisSqlConf/PriceAskProviderDAO.xml" />
 </sqlMapConfig>

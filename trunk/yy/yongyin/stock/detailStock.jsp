@@ -60,7 +60,7 @@ function out(id)
 	<td width="85"></td>
 </p:navigation> <br>
 
-<p:body width="100%">
+<p:body width="98%">
 
 	<p:title>
 		<td class="caption"><strong>采购单信息：</strong></td>
@@ -102,9 +102,13 @@ function out(id)
 			${my:formatNum(bean.total)}
 			</p:cell>
 
-			<p:cells celspan="2" title="异常状态">
+			<p:cells celspan="1" title="异常状态">
 			${my:get('stockExceptStatus', bean.exceptStatus)}
 			</p:cells>
+			
+			<p:cells celspan="1" title="询价类型">
+            ${my:get('priceAskType', bean.type)}
+            </p:cells>
 
 			<p:cells celspan="2" title="备注">
 			${bean.description}

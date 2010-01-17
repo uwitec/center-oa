@@ -102,7 +102,15 @@ function init()
 function selectProduct(index)
 {
 	cindex = index;
-	window.common.modal("../admin/product.do?method=rptInQueryProduct3&firstLoad=1");
+	
+	if ($$('type') == 0)
+	{
+	   window.common.modal("../admin/product.do?method=rptInQueryProduct3&firstLoad=1");
+	}
+	else
+	{
+	   window.common.modal("../stock/stock.do?method=rptInQueryPriceAskProvider&firstLoad=1");
+	}
 }
 
 function getProduct(oo)
@@ -112,6 +120,17 @@ function getProduct(oo)
 		$("productName_" + cindex).value = oo.productname;
 		$("productId_" + cindex).value = oo.value;
 	}
+}
+
+function getPriceAskProvider(oo)
+{
+    if (cindex != -1)
+    {
+        $("productName_" + cindex).value = oo.pn;
+        $("productId_" + cindex).value = oo.value;
+        $("price_" + cindex).value = oo.pp;
+        $("netaskId_" + cindex).value = oo.ppid;
+    }
 }
 
 </script>
@@ -125,6 +144,13 @@ function getProduct(oo)
 	<input type="hidden" name="productId_2" value="">
 	<input type="hidden" name="productId_3" value="">
 	<input type="hidden" name="productId_4" value="">
+	
+	<input type="hidden" name="netaskId_0" value="">
+    <input type="hidden" name="netaskId_1" value="">
+    <input type="hidden" name="netaskId_2" value="">
+    <input type="hidden" name="netaskId_3" value="">
+    <input type="hidden" name="netaskId_4" value="">
+    
 	<input type="hidden" name="oprMode" value="">
 	<input
 	type="hidden" name="id" value="${bean.id}"> <p:navigation
@@ -134,7 +160,7 @@ function getProduct(oo)
 	<td width="85"></td>
 </p:navigation> <br>
 
-<p:body width="100%">
+<p:body width="98%">
 
 	<p:title>
 		<td class="caption"><strong>≤…π∫–≈œ¢£∫</strong></td>

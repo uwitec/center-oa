@@ -80,6 +80,7 @@ function checkLock()
     
     <td   ondblclick="sho()" align="right">
     <font color="#FFFFFF">µÇÂ¼Õß£º${user.stafferName}</font>&nbsp;&nbsp;
+    <a target="_blank" href="../help/main.jsp" title="Áª»ú°ïÖú"><img src="../images/oa/help.png" width="20px" height="20px" border="0"/></a>
     <c:if test="${user.role != 'NETASK'}">
     <a href="../admin/logout.do" target="_parent" title="ÍË³öµÇÂ¼"><img src="../images/login/logout.gif" width="20px" height="20px" border="0"/></a>
     </c:if>

@@ -5,6 +5,7 @@ package com.china.centet.yongyin.vo;
 
 
 import com.china.center.annotation.Entity;
+import com.china.center.annotation.Ignore;
 import com.china.center.annotation.Relationship;
 import com.china.centet.yongyin.bean.PriceAskProviderBean;
 
@@ -18,11 +19,23 @@ public class PriceAskProviderBeanVO extends PriceAskProviderBean
     @Relationship(relationField = "productId", tagField = "name")
     private String productName = "";
 
+    @Relationship(relationField = "productId", tagField = "code")
+    private String productCode = "";
+
     @Relationship(relationField = "providerId", tagField = "name")
     private String providerName = "";
 
     @Relationship(relationField = "userId", tagField = "stafferName")
     private String userName = "";
+
+    @Ignore
+    private String pid = "";
+
+    /**
+     * 剩余的产品数量
+     */
+    @Ignore
+    private int remainmount = 0;
 
     /**
      *
@@ -79,5 +92,56 @@ public class PriceAskProviderBeanVO extends PriceAskProviderBean
     public void setUserName(String userName)
     {
         this.userName = userName;
+    }
+
+    /**
+     * @return the productCode
+     */
+    public String getProductCode()
+    {
+        return productCode;
+    }
+
+    /**
+     * @param productCode
+     *            the productCode to set
+     */
+    public void setProductCode(String productCode)
+    {
+        this.productCode = productCode;
+    }
+
+    /**
+     * @return the pid
+     */
+    public String getPid()
+    {
+        return pid;
+    }
+
+    /**
+     * @param pid
+     *            the pid to set
+     */
+    public void setPid(String pid)
+    {
+        this.pid = pid;
+    }
+
+    /**
+     * @return the remainmount
+     */
+    public int getRemainmount()
+    {
+        return remainmount;
+    }
+
+    /**
+     * @param remainmount
+     *            the remainmount to set
+     */
+    public void setRemainmount(int remainmount)
+    {
+        this.remainmount = remainmount;
     }
 }

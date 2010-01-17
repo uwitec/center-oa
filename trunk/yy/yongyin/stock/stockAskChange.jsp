@@ -83,7 +83,7 @@ function rejectToAsk()
 	<td width="85"></td>
 </p:navigation> <br>
 
-<p:body width="100%">
+<p:body width="98%">
 
 	<p:title>
 		<td class="caption"><strong>采购单信息：</strong></td>
@@ -219,12 +219,13 @@ function rejectToAsk()
 	<p:button leftWidth="100%" rightWidth="0%">
 		<div align="right"><input type="button" class="button_class"
 			name="sub1" style="cursor: pointer"
-			value="&nbsp;&nbsp;通 过&nbsp;&nbsp;" onclick="passTO()">
-			&nbsp;&nbsp;
+			value="&nbsp;&nbsp;通 过&nbsp;&nbsp;" onclick="passTO()">&nbsp;&nbsp;
+			<c:if test="${bean.type == 0}">
 			<input type="button" class="button_class"
 			name="sub1" style="cursor: pointer"
 			value="&nbsp;&nbsp;驳回到询价&nbsp;&nbsp;" onclick="rejectToAsk()">
 			&nbsp;&nbsp;
+			</c:if>
 			<input type="button" class="button_class"
 			onclick="javascript:history.go(-1)"
 			value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>

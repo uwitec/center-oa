@@ -18,7 +18,7 @@ import com.china.center.tools.TimeTools;
 /**
  * 常量的定义和使用
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2008-3-2
  * @see
  * @since
@@ -48,7 +48,10 @@ public abstract class DefinedCommon
 
         definedMap.put("priceAskInstancy", new Object[] {"一般", "紧急", "非常紧急"});
 
-        definedMap.put("priceAskType", new Object[] {"内部询价", "外网询价"});
+        definedMap.put("stockItemPayStatus", new Object[] {colorationToRed("未汇总"),
+            colorationToBlue("已汇总")});
+
+        definedMap.put("priceAskType", new Object[] {"内部询价", colorationToBlue("外网询价")});
 
         definedMap.put("stockStatus", new Object[] {colorationToGold("保存"), "提交",
             colorationToRed("驳回"), "区域经理通过", "核价员通过", "采购主管通过", "采购经理通过", colorationToBlue("采购中"),

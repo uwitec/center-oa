@@ -37,16 +37,19 @@ import com.china.center.eltools.ElTools;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
+import com.china.center.tools.ListTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 import com.china.centet.yongyin.Helper;
 import com.china.centet.yongyin.bean.FlowLogBean;
 import com.china.centet.yongyin.bean.LocationBean;
+import com.china.centet.yongyin.bean.PriceAskBean;
 import com.china.centet.yongyin.bean.PriceAskProviderBean;
 import com.china.centet.yongyin.bean.Product;
 import com.china.centet.yongyin.bean.Role;
 import com.china.centet.yongyin.bean.StockBean;
 import com.china.centet.yongyin.bean.StockItemBean;
+import com.china.centet.yongyin.bean.StockPayBean;
 import com.china.centet.yongyin.bean.User;
 import com.china.centet.yongyin.bean.helper.FlowLogHelper;
 import com.china.centet.yongyin.bean.helper.LocationHelper;
@@ -58,12 +61,15 @@ import com.china.centet.yongyin.constant.StockConstant;
 import com.china.centet.yongyin.dao.CommonDAO;
 import com.china.centet.yongyin.dao.FlowLogDAO;
 import com.china.centet.yongyin.dao.LocationDAO;
+import com.china.centet.yongyin.dao.PriceAskDAO;
 import com.china.centet.yongyin.dao.PriceAskProviderDAO;
 import com.china.centet.yongyin.dao.PriceDAO;
 import com.china.centet.yongyin.dao.ProductAmountDAO;
 import com.china.centet.yongyin.dao.ProductDAO;
 import com.china.centet.yongyin.dao.StockDAO;
 import com.china.centet.yongyin.dao.StockItemDAO;
+import com.china.centet.yongyin.dao.StockPayDAO;
+import com.china.centet.yongyin.dao.StockPayItemDAO;
 import com.china.centet.yongyin.dao.UserDAO;
 import com.china.centet.yongyin.manager.PriceManager;
 import com.china.centet.yongyin.manager.StockManager;
@@ -71,6 +77,8 @@ import com.china.centet.yongyin.vo.FlowLogBeanVO;
 import com.china.centet.yongyin.vo.PriceAskProviderBeanVO;
 import com.china.centet.yongyin.vo.StockBeanVO;
 import com.china.centet.yongyin.vo.StockItemBeanVO;
+import com.china.centet.yongyin.vo.StockPayBeanVO;
+import com.china.centet.yongyin.vo.StockPayItemBeanVO;
 
 
 /**
@@ -98,6 +106,10 @@ public class StockAction extends DispatchAction
 
     private ProductAmountDAO productAmountDAO = null;
 
+    private StockPayItemDAO stockPayItemDAO = null;
+
+    private StockPayDAO stockPayDAO = null;
+
     private FlowLogDAO flowLogDAO = null;
 
     private UserDAO userDAO = null;
@@ -105,6 +117,8 @@ public class StockAction extends DispatchAction
     private CommonDAO commonDAO = null;
 
     private PriceAskProviderDAO priceAskProviderDAO = null;
+
+    private PriceAskDAO priceAskDAO = null;
 
     /**
      *
@@ -165,6 +179,48 @@ public class StockAction extends DispatchAction
         request.setAttribute("forward", "1");
 
         return queryStock(mapping, form, request, reponse);
+    }
+
+    /**
+     * addStockPay
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward addStockPay(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        StockPayBean bean = new StockPayBean();
+
+        String[] ids = request.getParameterValues("ids");
+
+        try
+        {
+            BeanUtil.getBean(bean, request);
+
+            User user = Helper.getUser(request);
+
+            stockManager.addStockPayBean(user, ListTools.changeArrayToList(ids));
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功增加汇总单");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "增加汇总单失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        request.setAttribute("forward", "1");
+
+        return queryStockPay(mapping, form, request, reponse);
     }
 
     /**
@@ -452,23 +508,25 @@ public class StockAction extends DispatchAction
      */
     private void setStockBean(StockBean pbean, HttpServletRequest request)
     {
-        String[] providers = request.getParameterValues("check_init");
+        String[] indexs = request.getParameterValues("check_init");
 
         List<StockItemBean> item = new ArrayList<StockItemBean>();
 
-        for (int i = 0; i < providers.length; i++ )
+        for (int i = 0; i < indexs.length; i++ )
         {
-            if ( !StringTools.isNullOrNone(providers[i]))
+            if ( !StringTools.isNullOrNone(indexs[i]))
             {
                 StockItemBean bean = new StockItemBean();
 
-                bean.setProductId(request.getParameter("productId_" + providers[i]));
+                bean.setProductId(request.getParameter("productId_" + indexs[i]));
+
+                bean.setPriceAskProviderId(request.getParameter("netaskId_" + indexs[i]));
 
                 bean.setLogTime(TimeTools.now());
 
-                bean.setPrePrice(Float.parseFloat(request.getParameter("price_" + providers[i])));
+                bean.setPrePrice(Float.parseFloat(request.getParameter("price_" + indexs[i])));
 
-                bean.setAmount(CommonTools.parseInt(request.getParameter("amount_" + providers[i])));
+                bean.setAmount(CommonTools.parseInt(request.getParameter("amount_" + indexs[i])));
 
                 int num = productAmountDAO.countProductAmountByProductId(bean.getProductId());
 
@@ -479,6 +537,56 @@ public class StockAction extends DispatchAction
         }
 
         pbean.setItem(item);
+    }
+
+    /**
+     * rptInQueryPriceAskProvider
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptInQueryPriceAskProvider(ActionMapping mapping, ActionForm form,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        User user = Helper.getUser(request);
+
+        List<PriceAskProviderBeanVO> beanList = priceAskProviderDAO.queryByCondition(user.getId(),
+            TimeTools.now("yyyyMMdd"));
+
+        // 获取PID
+        for (PriceAskProviderBeanVO vo : beanList)
+        {
+            PriceAskBean ask = priceAskDAO.find(vo.getAskId());
+
+            if (ask == null || StringTools.isNullOrNone(ask.getParentAsk()))
+            {
+                continue;
+            }
+
+            PriceAskProviderBean pp = priceAskProviderDAO.findBeanByAskIdAndProviderId(
+                ask.getParentAsk(), vo.getProviderId());
+
+            if (pp != null)
+            {
+                vo.setPid(pp.getId());
+            }
+
+            int sum = stockItemDAO.sumNetProductByPid(pp.getId());
+
+            vo.setRemainmount(pp.getSupportAmount() - sum);
+        }
+
+        request.setAttribute("beanList", beanList);
+
+        return mapping.findForward("rptPriceAskProviderList");
     }
 
     /**
@@ -884,6 +992,126 @@ public class StockAction extends DispatchAction
         return mapping.findForward("queryStock");
     }
 
+    /**
+     * queryStockPayItem
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryStockPayItem(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        ConditionParse condtion = new ConditionParse();
+
+        // User user = Helper.getUser(request);
+
+        List<StockPayItemBeanVO> list = null;
+        try
+        {
+            if (OldPageSeparateTools.isFirstLoad(request))
+            {
+                setStockPayItemCondition(request, condtion);
+
+                int total = stockPayItemDAO.countVOBycondition(condtion.toString());
+
+                PageSeparate page = new PageSeparate(total, 50);
+
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryStockPayItem");
+
+                list = stockPayItemDAO.queryEntityVOsBycondition(condtion, page);
+            }
+            else
+            {
+                OldPageSeparateTools.processSeparate(request, "queryStockPayItem");
+
+                list = stockPayItemDAO.queryEntityVOsBycondition(
+                    OldPageSeparateTools.getCondition(request, "queryStockPayItem"),
+                    OldPageSeparateTools.getPageSeparate(request, "queryStockPayItem"));
+            }
+
+            request.setAttribute("list", list);
+        }
+        catch (Exception e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "查询失败:" + e.getMessage());
+
+            _logger.error(e, e);
+
+            return mapping.findForward("error");
+        }
+
+        return mapping.findForward("queryStockPayItem");
+    }
+
+    /**
+     * queryStockPay
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryStockPay(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        ConditionParse condtion = new ConditionParse();
+
+        List<StockPayBeanVO> list = null;
+        try
+        {
+            if (OldPageSeparateTools.isFirstLoad(request))
+            {
+                setStockPayCondition(request, condtion);
+
+                int total = stockPayDAO.countVOBycondition(condtion.toString());
+
+                PageSeparate page = new PageSeparate(total, Constant.PAGE_COMMON_SIZE);
+
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryStockPay");
+
+                list = stockPayDAO.queryEntityVOsBycondition(condtion, page);
+            }
+            else
+            {
+                OldPageSeparateTools.processSeparate(request, "queryStockPay");
+
+                list = stockPayDAO.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(
+                    request, "queryStockPay"), OldPageSeparateTools.getPageSeparate(request,
+                    "queryStockPay"));
+            }
+
+            request.setAttribute("list", list);
+        }
+        catch (Exception e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "查询失败:" + e.getMessage());
+
+            _logger.error(e, e);
+
+            return mapping.findForward("error");
+        }
+
+        return mapping.findForward("queryStockPay");
+    }
+
+    /**
+     * setStockDisplay
+     * 
+     * @param user
+     * @param stockBeanVO
+     */
     private void setStockDisplay(User user, StockBeanVO stockBeanVO)
     {
         Map<Integer, Role> map = new HashMap<Integer, Role>();
@@ -1009,6 +1237,13 @@ public class StockAction extends DispatchAction
             condtion.addIntCondition("StockBean.pay", "=", pay);
         }
 
+        String type = request.getParameter("type");
+
+        if ( !StringTools.isNullOrNone(type))
+        {
+            condtion.addIntCondition("StockBean.type", "=", type);
+        }
+
         String id = request.getParameter("ids");
 
         if ( !StringTools.isNullOrNone(id))
@@ -1045,6 +1280,103 @@ public class StockAction extends DispatchAction
         }
 
         condtion.addCondition("order by StockBean.logTime desc");
+    }
+
+    /**
+     * setStockPayItemCondition
+     * 
+     * @param request
+     * @param condtion
+     */
+    private void setStockPayItemCondition(HttpServletRequest request, ConditionParse condtion)
+    {
+        condtion.addWhereStr();
+
+        String status = request.getParameter("status");
+
+        if ( !StringTools.isNullOrNone(status))
+        {
+            condtion.addIntCondition("StockPayItemBean.status", "=", status);
+        }
+
+        String providerName = request.getParameter("providerName");
+
+        if ( !StringTools.isNullOrNone(providerName))
+        {
+            condtion.addCondition("ProviderBean.name", "like", providerName);
+        }
+
+        // payId
+        String providerCode = request.getParameter("providerCode");
+
+        if ( !StringTools.isNullOrNone(providerCode))
+        {
+            condtion.addCondition("ProviderBean.code", "like", providerCode);
+        }
+
+        String payId = request.getParameter("payId");
+
+        if ( !StringTools.isNullOrNone(payId))
+        {
+            condtion.addCondition("StockPayItemBean.payId", "like", payId);
+        }
+
+        String alogTime = request.getParameter("alogTime");
+
+        if ( !StringTools.isNullOrNone(alogTime))
+        {
+            condtion.addCondition("StockPayItemBean.logTime", ">=", alogTime + " 00:00:00");
+        }
+
+        String blogTime = request.getParameter("blogTime");
+
+        if ( !StringTools.isNullOrNone(blogTime))
+        {
+            condtion.addCondition("StockPayItemBean.logTime", "<=", blogTime + " 23:59:59");
+        }
+
+        condtion.addCondition("order by StockPayItemBean.logTime desc");
+    }
+
+    /**
+     * setStockPayCondition
+     * 
+     * @param request
+     * @param condtion
+     */
+    private void setStockPayCondition(HttpServletRequest request, ConditionParse condtion)
+    {
+        condtion.addWhereStr();
+
+        String providerName = request.getParameter("providerName");
+
+        if ( !StringTools.isNullOrNone(providerName))
+        {
+            condtion.addCondition("ProviderBean.name", "like", providerName);
+        }
+
+        String providerCode = request.getParameter("providerCode");
+
+        if ( !StringTools.isNullOrNone(providerCode))
+        {
+            condtion.addCondition("ProviderBean.code", "like", providerCode);
+        }
+
+        String alogTime = request.getParameter("alogTime");
+
+        if ( !StringTools.isNullOrNone(alogTime))
+        {
+            condtion.addCondition("StockPayBean.logTime", ">=", alogTime + " 00:00:00");
+        }
+
+        String blogTime = request.getParameter("blogTime");
+
+        if ( !StringTools.isNullOrNone(blogTime))
+        {
+            condtion.addCondition("StockPayBean.logTime", "<=", blogTime + " 23:59:59");
+        }
+
+        condtion.addCondition("order by StockPayBean.logTime desc");
     }
 
     /**
@@ -1424,5 +1756,56 @@ public class StockAction extends DispatchAction
     public void setCommonDAO(CommonDAO commonDAO)
     {
         this.commonDAO = commonDAO;
+    }
+
+    /**
+     * @return the priceAskDAO
+     */
+    public PriceAskDAO getPriceAskDAO()
+    {
+        return priceAskDAO;
+    }
+
+    /**
+     * @param priceAskDAO
+     *            the priceAskDAO to set
+     */
+    public void setPriceAskDAO(PriceAskDAO priceAskDAO)
+    {
+        this.priceAskDAO = priceAskDAO;
+    }
+
+    /**
+     * @return the stockPayItemDAO
+     */
+    public StockPayItemDAO getStockPayItemDAO()
+    {
+        return stockPayItemDAO;
+    }
+
+    /**
+     * @param stockPayItemDAO
+     *            the stockPayItemDAO to set
+     */
+    public void setStockPayItemDAO(StockPayItemDAO stockPayItemDAO)
+    {
+        this.stockPayItemDAO = stockPayItemDAO;
+    }
+
+    /**
+     * @return the stockPayDAO
+     */
+    public StockPayDAO getStockPayDAO()
+    {
+        return stockPayDAO;
+    }
+
+    /**
+     * @param stockPayDAO
+     *            the stockPayDAO to set
+     */
+    public void setStockPayDAO(StockPayDAO stockPayDAO)
+    {
+        this.stockPayDAO = stockPayDAO;
     }
 }

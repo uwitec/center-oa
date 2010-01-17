@@ -35,7 +35,7 @@ function passTO()
 	<td width="85"></td>
 </p:navigation> <br>
 
-<p:body width="100%">
+<p:body width="98%">
 
 	<p:title>
 		<td class="caption"><strong>采购单信息：</strong></td>

@@ -157,7 +157,7 @@ function end(id)
 
 function pay(id, status)
 {
-	var tipMap = {"1": "确定批准采购主管的采购付款申请?", "2": "确定向总经理申请采购付款?", "3": "确定驳回采购经理采购付款申请?"};
+	var tipMap = {"1": "确定批准采购主管的采购付款申请,同时自动生成付款单?", "2": "确定向采购经理申请采购付款?", "3": "确定驳回采购主管采购付款申请?"};
 
 	if (window.confirm(tipMap[status]))
 	{
@@ -196,7 +196,7 @@ function exports()
 	<td width="85"></td>
 </p:navigation> <br>
 
-<p:body width="100%">
+<p:body width="98%">
 
 	<p:subBody width="100%">
 		<table width="100%" align="center" cellspacing='1' class="table0">
@@ -257,12 +257,22 @@ function exports()
 					<option value="0">未逾期</option>
 					<option value="1">已逾期</option>
 				</select></td>
-				<td align="right" colspan="2"><input type="button" id="b_query"
-					class="button_class" value="&nbsp;&nbsp;查 询&nbsp;&nbsp;"
-					onclick="querys()">&nbsp;&nbsp; <input type="button"
-					class="button_class" value="&nbsp;&nbsp;重 置&nbsp;&nbsp;" id="b_reset"
-					onclick="resets()"></td>
+				<td align="center">询价方式</td>
+                <td align="center" width="35%"><select name="type"
+                    class="select_class" values="${type}">
+                    <option value="">--</option>
+                    <option value="0">内部询价</option>
+                    <option value="1">外网询价</option>
+                </select></td>
 			</tr>
+			
+			<tr align=center class="content0">
+                <td align="right" colspan="4"><input type="button" id="b_query"
+                    class="button_class" value="&nbsp;&nbsp;查 询&nbsp;&nbsp;"
+                    onclick="querys()">&nbsp;&nbsp; <input type="button"
+                    class="button_class" value="&nbsp;&nbsp;重 置&nbsp;&nbsp;" id="b_reset"
+                    onclick="resets()"></td>
+            </tr>
 		</table>
 
 	</p:subBody>
@@ -287,6 +297,8 @@ function exports()
 				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="5%"><strong>采购区域</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
+                    width="5%"><strong>询价方式</strong></td>
+				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="10%"><strong>到货日期</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this, true)"
 					width="10%"><strong>合计金额</strong></td>
@@ -309,6 +321,7 @@ function exports()
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('stockStatus',
 					item.status)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.locationName}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskType', item.type)}</td>
 					<c:if test="${item.overTime == 0}">
 						<td align="center" onclick="hrefAndSelect(this)"><font
 							color=blue>${item.needTime}</font></td>
@@ -380,7 +393,7 @@ function exports()
 						<a title="采购生成调出" href="javascript:out('${item.id}')"> <img
 							src="../images/change.gif" border="0" height="15" width="15"></a>
 					</c:if> <c:if
-						test="${user.role == 'MANAGER' && item.pay == 2 && user.locationID == '0'}">
+						test="${user.role == 'STOCKMANAGER' && item.pay == 2}">
 						<a title="批准付款" href="javascript:pay('${item.id}', '1')"> <img id="pay_approve_img_${vs.index}"
 							src="../images/pay.gif" border="0" height="15" width="15"></a>
 						<a title="驳回付款" href="javascript:pay('${item.id}', '3')"> <img id="pay_reject_img_${vs.index}"

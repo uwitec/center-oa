@@ -21,13 +21,13 @@ import com.china.center.tools.StringTools;
 /**
  * ²úÆ·
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2007-3-25
  * @see
  * @since
  */
 @Entity
-@Table(name = "t_center_product")
+@Table(name = "T_CENTER_PRODUCT")
 public class Product implements Serializable
 {
     @Id

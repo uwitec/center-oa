@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.china.center.cache.bean.MoreHashMap;
 import com.china.center.common.MYException;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.SequenceTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 import com.china.centet.yongyin.bean.BaseBean;
@@ -29,9 +30,12 @@ import com.china.centet.yongyin.bean.PriceAskProviderBean;
 import com.china.centet.yongyin.bean.Role;
 import com.china.centet.yongyin.bean.StockBean;
 import com.china.centet.yongyin.bean.StockItemBean;
+import com.china.centet.yongyin.bean.StockPayBean;
+import com.china.centet.yongyin.bean.StockPayItemBean;
 import com.china.centet.yongyin.bean.User;
 import com.china.centet.yongyin.bean.helper.LocationHelper;
 import com.china.centet.yongyin.constant.Constant;
+import com.china.centet.yongyin.constant.PriceConstant;
 import com.china.centet.yongyin.constant.StockConstant;
 import com.china.centet.yongyin.constant.SysConfigConstant;
 import com.china.centet.yongyin.dao.BaseBeanDAO;
@@ -43,6 +47,9 @@ import com.china.centet.yongyin.dao.PriceAskProviderDAO;
 import com.china.centet.yongyin.dao.PriceDAO;
 import com.china.centet.yongyin.dao.StockDAO;
 import com.china.centet.yongyin.dao.StockItemDAO;
+import com.china.centet.yongyin.dao.StockPayDAO;
+import com.china.centet.yongyin.dao.StockPayItemDAO;
+import com.china.centet.yongyin.vo.PriceAskProviderBeanVO;
 import com.china.centet.yongyin.vo.StockBeanVO;
 import com.china.centet.yongyin.vo.StockItemBeanVO;
 
@@ -50,7 +57,7 @@ import com.china.centet.yongyin.vo.StockItemBeanVO;
 /**
  * 会员消费的manager
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2007-12-15
  * @see
  * @since
@@ -77,6 +84,10 @@ public class StockManager
     private ParameterDAO parameterDAO = null;
 
     private BaseBeanDAO baseBeanDAO = null;
+
+    private StockPayItemDAO stockPayItemDAO = null;
+
+    private StockPayDAO stockPayDAO = null;
 
     private String stockLocation = "";
 
@@ -163,6 +174,89 @@ public class StockManager
         }
 
         return true;
+    }
+
+    /**
+     * addStockPayBean(归类生成付款单)
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean addStockPayBean(final User user, List<String> payItemIdList)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(payItemIdList);
+
+        List<StockPayBean> payList = new ArrayList();
+
+        for (String eachStr : payItemIdList)
+        {
+            StockPayItemBean sib = stockPayItemDAO.find(eachStr);
+
+            if (sib == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            if (sib.getStatus() != StockConstant.STOCK_ITEM_PAY_STATUS_INIT)
+            {
+                throw new MYException("单据已经汇总,请确认操作");
+            }
+
+            StockPayBean payEach = getPay(sib.getProviderId(), payList);
+
+            if (payEach == null)
+            {
+                StockPayBean pay = new StockPayBean();
+
+                payList.add(pay);
+
+                pay.setId(SequenceTools.getSequence(10));
+
+                pay.setProviderId(sib.getProviderId());
+
+                pay.setLogTime(TimeTools.now());
+
+                pay.setStafferId(user.getStafferId());
+
+                pay.setTotal(sib.getTotal());
+
+                payEach = pay;
+            }
+            else
+            {
+                payEach.setTotal(sib.getTotal() + payEach.getTotal());
+            }
+
+            sib.setPayId(payEach.getId());
+
+            sib.setStatus(StockConstant.STOCK_ITEM_PAY_STATUS_USED);
+
+            // 修改成绑定
+            stockPayItemDAO.updateEntityBean(sib);
+        }
+
+        // 全部保存
+        stockPayDAO.saveAllEntityBeans(payList);
+
+        return true;
+    }
+
+    private StockPayBean getPay(String providerId, List<StockPayBean> payList)
+    {
+        for (StockPayBean stockPayBean : payList)
+        {
+            if (stockPayBean.getProviderId().equals(providerId))
+            {
+                return stockPayBean;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -609,7 +703,6 @@ public class StockManager
     {
         JudgeTools.judgeParameterIsNull(user, id);
 
-        // 删除询价
         StockBean sb = stockDAO.find(id);
 
         if (sb == null)
@@ -624,15 +717,17 @@ public class StockManager
 
         int nextStatus = getNextStatus(sb.getStatus());
 
-        List<StockItemBean> item = stockItemDAO.queryEntityBeansByFK(id);
+        List<StockItemBean> itemList = stockItemDAO.queryEntityBeansByFK(id);
 
         double total = 0.0d;
+
+        // 如果是提交需要验证是否是外网询价
+        checkSubmit(sb, nextStatus, itemList);
 
         // 询价处理 需要全部的item都询价结束
         if (nextStatus == StockConstant.STOCK_STATUS_PRICEPASS)
         {
-
-            for (StockItemBean stockItemBean : item)
+            for (StockItemBean stockItemBean : itemList)
             {
                 if (stockItemBean.getStatus() != StockConstant.STOCK_ITEM_STATUS_ASK)
                 {
@@ -648,14 +743,14 @@ public class StockManager
         // 采购主管通过后到 单比金额大于5万，或者是选择价格不是最低，需要采购经理审核
         if (sb.getStatus() == StockConstant.STOCK_STATUS_PRICEPASS)
         {
-            if ( !checkMin(item))
+            if ( !checkMin(itemList))
             {
                 stockDAO.updateExceptStatus(id, StockConstant.EXCEPTSTATUS_EXCEPTION_MIN);
 
                 nextStatus = StockConstant.STOCK_STATUS_STOCKPASS;
             }
 
-            if ( !checkItemMoney(item))
+            if ( !checkItemMoney(itemList))
             {
                 stockDAO.updateExceptStatus(id, StockConstant.EXCEPTSTATUS_EXCEPTION_MONEY);
 
@@ -666,7 +761,7 @@ public class StockManager
         // 当结束的时候 把各个item的状态标志成结束(给询价作为参考)
         if (nextStatus == StockConstant.STOCK_STATUS_END)
         {
-            for (StockItemBean stockItemBean2 : item)
+            for (StockItemBean stockItemBean2 : itemList)
             {
                 // 更新状态
                 stockItemBean2.setStatus(StockConstant.STOCK_ITEM_STATUS_END);
@@ -678,9 +773,83 @@ public class StockManager
             }
         }
 
-        updateStockStatus(user, id, nextStatus, Constant.OPRMODE_PASS, "");
+        String reason = "";
+
+        // 处理外网询价的特殊流程
+        if (nextStatus == StockConstant.STOCK_STATUS_MANAGERPASS
+            && sb.getType() == PriceConstant.PRICE_ASK_TYPE_NET)
+        {
+            // 直接到(采购主管)
+            nextStatus = StockConstant.STOCK_STATUS_PRICEPASS;
+
+            // 更新最终价格为询价价格
+            for (StockItemBean iitem : itemList)
+            {
+                PriceAskProviderBean ppbs = priceAskProviderDAO.find(iitem.getPriceAskProviderId());
+
+                if (ppbs == null)
+                {
+                    throw new MYException("数据错误,请确认操作");
+                }
+
+                iitem.setProviderId(ppbs.getProviderId());
+
+                iitem.setPrice(iitem.getPrePrice());
+
+                iitem.setTotal(iitem.getPrice() * iitem.getAmount());
+
+                stockItemDAO.updateEntityBean(iitem);
+            }
+
+            reason = "外网询价采购无需询价员询价";
+        }
+
+        updateStockStatus(user, id, nextStatus, Constant.OPRMODE_PASS, reason);
 
         return true;
+    }
+
+    /**
+     * checkSubmit
+     * 
+     * @param sb
+     * @param nextStatus
+     * @param itemList
+     * @throws MYException
+     */
+    private void checkSubmit(StockBean sb, int nextStatus, List<StockItemBean> itemList)
+        throws MYException
+    {
+        if (nextStatus == StockConstant.STOCK_STATUS_SUBMIT
+            && sb.getType() == PriceConstant.PRICE_ASK_TYPE_NET)
+        {
+            // 需要校验数量是
+            for (StockItemBean iitem : itemList)
+            {
+                if (StringTools.isNullOrNone(iitem.getPriceAskProviderId()))
+                {
+                    throw new MYException("数据错误,请重新操作");
+                }
+
+                int sum = stockItemDAO.sumNetProductByPid(iitem.getPriceAskProviderId())
+                          + iitem.getAmount();
+
+                PriceAskProviderBeanVO ppb = priceAskProviderDAO.findVO(iitem.getPriceAskProviderId());
+
+                if (ppb == null)
+                {
+                    throw new MYException("数据错误,请重新操作");
+                }
+
+                if (ppb.getSupportAmount() < sum)
+                {
+                    throw new MYException(
+                        "外网采购中供应商[%s]提供的产品[%s]数量只有%d已经使用了%d,你请求的采购数量[%d]已经超出(可能其他业务员已经采购一空)",
+                        ppb.getProviderName(), ppb.getProductName(), ppb.getSupportAmount(),
+                        (sum - iitem.getAmount()), iitem.getAmount());
+                }
+            }
+        }
     }
 
     /**
@@ -882,8 +1051,8 @@ public class StockManager
      * @return
      * @throws MYException
      */
-    @Transactional(rollbackFor = {MYException.class})
     @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
     public boolean updateStockPayStatus(final User user, final String id, int payStatus)
         throws MYException
     {
@@ -894,7 +1063,54 @@ public class StockManager
         // 更新采购主单据
         stockDAO.updatePayStatus(id, payStatus);
 
+        handleStockItemPay(user, id, payStatus);
+
         return true;
+    }
+
+    /**
+     * handleStockItemPay
+     * 
+     * @param user
+     * @param id
+     * @param payStatus
+     */
+    private void handleStockItemPay(final User user, final String id, int payStatus)
+    {
+        if (payStatus == StockConstant.STOCK_PAY_YES)
+        {
+            // NOTE 自动生成付款单(根据采购的item)
+            List<StockItemBean> stockItemList = stockItemDAO.queryEntityBeansByFK(id);
+
+            for (StockItemBean stockItemBean : stockItemList)
+            {
+                StockPayItemBean spib = new StockPayItemBean();
+
+                spib.setId(SequenceTools.getSequence(10));
+
+                spib.setStockId(id);
+
+                spib.setStockItemId(stockItemBean.getId());
+
+                spib.setStafferId(user.getStafferId());
+
+                spib.setProviderId(stockItemBean.getProviderId());
+
+                spib.setProductId(stockItemBean.getProductId());
+
+                spib.setAmount(stockItemBean.getAmount());
+
+                spib.setLogTime(TimeTools.now());
+
+                spib.setPrice(stockItemBean.getPrice());
+
+                spib.setTotal(stockItemBean.getPrice() * stockItemBean.getAmount());
+
+                spib.setStatus(StockConstant.STOCK_ITEM_PAY_STATUS_INIT);
+
+                stockPayItemDAO.saveEntityBean(spib);
+            }
+        }
     }
 
     /**
@@ -950,8 +1166,7 @@ public class StockManager
 
         if (payStatus == StockConstant.STOCK_PAY_YES)
         {
-            if (user.getRole() != Role.MANAGER
-                || !LocationHelper.isSystemLocation(user.getLocationID()))
+            if (user.getRole() != Role.STOCKMANAGER)
             {
                 throw new MYException("没有权限");
             }
@@ -1196,5 +1411,39 @@ public class StockManager
     public void setBaseBeanDAO(BaseBeanDAO baseBeanDAO)
     {
         this.baseBeanDAO = baseBeanDAO;
+    }
+
+    /**
+     * @return the stockPayItemDAO
+     */
+    public StockPayItemDAO getStockPayItemDAO()
+    {
+        return stockPayItemDAO;
+    }
+
+    /**
+     * @param stockPayItemDAO
+     *            the stockPayItemDAO to set
+     */
+    public void setStockPayItemDAO(StockPayItemDAO stockPayItemDAO)
+    {
+        this.stockPayItemDAO = stockPayItemDAO;
+    }
+
+    /**
+     * @return the stockPayDAO
+     */
+    public StockPayDAO getStockPayDAO()
+    {
+        return stockPayDAO;
+    }
+
+    /**
+     * @param stockPayDAO
+     *            the stockPayDAO to set
+     */
+    public void setStockPayDAO(StockPayDAO stockPayDAO)
+    {
+        this.stockPayDAO = stockPayDAO;
     }
 }

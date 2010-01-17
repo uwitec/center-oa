@@ -32,6 +32,14 @@
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
+        <filter-name>MyFilter</filter-name>
+        <url-pattern>*.html</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>MyFilter</filter-name>
+        <url-pattern>*.htm</url-pattern>
+    </filter-mapping>
+	<filter-mapping>
 		<filter-name>MyFilter</filter-name>
 		<url-pattern>*.do</url-pattern>
 	</filter-mapping>

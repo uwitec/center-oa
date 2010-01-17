@@ -295,6 +295,9 @@
 			<forward name="updateStock" path="/stock/updateStock.jsp" />
 			<forward name="detailStock" path="/stock/detailStock.jsp" />
 			<forward name="processStock" path="/stock/processStock.jsp" />
+			<forward name="rptPriceAskProviderList" path="/stock/rptPriceAskProviderList.jsp" />
+			<forward name="queryStockPayItem" path="/stock/queryStockPayItem.jsp" />
+			<forward name="queryStockPay" path="/stock/queryStockPay.jsp" />
 			<forward name="addStock" path="/stock/addStock.jsp" />
 			<forward name="stockAskPrice"
 				path="/stock/stockAskPrice.jsp" />

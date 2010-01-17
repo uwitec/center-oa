@@ -127,4 +127,14 @@ public interface StockConstant
      */
     int STOCK_OVERTIME_YES = 1;
 
+    /**
+     * 采购单付款状态--初始
+     */
+    int STOCK_ITEM_PAY_STATUS_INIT = 0;
+
+    /**
+     * 采购单付款状态--使用
+     */
+    int STOCK_ITEM_PAY_STATUS_USED = 1;
+
 }

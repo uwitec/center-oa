@@ -49,6 +49,9 @@ public class StockItemBean implements Serializable
     @Join(tagClass = ProviderBean.class, type = JoinType.LEFT)
     private String providerId = "";
 
+    /**
+     * 采购数量
+     */
     private int amount = 0;
 
     /**
@@ -58,6 +61,8 @@ public class StockItemBean implements Serializable
 
     private int status = StockConstant.STOCK_ITEM_STATUS_INIT;
 
+    private String netAskId = "";
+
     private double price = 0.0d;
 
     private double prePrice = 0.0d;
@@ -65,6 +70,11 @@ public class StockItemBean implements Serializable
     private double total = 0.0d;
 
     private String logTime = "";
+
+    /**
+     * T_CENTER_PRICEASKPROVIDER(外网询价的ID)
+     */
+    private String priceAskProviderId = "";
 
     private String description = "";
 
@@ -330,5 +340,39 @@ public class StockItemBean implements Serializable
     public void setProductNum(int productNum)
     {
         this.productNum = productNum;
+    }
+
+    /**
+     * @return the priceAskProviderId
+     */
+    public String getPriceAskProviderId()
+    {
+        return priceAskProviderId;
+    }
+
+    /**
+     * @param priceAskProviderId
+     *            the priceAskProviderId to set
+     */
+    public void setPriceAskProviderId(String priceAskProviderId)
+    {
+        this.priceAskProviderId = priceAskProviderId;
+    }
+
+    /**
+     * @return the netAskId
+     */
+    public String getNetAskId()
+    {
+        return netAskId;
+    }
+
+    /**
+     * @param netAskId
+     *            the netAskId to set
+     */
+    public void setNetAskId(String netAskId)
+    {
+        this.netAskId = netAskId;
     }
 }

@@ -289,5 +289,4 @@ public class StockBean implements Serializable
     {
         this.type = type;
     }
-
 }
