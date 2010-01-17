@@ -187,6 +187,28 @@ public abstract class ListTools
         return new ArrayList<T>();
     }
 
+    /**
+     * changeArrayToList
+     * 
+     * @param <T>
+     * @param arrays
+     * @return
+     */
+    public static <T> List<T> changeArrayToList(T[] arrays)
+    {
+        List<T> result = new ArrayList();
+
+        for (T t : arrays)
+        {
+            if (t != null)
+            {
+                result.add(t);
+            }
+        }
+
+        return result;
+    }
+
     public static <T> List<T> distinct(List<T> inList)
     {
         Set<T> set = new HashSet();

@@ -212,7 +212,7 @@ public abstract class WriteBeanProperty
             {
                 if (html.type() == null || html.type() == Element.INPUT)
                 {
-                    oncheck = " oncheck=\"" + JCheck.NOT_NONE + JCheck.ONLY_COMMONCHAR + "\" ";
+                    oncheck = " oncheck=\"" + JCheck.NOT_NONE + "\" ";
                 }
                 else
                 {
