@@ -468,6 +468,16 @@ function getCheckBox(name)
 	return arr;
 }
 
+function checkBox_selectAll(name, sed)
+{
+    var k =0;
+    var obj = document.getElementsByName(name);
+    for (var i = 0; i < obj.length; i++)
+    {
+        obj[i].checked = sed;
+    }
+}
+
 function isNoneInCommon(obj)
 {
 	if (isNullInCommon(obj))

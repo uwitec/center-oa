@@ -54,6 +54,11 @@ function collectToPay()
         formEntry.submit();
     }
 }
+
+function allChange(obj)
+{
+    checkBox_selectAll('ids', obj.checked);
+}
 </script>
 
 </head>
@@ -123,10 +128,10 @@ function collectToPay()
 		<table width="100%" align="center" cellspacing='1' class="table0"
 			id="result">
 			<tr align=center class="content0">
-			    <td align="center" class="td_class" onclick="tableSort(this)"
-                    width="3%"><strong>选择</strong></td>
+			    <td align="center" class="td_class"
+                    width="5%"><strong>选择</strong><input type="checkbox" name="all_c" onclick="allChange(this)"/></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
-					width="5%"><strong>供应商</strong></td>
+					width="15%"><strong>供应商</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="5%"><strong>状态</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
@@ -156,7 +161,7 @@ function collectToPay()
 			</c:forEach>
 		</table>
 
-		<p:formTurning form="formEntry" method="queryStock"></p:formTurning>
+		<p:formTurning form="formEntry" method="queryStockPayItem"></p:formTurning>
 	</p:subBody>
 
 	<p:line flag="1" />

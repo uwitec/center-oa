@@ -29,6 +29,7 @@ function resets()
 
 	$('providerName').value = '';
 	$('providerCode').value = '';
+	$('id').value = '';
 }
 
 function load()
@@ -78,6 +79,14 @@ function collectToPay()
 			</tr>
 			
 			<tr align=center class="content1">
+                <td align="center">单据标识</td>
+                <td align="center" width="35%"><input type="text"
+                    onkeydown="press()" name="id" value="${id}"></td>
+                <td align="center"></td>
+                <td align="center" width="35%"></td>
+            </tr>
+			
+			<tr align=center class="content1">
                 <td align="right" colspan="4"><input type="button" id="b_query"
                     class="button_class" value="&nbsp;&nbsp;查 询&nbsp;&nbsp;"
                     onclick="querys()">&nbsp;&nbsp; <input type="button"
@@ -122,7 +131,7 @@ function collectToPay()
 			</c:forEach>
 		</table>
 
-		<p:formTurning form="formEntry" method="queryStock"></p:formTurning>
+		<p:formTurning form="formEntry" method="queryStockPay"></p:formTurning>
 	</p:subBody>
 
 	<p:line flag="1" />

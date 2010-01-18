@@ -18,7 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.china.center.cache.bean.MoreHashMap;
 import com.china.center.common.MYException;
+import com.china.center.eltools.ElTools;
+import com.china.center.oa.note.bean.ShortMessageConstant;
+import com.china.center.oa.note.bean.ShortMessageTaskBean;
+import com.china.center.oa.note.dao.ShortMessageTaskDAO;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.RandomTools;
 import com.china.center.tools.SequenceTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
@@ -28,6 +33,7 @@ import com.china.centet.yongyin.bean.LocationBean;
 import com.china.centet.yongyin.bean.OutBean;
 import com.china.centet.yongyin.bean.PriceAskProviderBean;
 import com.china.centet.yongyin.bean.Role;
+import com.china.centet.yongyin.bean.StafferBean2;
 import com.china.centet.yongyin.bean.StockBean;
 import com.china.centet.yongyin.bean.StockItemBean;
 import com.china.centet.yongyin.bean.StockPayBean;
@@ -40,11 +46,13 @@ import com.china.centet.yongyin.constant.StockConstant;
 import com.china.centet.yongyin.constant.SysConfigConstant;
 import com.china.centet.yongyin.dao.BaseBeanDAO;
 import com.china.centet.yongyin.dao.CommonDAO;
+import com.china.centet.yongyin.dao.CommonDAO2;
 import com.china.centet.yongyin.dao.FlowLogDAO;
 import com.china.centet.yongyin.dao.LocationDAO;
 import com.china.centet.yongyin.dao.ParameterDAO;
 import com.china.centet.yongyin.dao.PriceAskProviderDAO;
 import com.china.centet.yongyin.dao.PriceDAO;
+import com.china.centet.yongyin.dao.StafferDAO2;
 import com.china.centet.yongyin.dao.StockDAO;
 import com.china.centet.yongyin.dao.StockItemDAO;
 import com.china.centet.yongyin.dao.StockPayDAO;
@@ -82,6 +90,12 @@ public class StockManager
     private LocationDAO locationDAO = null;
 
     private ParameterDAO parameterDAO = null;
+
+    private StafferDAO2 stafferDAO2 = null;
+
+    private CommonDAO2 commonDAO2 = null;
+
+    private ShortMessageTaskDAO shortMessageTaskDAO = null;
 
     private BaseBeanDAO baseBeanDAO = null;
 
@@ -703,7 +717,7 @@ public class StockManager
     {
         JudgeTools.judgeParameterIsNull(user, id);
 
-        StockBean sb = stockDAO.find(id);
+        StockBeanVO sb = stockDAO.findVO(id);
 
         if (sb == null)
         {
@@ -717,7 +731,7 @@ public class StockManager
 
         int nextStatus = getNextStatus(sb.getStatus());
 
-        List<StockItemBean> itemList = stockItemDAO.queryEntityBeansByFK(id);
+        List<StockItemBeanVO> itemList = stockItemDAO.queryEntityVOsByFK(id);
 
         double total = 0.0d;
 
@@ -750,9 +764,19 @@ public class StockManager
                 nextStatus = StockConstant.STOCK_STATUS_STOCKPASS;
             }
 
-            if ( !checkItemMoney(itemList))
+            StringBuilder sbStr = new StringBuilder();
+
+            if ( !checkItemMoney(itemList, sbStr))
             {
                 stockDAO.updateExceptStatus(id, StockConstant.EXCEPTSTATUS_EXCEPTION_MONEY);
+
+                // 通知董事长(董事长的ID为5)
+                List<StafferBean2> sbList = stafferDAO2.queryByPostId("5");
+
+                for (StafferBean2 stafferBean2 : sbList)
+                {
+                    sendSMSInner(user, stafferBean2, id, sb, sbStr.toString());
+                }
 
                 nextStatus = StockConstant.STOCK_STATUS_STOCKPASS;
             }
@@ -810,6 +834,53 @@ public class StockManager
     }
 
     /**
+     * sendSMSInner
+     * 
+     * @param user
+     * @param sb
+     * @param id
+     * @param sbvo
+     * @param message
+     */
+    private void sendSMSInner(User user, StafferBean2 sb, String id, StockBeanVO sbvo,
+                              String message)
+    {
+        // send short message
+        ShortMessageTaskBean sms = new ShortMessageTaskBean();
+
+        sms.setId(commonDAO2.getSquenceString20());
+
+        sms.setFk(id);
+
+        sms.setType(104);
+
+        sms.setHandId(RandomTools.getRandomMumber(4));
+
+        sms.setStatus(ShortMessageConstant.STATUS_INIT);
+
+        sms.setMtype(ShortMessageConstant.MTYPE_ONLY_SEND);
+
+        sms.setFktoken("0");
+
+        sms.setMessage(sbvo.getUserName() + "发起的采购单" + message);
+
+        sms.setReceiver(sb.getHandphone());
+
+        sms.setStafferId(sb.getId());
+
+        sms.setLogTime(TimeTools.now());
+
+        // 24 hour
+        sms.setEndTime(TimeTools.now(1));
+
+        // internal
+        sms.setSendTime(TimeTools.now());
+
+        // add sms
+        shortMessageTaskDAO.saveEntityBean(sms);
+    }
+
+    /**
      * checkSubmit
      * 
      * @param sb
@@ -817,7 +888,7 @@ public class StockManager
      * @param itemList
      * @throws MYException
      */
-    private void checkSubmit(StockBean sb, int nextStatus, List<StockItemBean> itemList)
+    private void checkSubmit(StockBean sb, int nextStatus, List<StockItemBeanVO> itemList)
         throws MYException
     {
         if (nextStatus == StockConstant.STOCK_STATUS_SUBMIT
@@ -858,7 +929,7 @@ public class StockManager
      * @param item
      * @return
      */
-    private boolean checkMin(List<StockItemBean> item)
+    private boolean checkMin(List<StockItemBeanVO> item)
     {
         List<PriceAskProviderBean> ppbs = null;
         for (StockItemBean stockItemBean : item)
@@ -886,14 +957,17 @@ public class StockManager
      * @param item
      * @return
      */
-    private boolean checkItemMoney(List<StockItemBean> item)
+    private boolean checkItemMoney(List<StockItemBeanVO> item, StringBuilder sbStr)
     {
         int max = parameterDAO.getInt(SysConfigConstant.STOCK_MAX_SINGLE_MONEY);
 
-        for (StockItemBean stockItemBean : item)
+        for (StockItemBeanVO stockItemBean : item)
         {
             if (stockItemBean.getTotal() >= max)
             {
+                sbStr.append("[" + stockItemBean.getProductName() + "]的采购金额为:"
+                             + ElTools.formatNum(stockItemBean.getTotal()) + ",请注意");
+
                 return false;
             }
         }
@@ -1445,5 +1519,56 @@ public class StockManager
     public void setStockPayDAO(StockPayDAO stockPayDAO)
     {
         this.stockPayDAO = stockPayDAO;
+    }
+
+    /**
+     * @return the stafferDAO2
+     */
+    public StafferDAO2 getStafferDAO2()
+    {
+        return stafferDAO2;
+    }
+
+    /**
+     * @param stafferDAO2
+     *            the stafferDAO2 to set
+     */
+    public void setStafferDAO2(StafferDAO2 stafferDAO2)
+    {
+        this.stafferDAO2 = stafferDAO2;
+    }
+
+    /**
+     * @return the shortMessageTaskDAO
+     */
+    public ShortMessageTaskDAO getShortMessageTaskDAO()
+    {
+        return shortMessageTaskDAO;
+    }
+
+    /**
+     * @param shortMessageTaskDAO
+     *            the shortMessageTaskDAO to set
+     */
+    public void setShortMessageTaskDAO(ShortMessageTaskDAO shortMessageTaskDAO)
+    {
+        this.shortMessageTaskDAO = shortMessageTaskDAO;
+    }
+
+    /**
+     * @return the commonDAO2
+     */
+    public CommonDAO2 getCommonDAO2()
+    {
+        return commonDAO2;
+    }
+
+    /**
+     * @param commonDAO2
+     *            the commonDAO2 to set
+     */
+    public void setCommonDAO2(CommonDAO2 commonDAO2)
+    {
+        this.commonDAO2 = commonDAO2;
     }
 }

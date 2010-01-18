@@ -1362,6 +1362,13 @@ public class StockAction extends DispatchAction
             condtion.addCondition("ProviderBean.code", "like", providerCode);
         }
 
+        String id = request.getParameter("id");
+
+        if ( !StringTools.isNullOrNone(id))
+        {
+            condtion.addCondition("StockPayBean.id", "like", id);
+        }
+
         String alogTime = request.getParameter("alogTime");
 
         if ( !StringTools.isNullOrNone(alogTime))

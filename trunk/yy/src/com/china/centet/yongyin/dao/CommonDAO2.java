@@ -19,6 +19,6 @@ public class CommonDAO2
 {
     public String getSquenceString20()
     {
-        return SequenceTools.getSequence(20);
+        return SequenceTools.getSequence(6);
     }
 }
