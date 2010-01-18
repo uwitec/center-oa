@@ -38,6 +38,11 @@ public interface HandleMessage
     int TYPE_ASK = 103;
 
     /**
+     * stock
+     */
+    int TYPE_STOCK = 104;
+
+    /**
      * getHandleType
      * 
      * @return handleType
