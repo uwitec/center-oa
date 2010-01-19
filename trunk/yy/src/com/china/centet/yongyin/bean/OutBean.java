@@ -168,6 +168,16 @@ public class OutBean implements Serializable
      */
     private String reserve6 = "";
 
+    /**
+     * 预占客户信用等级金额(优先使用客户的)
+     */
+    private double curcredit = 0.0d;
+
+    /**
+     * 预占职员信用等级金额
+     */
+    private double staffcredit = 0.0d;
+
     @Ignore
     private List<BaseBean> baseList = null;
 
@@ -875,5 +885,39 @@ public class OutBean implements Serializable
     public void setReserve6(String reserve6)
     {
         this.reserve6 = reserve6;
+    }
+
+    /**
+     * @return the curcredit
+     */
+    public double getCurcredit()
+    {
+        return curcredit;
+    }
+
+    /**
+     * @param curcredit
+     *            the curcredit to set
+     */
+    public void setCurcredit(double curcredit)
+    {
+        this.curcredit = curcredit;
+    }
+
+    /**
+     * @return the staffcredit
+     */
+    public double getStaffcredit()
+    {
+        return staffcredit;
+    }
+
+    /**
+     * @param staffcredit
+     *            the staffcredit to set
+     */
+    public void setStaffcredit(double staffcredit)
+    {
+        this.staffcredit = staffcredit;
     }
 }

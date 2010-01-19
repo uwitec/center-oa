@@ -208,6 +208,10 @@ public class OutManager
 
         outBean.setTotal(ttatol);
 
+        outBean.setCurcredit(0.0d);
+
+        outBean.setStaffcredit(0.0d);
+
         // 增加管理员操作在数据库事务中完成
         TransactionTemplate tran = new TransactionTemplate(transactionManager);
         try
@@ -414,7 +418,7 @@ public class OutManager
             processBaseList(user, outBean, baseList, logList);
         }
 
-        // 修改库单的状态
+        // NOTE 修改库单的状态(信用额度处理)
         int status = processOutStutus(fullId, user, outBean);
 
         // 处理在途
@@ -493,24 +497,36 @@ public class OutManager
 
                 result = 1;
 
-                // 这里需要计算客户的信用金额-是否报送物流中心经理审批
-                boolean outCredit = parameterDAO.getBoolean(SysConfigConstant.OUT_CREDIT);
-
-                CustomerBean cbean = customerBaseDAO.find(outBean.getCustomerId());
-
-                // 进行逻辑处理(必须是货到收款才能有此逻辑)
-                if (outCredit && cbean != null
-                    && !StringTools.isNullOrNone(cbean.getCreditLevelId())
-                    && outBean.getReserve3() == OutConstanst.OUT_SAIL_TYPE_COMMON)
+                // 只有销售单，剔除个人领样的
+                if (outBean.getOutType() == 0)
                 {
-                    double noPayBusiness = outDAO.sumNoPayBusiness(outBean.getCustomerId(),
-                        YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
+                    // 这里需要计算客户的信用金额-是否报送物流中心经理审批
+                    boolean outCredit = parameterDAO.getBoolean(SysConfigConstant.OUT_CREDIT);
+
+                    CustomerBean cbean = customerBaseDAO.find(outBean.getCustomerId());
+
+                    if (cbean == null)
+                    {
+                        throw new MYException("客户不存在,请确认操作");
+                    }
 
                     // query customer credit
                     CreditLevelBean clevel = creditLevelDAO.find(cbean.getCreditLevelId());
 
-                    if (clevel != null)
+                    if (clevel == null)
                     {
+                        throw new MYException("客户信用等级不存在");
+                    }
+
+                    // 进行逻辑处理(必须是货到收款才能有此逻辑)
+                    if (outCredit && cbean != null
+                        && !StringTools.isNullOrNone(cbean.getCreditLevelId())
+                        && outBean.getReserve3() == OutConstanst.OUT_SAIL_TYPE_COMMON)
+                    {
+                        double noPayBusiness = outDAO.sumNoPayBusiness(outBean.getCustomerId(),
+                            YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate())
+                                               + outBean.getTotal();
+
                         // 超过了客户信用警戒线--报送物流中心经理审批
                         if (noPayBusiness > clevel.getMoney())
                         {
@@ -523,32 +539,72 @@ public class OutManager
                                 outBean.getReserve6());
 
                         }
-                    }
-                }
 
-                // 使用业务员的信用额度
-                if (outCredit && outBean.getReserve3() == OutConstanst.OUT_SAIL_TYPE_CREDIT)
-                {
-                    StafferBean2 sb2 = stafferDAO2.find(outBean.getStafferId());
-
-                    if (sb2 == null)
-                    {
-                        throw new MYException("数据不完备,请重新操作");
+                        // 全部使用客户的信用等级金额
+                        outDAO.updateCurcredit(fullId, outBean.getTotal());
                     }
 
-                    double noPayBusiness = outDAO.sumNoPayAndAvouchBusinessByStafferId(
-                        outBean.getStafferId(), YYTools.getFinanceBeginDate(),
-                        YYTools.getFinanceEndDate());
-
-                    if (noPayBusiness > sb2.getCredit())
+                    // 使用业务员的信用额度
+                    if (outCredit
+                        && outBean.getReserve3() == OutConstanst.OUT_SAIL_TYPE_CREDIT_AND_CUR)
                     {
-                        throw new MYException(sb2.getName() + "的信用额度已经超支,请重新操作");
+                        StafferBean2 sb2 = stafferDAO2.find(outBean.getStafferId());
+
+                        if (sb2 == null)
+                        {
+                            throw new MYException("数据不完备,请重新操作");
+                        }
+
+                        // 先清空两个预占金额,主要是统计的时候方便
+                        outDAO.updateCurcredit(fullId, 0.0d);
+
+                        outDAO.updateStaffcredit(fullId, 0.0d);
+
+                        double noPayBusinessInCur = outDAO.sumNoPayBusiness(
+                            outBean.getCustomerId(), YYTools.getFinanceBeginDate(),
+                            YYTools.getFinanceEndDate());
+
+                        double noPayBusiness = outDAO.sumNoPayAndAvouchBusinessByStafferId(
+                            outBean.getStafferId(), YYTools.getFinanceBeginDate(),
+                            YYTools.getFinanceEndDate());
+
+                        double remainInCur = clevel.getMoney() - noPayBusinessInCur;
+
+                        if (remainInCur < 0)
+                        {
+                            remainInCur = 0.0;
+                        }
+
+                        // 全部使用客户的信用等级
+                        if (remainInCur >= outBean.getTotal())
+                        {
+                            outDAO.updateCurcredit(fullId, outBean.getTotal());
+
+                            outDAO.updateStaffcredit(fullId, 0.0d);
+                        }
+
+                        // 一半使用客户,一半使用职员的
+                        if (remainInCur < outBean.getTotal())
+                        {
+                            // 全部使用客户的信用等级
+                            outDAO.updateCurcredit(fullId, remainInCur);
+
+                            double remainInStaff = outBean.getTotal() - remainInCur;
+
+                            // 防止职员信用等级超支
+                            if ( (noPayBusiness + remainInStaff) > sb2.getCredit())
+                            {
+                                throw new MYException(sb2.getName() + "的信用额度已经超支,请重新操作");
+                            }
+
+                            outDAO.updateStaffcredit(fullId, remainInStaff);
+                        }
                     }
                 }
             }
             catch (Exception e)
             {
-                throw new MYException(e.toString());
+                throw new MYException(e);
             }
         }
         else

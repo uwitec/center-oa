@@ -74,9 +74,9 @@ public interface OutConstanst
     int OUT_SAIL_TYPE_MONEY = 1;
 
     /**
-     * 使用业务员信用额度
+     * 使用业务员信用额度和客户信用额度(客户信用额度优先)
      */
-    int OUT_SAIL_TYPE_CREDIT = 2;
+    int OUT_SAIL_TYPE_CREDIT_AND_CUR = 2;
 
     /**
      * 黑名单客户

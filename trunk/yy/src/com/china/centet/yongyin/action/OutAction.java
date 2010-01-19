@@ -2175,6 +2175,19 @@ public class OutAction extends DispatchAction
 
         if ("1".equals(fow))
         {
+            User user = (User)request.getSession().getAttribute("user");
+
+            double noPayBusiness = outDAO.sumNoPayAndAvouchBusinessByStafferId(
+                user.getStafferId(), YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
+
+            StafferBean2 sb2 = stafferDAO2.find(user.getStafferId());
+
+            if (sb2 != null)
+            {
+                // 设置其剩余的信用额度
+                request.setAttribute("credit", ElTools.formatNum(sb2.getCredit() - noPayBusiness));
+            }
+
             // 处理修改
             return processModify(mapping, request, bean);
         }

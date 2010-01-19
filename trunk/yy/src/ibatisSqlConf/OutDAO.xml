@@ -18,7 +18,7 @@
 	
 	 <select id="sumNoPayBusiness" parameterClass="java.util.Map" resultClass="java.lang.Double">
         <![CDATA[
-            select sum(t1.total) from t_center_out t1
+            select sum(t1.curcredit) from t_center_out t1
             where t1.customerId = #customerId# 
             AND t1.type = 0 
             AND t1.outtype = 0
@@ -31,7 +31,7 @@
     
     <select id="sumNoPayAndAvouchBusinessByStafferId" parameterClass="java.util.Map" resultClass="java.lang.Double">
         <![CDATA[
-            select sum(t1.total) from t_center_out t1
+            select sum(t1.staffcredit) from t_center_out t1
             where t1.stafferId = #stafferId# 
             AND t1.type = 0 
             AND t1.outtype = 0

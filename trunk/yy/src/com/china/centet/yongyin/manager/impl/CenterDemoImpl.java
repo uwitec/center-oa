@@ -23,7 +23,7 @@ import com.china.centet.yongyin.manager.CenterDemo;
 public class CenterDemoImpl implements CenterDemo
 {
     /**
-     * 
+     * BankBean
      */
     public BankBean getBank(BillDemo bill, ProviderBean[] customer)
         throws MYException

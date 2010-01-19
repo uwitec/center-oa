@@ -139,6 +139,34 @@ public class OutDAO
         return true;
     }
 
+    /**
+     * updateCurcredit
+     * 
+     * @param fullId
+     * @param curcredit
+     * @return
+     */
+    public boolean updateCurcredit(String fullId, double curcredit)
+    {
+        jdbcOperation2.updateField("curcredit", curcredit, fullId, OutBean.class);
+
+        return true;
+    }
+
+    /**
+     * updateStaffcredit
+     * 
+     * @param fullId
+     * @param staffcredit
+     * @return
+     */
+    public boolean updateStaffcredit(String fullId, double staffcredit)
+    {
+        jdbcOperation2.updateField("staffcredit", staffcredit, fullId, OutBean.class);
+
+        return true;
+    }
+
     public int countBaseByIds(String fullId, String productId)
     {
         String sql = "select count(1) from t_center_base where outId = ? and productId = ?";
@@ -217,7 +245,7 @@ public class OutDAO
     }
 
     /**
-     * sumNoPayBusiness
+     * sumNoPayBusiness(统计基于客户信用额度的预占金额)
      * 
      * @param cid
      * @param beginDate
