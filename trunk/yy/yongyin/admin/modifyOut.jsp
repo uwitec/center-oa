@@ -453,7 +453,7 @@ function locationChange()
 								<td width="35">&nbsp;</td>
 								<td width="6"><img src="../images/dot_r.gif" width="6"
 									height="6"></td>
-								<td class="caption"><strong>修改${ff}库单信息:</strong>
+								<td class="caption"><strong>修改${ff}库单信息:您的信用额度还剩下:${credit}</strong>
 								<c:if test="${out.type == 0}">
 								<font color="blue">产品区域：</font>
 								<select name="location" class="select_class" values="${out.location}" onchange="locationChange()" readonly="true">
@@ -607,10 +607,11 @@ function locationChange()
 					<tr class="content2">
                         <td align="right">付款方式：</td>
                         <td colspan="3">
-                        <select name="reserve3" class="select_class" oncheck="notNone;" head="付款方式" values="${out.reserve3}" readonly="true">
+                        <select name="reserve3" class="select_class" oncheck="notNone;" head="付款方式" values="${out.reserve3}" readonly="true"
+                        style="width: 240px">
                             <option value='0'>货到收款</option>
                             <option value='1'>款到发货(黑名单客户)</option>
-                            <option value='2'>业务员信用额度担保</option>
+                            <option value='2'>客户信用和业务员信用额度担保</option>
                         </select>
                         <font color="#FF0000">*</font></td>
                     </tr>

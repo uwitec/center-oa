@@ -77,7 +77,7 @@ function getCustmeor(id, name, conn, phone, customercreditlevel)
         
         setOption($('reserve3'), '0', '货到收款');  
         setOption($('reserve3'), '1', '款到发货(黑名单客户)');  
-        //setOption($('reserve3'), '2', '业务员信用额度担保');  
+        setOption($('reserve3'), '2', '客户信用和业务员信用额度担保');  
 	}
 }
 
@@ -648,12 +648,10 @@ function selectOut()
 					<tr class="content2">
                         <td align="right">付款方式：</td>
                         <td colspan="3">
-                        <select name="reserve3" class="select_class" oncheck="notNone;" head="付款方式">
+                        <select name="reserve3" class="select_class" oncheck="notNone;" head="付款方式" style="width: 240px">
                             <option value='0'>货到收款</option>
                             <option value='1'>款到发货(黑名单客户)</option>
-                            <!-- 
-                            <option value='2'>业务员信用额度担保</option>
-                             -->
+                            <option value='2'>客户信用和业务员信用额度担保</option>
                         </select>
                         <font color="#FF0000">*</font></td>
                     </tr>

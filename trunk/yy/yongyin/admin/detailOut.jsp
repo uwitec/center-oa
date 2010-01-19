@@ -69,7 +69,7 @@ function pagePrint()
 	</tr>
 </table>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0"
+<table width="98%" border="0" cellpadding="0" cellspacing="0"
 	align="center">
 	<tr>
 		<td valign="top" colspan='2'>
@@ -203,7 +203,7 @@ function pagePrint()
 					<tr class="content2">
                         <td>付款方式：</td>
                         <%
-                                String[] sss2 = new String[]{"货到收款" , "<font color=red>款到发货</font>", "<font color=blue>业务员信用额度担保</font>"};
+                                String[] sss2 = new String[]{"货到收款" , "<font color=red>款到发货</font>", "<font color=blue>客户信用和业务员信用额度担保</font>"};
                                 request.setAttribute("sss2", sss2);
                         %>
                         <td colspan="3">${my:getValue(out.reserve3, sss2)}</td>

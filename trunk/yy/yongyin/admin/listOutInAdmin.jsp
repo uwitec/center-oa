@@ -1,15 +1,15 @@
 <%@ page contentType="text/html;charset=GBK" language="java"%>
 <%@include file="./common.jsp"%>
-
 <html>
-
 <head>
 <p:link title="查询销售单" />
-<script src="../js/prototype.js"></script>
+<link href="../js/plugin/dialog/css/dialog.css" type="text/css" rel="stylesheet"/>
 <script src="../js/title_div.js"></script>
 <script src="../js/common.js"></script>
 <script src="../js/cnchina.js"></script>
 <script src="../js/public.js"></script>
+<script src="../js/jquery/jquery.js"></script>
+<script src="../js/plugin/dialog/jquery.dialog.js"></script>
 <script language="javascript">
 function detail()
 {
@@ -49,18 +49,18 @@ function check()
 		if (window.confirm(hi + "确定审核通过销售单?"))
 		{
 			$Dbuttons(true);
-			$('method').value = 'modifyOutStatus';
+			getObj('method').value = 'modifyOutStatus';
 
-		 	$('statuss').value = dirs['${user.role}'];
-		 	$('oldStatus').value = getRadio('fullId').statuss;
+		 	getObj('statuss').value = dirs['${user.role}'];
+		 	getObj('oldStatus').value = getRadio('fullId').statuss;
 
-		 	$('outId').value = getRadioValue("fullId");
+		 	getObj('outId').value = getRadioValue("fullId");
 
-		 	$('radioIndex').value = $Index('fullId');
+		 	getObj('radioIndex').value = $Index('fullId');
 
 		 	//var sss = window.prompt('请输入审核通过原因：', '');
 
-		 	$('reason').value = '同意';
+		 	getObj('reason').value = '同意';
 
 		 	adminForm.submit();
 		}
@@ -100,30 +100,35 @@ function reject()
 
 	if (getRadio('fullId').statuss == cckk['${user.role}'])
 	{
-		if (window.confirm("确定驳回销售单?"))
-		{
-			$Dbuttons(true);
-			$('method').value = 'modifyOutStatus';
-		 	$('statuss').value = '2';
-		 	$('oldStatus').value = getRadio('fullId').statuss;
-		 	$('outId').value = getRadioValue("fullId");
-
-		 	$('radioIndex').value = $Index('fullId');
-
-		 	var sss = window.prompt('请输入驳回销售单原因：', '');
-
-		 	$('reason').value = sss;
-
-		 	if (!(sss == null || sss == ''))
-		 	{
-		 		adminForm.submit();
-		 	}
-		 	else
-		 	{
-		 	    $Dbuttons(false);
-		 	}
-		 	
-		}
+	    $.messager.prompt('驳回', '请输入驳回原因', '', function(r){
+                if (r)
+                {
+		            $Dbuttons(true);
+		            getObj('method').value = 'modifyOutStatus';
+		            getObj('statuss').value = '2';
+		            getObj('oldStatus').value = getRadio('fullId').statuss;
+		            getObj('outId').value = getRadioValue("fullId");
+		
+		            getObj('radioIndex').value = $Index('fullId');
+		
+		            var sss = r;
+		
+		            getObj('reason').value = r;
+		
+		            if (!(sss == null || sss == ''))
+		            {
+		                adminForm.submit();
+		            }
+		            else
+		            {
+		                $Dbuttons(false);
+		            }
+                }
+                else
+                {
+                    alert('请输入原因');
+                }
+            });
 	}
 	else
 	{
@@ -144,7 +149,7 @@ function prints()
 
 function query()
 {
-    $('method').value = 'queryOut2';
+    getObj('method').value = 'queryOut2';
 	adminForm.submit();
 }
 
@@ -155,8 +160,8 @@ function selectCustomer()
 
 function getCustmeor(id, name, conn, phone)
 {
-	$("customerName").value = name;
-	$("customerId").value = id;
+	getObj("customerName").value = name;
+	getObj("customerId").value = id;
 }
 
 var bs = '${user.role}';
@@ -180,6 +185,8 @@ function load()
 		$d('bu2');
 		$v('bu2');
 	}
+	
+	tooltip.init ();
 }
 
 
@@ -244,7 +251,7 @@ function load()
 </table>
 
 <br>
-<table width="100%" border="0" cellpadding="0" cellspacing="0"
+<table width="98%" border="0" cellpadding="0" cellspacing="0"
 	align="center">
 	<tr>
 		<td align='center' colspan='2'>
