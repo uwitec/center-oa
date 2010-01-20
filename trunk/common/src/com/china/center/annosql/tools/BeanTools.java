@@ -742,6 +742,11 @@ public abstract class BeanTools
                 continue;
             }
 
+            if (isRelationship(field))
+            {
+                continue;
+            }
+
             // ¹ýÂË¾²Ì¬ÀàÐÍ
             if (Modifier.isStatic(field.getModifiers()))
             {
@@ -972,6 +977,17 @@ public abstract class BeanTools
     public static boolean isIgnore(Field field)
     {
         return field.getAnnotation(Ignore.class) != null;
+    }
+
+    /**
+     * isRelationship
+     * 
+     * @param field
+     * @return
+     */
+    public static boolean isRelationship(Field field)
+    {
+        return field.getAnnotation(Relationship.class) != null;
     }
 
     /**

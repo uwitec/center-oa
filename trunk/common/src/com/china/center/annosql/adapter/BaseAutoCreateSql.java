@@ -621,7 +621,7 @@ public abstract class BaseAutoCreateSql implements AutoCreateSql
 
             String tableName = BeanTools.getTableName(claz);
 
-            List<InnerBean> columns = BeanTools.getClassFieldsInner(claz);
+            List<InnerBean> columns = BeanTools.getClassFieldsInsert(claz, true);
 
             if (columns.size() == 0)
             {

@@ -39,6 +39,25 @@ public class CommonTools
     {}
 
     /**
+     * getParamerFromAll
+     * 
+     * @param request
+     * @param key
+     * @return
+     */
+    public static String getParamerFromAll(HttpServletRequest request, String key)
+    {
+        String keyValue = request.getParameter(key);
+
+        if ( !StringTools.isNullOrNone(keyValue))
+        {
+            keyValue = (String)request.getAttribute(key);
+        }
+
+        return keyValue;
+    }
+
+    /**
      * 自动保存paramers到Attribute里面
      */
     public static void saveParamers(HttpServletRequest request)
