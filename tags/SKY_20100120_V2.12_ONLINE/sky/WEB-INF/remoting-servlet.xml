@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<bean name="/CommonFacade"
+		class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service">
+			<ref bean="commonFacade" />
+		</property>
+		<property name="serviceInterface">
+			<value>com.china.center.oa.interfaces.CommonFacade</value>
+		</property>
+	</bean>
+
+	<bean name="/BillFacade"
+		class="org.springframework.remoting.caucho.HessianServiceExporter">
+		<property name="service">
+			<ref bean="billFacade" />
+		</property>
+		<property name="serviceInterface">
+			<value>com.china.center.oa.interfaces.BillFacade</value>
+		</property>
+	</bean>
+</beans>

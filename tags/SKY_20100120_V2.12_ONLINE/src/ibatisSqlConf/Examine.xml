@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Examine">
+	<resultMap id="customerMap"
+        class="com.china.center.oa.examine.wrap.CustomerWrap">
+        <result property="id" column="id" />
+        <result property="name" column="name" />
+    </resultMap>
+    
+    
+    <!-- 产品的考核统计 -->
+    <select id="queryProductOutCustomerByCondition"
+        parameterClass="java.util.Map" resultMap="customerMap">
+        <![CDATA[
+        select distinct (t1.customerId) as id, t3.name  from t_center_out t1, t_center_base t2 , 
+        t_center_customer_now t3
+        WHERE t1.outTime >= #beginTime# and t1.outTime <= #endTime#
+        and t1.type = #type# and t1.stafferId = #stafferId# and t2.productId = #productId# 
+        and t1.fullid = t2.outid and t1.customerId = t3.id
+        ]]>
+    </select>
+    
+     <!-- 客户拜访在终端的维护考核 -->
+    <select id="queryCustomerInTer"
+        parameterClass="java.util.Map" resultMap="customerMap">
+        <![CDATA[
+        select DISTINCT(t1.targerId) as id, t1.targerName as name
+		from T_CENTER_WORKLOG_VISIT t1, t_center_worklog t3, t_center_customer_now t2
+		where t1.targerAtt = #newType# AND t1.parentid = t3.id 
+		and t1.targerId = t2.id and t2.selltype = 0
+		and t1.workType = 0 and t3.status = 1
+		and t3.stafferId = #stafferId#
+		and t3.workDate >= #beginTime#
+		and t3.workDate <= #endTime#
+        ]]>
+    </select>
+    
+</sqlMap>

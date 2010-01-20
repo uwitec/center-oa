@@ -1,0 +1,173 @@
+/**
+ * File Name: GroupBean.java<br>
+ * CopyRight: Copyright by www.center.china<br>
+ * Description:<br>
+ * Creater: zhuAchen<br>
+ * CreateTime: 2009-4-7<br>
+ * Grant: open source to everybody
+ */
+package com.china.center.oa.group.bean;
+
+
+import java.io.Serializable;
+import java.util.List;
+
+import com.china.center.annotation.Entity;
+import com.china.center.annotation.FK;
+import com.china.center.annotation.Html;
+import com.china.center.annotation.Id;
+import com.china.center.annotation.Ignore;
+import com.china.center.annotation.Table;
+import com.china.center.annotation.enums.Element;
+import com.china.center.oa.constant.GroupConstant;
+import com.china.center.oa.group.vs.GroupVSStafferBean;
+
+
+/**
+ * GroupBean
+ * 
+ * @author zhuzhu
+ * @version 2009-4-7
+ * @see GroupBean
+ * @since 1.0
+ */
+@Entity
+@Table(name = "T_CENTER_GROUP")
+public class GroupBean implements Serializable
+{
+    @Id
+    private String id = "";
+
+    @Html(title = "√˚≥∆", maxLength = 40, must = true)
+    private String name = "";
+
+    @Html(title = "¿‡–Õ", type = Element.SELECT)
+    private int type = GroupConstant.GROUP_TYPE_PRIVATE;
+
+    @FK
+    private String stafferId = "";
+
+    @Ignore
+    private List<GroupVSStafferBean> items = null;
+
+    /**
+     * default constructor
+     */
+    public GroupBean()
+    {}
+
+    /**
+     * equals
+     */
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+
+        if (this == obj)
+        {
+            return true;
+        }
+
+        if (obj instanceof GroupBean)
+        {
+            GroupBean temp = (GroupBean)obj;
+
+            return temp.getId().equals(this.id);
+        }
+
+        return false;
+    }
+
+    public int hashCode()
+    {
+        return this.id.hashCode();
+    }
+    
+    /**
+     * @return the id
+     */
+    public String getId()
+    {
+        return id;
+    }
+
+    /**
+     * @param id
+     *            the id to set
+     */
+    public void setId(String id)
+    {
+        this.id = id;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName()
+    {
+        return name;
+    }
+
+    /**
+     * @param name
+     *            the name to set
+     */
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    /**
+     * @return the type
+     */
+    public int getType()
+    {
+        return type;
+    }
+
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(int type)
+    {
+        this.type = type;
+    }
+
+    /**
+     * @return the stafferId
+     */
+    public String getStafferId()
+    {
+        return stafferId;
+    }
+
+    /**
+     * @param stafferId
+     *            the stafferId to set
+     */
+    public void setStafferId(String stafferId)
+    {
+        this.stafferId = stafferId;
+    }
+
+    /**
+     * @return the items
+     */
+    public List<GroupVSStafferBean> getItems()
+    {
+        return items;
+    }
+
+    /**
+     * @param items
+     *            the items to set
+     */
+    public void setItems(List<GroupVSStafferBean> items)
+    {
+        this.items = items;
+    }
+}

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="SnapshotDAO">
+    <update id="snapshotProductNumber" parameterClass="java.util.Map">
+    <![CDATA[
+       select t1.code , t1.productname, t1.num, 
+       t2.LOCATIONNAME from t_center_productnumber t1, 
+       t_center_location t2 where t1.locationid = t2.id 
+       and t1.num > 0 order by t1.productid 
+       into outfile #path#
+	]]>
+    </update>
+    
+    <update id="snapshotProductNumberInCenter" parameterClass="java.util.Map">
+    <![CDATA[
+       select t2.code, t2.name as pname, t1.amount, t3.name as dname, t4.name as sname
+       from t_center_storageralation t1, t_center_product t2, t_center_depotpart t3 ,
+       t_center_storage t4
+       where t1.amount > 0 and  t1.productId = t2.id and t1.depotpartId = t3.id 
+       and t1.storageId = t4.id 
+       order by t1.amount desc
+       into outfile #path#
+    ]]>
+    </update>
+</sqlMap>

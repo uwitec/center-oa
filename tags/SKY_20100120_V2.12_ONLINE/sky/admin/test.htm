@@ -1,0 +1,21 @@
+<html>
+<HEAD>
+<SCRIPT src="../js/jquery/jquery-1.2.6.js" type=text/javascript></SCRIPT>
+<SCRIPT src="../js/jquery.blockUI.js" type=text/javascript></SCRIPT>
+<script type="text/javascript">
+
+function load()
+{
+$.blockUI({ message: $('#loginForm') }); 
+         
+        setTimeout($.unblockUI, 2000); 
+}
+</SCRIPT>
+</head>
+<body onload="load()">
+<div id="loginForm" style="display:none">
+            <p><label>Username:</label><input type="text" name="demo1" /></p>
+            <p><label>Password:</label><input type="text" name="demo1" /></p>
+</div>
+<body>
+</html>

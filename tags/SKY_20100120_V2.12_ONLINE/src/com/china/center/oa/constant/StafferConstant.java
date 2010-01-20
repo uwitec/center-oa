@@ -1,0 +1,44 @@
+/**
+ * File Name: StafferConstant.java<br>
+ * CopyRight: Copyright by www.center.china<br>
+ * Description:<br>
+ * Creater: zhuAchen<br>
+ * CreateTime: 2009-2-8<br>
+ * Grant: open source to everybody
+ */
+package com.china.center.oa.constant;
+
+
+import com.china.center.annotation.Defined;
+
+
+/**
+ * StafferConstant
+ * 
+ * @author zhuzhu
+ * @version 2009-2-8
+ * @see StafferConstant
+ * @since 1.0
+ */
+public interface StafferConstant
+{
+    /**
+     * 超级管理员
+     */
+    String SUPER_STAFFER = "99999999";
+    
+    @Defined(key = "examType", value = "终端")
+    int EXAMTYPE_TERMINAL = ExamineConstant.EXAMINE_TYPE_TER;
+
+    @Defined(key = "examType", value = "拓展")
+    int EXAMTYPE_EXPAND = ExamineConstant.EXAMINE_TYPE_EXPEND;
+
+    @Defined(key = "examType", value = "其他")
+    int EXAMTYPE_OTHER = 99;
+
+    @Defined(key = "stafferStatus", value = "正常")
+    int STATUS_COMMON = 0;
+    
+    @Defined(key = "stafferStatus", value = "废弃")
+    int STATUS_DROP = 99;
+}
