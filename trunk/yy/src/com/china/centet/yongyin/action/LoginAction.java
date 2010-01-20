@@ -128,7 +128,7 @@ public class LoginAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        boolean real = false;
+        boolean real = getContorl();
 
         if (real && rand == null)
         {
@@ -293,6 +293,16 @@ public class LoginAction extends DispatchAction
     }
 
     /**
+     * getContorl
+     * 
+     * @return
+     */
+    private boolean getContorl()
+    {
+        return true;
+    }
+
+    /**
      * loginAsk
      * 
      * @param mapping
@@ -316,7 +326,7 @@ public class LoginAction extends DispatchAction
 
         String randKey = request.getParameter("jiamiRand");
 
-        boolean real = false;
+        boolean real = getContorl();
 
         if (real && rand == null)
         {
@@ -374,6 +384,8 @@ public class LoginAction extends DispatchAction
             request.getSession().setAttribute("GLocationName", "系统");
 
             request.getSession().setAttribute("GProvider", provider);
+
+            request.getSession().setAttribute("SNFLAG", "ASK");
 
             request.getSession().setAttribute("SN", "询价系统");
 
@@ -742,29 +754,59 @@ public class LoginAction extends DispatchAction
 
         User user = (User)request.getSession().getAttribute("user");
 
-        User user1 = userDAO.findUserByLoginName(user.getName());
+        String snFlag = (String)request.getSession().getAttribute("SNFLAG");
 
-        if (user1 == null)
+        if ( !"ASK".equals(snFlag))
         {
-            request.setAttribute(KeyConstant.MESSAGE, "用户不存在");
-            return mapping.findForward("password");
-        }
+            User user1 = userDAO.findUserByLoginName(user.getName());
 
-        if (user1.getPassword().equals(Security.getSecurity(oldPassword)))
-        {
-            if (userDAO.modifyPassword(user.getName(), Security.getSecurity(newPassword)))
+            if (user1 == null)
             {
-                user.setPassword(Security.getSecurity(newPassword));
-                request.setAttribute(KeyConstant.MESSAGE, "密码修改成功");
+                request.setAttribute(KeyConstant.MESSAGE, "用户不存在");
+                return mapping.findForward("password");
+            }
+
+            if (user1.getPassword().equals(Security.getSecurity(oldPassword)))
+            {
+                if (userDAO.modifyPassword(user.getName(), Security.getSecurity(newPassword)))
+                {
+                    user.setPassword(Security.getSecurity(newPassword));
+                    request.setAttribute(KeyConstant.MESSAGE, "密码修改成功");
+                }
+                else
+                {
+                    request.setAttribute(KeyConstant.MESSAGE, "密码修改失败");
+                }
             }
             else
             {
-                request.setAttribute(KeyConstant.MESSAGE, "密码修改失败");
+                request.setAttribute(KeyConstant.MESSAGE, "原密码错误");
             }
         }
         else
         {
-            request.setAttribute(KeyConstant.MESSAGE, "原密码错误");
+            ProviderUserBean puser = providerUserDAO.find(user.getStafferId());
+
+            if (puser == null)
+            {
+                request.setAttribute(KeyConstant.MESSAGE, "用户不存在");
+
+                return mapping.findForward("password");
+            }
+
+            if ( !puser.getPassword().equals(Security.getSecurity(oldPassword)))
+            {
+                request.setAttribute(KeyConstant.MESSAGE, "原密码错误");
+
+                return mapping.findForward("password");
+            }
+
+            // 修改外网询价用户的密码
+            String md5 = Security.getSecurity(newPassword);
+
+            providerUserDAO.updatePassword(user.getStafferId(), md5);
+
+            request.setAttribute(KeyConstant.MESSAGE, "密码修改成功");
         }
 
         return mapping.findForward("password");

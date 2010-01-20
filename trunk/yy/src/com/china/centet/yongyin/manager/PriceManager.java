@@ -9,6 +9,7 @@
 package com.china.centet.yongyin.manager;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,8 +108,8 @@ public class PriceManager
      * @return
      * @throws MYException
      */
-    @Transactional(rollbackFor = {MYException.class})
     @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
     public boolean addPriceAskBean(final PriceAskBean bean)
         throws MYException
     {
@@ -117,7 +118,28 @@ public class PriceManager
         // 如果是外网询价这里需要归并在一起
         handleNetAsk(bean);
 
+        bean.setSrcamount(bean.getAmount());
+
         priceAskDAO.saveEntityBean(bean);
+
+        return true;
+    }
+
+    /**
+     * updatePriceAskAmount
+     * 
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean updatePriceAskAmount(final Serializable id, int newAmount)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(id);
+
+        priceAskDAO.updateAmount(id, newAmount);
 
         return true;
     }
@@ -148,12 +170,16 @@ public class PriceManager
 
                 absAsk.setUserId(Constant.SYSTEM_USER);
 
+                absAsk.setSrcamount(absAsk.getAmount());
+
                 priceAskDAO.saveEntityBean(absAsk);
             }
             else
             {
                 // 补充数量
                 absAsk.setAmount(bean.getAmount() + absAsk.getAmount());
+
+                absAsk.setSrcamount(absAsk.getSrcamount() + bean.getAmount());
 
                 priceAskDAO.updateEntityBean(absAsk);
             }

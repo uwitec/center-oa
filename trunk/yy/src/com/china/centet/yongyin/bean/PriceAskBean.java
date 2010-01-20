@@ -38,6 +38,11 @@ public class PriceAskBean implements Serializable
     @Html(title = "数量", tip = "只能填写数字", must = true, maxLength = 40, oncheck = JCheck.ONLY_NUMBER)
     private int amount = 0;
 
+    /**
+     * 原始询价数量
+     */
+    private int srcamount = 0;
+
     private double price = 0.0d;
 
     private String logTime = "";
@@ -452,5 +457,25 @@ public class PriceAskBean implements Serializable
     public void setSaveType(int saveType)
     {
         this.saveType = saveType;
+    }
+
+    /**
+     * @return the srcamount
+     */
+    public int getSrcamount()
+    {
+        return srcamount;
+    }
+
+    /**
+     * @param srcamount
+     *            the srcamount to set
+     */
+    public void setSrcamount(int srcamount)
+    {
+        if (srcamount > 0)
+        {
+            this.srcamount = srcamount;
+        }
     }
 }

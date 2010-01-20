@@ -9,6 +9,7 @@
 package com.china.centet.yongyin.dao;
 
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.china.center.annosql.tools.BeanTools;
@@ -29,11 +30,12 @@ import com.china.centet.yongyin.vo.PriceAskBeanVO;
  */
 public class PriceAskDAO extends BaseDAO2<PriceAskBean, PriceAskBeanVO>
 {
-    /**
-     * default constructor
-     */
-    public PriceAskDAO()
-    {}
+    public boolean updateAmount(Serializable id, int newAmount)
+    {
+        this.jdbcOperation.updateField("amount", newAmount, id, claz);
+
+        return true;
+    }
 
     /**
      * 定时更新询价超时

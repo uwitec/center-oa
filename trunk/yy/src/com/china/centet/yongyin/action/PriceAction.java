@@ -735,6 +735,43 @@ public class PriceAction extends DispatchAction
     }
 
     /**
+     * updatePriceAskAmount
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward updatePriceAskAmount(ActionMapping mapping, ActionForm form,
+                                              HttpServletRequest request,
+                                              HttpServletResponse reponse)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        String newAmount = request.getParameter("newAmount");
+
+        try
+        {
+            priceManager.updatePriceAskAmount(id, CommonTools.parseInt(newAmount));
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功修改询价数量");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "修改询价数量失败:" + e.getMessage());
+        }
+
+        QueryTools.setForwardQuery(request);
+
+        return queryPriceAsk(mapping, form, request, reponse);
+    }
+
+    /**
      * @param bean
      */
     private void setPriceAskProcessTime(PriceAskBean bean)
@@ -1007,8 +1044,20 @@ public class PriceAction extends DispatchAction
 
             Map<String, String> map = new HashMap<String, String>();
 
+            int maxAmount = parameterDAO.getInt(SysConfigConstant.ASK_PRODUCT_AMOUNT_MAX);
+
             for (PriceAskBeanVO priceAskBeanVO : list)
             {
+                // 虚拟存储
+                if (priceAskBeanVO.getSaveType() == PriceConstant.PRICE_ASK_SAVE_TYPE_ABS)
+                {
+                    if (priceAskBeanVO.getAmount() > maxAmount)
+                    {
+                        // 超出了
+                        priceAskBeanVO.setOverMax(1);
+                    }
+                }
+
                 if (priceAskBeanVO.getStatus() == PriceConstant.PRICE_ASK_STATUS_PROCESSING
                     || priceAskBeanVO.getStatus() == PriceConstant.PRICE_ASK_STATUS_END)
                 {
@@ -1170,6 +1219,7 @@ public class PriceAction extends DispatchAction
         {
             condtion.addCondition("PriceAskBean.userId", "=", user.getId());
         }
+        // 外网询价的逻辑
         else if (user.getRole() == Role.NETASK)
         {
             List<ProductTypeVSCustomer> typeList = (List<ProductTypeVSCustomer>)request.getSession().getAttribute(
@@ -1195,6 +1245,10 @@ public class PriceAction extends DispatchAction
 
             condtion.addIntCondition("PriceAskBean.type", "=", PriceConstant.PRICE_ASK_TYPE_NET);
 
+            // 只能看见制定数量的产品询价
+            condtion.addIntCondition("PriceAskBean.amount", "<=",
+                parameterDAO.getInt(SysConfigConstant.ASK_PRODUCT_AMOUNT_MAX));
+
             // 只能看到虚拟存储的
             condtion.addIntCondition("PriceAskBean.saveType", "=",
                 PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
@@ -1205,7 +1259,33 @@ public class PriceAction extends DispatchAction
         }
         else
         {
-            condtion.addIntCondition("PriceAskBean.type", "=", PriceConstant.PRICE_ASK_TYPE_INNER);
+            String updateMax = request.getParameter("updateMax");
+
+            if (StringTools.isNullOrNone(updateMax))
+            {
+                updateMax = (String)request.getAttribute("updateMax");
+            }
+
+            if ( !StringTools.isNullOrNone(updateMax))
+            {
+                condtion.addIntCondition("PriceAskBean.type", "=",
+                    PriceConstant.PRICE_ASK_TYPE_NET);
+
+                // 只能看到虚拟存储的
+                condtion.addIntCondition("PriceAskBean.saveType", "=",
+                    PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
+
+                // 只能看见制定数量的产品询价
+                condtion.addIntCondition("PriceAskBean.amount", ">",
+                    parameterDAO.getInt(SysConfigConstant.ASK_PRODUCT_AMOUNT_MAX));
+
+                condtion.addCondition("AND PriceAskBean.status in (0, 1)");
+            }
+            else
+            {
+                condtion.addIntCondition("PriceAskBean.type", "=",
+                    PriceConstant.PRICE_ASK_TYPE_INNER);
+            }
         }
 
         String productId = request.getParameter("productId");
@@ -1227,6 +1307,13 @@ public class PriceAction extends DispatchAction
         if ( !StringTools.isNullOrNone(status))
         {
             condtion.addIntCondition("PriceAskBean.status", "=", status);
+        }
+
+        String type = request.getParameter("type");
+
+        if ( !StringTools.isNullOrNone(type))
+        {
+            condtion.addIntCondition("PriceAskBean.type", "=", type);
         }
 
         String overTime = request.getParameter("overTime");

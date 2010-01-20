@@ -124,10 +124,7 @@ function reject()
 		                $Dbuttons(false);
 		            }
                 }
-                else
-                {
-                    alert('«Î ‰»Î‘≠“Ú');
-                }
+               
             });
 	}
 	else

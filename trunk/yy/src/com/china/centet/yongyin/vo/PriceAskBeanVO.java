@@ -33,6 +33,12 @@ public class PriceAskBeanVO extends PriceAskBean
     @Relationship(relationField = "puserId", tagField = "stafferName")
     private String puserName = "";
 
+    /**
+     * 0:Ã»ÓÐ 1:³¬³ö
+     */
+    @Ignore
+    private int overMax = 0;
+
     @Ignore
     private List<PriceAskProviderBeanVO> itemVO = null;
 
@@ -142,5 +148,22 @@ public class PriceAskBeanVO extends PriceAskBean
     public void setLocationName(String locationName)
     {
         this.locationName = locationName;
+    }
+
+    /**
+     * @return the overMax
+     */
+    public int getOverMax()
+    {
+        return overMax;
+    }
+
+    /**
+     * @param overMax
+     *            the overMax to set
+     */
+    public void setOverMax(int overMax)
+    {
+        this.overMax = overMax;
     }
 }

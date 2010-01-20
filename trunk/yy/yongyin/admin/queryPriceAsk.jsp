@@ -4,11 +4,13 @@
 <html>
 <head>
 <p:link title="询价列表" />
-<script language="JavaScript" src="../js/prototype.js"></script>
+<link href="../js/plugin/dialog/css/dialog.css" type="text/css" rel="stylesheet"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/fanye.js"></script>
 <script language="JavaScript" src="../js/title_div.js"></script>
+<script src="../js/jquery/jquery.js"></script>
+<script src="../js/plugin/dialog/jquery.dialog.js"></script>
 <script language="javascript">
 
 var ask = 0;
@@ -35,24 +37,26 @@ function resets()
 {
 	formEntry.reset();
 
-	$('productName').value = '';
-	$('productId').value = '';
-	$('qid').value = '';
-	setSelectIndex($('status'), 0);
+	$O('productName').value = '';
+	$O('productId').value = '';
+	$O('qid').value = '';
+	setSelectIndex($O('status'), 0);
 }
 
 function load()
 {
 	$f('qid');
-	$('qid').select();
+	$O('qid').select();
+	
+	tooltip.init();
 }
 
 function del(id)
 {
 	if (window.confirm('确定删除询价?'))
 	{
-		$('method').value = 'delPriceAsk';
-		$('id').value = id;
+		$O('method').value = 'delPriceAsk';
+		$O('id').value = id;
 		formEntry.submit();
 	}
 }
@@ -61,8 +65,8 @@ function reject(id)
 {
 	if (window.confirm('确定驳回此询价?'))
 	{
-		$('method').value = 'rejectPriceAsk';
-		$('id').value = id;
+		$O('method').value = 'rejectPriceAsk';
+		$O('id').value = id;
 		formEntry.submit();
 	}
 }
@@ -107,8 +111,8 @@ function getProduct(oo)
 	}
 	else
 	{
-		$('productId').value = obj.value;
-		$('productName').value = obj.productname;
+		$O('productId').value = obj.value;
+		$O('productName').value = obj.productname;
 	}
 }
 
@@ -122,6 +126,31 @@ function showDiv(id)
 	if (jmap[id] != null && jmap[id] != '')
 	tooltip.showTable(jmap[id]);
 }
+
+function updateMaxAmount(id, amount)
+{
+    $.messager.prompt('更新询价数量', '请询价数量', amount, function(r){
+                if (r)
+                {
+                    $Dbuttons(true);
+                    
+                    var sss = r;
+        
+                    if (!(sss == null || sss == ''))
+                    {
+                        document.location.href = '../admin/price.do?method=updatePriceAskAmount&updateMax=1&id=' + id + '&newAmount=' + sss;
+                    }
+                    else
+                    {
+                        $Dbuttons(false);
+                    }
+                }
+                else
+                {
+                    alert('请输询价数量');
+                }
+            });
+}
 </script>
 
 </head>
@@ -130,7 +159,9 @@ function showDiv(id)
 	type="hidden" name="method" value="queryPriceAsk"> <input
 	type="hidden" name="id" value=""> <input type="hidden"
 	name="productId" value="${productId}"><input type="hidden"
-	value="1" name="firstLoad"> <p:navigation height="22">
+	value="1" name="firstLoad">
+	<input type="hidden" value="${updateMax}" name="updateMax">
+	 <p:navigation height="22">
 	<td width="550" class="navigation">询价管理 &gt;&gt; 询价列表</td>
 	<td width="85"></td>
 </p:navigation> <br>
@@ -187,12 +218,22 @@ function showDiv(id)
 					<option value="1">是</option>
 					<option value="0">否</option>
 				</select></td>
-				<td align="right" colspan="2"><input type="button"
-					class="button_class" value="&nbsp;&nbsp;查 询&nbsp;&nbsp;"
-					onclick="querys()">&nbsp;&nbsp; <input type="button"
-					class="button_class" value="&nbsp;&nbsp;重 置&nbsp;&nbsp;"
-					onclick="resets()"></td>
+				<td align="center">询价类型</td>
+                <td align="center" width="35%"><select name="type"
+                    class="select_class" values="${pmap.type}">
+                    <option value="">--</option>
+                    <option value="0">内部询价</option>
+                    <option value="1">外网询价</option>
+                </select></td>
 			</tr>
+			
+			<tr align=center class="content0">
+                <td align="right" colspan="4"><input type="button"
+                    class="button_class" value="&nbsp;&nbsp;查 询&nbsp;&nbsp;"
+                    onclick="querys()">&nbsp;&nbsp; <input type="button"
+                    class="button_class" value="&nbsp;&nbsp;重 置&nbsp;&nbsp;"
+                    onclick="resets()"></td>
+            </tr>
 		</table>
 
 	</p:subBody>
@@ -261,6 +302,11 @@ function showDiv(id)
 						<a title="询价详细" href="javascript:detail('${item.id}')"> <img
 							src="../images/edit.gif" border="0" height="15" width="15"></a>
 					</c:if>
+					
+					<c:if test="${(user.role == 'STOCK') && (item.status == 0 || item.status == 1 ) && updateMax == '1'}">
+                        <a title="修改最大询价数量" href="javascript:updateMaxAmount('${item.id}', ${item.amount})"> <img
+                            src="../images/edit.gif" border="0" height="15" width="15"></a>
+                    </c:if>
 
 					</td>
 					<td align="center" onclick="hrefAndSelect(this)">

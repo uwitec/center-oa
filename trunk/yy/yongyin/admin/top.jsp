@@ -75,12 +75,14 @@ function checkLock()
 <table width="100%" border="0" cellspacing="0" cellpadding="0" background="../images/login/vistablue.jpg" style="height: 63px">
   <tr ondblclick="sho()" background="../images/login/vistablue.jpg">
     <td ondblclick="sho()"></td>
-    <td ondblclick="sho()"><font color="#FFFFFF" size="2"><b>&nbsp;${SN}/SKY软件【V3.23.20100102】</b></font></td>
+    <td ondblclick="sho()"><font color="#FFFFFF" size="2"><b>&nbsp;${SN}/SKY软件【V3.24.20100120】</b></font></td>
     
     
     <td   ondblclick="sho()" align="right">
     <font color="#FFFFFF">登录者：${user.stafferName}</font>&nbsp;&nbsp;
+    <c:if test="${user.role != 'NETASK'}">
     <a target="_blank" href="../help/main.jsp" title="联机帮助"><img src="../images/oa/help.png" width="20px" height="20px" border="0"/></a>
+    </c:if>
     <c:if test="${user.role != 'NETASK'}">
     <a href="../admin/logout.do" target="_parent" title="退出登录"><img src="../images/login/logout.gif" width="20px" height="20px" border="0"/></a>
     </c:if>

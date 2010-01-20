@@ -11,7 +11,7 @@ package com.china.centet.yongyin.dao;
 
 import net.sourceforge.sannotations.annotation.Bean;
 
-import com.china.center.jdbc.inter.impl.BaseDAO2;
+import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.customer.bean.ProviderUserBean;
 
 
@@ -24,5 +24,12 @@ import com.china.center.oa.customer.bean.ProviderUserBean;
  * @since 1.0
  */
 @Bean(name = "providerUserDAO")
-public class ProviderUserDAO extends BaseDAO2<ProviderUserBean, ProviderUserBean>
-{}
+public class ProviderUserDAO extends BaseDAO<ProviderUserBean, ProviderUserBean>
+{
+    public boolean updatePassword(String id, String newPassword)
+    {
+        this.jdbcOperation.updateField("password", newPassword, id, claz);
+
+        return true;
+    }
+}

@@ -120,7 +120,7 @@ function listlog()
 </table>
 
 <br>
-<table width="100%" border="0" cellpadding="0" cellspacing="0"
+<table width="98%" border="0" cellpadding="0" cellspacing="0"
 	align="center">
 	<tr>
 		<td align='center' colspan='2'>
