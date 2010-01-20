@@ -88,4 +88,9 @@ public interface SysConfigConstant
      */
     String OUT_CREDIT = "OUT_CREDIT";
 
+    /**
+     * 外网询价最大产品数量
+     */
+    String ASK_PRODUCT_AMOUNT_MAX = "ASK_PRODUCT_AMOUNT_MAX";
+
 }

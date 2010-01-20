@@ -4,7 +4,7 @@
 <%@ page import="com.china.center.oa.util.MySessionListener"%>
 <html>
 <head>
-<title>-=SKY·OA系统[V2.11.20100102.Beta]=-</title>
+<title>-=SKY·OA系统[V2.12.201001202.Beta]=-</title>
 <meta http-equiv="Content-Type" content="text/html; charset=GBK">
 <style type="text/css">
 a:link {
