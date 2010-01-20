@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans default-autowire="byName">
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:config/config.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean name="/admin/checkuser"
+		class="com.china.centet.yongyin.action.LoginAction" scope="request" />
+
+	<bean name="/admin/logout"
+		class="com.china.centet.yongyin.action.LogoutAction" scope="request" />
+		
+	<bean name="/admin/logoutAsk"
+        class="com.china.centet.yongyin.action.LogoutAskAction" scope="request" />
+
+	<bean name="/admin/common"
+		class="com.china.centet.yongyin.action.CommonAction" scope="request" />
+
+	<bean name="/admin/product"
+		class="com.china.centet.yongyin.action.ProductAction"
+		scope="request">
+		<property name="picPath">
+			<value>${picPath}</value>
+		</property>
+		<property name="picWebName">
+			<value>${picWebName}</value>
+		</property>
+		<property name="froot">
+            <value>${froot}</value>
+        </property>
+	</bean>
+
+	<bean name="/admin/out"
+		class="com.china.centet.yongyin.action.OutAction" scope="request" />
+
+	<bean name="/admin/bill"
+		class="com.china.centet.yongyin.action.BillAction" scope="request" />
+
+	<bean name="/admin/stat"
+		class="com.china.centet.yongyin.action.StatAction" scope="request" />
+
+	<bean name="/admin/das"
+		class="com.china.centet.yongyin.action.DepotpartAndStorageAction"
+		scope="request" />
+
+	<bean name="/admin/transport"
+		class="com.china.centet.yongyin.action.ConsignAction"
+		scope="request">
+		<property name="outAction">
+			<ref bean="/admin/out" />
+		</property>
+	</bean>
+
+	<bean name="/admin/proException"
+		class="com.china.centet.yongyin.action.ProctExceptionAction"
+		scope="request">
+		<property name="attchmentPath">
+			<value>${attchmentPath}</value>
+		</property>
+	</bean>
+
+	<bean name="/admin/reports"
+		class="com.china.centet.yongyin.action.ReportsAction"
+		scope="request">
+	</bean>
+
+	<bean name="/member/member"
+		class="com.china.centet.yongyin.action.MemberAction"
+		scope="request">
+	</bean>
+
+	<bean name="/admin/net"
+		class="com.china.centet.yongyin.action.NetAccessAction"
+		scope="request">
+	</bean>
+
+	<bean name="/admin/price"
+		class="com.china.centet.yongyin.action.PriceAction" scope="request">
+		<property name="picWebName">
+			<value>${picWebName}</value>
+		</property>
+	</bean>
+
+	<bean name="/stock/stock"
+		class="com.china.centet.yongyin.action.StockAction" scope="request" />
+
+	<bean name="/flow/flow"
+		class="com.china.centet.yongyin.action.WorkFlowAction"
+		scope="request">
+		<property name="attchmentPath">
+			<value>${attchmentPath}</value>
+		</property>
+	</bean>
+
+</beans>
