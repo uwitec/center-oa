@@ -80,7 +80,7 @@ public interface DAO<Bean extends Serializable, VO extends Serializable>
      * @param key
      * @return
      */
-    boolean deleteByIds(Collection<Serializable> keys);
+    boolean deleteByIds(Collection<? extends Serializable> keys);
 
     /**
      * delete entity beans

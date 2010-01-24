@@ -222,6 +222,21 @@ public class TimeTools
     }
 
     /**
+     * 根据指定的string时间获得N天后的时间
+     * 
+     * @param date(LONG_FORMAT)
+     * @param days
+     * @return
+     */
+    public static String getSpecialDateStringByDays(String date, int days)
+    {
+        Date dateByFormat = getDateByFormat(date, TimeTools.LONG_FORMAT);
+
+        return getStringByFormat(new Date(dateByFormat.getTime() + 24 * 3600 * 1000 * days),
+            TimeTools.LONG_FORMAT);
+    }
+
+    /**
      * 获得指定的时间
      * 
      * @param days

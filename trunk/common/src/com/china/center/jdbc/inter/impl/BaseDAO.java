@@ -88,7 +88,7 @@ public abstract class BaseDAO<Bean extends Serializable, VO extends Serializable
      * 
      * @see com.china.center.jdbc.inter.DAO#deleteEntryBean(java.lang.Object)
      */
-    public boolean deleteByIds(Collection<Serializable> keys)
+    public boolean deleteByIds(Collection<? extends Serializable> keys)
     {
         jdbcOperation.deleteByIds(keys, claz);
 
