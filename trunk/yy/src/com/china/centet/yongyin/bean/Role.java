@@ -19,5 +19,22 @@ package com.china.centet.yongyin.bean;
 public enum Role
 {
     // THR 咨询员
-    TOP, SEC, ADMIN, MANAGER, FLOW, THR, COMMON, SHOP, SHOPMEMBER, PRICE, REPRICE, STOCK, STOCKMANAGER, WORKFLOW, NETASK;
+    TOP,
+    SEC,
+    ADMIN,
+    MANAGER,
+    FLOW,
+    THR,
+    COMMON,
+    SHOP,
+    SHOPMEMBER,
+    PRICE,
+    REPRICE,
+    STOCK,
+    STOCKMANAGER,
+    WORKFLOW,
+    NETASK,
+    NETCOMMON,
+    // 外网询价主管
+    NETSTOCK;
 }

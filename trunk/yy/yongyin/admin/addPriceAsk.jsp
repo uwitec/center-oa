@@ -10,12 +10,17 @@
 <script language="javascript">
 function addBean()
 {
+    if ($$('type_list_0') != '0' && $$('type_list_1') != '1')
+    {
+        alert('请选择类型');
+        return;
+    }
+    
 	submit('确定增加紧急询价?');
 }
 
 function load()
 {
-	//alert('load');
 	init();
 }
 
@@ -36,20 +41,22 @@ function getProduct(oo)
 function init()
 {
     var ss = $O('instancy');
-    removeAllItem(ss);
-    if ($$('type') == '0')
+    
+    if ($$('type_list_1') != '1')
     {
+        removeAllItem(ss);
         setOption(ss, '0', '一般(2小时)');
         setOption(ss, '1', '紧急(1小时)');
         setOption(ss, '2', '非常紧急(30分钟)');
     }
     
-    if ($$('type') == '1')
+    if ($$('type_list_1') == '1')
     {
-        setOption(ss, '3', '外网询价(中午11点结束)');
-        setOption(ss, '4', '外网询价(下午2点结束)');
-        setOption(ss, '5', '外网询价(下午6点结束)');
-        setOption(ss, '6', '外网询价(晚间23点结束)');
+        removeAllItem(ss);
+        setOption(ss, '3', '询价(中午11点结束)');
+        setOption(ss, '4', '询价(下午2点结束)');
+        setOption(ss, '5', '询价(下午6点结束)');
+        setOption(ss, '6', '询价(晚间23点结束)');
     }
 }
 </script>
@@ -83,20 +90,20 @@ function init()
 			</p:pro>
 
 			<p:pro field="amount" />
-			
-			<p:pro field="type" innerString="onchange=init()">
-                <option value="0">内部询价</option>
-                <option value="1">外网询价</option>
-            </p:pro>
+            
+            <p:cell title="询价方式">
+            <input type="checkbox" name="type_list_0" value="0" onclick=init()>内部询价
+            <input type="checkbox" name="type_list_1" value="1" onclick=init()>外网询价
+            </p:cell>
 
 			<p:pro field="instancy" innerString="style='width: 240px'">
 				<option value="0">一般(2小时)</option>
 				<option value="1">紧急(1小时)</option>
 				<option value="2">非常紧急(30分钟)</option>
-				<option value="3">外网询价(中午11点结束)</option>
-				<option value="4">外网询价(下午2点结束)</option>
-				<option value="5">外网询价(下午6点结束)</option>
-				<option value="6">外网询价(晚间23点结束)</option>
+				<option value="3">询价(中午11点结束)</option>
+				<option value="4">询价(下午2点结束)</option>
+				<option value="5">询价(下午6点结束)</option>
+				<option value="6">询价(晚间23点结束)</option>
 			</p:pro>
 			
 		</p:table>

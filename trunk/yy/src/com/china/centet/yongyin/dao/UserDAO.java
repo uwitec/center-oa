@@ -178,6 +178,7 @@ public class UserDAO extends BaseDAO<BaseUser, BaseUserVO>
                         throws SQLException
                     {
                         User user = new User();
+
                         getUser(user, rst);
 
                         list.add(user);

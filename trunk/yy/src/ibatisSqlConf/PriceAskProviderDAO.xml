@@ -5,14 +5,15 @@
 
 	<select id="queryByCondition"
 		parameterClass="java.util.Map" resultClass="com.china.centet.yongyin.vo.PriceAskProviderBeanVO">
-		select t2.*, t3.name as productName, t3.code as productCode, t4.name as providerName 
-		from T_CENTER_PRICEASK t1, T_CENTER_PRICEASKPROVIDER t2 ,
+		Select t2.*, t3.name as productName, t3.code as productCode, t4.name as providerName 
+		From T_CENTER_PRICEASK t1, T_CENTER_PRICEASKPROVIDER t2 ,
         T_CENTER_PRODUCT t3, T_CENTER_PROVIDE t4
-        where t2.askId = t1.id 
+        Where t2.askId = t1.id
         and t1.productId = t3.id
+        and t1.productId = #productId#
         and t4.id = t2.providerId
-        and t1.userId = #userId# 
-        and t1.type = #type# 
+        and t1.userId = #userId#
+        and t2.type = #type#
         and t1.askDate = #askDate#
 	</select>
 

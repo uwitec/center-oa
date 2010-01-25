@@ -299,6 +299,7 @@
 			<forward name="queryStockPayItem" path="/stock/queryStockPayItem.jsp" />
 			<forward name="queryStockPay" path="/stock/queryStockPay.jsp" />
 			<forward name="addStock" path="/stock/addStock.jsp" />
+			<forward name="stockAskPriceForNet" path="/stock/stockAskPriceForNet.jsp" />
 			<forward name="stockAskPrice"
 				path="/stock/stockAskPrice.jsp" />
 			<forward name="stockAskChange"

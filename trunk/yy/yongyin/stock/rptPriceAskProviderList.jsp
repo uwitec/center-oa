@@ -154,7 +154,8 @@ function query()
 
 					<c:forEach items="${beanList}" var="item" varStatus="vs">
 						<tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
-							<td align="center"><input type="radio" name="processers" ppid="${item.pid}"
+							<td align="center"><input type="radio" name="processers" ppid="${item.pid}" pprovideriId="${item.providerId}"
+							     pproviderName="${item.providerName}"
 								pn="${item.productName}" pp="${my:formatNum(item.price)}" paskid="${item.askId}" value="${item.productId}" /></td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.logTime}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.providerName}</td>

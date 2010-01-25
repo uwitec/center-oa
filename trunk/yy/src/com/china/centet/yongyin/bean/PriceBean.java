@@ -55,7 +55,7 @@ public class PriceBean implements Serializable
     private String description = "";
 
     /**
-     *
+     * PriceBean
      */
     public PriceBean()
     {}

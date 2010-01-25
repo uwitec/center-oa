@@ -302,15 +302,15 @@ public class StockManager
      * @return
      * @throws MYException
      */
-    @Transactional(rollbackFor = {MYException.class})
     @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
     public boolean stockItemAskChange(String itemId, String providerId)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(itemId, providerId);
 
         PriceAskProviderBean bean = priceAskProviderDAO.findBeanByAskIdAndProviderId(itemId,
-            providerId);
+            providerId, PriceConstant.PRICE_ASK_TYPE_INNER);
 
         if (bean == null)
         {
@@ -710,8 +710,8 @@ public class StockManager
      * @return
      * @throws MYException
      */
-    @Transactional(rollbackFor = {MYException.class, DataAccessException.class})
     @Exceptional
+    @Transactional(rollbackFor = {MYException.class, DataAccessException.class})
     public boolean passStock(final User user, final String id)
         throws MYException
     {
@@ -807,22 +807,25 @@ public class StockManager
             nextStatus = StockConstant.STOCK_STATUS_PRICEPASS;
 
             // 更新最终价格为询价价格
-            for (StockItemBean iitem : itemList)
+            if (false)
             {
-                PriceAskProviderBean ppbs = priceAskProviderDAO.find(iitem.getPriceAskProviderId());
-
-                if (ppbs == null)
+                for (StockItemBean iitem : itemList)
                 {
-                    throw new MYException("数据错误,请确认操作");
+                    PriceAskProviderBean ppbs = priceAskProviderDAO.find(iitem.getPriceAskProviderId());
+
+                    if (ppbs == null)
+                    {
+                        throw new MYException("数据错误,请确认操作");
+                    }
+
+                    iitem.setProviderId(ppbs.getProviderId());
+
+                    iitem.setPrice(iitem.getPrePrice());
+
+                    iitem.setTotal(iitem.getPrice() * iitem.getAmount());
+
+                    stockItemDAO.updateEntityBean(iitem);
                 }
-
-                iitem.setProviderId(ppbs.getProviderId());
-
-                iitem.setPrice(iitem.getPrePrice());
-
-                iitem.setTotal(iitem.getPrice() * iitem.getAmount());
-
-                stockItemDAO.updateEntityBean(iitem);
             }
 
             reason = "外网询价采购无需询价员询价";
@@ -891,7 +894,7 @@ public class StockManager
     private void checkSubmit(StockBean sb, int nextStatus, List<StockItemBeanVO> itemList)
         throws MYException
     {
-        if (nextStatus == StockConstant.STOCK_STATUS_SUBMIT
+        if (nextStatus == StockConstant.STOCK_STATUS_PRICEPASS
             && sb.getType() == PriceConstant.PRICE_ASK_TYPE_NET)
         {
             // 需要校验数量是

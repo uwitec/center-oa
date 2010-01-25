@@ -131,6 +131,7 @@ function rejectBean()
 	<input type="hidden" name="id" value="${bean.id}">
 	<input type="hidden" name="customerId_0" value="${GProvider.id}">
 	<input type="hidden" value="" name="reason">
+	<input type="hidden" value="1" name="askType">
 	<input
 	type="hidden" name="id" value="${bean.id}"> <p:navigation
 	height="22">

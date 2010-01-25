@@ -224,6 +224,7 @@ function updateMaxAmount(id, amount)
                     <option value="">--</option>
                     <option value="0">内部询价</option>
                     <option value="1">外网询价</option>
+                    <option value="2">内外网询价</option>
                 </select></td>
 			</tr>
 			
@@ -287,7 +288,8 @@ function updateMaxAmount(id, amount)
 							src="../images/realse.gif" border="0" height="15" width="15"></a>
 					</c:if>
 					
-					<c:if test="${(user.role == 'PRICE' || user.role == 'STOCK' || user.role == 'NETASK') && (item.status == 0 || item.status == 1 )}">
+					<c:if test="${(user.role == 'PRICE' || user.role == 'STOCK'
+					 || user.role == 'NETASK' || user.role == 'NETCOMMON') && (item.status == 0 || item.status == 1 )}">
 
 						<a title="处理询价" href="javascript:process('${item.id}')"> <img
 							src="../images/change.gif" border="0" height="15" width="15"></a>

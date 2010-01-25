@@ -29,7 +29,7 @@ public interface StockConstant
     int STOCK_STATUS_MANAGERPASS = 3;
 
     /**
-     * 询价员通过
+     * 询价员通过(外网询价员通过)
      */
     int STOCK_STATUS_PRICEPASS = 4;
 

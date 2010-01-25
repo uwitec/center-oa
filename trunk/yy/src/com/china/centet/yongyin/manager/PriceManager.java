@@ -11,7 +11,9 @@ package com.china.centet.yongyin.manager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import net.sourceforge.sannotations.annotation.Bean;
 
@@ -151,7 +153,8 @@ public class PriceManager
      */
     private void handleNetAsk(final PriceAskBean bean)
     {
-        if (bean.getType() == PriceConstant.PRICE_ASK_TYPE_NET)
+        if (bean.getType() == PriceConstant.PRICE_ASK_TYPE_NET
+            || bean.getType() == PriceConstant.PRICE_ASK_TYPE_BOTH)
         {
             // 查看当天的产品外网询价是否存在
             PriceAskBean absAsk = priceAskDAO.findAbsByProductIdAndProcessTime(
@@ -294,7 +297,14 @@ public class PriceManager
     {
         JudgeTools.judgeParameterIsNull(bean);
 
-        List<PriceAskProviderBean> item = (List<PriceAskProviderBean>)CommonTools.deepCopy(bean.getItem());
+        List<PriceAskProviderBean> itemList = (List<PriceAskProviderBean>)CommonTools.deepCopy(bean.getItem());
+
+        Set<PriceAskProviderBean> item = new HashSet();
+
+        for (PriceAskProviderBean each : itemList)
+        {
+            item.add(each);
+        }
 
         // 只要STOCK询价，此单自动结束
         if (user.getRole() == Role.STOCK)
@@ -332,7 +342,7 @@ public class PriceManager
             priceAskProviderBean.setAskId(bean.getId());
 
             priceAskProviderDAO.deleteByProviderId(bean.getId(),
-                priceAskProviderBean.getProviderId());
+                priceAskProviderBean.getProviderId(), priceAskProviderBean.getType());
 
             priceAskProviderDAO.saveEntityBean(priceAskProviderBean);
         }
@@ -344,7 +354,14 @@ public class PriceManager
 
             for (PriceAskBean subAskBean : subList)
             {
-                subAskBean.setItem(item);
+                List<PriceAskProviderBean> innerList = new ArrayList();
+
+                for (PriceAskProviderBean each : item)
+                {
+                    innerList.add(each);
+                }
+
+                subAskBean.setItem(innerList);
 
                 processPriceAskBean(user, subAskBean);
             }

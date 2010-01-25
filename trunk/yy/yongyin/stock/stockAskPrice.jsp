@@ -109,6 +109,7 @@ function init()
 function selectCustomer(index)
 {
 	cindex = index;
+	
 	window.common.modal("../admin/common.do?method=rptQueryCustmerInVS&load=1&productTypeId=${product.genre}");
 }
 
@@ -121,6 +122,7 @@ function getCustmeor(id, name)
 	}
 }
 
+
 </script>
 
 </head>
@@ -132,6 +134,7 @@ function getCustmeor(id, name)
 	<input type="hidden" name="customerId_2" value="">
 	<input type="hidden" name="customerId_3" value="">
 	<input type="hidden" name="customerId_4" value="">
+	
 	<input type="hidden" name="stockId" value="${id}">
 	<input
 	type="hidden" name="id" value="${bean.id}"> <p:navigation
@@ -141,7 +144,7 @@ function getCustmeor(id, name)
 	<td width="85"></td>
 </p:navigation> <br>
 
-<p:body width="100%">
+<p:body width="98%">
 
 	<p:title>
 		<td class="caption"><strong>询价信息：【询价供应商必须大于2家】</strong></td>

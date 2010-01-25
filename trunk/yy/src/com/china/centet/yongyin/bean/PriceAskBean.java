@@ -52,9 +52,15 @@ public class PriceAskBean implements Serializable
 
     private String endTime = "";
 
+    /**
+     * 
+     */
     @Join(tagClass = User.class, type = JoinType.LEFT)
     private String userId = "";
 
+    /**
+     * 
+     */
     @Join(tagClass = User.class, type = JoinType.LEFT, alias = "user1")
     private String puserId = "";
 
@@ -63,7 +69,9 @@ public class PriceAskBean implements Serializable
 
     private int status = PriceConstant.PRICE_ASK_STATUS_INIT;
 
-    @Html(title = "询价方式", type = Element.SELECT, must = true)
+    /**
+     * 询价类型
+     */
     private int type = PriceConstant.PRICE_ASK_TYPE_INNER;
 
     /**

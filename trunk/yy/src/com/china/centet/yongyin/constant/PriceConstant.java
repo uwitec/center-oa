@@ -51,6 +51,11 @@ public interface PriceConstant
     int PRICE_ASK_TYPE_NET = 1;
 
     /**
+     * 询价类型-(内外网询价)
+     */
+    int PRICE_ASK_TYPE_BOTH = 2;
+
+    /**
      * 普通存储
      */
     int PRICE_ASK_SAVE_TYPE_COMMON = 0;

@@ -33,10 +33,11 @@ public class PriceAskProviderDAO extends BaseDAO2<PriceAskProviderBean, PriceAsk
     public PriceAskProviderDAO()
     {}
 
-    public PriceAskProviderBean findBeanByAskIdAndProviderId(String askId, String providerId)
+    public PriceAskProviderBean findBeanByAskIdAndProviderId(String askId, String providerId,
+                                                             int type)
     {
-        return this.jdbcOperation.queryObjects("where askId = ? and providerId = ?", this.claz,
-            askId, providerId).uniqueResult(this.claz);
+        return this.jdbcOperation.queryObjects("where askId = ? and providerId = ? and type = ?",
+            this.claz, askId, providerId, type).uniqueResult(this.claz);
     }
 
     /**
@@ -47,11 +48,13 @@ public class PriceAskProviderDAO extends BaseDAO2<PriceAskProviderBean, PriceAsk
      * @param askDate
      * @return
      */
-    public List<PriceAskProviderBeanVO> queryByCondition(String userId, String askDate)
+    public List<PriceAskProviderBeanVO> queryByCondition(String userId, String askDate,
+                                                         String productId)
     {
         Map<String, Object> paramterMap = new HashMap();
 
         paramterMap.put("userId", userId);
+        paramterMap.put("productId", productId);
         paramterMap.put("type", PriceConstant.PRICE_ASK_TYPE_NET);
         paramterMap.put("askDate", askDate);
 
@@ -66,9 +69,10 @@ public class PriceAskProviderDAO extends BaseDAO2<PriceAskProviderBean, PriceAsk
      * @param providerId
      * @return
      */
-    public boolean deleteByProviderId(String askId, String providerId)
+    public boolean deleteByProviderId(String askId, String providerId, int type)
     {
-        this.jdbcOperation.delete("where askId = ? and providerId = ?", claz, askId, providerId);
+        this.jdbcOperation.delete("where askId = ? and providerId = ? and type = ?", claz, askId,
+            providerId, type);
 
         return true;
     }

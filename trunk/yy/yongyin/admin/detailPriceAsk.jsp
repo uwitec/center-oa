@@ -90,6 +90,7 @@
 				<td width="10%" align="center" onclick="tableSort(this, true)" class="td_class">价格</td>
 				<td width="10%" align="center">数量</td>
 				<td width="10%" align="center">数量满足</td>
+				<td width="5%" align="center">类型</td>
 				<td width="30%" align="center">备注</td>
 				<td width="10%" align="center" onclick="tableSort(this)" class="td_class">时间</td>
 			</tr>
@@ -108,6 +109,7 @@
 
 					<td  align="center">${item.hasAmount == 0 ? "满足" : "<font color=red>不满足</font>"}</td>
 					
+					<td  align="center">${my:get('priceAskType', item.type)}</td>
 					<td  align="center">${item.description}</td>
 					<td  align="center">${item.logTime}</td>
 				</tr>

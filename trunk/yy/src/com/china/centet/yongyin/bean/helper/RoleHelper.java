@@ -103,6 +103,16 @@ public abstract class RoleHelper
             return 14;
         }
 
+        if (role == Role.NETCOMMON)
+        {
+            return 15;
+        }
+
+        if (role == Role.NETSTOCK)
+        {
+            return 16;
+        }
+
         return -1;
     }
 
@@ -191,6 +201,16 @@ public abstract class RoleHelper
         {
             bean.setRole(Role.NETASK);
         }
+
+        if (i == 15)
+        {
+            bean.setRole(Role.NETCOMMON);
+        }
+
+        if (i == 16)
+        {
+            bean.setRole(Role.NETSTOCK);
+        }
     }
 
     /**
@@ -277,6 +297,16 @@ public abstract class RoleHelper
         if (i == 14)
         {
             bean.setBaseRole(Role.NETASK);
+        }
+
+        if (i == 15)
+        {
+            bean.setBaseRole(Role.NETCOMMON);
+        }
+
+        if (i == 16)
+        {
+            bean.setBaseRole(Role.NETSTOCK);
         }
     }
 }

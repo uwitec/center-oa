@@ -109,7 +109,8 @@ function selectProduct(index)
 	}
 	else
 	{
-	   window.common.modal("../stock/stock.do?method=rptInQueryPriceAskProvider&firstLoad=1");
+	   window.common.modal("../admin/product.do?method=rptInQueryProduct3&firstLoad=1");
+	   //window.common.modal("../stock/stock.do?method=rptInQueryPriceAskProvider&firstLoad=1");
 	}
 }
 

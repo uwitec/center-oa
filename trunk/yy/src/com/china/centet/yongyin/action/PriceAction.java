@@ -5,6 +5,7 @@ package com.china.centet.yongyin.action;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -355,7 +356,7 @@ public class PriceAction extends DispatchAction
         if (user.getRole() == Role.NETASK)
         {
             PriceAskProviderBean paskBean = priceAskProviderDAO.findBeanByAskIdAndProviderId(id,
-                user.getId());
+                user.getId(), PriceConstant.PRICE_ASK_TYPE_NET);
 
             request.setAttribute("paskBean", paskBean);
 
@@ -501,27 +502,7 @@ public class PriceAction extends DispatchAction
 
             List<PriceAskProviderBeanVO> items = bean.getItemVO();
 
-            if (user.getRole() == Role.PRICE)
-            {
-                for (int i = items.size() - 1; i >= 0; i-- )
-                {
-                    if ( !items.get(i).getUserId().equals(user.getId()))
-                    {
-                        items.remove(i);
-                    }
-                }
-            }
-
-            if (user.getRole() == Role.NETASK)
-            {
-                for (int i = items.size() - 1; i >= 0; i-- )
-                {
-                    if ( !items.get(i).getProviderId().equals(user.getId()))
-                    {
-                        items.remove(i);
-                    }
-                }
-            }
+            filterItem(user, items);
 
             request.setAttribute("bean", bean);
         }
@@ -538,6 +519,48 @@ public class PriceAction extends DispatchAction
     }
 
     /**
+     * filterItem
+     * 
+     * @param user
+     * @param items
+     */
+    private void filterItem(User user, List<PriceAskProviderBeanVO> items)
+    {
+        if (user.getRole() == Role.PRICE)
+        {
+            for (int i = items.size() - 1; i >= 0; i-- )
+            {
+                if ( !items.get(i).getUserId().equals(user.getId()))
+                {
+                    items.remove(i);
+                }
+            }
+        }
+
+        if (user.getRole() == Role.NETASK)
+        {
+            for (int i = items.size() - 1; i >= 0; i-- )
+            {
+                if ( !items.get(i).getProviderId().equals(user.getId()))
+                {
+                    items.remove(i);
+                }
+            }
+        }
+
+        if (user.getRole() == Role.NETCOMMON)
+        {
+            for (int i = items.size() - 1; i >= 0; i-- )
+            {
+                if (items.get(i).getType() == PriceConstant.PRICE_ASK_TYPE_INNER)
+                {
+                    items.remove(i);
+                }
+            }
+        }
+    }
+
+    /**
      * 收集数据
      * 
      * @param pbean
@@ -549,13 +572,23 @@ public class PriceAction extends DispatchAction
     {
         String[] providers = request.getParameterValues("check_init");
 
+        String askType = request.getParameter("askType");
+
         User user = Helper.getUser(request);
+
+        // 外网询价员
+        if (user.getRole() == Role.NETCOMMON)
+        {
+            askType = "1";
+        }
 
         for (int i = 0; i < providers.length; i++ )
         {
             if ( !StringTools.isNullOrNone(providers[i]))
             {
                 PriceAskProviderBean bean = new PriceAskProviderBean();
+
+                bean.setType(CommonTools.parseInt(askType));
 
                 bean.setAskId(pbean.getId());
 
@@ -695,11 +728,11 @@ public class PriceAction extends DispatchAction
 
             bean.setId(SequenceTools.getSequence("ASK", 5));
 
+            setAskType(request, bean);
+
             bean.setUserId(user.getId());
 
             bean.setLogTime(TimeTools.now());
-
-            bean.setAskDate(TimeTools.now("yyyyMMdd"));
 
             bean.setStatus(PriceConstant.PRICE_COMMON);
 
@@ -732,6 +765,34 @@ public class PriceAction extends DispatchAction
         QueryTools.setForwardQuery(request);
 
         return queryPriceAsk(mapping, form, request, reponse);
+    }
+
+    /**
+     * setAskType
+     * 
+     * @param request
+     * @param bean
+     */
+    private void setAskType(HttpServletRequest request, PriceAskBean bean)
+    {
+        String par0 = request.getParameter("type_list_0");
+
+        String par1 = request.getParameter("type_list_1");
+
+        if ("0".equals(par0) && !"1".equals(par1))
+        {
+            bean.setType(PriceConstant.PRICE_ASK_TYPE_INNER);
+        }
+
+        if ( !"0".equals(par0) && "1".equals(par1))
+        {
+            bean.setType(PriceConstant.PRICE_ASK_TYPE_NET);
+        }
+
+        if ("0".equals(par0) && "1".equals(par1))
+        {
+            bean.setType(PriceConstant.PRICE_ASK_TYPE_BOTH);
+        }
     }
 
     /**
@@ -811,6 +872,21 @@ public class PriceAction extends DispatchAction
         if (bean.getInstancy() == 6)
         {
             bean.setProcessTime(TimeTools.now_short() + " 23:00:00");
+        }
+
+        // 和当前时间比较
+        if (StringTools.compare(TimeTools.now(), bean.getProcessTime()) > 0)
+        {
+            Date dateByFormat = TimeTools.getDateByFormat(bean.getProcessTime(),
+                TimeTools.LONG_FORMAT);
+
+            String newTime = TimeTools.getStringByFormat(new Date(
+                dateByFormat.getTime() + 24 * 3600 * 1000), TimeTools.LONG_FORMAT);
+
+            bean.setProcessTime(newTime);
+
+            bean.setAskDate(TimeTools.getStringByFormat(new Date(
+                dateByFormat.getTime() + 24 * 3600 * 1000), "yyyyMMdd"));
         }
     }
 
@@ -1064,27 +1140,8 @@ public class PriceAction extends DispatchAction
                     User user = Helper.getUser(request);
 
                     List<PriceAskProviderBeanVO> items = priceAskProviderDAO.queryEntityVOsByFK(priceAskBeanVO.getId());
-                    if (user.getRole() == Role.PRICE)
-                    {
-                        for (int i = items.size() - 1; i >= 0; i-- )
-                        {
-                            if ( !items.get(i).getUserId().equals(user.getId()))
-                            {
-                                items.remove(i);
-                            }
-                        }
-                    }
 
-                    if (user.getRole() == Role.NETASK)
-                    {
-                        for (int i = items.size() - 1; i >= 0; i-- )
-                        {
-                            if ( !items.get(i).getProviderId().equals(user.getId()))
-                            {
-                                items.remove(i);
-                            }
-                        }
-                    }
+                    filterItem(user, items);
 
                     if (items.size() > 0)
                     {
@@ -1243,8 +1300,6 @@ public class PriceAction extends DispatchAction
 
             sb.append(")");
 
-            condtion.addIntCondition("PriceAskBean.type", "=", PriceConstant.PRICE_ASK_TYPE_NET);
-
             // 只能看见制定数量的产品询价
             condtion.addIntCondition("PriceAskBean.amount", "<=",
                 parameterDAO.getInt(SysConfigConstant.ASK_PRODUCT_AMOUNT_MAX));
@@ -1254,6 +1309,8 @@ public class PriceAction extends DispatchAction
                 PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
 
             condtion.addCondition("AND PriceAskBean.status in (0, 1)");
+
+            condtion.addCondition("AND PriceAskBean.type in (1, 2)");
 
             condtion.addCondition("AND PriceAskBean.productType in " + sb.toString());
         }
@@ -1283,8 +1340,18 @@ public class PriceAction extends DispatchAction
             }
             else
             {
-                condtion.addIntCondition("PriceAskBean.type", "=",
-                    PriceConstant.PRICE_ASK_TYPE_INNER);
+                // 只能看到虚拟存储的
+                condtion.addIntCondition("PriceAskBean.saveType", "=",
+                    PriceConstant.PRICE_ASK_SAVE_TYPE_COMMON);
+
+                if (user.getRole() == Role.NETCOMMON || user.getRole() == Role.NETSTOCK)
+                {
+                    condtion.addCondition("AND PriceAskBean.type in (1, 2)");
+                }
+                else
+                {
+                    condtion.addCondition("AND PriceAskBean.type in (0, 2)");
+                }
             }
         }
 

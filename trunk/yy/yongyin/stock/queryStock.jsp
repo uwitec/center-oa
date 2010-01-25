@@ -346,7 +346,7 @@ function exports()
 								src="../images/del.gif" border="0" height="15" width="15"></a>
 						</c:if>
 
-						<c:if test="${user.role != 'COMMON'  && user.role != 'PRICE'}">
+						<c:if test="${user.role != 'COMMON'  && user.role != 'PRICE' && user.role != 'NETSTOCK'}">
 							<a title="审批通过采购单" href="javascript:passTo('${item.id}')"> <img id="img_${vs.index}"
 								src="../images/realse.gif" border="0" height="15" width="15"></a>
 
@@ -364,7 +364,15 @@ function exports()
 							<a title="驳回采购单" href="javascript:reject('${item.id}')"> <img
 								src="../images/reject.gif" border="0" height="15" width="15"></a>
 						</c:if>
+						
+						<c:if test="${user.role == 'NETSTOCK'}">
+                            <a title="采购单询价" href="javascript:ask('${item.id}')"> <img id="ask_img_${vs.index}"
+                                src="../images/change.gif" border="0" height="15" width="15"></a>
 
+                            <a title="驳回采购单" href="javascript:reject('${item.id}')"> <img
+                                src="../images/reject.gif" border="0" height="15" width="15"></a>
+                        </c:if>
+						
 						<c:if test="${user.role == 'STOCK'}">
 							<a title="询价变动" href="javascript:askChange('${item.id}')"> <img
 								src="../images/change.gif" border="0" height="15" width="15"></a>
@@ -374,6 +382,7 @@ function exports()
 							</c:if>
 						</c:if>
 					</c:if> 
+					
 					
 					<c:if test="${user.role == 'STOCK'}">
 						<c:if test="${item.status == 7}">

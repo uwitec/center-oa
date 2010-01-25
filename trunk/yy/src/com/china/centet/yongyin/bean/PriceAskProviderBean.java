@@ -49,6 +49,11 @@ public class PriceAskProviderBean implements Serializable
      */
     private int supportAmount = 0;
 
+    /**
+     * 0:内部询价 1：网络询价
+     */
+    private int type = PriceConstant.PRICE_ASK_TYPE_INNER;
+
     private double price = 0.0d;
 
     private String logTime = "";
@@ -232,6 +237,65 @@ public class PriceAskProviderBean implements Serializable
     public void setSupportAmount(int supportAmount)
     {
         this.supportAmount = supportAmount;
+    }
+
+    /**
+     * @return the type
+     */
+    public int getType()
+    {
+        return type;
+    }
+
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(int type)
+    {
+        this.type = type;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( (askId == null) ? 0 : askId.hashCode());
+        result = prime * result + ( (providerId == null) ? 0 : providerId.hashCode());
+        result = prime * result + type;
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if ( ! (obj instanceof PriceAskProviderBean)) return false;
+        final PriceAskProviderBean other = (PriceAskProviderBean)obj;
+        if (askId == null)
+        {
+            if (other.askId != null) return false;
+        }
+        else if ( !askId.equals(other.askId)) return false;
+        if (providerId == null)
+        {
+            if (other.providerId != null) return false;
+        }
+        else if ( !providerId.equals(other.providerId)) return false;
+        if (type != other.type) return false;
+        return true;
     }
 
 }

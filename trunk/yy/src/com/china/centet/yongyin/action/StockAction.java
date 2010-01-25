@@ -169,7 +169,7 @@ public class StockAction extends DispatchAction
         }
         catch (MYException e)
         {
-            _logger.warn(e);
+            _logger.warn(e, e);
 
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "增加采购单失败:" + e.getMessage());
         }
@@ -324,7 +324,7 @@ public class StockAction extends DispatchAction
         }
         catch (MYException e)
         {
-            _logger.warn(e);
+            _logger.warn(e, e);
 
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "修改采购单状态失败:" + e.getMessage());
         }
@@ -556,10 +556,12 @@ public class StockAction extends DispatchAction
     {
         CommonTools.saveParamers(request);
 
-        User user = Helper.getUser(request);
+        String productId = request.getParameter("productId");
 
-        List<PriceAskProviderBeanVO> beanList = priceAskProviderDAO.queryByCondition(user.getId(),
-            TimeTools.now("yyyyMMdd"));
+        String userId = request.getParameter("userId");
+
+        List<PriceAskProviderBeanVO> beanList = priceAskProviderDAO.queryByCondition(userId,
+            TimeTools.now("yyyyMMdd"), productId);
 
         // 获取PID
         for (PriceAskProviderBeanVO vo : beanList)
@@ -572,16 +574,15 @@ public class StockAction extends DispatchAction
             }
 
             PriceAskProviderBean pp = priceAskProviderDAO.findBeanByAskIdAndProviderId(
-                ask.getParentAsk(), vo.getProviderId());
+                ask.getParentAsk(), vo.getProviderId(), PriceConstant.PRICE_ASK_TYPE_NET);
 
             if (pp != null)
             {
                 vo.setPid(pp.getId());
+                int sum = stockItemDAO.sumNetProductByPid(pp.getId());
+                vo.setRemainmount(pp.getSupportAmount() - sum);
             }
 
-            int sum = stockItemDAO.sumNetProductByPid(pp.getId());
-
-            vo.setRemainmount(pp.getSupportAmount() - sum);
         }
 
         request.setAttribute("beanList", beanList);
@@ -768,6 +769,21 @@ public class StockAction extends DispatchAction
             return queryStock(mapping, form, request, reponse);
         }
 
+        String stockId = vo.getStockId();
+
+        StockBean stock = stockDAO.find(stockId);
+
+        if (stock == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "采购不存在");
+
+            request.setAttribute("forward", 1);
+
+            return queryStock(mapping, form, request, reponse);
+        }
+
+        request.setAttribute("stock", stock);
+
         Product product = productDAO.findProductById(vo.getProductId());
 
         if (product == null)
@@ -780,6 +796,13 @@ public class StockAction extends DispatchAction
         }
 
         request.setAttribute("product", product);
+
+        User user = Helper.getUser(request);
+
+        if (user.getRole() == Role.NETSTOCK)
+        {
+            return mapping.findForward("stockAskPriceForNet");
+        }
 
         return mapping.findForward("stockAskPrice");
     }
@@ -1139,6 +1162,13 @@ public class StockAction extends DispatchAction
             stockBeanVO.setDisplay(StockConstant.DISPLAY_NO);
         }
 
+        if (user.getRole() == Role.NETSTOCK)
+        {
+            if (stockBeanVO.getStatus() == StockConstant.STOCK_STATUS_PRICEPASS)
+            {
+                stockBeanVO.setDisplay(StockConstant.DISPLAY_YES);
+            }
+        }
     }
 
     /**
@@ -1156,8 +1186,12 @@ public class StockAction extends DispatchAction
         // 只能看到通过的
         if (user.getRole() == Role.COMMON)
         {
-            // request.setAttribute("readonly", "true");
             condtion.addCondition("StockBean.userId", "=", user.getId());
+        }
+
+        if (user.getRole() == Role.NETSTOCK)
+        {
+            condtion.addIntCondition("StockBean.type", "=", PriceConstant.PRICE_ASK_TYPE_NET);
         }
 
         if (user.getRole() == Role.MANAGER)

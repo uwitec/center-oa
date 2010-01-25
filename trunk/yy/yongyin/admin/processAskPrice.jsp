@@ -134,6 +134,7 @@ function rejectBean()
 	<input type="hidden" name="customerId_2" value="">
 	<input type="hidden" name="customerId_3" value="">
 	<input type="hidden" name="customerId_4" value="">
+	<input type="hidden" value="0" name="askType">
 	<input type="hidden" value="" name="reason">
 	<input
 	type="hidden" name="id" value="${bean.id}"> <p:navigation
@@ -198,6 +199,8 @@ function rejectBean()
 							type="text" name="price_0" value="" size="6" oncheck="isFloat;">&nbsp;
 							数量是否满足:<input type="radio" name="hasAmount_0" value="0">满足
 							&nbsp;&nbsp;<input type="radio" name="hasAmount_0" value="1">不满足
+							<br>
+                                描述一: <textarea name="description_0" cols="60" rows="3"></textarea>
 
 							</td>
 					</tr>
@@ -212,6 +215,8 @@ function rejectBean()
 							type="text" name="price_1" value="" size="6" oncheck="isFloat;">&nbsp;
 							数量是否满足:<input type="radio" name="hasAmount_1" value="0">满足
 							&nbsp;&nbsp;<input type="radio" name="hasAmount_1" value="1">不满足
+							<br>
+                                描述二: <textarea name="description_1" cols="60" rows="3"></textarea>
 
 						</td>
 					</tr>
@@ -226,6 +231,8 @@ function rejectBean()
 							type="text" name="price_2" value="" size="6" oncheck="isFloat;">&nbsp;
 							数量是否满足:<input type="radio" name="hasAmount_2" value="0">满足
 							&nbsp;&nbsp;<input type="radio" name="hasAmount_2" value="1">不满足
+							<br>
+                                描述三: <textarea name="description_2" cols="60" rows="3"></textarea>
 							</td>
 					</tr>
 
@@ -239,6 +246,8 @@ function rejectBean()
 							type="text" name="price_3" value="" size="6" oncheck="isFloat;">&nbsp;
 							数量是否满足:<input type="radio" name="hasAmount_3" value="0">满足
 							&nbsp;&nbsp;<input type="radio" name="hasAmount_3" value="1">不满足
+							<br>
+                                描述四: <textarea name="description_3" cols="60" rows="3"></textarea>
 							</td>
 					</tr>
 
@@ -252,6 +261,8 @@ function rejectBean()
 							type="text" name="price_4" value="" size="6" oncheck="isFloat;">&nbsp;
 							数量是否满足:<input type="radio" name="hasAmount_4" value="0">满足
 							&nbsp;&nbsp;<input type="radio" name="hasAmount_4" value="1">不满足
+							<br>
+                                描述五: <textarea name="description_4" cols="60" rows="3"></textarea>
 							</td>
 					</tr>
 				</table>
