@@ -1092,6 +1092,8 @@ public class OutAction extends DispatchAction
                     }
                 }
 
+                condtion.addCondition("order by id desc");
+
                 int tatol = outDAO.countOutBeanByCondtion(condtion);
 
                 PageSeparate page = new PageSeparate(tatol, Constant.PAGE_SIZE - 5);
@@ -1266,9 +1268,30 @@ public class OutAction extends DispatchAction
                     setCondition(request, condtion);
                 }
 
-                int tatol = outDAO.countOutBeanByCondtion(condtion);
+                if (user.getRole() == Role.FLOW)
+                {
+                    condtion.addCondition("order by managerTime");
+                }
+                else
+                {
+                    condtion.addCondition("order by id desc");
+                }
 
-                PageSeparate page = new PageSeparate(tatol, Constant.PAGE_SIZE - 5);
+                int tatol = 0;
+
+                // FLOW需要特殊排序(根据managerTime)
+                tatol = outDAO.countOutBeanByCondtion2(condtion);
+
+                PageSeparate page = null;
+
+                if (user.getRole() == Role.FLOW)
+                {
+                    page = new PageSeparate(tatol, 50);
+                }
+                else
+                {
+                    page = new PageSeparate(tatol, Constant.PAGE_SIZE - 5);
+                }
 
                 OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryOut2");
 
@@ -1403,6 +1426,8 @@ public class OutAction extends DispatchAction
                 {
                     setCondition3(request, condtion, false);
                 }
+
+                condtion.addCondition("order by id desc");
 
                 int tatol = outDAO.countOutBeanByCondtion(condtion);
 

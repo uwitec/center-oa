@@ -15,6 +15,8 @@ function addBean()
 	submit('确定处理询价?', null, lverify);
 }
 
+var totalAmount = ${bean.amount};
+
 function lverify()
 {
 	var checkArr = document.getElementsByName('check_init');
@@ -24,6 +26,7 @@ function lverify()
 	var imap = {};
 
 	var count = 0;
+	var tmpAmount = 0;
 	for (var i = 0; i < checkArr.length; i++)
 	{
 		var obj = checkArr[i];
@@ -33,6 +36,7 @@ function lverify()
 		if (obj.checked)
 		{
 			count++;
+			
 			isSelect = true;
 
 			if ($('customerName_' + i).value == '' || $('customerId_' + i).value == '' )
@@ -41,32 +45,29 @@ function lverify()
 				return false;
 			}
 
-			if ($$('hasAmount_' + i)  == null)
-			{
-				alert('请选择供应商是否满足数量要求');
-				return false;
-			}
 
 			if (imap[$('customerId_' + i).value] == $('customerId_' + i).value)
 			{
 				alert('选择的供应商不能重复');
 				return false;
 			}
+			
+			tmpAmount += parseInt($('amount_' + i).value);
 
 			imap[$('customerId_' + i).value] = $('customerId_' + i).value;
 		}
-	}
-
-	if(count < 3)
-	{
-		alert('选择询价供应商必须大于2家');
-		return false;
 	}
 
 	if (!isSelect)
 	{
 		alert('请选择询价供应商');
 		return false;
+	}
+	
+	if (totalAmount != tmpAmount)
+	{
+	    alert('只能采购:' + totalAmount + "个!");
+        return false;
 	}
 
 	return true;
@@ -121,7 +122,6 @@ function getPriceAskProvider(oo)
         $("customerName_" + cindex).value = oo.pproviderName;
         $("customerId_" + cindex).value = oo.pprovideriId;
         $("price_" + cindex).value = oo.pp;
-        $("price_" + cindex).value = oo.pp;
         $("netaskId_" + cindex).value = oo.ppid;
     }
 }
@@ -131,7 +131,7 @@ function getPriceAskProvider(oo)
 </head>
 <body class="body_class" onload="load()">
 <form name="formEntry" action="../stock/stock.do" method="post"><input
-	type="hidden" name="method" value="stockItemAskPrice">
+	type="hidden" name="method" value="stockItemAskPriceForNet">
 	<input type="hidden" name="customerId_0" value="">
 	<input type="hidden" name="customerId_1" value="">
 	<input type="hidden" name="customerId_2" value="">
@@ -229,7 +229,7 @@ function getPriceAskProvider(oo)
 					</tr>
 
 					<tr>
-						<td><input type="checkbox" name="check_init" value="3" onclick="init()" id="check_init_03">供应商四：<input type="button"
+						<td><input type="checkbox" name="check_init" value="3" onclick="init()" id="check_init_3">供应商四：<input type="button"
 								value="&nbsp;选 择&nbsp;" name="qout_3" class="button_class"
 								onclick="selectCustomer(3)">&nbsp;
 							供应商:<input

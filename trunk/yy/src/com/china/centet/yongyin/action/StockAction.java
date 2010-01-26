@@ -558,9 +558,7 @@ public class StockAction extends DispatchAction
 
         String productId = request.getParameter("productId");
 
-        String userId = request.getParameter("userId");
-
-        List<PriceAskProviderBeanVO> beanList = priceAskProviderDAO.queryByCondition(userId,
+        List<PriceAskProviderBeanVO> beanList = priceAskProviderDAO.queryByCondition(
             TimeTools.now("yyyyMMdd"), productId);
 
         // 获取PID
@@ -568,20 +566,16 @@ public class StockAction extends DispatchAction
         {
             PriceAskBean ask = priceAskDAO.find(vo.getAskId());
 
-            if (ask == null || StringTools.isNullOrNone(ask.getParentAsk()))
+            if (ask == null)
             {
                 continue;
             }
 
-            PriceAskProviderBean pp = priceAskProviderDAO.findBeanByAskIdAndProviderId(
-                ask.getParentAsk(), vo.getProviderId(), PriceConstant.PRICE_ASK_TYPE_NET);
+            vo.setPid(vo.getId());
 
-            if (pp != null)
-            {
-                vo.setPid(pp.getId());
-                int sum = stockItemDAO.sumNetProductByPid(pp.getId());
-                vo.setRemainmount(pp.getSupportAmount() - sum);
-            }
+            int sum = stockItemDAO.sumNetProductByPid(vo.getId());
+
+            vo.setRemainmount(vo.getSupportAmount() - sum);
 
         }
 
@@ -892,6 +886,99 @@ public class StockAction extends DispatchAction
         request.setAttribute("stockId", stockId);
 
         return findStock(mapping, form, request, reponse);
+    }
+
+    /**
+     * 处理询价(外网询价员替供应商选择产品入库重新生成stockItem)<br>
+     * 这里不存在最低价,只有单价超过数额的
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward stockItemAskPriceForNet(ActionMapping mapping, ActionForm form,
+                                                 HttpServletRequest request,
+                                                 HttpServletResponse reponse)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        String stockId = request.getParameter("stockId");
+
+        StockItemBean bean = stockItemDAO.find(id);
+
+        if (bean == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "采购不存在");
+
+            request.setAttribute("forward", 1);
+
+            return queryStock(mapping, form, request, reponse);
+        }
+
+        List<StockItemBean> newItemList = new ArrayList();
+
+        setNewStockItemList(request, bean, newItemList);
+
+        try
+        {
+            stockManager.stockItemAskForNet(bean, newItemList);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功处理采购询价");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理采购询价失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        request.setAttribute("process", "1");
+
+        request.setAttribute("stockId", stockId);
+
+        return findStock(mapping, form, request, reponse);
+    }
+
+    /**
+     * setNewStockItemList
+     * 
+     * @param request
+     * @param bean
+     * @param newItemList
+     */
+    private void setNewStockItemList(HttpServletRequest request, StockItemBean bean,
+                                     List<StockItemBean> newItemList)
+    {
+        String[] providers = request.getParameterValues("check_init");
+
+        for (int i = 0; i < providers.length; i++ )
+        {
+            if ( !StringTools.isNullOrNone(providers[i]))
+            {
+                StockItemBean newBean = new StockItemBean();
+
+                BeanUtil.copyProperties(newBean, bean);
+
+                newBean.setAmount(CommonTools.parseInt(request.getParameter("amount_"
+                                                                            + providers[i])));
+
+                newBean.setPrice(Float.parseFloat(request.getParameter("price_" + providers[i])));
+
+                newBean.setLogTime(TimeTools.now());
+
+                newBean.setProviderId(request.getParameter("customerId_" + providers[i]));
+
+                newBean.setPriceAskProviderId(request.getParameter("netaskId_" + providers[i]));
+
+                newItemList.add(newBean);
+            }
+        }
     }
 
     /**

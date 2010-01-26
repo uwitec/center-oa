@@ -360,8 +360,8 @@ public class StockManager
      * @return
      * @throws MYException
      */
-    @Transactional(rollbackFor = {MYException.class})
     @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
     public boolean stockItemAsk(StockItemBean bean)
         throws MYException
     {
@@ -381,6 +381,33 @@ public class StockManager
         {
             priceAskProviderDAO.saveEntityBean(priceAskProviderBean);
         }
+
+        return true;
+    }
+
+    /**
+     * 删除旧的,换上新的
+     * 
+     * @param oldItem
+     * @return
+     * @throws MYException
+     */
+    @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean stockItemAskForNet(StockItemBean oldItem, List<StockItemBean> newItemList)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(oldItem, newItemList);
+
+        stockItemDAO.deleteEntityBean(oldItem.getId());
+
+        for (StockItemBean stockItemBean : newItemList)
+        {
+            stockItemBean.setStatus(StockConstant.STOCK_ITEM_STATUS_ASK);
+            stockItemBean.setTotal(stockItemBean.getAmount() * stockItemBean.getPrice());
+        }
+
+        stockItemDAO.saveAllEntityBeans(newItemList);
 
         return true;
     }
@@ -724,9 +751,24 @@ public class StockManager
             throw new MYException("采购单不存在");
         }
 
-        if (user.getRole() != getOprRole(sb.getStatus()))
+        // 这里外网询价员
+        Role role = user.getRole();
+
+        Role needRole = getOprRole(sb.getStatus());
+
+        if (needRole == Role.STOCK)
         {
-            throw new MYException("不能操作");
+            if (role != Role.STOCK && role != Role.NETSTOCK)
+            {
+                throw new MYException("不能操作");
+            }
+        }
+        else
+        {
+            if (role != needRole)
+            {
+                throw new MYException("不能操作");
+            }
         }
 
         int nextStatus = getNextStatus(sb.getStatus());
@@ -806,28 +848,6 @@ public class StockManager
             // 直接到(采购主管)
             nextStatus = StockConstant.STOCK_STATUS_PRICEPASS;
 
-            // 更新最终价格为询价价格
-            if (false)
-            {
-                for (StockItemBean iitem : itemList)
-                {
-                    PriceAskProviderBean ppbs = priceAskProviderDAO.find(iitem.getPriceAskProviderId());
-
-                    if (ppbs == null)
-                    {
-                        throw new MYException("数据错误,请确认操作");
-                    }
-
-                    iitem.setProviderId(ppbs.getProviderId());
-
-                    iitem.setPrice(iitem.getPrePrice());
-
-                    iitem.setTotal(iitem.getPrice() * iitem.getAmount());
-
-                    stockItemDAO.updateEntityBean(iitem);
-                }
-            }
-
             reason = "外网询价采购无需询价员询价";
         }
 
@@ -894,7 +914,7 @@ public class StockManager
     private void checkSubmit(StockBean sb, int nextStatus, List<StockItemBeanVO> itemList)
         throws MYException
     {
-        if (nextStatus == StockConstant.STOCK_STATUS_PRICEPASS
+        if (nextStatus == StockConstant.STOCK_STATUS_END
             && sb.getType() == PriceConstant.PRICE_ASK_TYPE_NET)
         {
             // 需要校验数量是

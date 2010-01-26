@@ -888,6 +888,10 @@ public class PriceAction extends DispatchAction
             bean.setAskDate(TimeTools.getStringByFormat(new Date(
                 dateByFormat.getTime() + 24 * 3600 * 1000), "yyyyMMdd"));
         }
+        else
+        {
+            bean.setAskDate(TimeTools.now("yyyyMMdd"));
+        }
     }
 
     /**
@@ -1340,9 +1344,18 @@ public class PriceAction extends DispatchAction
             }
             else
             {
-                // 只能看到虚拟存储的
-                condtion.addIntCondition("PriceAskBean.saveType", "=",
-                    PriceConstant.PRICE_ASK_SAVE_TYPE_COMMON);
+                if (user.getRole() == Role.NETCOMMON)
+                {
+                    // 只能看到普通存储的
+                    condtion.addIntCondition("PriceAskBean.saveType", "=",
+                        PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
+                }
+                else
+                {
+                    // 只能看到普通存储的
+                    condtion.addIntCondition("PriceAskBean.saveType", "=",
+                        PriceConstant.PRICE_ASK_SAVE_TYPE_COMMON);
+                }
 
                 if (user.getRole() == Role.NETCOMMON || user.getRole() == Role.NETSTOCK)
                 {

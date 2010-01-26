@@ -104,21 +104,33 @@ public class OutDAO
     {
         condtion.addWhereStr();
 
-        return jdbcOperation2.queryObjectsByPageSeparate(
-            condtion.toString() + " order by id desc", page, OutBean.class);
+        return jdbcOperation2.queryObjectsByPageSeparate(condtion.toString(), page, OutBean.class);
     }
 
     public int countOutBeanByCondtion(ConditionParse condtion)
     {
         condtion.addWhereStr();
 
-        return jdbcOperation2.queryObjects(condtion.toString() + " order by id desc",
-            OutBean.class).getCount();
+        return jdbcOperation2.queryObjects(condtion.toString(), OutBean.class).getCount();
+    }
+
+    public int countOutBeanByCondtion2(ConditionParse condtion)
+    {
+        condtion.addWhereStr();
+
+        return jdbcOperation2.queryObjects(condtion.toString(), OutBean.class).getCount();
     }
 
     public boolean modifyOutStatus2(String fullId, int status)
     {
         int i = jdbcOperation2.updateField("status", status, fullId, OutBean.class);
+
+        return i != 0;
+    }
+
+    public boolean modifyManagerTime(String fullId, String managerTime)
+    {
+        int i = jdbcOperation2.updateField("managerTime", managerTime, fullId, OutBean.class);
 
         return i != 0;
     }

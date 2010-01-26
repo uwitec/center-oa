@@ -73,6 +73,7 @@ function init()
 			$d('qout_' + index, false);
 			$d('price_' + index, false);
 			$d('hasAmount_' + index, false);
+			$d('supportAmount_' + index, false);
 		}
 		else
 		{
@@ -82,6 +83,7 @@ function init()
 			$d('qout_' + index);
 			$d('price_' + index);
 			$d('hasAmount_' + index);
+			$d('supportAmount_' + index);
 		}
 	}
 }
@@ -200,6 +202,9 @@ function rejectBean()
 							数量是否满足:<input type="radio" name="hasAmount_0" value="0">满足
 							&nbsp;&nbsp;<input type="radio" name="hasAmount_0" value="1">不满足
 							<br>
+							可提供数量:<input
+                            type="text" name="supportAmount_0" value="" size="6" oncheck="isNumber;">&nbsp;
+							<br>
                                 描述一: <textarea name="description_0" cols="60" rows="3"></textarea>
 
 							</td>
@@ -215,6 +220,9 @@ function rejectBean()
 							type="text" name="price_1" value="" size="6" oncheck="isFloat;">&nbsp;
 							数量是否满足:<input type="radio" name="hasAmount_1" value="0">满足
 							&nbsp;&nbsp;<input type="radio" name="hasAmount_1" value="1">不满足
+							<br>
+                                可提供数量:<input
+                            type="text" name="supportAmount_1" value="" size="6" oncheck="isNumber;">&nbsp;
 							<br>
                                 描述二: <textarea name="description_1" cols="60" rows="3"></textarea>
 
@@ -232,6 +240,9 @@ function rejectBean()
 							数量是否满足:<input type="radio" name="hasAmount_2" value="0">满足
 							&nbsp;&nbsp;<input type="radio" name="hasAmount_2" value="1">不满足
 							<br>
+                                可提供数量:<input
+                            type="text" name="supportAmount_2" value="" size="6" oncheck="isNumber;">&nbsp;
+							<br>
                                 描述三: <textarea name="description_2" cols="60" rows="3"></textarea>
 							</td>
 					</tr>
@@ -247,6 +258,9 @@ function rejectBean()
 							数量是否满足:<input type="radio" name="hasAmount_3" value="0">满足
 							&nbsp;&nbsp;<input type="radio" name="hasAmount_3" value="1">不满足
 							<br>
+                                可提供数量:<input
+                            type="text" name="supportAmount_3" value="" size="6" oncheck="isNumber;">&nbsp;
+							<br>
                                 描述四: <textarea name="description_3" cols="60" rows="3"></textarea>
 							</td>
 					</tr>
@@ -261,6 +275,9 @@ function rejectBean()
 							type="text" name="price_4" value="" size="6" oncheck="isFloat;">&nbsp;
 							数量是否满足:<input type="radio" name="hasAmount_4" value="0">满足
 							&nbsp;&nbsp;<input type="radio" name="hasAmount_4" value="1">不满足
+							<br>
+                                可提供数量:<input
+                            type="text" name="supportAmount_4" value="" size="6" oncheck="isNumber;">&nbsp;
 							<br>
                                 描述五: <textarea name="description_4" cols="60" rows="3"></textarea>
 							</td>

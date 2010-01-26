@@ -1263,6 +1263,12 @@ public class OutManager
                     try
                     {
                         outDAO.modifyOutStatus2(outBean.getFullId(), nextStatus);
+
+                        // 修改manager的入库时间
+                        if (nextStatus == Constant.STATUS_MANAGER_PASS)
+                        {
+                            outDAO.modifyManagerTime(outBean.getFullId(), TimeTools.now());
+                        }
                     }
                     catch (Exception e)
                     {

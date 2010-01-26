@@ -42,6 +42,11 @@ public class OutBean implements Serializable
     private String outTime = "";
 
     /**
+     * 总经理通过时间
+     */
+    private String managerTime = "";
+
+    /**
      * 库单类型 对于出入库都不一样
      */
     private int outType = 0;
@@ -919,5 +924,22 @@ public class OutBean implements Serializable
     public void setStaffcredit(double staffcredit)
     {
         this.staffcredit = staffcredit;
+    }
+
+    /**
+     * @return the managerTime
+     */
+    public String getManagerTime()
+    {
+        return managerTime;
+    }
+
+    /**
+     * @param managerTime
+     *            the managerTime to set
+     */
+    public void setManagerTime(String managerTime)
+    {
+        this.managerTime = managerTime;
     }
 }

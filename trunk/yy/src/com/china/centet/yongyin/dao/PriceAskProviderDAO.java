@@ -48,14 +48,17 @@ public class PriceAskProviderDAO extends BaseDAO2<PriceAskProviderBean, PriceAsk
      * @param askDate
      * @return
      */
-    public List<PriceAskProviderBeanVO> queryByCondition(String userId, String askDate,
-                                                         String productId)
+    public List<PriceAskProviderBeanVO> queryByCondition(String askDate, String productId)
     {
         Map<String, Object> paramterMap = new HashMap();
 
-        paramterMap.put("userId", userId);
         paramterMap.put("productId", productId);
+
+        // ÐéÄâ´æ´¢
+        paramterMap.put("saveType", PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
+
         paramterMap.put("type", PriceConstant.PRICE_ASK_TYPE_NET);
+
         paramterMap.put("askDate", askDate);
 
         return (List)this.jdbcOperation2.getIbatisDaoSupport().queryForList(
