@@ -609,9 +609,8 @@ function locationChange()
                         <td colspan="3">
                         <select name="reserve3" class="select_class" oncheck="notNone;" head="付款方式" values="${out.reserve3}" readonly="true"
                         style="width: 240px">
-                            <option value='0'>货到收款</option>
-                            <option value='1'>款到发货(黑名单客户)</option>
                             <option value='2'>客户信用和业务员信用额度担保</option>
+                            <option value='1'>款到发货(黑名单客户)</option>
                         </select>
                         <font color="#FF0000">*</font></td>
                     </tr>

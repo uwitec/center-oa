@@ -518,30 +518,12 @@ public class OutManager
                         throw new MYException("客户信用等级不存在");
                     }
 
-                    // 进行逻辑处理(必须是货到收款才能有此逻辑)
+                    // 进行逻辑处理(必须是货到收款才能有此逻辑) 此逻辑已经废除
                     if (outCredit && cbean != null
                         && !StringTools.isNullOrNone(cbean.getCreditLevelId())
                         && outBean.getReserve3() == OutConstanst.OUT_SAIL_TYPE_COMMON)
                     {
-                        double noPayBusiness = outDAO.sumNoPayBusiness(outBean.getCustomerId(),
-                            YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate())
-                                               + outBean.getTotal();
-
-                        // 超过了客户信用警戒线--报送物流中心经理审批
-                        if (noPayBusiness > clevel.getMoney())
-                        {
-                            outBean.setReserve6("客户信用最大额度是:"
-                                                + MathTools.formatNum(clevel.getMoney())
-                                                + ".当前未付款金额(包括此单):"
-                                                + MathTools.formatNum(noPayBusiness));
-
-                            outDAO.updateOutReserve2(fullId, OutConstanst.OUT_CREDIT_OVER,
-                                outBean.getReserve6());
-
-                        }
-
-                        // 全部使用客户的信用等级金额
-                        outDAO.updateCurcredit(fullId, outBean.getTotal());
+                        throw new MYException("不支持此类型,请重新操作");
                     }
 
                     // 使用业务员的信用额度
@@ -594,7 +576,16 @@ public class OutManager
                             // 防止职员信用等级超支
                             if ( (noPayBusiness + remainInStaff) > sb2.getCredit())
                             {
-                                throw new MYException(sb2.getName() + "的信用额度已经超支,请重新操作");
+                                outBean.setReserve6("客户信用最大额度是:"
+                                                    + MathTools.formatNum(clevel.getMoney())
+                                                    + ".当前未付款金额(包括此单):"
+                                                    + MathTools.formatNum(noPayBusiness)
+                                                    + ".超支:"
+                                                    + (MathTools.formatNum( (noPayBusiness
+                                                                             + remainInStaff - sb2.getCredit()))));
+
+                                outDAO.updateOutReserve2(fullId, OutConstanst.OUT_CREDIT_OVER,
+                                    outBean.getReserve6());
                             }
 
                             outDAO.updateStaffcredit(fullId, remainInStaff);
@@ -604,6 +595,8 @@ public class OutManager
             }
             catch (Exception e)
             {
+                _logger.error(e, e);
+
                 throw new MYException(e);
             }
         }

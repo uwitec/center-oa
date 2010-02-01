@@ -75,9 +75,8 @@ function getCustmeor(id, name, conn, phone, customercreditlevel)
 	{
 	    removeAllItem($('reserve3'));
         
-        setOption($('reserve3'), '0', '货到收款');  
-        setOption($('reserve3'), '1', '款到发货(黑名单客户)');  
         setOption($('reserve3'), '2', '客户信用和业务员信用额度担保');  
+        setOption($('reserve3'), '1', '款到发货(黑名单客户)');  
 	}
 }
 
@@ -281,7 +280,13 @@ function check()
 	var desList = document.getElementsByName('desciprt');
 	for (var i = 1; i < desList.length; i++)
 	{
-		if (trim(desList[i].value) != '')
+		if (trim(desList[i].value) == '')
+		{
+		    alert('成本是必填!');
+            desList[i].focus();
+            return false;
+		}
+		
 		if (!isFloat(desList[i].value))
 		{
 			alert('格式错误,成本只能是浮点数!');
@@ -649,9 +654,8 @@ function selectOut()
                         <td align="right">付款方式：</td>
                         <td colspan="3">
                         <select name="reserve3" class="select_class" oncheck="notNone;" head="付款方式" style="width: 240px">
-                            <option value='0'>货到收款</option>
-                            <option value='1'>款到发货(黑名单客户)</option>
                             <option value='2'>客户信用和业务员信用额度担保</option>
+                            <option value='1'>款到发货(黑名单客户)</option>
                         </select>
                         <font color="#FF0000">*</font></td>
                     </tr>
