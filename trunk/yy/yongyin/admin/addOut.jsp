@@ -266,6 +266,15 @@ function check()
 			prices[i].focus();
 			return false;
 		}
+		
+		if (parseInt(trim(prices[i].value)) == 0)
+        {
+            if (!window.confirm('除非赠品单价不要填0,否则到总裁审批,你确定?'))
+            {
+                 prices[i].focus();
+                 return false;
+            }
+        }
 
 		if (!isFloat(prices[i].value))
 		{

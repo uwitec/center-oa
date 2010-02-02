@@ -66,6 +66,8 @@ public abstract class DefinedCommon
 
         definedMap.put("flowDefineStatus", new Object[] {"发布", "发布", colorationToRed("废弃")});
 
+        definedMap.put("outCredit", new Object[] {"正常", "超支", "价格为0"});
+
         definedMap.put("tokenType", new Object[] {"人员处理", "角色处理", "全部", "职员处理", ""});
     }
 

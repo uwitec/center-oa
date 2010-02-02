@@ -2074,6 +2074,20 @@ public class OutAction extends DispatchAction
                     }
                 }
 
+                // 单价存在0
+                if (outCredit && out.getReserve2() == OutConstanst.OUT_CREDIT_MIN
+                    && out.getType() == Constant.OUT_TYPE_OUTBILL
+                    && statuss == Constant.STATUS_MANAGER_PASS)
+                {
+                    // 总部的管理员
+                    if ( !LocationHelper.isSystemLocation(user.getLocationID()))
+                    {
+                        request.setAttribute(KeyConstant.ERROR_MESSAGE, "只有物流的总经理(总裁)可以审批此销售单");
+
+                        return mapping.findForward("error");
+                    }
+                }
+
                 // 如果是黑名单的客户(且没有付款)
                 if (outCredit && out.getReserve3() == OutConstanst.OUT_SAIL_TYPE_MONEY
                     && out.getType() == Constant.OUT_TYPE_OUTBILL && out.getPay() == 0)

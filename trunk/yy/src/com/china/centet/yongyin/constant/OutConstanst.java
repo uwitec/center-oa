@@ -64,6 +64,11 @@ public interface OutConstanst
     int OUT_CREDIT_OVER = 1;
 
     /**
+     * 价格为0
+     */
+    int OUT_CREDIT_MIN = 2;
+
+    /**
      * 货到收款
      */
     int OUT_SAIL_TYPE_COMMON = 0;

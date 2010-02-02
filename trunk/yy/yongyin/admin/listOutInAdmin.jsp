@@ -422,7 +422,7 @@ function load()
 							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.hadPay}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
-							<td align="center" onclick="hrefAndSelect(this)">${item.reserve2 == 0 ? "<font color=blue><b>正常</b></font>" : "<font color=red><b>超支</b></font>"}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:get('outCredit', item.reserve2)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.consign == 1 ? "未通过" : ""}${item.consign == 2 ? "<font color=blue><b>通过</b></font>" : ""}</td>
 						</tr>
 					</c:forEach>

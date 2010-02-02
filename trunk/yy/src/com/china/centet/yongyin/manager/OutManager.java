@@ -500,6 +500,8 @@ public class OutManager
                 // 只有销售单，剔除个人领样的
                 if (outBean.getOutType() == 0)
                 {
+                    boolean isCreditOutOf = false;
+
                     // 这里需要计算客户的信用金额-是否报送物流中心经理审批
                     boolean outCredit = parameterDAO.getBoolean(SysConfigConstant.OUT_CREDIT);
 
@@ -584,11 +586,43 @@ public class OutManager
                                                     + (MathTools.formatNum( (noPayBusiness
                                                                              + remainInStaff - sb2.getCredit()))));
 
+                                isCreditOutOf = true;
+
                                 outDAO.updateOutReserve2(fullId, OutConstanst.OUT_CREDIT_OVER,
                                     outBean.getReserve6());
                             }
 
                             outDAO.updateStaffcredit(fullId, remainInStaff);
+                        }
+                    }
+
+                    if ( !isCreditOutOf)
+                    {
+                        boolean isZero = false;
+
+                        List<BaseBean> baseList = outDAO.queryBaseByOutFullId(outBean.getFullId());
+
+                        for (BaseBean baseBean : baseList)
+                        {
+                            if (baseBean.getPrice() == 0.0d)
+                            {
+                                isZero = true;
+
+                                outBean.setReserve6("存在价格为0的数据");
+
+                                outDAO.updateOutReserve2(fullId, OutConstanst.OUT_CREDIT_MIN,
+                                    outBean.getReserve6());
+
+                                break;
+                            }
+                        }
+
+                        if ( !isZero)
+                        {
+                            outBean.setReserve6("");
+
+                            outDAO.updateOutReserve2(fullId, OutConstanst.OUT_CREDIT_COMMON,
+                                outBean.getReserve6());
                         }
                     }
                 }
