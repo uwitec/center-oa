@@ -96,8 +96,12 @@ public class OutDAO
     {
         condtion.addWhereStr();
 
-        return jdbcOperation2.queryForList(condtion.toString() + " order by id desc",
-            OutBean.class);
+        if (condtion.toString().toLowerCase().indexOf("order") == -1)
+        {
+            condtion.addCondition(" order by id desc");
+        }
+
+        return jdbcOperation2.queryForList(condtion.toString(), OutBean.class);
     }
 
     public List<OutBean> queryOutBeanByCondtion(ConditionParse condtion, PageSeparate page)
