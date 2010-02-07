@@ -135,7 +135,7 @@ public abstract class WriteBeanProperty
                 }
 
                 bbb.append("<select ").append(name).append(values).append(
-                    " class=\"select_class\" ").append('>');
+                    " class=\"select_class\" autodisplay=1 ").append('>');
 
                 end.append("</select>");
 
