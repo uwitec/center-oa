@@ -58,6 +58,26 @@ function getMakeTokens(oo)
     submit();
 }
 
+function submitException(oo)
+{
+    if ($$('exceptionReason') == null)
+    {
+        alert('请选择异常结束原因');
+        return;
+    }
+    
+    $O('method').value = 'exceptionEndMake';
+    
+    if ($$('reason') == '')
+    {
+    	$O('reason').value = '异常结束';
+    }
+    
+    $('#dlg2').dialog({closed:true});
+    
+    submit();
+}
+
 function queryLog()
 {
     window.common.modal('../admin/pop.do?method=rptQueryLog&fk=' + makeid);
@@ -77,6 +97,20 @@ function load()
                     },
                     '取 消':function(){
                         $('#dlg1').dialog({closed:true});
+                    }
+                }
+     });
+     
+     $('#dlg2').dialog({
+                //iconCls: 'icon-save',
+                modal:true,
+                closed:true,
+                buttons:{
+                    '确 定':function(){
+                        submitException();
+                    },
+                    '取 消':function(){
+                        $('#dlg2').dialog({closed:true});
                     }
                 }
      });
@@ -139,6 +173,11 @@ function callBackFunRejectToken(data)
     $O('dialog_inner').innerHTML = htm;
 	
 	$('#dlg1').dialog({closed:false});
+}
+
+function exceptionMake()
+{
+	$('#dlg2').dialog({closed:false});
 }
 
 

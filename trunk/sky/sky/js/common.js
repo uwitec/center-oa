@@ -389,6 +389,8 @@ function eload(elements)
             setSelectIndex(ele, index);
 
             var quick = ele.getAttribute('quick');
+            
+            var autodisplay = ele.getAttribute('autodisplay');
 
             if (quick == "true")
             {
@@ -402,14 +404,24 @@ function eload(elements)
             disAll = ele.getAttribute('disall') || ele.getAttribute('disAll');
             
             if (!disAll)
-            if (va == 'true' || va == 'readonly' || va == true)
             {
-                var ii = 0;
-                for (ii = ele.options.length - 1; ii >= 0; ii--)
-                {
-                    if (!ele.options[ii].selected)
-                    ele.remove(ii);
-                }
+	            if (va == 'true' || va == 'readonly' || va == true)
+	            {
+	                var ii = 0;
+	                for (ii = ele.options.length - 1; ii >= 0; ii--)
+	                {
+	                    if (!ele.options[ii].selected)
+	                    ele.remove(ii);
+	                }
+	            }
+            }
+            
+            // display only text
+            if (autodisplay == "1")
+            {
+            	var par = ele.parentNode;
+            	par.removeChild(ele);
+            	par.innerHTML = getOptionText(ele);
             }
         }
 

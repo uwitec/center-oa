@@ -2,7 +2,7 @@
 	<defaultCache maxElementsInMemory="200" eternal="false"
 		timeToIdleSeconds="1800" timeToLiveSeconds="0" overflowToDisk="false" />
 
-	<diskStore path="C:/Tomcat 5.5" />
+	<diskStore path="java.io.tmpdir" />
 
 	<cache name="CENTER_CHINA_CACHE_LOCAL" maxElementsInMemory="0"
 		eternal="true" timeToIdleSeconds="0" timeToLiveSeconds="0"

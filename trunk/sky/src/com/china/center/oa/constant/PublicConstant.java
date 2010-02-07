@@ -124,6 +124,11 @@ public interface PublicConstant
     String OPERATION_REJECT = "驳回";
 
     /**
+     * 操作--异常结束
+     */
+    String OPERATION_EXCEPTIONEND = "异常结束";
+
+    /**
      * 变更
      */
     String OPERATION_CHANGE = "变更";

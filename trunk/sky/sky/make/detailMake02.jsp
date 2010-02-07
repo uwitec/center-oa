@@ -51,7 +51,7 @@ var baseURL = '${eurl}';
 <a><font color=blue>【第${make.status}环${token.name}】--${position.name}(${position.ends == 1 ? "<font color=red>结束环</font>" : "中间环"})</font></a>
 </div>
 
-        <p:class value="com.china.center.oa.customize.make.bean.Make01Bean" opr="1"/>
+        <p:class value="com.china.center.oa.customize.make.bean.Make01Bean" opr="2"/>
 
         
         <div id="base_div">
@@ -205,17 +205,20 @@ var baseURL = '${eurl}';
                  
                  <p:tr>
                 <input type="button" class="button_class" id="ok_b" name="ok_b"
-         value="&nbsp;&nbsp;通 过&nbsp;&nbsp;" accesskey="O"
+         value="&nbsp;&nbsp;通 过(O)&nbsp;&nbsp;" accesskey="O"
             onclick="addBean()">&nbsp;&nbsp;
         <c:if test="${position.ends != 1}">
         <input type="button" class="button_class" id="reject_b" name="reject_b"
-         value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;" accesskey="R"
+         value="&nbsp;&nbsp;驳 回(R)&nbsp;&nbsp;" accesskey="R"
             onclick="rejectMake()">&nbsp;&nbsp;
         </c:if>
         <c:if test="${position.ends == 1}">
         <input type="button" class="button_class" id="reject_b" name="reject_b"
-         value="&nbsp;&nbsp;环节驳回&nbsp;&nbsp;" accesskey="E"
-            onclick="rejectTokenMake()">
+         value="&nbsp;&nbsp;环节驳回(E)&nbsp;&nbsp;" accesskey="E"
+            onclick="rejectTokenMake()">&nbsp;&nbsp;
+        <input type="button" class="button_class" id="reject_b" name="reject_b"
+         value="&nbsp;&nbsp;异常结束(T)&nbsp;&nbsp;" accesskey="T"
+            onclick="exceptionMake()">
         </c:if>
                  </p:tr>
     
@@ -229,8 +232,20 @@ var baseURL = '${eurl}';
 
 <div id="dlg1" title="选择驳回到的历史环节" style="width:320px;">
     <div style="padding:20px;height:200px;" id="dialog_inner" title="">
-       
-    </div>
+   </div>
+</div>
+
+<div id="dlg2" title="选择异常结束原因" style="width:320px;">
+    <div style="padding:20px;height:200px;" id="dialog_inner2" title="">
+    
+    <input type=radio name=exceptionReason value="1"/> 创意未过<br/>
+    <input type=radio name=exceptionReason value="2"/> 设计未过<br/>
+    <input type=radio name=exceptionReason value="3"/> 客户需求变化<br/>
+    <input type=radio name=exceptionReason value="4"/> 工艺问题<br/>
+    <input type=radio name=exceptionReason value="5"/> 创交货时间不足<br/>
+    <input type=radio name=exceptionReason value="6"/> 付款和运输条件不满足足<br/>
+    <input type=radio name=exceptionReason value="99"/> 其他<br/>
+   </div>
 </div>
 </form>
 

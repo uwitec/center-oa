@@ -101,9 +101,9 @@ function load()
 </head>
 <body class="body_class" onload="load()">
 <form name="formEntry" action="../make/make.do" method="post"><input
-	type="hidden" name="method" value="passMake">
-<input type="hidden" name="cid" value=""> 
-<input type="hidden" name="id" value="${make.id}"> 
+	type="hidden" name="method" value="passMake"/>
+<input type="hidden" name="cid" value=""/> 
+<input type="hidden" name="id" value="${make.id}"/> 
 
 <div class="basic" id="flowDiv">
 
@@ -111,7 +111,7 @@ function load()
 <a><font color=blue>【第${make.status}环${token.name}】--${position.name}(${position.ends == 1 ? "<font color=red>结束环</font>" : "中间环"})</font></a>
 </div>
 
-		<p:class value="com.china.center.oa.customize.make.bean.Make01Bean" opr="1"/>
+		<p:class value="com.china.center.oa.customize.make.bean.Make01Bean" opr="2"/>
 
         
         <div id="base_div">
@@ -127,15 +127,12 @@ function load()
 		    </p:cell>  
 		    
 		    <p:cell title="类型">
-              <select class="select_class" name="type" values="${make.type}">
+              <select class="select_class" name="type" values="${make.type}" autodisplay="1">
                   <p:option type="makeType"></p:option> 
               </select>
             </p:cell> 
 
-			<p:pro field="cname" innerString="size=40">
-			    <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectCus()">&nbsp;&nbsp; 
-			</p:pro>
+			<p:pro field="cname"/>
 
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
             
@@ -149,7 +146,7 @@ function load()
             
             <p:pro field="charact"/>
             
-            <p:pro field="cdes" innerString="rows=5 cols=55 oncheck='minLength(100)'" outString="内容不能少于50字" />
+            <p:pro field="cdes" innerString="rows=5 cols=55 oncheck='minLength(100)'" />
             
             <p:pro field="sampleType">
                 <p:option type="sampleType"></p:option>

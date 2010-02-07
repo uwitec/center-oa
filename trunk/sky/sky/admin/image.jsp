@@ -1,4 +1,5 @@
 <%@ page contentType="image/jpeg; charset=gb2312" language="java" %>
+<%@ page import="java.io.OutputStream" %>
 <%@ page import="java.awt.*,java.awt.image.*,java.util.*,javax.imageio.*" %>
 <%!Color getRandColor(int fc, int bc)
     {
@@ -68,5 +69,16 @@
             g.dispose();
             
             ImageIO.setUseCache(true);
-            ImageIO.write(image, "JPEG", response.getOutputStream());
+            
+            OutputStream os=response.getOutputStream();
+
+            ImageIO.write(image, "JPEG", os);
+            
+            os.flush();
+            os.close();
+            os=null;
+            response.flushBuffer();
+            out.clear();
+            out = pageContext.pushBody();
+
 %>

@@ -49,6 +49,8 @@ public class MakeBean implements Serializable
     @Join(tagClass = MakeTokenBean.class)
     private int status = MakeConstant.MAKE_TOKEN_01;
 
+    private int endType = MakeConstant.EXCEPTION_END_0;
+
     @Join(tagClass = MakeTokenItemBean.class)
     private int position = 11;
 
@@ -267,6 +269,23 @@ public class MakeBean implements Serializable
             this.description).append(tab).append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the endType
+     */
+    public int getEndType()
+    {
+        return endType;
+    }
+
+    /**
+     * @param endType
+     *            the endType to set
+     */
+    public void setEndType(int endType)
+    {
+        this.endType = endType;
     }
 
 }

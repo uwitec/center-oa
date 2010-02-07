@@ -21,6 +21,12 @@
             <type>select</type>
             <option>$makeType</option>
         </condtion>
+        <condtion name="endType" caption="状态">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$exceptionReason</option>
+        </condtion>
         <condtion name="createrId" caption="创建人">
             <opr>=</opr>
             <datatype>0</datatype>
@@ -43,6 +49,12 @@
         <condtion name="title" caption="主题" pfix="MakeBean">
             <opr>like</opr>
             <type>text</type>
+        </condtion>
+        <condtion name="endType" caption="状态" pfix="MakeBean">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$exceptionReason</option>
         </condtion>
         <condtion name="createrId" caption="创建人">
             <opr>=</opr>
@@ -72,6 +84,12 @@
             <datatype>1</datatype>
             <type>select</type>
             <option>$makeType</option>
+        </condtion>
+        <condtion name="endType" caption="状态">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$exceptionReason</option>
         </condtion>
         <condtion name="createrId" caption="创建人">
             <opr>=</opr>

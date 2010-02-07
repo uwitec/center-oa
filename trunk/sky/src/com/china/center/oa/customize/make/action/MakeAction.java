@@ -862,7 +862,47 @@ public class MakeAction extends DispatchAction
         {
             _logger.warn(e, e);
 
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "驳回申请失败:" + e.getMessage());
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "驳回定制产品失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        return mapping.findForward("queryHandlerMake");
+    }
+
+    /**
+     * 异常结束定制流程
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exceptionEndMake(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        String makeId = request.getParameter("id");
+
+        String reason = request.getParameter("reason");
+
+        int exceptionReason = CommonTools.parseInt(request.getParameter("exceptionReason"));
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            makeManager.exceptionEnd(user, makeId, exceptionReason, reason);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功异常结束定制产品");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "异常结束定制产品失败:" + e.getMessage());
         }
 
         CommonTools.removeParamers(request);

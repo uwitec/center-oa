@@ -188,4 +188,31 @@ public interface MakeConstant
 
     @Defined(key = "requestType", value = "全稿")
     int REQUEST_TYPE_05 = 5;
+
+    /**
+     * 正常结束
+     */
+    @Defined(key = "exceptionReason", value = "正常")
+    int EXCEPTION_END_0 = 0;
+
+    @Defined(key = "exceptionReason", value = "创意未过")
+    int EXCEPTION_END_1 = 1;
+
+    @Defined(key = "exceptionReason", value = "设计未过")
+    int EXCEPTION_END_2 = 2;
+
+    @Defined(key = "exceptionReason", value = "客户需求变化")
+    int EXCEPTION_END_3 = 3;
+
+    @Defined(key = "exceptionReason", value = "工艺问题")
+    int EXCEPTION_END_4 = 4;
+
+    @Defined(key = "exceptionReason", value = "交货时间不足")
+    int EXCEPTION_END_5 = 5;
+
+    @Defined(key = "exceptionReason", value = "付款和运输条件不满足")
+    int EXCEPTION_END_6 = 6;
+
+    @Defined(key = "exceptionReason", value = "其他")
+    int EXCEPTION_END_99 = 99;
 }

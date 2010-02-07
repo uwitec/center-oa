@@ -482,6 +482,67 @@ public class MakeManager
     }
 
     /**
+     * 异常结束
+     * 
+     * @param user
+     * @param makeId
+     * @param reason
+     * @return
+     * @throws MYException
+     */
+    @Transactional(rollbackFor = MYException.class)
+    public boolean exceptionEnd(User user, String makeId, int etype, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, makeId);
+
+        MakeBean make = makeDAO.find(makeId);
+
+        if (make == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if ( !make.getHanderId().equals(user.getStafferId()))
+        {
+            throw new MYException("不能处理申请,请确认操作");
+        }
+
+        MakeTokenBean makeToken = makeTokenDAO.find(make.getStatus());
+
+        if (makeToken == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        MakeTokenItemBean makeTokenItem = makeTokenItemDAO.find(make.getPosition());
+
+        if (makeTokenItem == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (makeTokenItem.getEnds() != MakeConstant.END_TOKEN_YES)
+        {
+            throw new MYException("不在定制客服的结束环,请确认操作");
+        }
+
+        // 设置结束
+        make.setStatus(MakeConstant.STATUS_END);
+
+        // 异常结束
+        make.setEndType(etype);
+
+        makeDAO.updateEntityBean(make);
+
+        // log
+        saveLog(user, make.getId(), PublicConstant.OPERATION_EXCEPTIONEND, makeTokenItem.getId(),
+            "第" + makeToken.getId() + "环产-" + makeTokenItem.getName(), reason);
+
+        return true;
+    }
+
+    /**
      * rejectTokenMake
      * 
      * @param user
