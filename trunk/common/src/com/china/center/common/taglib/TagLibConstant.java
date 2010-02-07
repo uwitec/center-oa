@@ -18,14 +18,19 @@ public interface TagLibConstant
     String CENTER_TRS_INDEX = "CENTER_TRS_INDEX_ISP_TRS_INDEX";
 
     String CENTER_BEAN_CLASS = "CENTER_BEAN_CLASS_ISP_BEAN_CLASS";
-    
+
     String CENTER_BEAN_OPR = "CENTER_BEAN_CLASS_ISP_BEAN_OPR";
-    
+
     String CENTER_BEAN_UPDATBEAN = "bean";
-    
+
     String CENTER_GOBAL_LANG_SETTING = "CENTER_GOBAL_LANG_SETTING";
-    
+
     int BEAN_UPDATE = 1;
+
+    /**
+     * 页面展现
+     */
+    int BEAN_DISPLAY = 2;
 
     int ALL_CELLS = 0;
 
@@ -43,21 +48,21 @@ public interface TagLibConstant
      * 脚本存放
      */
     String JS_FOLDER_NAME = "/js/";
-    
+
     String JS_LANG_FOLDER_NAME = "/js/lang/";
-    
+
     String JQUERY_JS_LANG_FOLDER_NAME = "jquery/";
-    
+
     String CAL_JS_FOLDER_NAME = "center_cal/";
 
     String CSS_FILE_NAME = "center.css";
-    
+
     String CSS_GUID_NAME = "flexigrid.css";
-    
+
     String JS_RESOURCES_NAME = "public_resources.js";
-    
+
     String JS_QUERY_NAME = "jquery.js";
-    
+
     String JS_FLEXIGRID_NAME = "flexigrid.js";
 
     String CSS_STYLE_LOADING = "CSS_STYLE_LOADING";

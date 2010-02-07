@@ -154,7 +154,8 @@ public class PageBeanProperty extends BodyTagCenterSupport
 
         int cellk = this.cell <= 0 ? (cells * 2 - 1) : (this.cell * 2) - 1;
 
-        if (opr == TagLibConstant.BEAN_UPDATE && isNullOrNone(this.value))
+        if ( (opr == TagLibConstant.BEAN_UPDATE || opr == TagLibConstant.BEAN_DISPLAY)
+            && isNullOrNone(this.value))
         {
             oval = request.getAttribute(TagLibConstant.CENTER_BEAN_UPDATBEAN);
 
@@ -180,7 +181,7 @@ public class PageBeanProperty extends BodyTagCenterSupport
 
         String[] rs = WriteBeanProperty.writeProperty(cla, this.field, this.value, cellk,
             this.innerString, this.outString, this.width + "%", getLastWidth() + "%", this.align,
-            request.getContextPath());
+            request.getContextPath(), opr);
 
         this.value = "";
 

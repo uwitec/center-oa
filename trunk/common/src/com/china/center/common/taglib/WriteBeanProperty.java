@@ -39,7 +39,7 @@ public abstract class WriteBeanProperty
      */
     public static String[] writeProperty(Class claz, String property, String value, int cell,
                                          String innerString, String outString, String width1,
-                                         String width2, String algin, String rootUrl)
+                                         String width2, String algin, String rootUrl, int opr)
     {
         Field field = BeanTools.getFieldIgnoreCase(property, claz);
 
@@ -116,7 +116,44 @@ public abstract class WriteBeanProperty
             }
         }
 
+        // 开始和结束标签
         String[] ele = getElement(html, property, value, innerString, rootUrl);
+
+        if (opr == TagLibConstant.BEAN_DISPLAY)
+        {
+            ele = new String[2];
+
+            if (html.type() == Element.SELECT)
+            {
+                StringBuffer bbb = new StringBuffer();
+                StringBuffer end = new StringBuffer();
+
+                String values = "";
+                if ( !isNullOrNone(value))
+                {
+                    values = " values='" + value + "' ";
+                }
+
+                bbb.append("<select ").append(name).append(values).append(
+                    " class=\"select_class\" ").append('>');
+
+                end.append("</select>");
+
+                ele[0] = bbb.toString();
+
+                ele[1] = end.toString();
+            }
+            else
+            {
+                ele[0] = value.trim();
+
+                ele[1] = "";
+            }
+        }
+        else
+        {
+            ele = getElement(html, property, value, innerString, rootUrl);
+        }
 
         String[] result = new String[2];
 
