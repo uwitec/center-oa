@@ -1329,8 +1329,7 @@ public class PriceAction extends DispatchAction
 
             if ( !StringTools.isNullOrNone(updateMax))
             {
-                condtion.addIntCondition("PriceAskBean.type", "=",
-                    PriceConstant.PRICE_ASK_TYPE_NET);
+                condtion.addCondition(" AND PriceAskBean.type in (1, 2) ");
 
                 // 只能看到虚拟存储的
                 condtion.addIntCondition("PriceAskBean.saveType", "=",

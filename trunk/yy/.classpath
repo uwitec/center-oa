@@ -2,8 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="j2src"/>
-	<classpathentry kind="var" path="TOMCAT_HOME/common/lib/servlet-api.jar"/>
-	<classpathentry kind="var" path="TOMCAT_HOME/common/lib/jsp-api.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.5.0_06"/>
 	<classpathentry kind="lib" path="yongyin/WEB-INF/lib/ant-1.6.2-stripped.jar"/>
@@ -126,5 +124,7 @@
 	<classpathentry kind="lib" path="yongyin/WEB-INF/lib/center_curout.jar"/>
 	<classpathentry kind="lib" path="yongyin/WEB-INF/lib/center_sustomer.jar"/>
 	<classpathentry kind="lib" path="yongyin/WEB-INF/lib/center_all_common_0.9.jar" sourcepath="/common"/>
+	<classpathentry kind="lib" path="extlib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="extlib/servlet-api.jar"/>
 	<classpathentry kind="output" path="yongyin/WEB-INF/classes"/>
 </classpath>

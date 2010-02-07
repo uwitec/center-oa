@@ -305,7 +305,7 @@ function updateMaxAmount(id, amount)
 							src="../images/edit.gif" border="0" height="15" width="15"></a>
 					</c:if>
 					
-					<c:if test="${(user.role == 'STOCK') && (item.status == 0 || item.status == 1 ) && updateMax == '1'}">
+					<c:if test="${(user.role == 'NETSTOCK') && (item.status == 0 || item.status == 1 ) && updateMax == '1'}">
                         <a title="修改最大询价数量" href="javascript:updateMaxAmount('${item.id}', ${item.amount})"> <img
                             src="../images/edit.gif" border="0" height="15" width="15"></a>
                     </c:if>

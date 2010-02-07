@@ -1270,7 +1270,7 @@ public class OutAction extends DispatchAction
 
                 if (user.getRole() == Role.FLOW)
                 {
-                    condtion.addCondition("order by managerTime");
+                    condtion.addCondition("order by managerTime desc");
                 }
                 else
                 {

@@ -299,7 +299,7 @@ public class LoginAction extends DispatchAction
      */
     private boolean getContorl()
     {
-        return true;
+        return false;
     }
 
     /**
