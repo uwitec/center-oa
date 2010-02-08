@@ -94,7 +94,15 @@ function queryLog()
 
 function load()
 {
-    setAllReadOnly4(null, ['reason', 'qout1', 'ok_b', 'log_b', 'reject_b']);
+    setAllReadOnly4(null, ['reason', 'qout1', 'ok_b', 'log_b', 'reject_b', 'help_b']);
+}
+
+var gtid;
+function callHelp(id)
+{
+    gtid = id;
+    
+    window.open('../help/flow/makeflow.html', "myOpen");
 }
 </script>
 
@@ -225,16 +233,19 @@ function load()
 	                        class="button_class" onclick="selectNext()">&nbsp;&nbsp; 
 	                  <font color="red">*</font>
 	                  <input type="button" value="&nbsp;审批日志&nbsp;" name="log_b" id="log_b"
-	                        class="button_class" onclick="queryLog()">
+	                        class="button_class" onclick="queryLog()"/>
 	             </p:cell> 
 	             
 	             <p:tr>
 	             <input type="button" class="button_class" id="ok_b" name="ok_b"
-		         value="&nbsp;&nbsp;通 过&nbsp;&nbsp;" accesskey="O"
-		            onclick="addBean()">&nbsp;&nbsp;
+		         value="&nbsp;&nbsp;通 过(O)&nbsp;&nbsp;" accesskey="O"
+		            onclick="addBean()"/>&nbsp;&nbsp;
 		        <input type="button" class="button_class" id="reject_b" name="reject_b"
-		         value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;" accesskey="R"
-		            onclick="rejectMake()"> 
+		         value="&nbsp;&nbsp;驳 回(R)&nbsp;&nbsp;" accesskey="R"
+		            onclick="rejectMake()"/> &nbsp;&nbsp;
+		        <input type="button" class="button_class" id="help_b" name="help_b"
+                 value="&nbsp;&nbsp;帮助(H)&nbsp;&nbsp;" accesskey="H"
+                    onclick="callHelp('t${position.id}')"/>
 	             </p:tr>
 	
 	        </p:table>
