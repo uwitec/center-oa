@@ -550,9 +550,9 @@ public class MakeAction extends DispatchAction
         if (MakeConstant.MAKE_TOKEN_02 == make.getStatus())
         {
             // find template
-            if (make.getPosition() == 22)
+            if (make.getPosition() == 21)
             {
-                handle22(request, make, templates);
+                handle21(request, make, templates);
             }
 
             Make01Bean make01 = make01DAO.find(make.getId());
@@ -614,7 +614,7 @@ public class MakeAction extends DispatchAction
      * @throws MYException
      * @throws IOException
      */
-    private void handle22(HttpServletRequest request, MakeBean make,
+    private void handle21(HttpServletRequest request, MakeBean make,
                           List<SystemTemplateFileBean> templates)
         throws MYException, IOException
     {
@@ -628,7 +628,7 @@ public class MakeAction extends DispatchAction
         }
 
         MakeFileBean makeFile = makeFileDAO.findByPidAndTokenIdAndType(make.getId(),
-            make.getStatus(), MakeConstant.MAKE_FILE_TYPE_22);
+            make.getStatus(), MakeConstant.MAKE_FILE_TYPE_21);
 
         String fk = "M" + make.getPosition() + find.getAppType();
 

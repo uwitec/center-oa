@@ -1,6 +1,6 @@
 function doSearch()
 {
-    window.common.qmodal('../admin/query.do?method=popCommonQuery&key=queryExamine');
+	$modalQuery('../admin/query.do?method=popCommonQuery2&key=queryExamine');
 }
 
 function queryCustomerDistribute()

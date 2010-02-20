@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="业务考评管理" link="true" guid="true" cal="false"/>
+<p:link title="业务考评管理" link="true" guid="true" cal="false" dialog="true" />
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
@@ -20,6 +20,8 @@ var thisObj;
 var updatFlag = window.top.topFrame.containAuth('0304') ? '1' : '0';
 function load()
 {
+     preload();
+     
 	 guidMap = {
 		 title: '业务考核列表',
 		 url: '../examine/examine.do?method=queryExamine',
@@ -99,4 +101,5 @@ function load()
 </form>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
+<p:query/>
 </body>

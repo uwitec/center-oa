@@ -11,6 +11,10 @@
             <type>date</type>
             <inner></inner>
         </condtion>
+        <condtion name="id" caption="标识">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
         <condtion name="title" caption="主题">
             <opr>like</opr>
             <type>text</type>
@@ -46,6 +50,10 @@
             <type>date</type>
             <inner></inner>
         </condtion>
+        <condtion name="id" caption="标识" pfix="MakeBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
         <condtion name="title" caption="主题" pfix="MakeBean">
             <opr>like</opr>
             <type>text</type>
@@ -74,6 +82,10 @@
             <opr>&lt;=</opr>
             <type>date</type>
             <inner></inner>
+        </condtion>
+        <condtion name="id" caption="标识">
+            <opr>like</opr>
+            <type>text</type>
         </condtion>
         <condtion name="title" caption="主题">
             <opr>like</opr>

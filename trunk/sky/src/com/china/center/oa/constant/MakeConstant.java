@@ -166,7 +166,7 @@ public interface MakeConstant
     /**
      * 第二环的定制附件
      */
-    int MAKE_FILE_TYPE_22 = 101;
+    int MAKE_FILE_TYPE_21 = 101;
 
     /**
      * 工艺咨询

@@ -22,7 +22,8 @@ function load()
          url: '../make/make.do?method=queryHandlerMake',
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} lposition={position}>', width : 40, align: 'center'},
-             {display: '标题', name : 'title', width : '30%'},
+             {display: '标识', name : 'id', width : '15%'},
+             {display: '标题', name : 'title', width : '15%'},
              {display: '环数', name : 'token', content: '第{status}环', width : '8%'},
              {display: '环节', name : 'statusName', width : '8%'},
              {display: '位置', name : 'positionName', width : '8%'},
@@ -33,7 +34,8 @@ function load()
              {display: '申请时间', name : 'logTime', sortable : true, width : 'auto'}
              ],
          extAtt: {
-             title : {begin : '<a href=../make/make.do?method=findMake&hanlerMode=1&id={id}>', end : '</a>'}
+             title : {begin : '<a href=../make/make.do?method=findMake&hanlerMode=1&id={id}>', end : '</a>'},
+             id : {begin : '<a href=../make/make.do?method=findMake&hanlerMode=1&id={id}>', end : '</a>'}
          },
          buttons : [
              {id: 'update', bclass: 'update', caption: '处理申请', onpress : updateBean, auth: 'true'},

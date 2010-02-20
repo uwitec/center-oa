@@ -62,19 +62,21 @@ var baseURL = '${eurl}';
         <td>
         <p:table cells="1">
             
+            <p:cell title="标识">
+             ${make.id}
+            </p:cell>
+            
             <p:cell title="标题">
              ${make.title}
             </p:cell>  
             
             <p:cell title="类型">
-              <select class="select_class" name="type" values="${make.type}">
+              <select class="select_class" name="type" values="${make.type}" autodisplay="1">
                   <p:option type="makeType"></p:option> 
               </select>
             </p:cell> 
 
             <p:pro field="cname" innerString="size=40">
-                <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectCus()">&nbsp;&nbsp; 
             </p:pro>
 
             <p:pro field="description" cell="0" innerString="rows=3 cols=55" />
@@ -89,7 +91,7 @@ var baseURL = '${eurl}';
             
             <p:pro field="charact"/>
             
-            <p:pro field="cdes" innerString="rows=5 cols=55 oncheck='minLength(100)'" outString="内容不能少于50字" />
+            <p:pro field="cdes" innerString="rows=5 cols=55 oncheck='minLength(100)'" outString="(内容不能少于50字)" />
             
             <p:pro field="sampleType">
                 <p:option type="sampleType"></p:option>

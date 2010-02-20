@@ -1,4 +1,4 @@
-#Sun Jan 03 14:38:43 CST 2010
+#Sat Feb 20 20:49:49 CST 2010
 eclipse.preferences.version=1
 encoding//sky/admin/image.jsp=GBK
 encoding//sky/admin/index.jsp=GBK
@@ -37,6 +37,8 @@ encoding//sky/js/lang/eng/public_resources.js=GBK
 encoding//sky/js/lang/zh/public_resources.js=GBK
 encoding//sky/js/oa/enc.js=GBK
 encoding//sky/js/oa/make/02.js=GBK
+encoding//sky/js/oa/queryExamine.js=GBK
+encoding//sky/js/oa/queryProductExamine.js=GBK
 encoding//sky/js/plugin/blockui/211.js=GBK
 encoding//sky/js/pop.js=GBK
 encoding//sky/js/popmenu_data.js=GBK

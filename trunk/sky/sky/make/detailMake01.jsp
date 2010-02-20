@@ -129,6 +129,10 @@ function callHelp(id)
 	    <tr>
         <td>
 		<p:table cells="1">
+		
+		    <p:cell title="标识">
+             ${make.id}
+            </p:cell>
 		    
 		    <p:cell title="标题">
 		     ${make.title}
