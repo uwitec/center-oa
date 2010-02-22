@@ -497,7 +497,7 @@ public class MakeAction extends DispatchAction
             BeanUtil.copyProperties(wrap, makeFileBean);
 
             // whether edit
-            wrap.setEdit(isEdit(makeFileBean, templateList));
+            wrap.setEdit(isEdit(makeFileBean, templateList, make));
 
             makeFileLWrapList.add(wrap);
         }
@@ -512,7 +512,8 @@ public class MakeAction extends DispatchAction
      * @param templateList
      * @return
      */
-    private boolean isEdit(MakeFileBean makeFileBean, List<SystemTemplateFileBean> templateList)
+    private boolean isEdit(MakeFileBean makeFileBean, List<SystemTemplateFileBean> templateList,
+                           MakeBean make)
     {
         for (SystemTemplateFileBean systemTemplateFileBean : templateList)
         {
@@ -527,7 +528,8 @@ public class MakeAction extends DispatchAction
 
         if (alias != null)
         {
-            if (alias.getType() == makeFileBean.getType())
+            // 只有当前位置和alias相同的才可以编辑
+            if (make.getPosition() == alias.getTokenItemId())
             {
                 return true;
             }
@@ -553,6 +555,22 @@ public class MakeAction extends DispatchAction
             if (make.getPosition() == 21)
             {
                 handle21(request, make, templates);
+            }
+
+            Make01Bean make01 = make01DAO.find(make.getId());
+
+            request.setAttribute("bean", make01);
+
+            return;
+        }
+
+        // 第9环 由开始填写的决定是否打样
+        if (MakeConstant.MAKE_TOKEN_09 == make.getStatus() && make.getPosition() == 91)
+        {
+            // M910(打样费声明) M911(不打样免责声明)
+            if (make.getPosition() == 91)
+            {
+                handle91(request, make, templates);
             }
 
             Make01Bean make01 = make01DAO.find(make.getId());
@@ -594,7 +612,27 @@ public class MakeAction extends DispatchAction
 
             aliasNewMakeFileBean.setTokenItemId(make.getPosition());
 
+            FileInputStream in = new FileInputStream(this.makeAttachmentRoot
+                                                     + aliasNewMakeFileBean.getPath());
+
+            String savePath = mkdir(this.makeAttachmentRoot) + make.getId() + alias.getId() + "."
+                              + FileTools.getFilePostfix(aliasNewMakeFileBean.getPath());
+
+            OutputStream out = new FileOutputStream(savePath);
+
+            UtilStream ustream = new UtilStream(in, out);
+
+            // copy file to
+            ustream.copyAndCloseStream();
+
             User user = Helper.getUser(request);
+
+            if (alias.getTokenItemId() == 81)
+            {
+                aliasNewMakeFileBean.setName("核价单");
+            }
+
+            aliasNewMakeFileBean.setPath(savePath.substring(this.makeAttachmentRoot.length()));
 
             makeManager.addMakeFile(user, aliasNewMakeFileBean);
         }
@@ -640,6 +678,149 @@ public class MakeAction extends DispatchAction
             if ( !systemTemplateFileBean.getFk().equals(fk))
             {
                 iterator.remove();
+            }
+        }
+
+        // create attachment
+        if (makeFile == null)
+        {
+            MakeFileBean newMakeFileBean = new MakeFileBean();
+
+            SystemTemplateFileBean template = systemTemplateFileDAO.findByUnique(fk);
+
+            if (template == null)
+            {
+                throw new MYException("估价模板不存在,请确认操作");
+            }
+
+            FileInputStream in = new FileInputStream(this.systemAtt + template.getPath());
+
+            String savePath = mkdir(this.makeAttachmentRoot) + id + template.getFileName();
+
+            OutputStream out = new FileOutputStream(savePath);
+
+            UtilStream ustream = new UtilStream(in, out);
+
+            // copy file to
+            ustream.copyAndCloseStream();
+
+            newMakeFileBean.setPid(id);
+
+            newMakeFileBean.setName(template.getName());
+
+            newMakeFileBean.setPath(savePath.substring(this.makeAttachmentRoot.length()));
+
+            newMakeFileBean.setTokenId(make.getStatus());
+
+            newMakeFileBean.setTokenItemId(make.getPosition());
+
+            newMakeFileBean.setType(template.getType());
+
+            User user = Helper.getUser(request);
+
+            makeManager.addMakeFile(user, newMakeFileBean);
+        }
+
+    }
+
+    /**
+     * preForStat
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward preForStat(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        createRefResource(request);
+
+        return mapping.findForward("queryStatMake");
+    }
+
+    /**
+     * @param request
+     */
+    private void createRefResource(HttpServletRequest request)
+    {
+        List<StafferBean> stafferList = stafferDAO.listCommonEntityBeans();
+
+        request.setAttribute("stafferList", stafferList);
+    }
+
+    /**
+     * M910(打样费声明) M911(不打样免责声明)
+     * 
+     * @param request
+     * @param make
+     * @param templates
+     * @throws MYException
+     * @throws IOException
+     */
+    private void handle91(HttpServletRequest request, MakeBean make,
+                          List<SystemTemplateFileBean> templates)
+        throws MYException, IOException
+    {
+        String id = make.getId();
+
+        Make01Bean find = make01DAO.find(id);
+
+        if (find == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        MakeFileBean makeFile = null;
+
+        int type = 901;
+
+        // 需要打样
+        if (find.getSampleType() == MakeConstant.SAMPLETYPE_YES)
+        {
+            type = 901;
+        }
+        else
+        {
+            type = 902;
+        }
+
+        makeFile = makeFileDAO.findByPidAndTokenIdAndType(make.getId(), make.getStatus(), type);
+
+        // 已经拷贝
+        if (makeFile != null)
+        {
+            return;
+        }
+
+        String fk = "";
+
+        // filter
+        for (Iterator iterator = templates.iterator(); iterator.hasNext();)
+        {
+            SystemTemplateFileBean systemTemplateFileBean = (SystemTemplateFileBean)iterator.next();
+
+            if (find.getSampleType() == MakeConstant.SAMPLETYPE_YES)
+            {
+                fk = "M910";
+
+                if ( !systemTemplateFileBean.getFk().equals("M910"))
+                {
+                    iterator.remove();
+                }
+            }
+
+            if (find.getSampleType() == MakeConstant.SAMPLETYPE_NO)
+            {
+                fk = "M911";
+
+                if ( !systemTemplateFileBean.getFk().equals("M911"))
+                {
+                    iterator.remove();
+                }
             }
         }
 

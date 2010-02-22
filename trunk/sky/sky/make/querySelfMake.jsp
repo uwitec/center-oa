@@ -34,7 +34,8 @@ function load()
              {display: '…Í«Î ±º‰', name : 'logTime', sortable : true, width : 'auto'}
              ],
          extAtt: {
-             title : {begin : '<a href=../make/make.do?method=findMake&id={id}>', end : '</a>'}
+             title : {begin : '<a href=../make/make.do?method=findMake&id={id}>', end : '</a>'},
+             id : {begin : '<a href=../make/make.do?method=findMake&id={id}>', end : '</a>'}
          },
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: 'true'},

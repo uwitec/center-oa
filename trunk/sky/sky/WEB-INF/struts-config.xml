@@ -387,6 +387,7 @@
             <forward name="queryHandlerMake" path="/make/queryHandlerMake.jsp" />
             <forward name="detailMakeTemplate" path="/make/detailMakeTemplate.jsp" />
             <forward name="detailMake" path="/make/detailMake.jsp" />
+            <forward name="queryStatMake" path="/make/queryStatMake.jsp" />
             <forward name="updateMake01" path="/make/updateMake01.jsp" />
             <forward name="updateMake02" path="/make/updateMake02.jsp" />
             <forward name="updateMake03" path="/make/updateMake03.jsp" />

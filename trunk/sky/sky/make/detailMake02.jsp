@@ -35,6 +35,14 @@ var role = '${position.role}';
 var makeid = '${make.id}';
 
 var baseURL = '${eurl}';
+
+var gtid;
+function callHelp(id)
+{
+    gtid = id;
+    
+    window.open('../help/flow/makeflow.html', "myOpen");
+}
 </script>
 
 </head>
@@ -48,7 +56,8 @@ var baseURL = '${eurl}';
 <div class="basic" id="flowDiv">
 
 <div id="title_div">
-<a><font color=blue>【第${make.status}环${token.name}】--${position.name}(${position.ends == 1 ? "<font color=red>结束环</font>" : "中间环"})</font></a>
+<a><font color=blue>【第${make.status}环${token.name}】--${position.name}(${position.ends == 1 ? "<font color=red>结束环</font>" : "中间环"})
+(${token.id == 15 ? "<font color=red>这里实际是通过销售单结算,程序里面仅仅是结束此定制流程</font>" : ""})</font></a>
 </div>
 
         <p:class value="com.china.center.oa.customize.make.bean.Make01Bean" opr="2"/>
@@ -220,8 +229,11 @@ var baseURL = '${eurl}';
             onclick="rejectTokenMake()">&nbsp;&nbsp;
         <input type="button" class="button_class" id="reject_b" name="reject_b"
          value="&nbsp;&nbsp;异常结束(T)&nbsp;&nbsp;" accesskey="T"
-            onclick="exceptionMake()">
+            onclick="exceptionMake()">&nbsp;&nbsp;
         </c:if>
+        <input type="button" class="button_class" id="help_b" name="help_b"
+                 value="&nbsp;&nbsp;帮助(H)&nbsp;&nbsp;" accesskey="H"
+                    onclick="callHelp('t${position.id}')"/>
                  </p:tr>
     
             </p:table>
@@ -245,7 +257,7 @@ var baseURL = '${eurl}';
     <input type=radio name=exceptionReason value="3"/> 客户需求变化<br/>
     <input type=radio name=exceptionReason value="4"/> 工艺问题<br/>
     <input type=radio name=exceptionReason value="5"/> 创交货时间不足<br/>
-    <input type=radio name=exceptionReason value="6"/> 付款和运输条件不满足足<br/>
+    <input type=radio name=exceptionReason value="6"/> 付款和运输条件不满足<br/>
     <input type=radio name=exceptionReason value="99"/> 其他<br/>
    </div>
 </div>

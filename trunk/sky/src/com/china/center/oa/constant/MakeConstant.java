@@ -168,6 +168,8 @@ public interface MakeConstant
      */
     int MAKE_FILE_TYPE_21 = 101;
 
+    int MAKE_FILE_TYPE_91 = 91;
+
     /**
      * ╧╓рувия╞
      */

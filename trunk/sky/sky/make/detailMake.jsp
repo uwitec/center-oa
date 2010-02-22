@@ -45,7 +45,7 @@ function load1()
 	<p:line flag="0" />
 
 	<p:subBody width="98%">
-		<p:class value="com.china.center.oa.customize.make.bean.Make01Bean" opr="1"/>
+		<p:class value="com.china.center.oa.customize.make.bean.Make01Bean" opr="2"/>
 
 		<p:table cells="1">
 		
@@ -58,7 +58,7 @@ function load1()
 		    </p:cell>  
 		    
 		    <p:cell title="类型">
-              <select class="select_class" name="type" values="${make.type}">
+              <select class="select_class" name="type" values="${make.type}" autodisplay="1">
                   <p:option type="makeType"></p:option> 
               </select>
             </p:cell> 
@@ -78,7 +78,7 @@ function load1()
             
             <p:pro field="charact"/>
             
-            <p:pro field="cdes" innerString="rows=5 cols=55 oncheck='minLength(100)'" outString="内容不能少于50字" />
+            <p:pro field="cdes" innerString="rows=5 cols=55 oncheck='minLength(100)'" outString="(内容不能少于50字)" />
             
             <p:pro field="sampleType">
                 <p:option type="sampleType"></p:option>

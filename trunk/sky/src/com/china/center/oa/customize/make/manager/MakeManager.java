@@ -406,10 +406,13 @@ public class MakeManager
 
         make.setHanderId(handerId);
 
+        int currentStatus = make.getStatus();
+
+        int currentPostion = make.getPosition();
+
         // handler end
         if (makeTokenItem.getEnds() == MakeConstant.END_TOKEN_YES)
         {
-            int currentStatus = make.getStatus();
             // flow is end
             if (makeToken.getEnds() == MakeConstant.END_TOKEN_YES)
             {
@@ -449,6 +452,14 @@ public class MakeManager
 
                 make.setPosition(make.getStatus() * 10 + MakeConstant.TOKEN_BEGIN);
             }
+        }
+        // 第九环的第三环节是否需要存在(不打样)
+        else if (currentPostion == 92 && make01.getSampleType() == MakeConstant.SAMPLETYPE_NO)
+        {
+            // 直接到第10环
+            make.setStatus(MakeConstant.MAKE_TOKEN_10);
+
+            make.setPosition(make.getStatus() * 10 + MakeConstant.TOKEN_BEGIN);
         }
         else
         {
@@ -685,6 +696,13 @@ public class MakeManager
             throw new MYException("数据错误,请确认操作");
         }
 
+        Make01Bean make01 = make01DAO.find(makeId);
+
+        if (make01 == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
         MakeTokenItemBean makeTokenItem = makeTokenItemDAO.find(make.getPosition());
 
         if (makeTokenItem == null)
@@ -692,7 +710,7 @@ public class MakeManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        // if current token is one,reject means return to init
+        // if current token is one,reject means return to INIT
         if (make.getStatus() == MakeConstant.MAKE_TOKEN_01)
         {
             LogBean nearLog = logDAO.findLogBeanByFKAndPosid(make.getId(),
@@ -720,10 +738,22 @@ public class MakeManager
 
             int nearestStatus = CommonTools.parseInt(nearestToken.getId());
 
-            // find token end item
-            MakeTokenItemBean nearestEnd = makeTokenItemDAO.findEndTokenByParentId(nearestStatus);
+            LogBean nearLog = null;
+            MakeTokenItemBean nearestEnd = null;
 
-            LogBean nearLog = logDAO.findLogBeanByFKAndPosid(make.getId(), nearestEnd.getId());
+            // NOTE 第9环(存在定制逻辑，环节不一定都存在)
+            if (nearestStatus == MakeConstant.MAKE_TOKEN_09
+                && make01.getSampleType() == MakeConstant.SAMPLETYPE_NO)
+            {
+                nearestEnd = makeTokenItemDAO.find("92");
+            }
+            else
+            {
+                // find token end item
+                nearestEnd = makeTokenItemDAO.findEndTokenByParentId(nearestStatus);
+            }
+
+            nearLog = logDAO.findLogBeanByFKAndPosid(make.getId(), nearestEnd.getId());
 
             if (nearLog == null)
             {
