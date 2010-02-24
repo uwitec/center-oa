@@ -21,6 +21,8 @@ function querys()
 function resets()
 {
 	formEntry.reset();
+    $O('beginDate').value = '';
+    $O('endDate').value = '';
 }
 
 function load()
@@ -31,8 +33,8 @@ function load()
 
 </head>
 <body class="body_class" onload="load()">
-<form name="formEntry" action="../worklog/worklog.do"><input
-	type="hidden" name="method" value="queryStatWorkLog">
+<form name="formEntry" action="../make/make.do"><input
+	type="hidden" name="method" value="queryStatMake">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">定制产品 &gt;&gt; 统计分析</td>
@@ -45,7 +47,7 @@ function load()
 		<table width="100%" align="center" cellspacing='1' class="table0">
 		    <tr align=center class="content0">
                 <td align="center">开始时间</td>
-                <td align="center" width="35%"><p:plugin name="beginDate" oncheck="notNone" innerString="head=开始时间"
+                <td align="center" width="35%"><p:plugin name="beginDate" innerString="head=开始时间"
                     value="${beginDate}" /></td>
                 <td align="center">结束时间</td>
                 <td align="center" width="35%"><p:plugin name="endDate"
@@ -53,7 +55,7 @@ function load()
             </tr>
             
 			<tr align=center class="content1">
-				<td align="center" >异常原因</td>
+				<td align="center">异常原因</td>
 				<td align="center" width="35%">
 				<select name="exceptionReason"
                     class="select_class" values="${exceptionReason}">
@@ -102,18 +104,20 @@ function load()
 	<p:subBody width="98%">
 		<table width="100%" align="center" cellspacing='1' class="table0" id="result">
 			<tr align=center class="content0">
-				<td align="center" class="td_class" onclick="tableSort(this)" width="25%"><strong>职员</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this, true)" width="25%"><strong>日志总量</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this, true)" width="25%"><strong>延期日志</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this, true)" width="25%"><strong>异常率</strong></td>
+				<td align="center" class="td_class" onclick="tableSort(this)" width="15%"><strong>异常原因</strong></td>
+				<td align="center" class="td_class" onclick="tableSort(this, true)" width="25%"><strong>比例</strong></td>
+				<td align="center" class="td_class" onclick="tableSort(this, true)" width="15%"><strong>定制数量</strong></td>
+				<td align="center" class="td_class" onclick="tableSort(this)" width="15%"><strong>环数</strong></td>
+				<td align="center" class="td_class" onclick="tableSort(this)" width="15%"><strong>环节</strong></td>
 			</tr>
 
-			<c:forEach items="${statWorkLogList}" var="item" varStatus="vs">
+			<c:forEach items="${statMakeList}" var="item" varStatus="vs">
 				<tr class="${s.index % 2 == 0 ? 'content1' : 'content2'}">
-					<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${item.total}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${item.exceptionNum}</td>
-					<td align="center" onclick="hrefAndSelect(this)"><font color='${item.exceptionNum > 0 ? "red" : ""}'>${item.exRatio}</font></td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:get('exceptionReason', item.endType)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.stat}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.amount}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.tokenName}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.positionName}</td>
 				</tr>
 			</c:forEach>
 		</table>

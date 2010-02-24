@@ -14,8 +14,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +36,7 @@ import com.china.center.common.MYException;
 import com.china.center.common.PageSeparateTools;
 import com.china.center.common.json.AjaxResult;
 import com.china.center.common.query.HandleResult;
+import com.china.center.eltools.ElTools;
 import com.china.center.oa.constant.MakeConstant;
 import com.china.center.oa.customize.make.bean.FileAliasBean;
 import com.china.center.oa.customize.make.bean.Make01Bean;
@@ -53,6 +56,7 @@ import com.china.center.oa.customize.make.manager.MakeManager;
 import com.china.center.oa.customize.make.vo.MakeVO;
 import com.china.center.oa.customize.make.vo.MakeViewVO;
 import com.china.center.oa.customize.make.wrap.MakeFileWrap;
+import com.china.center.oa.customize.make.wrap.MakeStatWrap;
 import com.china.center.oa.group.dao.GroupVSStafferDAO;
 import com.china.center.oa.group.vs.GroupVSStafferBean;
 import com.china.center.oa.helper.Helper;
@@ -69,6 +73,7 @@ import com.china.center.tools.CommonTools;
 import com.china.center.tools.FileTools;
 import com.china.center.tools.HTTPTools;
 import com.china.center.tools.JSONTools;
+import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 import com.china.center.tools.UtilStream;
 
@@ -739,7 +744,7 @@ public class MakeAction extends DispatchAction
     {
         createRefResource(request);
 
-        return mapping.findForward("queryStatMake");
+        return queryStatMake(mapping, form, request, response);
     }
 
     /**
@@ -750,6 +755,122 @@ public class MakeAction extends DispatchAction
         List<StafferBean> stafferList = stafferDAO.listCommonEntityBeans();
 
         request.setAttribute("stafferList", stafferList);
+    }
+
+    /**
+     * queryStatMake
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryStatMake(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        ConditionParse condition = new ConditionParse();
+
+        createCondotion(request, condition);
+
+        createRefResource(request);
+
+        List<MakeStatWrap> statMakeList = makeDAO.queryStatMake(condition);
+
+        handleStat(statMakeList);
+
+        request.setAttribute("statMakeList", statMakeList);
+
+        return mapping.findForward("queryStatMake");
+    }
+
+    /**
+     * createCondotion
+     * 
+     * @param request
+     * @param condition
+     */
+    private void createCondotion(HttpServletRequest request, ConditionParse condition)
+    {
+        condition.addWhereStr();
+
+        String beginDate = request.getParameter("beginDate");
+
+        if ( !StringTools.isNullOrNone(beginDate))
+        {
+            condition.addCondition("logTime", ">=", beginDate + " 00:00:00");
+        }
+
+        String endDate = request.getParameter("endDate");
+
+        if ( !StringTools.isNullOrNone(endDate))
+        {
+            condition.addCondition("logTime", "<=", endDate + " 23:59:59");
+        }
+
+        String stafferId = request.getParameter("stafferId");
+
+        if ( !StringTools.isNullOrNone(stafferId))
+        {
+            condition.addCondition("createrId", "=", stafferId);
+        }
+
+        String exceptionReason = request.getParameter("exceptionReason");
+
+        if ( !StringTools.isNullOrNone(exceptionReason))
+        {
+            condition.addIntCondition("endType", "=", exceptionReason);
+        }
+
+        condition.addIntCondition("status", "=", MakeConstant.STATUS_END);
+    }
+
+    /**
+     * handleStat
+     * 
+     * @param statMakeList
+     */
+    private void handleStat(List<MakeStatWrap> statMakeList)
+    {
+        int total = 0;
+
+        Map<Integer, Integer> map = new HashMap();
+
+        for (MakeStatWrap makeStatWrap : statMakeList)
+        {
+            if (map.containsKey(makeStatWrap.getEndType()))
+            {
+                Integer integer = map.get(makeStatWrap.getEndType()) + makeStatWrap.getAmount();
+
+                map.put(makeStatWrap.getEndType(), integer);
+            }
+            else
+            {
+                map.put(makeStatWrap.getEndType(), makeStatWrap.getAmount());
+            }
+
+            total += makeStatWrap.getAmount();
+        }
+
+        for (MakeStatWrap makeStatWrap : statMakeList)
+        {
+            MakeTokenItemBean makeToken = makeTokenItemDAO.find(makeStatWrap.getPosition());
+
+            if (makeToken != null)
+            {
+                makeStatWrap.setPositionName(makeToken.getName());
+
+                makeStatWrap.setTokenName("µÚ" + makeStatWrap.getPosition() / 10 + "»·");
+            }
+
+            makeStatWrap.setStat(ElTools.formatNum(map.get(makeStatWrap.getEndType())
+                                                   / (total + 0.0d) * 100)
+                                 + "% (" + map.get(makeStatWrap.getEndType()) + "/" + total + ")");
+        }
     }
 
     /**
