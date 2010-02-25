@@ -18,6 +18,7 @@ import com.china.center.oa.constant.AuthConstant;
 import com.china.center.oa.examine.bean.CityConfigBean;
 import com.china.center.oa.examine.bean.CityProfitBean;
 import com.china.center.oa.examine.bean.CityProfitExamineBean;
+import com.china.center.oa.examine.bean.CitySailBean;
 import com.china.center.oa.examine.bean.ExamineBean;
 import com.china.center.oa.examine.bean.NewCustomerExamineBean;
 import com.china.center.oa.examine.bean.OldCustomerExamineBean;
@@ -84,6 +85,87 @@ public class ExamineFacade extends AbstarctFacade
         if (containAuth(user, AuthConstant.CITYCONFIG_OPR))
         {
             return cityConfigManager.updateBean(user, bean);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
+     * 增加铺样指标
+     * 
+     * @param userId
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    public boolean addSailBean(String userId, CitySailBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CITYCONFIG_OPR))
+        {
+            return cityConfigManager.addSailBean(user, bean);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
+     * update铺样指标
+     * 
+     * @param userId
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    public boolean updateSailBean(String userId, CitySailBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CITYCONFIG_OPR))
+        {
+            return cityConfigManager.updateSailBean(user, bean);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
+     * delete铺样指标
+     * 
+     * @param userId
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    public boolean deleteSailBean(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CITYCONFIG_OPR))
+        {
+            return cityConfigManager.deleteSailBean(user, id);
         }
         else
         {

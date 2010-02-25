@@ -208,6 +208,7 @@
 				path="/examine/updateCityConfig.jsp" />
 			<forward name="uploadProfit"
 				path="/examine/uploadProfit.jsp" />
+			<forward name="queryCitySail" path="/examine/queryCitySail.jsp" />
 		</action>
 
 		<action path="/examine/examine" parameter="method"

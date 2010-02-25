@@ -170,3 +170,25 @@ function querySure()
     
     closeModal();
 }
+
+var keyArray = [];
+
+function $ESC(id)
+{
+	 // bing Esc to close modal query
+     document.onkeydown = function ()
+     {
+        //∑¿÷πbody.onmouseup“—æ≠∞Û∂®
+        if (document.body.onkeydown == null)
+        {
+            var event = getEvent();
+            
+            if (event.keyCode == 27)
+            {
+                $('#' + id).dialog({closed:true});
+                
+                return false;
+            }
+        }
+     }
+}

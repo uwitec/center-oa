@@ -36,9 +36,11 @@ import com.china.center.oa.customer.dao.StafferVSCustomerDAO;
 import com.china.center.oa.customer.vs.StafferVSCustomerBean;
 import com.china.center.oa.examine.bean.CityConfigBean;
 import com.china.center.oa.examine.bean.CityProfitBean;
+import com.china.center.oa.examine.bean.CitySailBean;
 import com.china.center.oa.examine.bean.ProfitBean;
 import com.china.center.oa.examine.dao.CityConfigDAO;
 import com.china.center.oa.examine.dao.CityProfitDAO;
+import com.china.center.oa.examine.dao.CitySailDAO;
 import com.china.center.oa.examine.dao.ProfitDAO;
 import com.china.center.oa.examine.vo.CityConfigVO;
 import com.china.center.oa.facade.ExamineFacade;
@@ -58,7 +60,7 @@ import com.china.center.tools.TimeTools;
 /**
  * CityConfigAction
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2009-1-3
  * @see CityConfigAction
  * @since 1.0
@@ -77,11 +79,15 @@ public class CityConfigAction extends DispatchAction
 
     private ProfitDAO profitDAO = null;
 
+    private CitySailDAO citySailDAO = null;
+
     private CustomerDAO customerDAO = null;
 
     private StafferVSCustomerDAO stafferVSCustomerDAO = null;
 
     private UserManager userManager = null;
+
+    private static String QUERYCITYSAIL = "queryCitySail";
 
     private static String QUERYCITYCONFIG = "queryCityConfig";
 
@@ -198,6 +204,108 @@ public class CityConfigAction extends DispatchAction
             });
 
         return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryCitySail
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryCitySail(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        ActionTools.processJSONQueryCondition(QUERYCITYSAIL, request, condtion);
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCITYSAIL, request, condtion,
+            this.citySailDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * addCitySail
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward addCitySail(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        CitySailBean bean = new CitySailBean();
+
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            BeanUtil.getBean(bean, request);
+
+            User user = Helper.getUser(request);
+
+            examineFacade.addSailBean(user.getId(), bean);
+
+            ajax.setSuccess("成功保存区域铺样");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("保存区域铺样失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * addCitySail
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward updateCitySail(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        CitySailBean bean = new CitySailBean();
+
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            BeanUtil.getBean(bean, request);
+
+            User user = Helper.getUser(request);
+
+            examineFacade.updateSailBean(user.getId(), bean);
+
+            ajax.setSuccess("成功修改区域铺样");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("修改区域铺样失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
     }
 
     /**
@@ -729,5 +837,22 @@ public class CityConfigAction extends DispatchAction
     public void setStafferDAO(StafferDAO stafferDAO)
     {
         this.stafferDAO = stafferDAO;
+    }
+
+    /**
+     * @return the citySailDAO
+     */
+    public CitySailDAO getCitySailDAO()
+    {
+        return citySailDAO;
+    }
+
+    /**
+     * @param citySailDAO
+     *            the citySailDAO to set
+     */
+    public void setCitySailDAO(CitySailDAO citySailDAO)
+    {
+        this.citySailDAO = citySailDAO;
     }
 }
