@@ -46,7 +46,7 @@ public class ParameterDAO
             parMap.put(map.get("CONFIG").toString(), map.get("VALUE").toString());
         }
 
-        System.out.println("加载系统配置参数...");
+        // System.out.println("加载系统配置参数...");
     }
 
     public boolean getBoolean(String key)

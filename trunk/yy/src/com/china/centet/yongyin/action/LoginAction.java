@@ -299,7 +299,7 @@ public class LoginAction extends DispatchAction
      */
     private boolean getContorl()
     {
-        return false;
+        return parameterDAO.getBoolean("REAL_LOGIN");
     }
 
     /**
