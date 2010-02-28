@@ -14,7 +14,7 @@ function Logout()
 	<frame src="top.jsp" name="topFrame" scrolling="NO">
 	<frameset cols="191,*" framespacing="0" frameborder="no" border="0">
 
-		<frame src="shousuo.jsp" name="fun" noresize scrolling="NO">
+		<frame src="shousuo.jsp" name="fun" noresize scrolling="auto">
 		<c:if test='${flagOutString eq "0"}'>
 			<frame src="flagOutInCommon.jsp" name="main">
 		</c:if>
