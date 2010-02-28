@@ -115,10 +115,12 @@ public class LoginAction extends DispatchAction
         // 是否二次认证
         String anhao = parameterDAO.getString(SysConfigConstant.SIGN_YY_CENTER);
 
+        boolean login = parameterDAO.getBoolean("REAL_LOGIN");
+
         // 是否启用加密锁
         boolean hasEncLock = parameterDAO.getBoolean(SysConfigConstant.NEED_SUPER_ENC_LOCK);
 
-        boolean real = false;
+        boolean real = login;
 
         ActionForward checkCommonResult = checkCommon(mapping, request, rand, real);
 

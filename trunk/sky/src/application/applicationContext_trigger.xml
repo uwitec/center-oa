@@ -213,6 +213,20 @@
         <property name="jobDetail" ref="statOutJob" />
         <property name="cronExpression" value="0 30 3 * * ?" />
     </bean>
+    
+    <bean id="hotLoadingParameterJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="parameterDAO" />
+        <property name="targetMethod" value="init" />
+        <property name="concurrent" value="false" />
+    </bean>
+    
+    <bean id="hotLoadingParameterTrigger"
+        class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail" ref="hotLoadingParameterJob" />
+        <property name="startDelay" value="30000" />
+        <property name="repeatInterval" value="30000" />
+    </bean>
 
 	<bean
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -234,6 +248,7 @@
 				<ref bean="sendMessageTrigger" />
 				<ref bean="changeInitToWaitSendTrigger" />
 				<ref bean="statOutTrigger" />
+				<ref bean="hotLoadingParameterTrigger" />
 			</list>
 		</property>
 	</bean>
