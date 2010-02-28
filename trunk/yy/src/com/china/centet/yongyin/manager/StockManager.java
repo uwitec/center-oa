@@ -925,8 +925,8 @@ public class StockManager
                     throw new MYException("数据错误,请重新操作");
                 }
 
-                int sum = stockItemDAO.sumNetProductByPid(iitem.getPriceAskProviderId())
-                          + iitem.getAmount();
+                // 事务内已经被使用的
+                int sum = stockItemDAO.sumNetProductByPid(iitem.getPriceAskProviderId());
 
                 PriceAskProviderBeanVO ppb = priceAskProviderDAO.findVO(iitem.getPriceAskProviderId());
 
@@ -1008,8 +1008,8 @@ public class StockManager
      * @return
      * @throws MYException
      */
-    @Transactional(rollbackFor = {MYException.class})
     @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
     public boolean rejectStock(final User user, final String id, String reason)
         throws MYException
     {
@@ -1034,7 +1034,10 @@ public class StockManager
 
         if (user.getRole() != role)
         {
-            throw new MYException("不能操作");
+            if ( ! (user.getRole() == Role.NETSTOCK && role == Role.STOCK))
+            {
+                throw new MYException("不能操作");
+            }
         }
 
         int nextStatus = StockConstant.STOCK_STATUS_REJECT;
@@ -1057,6 +1060,8 @@ public class StockManager
         for (StockItemBean stockItemBean : item)
         {
             stockItemBean.setProviderId("");
+
+            stockItemBean.setPriceAskProviderId("");
 
             stockItemBean.setStatus(StockConstant.STOCK_ITEM_STATUS_INIT);
 
