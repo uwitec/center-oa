@@ -160,7 +160,7 @@ function allSelect(check)
 	<p:line flag="0" />
 
 	<p:subBody width="98%">
-		<p:class value="com.china.center.oa.publics.bean.User" />
+		<p:class value="com.china.center.oa.publics.bean.UserBean" />
 
 		<p:table cells="1">
 			<p:pro field="name" />

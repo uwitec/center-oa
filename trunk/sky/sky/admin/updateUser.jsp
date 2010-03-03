@@ -81,7 +81,7 @@ function changes()
 	<p:line flag="0" />
 
 	<p:subBody width="98%">
-		<p:class value="com.china.center.oa.publics.bean.User" opr="1"/>
+		<p:class value="com.china.center.oa.publics.bean.UserBean" opr="1"/>
 
 		<p:table cells="1">
 			<p:pro field="name" innerString="readonly=true"/>
