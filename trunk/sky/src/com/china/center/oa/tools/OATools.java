@@ -45,6 +45,28 @@ public abstract class OATools
 
         return year + "-03-01";
     }
+    
+    /**
+     * 获得财务年度的开始日期
+     * 
+     * @return
+     */
+    public static int getFinanceYear()
+    {
+        Calendar cal = Calendar.getInstance();
+
+        int month = cal.get(Calendar.MONTH);
+
+        int year = cal.get(Calendar.YEAR);
+
+        // 上一年的
+        if (month >= 0 && month <= 1)
+        {
+            return year - 1;
+        }
+
+        return year;
+    }
 
     /**
      * 获得财务年度的结束日期

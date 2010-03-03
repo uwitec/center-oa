@@ -27,6 +27,9 @@ public class CityConfigVO extends CityConfigBean
 {
     @Relationship(relationField = "cityId")
     private String cityName = "";
+    
+    @Relationship(relationField = "bespread")
+    private String bespreadName = "";
 
     public CityConfigVO()
     {}
@@ -46,5 +49,15 @@ public class CityConfigVO extends CityConfigBean
     public void setCityName(String cityName)
     {
         this.cityName = cityName;
+    }
+
+    public String getBespreadName()
+    {
+        return bespreadName;
+    }
+
+    public void setBespreadName(String bespreadName)
+    {
+        this.bespreadName = bespreadName;
     }
 }

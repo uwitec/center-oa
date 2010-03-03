@@ -8,15 +8,14 @@
  */
 package com.china.center.oa.examine.bean;
 
-
 import java.io.Serializable;
 
 import com.china.center.annotation.Entity;
 import com.china.center.annotation.Id;
 import com.china.center.annotation.Join;
 import com.china.center.annotation.Table;
+import com.china.center.annotation.enums.JoinType;
 import com.china.center.oa.publics.bean.CityBean;
-
 
 /**
  * 地市配置
@@ -33,30 +32,31 @@ public class CityConfigBean implements Serializable
     @Id
     @Join(tagClass = CityBean.class)
     private String cityId = "";
-
+    
     /**
      * 成交量(年度)
      */
     private int business = 0;
-
+    
     /**
      * 铺样率指标(指标，非年度)
      */
-    private int bespread = 0;
-
+    @Join(tagClass = CitySailBean.class, type = JoinType.LEFT)
+    private String bespread = "";
+    
     /**
      * 保留字段
      */
     private int resolve0 = 0;
-
+    
     private int resolve1 = 0;
-
+    
     private int resolve2 = 0;
-
+    
     private int resolve3 = 0;
-
+    
     private int resolve4 = 0;
-
+    
     /**
      * @return the cityId
      */
@@ -64,7 +64,7 @@ public class CityConfigBean implements Serializable
     {
         return cityId;
     }
-
+    
     /**
      * @param cityId
      *            the cityId to set
@@ -73,7 +73,7 @@ public class CityConfigBean implements Serializable
     {
         this.cityId = cityId;
     }
-
+    
     /**
      * @return the business
      */
@@ -81,7 +81,7 @@ public class CityConfigBean implements Serializable
     {
         return business;
     }
-
+    
     /**
      * @param business
      *            the business to set
@@ -90,24 +90,17 @@ public class CityConfigBean implements Serializable
     {
         this.business = business;
     }
-
-    /**
-     * @return the bespread
-     */
-    public int getBespread()
+    
+    public String getBespread()
     {
         return bespread;
     }
-
-    /**
-     * @param bespread
-     *            the bespread to set
-     */
-    public void setBespread(int bespread)
+    
+    public void setBespread(String bespread)
     {
         this.bespread = bespread;
     }
-
+    
     /**
      * @return the resolve0
      */
@@ -115,7 +108,7 @@ public class CityConfigBean implements Serializable
     {
         return resolve0;
     }
-
+    
     /**
      * @param resolve0
      *            the resolve0 to set
@@ -124,7 +117,7 @@ public class CityConfigBean implements Serializable
     {
         this.resolve0 = resolve0;
     }
-
+    
     /**
      * @return the resolve1
      */
@@ -132,7 +125,7 @@ public class CityConfigBean implements Serializable
     {
         return resolve1;
     }
-
+    
     /**
      * @param resolve1
      *            the resolve1 to set
@@ -141,7 +134,7 @@ public class CityConfigBean implements Serializable
     {
         this.resolve1 = resolve1;
     }
-
+    
     /**
      * @return the resolve2
      */
@@ -149,7 +142,7 @@ public class CityConfigBean implements Serializable
     {
         return resolve2;
     }
-
+    
     /**
      * @param resolve2
      *            the resolve2 to set
@@ -158,7 +151,7 @@ public class CityConfigBean implements Serializable
     {
         this.resolve2 = resolve2;
     }
-
+    
     /**
      * @return the resolve3
      */
@@ -166,7 +159,7 @@ public class CityConfigBean implements Serializable
     {
         return resolve3;
     }
-
+    
     /**
      * @param resolve3
      *            the resolve3 to set
@@ -175,7 +168,7 @@ public class CityConfigBean implements Serializable
     {
         this.resolve3 = resolve3;
     }
-
+    
     /**
      * @return the resolve4
      */
@@ -183,7 +176,7 @@ public class CityConfigBean implements Serializable
     {
         return resolve4;
     }
-
+    
     /**
      * @param resolve4
      *            the resolve4 to set
@@ -192,7 +185,7 @@ public class CityConfigBean implements Serializable
     {
         this.resolve4 = resolve4;
     }
-
+    
     /**
      * @return the resolve5
      */
@@ -200,7 +193,7 @@ public class CityConfigBean implements Serializable
     {
         return resolve5;
     }
-
+    
     /**
      * @param resolve5
      *            the resolve5 to set
@@ -209,9 +202,10 @@ public class CityConfigBean implements Serializable
     {
         this.resolve5 = resolve5;
     }
-
+    
     public CityConfigBean()
-    {}
-
+    {
+    }
+    
     private int resolve5 = 0;
 }

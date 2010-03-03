@@ -112,9 +112,14 @@ public interface ExamineConstant
     int EXAMINE_ITEM_TYPE_CPROFIT = 4;
 
     /**
-     * 考核项--产品考核
+     * 考核项--产品考核(废弃)
      */
     int EXAMINE_ITEM_TYPE_PRODUCT = 5;
+    
+    /**
+     * 考核项--产品考核
+     */
+    int EXAMINE_ITEM_TYPE_PRODUCT2 = 9995;
 
     /**
      * 考核项--新客户考核(终端)

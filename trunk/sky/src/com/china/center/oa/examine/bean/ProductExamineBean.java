@@ -28,7 +28,7 @@ import com.china.center.oa.publics.bean.StafferBean;
 /**
  * ProductExamineBean
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2009-2-14
  * @see ProductExamineBean
  * @since 1.0
@@ -45,7 +45,7 @@ public class ProductExamineBean implements Serializable
 
     @Join(tagClass = StafferBean.class)
     private String createrId = "";
-
+    
     @Join(tagClass = LocationBean.class)
     @Html(title = "分公司", must = true, type = Element.SELECT)
     private String locationId = "";
@@ -55,6 +55,11 @@ public class ProductExamineBean implements Serializable
     private String productId = "";
 
     private int status = ExamineConstant.EXAMINE_STATUS_INIT;
+    
+    /**
+     * 持续的时间(月)
+     */
+    private int month = 1;
 
     private String logTime = "";
 
@@ -68,23 +73,8 @@ public class ProductExamineBean implements Serializable
     private String description = "";
     
     @Ignore
-    private List<ProductExamineItemBean> items = null;
+    private List<ProductCityExamineItemBean> items = null;
 
-    /**
-     * @return the items
-     */
-    public List<ProductExamineItemBean> getItems()
-    {
-        return items;
-    }
-
-    /**
-     * @param items the items to set
-     */
-    public void setItems(List<ProductExamineItemBean> items)
-    {
-        this.items = items;
-    }
 
     /**
      * default constructor
@@ -260,5 +250,25 @@ public class ProductExamineBean implements Serializable
     public void setDescription(String description)
     {
         this.description = description;
+    }
+
+    public int getMonth()
+    {
+        return month;
+    }
+
+    public void setMonth(int month)
+    {
+        this.month = month;
+    }
+
+    public List<ProductCityExamineItemBean> getItems()
+    {
+        return items;
+    }
+
+    public void setItems(List<ProductCityExamineItemBean> items)
+    {
+        this.items = items;
     }
 }

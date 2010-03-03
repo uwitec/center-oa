@@ -8,7 +8,6 @@
  */
 package com.china.center.oa.examine.action;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -54,7 +53,6 @@ import com.china.center.tools.CommonTools;
 import com.china.center.tools.JSONTools;
 import com.china.center.tools.StringTools;
 
-
 /**
  * ProductExamineAction
  * 
@@ -66,24 +64,25 @@ import com.china.center.tools.StringTools;
 public class ProductExamineAction extends DispatchAction
 {
     private final Log _logger = LogFactory.getLog(getClass());
-
+    
     private ExamineFacade examineFacade = null;
-
+    
     private ProductExamineDAO productExamineDAO = null;
-
+    
     private ProductExamineItemDAO productExamineItemDAO = null;
-
+    
     private static String QUERYPRODUCTEXAMINE = "queryProductExamine";
-
+    
     private UserManager userManager = null;
-
+    
     private StafferDAO stafferDAO = null;
-
+    
     private LocationDAO locationDAO = null;
-
+    
     public ProductExamineAction()
-    {}
-
+    {
+    }
+    
     /**
      * 查询产品考核
      * 
@@ -94,67 +93,83 @@ public class ProductExamineAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryProductExamine(ActionMapping mapping, ActionForm form,
-                                             HttpServletRequest request,
-                                             HttpServletResponse response)
-        throws ServletException
+    public ActionForward queryProductExamine(ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
-
+        
         condtion.addWhereStr();
-
+        
         final User user = Helper.getUser(request);
-
+        
         String jsonstr = "";
-
-        if ( !userManager.containAuth(user, AuthConstant.EXAMINE_OPR))
+        
+        if (!userManager.containAuth(user, AuthConstant.EXAMINE_OPR))
         {
-            condtion.addCondition("ProductExamineBean.locationId", "=", user.getLocationId());
-
-            condtion.addCondition("ProductExamineBean.status", ">",
-                ExamineConstant.EXAMINE_STATUS_INIT);
-
+            condtion.addCondition("ProductExamineBean.locationId",
+                    "=",
+                    user.getLocationId());
+            
+            condtion.addCondition("ProductExamineBean.status",
+                    ">",
+                    ExamineConstant.EXAMINE_STATUS_INIT);
+            
+            condtion.addCondition("order by ProductExamineBean.logTime desc");
+            
             // 从条件里面过滤用户
-            jsonstr = ActionTools.querySelfBeanByJSONAndToString(QUERYPRODUCTEXAMINE, request,
-                condtion, new CommonQuery()
-                {
-                    public int getCount(String key, HttpServletRequest request,
-                                        ConditionParse condition)
+            jsonstr = ActionTools.querySelfBeanByJSONAndToString(QUERYPRODUCTEXAMINE,
+                    request,
+                    condtion,
+                    new CommonQuery()
                     {
-                        return productExamineDAO.countProductExamineByCondition(
-                            user.getStafferId(), condition);
-                    }
-
-                    public String getOrderPfix(String key, HttpServletRequest request)
-                    {
-                        return "ProductExamineBean";
-                    }
-
-                    public List queryResult(String key, HttpServletRequest request,
-                                            ConditionParse queryCondition)
-                    {
-                        return productExamineDAO.queryProductExamineByConstion(
-                            user.getStafferId(), PageSeparateTools.getCondition(request, key),
-                            PageSeparateTools.getPageSeparate(request, key));
-                    }
-
-                    public String getSortname(HttpServletRequest request)
-                    {
-                        return request.getParameter(ActionTools.SORTNAME);
-                    }
-                });
+                        public int getCount(String key,
+                                HttpServletRequest request,
+                                ConditionParse condition)
+                        {
+                            return productExamineDAO.countProductExamineByCondition(user.getStafferId(),
+                                    condition);
+                        }
+                        
+                        public String getOrderPfix(String key,
+                                HttpServletRequest request)
+                        {
+                            return "ProductExamineBean";
+                        }
+                        
+                        public List queryResult(String key,
+                                HttpServletRequest request,
+                                ConditionParse queryCondition)
+                        {
+                            return productExamineDAO.queryProductExamineByConstion(user.getStafferId(),
+                                    PageSeparateTools.getCondition(request, key),
+                                    PageSeparateTools.getPageSeparate(request,
+                                            key));
+                        }
+                        
+                        public String getSortname(HttpServletRequest request)
+                        {
+                            return request.getParameter(ActionTools.SORTNAME);
+                        }
+                    });
         }
         else
         {
-            ActionTools.processJSONQueryCondition(QUERYPRODUCTEXAMINE, request, condtion);
-
-            jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPRODUCTEXAMINE, request, condtion,
-                this.productExamineDAO);
+            condtion.addCondition("order by ProductExamineBean.logTime desc");
+            
+            ActionTools.processJSONQueryCondition(QUERYPRODUCTEXAMINE,
+                    request,
+                    condtion);
+            
+            jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPRODUCTEXAMINE,
+                    request,
+                    condtion,
+                    this.productExamineDAO);
         }
-
+        
         return JSONTools.writeResponse(response, jsonstr);
     }
-
+    
     /**
      * preForAddExamine
      * 
@@ -165,20 +180,19 @@ public class ProductExamineAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddProductExamine(ActionMapping mapping, ActionForm form,
-                                                 HttpServletRequest request,
-                                                 HttpServletResponse response)
-        throws ServletException
+    public ActionForward preForAddProductExamine(ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException
     {
         handleStafferList(request);
-
+        
         List<LocationBean> locationList = locationDAO.listEntityBeans();
-
+        
         request.setAttribute("locationList", locationList);
-
+        
         return mapping.findForward("addProductExamine");
     }
-
+    
     /**
      * addExamine
      * 
@@ -189,50 +203,55 @@ public class ProductExamineAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addProductExamine(ActionMapping mapping, ActionForm form,
-                                           HttpServletRequest request, HttpServletResponse response)
-        throws ServletException
+    public ActionForward addProductExamine(ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException
     {
         ProductExamineBean bean = new ProductExamineBean();
-
+        
         try
         {
             BeanUtil.getBean(bean, request);
-
+            
             User user = Helper.getUser(request);
-
+            
             bean.setCreaterId(user.getStafferId());
-
+            
             createProductExamine(request, bean);
-
-            examineFacade.addProductExamine(user.getId(), bean);
-
+            
+            String stafferIds = request.getParameter("stafferId");
+            
+            String[] ss = stafferIds.split(",");
+            
+            examineFacade.addProductExamine(user.getId(), bean, ss);
+            
             request.setAttribute(KeyConstant.MESSAGE, "成功保存产品考核基本信息");
-
+            
         }
         catch (MYException e)
         {
             _logger.warn(e, e);
-
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "保存考核基本信息失败:" + e.getMessage());
-
+            
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "保存考核基本信息失败:"
+                    + e.getMessage());
+            
             return mapping.findForward("queryProductExamine");
         }
-
+        
         String forward = request.getParameter("forward");
-
+        
         if ("1".equals(forward))
         {
             CommonTools.removeParamers(request);
-
+            
             request.setAttribute("pid", bean.getId());
-
+            
             return queryProductExamineItem(mapping, form, request, response);
         }
-
+        
         return mapping.findForward("queryProductExamine");
     }
-
+    
     /**
      * 查询考核项
      * 
@@ -243,52 +262,51 @@ public class ProductExamineAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryProductExamineItem(ActionMapping mapping, ActionForm form,
-                                                 HttpServletRequest request,
-                                                 HttpServletResponse response)
-        throws ServletException
+    public ActionForward queryProductExamineItem(ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException
     {
         String id = request.getParameter("pid");
-
+        
         if (StringTools.isNullOrNone(id))
         {
             Object tep = request.getAttribute("pid");
-
+            
             if (tep != null)
             {
                 id = tep.toString();
             }
         }
-
+        
         ProductExamineVO examine = productExamineDAO.findVO(id);
-
+        
         if (examine == null)
         {
             return ActionTools.toError("考核不存在", mapping, request);
         }
-
+        
         if (ExamineHelper.isReadonly(examine.getStatus()))
         {
             request.setAttribute("readonly", 1);
         }
-
+        
         List<ProductExamineItemVO> list = productExamineItemDAO.queryEntityVOsByFK(id);
-
+        
         request.setAttribute("newList", list);
-
+        
         request.setAttribute("examine", examine);
-
+        
         CommonTools.saveParamers(request);
-
+        
         String look = request.getParameter("look");
-
+        
         if ("1".equals(look))
         {
-            if ( !ExamineHelper.isReadonly(examine.getStatus()))
+            if (!ExamineHelper.isReadonly(examine.getStatus()))
             {
                 return ActionTools.toError("考核没有提交", mapping, request);
             }
-
+            
             return mapping.findForward("configProductExamine2");
         }
         else
@@ -296,7 +314,7 @@ public class ProductExamineAction extends DispatchAction
             return mapping.findForward("configProductExamine");
         }
     }
-
+    
     /**
      * 保存新客户的考核配置
      * 
@@ -307,49 +325,49 @@ public class ProductExamineAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward configProductExamineItem(ActionMapping mapping, ActionForm form,
-                                                  HttpServletRequest request,
-                                                  HttpServletResponse response)
-        throws ServletException
+    public ActionForward configProductExamineItem(ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException
     {
         String id = request.getParameter("pid");
-
+        
         ProductExamineBean examine = productExamineDAO.find(id);
-
+        
         if (examine == null)
         {
             return ActionTools.toError("考核不存在", mapping, request);
         }
-
+        
         User user = Helper.getUser(request);
-
+        
         List<ProductExamineItemBean> nList = new ArrayList<ProductExamineItemBean>();
-
+        
         ActionForward tem = createItem(mapping, request, nList);
-
+        
         if (tem != null)
         {
             return tem;
         }
-
+        
         try
         {
             examineFacade.configProductExamine(user.getId(), id, nList);
-
+            
             request.setAttribute(KeyConstant.MESSAGE, "成功保存考核信息");
         }
         catch (MYException e)
         {
             _logger.warn(e, e);
-
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "保存考核信息失败:" + e.getMessage());
+            
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "保存考核信息失败:"
+                    + e.getMessage());
         }
-
+        
         request.setAttribute("pid", id);
-
+        
         return queryProductExamineItem(mapping, form, request, response);
     }
-
+    
     /**
      * 详细显示基本信息
      * 
@@ -360,31 +378,30 @@ public class ProductExamineAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findProductExamine(ActionMapping mapping, ActionForm form,
-                                            HttpServletRequest request,
-                                            HttpServletResponse response)
-        throws ServletException
+    public ActionForward findProductExamine(ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException
     {
         String id = request.getParameter("id");
-
+        
         ProductExamineVO bean = productExamineDAO.findVO(id);
-
+        
         if (bean == null)
         {
             return ActionTools.toError("考核不存在", mapping, request);
         }
-
+        
         handleStafferList(request);
-
+        
         request.setAttribute("bean", bean);
-
+        
         List<LocationBean> locationList = locationDAO.listEntityBeans();
-
+        
         request.setAttribute("locationList", locationList);
-
+        
         return mapping.findForward("detailProductExamine");
     }
-
+    
     /**
      * 构建考核子项
      * 
@@ -393,32 +410,32 @@ public class ProductExamineAction extends DispatchAction
      * @param nList
      * @return
      */
-    private ActionForward createItem(ActionMapping mapping, HttpServletRequest request,
-                                     List<ProductExamineItemBean> nList)
+    private ActionForward createItem(ActionMapping mapping,
+            HttpServletRequest request, List<ProductExamineItemBean> nList)
     {
         String[] stafferIds = request.getParameterValues("stafferIds");
-
+        
         String[] realValues = request.getParameterValues("realValue");
-
+        
         if (stafferIds.length != realValues.length)
         {
             return ActionTools.toError("数据不完备,请重新操作", mapping, request);
         }
-
-        for (int i = 0; i < stafferIds.length; i++ )
+        
+        for (int i = 0; i < stafferIds.length; i++)
         {
             ProductExamineItemBean item = new ProductExamineItemBean();
-
+            
             item.setPlanValue(CommonTools.parseInt(realValues[i]));
-
+            
             item.setStafferId(stafferIds[i]);
-
+            
             nList.add(item);
         }
-
+        
         return null;
     }
-
+    
     /**
      * 删除考核
      * 
@@ -429,32 +446,32 @@ public class ProductExamineAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward delProductExamine(ActionMapping mapping, ActionForm form,
-                                           HttpServletRequest request, HttpServletResponse response)
-        throws ServletException
+    public ActionForward delProductExamine(ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException
     {
         String id = request.getParameter("id");
-
+        
         AjaxResult ajax = new AjaxResult();
-
+        
         try
         {
             User user = Helper.getUser(request);
-
+            
             examineFacade.delProductExamine(user.getId(), id);
-
+            
             ajax.setSuccess("成功删除考核");
         }
         catch (MYException e)
         {
             _logger.warn(e, e);
-
+            
             ajax.setError("删除考核失败:" + e.getMessage());
         }
-
+        
         return JSONTools.writeResponse(response, ajax);
     }
-
+    
     /**
      * 提交考核
      * 
@@ -465,72 +482,70 @@ public class ProductExamineAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward submitProductExamine(ActionMapping mapping, ActionForm form,
-                                              HttpServletRequest request,
-                                              HttpServletResponse response)
-        throws ServletException
+    public ActionForward submitProductExamine(ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException
     {
         String id = request.getParameter("id");
-
+        
         AjaxResult ajax = new AjaxResult();
-
+        
         try
         {
             User user = Helper.getUser(request);
-
+            
             examineFacade.submitProductExamine(user.getId(), id);
-
+            
             ajax.setSuccess("成功提交考核");
         }
         catch (MYException e)
         {
             _logger.warn(e, e);
-
+            
             ajax.setError("提交考核失败:" + e.getMessage());
         }
-
+        
         return JSONTools.writeResponse(response, ajax);
     }
-
+    
     /**
      * 构建实体bean
      * 
      * @param request
      * @param bean
      */
-    private void createProductExamine(HttpServletRequest request, ProductExamineBean bean)
+    private void createProductExamine(HttpServletRequest request,
+            ProductExamineBean bean)
     {
         String stafferIds = request.getParameter("stafferId");
-
+        
         String[] ss = stafferIds.split(",");
-
+        
         List<ProductExamineItemBean> items = new ArrayList<ProductExamineItemBean>();
-
+        
         for (String eachItem : ss)
         {
             if (StringTools.isNullOrNone(eachItem))
             {
                 continue;
             }
-
+            
             ProductExamineItemBean item = new ProductExamineItemBean();
-
+            
             item.setStafferId(eachItem);
-
+            
             item.setStatus(ExamineConstant.EXAMINE_ITEM_STATUS_INIT);
-
+            
             item.setResult(ExamineConstant.EXAMINE_RESULT_INIT);
-
+            
             items.add(item);
         }
-
+        
         bean.setBeginTime(bean.getBeginTime() + " 00:00:00");
-
+        
         bean.setEndTime(bean.getEndTime() + " 23:59:59");
-
-        bean.setItems(items);
     }
-
+    
     /**
      * 处理职员(只有终端和拓展的职员)
      * 
@@ -539,23 +554,23 @@ public class ProductExamineAction extends DispatchAction
     private void handleStafferList(HttpServletRequest request)
     {
         User user = Helper.getUser(request);
-
+        
         List<StafferBean> stafferList = stafferDAO.queryStafferByLocationId(user.getLocationId());
-
+        
         for (Iterator iterator = stafferList.iterator(); iterator.hasNext();)
         {
-            StafferBean stafferBean = (StafferBean)iterator.next();
-
+            StafferBean stafferBean = (StafferBean) iterator.next();
+            
             if (stafferBean.getExamType() != StafferConstant.EXAMTYPE_EXPAND
-                && stafferBean.getExamType() != StafferConstant.EXAMTYPE_TERMINAL)
+                    && stafferBean.getExamType() != StafferConstant.EXAMTYPE_TERMINAL)
             {
                 iterator.remove();
             }
         }
-
+        
         request.setAttribute("stafferList", stafferList);
     }
-
+    
     /**
      * @return the examineFacade
      */
@@ -563,7 +578,7 @@ public class ProductExamineAction extends DispatchAction
     {
         return examineFacade;
     }
-
+    
     /**
      * @param examineFacade
      *            the examineFacade to set
@@ -572,7 +587,7 @@ public class ProductExamineAction extends DispatchAction
     {
         this.examineFacade = examineFacade;
     }
-
+    
     /**
      * @return the productExamineDAO
      */
@@ -580,7 +595,7 @@ public class ProductExamineAction extends DispatchAction
     {
         return productExamineDAO;
     }
-
+    
     /**
      * @param productExamineDAO
      *            the productExamineDAO to set
@@ -589,7 +604,7 @@ public class ProductExamineAction extends DispatchAction
     {
         this.productExamineDAO = productExamineDAO;
     }
-
+    
     /**
      * @return the productExamineItemDAO
      */
@@ -597,16 +612,17 @@ public class ProductExamineAction extends DispatchAction
     {
         return productExamineItemDAO;
     }
-
+    
     /**
      * @param productExamineItemDAO
      *            the productExamineItemDAO to set
      */
-    public void setProductExamineItemDAO(ProductExamineItemDAO productExamineItemDAO)
+    public void setProductExamineItemDAO(
+            ProductExamineItemDAO productExamineItemDAO)
     {
         this.productExamineItemDAO = productExamineItemDAO;
     }
-
+    
     /**
      * @return the userManager
      */
@@ -614,7 +630,7 @@ public class ProductExamineAction extends DispatchAction
     {
         return userManager;
     }
-
+    
     /**
      * @param userManager
      *            the userManager to set
@@ -623,7 +639,7 @@ public class ProductExamineAction extends DispatchAction
     {
         this.userManager = userManager;
     }
-
+    
     /**
      * @return the stafferDAO
      */
@@ -631,7 +647,7 @@ public class ProductExamineAction extends DispatchAction
     {
         return stafferDAO;
     }
-
+    
     /**
      * @param stafferDAO
      *            the stafferDAO to set
@@ -640,7 +656,7 @@ public class ProductExamineAction extends DispatchAction
     {
         this.stafferDAO = stafferDAO;
     }
-
+    
     /**
      * @return the locationDAO
      */
@@ -648,7 +664,7 @@ public class ProductExamineAction extends DispatchAction
     {
         return locationDAO;
     }
-
+    
     /**
      * @param locationDAO
      *            the locationDAO to set

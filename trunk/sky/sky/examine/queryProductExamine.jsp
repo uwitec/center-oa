@@ -42,7 +42,6 @@ function load()
              {id: 'add', bclass: 'add', onpress : addBean, auth: '0304'},
              {id: 'del', bclass: 'delete', onpress : delBean, auth: '0304'},
              {id: 'submits', bclass: 'pass', caption: '提交', onpress : submitBean, auth: '0304'},
-             {id: 'update2', caption: '配置产品考核项', bclass: 'update', onpress : updateBean, auth: '0304'},
              {id: 'current',  caption: '查看进度', bclass: 'search', onpress : queryCurrent},
              {id: 'log',  caption: '考评日志', bclass: 'search', onpress : logBean},
              {id: 'search', bclass: 'search', onpress : doSearch}

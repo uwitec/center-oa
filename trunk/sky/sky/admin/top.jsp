@@ -57,7 +57,7 @@ function load()
     }
     
     <c:if test="${hasEncLock}">
-    setTimeout("checkLock()", 30000);
+    //setTimeout("checkLock()", 30000);
     </c:if>
 }
 

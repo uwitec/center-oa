@@ -26,9 +26,9 @@ import com.china.center.tools.JudgeTools;
 
 
 /**
- * CityProfitManager
+ * ÇøÓòÀûÈóµÄÅäÖÃ
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2009-1-29
  * @see
  * @since

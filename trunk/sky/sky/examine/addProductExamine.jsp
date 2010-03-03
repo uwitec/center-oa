@@ -138,7 +138,12 @@ function load()
             
             <p:pro field="beginTime"></p:pro>        
                  
-            <p:pro field="endTime"></p:pro>             
+            <p:cells title="考核周期" celspan="1">
+	            <select class="select_class" name="month">
+	            	<option value='1'>一个月</option>
+	            	<option value='2'>两个月</option>
+	            </select>
+            </p:cells> 
 
 			<p:pro field="description" cell="0" innerString="rows=4 cols=60" />
 
@@ -150,9 +155,7 @@ function load()
 	<p:button leftWidth="100%" rightWidth="0%">
 		<div align="right"><input type="button" class="button_class"
 			id="ok_b" style="cursor: pointer" value="&nbsp;&nbsp;保 存&nbsp;&nbsp;"
-			onclick="addBean(0)">&nbsp;&nbsp; <input type="button"
-			class="button_class" id="ok_b1" style="cursor: pointer"
-			value="&nbsp;&nbsp;保存并制定产品考核&nbsp;&nbsp;" onclick="addBean(1)"></div>
+			onclick="addBean(0)">&nbsp;&nbsp;</div>
 	</p:button>
 
 	<p:message />

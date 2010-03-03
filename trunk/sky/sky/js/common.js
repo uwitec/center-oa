@@ -473,7 +473,7 @@ function eload(elements)
 }
 
 /**
- * set the index of radio or select
+ * set the index of radio
  */
 function $Set(name, index)
 {
@@ -482,6 +482,19 @@ function $Set(name, index)
     for (var i = 0; i < obj.length; i++)
     {
         if (index == i)
+        {
+            obj[i].checked = true;
+        }
+    }
+}
+
+function $Set2(name, indexValue)
+{
+    var obj = document.getElementsByName(name);
+
+    for (var i = 0; i < obj.length; i++)
+    {
+        if (obj[i].value == indexValue)
         {
             obj[i].checked = true;
         }

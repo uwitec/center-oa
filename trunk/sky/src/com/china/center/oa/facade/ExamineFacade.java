@@ -262,7 +262,7 @@ public class ExamineFacade extends AbstarctFacade
      * @return
      * @throws MYException
      */
-    public boolean addProductExamine(String userId, ProductExamineBean bean)
+    public boolean addProductExamine(String userId, ProductExamineBean bean, String[] stafferIds)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(userId, bean);
@@ -273,7 +273,7 @@ public class ExamineFacade extends AbstarctFacade
 
         if (containAuth(user, AuthConstant.EXAMINE_OPR))
         {
-            return productExamineManager.addBean(user, bean);
+            return productExamineManager.addBean(user, bean, stafferIds);
         }
         else
         {

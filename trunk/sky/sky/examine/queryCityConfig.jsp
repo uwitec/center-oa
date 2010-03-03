@@ -19,15 +19,16 @@ function load()
 		 title: '地市考核配置列表',
 		 url: '../examine/city.do?method=queryCityConfig',
 		 colModel : [
-		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={cityId} lname={cityName}>', width : 40, sortable : false, align: 'center'},
+		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={cityId} lname={cityName} lsail={bespread}>', width : 40, sortable : false, align: 'center'},
 		     {display: '地市', name : 'cityName', width : '30%', sortable : false, align: 'left'},
-		     {display: '产品铺样', name : 'bespread', width : 'auto', sortable : true, align: 'left'}
+		     {display: '产品铺样', name : 'bespreadName', width : 'auto', align: 'left'}
 		     ],
 		 extAtt: {
-		     cityName : {begin : '<a href=../examine/city.do?method=findCityConfig&id={cityId}&update=1 title=查看明细>', end : '</a>'}
+		     //cityName : {begin : '<a href=../examine/city.do?method=findCityConfig&id={cityId}&update=1 title=查看明细>', end : '</a>'}
 		 },
 		 buttons : [
 		     {id: 'update1', bclass: 'update', caption: '配置区域利润', onpress : updateProfit, auth: '0302'},
+		     {id: 'update2', bclass: 'update', caption: '配置铺样指标', onpress : preForUpdateCitySail, auth: '0302'},
 		     {id: 'search', bclass: 'search', onpress : doSearch}
 		     ],
 		 usepager: true,
@@ -42,6 +43,22 @@ function load()
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);
+	 
+	 $('#dlg').dialog({
+                //iconCls: 'icon-save',
+                modal:true,
+                closed:true,
+                buttons:{
+                    '确 定':function(){
+                        configBean();
+                    },
+                    '取 消':function(){
+                        $('#dlg').dialog({closed:true});
+                    }
+                }
+     });
+	 
+	 $ESC('dlg');
  }
  
 function doSearch()
@@ -64,6 +81,69 @@ function updateProfit(opr, grid)
     {
        $l('../examine/queryCityProfit.jsp?cityId=' + getRadioValue('checkb'));
     }
+    else
+    {
+    	$error();
+    }
+}
+
+function configBean()
+{
+	var newSail = $$('citySail');
+	if (getRadio('checkb') && getRadioValue('checkb') && newSail != '')
+	{
+		$ajax('../examine/city.do?method=updateCityConfigSail&id=' + getRadioValue('checkb') + '&sailId=' + newSail, callSucess);
+	}
+}
+
+function callSucess(data)
+{
+	$('#dlg').dialog({closed:true});
+	callBackFun(data);
+}
+
+function preForUpdateCitySail()
+{
+	if (getRadio('checkb') && getRadioValue('checkb'))
+    {
+       $ajax('../examine/city.do?method=listCitySail', callBackFunSail);
+    }
+    else
+    {
+    	$error();
+    }
+}
+
+function callBackFunSail(data)
+{
+	if ($O('dia_inner').innerHTML != '')
+	{
+		$Set2('citySail', getRadio('checkb').lsail);
+    
+        $('#dlg').dialog({closed:false});
+		return;
+	}
+	
+	$O('dia_inner').innerHTML = '';
+    
+    var logs = data.msg;
+    
+    var htm = '';
+    
+    for(var i = 0; i < logs.length; i++)
+    {
+        var item = logs[i];
+        
+        var llog = '<input type=radio name=citySail value=' + item.id + '>' + item.name + '<br>';
+        
+        htm += llog;
+    }
+    
+    $O('dia_inner').innerHTML = htm;
+    
+    $Set2('citySail', getRadio('checkb').lsail);
+    
+    $('#dlg').dialog({closed:false});
 }
 
 function commonQuery(par)
@@ -75,12 +155,17 @@ function commonQuery(par)
 </script>
 </head>
 <body onload="load()" class="body_class">
-<form name="mainForm" action="../admin/staffer.do" method="post">
+<form name="mainForm" method="post">
 <input type="hidden" name="method" value=""/>
 <input type="hidden" name="stafferId" value=""/>
+
 <p:cache></p:cache>
 </form>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
+<div id="dlg" title="选择铺样" style="width:320px;">
+    <div style="padding:20px;height:200px;" id="dia_inner" title="">
+   </div>
+</div>
 <p:query/>
 </body>

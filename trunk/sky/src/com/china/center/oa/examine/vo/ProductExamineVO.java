@@ -18,7 +18,7 @@ import com.china.center.oa.examine.bean.ProductExamineBean;
 /**
  * ProductExamineVO
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2009-2-14
  * @see ProductExamineVO
  * @since 1.0
