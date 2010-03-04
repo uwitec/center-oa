@@ -78,7 +78,7 @@ public interface Constant
     int STATUS_REJECT = 2;
 
     /**
-     * admin通过
+     * ADMIN通过
      */
     int STATUS_PASS = 3;
 

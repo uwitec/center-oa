@@ -10,6 +10,7 @@ package com.china.centet.yongyin.dao;
 
 
 import com.china.center.jdbc.inter.impl.BaseDAO;
+import com.china.center.tools.TimeTools;
 import com.china.centet.yongyin.bean.BankBean;
 
 
@@ -28,8 +29,9 @@ public class TestDAO extends BaseDAO<BankBean, BankBean>
 
     public static void main(String[] args)
     {
-        TestDAO test = new TestDAO();
-
-        System.out.println(test.getClaz());
+        String endTime = TimeTools.getSpecialDateStringByDays("2010-03-01 00:00:00",
+                21);
+        
+        System.out.println(endTime);
     }
 }

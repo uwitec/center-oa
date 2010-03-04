@@ -87,4 +87,34 @@ public interface OutConstanst
      * 黑名单客户
      */
     String BLACK_LEVEL = "90000000000000000000";
+    
+    /**
+     * 提交
+     */
+    int STATUS_SUBMIT = 1;
+
+    /**
+     * 驳回
+     */
+    int STATUS_REJECT = 2;
+
+    /**
+     * ADMIN通过(一般此通过即是销售单已经OK status in (3, 4))
+     */
+    int STATUS_PASS = 3;
+
+    /**
+     * 会计通过
+     */
+    int STATUS_SEC_PASS = 4;
+
+    /**
+     * 总经理通过
+     */
+    int STATUS_MANAGER_PASS = 6;
+
+    /**
+     * 物流管理员通过
+     */
+    int STATUS_FLOW_PASS = 7;
 }
