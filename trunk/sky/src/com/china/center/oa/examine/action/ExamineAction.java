@@ -154,6 +154,8 @@ public class ExamineAction extends DispatchAction
 
             condtion.addCondition("ExamineBean.status", ">", ExamineConstant.EXAMINE_STATUS_INIT);
         }
+        
+        condtion.addCondition("order by ExamineBean.logTime desc");
 
         ActionTools.processJSONQueryCondition(QUERYEXAMINE, request, condtion);
 

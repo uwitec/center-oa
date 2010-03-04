@@ -11,22 +11,25 @@ package com.china.center.oa.examine.vo;
 
 import com.china.center.annotation.Entity;
 import com.china.center.annotation.Relationship;
-import com.china.center.oa.examine.bean.ProductExamineItemBean;
+import com.china.center.oa.examine.bean.ProductCityExamineItemBean;
 
 
 /**
  * ProductExamineItemVO
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2009-2-14
  * @see ProductCityExamineItemVO
  * @since 1.0
  */
 @Entity(inherit = true)
-public class ProductCityExamineItemVO extends ProductExamineItemBean
+public class ProductCityExamineItemVO extends ProductCityExamineItemBean
 {
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
+    
+    @Relationship(relationField = "cityId")
+    private String cityName = "";
 
     public ProductCityExamineItemVO()
     {}
@@ -46,5 +49,15 @@ public class ProductCityExamineItemVO extends ProductExamineItemBean
     public void setStafferName(String stafferName)
     {
         this.stafferName = stafferName;
+    }
+
+    public String getCityName()
+    {
+        return cityName;
+    }
+
+    public void setCityName(String cityName)
+    {
+        this.cityName = cityName;
     }
 }

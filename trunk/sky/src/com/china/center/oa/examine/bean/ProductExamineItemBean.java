@@ -19,9 +19,9 @@ import com.china.center.oa.constant.ExamineConstant;
 import com.china.center.oa.publics.bean.StafferBean;
 
 /**
- * ProductExamineItemBean
+ * ProductExamineItemBean(ÒÑ¾­·ÏÆú)
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2009-2-14
  * @see ProductExamineItemBean
  * @since 1.0

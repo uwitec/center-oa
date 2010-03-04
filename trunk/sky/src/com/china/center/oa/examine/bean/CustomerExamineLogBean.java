@@ -44,6 +44,8 @@ public class CustomerExamineLogBean implements Serializable
     private String customerName = "";
     
     private String logTime = "";
+    
+    private int amount = 0;
 
     public CustomerExamineLogBean()
     {}
@@ -158,5 +160,15 @@ public class CustomerExamineLogBean implements Serializable
     public void setLogTime(String logTime)
     {
         this.logTime = logTime;
+    }
+
+    public int getAmount()
+    {
+        return amount;
+    }
+
+    public void setAmount(int amount)
+    {
+        this.amount = amount;
     }
 }

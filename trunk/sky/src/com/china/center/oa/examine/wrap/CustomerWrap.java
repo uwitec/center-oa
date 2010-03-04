@@ -23,6 +23,8 @@ import com.china.center.oa.customer.bean.CustomerBean;
 public class CustomerWrap extends CustomerBean
 {
     private String outId = "";
+    
+    private int amount = 0;
 
     /**
      * ¼ÇÂ¼Ê±¼ä
@@ -64,5 +66,15 @@ public class CustomerWrap extends CustomerBean
     public void setLogTime(String logTime)
     {
         this.logTime = logTime;
+    }
+
+    public int getAmount()
+    {
+        return amount;
+    }
+
+    public void setAmount(int amount)
+    {
+        this.amount = amount;
     }
 }

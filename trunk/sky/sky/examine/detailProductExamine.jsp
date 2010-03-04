@@ -41,7 +41,7 @@ function load()
 	<p:line flag="0" />
 
 	<p:subBody width="100%">
-		<p:class value="com.china.center.oa.examine.bean.ProductExamineBean" opr="1" />
+		<p:class value="com.china.center.oa.examine.bean.ProductExamineBean" opr="2" />
 
 		<p:table cells="2">
 			<p:pro field="name" cell="2" innerString="size=60" />
@@ -69,7 +69,7 @@ function load()
 	<p:button leftWidth="100%" rightWidth="0%">
 		<div align="right"><input type="button"
 			class="button_class" id="ok_b1" style="cursor: pointer"
-			value="&nbsp;&nbsp;查看产品考核项&nbsp;&nbsp;" onclick="addBean()"></div>
+			value="&nbsp;&nbsp;查看产品铺样考核项&nbsp;&nbsp;" onclick="addBean()"></div>
 	</p:button>
 
 	<p:message />

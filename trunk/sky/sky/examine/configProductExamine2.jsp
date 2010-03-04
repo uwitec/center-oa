@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="配置产品考核" cal="false" />
+<p:link title="配置产品区域铺样" cal="false" />
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="javascript">
 
@@ -42,7 +42,7 @@ function refush()
 <p:body width="100%">
 
 	<p:title>
-		<td class="caption"><strong>【${examine.productName}】产品考核信息：</strong></td>
+		<td class="caption"><strong>【${examine.productName}】产品区域铺样信息：</strong></td>
 	</p:title>
 
 	<p:line flag="0" />
@@ -53,14 +53,16 @@ function refush()
 				<td width="20%" align="left">开始时间</td>
 				<td width="20%" align="left">结束时间</td>
 				<td width="20%" align="left">职员</td>
-				<td width="20%" align="left">成交客户数量</td>
+				<td width="20%" align="left">区域</td>
+				<td width="20%" align="left">铺样量(实际/预期)</td>
 			</tr>
 
 			<c:forEach items="${newList}" var="item" varStatus="vs">
-				<tr class='${vs.index % 2 == 0 ? "content2" : "content1"}'>
-				    <td width="20%">${examine.beginTime}</td>
-					<td width="20%">${examine.endTime}</td>
+				<tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
+				    <td width="20%">${item.beginTime}</td>
+					<td width="20%">${item.endTime}</td>
 					<td width="20%">${item.stafferName}</td>
+					<td width="20%">${item.cityName}</td>
 					<td>${item.realValue}/${item.planValue}</td>
 				</tr>
 			</c:forEach>

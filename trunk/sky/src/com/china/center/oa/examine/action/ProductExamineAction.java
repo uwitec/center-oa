@@ -34,10 +34,10 @@ import com.china.center.oa.constant.ExamineConstant;
 import com.china.center.oa.constant.StafferConstant;
 import com.china.center.oa.examine.bean.ProductExamineBean;
 import com.china.center.oa.examine.bean.ProductExamineItemBean;
+import com.china.center.oa.examine.dao.ProductCityExamineItemDAO;
 import com.china.center.oa.examine.dao.ProductExamineDAO;
-import com.china.center.oa.examine.dao.ProductExamineItemDAO;
 import com.china.center.oa.examine.helper.ExamineHelper;
-import com.china.center.oa.examine.vo.ProductExamineItemVO;
+import com.china.center.oa.examine.vo.ProductCityExamineItemVO;
 import com.china.center.oa.examine.vo.ProductExamineVO;
 import com.china.center.oa.facade.ExamineFacade;
 import com.china.center.oa.helper.Helper;
@@ -52,6 +52,7 @@ import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.JSONTools;
 import com.china.center.tools.StringTools;
+import com.china.center.tools.TimeTools;
 
 /**
  * ProductExamineAction
@@ -69,7 +70,7 @@ public class ProductExamineAction extends DispatchAction
     
     private ProductExamineDAO productExamineDAO = null;
     
-    private ProductExamineItemDAO productExamineItemDAO = null;
+    private ProductCityExamineItemDAO productCityExamineItemDAO = null;
     
     private static String QUERYPRODUCTEXAMINE = "queryProductExamine";
     
@@ -290,7 +291,7 @@ public class ProductExamineAction extends DispatchAction
             request.setAttribute("readonly", 1);
         }
         
-        List<ProductExamineItemVO> list = productExamineItemDAO.queryEntityVOsByFK(id);
+        List<ProductCityExamineItemVO> list = productCityExamineItemDAO.queryEntityVOsByFK(id);
         
         request.setAttribute("newList", list);
         
@@ -311,7 +312,7 @@ public class ProductExamineAction extends DispatchAction
         }
         else
         {
-            return mapping.findForward("configProductExamine");
+            return mapping.findForward("configProductExamine2");
         }
     }
     
@@ -517,33 +518,12 @@ public class ProductExamineAction extends DispatchAction
     private void createProductExamine(HttpServletRequest request,
             ProductExamineBean bean)
     {
-        String stafferIds = request.getParameter("stafferId");
-        
-        String[] ss = stafferIds.split(",");
-        
-        List<ProductExamineItemBean> items = new ArrayList<ProductExamineItemBean>();
-        
-        for (String eachItem : ss)
-        {
-            if (StringTools.isNullOrNone(eachItem))
-            {
-                continue;
-            }
-            
-            ProductExamineItemBean item = new ProductExamineItemBean();
-            
-            item.setStafferId(eachItem);
-            
-            item.setStatus(ExamineConstant.EXAMINE_ITEM_STATUS_INIT);
-            
-            item.setResult(ExamineConstant.EXAMINE_RESULT_INIT);
-            
-            items.add(item);
-        }
-        
         bean.setBeginTime(bean.getBeginTime() + " 00:00:00");
         
-        bean.setEndTime(bean.getEndTime() + " 23:59:59");
+        String endTime = TimeTools.getSpecialDateStringByDays(bean.getBeginTime(),
+                (bean.getMonth() * 30) + 1);
+        
+        bean.setEndTime(endTime);
     }
     
     /**
@@ -606,24 +586,6 @@ public class ProductExamineAction extends DispatchAction
     }
     
     /**
-     * @return the productExamineItemDAO
-     */
-    public ProductExamineItemDAO getProductExamineItemDAO()
-    {
-        return productExamineItemDAO;
-    }
-    
-    /**
-     * @param productExamineItemDAO
-     *            the productExamineItemDAO to set
-     */
-    public void setProductExamineItemDAO(
-            ProductExamineItemDAO productExamineItemDAO)
-    {
-        this.productExamineItemDAO = productExamineItemDAO;
-    }
-    
-    /**
      * @return the userManager
      */
     public UserManager getUserManager()
@@ -672,5 +634,16 @@ public class ProductExamineAction extends DispatchAction
     public void setLocationDAO(LocationDAO locationDAO)
     {
         this.locationDAO = locationDAO;
+    }
+
+    public ProductCityExamineItemDAO getProductCityExamineItemDAO()
+    {
+        return productCityExamineItemDAO;
+    }
+
+    public void setProductCityExamineItemDAO(
+            ProductCityExamineItemDAO productCityExamineItemDAO)
+    {
+        this.productCityExamineItemDAO = productCityExamineItemDAO;
     }
 }

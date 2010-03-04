@@ -53,7 +53,7 @@ public class ProductExamineDAO extends BaseDAO2<ProductExamineBean, ProductExami
     }
 
     /**
-     * 根据职员和时间查询时间段内产品的开单客户
+     * 根据区域、职员和时间查询时间段内产品的开单客户(已经成交的status in (3, 4))
      * 
      * @param stafferId
      * @param beginTime
@@ -62,7 +62,7 @@ public class ProductExamineDAO extends BaseDAO2<ProductExamineBean, ProductExami
      */
     public List<CustomerWrap> queryProductOutCustomerByCondition(String productId,
                                                                  String stafferId,
-                                                                 String beginTime, String endTime)
+                                                                 String beginTime, String endTime, String cityId)
     {
         // 先格式化一下
         beginTime = TimeTools.changeTimeToDate(beginTime);
@@ -75,12 +75,13 @@ public class ProductExamineDAO extends BaseDAO2<ProductExamineBean, ProductExami
         map.put("stafferId", stafferId);
         map.put("beginTime", beginTime);
         map.put("endTime", endTime);
+        map.put("cityId", cityId);
         map.put("type", com.china.centet.yongyin.constant.Constant.OUT_TYPE_OUTBILL);
 
         return this.jdbcOperation.getIbatisDaoSupport().queryForList(
             "Examine.queryProductOutCustomerByCondition", map);
     }
-
+    
     /**
      * countProductExamineByCondition
      * @param stafferId

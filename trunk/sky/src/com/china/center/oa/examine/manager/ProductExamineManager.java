@@ -33,7 +33,6 @@ import com.china.center.oa.examine.dao.CitySailDAO;
 import com.china.center.oa.examine.dao.ExamineDAO;
 import com.china.center.oa.examine.dao.ProductCityExamineItemDAO;
 import com.china.center.oa.examine.dao.ProductExamineDAO;
-import com.china.center.oa.examine.dao.ProductExamineItemDAO;
 import com.china.center.oa.examine.helper.ExamineHelper;
 import com.china.center.oa.examine.vo.CityConfigVO;
 import com.china.center.oa.plan.bean.PlanBean;
@@ -61,8 +60,6 @@ import com.china.center.tools.TimeTools;
 public class ProductExamineManager
 {
     private ProductExamineDAO productExamineDAO = null;
-    
-    private ProductExamineItemDAO productExamineItemDAO = null;
     
     private CommonDAO2 commonDAO2 = null;
     
@@ -138,7 +135,7 @@ public class ProductExamineManager
         
         productExamineDAO.deleteEntityBean(id);
         
-        productExamineItemDAO.deleteEntityBeansByFK(id);
+        productCityExamineItemDAO.deleteEntityBeansByFK(id);
         
         return true;
     }
@@ -170,11 +167,11 @@ public class ProductExamineManager
         for (ProductExamineBean productExamineBean : list)
         {
             // 看看下面是否都结束了
-            List<ProductExamineItemBean> temp = productExamineItemDAO.queryEntityBeansByFK(productExamineBean.getId());
+            List<ProductCityExamineItemBean> temp = productCityExamineItemDAO.queryEntityBeansByFK(productExamineBean.getId());
             
             boolean isEnd = true;
             
-            for (ProductExamineItemBean productExamineItemBean : temp)
+            for (ProductCityExamineItemBean productExamineItemBean : temp)
             {
                 if (productExamineItemBean.getStatus() != ExamineConstant.EXAMINE_ITEM_STATUS_END)
                 {
@@ -211,19 +208,6 @@ public class ProductExamineManager
             List<ProductExamineItemBean> items) throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, items);
-        
-        checkConfig(parentId);
-        
-        productExamineItemDAO.deleteEntityBeansByFK(parentId);
-        
-        for (ProductExamineItemBean item : items)
-        {
-            item.setId(commonDAO2.getSquenceString());
-            
-            item.setPid(parentId);
-            
-            productExamineItemDAO.saveEntityBean(item);
-        }
         
         return true;
     }
@@ -437,27 +421,6 @@ public class ProductExamineManager
     }
     
     /**
-     * 配置检查
-     * 
-     * @param id
-     * @throws MYException
-     */
-    private void checkConfig(String id) throws MYException
-    {
-        ProductExamineBean parent = productExamineDAO.find(id);
-        
-        if (parent == null)
-        {
-            throw new MYException("产品考核不存在,请确认");
-        }
-        
-        if (ExamineHelper.isReadonly(parent.getStatus()))
-        {
-            throw new MYException("只有初始态可以配置");
-        }
-    }
-    
-    /**
      * 写数据库日志
      * 
      * @param user
@@ -492,24 +455,6 @@ public class ProductExamineManager
     public void setProductExamineDAO(ProductExamineDAO productExamineDAO)
     {
         this.productExamineDAO = productExamineDAO;
-    }
-    
-    /**
-     * @return the productExamineItemDAO
-     */
-    public ProductExamineItemDAO getProductExamineItemDAO()
-    {
-        return productExamineItemDAO;
-    }
-    
-    /**
-     * @param productExamineItemDAO
-     *            the productExamineItemDAO to set
-     */
-    public void setProductExamineItemDAO(
-            ProductExamineItemDAO productExamineItemDAO)
-    {
-        this.productExamineItemDAO = productExamineItemDAO;
     }
     
     /**

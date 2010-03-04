@@ -10,10 +10,10 @@ package com.china.center.oa.examine.vo;
 
 import com.china.center.annotation.Entity;
 import com.china.center.annotation.Relationship;
-import com.china.center.oa.examine.bean.ProductCityExamineItemBean;
+import com.china.center.oa.examine.bean.ProductExamineItemBean;
 
 /**
- * ProductExamineItemVO
+ * ProductExamineItemVO(ÒÑ¾­·ÏÆú)
  * 
  * @author ZHUZHU
  * @version 2009-2-14
@@ -21,13 +21,10 @@ import com.china.center.oa.examine.bean.ProductCityExamineItemBean;
  * @since 1.0
  */
 @Entity(inherit = true)
-public class ProductExamineItemVO extends ProductCityExamineItemBean
+public class ProductExamineItemVO extends ProductExamineItemBean
 {
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
-    
-    @Relationship(relationField = "cityId")
-    private String cityName = "";
     
     public ProductExamineItemVO()
     {
@@ -48,15 +45,5 @@ public class ProductExamineItemVO extends ProductCityExamineItemBean
     public void setStafferName(String stafferName)
     {
         this.stafferName = stafferName;
-    }
-    
-    public String getCityName()
-    {
-        return cityName;
-    }
-    
-    public void setCityName(String cityName)
-    {
-        this.cityName = cityName;
     }
 }
