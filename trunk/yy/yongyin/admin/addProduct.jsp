@@ -159,10 +159,28 @@ function load()
 						<td><input type="text" name="code" value="" maxlength="16"><font
 							color="#FF0000">*</font></td>
 					</tr>
+					
+					<tr class="content1">
+						<td width="30%">生产期（天）:</td>
+						<td><input type="text" name="makeDays" oncheck="notNone;isInt" value="" maxlength="16"><font
+							color="#FF0000">*</font></td>
+					</tr>
+					
+					<tr class="content2">
+						<td width="30%">物流期（天）:</td>
+						<td><input type="text" name="flowDays" oncheck="notNone;isInt" value="" maxlength="16"><font
+							color="#FF0000">*</font></td>
+					</tr>
+					
+					<tr class="content1">
+						<td width="30%">最小生产批量（个）:</td>
+						<td><input type="text" name="minAmount" oncheck="notNone;isInt" value="" maxlength="16"><font
+							color="#FF0000">*</font></td>
+					</tr>
 
 					<tr class="content2">
 						<td width="30%">产品类型:</td>
-						<td><select name="genre" oncheck="notNone;" quick="true">
+						<td><select name="genre" oncheck="notNone;" quick="true" style="width:200px">
 							<option value="">--</option>
 							<c:forEach items="${list}" var="item">
 							<option value="${item.id}">${item.name}</option>
@@ -171,8 +189,17 @@ function load()
 					</tr>
 
 					<tr class="content2">
+						<td width="30%">产品归属:</td>
+						<td><select name="temp" oncheck="notNone;" style="width:200px">
+							<option value="">--</option>
+							<option value="0">自有</option>
+							<option value="1">非自有</option>
+						</select><font color="#FF0000">*</font></td>
+					</tr>
+					
+					<tr class="content2">
 						<td width="30%">盘点分类:</td>
-						<td><select name="type" oncheck="notNone;">
+						<td><select name="type" oncheck="notNone;" style="width:200px">
 							<option value="">--</option>
 							<option value="0">每天盘点</option>
 							<option value="1">其他</option>

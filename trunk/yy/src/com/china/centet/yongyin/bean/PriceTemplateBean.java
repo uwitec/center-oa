@@ -17,12 +17,13 @@ import com.china.center.annotation.Html;
 import com.china.center.annotation.Id;
 import com.china.center.annotation.Join;
 import com.china.center.annotation.Table;
+import com.china.center.annotation.enums.JoinType;
 
 
 /**
- * <ÃèÊö>
+ * PriceTemplateBean
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2008-8-3
  * @see
  * @since
@@ -35,7 +36,7 @@ public class PriceTemplateBean implements Serializable
     private String id = "";
 
     @FK
-    @Join(tagClass = Product.class)
+    @Join(tagClass = Product.class, type = JoinType.LEFT)
     @Html(title = "²úÆ·", name = "productName", readonly = true)
     private String productId = "";
 

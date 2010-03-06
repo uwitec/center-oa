@@ -106,11 +106,11 @@ function exports()
 </table>
 
 <br>
-<table width="85%" border="0" cellpadding="0" cellspacing="0"
+<table width="100%" border="0" cellpadding="0" cellspacing="0"
 	align="center">
 	<tr>
 		<td align='center' colspan='2'>
-		<table width="85%" border="0" cellpadding="0" cellspacing="0"
+		<table width="98%" border="0" cellpadding="0" cellspacing="0"
 			class="border">
 			<tr>
 				<td>
@@ -177,16 +177,18 @@ function exports()
 
 	<tr>
 		<td align='center' colspan='2'>
-		<table width="85%" border="0" cellpadding="0" cellspacing="0"
+		<table width="98%" border="0" cellpadding="0" cellspacing="0"
 			class="border">
 			<tr>
 				<td>
 				<table width="100%" border="0" cellspacing='1'>
 					<tr align="center" class="content0">
-						<td align="center" width="8%" class="td_class">选择</td>
+						<td align="center" width="5%" class="td_class">选择</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">产品名称</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">产品编码</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">盘点分类</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">状态</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">归属</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">图片</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">索引</td>
 					</tr>
@@ -195,11 +197,13 @@ function exports()
 						<tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
 							<td align="center"><input type="radio" name="productId"
 								productName="${item.name}" value="${item.id}" ${vs.index== 0 ? "checked" : ""}/></td>
-							<td align="center">${item.name}</td>
-							<td align="center">${item.code}</td>
-							<td align="center">${item.type == 0 ? "每天盘点" : "其他"}</td>
-							<td align="center">${item.picPath}</td>
-							<td align="center">${item.id}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.name}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.code}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.type == 0 ? "每天盘点" : "其他"}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:get('productStatus', item.status)}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.temp == 0 ? "自有" : "非自有"}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.picPath}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.id}</td>
 						</tr>
 					</c:forEach>
 				</table>
@@ -237,7 +241,7 @@ function exports()
 	</tr>
 
 	<tr>
-		<td width="93%">
+		<td width="100%">
 		<div align="right"><input type="button" class="button_class"
 			value="&nbsp;增加产品&nbsp;" onClick="addywy()">&nbsp;&nbsp;
 			<input type="button" class="button_class"
@@ -249,7 +253,7 @@ function exports()
 			</c:if>
 			</div>
 		</td>
-		<td width="7%"></td>
+		<td width="0%"></td>
 	</tr>
 
 	<tr height="10">

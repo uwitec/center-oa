@@ -19,7 +19,7 @@ body {
 
 /*==================一级目录===================*/
 #nav a {
-	width: 160px;
+	width: 145px;
 	display: block;
 	padding-left: 20px;
 	/*Width(一定要)，否则下面的Li会变形*/
@@ -65,7 +65,7 @@ body {
 
 #nav li ul a {
 	padding-left: 20px;
-	width: 160px;
+	width: 145px;
 	/* padding-left二级目录中文字向右移动，但Width必须重新设置=(总宽度-padding-left)*/
 }
 
@@ -117,6 +117,6 @@ body {
 }
 
 #PARENT {
-	width: 160px;
+	width: 145px;
 	padding-left: 20px;
 }

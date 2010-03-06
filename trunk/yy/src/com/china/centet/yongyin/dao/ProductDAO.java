@@ -114,7 +114,7 @@ public class ProductDAO
 
         if (needLimite)
         {
-            limite = Constant.PAGE_SIZE;
+            limite = Constant.PAGE_SIZE * 10;
         }
 
         return jdbcOperation.queryObjects(buffer.toString(), Product.class).setMaxResults(limite).list(

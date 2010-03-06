@@ -1466,7 +1466,17 @@ public class PriceAction extends DispatchAction
             {
                 setConditionForPriceTemplate(request, condtion);
 
-                int total = priceTemplateDAO.countVOBycondition(condtion.toString());
+                int total = 0;
+                
+                try
+                {
+                    //这里实现有问题 暂时先保护起来
+                    total = priceTemplateDAO.countVOBycondition(condtion.toString());
+                }
+                catch (Exception e)
+                {
+                    total = 0;
+                }
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_COMMON_SIZE);
 

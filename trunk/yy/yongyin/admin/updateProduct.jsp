@@ -132,24 +132,61 @@ function load()
 							value="${bean.code}" oncheck="notNone;isNumberOrLetter"><font
 							color="#FF0000">*</font></td>
 					</tr>
+					
+					<tr class="content1">
+						<td width="30%">生产期（天）:</td>
+						<td><input type="text" name="makeDays" oncheck="notNone;isInt" value="${bean.makeDays}" maxlength="16"><font
+							color="#FF0000">*</font></td>
+					</tr>
+					
+					<tr class="content2">
+						<td width="30%">物流期（天）:</td>
+						<td><input type="text" name="flowDays" oncheck="notNone;isInt" value="${bean.flowDays}" maxlength="16"><font
+							color="#FF0000">*</font></td>
+					</tr>
+					
+					<tr class="content1">
+						<td width="30%">最小生产批量（个）:</td>
+						<td><input type="text" name="minAmount" oncheck="notNone;isInt" value="${bean.minAmount}" maxlength="16"><font
+							color="#FF0000">*</font></td>
+					</tr>
 
 					<tr class="content2">
 						<td width="30%">产品类型:</td>
-						<td><select name="genre" oncheck="notNone;" values="${bean.genre}">
+						<td><select name="genre" oncheck="notNone;" values="${bean.genre}" style="width:200px">
 							<option value="">--</option>
 							<c:forEach items="${list}" var="item">
 							<option value="${item.id}">${item.name}</option>
 							</c:forEach>
 						</select><font color="#FF0000">*</font></td>
 					</tr>
+					
+					<tr class="content2">
+						<td width="30%">产品归属:</td>
+						<td><select name="temp" oncheck="notNone;" style="width:200px" values="${bean.temp}">
+							<option value="">--</option>
+							<option value="0">自有</option>
+							<option value="1">非自有</option>
+						</select><font color="#FF0000">*</font></td>
+					</tr>
 
 					<tr class="content1">
 						<td width="30%">盘点分类:</td>
-						<td><select name="type" oncheck="notNone;" values="${bean.type}">
+						<td><select name="type" oncheck="notNone;" values="${bean.type}" style="width:200px">
 							<option value="">--</option>
 							<option value="0">每天盘点</option>
 							<option value="1">其他</option>
 						</select><font color="#FF0000">*</font></td>
+					</tr>
+					
+					<tr class="content2">
+						<td width="30%">状态:</td>
+						<td><select name="status" oncheck="notNone;" values="${bean.status}" style="width:200px">
+							<option value="">--</option>
+							<option value="0">运营</option>
+							<option value="1">锁定</option>
+							<option value="2">注销</option>
+						</select><font color="#FF0000">*(只有运营态的产品可以开单)</font></td>
 					</tr>
 
 					<c:if test="${my:length(bean.picPath) > 0}">
@@ -185,14 +222,14 @@ function load()
 	</tr>
 
 	<tr>
-		<td width="82%">
+		<td width="93%">
 		<div align="right"><input name="add" type="button"
 			class="button_class" value="&nbsp;&nbsp;确 定&nbsp;&nbsp;" onclick="callbacks()">&nbsp;&nbsp;
 		<input type="button" class="button_class"
 			onclick="javascript:history.go(-1)"
 			value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>
 		</td>
-		<td width="18%"></td>
+		<td width="7%"></td>
 	</tr>
 
 	<tr height="10">

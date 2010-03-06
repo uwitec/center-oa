@@ -67,6 +67,7 @@ import com.china.centet.yongyin.bean.TempBean;
 import com.china.centet.yongyin.bean.User;
 import com.china.centet.yongyin.bean.helper.LocationHelper;
 import com.china.centet.yongyin.constant.Constant;
+import com.china.centet.yongyin.constant.ProductConstant;
 import com.china.centet.yongyin.dao.CommonDAO;
 import com.china.centet.yongyin.dao.DepotpartDAO;
 import com.china.centet.yongyin.dao.HotProductDAO;
@@ -276,6 +277,8 @@ public class ProductAction extends DispatchAction
             }
 
             ConditionParse condtion = new ConditionParse();
+            
+            condtion.addIntCondition("t1.status", "=", ProductConstant.STATUS_COMMON);
 
             if ( !StringTools.isNullOrNone(name))
             {
