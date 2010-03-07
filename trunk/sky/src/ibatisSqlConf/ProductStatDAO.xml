@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ProductStatDAO">
+
+	<resultMap id="ProductStatBean"
+		class="com.china.center.oa.product.bean.ProductStatBean">
+		<result property="productId" column="productId" />
+		<result property="productName" column="productName" />
+		<result property="productCode" column="productCode" />
+		<result property="sailAmount" column="sailAmount" />
+	</resultMap>
+
+	<select id="queryStatProductByCondition" parameterClass="java.util.Map"
+		resultMap="ProductStatBean">
+	<![CDATA[
+		select count(t1.amount) as sailAmount, t1.productId, t3.name as productName, t3.code as productCode
+		from t_center_base t1, t_center_out t2 , t_center_product t3
+		where t1.outid = t2.fullid 
+		and t2.status > 2 
+		and t1.productid = t3.id
+		and t2.outTime >= #beginDate#
+		and t2.outTime <= #endDate#
+		and t2.type = 0 
+		GROUP by t1.productid
+	]]>
+	</select>
+
+</sqlMap>
