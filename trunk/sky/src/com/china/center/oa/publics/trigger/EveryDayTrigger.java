@@ -24,6 +24,7 @@ import com.china.center.oa.customer.manager.CustomerCheckManager;
 import com.china.center.oa.examine.manager.ProductExamineManager;
 import com.china.center.oa.job.dao.SnapshotDAO;
 import com.china.center.oa.note.manager.NoteManager;
+import com.china.center.oa.product.manager.ProductStatManager;
 import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.tools.FileTools;
 import com.china.center.tools.RegularExpress;
@@ -52,6 +53,8 @@ public class EveryDayTrigger
     private CustomerCheckManager customerCheckManager = null;
 
     private NoteManager noteManager = null;
+    
+    private ProductStatManager productStatManager = null;
 
     private SnapshotDAO snapshotDAO = null;
 
@@ -81,6 +84,18 @@ public class EveryDayTrigger
         try
         {
             noteManager.moveTimeoutData();
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+        }
+        
+        try
+        {
+            //产品模型的每天统计
+            productStatManager.statProduct();
+            
+            productStatManager.deleteHistoryData();
         }
         catch (Throwable e)
         {
@@ -310,5 +325,15 @@ public class EveryDayTrigger
     public void setParameterDAO(ParameterDAO parameterDAO)
     {
         this.parameterDAO = parameterDAO;
+    }
+
+    public ProductStatManager getProductStatManager()
+    {
+        return productStatManager;
+    }
+
+    public void setProductStatManager(ProductStatManager productStatManager)
+    {
+        this.productStatManager = productStatManager;
     }
 }

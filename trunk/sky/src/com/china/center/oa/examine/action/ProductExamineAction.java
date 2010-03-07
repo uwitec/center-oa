@@ -41,6 +41,7 @@ import com.china.center.oa.examine.vo.ProductCityExamineItemVO;
 import com.china.center.oa.examine.vo.ProductExamineVO;
 import com.china.center.oa.facade.ExamineFacade;
 import com.china.center.oa.helper.Helper;
+import com.china.center.oa.product.manager.ProductStatManager;
 import com.china.center.oa.publics.User;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.StafferBean;
@@ -79,6 +80,8 @@ public class ProductExamineAction extends DispatchAction
     private StafferDAO stafferDAO = null;
     
     private LocationDAO locationDAO = null;
+    
+    private ProductStatManager productStatManager = null;
     
     public ProductExamineAction()
     {
@@ -645,5 +648,15 @@ public class ProductExamineAction extends DispatchAction
             ProductCityExamineItemDAO productCityExamineItemDAO)
     {
         this.productCityExamineItemDAO = productCityExamineItemDAO;
+    }
+
+    public ProductStatManager getProductStatManager()
+    {
+        return productStatManager;
+    }
+
+    public void setProductStatManager(ProductStatManager productStatManager)
+    {
+        this.productStatManager = productStatManager;
     }
 }

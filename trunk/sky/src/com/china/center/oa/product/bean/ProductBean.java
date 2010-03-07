@@ -14,13 +14,14 @@ import java.io.Serializable;
 import com.china.center.annotation.Entity;
 import com.china.center.annotation.Id;
 import com.china.center.annotation.Table;
+import com.china.center.oa.constant.ProductConstant;
 import com.china.center.tools.StringTools;
 
 
 /**
  * 产品
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2007-3-25
  * @see
  * @since
@@ -39,27 +40,47 @@ public class ProductBean implements Serializable
     private String modify = "";
 
     /**
-     * 0：正式 1：临时
+     * 0：自有 1：非自有
      */
-    private int temp = 0;
-
+    private int temp = ProductConstant.TEMP_SELF;
+    
     /**
      * 0:每天 1:其他
      */
     private int type = 0;
-
+    
     /**
      * 产品的类型
      */
     private int genre = 0;
-
+    
+    /**
+     * 生产期（天）
+     */
+    private int makeDays = 0;
+    
+    /**
+     * 物流期（天）
+     */
+    private int flowDays = 0;
+    
+    /**
+     * 最小批量的个数
+     */
+    private int minAmount = 0;
+    
+    /**
+     * 0:正常 1:锁定 2:注销
+     */
+    private int status = ProductConstant.STATUS_COMMON;
+    
     /**
      * 父引用ID
      */
     private String refId = "";
-
+    
     private String cityFlag = "";
-
+    
     /**
      * 产品图片的路径
      */
@@ -245,6 +266,46 @@ public class ProductBean implements Serializable
     public void setPicPath(String picPath)
     {
         this.picPath = picPath;
+    }
+
+    public int getMakeDays()
+    {
+        return makeDays;
+    }
+
+    public void setMakeDays(int makeDays)
+    {
+        this.makeDays = makeDays;
+    }
+
+    public int getFlowDays()
+    {
+        return flowDays;
+    }
+
+    public void setFlowDays(int flowDays)
+    {
+        this.flowDays = flowDays;
+    }
+
+    public int getMinAmount()
+    {
+        return minAmount;
+    }
+
+    public void setMinAmount(int minAmount)
+    {
+        this.minAmount = minAmount;
+    }
+
+    public int getStatus()
+    {
+        return status;
+    }
+
+    public void setStatus(int status)
+    {
+        this.status = status;
     }
 
 }
