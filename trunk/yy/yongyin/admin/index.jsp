@@ -186,7 +186,7 @@ function again(obj)
 
 var isActive = false;
 
-var isUseActive = false;
+var isUseActive = true;
 
 function load()
 {
