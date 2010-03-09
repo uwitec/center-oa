@@ -14,7 +14,7 @@
         and t1.productId = #productId#
         and t4.id = t2.providerId
         and t2.type = #type#
-        and t1.askDate = #askDate#
+        and t1.askDate >= #askDate#
 	</select>
 
 </sqlMap>
