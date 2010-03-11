@@ -1376,6 +1376,11 @@ public class OutManager
             throw new MYException("销售单不存在，请重新操作");
         }
 
+        if (outBean.getStatus() != Constant.STATUS_PASS)
+        {
+            throw new MYException("销售单不在库管通过状态，不能核对");
+        }
+
         // 入库操作在数据库事务中完成
         TransactionTemplate tran = new TransactionTemplate(transactionManager);
         try
