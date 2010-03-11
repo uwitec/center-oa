@@ -189,14 +189,15 @@ public class CurOutManager
             }
 
             // 还未付款的，看看是否已经超期
-            if (outBean.getPay() == CreditConstant.PAY_NOT)
+            if (outBean.getPay() == CreditConstant.PAY_NOT
+                && !StringTools.isNullOrNone(outBean.getRedate()))
             {
                 int delay = TimeTools.cdate(TimeTools.now_short(), outBean.getRedate());
 
                 // 等待延期
                 if (delay <= 0)
                 {
-                    return;
+                    continue;
                 }
 
                 // 处理延期
@@ -253,6 +254,7 @@ public class CurOutManager
         condition.addWhereStr();
 
         condition.addCondition("cid", "=", cid);
+
         condition.addIntCondition("ptype", "=", CreditConstant.CREDIT_TYPE_STATIC);
 
         List<CustomerCreditBean> ccList = customerCreditDAO.queryEntityBeansByCondition(condition);
@@ -318,6 +320,19 @@ public class CurOutManager
                 customerCreditManager.configCustomerCredit(user, cid, ccList);
 
                 triggerLog.info("系统自动修正客户的静态指标:" + cid);
+            }
+            catch (MYException e)
+            {
+                _logger.error(e, e);
+            }
+        }
+        else
+        {
+            try
+            {
+                customerCreditManager.updateCustomerCredit(cid);
+
+                triggerLog.info("系统自动修正客户的静态指标2:" + cid);
             }
             catch (MYException e)
             {
@@ -902,20 +917,23 @@ public class CurOutManager
      */
     private void saveCurLog(final String cid, final OutBean outBean, double minus)
     {
-        // add log CurOutBean
-        CurOutBean log = new CurOutBean();
+        if (minus != 0.0)
+        {
+            // add log CurOutBean
+            CurOutBean log = new CurOutBean();
 
-        log.setCid(cid);
+            log.setCid(cid);
 
-        log.setDelay(outBean.getTempType());
+            log.setDelay(outBean.getTempType());
 
-        log.setLogTime(TimeTools.now());
+            log.setLogTime(TimeTools.now());
 
-        log.setOutId(outBean.getFullId());
+            log.setOutId(outBean.getFullId());
 
-        log.setVal(minus);
+            log.setVal(minus);
 
-        curOutDAO.saveEntityBean(log);
+            curOutDAO.saveEntityBean(log);
+        }
     }
 
     /**

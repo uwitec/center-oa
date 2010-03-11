@@ -21,6 +21,7 @@ function load()
 		 title: '客户信用日志',
 		 url: '../credit/customer.do?method=queryCustomerCreditLog&cid=${param.targerId}',
 		 colModel : [
+		     {display: '序列', name : 'id', width : '10%', sortable : true, align: 'left'},
 		     {display: '时间', name : 'logTime', width : '15%', sortable : true, align: 'left'},
 		     {display: '日志', name : 'log', width : 'auto'},
 		     {display: '变更值', name : 'val', width : '10%', toFixed: 2}

@@ -104,6 +104,8 @@ public abstract class DefinedCommon
         DefinedTools.parserConstant(definedMap, MakeConstant.class);
 
         DefinedTools.parserConstant(definedMap, CreditConstant.class);
+
+        DefinedTools.parserConstant(definedMap, ProductConstant.class);
     }
 
     public static String getValue(String key, int index)

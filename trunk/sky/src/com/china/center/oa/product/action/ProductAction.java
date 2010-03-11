@@ -82,6 +82,8 @@ public class ProductAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYPRODUCTSTAT, request, condtion);
 
+        condtion.addCondition("order by ProductStatBean.logTime desc");
+
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPRODUCTSTAT, request, condtion,
             this.productStatDAO);
 

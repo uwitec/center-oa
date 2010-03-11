@@ -419,6 +419,12 @@
             <forward name="uploadCustomerCredit" path="/credit/uploadCustomerCredit.jsp" />
             <forward name="queryApplyCustomerForCredit" path="/customer/queryApplyCustomerForCredit.jsp" />
         </action>
+        
+        <action path="/product/product" parameter="method"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+            <forward name="queryProductStat" path="/product/queryProductStat.jsp" />
+        </action>
 
 	</action-mappings>
 

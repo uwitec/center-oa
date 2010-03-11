@@ -196,4 +196,8 @@
     <bean name="/credit/customer"
         class="com.china.center.oa.credit.action.CustomerCreditAction"
         scope="request" />
+        
+    <bean name="/product/product"
+        class="com.china.center.oa.product.action.ProductAction"
+        scope="request" />
 </beans>

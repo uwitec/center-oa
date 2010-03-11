@@ -133,6 +133,19 @@ public class CustomerCreditManager
     }
 
     /**
+     * updateCustomerCredit
+     * 
+     * @param cid
+     * @throws MYException
+     */
+    @Transactional(rollbackFor = MYException.class)
+    public void updateCustomerCredit(String cid)
+        throws MYException
+    {
+        updateLevel(cid);
+    }
+
+    /**
      * updateLevel
      * 
      * @param cid

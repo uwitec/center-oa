@@ -40,9 +40,9 @@ import com.china.centet.yongyin.bean.OutBean;
 public class OutStatDAO extends BaseDAO2<OutBean, OutBean>
 {
     /**
-     * 2009-12-01开始使用
+     * 2010-03-01开始使用
      */
-    private static final String BEGINDATE = "2009-06-01";
+    private static final String BEGINDATE = "2010-03-01";
 
     /**
      * 查询没有进行统计的销售单(2009-12-01开始统计的)
@@ -59,7 +59,7 @@ public class OutStatDAO extends BaseDAO2<OutBean, OutBean>
 
         String beginDate = BEGINDATE;
 
-        // 只统计前6个月的数据
+        // TODO 只统计前6个月的数据(这里不能逾越财务年度的开始)
         String fbeginDate = TimeTools.getDateShortString( -6 * 30);
 
         if (beginDate.compareTo(fbeginDate) < 0)
@@ -124,9 +124,29 @@ public class OutStatDAO extends BaseDAO2<OutBean, OutBean>
             public void processRow(ResultSet rs)
                 throws SQLException
             {
-                list.add(rs.getString(1));
+                String ccid = rs.getString(1);
+
+                if ( !list.contains(ccid))
+                {
+                    list.add(ccid);
+                }
             }
         });
+
+        this.jdbcOperation.query("select distinct(t.cid) from t_center_vs_curcre t ",
+            new RowCallbackHandler()
+            {
+                public void processRow(ResultSet rs)
+                    throws SQLException
+                {
+                    String ccid = rs.getString(1);
+
+                    if ( !list.contains(ccid))
+                    {
+                        list.add(ccid);
+                    }
+                }
+            });
 
         return list;
     }
