@@ -102,13 +102,8 @@ public class ProductStatManager
 
             productStatBean.setLogTime(logTime);
 
-            productStatBean.setSailAvg(productStatBean.getSailAmount() / ProductConstant.STAT_DAYS);
-
-            if (productStatBean.getSailAvg() == 0
-                && productStatBean.getSailAmount() > (ProductConstant.STAT_DAYS / 2))
-            {
-                productStatBean.setSailAvg(1);
-            }
+            productStatBean.setSailAvg(productStatBean.getSailAmount()
+                                       / (ProductConstant.STAT_DAYS + 0.0d));
 
             productStatBean.setDescription("自动统计结果");
 
@@ -121,8 +116,9 @@ public class ProductStatManager
 
             productStatBean.setOrderAmount(notSail);
 
-            int cum = (productBean.getMakeDays() + productBean.getFlowDays())
-                      * productStatBean.getSailAvg() + notSail;
+            int cum = (int)Math.round( (productBean.getMakeDays() + productBean.getFlowDays())
+                                      * productStatBean.getSailAvg())
+                      + notSail;
 
             if (sumAmount < cum)
             {

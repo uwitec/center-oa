@@ -65,4 +65,14 @@ public interface ProductConstant
      * 统计周期
      */
     int STAT_DAYS = 15;
+
+    /**
+     * 不启用
+     */
+    int SAILTYPE_NO_USER = 0;
+
+    /**
+     * 启用
+     */
+    int SAILTYPE_USER = 1;
 }

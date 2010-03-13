@@ -75,6 +75,11 @@ public class ProductBean implements Serializable
     private int status = ProductConstant.STATUS_COMMON;
     
     /**
+     * 0:不启用库存模型 1:启用库存模型
+     */
+    private int sailType = ProductConstant.SAILTYPE_NO_USER;
+    
+    /**
      * 父引用ID
      */
     private String refId = "";
@@ -306,6 +311,22 @@ public class ProductBean implements Serializable
     public void setStatus(int status)
     {
         this.status = status;
+    }
+
+    /**
+     * @return the sailType
+     */
+    public int getSailType()
+    {
+        return sailType;
+    }
+
+    /**
+     * @param sailType the sailType to set
+     */
+    public void setSailType(int sailType)
+    {
+        this.sailType = sailType;
     }
 
 }

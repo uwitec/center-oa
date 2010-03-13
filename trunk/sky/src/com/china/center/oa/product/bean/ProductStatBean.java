@@ -36,7 +36,7 @@ public class ProductStatBean implements Serializable
 
     private int sailAmount = 0;
 
-    private int sailAvg = 0;
+    private double sailAvg = 0.0d;
 
     /**
      * È±¶î
@@ -143,12 +143,19 @@ public class ProductStatBean implements Serializable
         this.description = description;
     }
 
-    public int getSailAvg()
+    /**
+     * @return the sailAvg
+     */
+    public double getSailAvg()
     {
         return sailAvg;
     }
 
-    public void setSailAvg(int sailAvg)
+    /**
+     * @param sailAvg
+     *            the sailAvg to set
+     */
+    public void setSailAvg(double sailAvg)
     {
         this.sailAvg = sailAvg;
     }

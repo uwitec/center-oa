@@ -19,6 +19,7 @@
 		where t1.outid = t2.fullid 
 		and t2.status > 2 
 		and t1.productid = t3.id
+		and t3.sailType = 1
 		and t2.outTime >= #beginDate#
 		and t2.outTime <= #endDate#
 		and t2.type = 0 
@@ -32,7 +33,8 @@
         select 0 as sailAmount, t1.productId, t2.name as productName, t2.code as productCode
         from T_CENTER_OUTORDER t1, t_center_product t2
         where t1.productId = t2.id 
-        and t1.status = 0 
+        and t1.status = 0
+        and t2.sailType = 1
         GROUP by t1.productid
     ]]>
     </select>

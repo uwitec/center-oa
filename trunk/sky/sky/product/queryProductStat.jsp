@@ -26,7 +26,7 @@ function load()
              {display: '编码', name : 'productCode', width : '10%'},
              {display: '状态', name : 'status', width : '5%', cc: 'productStatStatus'},
              {display: '缺额', name : 'subtractAmount', width : '8%'},
-             {display: '日均销售', name : 'sailAvg', sortable : true, width : '8%'},
+             {display: '日均销售', name : 'sailAvg', sortable : true, width : '8%', toFixed: 2},
              {display: '15天销售量', name : 'sailAmount', width : '8%'},
              {display: '库存', name : 'inventoryAmount', width : '8%'},
              {display: '订货', name : 'orderAmount', width : '8%'},
