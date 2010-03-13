@@ -42,6 +42,11 @@ function changes()
 	submit('确定转移产品到--' + getOptionText($('dirStorage')));
 }
 
+function query()
+{
+    $l('../admin/das.do?method=findStorage&modfiy=2&id=${bean.id}&depotpartId=${depotpartId}&pname=' + $$('pname'));
+}
+
 </script>
 
 </head>
@@ -53,7 +58,7 @@ function changes()
 	value="${my:show(param.depotpartId, bean.depotpartId)}"> <input
 	type="hidden" name="method" value='changeDefaultStorage'> <p:navigation
 	height="22">
-	<td width="550" class="navigation"><span style="cursor: hand"
+	<td width="550" class="navigation"><span style="cursor: pointer;"
 		onclick="javascript:history.go(-1)">储位管理</span> &gt;&gt; 默认储位</td>
 	<td width="85"></td>
 </p:navigation> <br>
@@ -84,9 +89,14 @@ function changes()
 				</select>
 				<font color="#FF0000">*</font>
 			</p:cell>
+			
+			<p:cell title="产品名称">
+                <input type="text" name="pname" value="${pname}"/>&nbsp;&nbsp;
+                <input type="button" class="button_class" style="cursor: pointer" value="&nbsp;查询&nbsp;" onclick="query()">
+            </p:cell>
 
 			<p:pro field="productId"
-				innerString="multiple=true size=12 style='width: 220px'">
+				innerString="multiple=true size=12 style='width: 420px'">
 				<c:forEach items="${relations}" var="item">
 					<option value="${item.productId}" amount="${item.amount}">${item.productName}</option>
 				</c:forEach>

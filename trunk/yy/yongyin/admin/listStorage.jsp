@@ -62,7 +62,7 @@ function load()
 	<td width="85"></td>
 </p:navigation> <br>
 
-<p:body width="100%">
+<p:body width="98%">
 
 	<p:title>
 		<td class="caption"><strong>´¢Î»ÁÐ±í£º</strong></td>

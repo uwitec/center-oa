@@ -154,7 +154,7 @@ public class OutBean implements Serializable
     private int reserve2 = OutConstanst.OUT_CREDIT_COMMON;
 
     /**
-     * 0:货到收款 1:款到发货 2:使用业务员信用额度
+     * 0:货到收款 1:款到发货(黑名单) 2:使用业务员信用额度
      */
     private int reserve3 = OutConstanst.OUT_SAIL_TYPE_COMMON;
 

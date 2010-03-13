@@ -90,7 +90,7 @@ import com.china.centet.yongyin.wokflow.sale.SaleConstant;
 /**
  * 增加出库单
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2007-4-1
  * @see
  * @since
@@ -2114,6 +2114,24 @@ public class OutAction extends DispatchAction
             // 驳回
             if (statuss == Constant.STATUS_REJECT)
             {
+                // 这里对SEC做一个判断
+                if (user.getRole() == Role.SEC)
+                {
+                    if (out.getStatus() != OutConstanst.STATUS_SUBMIT)
+                    {
+                        request.setAttribute(KeyConstant.ERROR_MESSAGE, "单据状态错误");
+
+                        return mapping.findForward("error");
+                    }
+
+                    if (out.getReserve3() != OutConstanst.OUT_SAIL_TYPE_MONEY)
+                    {
+                        request.setAttribute(KeyConstant.ERROR_MESSAGE, "单据不是款到发货,不能驳回");
+
+                        return mapping.findForward("error");
+                    }
+                }
+
                 try
                 {
                     outManager.reject(fullId, user, reason);

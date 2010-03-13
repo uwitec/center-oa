@@ -187,6 +187,7 @@ function exports()
 						<td align="center" onclick="tableSort(this)" class="td_class">产品名称</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">产品编码</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">盘点分类</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">库存模型</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">状态</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">归属</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">图片</td>
@@ -200,6 +201,7 @@ function exports()
 							<td align="center" onclick="hrefAndSelect(this)">${item.name}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.code}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.type == 0 ? "每天盘点" : "其他"}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.sailType == 0 ? "不启用" : "启用"}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('productStatus', item.status)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.temp == 0 ? "自有" : "非自有"}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.picPath}</td>

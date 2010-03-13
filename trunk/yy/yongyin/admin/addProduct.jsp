@@ -160,21 +160,30 @@ function load()
 							color="#FF0000">*</font></td>
 					</tr>
 					
+					<tr class="content2">
+                        <td width="30%">库存模型:</td>
+                        <td><select name="sailType" oncheck="notNone;" style="width:200px">
+                            <option value="">--</option>
+                            <option value="0">不启用</option>
+                            <option value="1">启用</option>
+                        </select><font color="#FF0000">*</font></td>
+                    </tr>
+					
 					<tr class="content1">
 						<td width="30%">生产期（天）:</td>
-						<td><input type="text" name="makeDays" oncheck="notNone;isInt" value="" maxlength="16"><font
+						<td><input type="text" name="makeDays" oncheck="notNone;isNumber" value="" maxlength="16"><font
 							color="#FF0000">*</font></td>
 					</tr>
 					
 					<tr class="content2">
 						<td width="30%">物流期（天）:</td>
-						<td><input type="text" name="flowDays" oncheck="notNone;isInt" value="" maxlength="16"><font
+						<td><input type="text" name="flowDays" oncheck="notNone;isNumber" value="" maxlength="16"><font
 							color="#FF0000">*</font></td>
 					</tr>
 					
 					<tr class="content1">
 						<td width="30%">最小生产批量（个）:</td>
-						<td><input type="text" name="minAmount" oncheck="notNone;isInt" value="" maxlength="16"><font
+						<td><input type="text" name="minAmount" oncheck="notNone;isNumber" value="" maxlength="16"><font
 							color="#FF0000">*</font></td>
 					</tr>
 

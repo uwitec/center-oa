@@ -2,6 +2,7 @@ package com.china.centet.yongyin.action;
 
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -207,6 +208,7 @@ public class DepotpartAndStorageAction extends DispatchAction
         String id = request.getParameter("id");
         String modfiy = request.getParameter("modfiy");
         String depotpartId = request.getParameter("depotpartId");
+        String pname = request.getParameter("pname");
 
         if (StringTools.isNullOrNone(id))
         {
@@ -235,8 +237,10 @@ public class DepotpartAndStorageAction extends DispatchAction
         List<StorageRelationBean> relations = storageDAO.queryStorageRelationByStorageId(
             depotpartId, id);
 
-        for (StorageRelationBean storageRelationBean : relations)
+        for (Iterator iterator = relations.iterator(); iterator.hasNext();)
         {
+            StorageRelationBean storageRelationBean = (StorageRelationBean)iterator.next();
+
             Product product = productManager.findProductById(storageRelationBean.getProductId());
 
             if (product != null)
@@ -244,6 +248,15 @@ public class DepotpartAndStorageAction extends DispatchAction
                 storageRelationBean.setProductName(product.getName() + "     ÊýÁ¿¡¾"
                                                    + storageRelationBean.getAmount() + "¡¿");
             }
+
+            if ( !StringTools.isNullOrNone(pname))
+            {
+                if (product.getName().indexOf(pname) == -1)
+                {
+                    iterator.remove();
+                }
+            }
+
         }
 
         StorageBeanVO vo = getStorageBeanVO(storageBean, relations);
@@ -251,6 +264,10 @@ public class DepotpartAndStorageAction extends DispatchAction
         request.setAttribute("bean", vo);
 
         request.setAttribute("relations", relations);
+
+        request.setAttribute("depotpartId", depotpartId);
+
+        request.setAttribute("pname", pname);
 
         if ("2".equals(modfiy))
         {

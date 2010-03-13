@@ -9,12 +9,15 @@
 <c:if test='${flag == "3"}'>
 <base target="_self">
 </c:if>
+<link href="../js/plugin/dialog/css/dialog.css" type="text/css" rel="stylesheet"/>
 <script src="../js/CommonScriptMethod.js"></script>
 <script src="../js/prototype.js"></script>
 <script src="../js/common.js"></script>
 <script src="../js/fanye.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/title_div.js"></script>
+<script src="../js/jquery/jquery.js"></script>
+<script src="../js/plugin/dialog/jquery.dialog.js"></script>
 <script language="javascript">
 function detail()
 {
@@ -41,24 +44,24 @@ function sures()
 
 function res()
 {
-	$('customerId').value= '';
-	$('customerName').value= '';
-	$('id').value= '';
-	$('type').selectedIndex = 0;
-	$('checks').selectedIndex = 0;
-	$('stafferName').selectedIndex = 0;
-	$('pay').selectedIndex = 0;
-	$('reCom').selectedIndex = 0;
-	$('redate').value= '';
+	$O('customerId').value= '';
+	$O('customerName').value= '';
+	$O('id').value= '';
+	$O('type').selectedIndex = 0;
+	$O('checks').selectedIndex = 0;
+	$O('stafferName').selectedIndex = 0;
+	$O('pay').selectedIndex = 0;
+	$O('reCom').selectedIndex = 0;
+	$O('redate').value= '';
 }
 
 function comp()
 {
 	var now = '${now}';
 	
-	var str1 = $('outTime').value;
+	var str1 = $O('outTime').value;
 	
-	var str2 = $('outTime1').value;
+	var str2 = $O('outTime1').value;
 	
 	//必须要有开始和结束时间一个
 	if (str1 == '' && str2 == '')
@@ -75,7 +78,7 @@ function comp()
 			return false;
 		}
 		
-		$('outTime1').value = now;
+		$O('outTime1').value = now;
 	}
 	
 	if (str1 == '' && str2 != '')
@@ -86,7 +89,7 @@ function comp()
 			return false;
 		}
 		
-		$('outTime').value = now;
+		$O('outTime').value = now;
 	}
 	
 	if (str1 != '' && str2 != '')
@@ -162,8 +165,8 @@ function selectCustomer()
 
 function getCustmeor(id, name, conn, phone)
 {
-	$("customerName").value = name;
-	$("customerId").value = id;
+	$O("customerName").value = name;
+	$O("customerId").value = id;
 }
 
 var jmap = new Object();
@@ -177,6 +180,42 @@ function showDiv(id, obj)
 	tooltip.showTable(jmap[id]);
 }
 
+function reject()
+{
+    if (getRadio('fullId').statuss == 1 && getRadio('fullId').lreserve3 == 1 && getRadio('fullId').pay == 0)
+    {
+        $.messager.prompt('驳回', '请输入驳回原因', '', function(r){
+                if (r)
+                {
+                    $Dbuttons(true);
+                    getObj('method').value = 'modifyOutStatus';
+                    getObj('statuss').value = '2';
+                    getObj('oldStatus').value = getRadio('fullId').statuss;
+                    getObj('outId').value = getRadioValue("fullId");
+        
+                    getObj('radioIndex').value = $Index('fullId');
+        
+                    var sss = r;
+        
+                    getObj('reason').value = r;
+        
+                    if (!(sss == null || sss == ''))
+                    {
+                        adminForm.submit();
+                    }
+                    else
+                    {
+                        $Dbuttons(false);
+                    }
+                }
+            });
+    }
+    else
+    {
+        alert('不可以操作!');
+    }
+}
+
 </script>
 <title>出库单列表</title>
 
@@ -185,12 +224,20 @@ function showDiv(id, obj)
 <form action="./out.do" name="adminForm"><input type="hidden"
 	value="queryOut3" name="method"> <input type="hidden" value="1"
 	name="firstLoad">
+	<input type="hidden"
+    name="reason">
 	<input type="hidden" value="${customerId}"
 	name="customerId">
 	<input type="hidden" value=""
 	name="outId">
 	<input type="hidden" value="${flag}"
 	name="flag">
+	<input type="hidden" value=""
+    name="radioIndex">
+    <input type="hidden" value=""
+    name="oldStatus">
+    <input type="hidden" value=""
+    name="statuss">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td height="22" valign="bottom">
@@ -386,7 +433,7 @@ function showDiv(id, obj)
 					<c:set var="hr" value='${flag != "3"}'/>
 					<c:forEach items="${listOut3}" var="item" varStatus="vs">
 						<tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
-							<td align="center"><input type="radio" name="fullId"
+							<td align="center"><input type="radio" name="fullId" lreserve3=${item.reserve3} lpay=${item.pay} 
 								statuss='${item.status}' value="${item.fullId}" ${vs.index == ind ? "checked" : ""}/></td>
 							<td align="center"
 							onMouseOver="showDiv('${item.fullId}', this)" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a 
@@ -439,7 +486,10 @@ function showDiv(id, obj)
 	<tr>
 		<td width="100%">
 		<div align="right"><input type="button" class="button_class"
-			value="&nbsp;&nbsp;${dis}核对&nbsp;&nbsp;" onClick="detail()">&nbsp;&nbsp;</div>
+			value="&nbsp;&nbsp;${dis}核对&nbsp;&nbsp;" onClick="detail()">&nbsp;&nbsp;
+			<input type="button" name="bu2"
+                class="button_class" value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;"
+                onclick="reject()" /></div>
 		</td>
 		<td width="0%"></td>
 	</tr>

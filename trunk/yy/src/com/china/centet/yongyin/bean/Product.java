@@ -8,6 +8,7 @@
  */
 package com.china.centet.yongyin.bean;
 
+
 import java.io.Serializable;
 
 import com.china.center.annotation.Entity;
@@ -16,6 +17,7 @@ import com.china.center.annotation.Ignore;
 import com.china.center.annotation.Table;
 import com.china.center.tools.StringTools;
 import com.china.centet.yongyin.constant.ProductConstant;
+
 
 /**
  * 产品
@@ -31,70 +33,74 @@ public class Product implements Serializable
 {
     @Id
     private String id = "";
-    
+
     private String name = "";
-    
+
     private String code = "";
-    
+
     @Ignore
     private int num = 0;
-    
+
     private String modify = "";
-    
+
     /**
      * 0：自有 1：非自有
      */
     private int temp = ProductConstant.TEMP_SELF;
-    
+
     /**
      * 0:每天 1:其他
      */
     private int type = 0;
-    
+
     /**
      * 产品的类型
      */
     private int genre = 0;
-    
+
     /**
      * 生产期（天）
      */
     private int makeDays = 0;
-    
+
     /**
      * 物流期（天）
      */
     private int flowDays = 0;
-    
+
     /**
      * 最小批量的个数
      */
     private int minAmount = 0;
-    
+
     /**
      * 0:正常 1:锁定 2:注销
      */
     private int status = ProductConstant.STATUS_COMMON;
-    
+
+    /**
+     * 0:不启用库存模型 1:启用库存模型
+     */
+    private int sailType = ProductConstant.SAILTYPE_NO_USER;
+
     /**
      * 父引用ID
      */
     private String refId = "";
-    
+
     private String cityFlag = "";
-    
+
     /**
      * 产品图片的路径
      */
     private String picPath = "";
-    
+
     /**
      * default constructor
      */
     public Product()
-    {
-    }
-    
+    {}
+
     /**
      * @return the code
      */
@@ -102,7 +108,7 @@ public class Product implements Serializable
     {
         return code;
     }
-    
+
     /**
      * @param code
      *            the code to set
@@ -111,7 +117,7 @@ public class Product implements Serializable
     {
         this.code = code;
     }
-    
+
     /**
      * @return the id
      */
@@ -119,7 +125,7 @@ public class Product implements Serializable
     {
         return id;
     }
-    
+
     /**
      * @param id
      *            the id to set
@@ -128,7 +134,7 @@ public class Product implements Serializable
     {
         this.id = id;
     }
-    
+
     /**
      * @return the name
      */
@@ -136,7 +142,7 @@ public class Product implements Serializable
     {
         return name;
     }
-    
+
     /**
      * @param name
      *            the name to set
@@ -145,7 +151,7 @@ public class Product implements Serializable
     {
         this.name = name;
     }
-    
+
     /**
      * @return the num
      */
@@ -153,7 +159,7 @@ public class Product implements Serializable
     {
         return num;
     }
-    
+
     /**
      * @param num
      *            the num to set
@@ -162,7 +168,7 @@ public class Product implements Serializable
     {
         this.num = num;
     }
-    
+
     /**
      * @return the modify
      */
@@ -170,7 +176,7 @@ public class Product implements Serializable
     {
         return modify;
     }
-    
+
     /**
      * @param modify
      *            the modify to set
@@ -179,7 +185,7 @@ public class Product implements Serializable
     {
         this.modify = modify;
     }
-    
+
     /**
      * @return the temp
      */
@@ -187,7 +193,7 @@ public class Product implements Serializable
     {
         return temp;
     }
-    
+
     /**
      * @param temp
      *            the temp to set
@@ -196,7 +202,7 @@ public class Product implements Serializable
     {
         this.temp = temp;
     }
-    
+
     /**
      * @return the refId
      */
@@ -204,7 +210,7 @@ public class Product implements Serializable
     {
         return refId;
     }
-    
+
     /**
      * @param refId
      *            the refId to set
@@ -216,7 +222,7 @@ public class Product implements Serializable
             this.refId = refId;
         }
     }
-    
+
     /**
      * @return the cityFlag
      */
@@ -224,19 +230,19 @@ public class Product implements Serializable
     {
         return cityFlag;
     }
-    
+
     /**
      * @param cityFlag
      *            the cityFlag to set
      */
     public void setCityFlag(String cityFlag)
     {
-        if (!StringTools.isNullOrNone(cityFlag))
+        if ( !StringTools.isNullOrNone(cityFlag))
         {
             this.cityFlag = cityFlag;
         }
     }
-    
+
     /**
      * @return the type
      */
@@ -244,7 +250,7 @@ public class Product implements Serializable
     {
         return type;
     }
-    
+
     /**
      * @param type
      *            the type to set
@@ -253,7 +259,7 @@ public class Product implements Serializable
     {
         this.type = type;
     }
-    
+
     /**
      * @return the genre
      */
@@ -261,7 +267,7 @@ public class Product implements Serializable
     {
         return genre;
     }
-    
+
     /**
      * @param genre
      *            the genre to set
@@ -270,7 +276,7 @@ public class Product implements Serializable
     {
         this.genre = genre;
     }
-    
+
     /**
      * @return the picPath
      */
@@ -278,7 +284,7 @@ public class Product implements Serializable
     {
         return picPath;
     }
-    
+
     /**
      * @param picPath
      *            the picPath to set
@@ -287,45 +293,62 @@ public class Product implements Serializable
     {
         this.picPath = picPath;
     }
-    
+
     public int getMakeDays()
     {
         return makeDays;
     }
-    
+
     public void setMakeDays(int makeDays)
     {
         this.makeDays = makeDays;
     }
-    
+
     public int getFlowDays()
     {
         return flowDays;
     }
-    
+
     public void setFlowDays(int flowDays)
     {
         this.flowDays = flowDays;
     }
-    
+
     public int getMinAmount()
     {
         return minAmount;
     }
-    
+
     public void setMinAmount(int minAmount)
     {
         this.minAmount = minAmount;
     }
-    
+
     public int getStatus()
     {
         return status;
     }
-    
+
     public void setStatus(int status)
     {
         this.status = status;
     }
-    
+
+    /**
+     * @return the sailType
+     */
+    public int getSailType()
+    {
+        return sailType;
+    }
+
+    /**
+     * @param sailType
+     *            the sailType to set
+     */
+    public void setSailType(int sailType)
+    {
+        this.sailType = sailType;
+    }
+
 }
