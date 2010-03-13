@@ -27,7 +27,7 @@ import com.china.center.oa.constant.StafferConstant;
 /**
  * StafferBean
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2008-11-2
  * @see StafferBean
  * @since 1.0

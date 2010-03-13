@@ -302,4 +302,9 @@ public interface AuthConstant
      * 导入
      */
     String CREDIT_IMPOTR = "0904";
+
+    /**
+     * 产品订货
+     */
+    String PRODUCT_ORDER = "1001";
 }

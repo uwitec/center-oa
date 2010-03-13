@@ -94,8 +94,8 @@ function load()
 				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
 					<td align="center"><input type="radio" name="beans"
 						pname="${item.name}" value="${item.id}" ${vs.index== 0 ? "checked" : ""}/></td>
-					<td align="center">${item.name}</td>
-					<td align="center">${item.code}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.name}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.code}</td>
 				</tr>
 			</c:forEach>
 		</table>

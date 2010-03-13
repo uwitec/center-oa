@@ -43,6 +43,11 @@ public interface HandleMessage
     int TYPE_STOCK = 104;
 
     /**
+     * 产品通知
+     */
+    int TYPE_PRODUCT = 105;
+
+    /**
      * getHandleType
      * 
      * @return handleType

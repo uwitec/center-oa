@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="流程定义管理" link="true" guid="true" cal="false"/>
+<p:link title="流程定义管理" link="true" guid="true" cal="true" dialog="true" />
 <script src="../js/JCheck.js"></script>
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
@@ -18,6 +18,8 @@ var guidMap;
 var thisObj;
 function load()
 {
+     preload();
+      
 	 guidMap = {
 		 title: '流程定义列表',
 		 url: '../flow/flow.do?method=queryFlowDefine',
@@ -133,7 +135,7 @@ function configBean1()
 
 function doSearch()
 {
-    window.common.qmodal('../admin/query.do?method=popCommonQuery&key=queryFlowDefine');
+    $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryFlowDefine');
 }
 
 function $process()
@@ -171,4 +173,5 @@ function $process()
 
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
+<p:query/>
 </body>

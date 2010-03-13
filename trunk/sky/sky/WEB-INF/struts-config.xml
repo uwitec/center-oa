@@ -424,6 +424,7 @@
             type="org.springframework.web.struts.DelegatingActionProxy"
             validate="false">
             <forward name="queryProductStat" path="/product/queryProductStat.jsp" />
+            <forward name="queryOutOrder" path="/product/queryOutOrder.jsp" />
         </action>
 
 	</action-mappings>

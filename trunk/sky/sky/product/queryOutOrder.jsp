@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="产品库存管理" link="true" guid="true" cal="true" dialog="true" />
+<p:link title="订货管理" link="true" guid="true" cal="true" dialog="true" />
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
@@ -18,25 +18,24 @@ function load()
      preload();
      
      guidMap = {
-         title: '产品库存统计列表',
-         url: '../product/product.do?method=queryProductStat',
+         title: '订货列表',
+         url: '../product/product.do?method=queryOutOrder',
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status}}>', width : 40, align: 'center'},
+             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status}>', width : 40, align: 'center'},
              {display: '产品', name : 'productName', width : '20%'},
-             {display: '编码', name : 'productCode', width : '10%'},
-             {display: '状态', name : 'status', width : '5%', cc: 'productStatStatus'},
-             {display: '缺额', name : 'subtractAmount', width : '8%'},
-             {display: '日均销售', name : 'sailAvg', sortable : true, width : '8%'},
-             {display: '15天销售量', name : 'sailAmount', width : '8%'},
-             {display: '库存', name : 'inventoryAmount', width : '8%'},
-             {display: '订货', name : 'orderAmount', width : '8%'},
-             {display: '统计时间', name : 'logTime', sortable : true, cname: 'logTime',  width : 'auto'}
+             {display: '编码', name : 'productCode', width : '8%'},
+             {display: '状态', name : 'status', width : '8%', cc: 'productOrderStatus'},
+             {display: '订货量', name : 'orderAmount', width : '8%'},
+             {display: '订货职员', name : 'stafferName', width : '8%'},
+             {display: '备注', name : 'description', width : '25%'},
+             {display: '时间', name : 'logTime', sortable : true, cname: 'logTime',  width : 'auto'}
              ],
          extAtt: {
              //title : {begin : '<a href=../product/product.do?method=findMake&id={id}>', end : '</a>'}
          },
          buttons : [
-             //{id: 'add', bclass: 'add', caption: '增加订货建议', onpress : addBean, auth: '1001'},
+             {id: 'add', bclass: 'add', caption: '增加预定', onpress : addBean, auth: '1001'},
+             {id: 'delete', bclass: 'delete', caption: '取消预定', onpress : deldBean, auth: '1001'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
          usepager: true,
@@ -58,13 +57,28 @@ function $callBack()
 {
     loadForm();
     
-    highlights($("#mainTable").get(0), ['预警态'], 'red');
-    highlights($("#mainTable").get(0), ['正常态'], 'blue');
+    highlights($("#mainTable").get(0), ['结束'], 'red');
+    highlights($("#mainTable").get(0), ['预定'], 'blue');
+}
+
+
+function addBean(opr, grid)
+{
+    $l('../product/addOutOrder.jsp');
+}
+
+function deldBean(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb') 
+        && getRadio('checkb').lstatus == 0 && window.confirm('确定订购正常结束(即已经开单)?'))
+    $ajax('../product/product.do?method=cancelOutOrder&id=' + getRadioValue('checkb'), callBackFun);
+    else
+    $error('不能操作');
 }
 
 function doSearch()
 {
-    $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryProductStat');
+    $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryOutOrder');
 }
 
 </script>

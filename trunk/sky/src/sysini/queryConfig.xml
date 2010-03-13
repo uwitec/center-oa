@@ -783,4 +783,31 @@
             <option>$productStatStatus</option>
         </condtion>
     </item>
+    
+    <item name="queryOutOrder" deaultpfix="OutOrderBean">
+        <condtion name="alogTime" filed="logTime" caption="开始时间">
+            <opr>&gt;=</opr>
+            <type>datetime</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="blogTime" filed="logTime" caption="结束时间">
+            <opr>&lt;=</opr>
+            <type>datetime</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="productName" caption="产品名称" filed="name" pfix="ProductBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="productCode" caption="产品编码" filed="code" pfix="ProductBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="status" caption="状态">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$productOrderStatus</option>
+        </condtion>
+    </item>
 </query>

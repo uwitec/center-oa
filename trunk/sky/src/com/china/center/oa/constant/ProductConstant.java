@@ -50,6 +50,18 @@ public interface ProductConstant
     int STAT_STATUS_ALERT = 1;
 
     /**
+     * 正常
+     */
+    @Defined(key = "productOrderStatus", value = "预定")
+    int ORDER_STATUS_COMMON = 0;
+
+    /**
+     * 结束
+     */
+    @Defined(key = "productOrderStatus", value = "结束")
+    int ORDER_STATUS_END = 1;
+
+    /**
      * 统计周期
      */
     int STAT_DAYS = 15;

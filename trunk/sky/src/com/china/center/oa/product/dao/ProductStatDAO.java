@@ -34,8 +34,22 @@ public class ProductStatDAO extends BaseDAO2<ProductStatBean, ProductStatBean>
 
         map.put("endDate", TimeTools.getSpecialDateString( -1, TimeTools.SHORT_FORMAT));
 
-        return this.jdbcOperation.getIbatisDaoSupport().queryForList(
+        List<ProductStatBean> resultList = this.jdbcOperation.getIbatisDaoSupport().queryForList(
             "ProductStatDAO.queryStatProductByCondition", map);
+
+        // 这里统计订货的产品
+        List<ProductStatBean> newList = this.jdbcOperation.getIbatisDaoSupport().queryForList(
+            "ProductStatDAO.queryOutOrderProductByCondition", map);
+
+        for (ProductStatBean productStatBean : newList)
+        {
+            if ( !resultList.contains(productStatBean))
+            {
+                resultList.add(productStatBean);
+            }
+        }
+
+        return resultList;
     }
 
     /**
@@ -51,11 +65,12 @@ public class ProductStatDAO extends BaseDAO2<ProductStatBean, ProductStatBean>
     }
 
     /**
-     * 已知订单（销售未发货）(15天以内的)
+     * 已知订单（销售未发货）(15天以内的)(已经废弃)
      * 
      * @param productId
      * @return double
      */
+    @Deprecated
     public int sumNotSailProduct(String productId)
     {
         Map<String, String> paramterMap = new HashMap();

@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="流程实例管理" link="true" guid="true" cal="false"/>
+<p:link title="流程实例管理" link="true" guid="true" cal="true" dialog="true" />
 <script src="../js/JCheck.js"></script>
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
@@ -45,12 +45,14 @@ var guidMap;
 var thisObj;
 function load()
 {
+     preload();
+      
 	 guidMap = {
 		 title: titleMap['${param.operation}'],
 		 url: '../flow/instance.do?method=queryFlowInstance&operationMode=${param.operation}',
 		 colModel : [
 		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={instanceId} sstatus={status}>', width : 40, align: 'center'},
-		     {display: '标题', name : 'title', width : '30%'},
+		     {display: '主题', name : 'title', width : '30%'},
 		     {display: sMap['${param.operation}'], name : 'stafferName', sortable : false, width : '10%'},
 		     {display: '当前环节', name : 'tokenName', width : '15%'},
 		     {display: '流程定义', name : 'flowName', sortable : true, cname: 'FlowDefineBean.name', width : '15%'},
@@ -126,7 +128,7 @@ function configBean()
 
 function doSearch()
 {
-    window.common.qmodal('../admin/query.do?method=popCommonQuery&key=queryFlowInstance${param.operation}');
+    $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryFlowInstance${param.operation}');
 }
 
 function $process()
@@ -160,4 +162,5 @@ function $process()
 
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
+<p:query/>
 </body>

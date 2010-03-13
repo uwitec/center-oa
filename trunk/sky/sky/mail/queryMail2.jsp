@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="邮件管理" link="true" guid="true" cal="false"/>
+<p:link title="邮件管理" link="true" guid="true" cal="true" dialog="true" />
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
@@ -16,6 +16,8 @@ var guidMap;
 var thisObj;
 function load()
 {
+     preload();
+     
 	 guidMap = {
 		 title: '我的发件箱',
 		 url: '../mail/mail.do?method=queryMail2',
@@ -85,7 +87,7 @@ function forwardBean(opr, grid)
 
 function doSearch()
 {
-    window.common.qmodal('../admin/query.do?method=popCommonQuery&key=queryMail2');
+    $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryMail2');
 }
 </script>
 </head>
@@ -95,4 +97,5 @@ function doSearch()
 </form>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
+<p:query/>
 </body>

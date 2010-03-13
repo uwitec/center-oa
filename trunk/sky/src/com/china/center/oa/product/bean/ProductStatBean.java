@@ -3,6 +3,7 @@
  */
 package com.china.center.oa.product.bean;
 
+
 import java.io.Serializable;
 
 import com.china.center.annotation.Entity;
@@ -11,8 +12,10 @@ import com.china.center.annotation.Id;
 import com.china.center.annotation.Table;
 import com.china.center.oa.constant.ProductConstant;
 
+
 /**
  * ProductStatBean
+ * 
  * @author ZHUZHU
  */
 @Entity
@@ -21,40 +24,44 @@ public class ProductStatBean implements Serializable
 {
     @Id
     private String id = "";
-    
+
     private String productId = "";
-    
+
     private String productName = "";
-    
+
     private String productCode = "";
-    
+
     @FK
     private String logTime = "";
-    
+
     private int sailAmount = 0;
-    
+
     private int sailAvg = 0;
-    
+
     /**
      * »±∂Ó
      */
     private int subtractAmount = 0;
-    
+
     /**
      * ø‚¥Ê
      */
     private int inventoryAmount = 0;
-    
+
+    /**
+     * ∂©ªı¡ø
+     */
+    private int orderAmount = 0;
+
     private int status = ProductConstant.STAT_STATUS_COMMON;
-    
+
     private String description = "";
 
     /**
      * ProductStatBean
      */
     public ProductStatBean()
-    {
-    }
+    {}
 
     public String getId()
     {
@@ -164,5 +171,56 @@ public class ProductStatBean implements Serializable
     public void setInventoryAmount(int inventoryAmount)
     {
         this.inventoryAmount = inventoryAmount;
+    }
+
+    /**
+     * @return the orderAmount
+     */
+    public int getOrderAmount()
+    {
+        return orderAmount;
+    }
+
+    /**
+     * @param orderAmount
+     *            the orderAmount to set
+     */
+    public void setOrderAmount(int orderAmount)
+    {
+        this.orderAmount = orderAmount;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( (productId == null) ? 0 : productId.hashCode());
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if ( ! (obj instanceof ProductStatBean)) return false;
+        final ProductStatBean other = (ProductStatBean)obj;
+        if (productId == null)
+        {
+            if (other.productId != null) return false;
+        }
+        else if ( !productId.equals(other.productId)) return false;
+        return true;
     }
 }
