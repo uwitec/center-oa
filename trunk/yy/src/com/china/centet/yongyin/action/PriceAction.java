@@ -853,14 +853,14 @@ public class PriceAction extends DispatchAction
             bean.setProcessTime(TimeTools.getDateTimeString(1800 * 1000));
         }
 
-        if (bean.getInstancy() == PriceConstant.PRICE_INSTANCY_NETWORK_11)
+        if (bean.getInstancy() == PriceConstant.PRICE_INSTANCY_NETWORK_1130)
         {
-            bean.setProcessTime(TimeTools.now_short() + " 11:00:00");
+            bean.setProcessTime(TimeTools.now_short() + " 11:30:00");
         }
 
-        if (bean.getInstancy() == PriceConstant.PRICE_INSTANCY_NETWORK_14)
+        if (bean.getInstancy() == PriceConstant.PRICE_INSTANCY_NETWORK_1530)
         {
-            bean.setProcessTime(TimeTools.now_short() + " 14:00:00");
+            bean.setProcessTime(TimeTools.now_short() + " 15:30:00");
         }
 
         if (bean.getInstancy() == PriceConstant.PRICE_INSTANCY_NETWORK_16)
@@ -1467,10 +1467,10 @@ public class PriceAction extends DispatchAction
                 setConditionForPriceTemplate(request, condtion);
 
                 int total = 0;
-                
+
                 try
                 {
-                    //这里实现有问题 暂时先保护起来
+                    // 这里实现有问题 暂时先保护起来
                     total = priceTemplateDAO.countVOBycondition(condtion.toString());
                 }
                 catch (Exception e)

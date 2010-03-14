@@ -103,12 +103,12 @@ public interface PriceConstant
     /**
      * 询价紧急程度-定点11点
      */
-    int PRICE_INSTANCY_NETWORK_11 = 3;
+    int PRICE_INSTANCY_NETWORK_1130 = 3;
 
     /**
      * 询价紧急程度-定点14点
      */
-    int PRICE_INSTANCY_NETWORK_14 = 4;
+    int PRICE_INSTANCY_NETWORK_1530 = 4;
 
     /**
      * 询价紧急程度-定点16点
