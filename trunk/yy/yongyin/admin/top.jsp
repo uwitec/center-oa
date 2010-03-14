@@ -75,7 +75,7 @@ function checkLock()
 <table width="100%" border="0" cellspacing="0" cellpadding="0" background="../images/login/vistablue.jpg" style="height: 63px">
   <tr ondblclick="sho()" background="../images/login/vistablue.jpg">
     <td ondblclick="sho()"></td>
-    <td ondblclick="sho()"><font color="#FFFFFF" size="2"><b>&nbsp;${SN}/SKYÈí¼þ¡¾V3.24.20100120¡¿</b></font></td>
+    <td ondblclick="sho()"><font color="#FFFFFF" size="2"><b>&nbsp;${SN}/SKYÈí¼þ¡¾V3.25.20100314¡¿</b></font></td>
     
     
     <td   ondblclick="sho()" align="right">

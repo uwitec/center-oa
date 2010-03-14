@@ -53,10 +53,8 @@ function init()
     if ($$('type_list_1') == '1')
     {
         removeAllItem(ss);
-        setOption(ss, '3', '询价(中午11点结束)');
-        setOption(ss, '4', '询价(下午2点结束)');
-        setOption(ss, '5', '询价(下午6点结束)');
-        setOption(ss, '6', '询价(晚间23点结束)');
+        setOption(ss, '3', '询价(中午11:30结束)');
+        setOption(ss, '4', '询价(下午15:30结束)');
     }
 }
 </script>
@@ -100,10 +98,8 @@ function init()
 				<option value="0">一般(2小时)</option>
 				<option value="1">紧急(1小时)</option>
 				<option value="2">非常紧急(30分钟)</option>
-				<option value="3">询价(中午11点结束)</option>
-				<option value="4">询价(下午2点结束)</option>
-				<option value="5">询价(下午6点结束)</option>
-				<option value="6">询价(晚间23点结束)</option>
+				<option value="3">询价(中午11:30结束)</option>
+				<option value="4">询价(下午15:30结束)</option>
 			</p:pro>
 			
 		</p:table>
