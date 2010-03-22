@@ -71,9 +71,9 @@ function addTr()
 {
 	var length = document.getElementsByName("productName").length;
 	
-	if (length > 10)
+	if (length > 15)
 	{
-		alert('最多只能有10个产品');
+		alert('最多只能有15个产品');
 		return null;
 	}
 	
