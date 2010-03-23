@@ -10,7 +10,7 @@
 <script language="javascript">
 function addBean()
 {
-	submit('确定增加订货?');
+	submit('确定修改订货?');
 }
 
 function selectCus()
@@ -29,12 +29,14 @@ function getProduct(obj)
 </head>
 <body class="body_class">
 <form name="formEntry" action="../product/product.do"><input
-	type="hidden" name="method" value="addOutOrder">
-<input type="hidden" name="productId" value=""> 
+	type="hidden" name="method" value="updateOutOrder">
+<input type="hidden" name="id" value="${bean.id}"> 
+<input type="hidden" name="productId" value="${bean.productId}"> 
+<input type="hidden" name="logTime" value="${bean.logTime}"> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javascript:history.go(-1)">定制产品管理</span> &gt;&gt; 增加订货</td>
+		onclick="javascript:history.go(-1)">定制产品管理</span> &gt;&gt; 修改订货</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -47,14 +49,11 @@ function getProduct(obj)
 	<p:line flag="0" />
 
 	<p:subBody width="98%">
-		<p:class value="com.china.center.oa.product.bean.OutOrderBean" />
+		<p:class value="com.china.center.oa.product.bean.OutOrderBean" opr="1"/>
 
 		<p:table cells="1">
 		    
-			<p:pro field="productId" innerString="size=60">
-			    <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectCus()">&nbsp;&nbsp; 
-			</p:pro>
+			<p:cell title="产品">${bean.productName}</p:cell>
 
 			<p:pro field="orderAmount" innerString="oncheck=isMathNumber"/>
 			

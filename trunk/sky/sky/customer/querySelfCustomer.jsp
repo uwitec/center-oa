@@ -29,7 +29,6 @@ function load()
 		     {display: '编码', name : 'code', width : '10%', sortable : false, align: 'left'},
 		     {display: '联系人', name : 'connector', width : '10%', sortable : false, align: 'left'},
 		     {display: '类型', name : 'selltype', width : '10%', sortable : false, align: 'left', cc: 101},
-		     {display: '级别', name : 'creditLevelName', width : '10%', sortable : false, align: 'left'},
 		     {display: '积分', name : 'creditVal', width : '10%', toFixed: 2},
 		     {display: '性质', name : 'mtype', width : '10%', sortable : false, align: 'left', cc: 107},
 		     {display: '时间', name : 'loginTime', width : 'auto', sortable : true, align: 'left'}

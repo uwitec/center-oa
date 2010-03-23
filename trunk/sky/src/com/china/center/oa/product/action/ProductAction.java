@@ -188,6 +188,78 @@ public class ProductAction extends DispatchAction
     }
 
     /**
+     * findOutOrder
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward findOutOrder(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        OutOrderBean bean = outOrderDAO.findVO(id);
+
+        if (bean == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据不存在");
+
+            return mapping.findForward("error");
+        }
+
+        request.setAttribute("bean", bean);
+
+        return mapping.findForward("updateOutOrder");
+    }
+
+    /**
+     * updateOutOrder
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward updateOutOrder(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        OutOrderBean bean = new OutOrderBean();
+
+        try
+        {
+            BeanUtil.getBean(bean, request);
+
+            User user = Helper.getUser(request);
+
+            bean.setStatus(ProductConstant.ORDER_STATUS_COMMON);
+
+            bean.setStafferId(user.getStafferId());
+
+            productFacade.updateOutOrder(user.getId(), bean);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功修改订货");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "修改订货失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        return mapping.findForward("queryOutOrder");
+    }
+
+    /**
      * cancelOutOrder
      * 
      * @param mapping

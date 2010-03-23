@@ -425,6 +425,7 @@
             validate="false">
             <forward name="queryProductStat" path="/product/queryProductStat.jsp" />
             <forward name="queryOutOrder" path="/product/queryOutOrder.jsp" />
+            <forward name="updateOutOrder" path="/product/updateOutOrder.jsp" />
         </action>
 
 	</action-mappings>

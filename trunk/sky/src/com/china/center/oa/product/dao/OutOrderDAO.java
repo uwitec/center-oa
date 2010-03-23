@@ -16,6 +16,7 @@ import com.china.center.jdbc.inter.impl.BaseDAO2;
 import com.china.center.oa.constant.ProductConstant;
 import com.china.center.oa.product.bean.OutOrderBean;
 import com.china.center.oa.product.vo.OutOrderVO;
+import com.china.center.tools.TimeTools;
 
 
 /**
@@ -34,5 +35,15 @@ public class OutOrderDAO extends BaseDAO2<OutOrderBean, OutOrderVO>
         return this.jdbcOperation.queryForInt(BeanTools.getSumHead(claz, "orderAmount")
                                               + "where status = ? and productId = ?",
             ProductConstant.ORDER_STATUS_COMMON, productId);
+    }
+
+    public boolean autoEndOrderBean()
+    {
+        this.jdbcOperation.update(BeanTools.getUpdateHead(claz)
+                                  + "set status = ? where status = ? and endTime >= ?",
+            ProductConstant.ORDER_STATUS_END, ProductConstant.ORDER_STATUS_COMMON,
+            TimeTools.now_short());
+
+        return true;
     }
 }

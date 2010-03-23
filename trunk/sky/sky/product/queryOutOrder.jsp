@@ -22,12 +22,13 @@ function load()
          url: '../product/product.do?method=queryOutOrder',
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status}>', width : 40, align: 'center'},
-             {display: '产品', name : 'productName', width : '20%'},
+             {display: '产品', name : 'productName', width : '15%'},
              {display: '编码', name : 'productCode', width : '8%'},
              {display: '状态', name : 'status', width : '8%', cc: 'productOrderStatus'},
              {display: '订货量', name : 'orderAmount', width : '8%'},
              {display: '订货职员', name : 'stafferName', width : '8%'},
-             {display: '备注', name : 'description', width : '25%'},
+             {display: '备注', name : 'description', width : '20%'},
+             {display: '失效', name : 'endTime', width : '15%'},
              {display: '时间', name : 'logTime', sortable : true, cname: 'logTime',  width : 'auto'}
              ],
          extAtt: {
@@ -35,6 +36,7 @@ function load()
          },
          buttons : [
              {id: 'add', bclass: 'add', caption: '增加预定', onpress : addBean, auth: '1001'},
+             {id: 'update', bclass: 'update', caption: '更新预定', onpress : updateBean, auth: '1001'},
              {id: 'delete', bclass: 'delete', caption: '取消预定', onpress : deldBean, auth: '1001'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
@@ -65,6 +67,15 @@ function $callBack()
 function addBean(opr, grid)
 {
     $l('../product/addOutOrder.jsp');
+}
+
+function updateBean(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb') 
+        && getRadio('checkb').lstatus == 0)
+    $l('../product/product.do?method=findOutOrder&update=1&id=' + $$('checkb'));
+    else
+    $error('不能操作');
 }
 
 function deldBean(opr, grid)

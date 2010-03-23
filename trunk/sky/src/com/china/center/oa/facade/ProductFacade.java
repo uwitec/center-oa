@@ -70,6 +70,35 @@ public class ProductFacade extends AbstarctFacade
     }
 
     /**
+     * updateOutOrder
+     * 
+     * @param userId
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    public boolean updateOutOrder(String userId, OutOrderBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        String opr = AuthConstant.PRODUCT_ORDER;
+
+        if (containAuth(user, opr))
+        {
+            return productStatManager.updateOutOrder(user, bean);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
      * cancleOutOrder
      * 
      * @param userId

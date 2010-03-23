@@ -9,7 +9,6 @@ import java.io.Serializable;
 import com.china.center.annotation.Entity;
 import com.china.center.annotation.Html;
 import com.china.center.annotation.Id;
-import com.china.center.annotation.JCheck;
 import com.china.center.annotation.Join;
 import com.china.center.annotation.Table;
 import com.china.center.annotation.enums.Element;
@@ -36,10 +35,13 @@ public class OutOrderBean implements Serializable
     @Join(tagClass = StafferBean.class)
     private String stafferId = "";
 
-    @Html(title = "订货数量", type = Element.INPUT, oncheck = JCheck.ONLY_NUMBER, must = true)
+    @Html(title = "订货数量", type = Element.INPUT, must = true)
     private int orderAmount = 0;
 
     private int status = ProductConstant.ORDER_STATUS_COMMON;
+
+    @Html(title = "失效时间", type = Element.DATE, must = true)
+    private String endTime = "";
 
     private String logTime = "";
 
@@ -169,5 +171,22 @@ public class OutOrderBean implements Serializable
     public void setStafferId(String stafferId)
     {
         this.stafferId = stafferId;
+    }
+
+    /**
+     * @return the endTime
+     */
+    public String getEndTime()
+    {
+        return endTime;
+    }
+
+    /**
+     * @param endTime
+     *            the endTime to set
+     */
+    public void setEndTime(String endTime)
+    {
+        this.endTime = endTime;
     }
 }

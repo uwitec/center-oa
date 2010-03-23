@@ -304,6 +304,9 @@ public class ProductStatManager
         condition.addCondition("logTime", "<=", logTime);
 
         outOrderDAO.deleteEntityBeansByCondition(condition);
+
+        // ×Ô¶¯½áÊø
+        outOrderDAO.autoEndOrderBean();
     }
 
     /**
@@ -323,6 +326,25 @@ public class ProductStatManager
         bean.setId(commonDAO2.getSquenceString20());
 
         outOrderDAO.saveEntityBean(bean);
+
+        return true;
+    }
+
+    /**
+     * updateOutOrder
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean updateOutOrder(User user, OutOrderBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, bean);
+
+        outOrderDAO.updateEntityBean(bean);
 
         return true;
     }
