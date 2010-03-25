@@ -171,6 +171,8 @@ public class PopQueryAction extends DispatchAction
         {
             condtion.addCondition("code", "like", code);
         }
+
+        condtion.addCondition("order by creditVal desc");
     }
 
     /**

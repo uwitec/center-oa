@@ -29,7 +29,7 @@ import com.china.center.tools.StringTools;
 /**
  * DepartmentDAO
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2008-11-2
  * @see CustomerDAO
  * @since 1.0
