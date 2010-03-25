@@ -625,6 +625,11 @@ public class OutManager
                                 outBean.getReserve6());
                         }
                     }
+
+                    // 修改人工干预,重新置为0
+                    String pid = "90000000000000009999";
+
+                    outDAO.updateCurCreToInit(pid, outBean.getCustomerId());
                 }
             }
             catch (Exception e)

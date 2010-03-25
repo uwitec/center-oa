@@ -1,9 +1,14 @@
 package com.china.centet.yongyin.dao;
 
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.jdbc.core.RowCallbackHandler;
 
 import com.china.center.common.ConditionParse;
 import com.china.center.jdbc.inter.JdbcOperation;
@@ -151,6 +156,44 @@ public class OutDAO
         jdbcOperation2.updateField("reserve2", reserve4, fullId, OutBean.class);
 
         jdbcOperation2.updateField("reserve6", reserve6, fullId, OutBean.class);
+
+        return true;
+    }
+
+    /**
+     * 修改客户的信用等级
+     * 
+     * @param pid
+     * @param cid
+     * @return
+     */
+    public boolean updateCurCreToInit(String pid, String cid)
+    {
+        jdbcOperation2.update(
+            "update T_CENTER_VS_CURCRE set val = 0.0 where pitemId = ? and cid = ?", pid, cid);
+
+        // 需要重新计算
+        double newCre = Math.ceil(jdbcOperation2.queryForDouble(
+            "select sum(val) from T_CENTER_VS_CURCRE where cid = ?", cid));
+
+        final List<String> list = new ArrayList();
+
+        jdbcOperation2.query("select * from t_center_credit_level where min <= ? and max >= ?",
+            new Object[] {newCre, newCre}, new RowCallbackHandler()
+            {
+                public void processRow(ResultSet rst)
+                    throws SQLException
+                {
+                    list.add(rst.getString("id"));
+                }
+            });
+
+        if (list.size() > 0)
+        {
+            jdbcOperation2.update(
+                "update t_center_customer_now set creditLevelId = ?, creditVal = ? where id = ?",
+                list.get(0), newCre, cid);
+        }
 
         return true;
     }
