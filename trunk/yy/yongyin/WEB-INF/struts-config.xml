@@ -54,6 +54,25 @@
             <forward name="successAsk" path="/admin/ask.jsp"
                 redirect="false" />
 		</action>
+		
+		<action path="/wap/checkuser" parameter="method"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+            <forward name="success" path="/wap/menu.jsp"
+                redirect="false" />
+            <forward name="error" path="/wap/index.jsp" redirect="true" />
+            <forward name="toIndex" path="/wap/index.jsp" redirect="true" />
+        </action>
+        
+        <action path="/wap/out" parameter="method"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+            <forward name="step2" path="/wap/step2.jsp" redirect="false" />
+            <forward name="step1Error" path="/wap/step1.jsp" redirect="false" />
+            <forward name="step2Error" path="/wap/step2.jsp" redirect="false" />
+            <forward name="step3" path="/wap/step3.jsp" redirect="false" />
+            <forward name="total" path="/wap/total.jsp" redirect="false" />
+        </action>
 
 		<action path="/admin/product" parameter="method"
 			type="org.springframework.web.struts.DelegatingActionProxy"

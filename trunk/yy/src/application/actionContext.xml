@@ -14,6 +14,12 @@
 
 	<bean name="/admin/checkuser"
 		class="com.china.centet.yongyin.action.LoginAction" scope="request" />
+		
+	<bean name="/wap/checkuser"
+        class="com.china.centet.yongyin.action.WapLoginAction" scope="request" />
+        
+    <bean name="/wap/out"
+        class="com.china.centet.yongyin.action.WapOutAction" scope="request" />
 
 	<bean name="/admin/logout"
 		class="com.china.centet.yongyin.action.LogoutAction" scope="request" />

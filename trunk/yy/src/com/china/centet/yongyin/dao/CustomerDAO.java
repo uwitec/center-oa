@@ -36,14 +36,31 @@ public class CustomerDAO
 
     public List<CustomerBean> queryCustomerByCondtion(ConditionParse condtion)
     {
+        return queryCustomerByCondtion(condtion, 100);
+    }
+
+    public List<CustomerBean> queryCustomerByCondtion(ConditionParse condtion, int limit)
+    {
         condtion.removeWhereStr();
 
-        // select * from t_center_customer_now t1, t_center_vs_stacus t2 where t1.id = t2.customerid and t2.stafferid =
-        // ? and ...
         return jdbcOperation.queryObjectsBySql(
             "select t1.* from t_center_customer_now t1, t_center_vs_stacus t2 where t1.id = t2.customerid and "
-                + condtion.toString() + " order by t1.id desc").setMaxResults(100).list(
+                + condtion.toString() + " order by t1.id desc").setMaxResults(limit).list(
             CustomerBean.class);
+    }
+
+    /**
+     * 是否有此客户的权限
+     * 
+     * @param stafferId
+     * @param customerId
+     * @return
+     */
+    public boolean isCustomerOwner(String stafferId, String customerId)
+    {
+        String sql = "select count(1) from t_center_vs_stacus t where STAFFERID = ? and CUSTOMERID = ? ";
+
+        return jdbcOperation.queryForInt(sql, stafferId, customerId) > 0;
     }
 
     public List<CustomerVO2> queryAllCustomerByCondtion(Map map)

@@ -46,9 +46,6 @@ public class ServletFilter implements Filter
     public void destroy()
     {}
 
-    /**
-     * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest,javax.servlet.ServletResponse,javax.servlet.FilterChain)
-     */
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
         throws IOException, ServletException
     {
@@ -62,21 +59,51 @@ public class ServletFilter implements Filter
 
         User user = (User)session.getAttribute("user");
 
+        Object wapUser = session.getAttribute("gwap");
+
         RequestDispatcher dispatch = request.getRequestDispatcher("timeout.jsp");
+
+        RequestDispatcher wapdispatch = request.getRequestDispatcher("../wap/index.jsp");
 
         String path = request.getServletPath().substring(0, 4);
 
-        if ("/index.jsp".equals(request.getServletPath()))
+        if (wapUser != null)
+        {
+            if (request.getServletPath().indexOf("/wap/") == -1)
+            {
+                dispatch.forward(request, response);
+                return;
+            }
+        }
+
+        if ("/index.jsp".equals(request.getServletPath())
+            || "/wap/index.jsp".equals(request.getServletPath())
+            || "/wap/image.jsp".equals(request.getServletPath())
+            || ("/wap/checkuser.do".equals(request.getServletPath())))
         {
             chain.doFilter(request, response);
             return;
         }
 
+        if (wapUser == null && user == null)
+        {
+            if (request.getServletPath().indexOf("/wap/") != -1)
+            {
+                request.getSession().setAttribute("errorInfo", "请重新登录");
+
+                wapdispatch.forward(request, response);
+
+                return;
+            }
+        }
+
         if ("/adm".equals(path) || "/mem".equals(path) || "/hel".equals(path)
-            || "/sto".equals(path) || "/flo".equals(path) || "/pri".equals(path))
+            || "/sto".equals(path) || "/flo".equals(path) || "/pri".equals(path)
+            || "/wap".equals(path))
         {
             if ( (user == null) && ! ("/admin/index.jsp".equals(request.getServletPath()))
                 && ! ("/admin/checkuser.do".equals(request.getServletPath()))
+                && ! ("/wap/checkuser.do".equals(request.getServletPath()))
                 && ! ("/admin/image.jsp".equals(request.getServletPath()))
                 && ! ("/admin/logout.do".equals(request.getServletPath()))
                 && ! ("/admin/ask.jsp".equals(request.getServletPath())))
@@ -108,6 +135,21 @@ public class ServletFilter implements Filter
         {
             dispatch.forward(request, response);
             return;
+        }
+
+        // 限制wap使用其他的
+        if (request.getServletPath() != null && request.getServletPath().length() > 0)
+        {
+            if (request.getServletPath().indexOf("/wap/") != -1
+                && ! ("/wap/checkuser.do".equals(request.getServletPath())))
+            {
+                if (wapUser == null)
+                {
+                    dispatch.forward(request, response);
+
+                    return;
+                }
+            }
         }
 
         // 去掉try {} finally{}

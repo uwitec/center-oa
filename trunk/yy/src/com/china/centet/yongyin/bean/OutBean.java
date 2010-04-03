@@ -20,7 +20,7 @@ import com.china.centet.yongyin.constant.OutConstanst;
 /**
  * Èë¿âµÄbean
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2007-3-25
  * @see
  * @since
