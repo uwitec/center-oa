@@ -53,7 +53,7 @@ public class ProductStatDAO extends BaseDAO2<ProductStatBean, ProductStatBean>
     }
 
     /**
-     * 查询产品的库存
+     * 查询产品的库存(物流中心的)
      * 
      * @param productId
      * @return
@@ -61,7 +61,8 @@ public class ProductStatDAO extends BaseDAO2<ProductStatBean, ProductStatBean>
     public int sumProductAmountByProductId(String productId)
     {
         return this.jdbcOperation.queryForInt(
-            "select sum(num) from t_center_productnumber  where productId = ? ", productId);
+            "select sum(num) from t_center_productnumber  where productId = ? and locationId = ?",
+            productId, "0");
     }
 
     /**
