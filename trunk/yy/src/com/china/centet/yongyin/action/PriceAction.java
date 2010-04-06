@@ -833,6 +833,41 @@ public class PriceAction extends DispatchAction
     }
 
     /**
+     * updatePriceAskAmount
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward updatePriceAskAmountStatus(ActionMapping mapping, ActionForm form,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse reponse)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        try
+        {
+            priceManager.updatePriceAskAmountStatus(id, 1);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功放行");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "放行失败:" + e.getMessage());
+        }
+
+        QueryTools.setForwardQuery(request);
+
+        return queryPriceAsk(mapping, form, request, reponse);
+    }
+
+    /**
      * @param bean
      */
     private void setPriceAskProcessTime(PriceAskBean bean)
@@ -1304,9 +1339,10 @@ public class PriceAction extends DispatchAction
 
             sb.append(")");
 
-            // 只能看见制定数量的产品询价
-            condtion.addIntCondition("PriceAskBean.amount", "<=",
-                parameterDAO.getInt(SysConfigConstant.ASK_PRODUCT_AMOUNT_MAX));
+            // 只能看见制定数量的产品询价(或者放行的)
+            condtion.addCondition("AND (PriceAskBean.amount <= "
+                                  + parameterDAO.getInt(SysConfigConstant.ASK_PRODUCT_AMOUNT_MAX)
+                                  + " or PriceAskBean.amountStatus = 1) ");
 
             // 只能看到虚拟存储的
             condtion.addIntCondition("PriceAskBean.saveType", "=",
@@ -1334,6 +1370,9 @@ public class PriceAction extends DispatchAction
                 // 只能看到虚拟存储的
                 condtion.addIntCondition("PriceAskBean.saveType", "=",
                     PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
+
+                // 没有放行的
+                condtion.addIntCondition("PriceAskBean.amountStatus", "=", 0);
 
                 // 只能看见制定数量的产品询价
                 condtion.addIntCondition("PriceAskBean.amount", ">",

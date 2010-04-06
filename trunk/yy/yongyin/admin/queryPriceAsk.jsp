@@ -153,6 +153,16 @@ function updateMaxAmount(id, amount)
                 }
             });
 }
+
+function updatePass(id)
+{
+    //updatePriceAskAmountStatus
+    if (window.confirm('确定放行此询价?'))
+    {
+        $Dbuttons(true);
+        document.location.href = '../admin/price.do?method=updatePriceAskAmountStatus&updateMax=1&id=' + id;
+    }
+}
 </script>
 
 </head>
@@ -312,6 +322,8 @@ function updateMaxAmount(id, amount)
 					<c:if test="${(user.role == 'NETSTOCK') && (item.status == 0 || item.status == 1 ) && updateMax == '1'}">
                         <a title="修改最大询价数量" href="javascript:updateMaxAmount('${item.id}', ${item.amount})"> <img
                             src="../images/edit.gif" border="0" height="15" width="15"></a>
+                        <a title="直接放行" href="javascript:updatePass('${item.id}')"> <img
+                            src="../images/change.gif" border="0" height="15" width="15"></a>
                     </c:if>
 
 					</td>

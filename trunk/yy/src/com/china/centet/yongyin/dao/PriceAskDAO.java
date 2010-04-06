@@ -37,6 +37,13 @@ public class PriceAskDAO extends BaseDAO2<PriceAskBean, PriceAskBeanVO>
         return true;
     }
 
+    public boolean updateAmountStatus(Serializable id, int newStatus)
+    {
+        this.jdbcOperation.updateField("amountStatus", newStatus, id, claz);
+
+        return true;
+    }
+
     /**
      * 定时更新询价超时
      * 

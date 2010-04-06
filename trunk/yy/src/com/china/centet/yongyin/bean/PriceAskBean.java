@@ -75,6 +75,11 @@ public class PriceAskBean implements Serializable
     private int type = PriceConstant.PRICE_ASK_TYPE_INNER;
 
     /**
+     * amountStatus
+     */
+    private int amountStatus = 0;
+
+    /**
      * 询价产品类型
      */
     private int productType = 0;
@@ -485,5 +490,22 @@ public class PriceAskBean implements Serializable
         {
             this.srcamount = srcamount;
         }
+    }
+
+    /**
+     * @return the amountStatus
+     */
+    public int getAmountStatus()
+    {
+        return amountStatus;
+    }
+
+    /**
+     * @param amountStatus
+     *            the amountStatus to set
+     */
+    public void setAmountStatus(int amountStatus)
+    {
+        this.amountStatus = amountStatus;
     }
 }

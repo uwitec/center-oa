@@ -146,6 +146,18 @@ public class PriceManager
         return true;
     }
 
+    @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean updatePriceAskAmountStatus(final Serializable id, int newStatus)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(id);
+
+        priceAskDAO.updateAmountStatus(id, newStatus);
+
+        return true;
+    }
+
     /**
      * handleNetAsk
      * 
@@ -568,6 +580,12 @@ public class PriceManager
         if ( ! (bean.getStatus() == PriceConstant.PRICE_ASK_STATUS_INIT || bean.getStatus() == PriceConstant.PRICE_ASK_STATUS_EXCEPTION))
         {
             throw new MYException("已经询价,不能删除");
+        }
+
+        // 如果存在父询价，也不能删除
+        if ( !StringTools.isNullOrNone(bean.getParentAsk()))
+        {
+            throw new MYException("询价中,不能删除");
         }
 
         priceAskDAO.deleteEntityBean(id);
