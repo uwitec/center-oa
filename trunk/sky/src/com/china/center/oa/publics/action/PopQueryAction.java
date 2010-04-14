@@ -129,7 +129,7 @@ public class PopQueryAction extends DispatchAction
 
             condtion.addWhereStr();
 
-            setInnerCondition(request, condtion);
+            setInnerConditionProduct(request, condtion);
 
             int total = productDAO.countByCondition(condtion.toString());
 
@@ -173,6 +173,23 @@ public class PopQueryAction extends DispatchAction
         }
 
         condtion.addCondition("order by creditVal desc");
+    }
+
+    private void setInnerConditionProduct(HttpServletRequest request, ConditionParse condtion)
+    {
+        String name = request.getParameter("name");
+
+        String code = request.getParameter("code");
+
+        if ( !StringTools.isNullOrNone(name))
+        {
+            condtion.addCondition("name", "like", name);
+        }
+
+        if ( !StringTools.isNullOrNone(code))
+        {
+            condtion.addCondition("code", "like", code);
+        }
     }
 
     /**
