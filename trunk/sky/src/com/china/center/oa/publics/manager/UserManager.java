@@ -343,6 +343,13 @@ public class UserManager
 
     @Exceptional
     @Transactional(rollbackFor = {MYException.class})
+    public boolean updateLocation(String id, String locationId)
+    {
+        return this.userDAO.updateLocation(id, locationId);
+    }
+
+    @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
     public boolean updateFail(String id, int fail)
     {
         return this.userDAO.updateFail(id, fail);

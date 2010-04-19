@@ -487,6 +487,45 @@ public class UserAction extends DispatchAction
     }
 
     /**
+     * updateUserLocation
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward updateUserLocation(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request,
+                                            HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        String newLocationId = request.getParameter("newLocationId");
+
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            publicFacade.updateUserLocation(user.getId(), id, newLocationId);
+
+            ajax.setSuccess("成功修改用户分公司属性");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("修改失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
      * findUser
      * 
      * @param mapping

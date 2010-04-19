@@ -445,6 +445,34 @@ public class PublicFacade extends AbstarctFacade
     }
 
     /**
+     * updateUserLocation
+     * 
+     * @param userId
+     * @param id
+     * @param locationId
+     * @return
+     * @throws MYException
+     */
+    public boolean updateUserLocation(String userId, String id, String locationId)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.USER_OPR))
+        {
+            return userManager.updateLocation(id, locationId);
+        }
+        else
+        {
+            throw new MYException("没有权限");
+        }
+    }
+
+    /**
      * addOrgBean
      * 
      * @param user

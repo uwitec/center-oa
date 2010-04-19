@@ -28,6 +28,7 @@ import org.apache.struts.actions.DispatchAction;
 import com.china.center.common.ConditionParse;
 import com.china.center.common.KeyConstant;
 import com.china.center.common.MYException;
+import com.china.center.common.json.AjaxResult;
 import com.china.center.oa.facade.PublicFacade;
 import com.china.center.oa.helper.Helper;
 import com.china.center.oa.publics.User;
@@ -140,7 +141,7 @@ public class LocationAction extends DispatchAction
         try
         {
             String[] citys = request.getParameterValues("city");
-            
+
             if (citys == null)
             {
                 citys = new String[0];
@@ -298,6 +299,29 @@ public class LocationAction extends DispatchAction
         }
 
         return mapping.findForward("detailLocation");
+    }
+
+    /**
+     * listLocation
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward listLocation(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        List<LocationBean> listEntityBeans = locationDAO.listEntityBeans();
+
+        ajax.setSuccess(listEntityBeans);
+
+        return JSONTools.writeResponse(response, ajax);
     }
 
     /**

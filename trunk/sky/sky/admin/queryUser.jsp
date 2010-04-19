@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="用户管理" link="true" guid="true" cal="true" dialog="true" />
+<p:link title="用户管理" link="true" guid="true" cal="false" dialog="true" />
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
@@ -23,7 +23,7 @@ function load()
 		 title: '用户列表',
 		 url: '../admin/user.do?method=queryUser',
 		 colModel : [
-		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lname={name} role={roleId}>', width : 40, sortable : false, align: 'center'},
+		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lname={name} role={roleId} llocationId={locationId}>', width : 40, sortable : false, align: 'center'},
 		     {display: '用户', name : 'name', width : '15%', sortable : false, align: 'left'},
 		     {display: '职员', name : 'stafferName', width : '15%', sortable : false, align: 'left'},
 		     {display: '分公司', name : 'locationName', width : '15%', sortable : false, align: 'left'},
@@ -36,6 +36,7 @@ function load()
 		 buttons : [
 		     {id: 'add', bclass: 'add', onpress : addBean, auth: '010401'},
 		     {id: 'update1', caption: '修改权限', bclass: 'update', onpress : updateRole, auth: '010401'},
+		     {id: 'update2', caption: '修改分公司', bclass: 'update', onpress : preForUpdateLocation, auth: '010401'},
 		     {id: 'del', bclass: 'delete', onpress : delBean, auth: '010401'},
 		     {id: 'unlock', caption: '解锁', bclass: 'update', onpress : unlock, auth: '010401'},
 		     {id: 'init', caption: '初始化密码', bclass: 'update', onpress : initPassword, auth: '010401'},
@@ -53,7 +54,84 @@ function load()
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);
+	 
+	 $('#dlg').dialog({
+                //iconCls: 'icon-save',
+                modal:true,
+                closed:true,
+                buttons:{
+                    '确 定':function(){
+                        updateLocation();
+                    },
+                    '取 消':function(){
+                        $('#dlg').dialog({closed:true});
+                    }
+                }
+     });
+     
+     $ESC('dlg');
 }
+
+function updateLocation()
+{
+    var newLocationId = $$('locationRadio');
+    
+    if (getRadio('checkb') && getRadioValue('checkb') && newLocationId != '')
+    {
+        $ajax('../admin/user.do?method=updateUserLocation&id=' + getRadioValue('checkb') + '&newLocationId=' + newLocationId, callSucess);
+    }
+}
+
+function callSucess(data)
+{
+    $('#dlg').dialog({closed:true});
+    
+    callBackFun(data);
+}
+
+function preForUpdateLocation()
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {
+       $ajax('../admin/location.do?method=listLocation', callBackFunLocation);
+    }
+    else
+    {
+        $error();
+    }
+}
+
+function callBackFunLocation(data)
+{
+    if ($O('dia_inner').innerHTML != '')
+    {
+        $Set2('locationRadio', getRadio('checkb').llocationId);
+    
+        $('#dlg').dialog({closed:false});
+        return;
+    }
+    
+    $O('dia_inner').innerHTML = '';
+    
+    var logs = data.msg;
+    
+    var htm = '';
+    
+    for(var i = 0; i < logs.length; i++)
+    {
+        var item = logs[i];
+        
+        var llog = '<input type=radio name=locationRadio value=' + item.id + '> ' + item.name + '<br>';
+        
+        htm += llog;
+    }
+    $O('dia_inner').innerHTML = htm;
+    
+    $Set2('locationRadio', getRadio('checkb').llocationId);
+    
+    $('#dlg').dialog({closed:false});
+}
+
 
 function $callBack()
 {
@@ -143,5 +221,9 @@ function commonQuery(par)
 </form>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
+<div id="dlg" title="选择分公司" style="width:320px;">
+    <div style="padding:20px;height:200px;" id="dia_inner" title="">
+   </div>
+</div>
 <p:query/>
 </body>

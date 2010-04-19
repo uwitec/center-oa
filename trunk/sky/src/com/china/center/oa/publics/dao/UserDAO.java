@@ -52,6 +52,20 @@ public class UserDAO extends BaseDAO2<UserBean, UserVO>
         return i != 0;
     }
 
+    /**
+     * updateLocation
+     * 
+     * @param id
+     * @param locationId
+     * @return
+     */
+    public boolean updateLocation(String id, String locationId)
+    {
+        int i = jdbcOperation.updateField("locationId", locationId, id, this.claz);
+
+        return i != 0;
+    }
+
     public boolean updateFail(String id, int fail)
     {
         int i = jdbcOperation.updateField("fail", fail, id, this.claz);
