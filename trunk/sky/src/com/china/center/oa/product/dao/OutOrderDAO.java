@@ -40,7 +40,7 @@ public class OutOrderDAO extends BaseDAO2<OutOrderBean, OutOrderVO>
     public boolean autoEndOrderBean()
     {
         this.jdbcOperation.update(BeanTools.getUpdateHead(claz)
-                                  + "set status = ? where status = ? and endTime >= ?",
+                                  + "set status = ? where status = ? and endTime <= ?",
             ProductConstant.ORDER_STATUS_END, ProductConstant.ORDER_STATUS_COMMON,
             TimeTools.now_short());
 
