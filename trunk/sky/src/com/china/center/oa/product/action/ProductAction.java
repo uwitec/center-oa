@@ -1,9 +1,21 @@
 package com.china.center.oa.product.action;
 
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import jxl.Workbook;
+import jxl.write.Label;
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,10 +28,12 @@ import com.china.center.common.ConditionParse;
 import com.china.center.common.KeyConstant;
 import com.china.center.common.MYException;
 import com.china.center.common.json.AjaxResult;
+import com.china.center.eltools.ElTools;
 import com.china.center.oa.constant.ProductConstant;
 import com.china.center.oa.facade.ProductFacade;
 import com.china.center.oa.helper.Helper;
 import com.china.center.oa.product.bean.OutOrderBean;
+import com.china.center.oa.product.bean.ProductStatBean;
 import com.china.center.oa.product.dao.OutOrderDAO;
 import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.dao.ProductStatDAO;
@@ -293,6 +307,140 @@ public class ProductAction extends DispatchAction
         }
 
         return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * export
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward export(ActionMapping mapping, ActionForm form,
+                                HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        condtion.addCondition("logTime", ">=",
+            TimeTools.getDateString( -2, TimeTools.SHORT_FORMAT));
+
+        condtion.addCondition("order by logTime desc");
+
+        List<ProductStatBean> beanList = productStatDAO.queryEntityBeansByCondition(condtion);
+
+        OutputStream out = null;
+
+        // yyyy-MM-dd HH:mm:ss
+        String filenName = null;
+
+        filenName = "P_" + TimeTools.now("MMddHHmmss") + ".xls";
+
+        if (beanList.size() == 0)
+        {
+            return null;
+        }
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WritableWorkbook wwb = null;
+
+        WritableSheet ws = null;
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            // create a excel
+            wwb = Workbook.createWorkbook(out);
+
+            ws = wwb.createSheet("sheel1", 0);
+
+            int i = 0, j = 0;
+
+            ProductStatBean element = null;
+
+            WritableFont font = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD, false,
+                jxl.format.UnderlineStyle.NO_UNDERLINE, jxl.format.Colour.BLUE);
+
+            WritableFont font2 = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD,
+                false, jxl.format.UnderlineStyle.NO_UNDERLINE, jxl.format.Colour.BLACK);
+
+            WritableCellFormat format = new WritableCellFormat(font);
+
+            WritableCellFormat format2 = new WritableCellFormat(font2);
+
+            ws.addCell(new Label(j++ , i, "时间", format));
+            ws.addCell(new Label(j++ , i, "产品名称", format));
+            ws.addCell(new Label(j++ , i, "产品编码", format));
+            ws.addCell(new Label(j++ , i, "状态", format));
+            ws.addCell(new Label(j++ , i, "缺额", format));
+            ws.addCell(new Label(j++ , i, "日均销量", format));
+            ws.addCell(new Label(j++ , i, "15天销售量", format));
+            ws.addCell(new Label(j++ , i, "库存", format));
+            ws.addCell(new Label(j++ , i, "订货", format));
+
+            for (Iterator iter = beanList.iterator(); iter.hasNext();)
+            {
+                element = (ProductStatBean)iter.next();
+
+                j = 0;
+                i++ ;
+
+                ws.addCell(new Label(j++ , i, element.getLogTime()));
+                ws.addCell(new Label(j++ , i, element.getProductName()));
+
+                ws.addCell(new Label(j++ , i, element.getProductCode()));
+
+                ws.addCell(new Label(j++ , i,
+                    ElTools.get("productStatStatus", element.getStatus()), format2));
+
+                ws.addCell(new jxl.write.Number(j++ , i, element.getSubtractAmount()));
+                ws.addCell(new jxl.write.Number(j++ , i, element.getSailAvg()));
+
+                ws.addCell(new jxl.write.Number(j++ , i, element.getSailAmount()));
+
+                ws.addCell(new jxl.write.Number(j++ , i, element.getInventoryAmount()));
+                ws.addCell(new jxl.write.Number(j++ , i, element.getOrderAmount()));
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+
+            return null;
+        }
+        finally
+        {
+            if (wwb != null)
+            {
+                try
+                {
+                    wwb.write();
+                    wwb.close();
+                }
+                catch (Exception e1)
+                {}
+            }
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {}
+            }
+        }
+
+        return null;
     }
 
     /**

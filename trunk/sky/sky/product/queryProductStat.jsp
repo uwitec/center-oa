@@ -36,7 +36,7 @@ function load()
              //title : {begin : '<a href=../product/product.do?method=findMake&id={id}>', end : '</a>'}
          },
          buttons : [
-             //{id: 'add', bclass: 'add', caption: '增加订货建议', onpress : addBean, auth: '1001'},
+             {id: 'add', bclass: 'replied', caption: '导出', onpress : exportBean, auth: '1001'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
          usepager: true,
@@ -60,6 +60,12 @@ function $callBack()
     
     highlights($("#mainTable").get(0), ['预警态'], 'red');
     highlights($("#mainTable").get(0), ['正常态'], 'blue');
+}
+
+//导出最近的2天数据
+function exportBean()
+{
+    $l('../product/product.do?method=export');
 }
 
 function doSearch()
