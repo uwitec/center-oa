@@ -174,6 +174,12 @@ public class ProductDAO
             "select * from t_center_product " + condtion.toString()).getCount();
     }
 
+    public int sumProductInAllLocation(String productId)
+    {
+        return this.jdbcOperation.queryForInt(
+            "select sum(num) from t_center_productnumber where productId = ?", productId);
+    }
+
     public List<Product> queryNotSynchronizedProductByLocationId(String locationId)
     {
         String sql = "select * from t_center_product where id not in "

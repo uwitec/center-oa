@@ -277,7 +277,7 @@ public class ProductAction extends DispatchAction
             }
 
             ConditionParse condtion = new ConditionParse();
-            
+
             condtion.addIntCondition("t1.status", "=", ProductConstant.STATUS_COMMON);
 
             if ( !StringTools.isNullOrNone(name))
@@ -652,6 +652,10 @@ public class ProductAction extends DispatchAction
 
         for (ProductAmount productAmount : list)
         {
+            int sum = productDAO.sumProductInAllLocation(productAmount.getProductId());
+
+            productAmount.setTotal(sum);
+
             tatol += productAmount.getNum();
         }
 
@@ -1503,7 +1507,8 @@ public class ProductAction extends DispatchAction
 
                 PageSeparate page = new PageSeparate(total, Constant.PAGE_COMMON_SIZE);
 
-                OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryStatHotProduct");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request,
+                    "queryStatHotProduct");
 
                 list = hotProductDAO.queryStatHotProduct(beginTime, endTime, page);
             }

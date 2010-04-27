@@ -41,6 +41,9 @@ public class ProductAmount implements Serializable
 
     private int num = 0;
 
+    @Ignore
+    private int total = 0;
+
     private String locationId = "";
 
     @Ignore
@@ -168,6 +171,23 @@ public class ProductAmount implements Serializable
     public void setLocationName(String locationName)
     {
         this.locationName = locationName;
+    }
+
+    /**
+     * @return the total
+     */
+    public int getTotal()
+    {
+        return total;
+    }
+
+    /**
+     * @param total
+     *            the total to set
+     */
+    public void setTotal(int total)
+    {
+        this.total = total;
     }
 
 }

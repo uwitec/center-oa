@@ -172,8 +172,8 @@ function exprotProduct()
 						<td align="center" onclick="tableSort(this)" class="td_class"><B>产品名称</B></td>
 						<td align="center" onclick="tableSort(this)" class="td_class"><B>产品编码</B></td>
 						<td align="center" onclick="tableSort(this)" class="td_class"><B>产品区域</B></td>
-						<td align="center" onclick="tableSort(this, true)"
-							class="td_class"><B>产品数量</B></td>
+						<td align="center" onclick="tableSort(this, true)" class="td_class"><B>产品数量</B></td>
+						<td align="center" onclick="tableSort(this, true)" class="td_class"><B>产品总数量</B></td>
 					</tr>
 
 					<c:forEach items="${productList}" var="item" varStatus="vs">
@@ -182,6 +182,7 @@ function exprotProduct()
 							<td align="center">${item.productCode}</td>
 							<td align="center">${item.locationName}</td>
 							<td align="center">${item.num}</td>
+							<td align="center">${item.total}</td>
 						</tr>
 					</c:forEach>
 				</table>
