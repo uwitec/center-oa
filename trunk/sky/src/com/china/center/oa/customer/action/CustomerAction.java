@@ -773,7 +773,7 @@ public class CustomerAction extends DispatchAction
     }
 
     /**
-     * addCustomer
+     * addApplyCustomer
      * 
      * @param mapping
      * @param form

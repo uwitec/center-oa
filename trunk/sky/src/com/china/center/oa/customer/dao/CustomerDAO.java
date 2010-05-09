@@ -48,6 +48,11 @@ public class CustomerDAO extends BaseDAO2<CustomerBean, CustomerVO>
         return this.jdbcOperation.queryForInt("where locationId = ?", claz, locationId);
     }
 
+    public int countByCreditLevelId(String creditLevelId)
+    {
+        return this.jdbcOperation.queryForInt("where creditLevelId = ?", claz, creditLevelId);
+    }
+
     /**
      * Í³¼Æcode
      * 

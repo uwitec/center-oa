@@ -13,6 +13,7 @@ import net.sourceforge.sannotations.annotation.Bean;
 
 import com.china.center.jdbc.inter.impl.BaseDAO2;
 import com.china.center.oa.credit.bean.CreditLevelBean;
+import com.china.center.oa.credit.vo.CreditLevelVO;
 
 
 /**
@@ -24,7 +25,7 @@ import com.china.center.oa.credit.bean.CreditLevelBean;
  * @since 1.0
  */
 @Bean(name = "creditLevelDAO")
-public class CreditLevelDAO extends BaseDAO2<CreditLevelBean, CreditLevelBean>
+public class CreditLevelDAO extends BaseDAO2<CreditLevelBean, CreditLevelVO>
 {
     public CreditLevelBean findByVal(int val)
     {

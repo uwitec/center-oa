@@ -184,6 +184,8 @@ public abstract class AbstractBean implements Serializable
 
     private String loginTime = "";
 
+    private String createTime = "";
+
     @Html(title = "ÆäËû", type = Element.TEXTAREA, maxLength = 200)
     private String description = "";
 
@@ -946,5 +948,22 @@ public abstract class AbstractBean implements Serializable
             tab).append("creditVal = ").append(this.creditVal).append(tab).append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the createTime
+     */
+    public String getCreateTime()
+    {
+        return createTime;
+    }
+
+    /**
+     * @param createTime
+     *            the createTime to set
+     */
+    public void setCreateTime(String createTime)
+    {
+        this.createTime = createTime;
     }
 }

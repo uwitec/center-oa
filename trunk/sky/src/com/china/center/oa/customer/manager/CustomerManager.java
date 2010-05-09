@@ -118,6 +118,8 @@ public class CustomerManager
 
         bean.setLoginTime(TimeTools.now());
 
+        bean.setCreateTime(TimeTools.now());
+
         customerApplyDAO.saveEntityBean(bean);
 
         return true;
@@ -716,6 +718,8 @@ public class CustomerManager
         bean.setStatus(CustomerConstant.REAL_STATUS_IDLE);
 
         bean.setLoginTime(TimeTools.now());
+
+        bean.setCreateTime(TimeTools.now());
 
         // º”√‹
         CustomerHelper.encryptCustomer(bean);

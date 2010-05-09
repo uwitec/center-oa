@@ -412,9 +412,18 @@ public class CustomerCreditManager
      * 
      * @param user
      * @param bean
+     * @throws MYException
      */
     private void saveApply(User user, CustomerBean bean)
+        throws MYException
     {
+        CustomerApplyBean old = customerApplyDAO.find(bean.getId());
+
+        if (old != null)
+        {
+            throw new MYException("客户修改申请已经存在(或者驳回了职员未处理),请先处理此申请");
+        }
+
         CustomerApplyBean apply = new CustomerApplyBean();
 
         BeanUtil.copyProperties(apply, bean);

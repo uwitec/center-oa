@@ -21,9 +21,10 @@ function load()
          url: '../credit/credit.do?method=queryCreditLevel',
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lmoney={money}>', width : 40, align: 'center'},
-             {display: '信用等级', name : 'name', width : '40%'},
+             {display: '信用等级', name : 'name', width : '30%'},
              {display: '等级分下限', name : 'min', width : '20%', toFixed: 2},
              {display: '等级分上限', name : 'max', width : '20%', toFixed: 2},
+             {display: '客户数量', name : 'customerAmount', width : '10%'},
              {display: '开单额度', name : 'money', width : 'auto', toFixed: 2}
              ],
          extAtt: {

@@ -41,6 +41,8 @@ import com.china.center.oa.credit.manager.CreditItemManager;
 import com.china.center.oa.credit.vo.CreditItemSecVO;
 import com.china.center.oa.credit.vo.CreditItemThrVO;
 import com.china.center.oa.credit.vo.CreditItemVO;
+import com.china.center.oa.credit.vo.CreditLevelVO;
+import com.china.center.oa.customer.dao.CustomerDAO;
 import com.china.center.oa.facade.CustomerFacade;
 import com.china.center.oa.helper.Helper;
 import com.china.center.oa.publics.User;
@@ -65,6 +67,8 @@ public class CreditItemAction extends DispatchAction
     private final Log _logger = LogFactory.getLog(getClass());
 
     private CreditItemDAO creditItemDAO = null;
+
+    private CustomerDAO customerDAO = null;
 
     private CreditItemSecDAO creditItemSecDAO = null;
 
@@ -220,7 +224,15 @@ public class CreditItemAction extends DispatchAction
         ActionTools.processJSONQueryCondition(QUERYCREDITLEVEL, request, condtion);
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCREDITLEVEL, request, condtion,
-            this.creditLevelDAO);
+            this.creditLevelDAO, new HandleResult<CreditLevelVO>()
+            {
+                public void handle(CreditLevelVO obj)
+                {
+                    int count = customerDAO.countByCreditLevelId(obj.getId());
+
+                    obj.setCustomerAmount(String.valueOf(count));
+                }
+            });
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -687,5 +699,22 @@ public class CreditItemAction extends DispatchAction
     public void setParameterDAO(ParameterDAO parameterDAO)
     {
         this.parameterDAO = parameterDAO;
+    }
+
+    /**
+     * @return the customerDAO
+     */
+    public CustomerDAO getCustomerDAO()
+    {
+        return customerDAO;
+    }
+
+    /**
+     * @param customerDAO
+     *            the customerDAO to set
+     */
+    public void setCustomerDAO(CustomerDAO customerDAO)
+    {
+        this.customerDAO = customerDAO;
     }
 }

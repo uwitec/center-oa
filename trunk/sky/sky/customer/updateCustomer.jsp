@@ -98,8 +98,8 @@ function changeArea(flag)
 <body class="body_class" onload="load()">
 <form name="addApply" action="../customer/customer.do" method="post"><input
 	type="hidden" name="method" value="addUpdateApplyCustomer">
-	<input
-    type="hidden" name="id" value="${bean.id}">
+<input type="hidden" name="id" value="${bean.id}">
+<input type="hidden" name="createTime" value="${bean.createTime}">
 	 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
