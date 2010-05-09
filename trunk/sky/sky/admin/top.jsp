@@ -109,7 +109,7 @@ function checkLock()
 <table width="100%" border="0" cellspacing="0" cellpadding="0" background="../images/login/vistablue.jpg" style="height: 63px">
   <tr ondblclick="sho()" background="../images/login/vistablue.jpg">
     <td ondblclick="sho()"></td>
-    <td ondblclick="sho()"><font color="#FFFFFF" size="2"><b>&nbsp;OA系统/SKY软件【V2.13.20100314.Beta】</b></font></td>
+    <td ondblclick="sho()"><font color="#FFFFFF" size="2"><b>&nbsp;OA系统/SKY软件【V2.14.20100509】</b></font></td>
     
     
     <td   ondblclick="sho()" align="right">
