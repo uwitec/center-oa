@@ -23,6 +23,7 @@ import com.china.center.oa.constant.PublicConstant;
 import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.customer.vo.CustomerVO;
 import com.china.center.oa.customer.wrap.CustomerAssignWrap;
+import com.china.center.oa.tools.OATools;
 import com.china.center.tools.StringTools;
 
 
@@ -50,7 +51,9 @@ public class CustomerDAO extends BaseDAO2<CustomerBean, CustomerVO>
 
     public int countByCreditLevelId(String creditLevelId)
     {
-        return this.jdbcOperation.queryForInt("where creditLevelId = ?", claz, creditLevelId);
+        return this.jdbcOperation.queryForInt(
+            "select count(1) from (select distinct(t1.id) from T_CENTER_CUSTOMER_NOW t1, t_center_out t2 where t1.id = t2.customerId and t2.outTime >= ? and t1.creditLevelId = ?) tt",
+            OATools.getFinanceBeginDate(), creditLevelId);
     }
 
     /**

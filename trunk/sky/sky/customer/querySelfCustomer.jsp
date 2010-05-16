@@ -26,11 +26,12 @@ function load()
 		 colModel : [
 		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lname={name}>', width : 40, sortable : false, align: 'center'},
 		     {display: '客户', name : 'name', width : '15%', sortable : true, align: 'left', cname: 'id'},
-		     {display: '编码', name : 'code', width : '10%', sortable : false, align: 'left'},
+		     {display: '编码', name : 'code', width : '8%', sortable : false, align: 'left'},
 		     {display: '联系人', name : 'connector', width : '10%', sortable : false, align: 'left'},
-		     {display: '类型', name : 'selltype', width : '10%', sortable : false, align: 'left', cc: 101},
-		     {display: '积分', name : 'creditVal', width : '10%', toFixed: 2},
+		     {display: '类型', name : 'selltype', width : '8%', sortable : false, align: 'left', cc: 101},
+		     {display: '积分', name : 'creditVal', width : '8%', toFixed: 2},
 		     {display: '性质', name : 'mtype', width : '10%', sortable : false, align: 'left', cc: 107},
+		     {display: '信用更新', name : 'creditUpdateTime', width : '8%', sortable : false, align: 'left'},
 		     {display: '时间', name : 'createTime', width : 'auto', sortable : true, align: 'left'}
 		     ],
 		 extAtt: {

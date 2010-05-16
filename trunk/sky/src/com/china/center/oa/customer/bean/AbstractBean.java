@@ -195,6 +195,11 @@ public abstract class AbstractBean implements Serializable
     private double creditVal = 30.0d;
 
     /**
+     * 更新次数
+     */
+    private int creditUpdateTime = 0;
+
+    /**
      * @return the description
      */
     public String getDescription()
@@ -965,5 +970,22 @@ public abstract class AbstractBean implements Serializable
     public void setCreateTime(String createTime)
     {
         this.createTime = createTime;
+    }
+
+    /**
+     * @return the creditUpdateTime
+     */
+    public int getCreditUpdateTime()
+    {
+        return creditUpdateTime;
+    }
+
+    /**
+     * @param creditUpdateTime
+     *            the creditUpdateTime to set
+     */
+    public void setCreditUpdateTime(int creditUpdateTime)
+    {
+        this.creditUpdateTime = creditUpdateTime;
     }
 }

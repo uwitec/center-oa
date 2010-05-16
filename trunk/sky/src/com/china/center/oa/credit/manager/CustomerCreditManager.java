@@ -364,6 +364,14 @@ public class CustomerCreditManager
     {
         JudgeTools.judgeParameterIsNull(user, cid);
 
+        // 更新信用次数
+        CustomerBean old = customerDAO.find(cid);
+
+        if (old == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
         List<CustomerCreditApplyBean> creditApplyList = customerCreditApplyDAO.queryEntityBeansByFK(cid);
 
         List<CustomerCreditBean> creditList = new ArrayList();
@@ -382,6 +390,10 @@ public class CustomerCreditManager
         customerCreditApplyDAO.deleteEntityBeansByFK(cid);
 
         customerApplyDAO.deleteEntityBean(cid);
+
+        old.setCreditUpdateTime(old.getCreditUpdateTime() + 1);
+
+        customerDAO.updateEntityBean(old);
 
         return true;
     }

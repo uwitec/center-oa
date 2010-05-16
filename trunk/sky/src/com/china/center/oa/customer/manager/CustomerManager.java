@@ -630,6 +630,7 @@ public class CustomerManager
         }
 
         cbean.setStatus(oldBean.getStatus());
+        cbean.setCreditUpdateTime(oldBean.getCreditUpdateTime());
 
         // 加入到正表里面
         customerDAO.updateEntityBean(cbean);
