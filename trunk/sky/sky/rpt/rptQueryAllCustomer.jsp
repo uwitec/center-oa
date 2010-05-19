@@ -91,9 +91,10 @@ function press()
 			id="result">
 			<tr align=center class="content0">
 				<td align="center" width="5%">选择</td>
-				<td align="center" width="40%"><strong>名称</strong></td>
-				<td align="center" width="30%"><strong>编码</strong></td>
-				<td align="center" width="30%"><strong>信用分</strong></td>
+				<td align="center" width="25%"><strong>名称</strong></td>
+				<td align="center" width="20%"><strong>编码</strong></td>
+				<td align="center" width="20%"><strong>信用分</strong></td>
+				<td align="center" width="20%"><strong>信用更新</strong></td>
 			</tr>
 
 			<c:forEach items="${list}" var="item" varStatus="vs">
@@ -103,6 +104,7 @@ function press()
 					<td align="center" onclick="hrefAndSelect(this)">${item.name}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.code}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.creditVal)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.creditUpdateTime}</td>
 				</tr>
 			</c:forEach>
 		</table>
