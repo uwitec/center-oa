@@ -149,13 +149,13 @@ public abstract class AbstractBean implements Serializable
 
     private String createrId = "";
 
-    @Html(title = "公司/机构", maxLength = 200)
+    @Html(title = "公司/机构", maxLength = 200, must = true)
     private String company = "";
 
     @Html(title = "地址", maxLength = 200, must = true)
     private String address = "";
 
-    @Html(title = "移动电话", maxLength = 200)
+    @Html(title = "移动电话", maxLength = 200, must = true)
     private String handphone = "";
 
     @Html(title = "固话", maxLength = 200)
