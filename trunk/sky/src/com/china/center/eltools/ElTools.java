@@ -12,9 +12,9 @@ import com.china.center.tools.StringTools;
 
 
 /**
- * 〈一句话功能简述〉
- *
- * @author zhuzhu
+ * ElTools
+ * 
+ * @author ZHUZHU
  * @version 2006-9-29
  * @see ElTools
  * @since
@@ -24,7 +24,7 @@ public final class ElTools
 {
     /**
      * Description:获得对象的长度 <br>
-     *
+     * 
      * @param o
      * @return int
      */
@@ -55,7 +55,7 @@ public final class ElTools
 
     /**
      * Description: 获得数组的长度<br>
-     *
+     * 
      * @param o
      * @return int
      */
@@ -66,7 +66,7 @@ public final class ElTools
 
     /**
      * Description: 在界面显示的时候截断字符<br>
-     *
+     * 
      * @param s
      * @param begin
      * @param end
