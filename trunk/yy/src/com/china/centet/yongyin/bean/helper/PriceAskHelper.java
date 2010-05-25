@@ -83,7 +83,9 @@ public abstract class PriceAskHelper
             buffer.append("<td  align='center'>" + bean.getSupportAmount() + "</td>");
             buffer.append("<td  align='center'>" + str + "</td>");
 
-            buffer.append("<td  align='center'>" + bean.getDescription() + "</td>");
+            String des = bean.getDescription().replaceAll("\r\n", "");
+
+            buffer.append("<td  align='center'>" + des + "</td>");
 
             buffer.append("<td  align='center'>" + bean.getLogTime() + "</td>");
 
