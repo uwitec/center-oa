@@ -107,7 +107,7 @@ public class OutBean implements Serializable
     private int consign = 0;
 
     /**
-     * 没有付款
+     * 0:没有付款 1:付款
      */
     private int pay = 0;
 
