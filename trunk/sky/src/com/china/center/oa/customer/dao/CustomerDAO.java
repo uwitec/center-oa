@@ -9,11 +9,16 @@
 package com.china.center.oa.customer.dao;
 
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.sannotations.annotation.Bean;
+
+import org.springframework.jdbc.core.RowCallbackHandler;
 
 import com.china.center.common.ConditionParse;
 import com.china.center.jdbc.inter.impl.BaseDAO2;
@@ -129,6 +134,32 @@ public class CustomerDAO extends BaseDAO2<CustomerBean, CustomerVO>
         this.jdbcOperation.updateField("status", status, id, claz);
 
         return true;
+    }
+
+    /**
+     * listNotPayCustomerIds
+     * 
+     * @return
+     */
+    public List<String> listNotPayCustomerIds()
+    {
+        // 查询销售单未还款的客户
+        String sql = "select distinct(t2.id) from t_center_out t1, T_CENTER_CUSTOMER_NOW t2 "
+                     + "where t2.id = t1.customerId and  t1.pay = 0 and t1.type = 0 and t1.outTime >= ?";
+
+        final List<String> result = new ArrayList();
+
+        this.jdbcOperation.query(sql, new Object[] {OATools.getFinanceBeginDate()},
+            new RowCallbackHandler()
+            {
+                public void processRow(ResultSet rst)
+                    throws SQLException
+                {
+                    result.add(rst.getString("ID"));
+                }
+            });
+
+        return result;
     }
 
     /**

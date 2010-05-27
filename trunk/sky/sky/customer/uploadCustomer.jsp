@@ -31,6 +31,12 @@ function checkValue()
     return true;
 }
 
+function exportCur()
+{
+    document.location.target = '_blank';
+    document.location.href = '../customer/customer.do?method=exportNotPay';
+}
+
 </script>
 
 </head>
@@ -63,6 +69,9 @@ function checkValue()
 			<p:cell title="导入文件">
 				<input type="file" name="myFile" class="button_class" />
 			</p:cell>
+			<p:cell title="导出应收客户">
+                <input type="button" class="button_class"  value="导出应收客户" onclick="exportCur()"/>
+            </p:cell>
 		</p:table>
 	</p:subBody>
 

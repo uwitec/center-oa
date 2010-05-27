@@ -23,6 +23,8 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import com.china.center.common.ConditionParse;
 import com.china.center.jdbc.inter.impl.BaseDAO2;
 import com.china.center.oa.constant.CreditConstant;
+import com.china.center.oa.customer.wrap.NotPayWrap;
+import com.china.center.oa.tools.OATools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.TimeTools;
 import com.china.centet.yongyin.bean.OutBean;
@@ -224,6 +226,20 @@ public class OutStatDAO extends BaseDAO2<OutBean, OutBean>
     }
 
     /**
+     * 查询财务年度以内的客户没有还款的金额
+     * 
+     * @param cid
+     * @return
+     */
+    public double sumNotPayByCid(String cid)
+    {
+        String sql = "select sum(t1.total) from t_center_out t1 "
+                     + "where t1.customerId = ? and t1.pay = 0 and t1.type = 0 and t1.outTime >= ?";
+
+        return this.jdbcOperation.queryForDouble(sql, cid, OATools.getFinanceBeginDate());
+    }
+
+    /**
      * sumBusiness(统计一段时间内的销售额)
      * 
      * @param cid
@@ -248,5 +264,22 @@ public class OutStatDAO extends BaseDAO2<OutBean, OutBean>
         }
 
         return (Double)max;
+    }
+
+    /**
+     * 查询当前所有的存在应收的客户
+     * 
+     * @return
+     */
+    public List<NotPayWrap> listNotPayWrap()
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("outTime", OATools.getFinanceBeginDate());
+
+        List<NotPayWrap> result = this.jdbcOperation.getIbatisDaoSupport().queryForList(
+            "OutStatDAO.listNotPayWrap", paramterMap);
+
+        return result;
     }
 }
