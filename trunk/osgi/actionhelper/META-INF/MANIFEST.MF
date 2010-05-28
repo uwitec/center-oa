@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Require-Bundle: com.china.center.osgi.jdbc;bundle-version="1.0.0",
+ com.china.center.osgi.tools;bundle-version="1.0.0"
+Export-Package: com.china.center.actionhelper.common;version="1.0.0",
+ com.china.center.actionhelper.json;version="1.0.0",
+ com.china.center.actionhelper.jsonimpl;version="1.0.0",
+ com.china.center.actionhelper.query;version="1.0.0"
+Bundle-Version: 1.0.0
+Bundle-Name: com.china.center.osgi.actionhelper
+Bundle-ManifestVersion: 2
+Import-Package: org.osgi.framework;version="1.3.0"
+Bundle-SymbolicName: com.china.center.osgi.actionhelper
+
+
