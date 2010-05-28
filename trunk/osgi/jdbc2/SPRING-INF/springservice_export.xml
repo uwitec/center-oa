@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:ex="http://www.springframework.org/schema/ex"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="
+  http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/tx 
+  http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+  http://www.springframework.org/schema/ex 
+  http://www.springframework.org/schema/ex/spring-ex-2.0.xsd
+  http://www.springframework.org/schema/osgi
+  http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<osgi:service ref="jdbcOperation" interface="com.china.center.jdbc.inter.JdbcOperation" />
+	
+	<osgi:service ref="dynamicJdbcOperation" interface="com.china.center.jdbc.inter.DynamicJdbcOperation" />
+	
+	<osgi:service ref="transactionManager" interface="org.springframework.transaction.PlatformTransactionManager" />
+	
+	<osgi:service ref="exceptionalManager" interface="org.china.center.spring.ex.annotation.ExceptionalManager" />
+	
+	<osgi:service ref="convertEncode" interface="com.china.center.jdbc.inter.Convert" />
+	
+	<osgi:service ref="dataSource" interface="javax.sql.DataSource" />
+
+</beans>

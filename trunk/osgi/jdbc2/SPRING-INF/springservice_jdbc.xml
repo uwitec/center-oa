@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:ex="http://www.springframework.org/schema/ex"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="
+  http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/tx 
+  http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+  http://www.springframework.org/schema/ex 
+  http://www.springframework.org/schema/ex/spring-ex-2.0.xsd
+  http://www.springframework.org/schema/osgi
+  http://www.springframework.org/schema/osgi/spring-osgi.xsd"
+	default-autowire="byName" default-init-method="init">
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+	</bean>
+
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>${jdbc.driverClassName}</value>
+		</property>
+		<property name="url">
+			<value>${jdbc.url}</value>
+		</property>
+		<property name="username">
+			<value>${jdbc.username}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password}</value>
+		</property>
+		<property name="maxActive">
+			<value>20</value>
+		</property>
+		<property name="maxIdle">
+			<value>15</value>
+		</property>
+		<property name="maxWait">
+			<value>18000</value>
+		</property>
+		<property name="defaultAutoCommit">
+			<value>false</value>
+		</property>
+	</bean>
+
+	<bean id="jdbcTemplate"
+		class="org.springframework.jdbc.core.JdbcTemplate" scope="prototype">
+	</bean>
+
+	<bean id="jdbcOperation"
+		class="com.china.center.jdbc.inter.impl.MyJdbcTemplate">
+		<property name="show_sql">
+			<value>${show_sql}</value>
+		</property>
+		<property name="cache">
+			<value>${cache}</value>
+		</property>
+	</bean>
+
+	<bean id="baseDAO"
+		class="com.china.center.jdbc.inter.impl.BaseDAO"
+		abstract="true">
+	</bean>
+	
+	<bean id="convertEncode"
+		class="com.china.center.jdbc.inter.impl.ConvertEncode">
+		<property name="databaseEncoding">
+			<value>${databaseEncoding}</value>
+		</property>
+		<property name="systemEncoding">
+			<value>${systemEncoding}</value>
+		</property>
+	</bean>
+
+	<bean id="cacheBootstrap"
+		class="com.china.center.jdbc.cache.impl.EhcacheBootstrapImpl" />
+
+	<bean id="cacheManager"
+		class="com.china.center.jdbc.cache.impl.EhcacheCacheManagerImpl"
+		init-method="init" destroy-method="destory">
+		<property name="cluster">
+			<value>${cluster}</value>
+		</property>
+		<property name="group">
+			<value>${group}</value>
+		</property>
+		<property name="mprot">
+			<value>${mprot}</value>
+		</property>
+		<property name="timeToLive">
+			<value>${timeToLive}</value>
+		</property>
+	</bean>
+
+	<bean id="adapterCache"
+		class="com.china.center.jdbc.inter.adapter.AdapterCacheImpl"
+		init-method="bootstrap">
+		<property name="cacheConfig">
+			<value>${cacheConfig}</value>
+		</property>
+	</bean>
+
+	<bean id="exceptionalManager"
+		class="com.china.center.common.ex.MyExceptionalManager" />
+		
+	<bean id="dynamicJdbcOperation"
+		class="com.china.center.jdbc.inter.impl.MyDynamicJdbcOperationImpl">
+		<property name="jdbcOperationMap">  
+          <map key-type="java.lang.String">  
+             <entry key="default" value-ref="jdbcOperation"/>  
+             <entry key="more1" value-ref="jdbcOperation_more1"/>  
+          </map>  
+       </property>
+	   <property name="platformTransactionManagerMap">  
+          <map key-type="java.lang.String">  
+             <entry key="default" value-ref="transactionManager"/>  
+             <entry key="more1" value-ref="transactionManager_more1"/>  
+          </map>  
+       </property>
+       <property name="defaultJdbcOperation">
+			<ref bean="jdbcOperation" />
+		</property> 
+       <property name="defaultPlatformTransactionManager">
+			<ref bean="transactionManager" />
+		</property> 
+	</bean>
+		
+</beans>
