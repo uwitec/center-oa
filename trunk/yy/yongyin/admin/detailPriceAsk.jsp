@@ -104,7 +104,7 @@
 					<td align="center">${item.userName}</td>
 					</c:if>
 
-					<td  align="center">${item.price}</td>
+					<td  align="center">${my:formatNum(item.price)}</td>
 					<td  align="center">${item.supportAmount}</td>
 
 					<td  align="center">${item.hasAmount == 0 ? "Âú×ã" : "<font color=red>²»Âú×ã</font>"}</td>
