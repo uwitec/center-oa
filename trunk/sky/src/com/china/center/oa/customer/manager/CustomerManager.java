@@ -938,7 +938,7 @@ public class CustomerManager
      * @param bean
      * @throws MYException
      */
-    private void checkUpdateBean(CustomerApplyBean bean)
+    private CustomerBean checkUpdateBean(CustomerApplyBean bean)
         throws MYException
     {
         CustomerBean old = customerDAO.find(bean.getId());
@@ -985,6 +985,7 @@ public class CustomerManager
                 throw new MYException("客户[%s]存在静态属性修改,请先结束此审批", bean.getName());
             }
         }
+        return old;
     }
 
     /**

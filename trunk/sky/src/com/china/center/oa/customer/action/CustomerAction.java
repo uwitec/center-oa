@@ -9,6 +9,7 @@
 package com.china.center.oa.customer.action;
 
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -760,12 +761,122 @@ public class CustomerAction extends DispatchAction
             condtion.addIntCondition("CustomerBean.status", "=", CustomerConstant.REAL_STATUS_IDLE);
         }
 
+        // exportAssign(request);
+
         ActionTools.processJSONQueryCondition(QUERYCANASSIGNCUSTOMER, request, condtion);
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCANASSIGNCUSTOMER, request,
             condtion, this.customerDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * exportAssign
+     * 
+     * @param condtion
+     */
+    public void exportAssign(HttpServletRequest request)
+    {
+        User user = Helper.getUser(request);
+
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        condtion.addCondition("CustomerBean.locationId", "=", user.getLocationId());
+
+        condtion.addIntCondition("CustomerBean.status", "=", CustomerConstant.REAL_STATUS_IDLE);
+
+        OutputStream out = null;
+
+        String filenName = null;
+
+        filenName = "c:/exportAssign_" + TimeTools.now("MMddHHmmss") + ".xls";
+
+        WritableWorkbook wwb = null;
+
+        WritableSheet ws = null;
+
+        List<CustomerBean> list = this.customerDAO.queryEntityBeansByCondition(condtion);
+
+        try
+        {
+            out = new FileOutputStream(filenName);
+
+            // create a excel
+            wwb = Workbook.createWorkbook(out);
+
+            ws = wwb.createSheet("exportAssign", 0);
+
+            int i = 0, j = 0;
+
+            CustomerBean element = null;
+
+            WritableFont font = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD, false,
+                jxl.format.UnderlineStyle.NO_UNDERLINE, jxl.format.Colour.BLUE);
+
+            WritableFont font2 = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD,
+                false, jxl.format.UnderlineStyle.NO_UNDERLINE, jxl.format.Colour.BLACK);
+
+            WritableCellFormat format = new WritableCellFormat(font);
+
+            WritableCellFormat format2 = new WritableCellFormat(font2);
+
+            ws.addCell(new Label(j++ , i, "客户名称", format2));
+            ws.addCell(new Label(j++ , i, "客户编码", format));
+            ws.addCell(new Label(j++ , i, "公司", format));
+            ws.addCell(new Label(j++ , i, "联系人", format));
+            ws.addCell(new Label(j++ , i, "手机", format));
+            ws.addCell(new Label(j++ , i, "固话", format));
+            ws.addCell(new Label(j++ , i, "地址", format));
+
+            for (Iterator iter = list.iterator(); iter.hasNext();)
+            {
+                element = (CustomerBean)iter.next();
+
+                CustomerHelper.decryptCustomer(element);
+
+                j = 0;
+                i++ ;
+
+                ws.addCell(new Label(j++ , i, element.getName()));
+                ws.addCell(new Label(j++ , i, element.getCode()));
+
+                ws.addCell(new Label(j++ , i, element.getCompany()));
+                ws.addCell(new Label(j++ , i, element.getConnector()));
+                ws.addCell(new Label(j++ , i, element.getHandphone()));
+                ws.addCell(new Label(j++ , i, element.getTel()));
+                ws.addCell(new Label(j++ , i, element.getAddress()));
+
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            if (wwb != null)
+            {
+                try
+                {
+                    wwb.write();
+                    wwb.close();
+                }
+                catch (Exception e1)
+                {}
+            }
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {}
+            }
+        }
     }
 
     /**
@@ -879,7 +990,17 @@ public class CustomerAction extends DispatchAction
                                                 HttpServletResponse response)
         throws ServletException
     {
-        CustomerApplyBean bean = new CustomerApplyBean();
+        String id = request.getParameter("id");
+
+        // 防止某些隐藏值被修改
+        CustomerBean bean = customerDAO.find(id);
+
+        if (bean == null)
+        {
+            ActionTools.toError("客户不存在", "queryApplyCustomer", mapping, request);
+        }
+
+        CustomerApplyBean apply = new CustomerApplyBean();
 
         try
         {
@@ -887,7 +1008,9 @@ public class CustomerAction extends DispatchAction
 
             User user = Helper.getUser(request);
 
-            customerFacade.applyUpdateCustomer(user.getId(), bean);
+            BeanUtil.copyProperties(apply, bean);
+
+            customerFacade.applyUpdateCustomer(user.getId(), apply);
 
             request.setAttribute(KeyConstant.MESSAGE, "成功申请修改客户:" + bean.getName());
         }

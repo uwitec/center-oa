@@ -130,6 +130,12 @@ public final class ElTools
         return DefinedCommon.getValue(key, index);
     }
 
+    /**
+     * formatNum
+     * 
+     * @param d
+     * @return
+     */
     public static String formatNum(double d)
     {
         DecimalFormat df = new DecimalFormat("####0.00");
