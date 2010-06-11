@@ -393,7 +393,7 @@ public class CustomerCreditManager
 
         old.setCreditUpdateTime(old.getCreditUpdateTime() + 1);
 
-        customerDAO.updateEntityBean(old);
+        customerDAO.updateCustomerCreditUpdateTime(cid, old.getCreditUpdateTime());
 
         return true;
     }

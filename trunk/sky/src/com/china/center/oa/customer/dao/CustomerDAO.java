@@ -137,6 +137,20 @@ public class CustomerDAO extends BaseDAO2<CustomerBean, CustomerVO>
     }
 
     /**
+     * updateCustomerCreditUpdateTime
+     * 
+     * @param id
+     * @param creditUpdateTime
+     * @return
+     */
+    public boolean updateCustomerCreditUpdateTime(String id, int creditUpdateTime)
+    {
+        this.jdbcOperation.updateField("creditUpdateTime", creditUpdateTime, id, claz);
+
+        return true;
+    }
+
+    /**
      * listNotPayCustomerIds
      * 
      * @return
