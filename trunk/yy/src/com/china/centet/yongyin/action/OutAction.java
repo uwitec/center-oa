@@ -1356,7 +1356,7 @@ public class OutAction extends DispatchAction
 
         request.setAttribute("overDayMap", overDayMap);
 
-        List<String> lists = commonDAO.listAll("t_center_oastaffer");
+        List<StafferBean2> lists = stafferDAO2.listEntityBeans();
 
         request.setAttribute("staffers", lists);
 
@@ -2616,6 +2616,13 @@ public class OutAction extends DispatchAction
         if ( !StringTools.isNullOrNone(stafferName))
         {
             condtion.addCondition("stafferName", "like", stafferName);
+        }
+
+        String stafferId = request.getParameter("stafferId");
+
+        if ( !StringTools.isNullOrNone(stafferId))
+        {
+            condtion.addCondition("stafferId", "=", stafferId);
         }
 
         String redate = request.getParameter("redate");

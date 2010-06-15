@@ -35,9 +35,11 @@ import com.china.center.common.MYException;
 import com.china.center.common.OldPageSeparateTools;
 import com.china.center.eltools.ElTools;
 import com.china.center.jdbc.util.PageSeparate;
+import com.china.center.tools.ActionTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.ListTools;
+import com.china.center.tools.SequenceTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 import com.china.centet.yongyin.Helper;
@@ -179,6 +181,116 @@ public class StockAction extends DispatchAction
         request.setAttribute("forward", "1");
 
         return queryStock(mapping, form, request, reponse);
+    }
+
+    /**
+     * 自动生成外网询价单
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward createAskBean(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        String itemId = request.getParameter("itemId");
+
+        StockItemBean item = stockItemDAO.find(itemId);
+
+        if (item == null)
+        {
+            return ActionTools.toError("数据错误,请确认操作", mapping, request);
+        }
+
+        PriceAskBean old = priceAskDAO.findByDescription(itemId);
+
+        if (old != null)
+        {
+            return ActionTools.toError("已经生成自动询价单,请确认操作", mapping, request);
+        }
+
+        User user = Helper.getUser(request);
+
+        try
+        {
+            PriceAskBean bean = new PriceAskBean();
+
+            setAutoAskBean(mapping, request, itemId, item, user, bean);
+
+            priceManager.addPriceAskBean(bean);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功增加询价申请");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "增加询价申失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        request.setAttribute("forward", "1");
+
+        return queryStock(mapping, form, request, reponse);
+    }
+
+    /**
+     * setAutoAskBean
+     * 
+     * @param mapping
+     * @param request
+     * @param itemId
+     * @param item
+     * @param user
+     * @param bean
+     */
+    private void setAutoAskBean(ActionMapping mapping, HttpServletRequest request, String itemId,
+                                StockItemBean item, User user, PriceAskBean bean)
+    {
+        bean.setId(SequenceTools.getSequence("ASK", 5));
+
+        bean.setProductId(item.getProductId());
+
+        bean.setAmount(item.getAmount());
+
+        bean.setSrcamount(item.getAmount());
+
+        bean.setType(PriceConstant.PRICE_ASK_TYPE_NET);
+
+        bean.setUserId(user.getId());
+
+        bean.setLogTime(TimeTools.now());
+
+        bean.setStatus(PriceConstant.PRICE_COMMON);
+
+        bean.setLocationId(user.getLocationID());
+
+        bean.setDescription(itemId);
+
+        Product product = productDAO.findProductById(bean.getProductId());
+
+        if (product != null)
+        {
+            bean.setProductType(product.getGenre());
+        }
+
+        StockBean stock = stockDAO.find(item.getStockId());
+
+        if (stock != null)
+        {
+            bean.setUserId(stock.getUserId());
+
+            bean.setLocationId(stock.getLocationId());
+        }
+
+        bean.setProcessTime(TimeTools.getDateString(1, TimeTools.LONG_FORMAT));
+
+        bean.setAskDate(TimeTools.getDateString(1, "yyyyMMdd"));
     }
 
     /**

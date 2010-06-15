@@ -295,11 +295,11 @@ function load()
 
 					<tr class="content2">
 						<td width="15%" align="center">出库人</td>
-						<td align="center"><select name="stafferName" values="${stafferName}" quick="true"
+						<td align="center"><select name="stafferId" values="${stafferId}" quick="true"
 							class="select_class">
 							<option value="" >--</option>
 							<c:forEach items="${staffers}" var="item">
-								<option value="${item}">${item}</option>
+								<option value="${item.id}">${item.name}</option>
 							</c:forEach>
 						</select></td>
 						<td width="15%" align="center">回款日期</td>

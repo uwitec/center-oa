@@ -126,6 +126,14 @@ function getPriceAskProvider(oo)
     }
 }
 
+//自动生成外网询价单
+function createAskBean()
+{
+    if (window.confirm('确定自动生成外网询价单?'))
+    {
+        $l('../stock/stock.do?method=createAskBean&stockId=${stockId}&itemId=${bean.id}');
+    }    
+}
 </script>
 
 </head>
@@ -265,6 +273,9 @@ function getPriceAskProvider(oo)
 		<div align="right"><input type="button" class="button_class"
 			name="adds" style="cursor: pointer"
 			value="&nbsp;&nbsp;确认询价&nbsp;&nbsp;" onclick="addBean()">&nbsp;&nbsp;
+		<input type="button" class="button_class"
+            name="adds" style="cursor: pointer"
+            value="&nbsp;&nbsp;自动生成外网询价单&nbsp;&nbsp;" onclick="createAskBean()">&nbsp;&nbsp;
 		<input type="button" class="button_class"
 			onclick="javascript:history.go(-1)"
 			value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>

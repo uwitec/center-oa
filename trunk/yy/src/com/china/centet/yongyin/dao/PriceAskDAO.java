@@ -37,6 +37,19 @@ public class PriceAskDAO extends BaseDAO2<PriceAskBean, PriceAskBeanVO>
         return true;
     }
 
+    public PriceAskBean findByDescription(String description)
+    {
+        List<PriceAskBean> list = this.jdbcOperation.queryForList("where description = ?", claz,
+            description);
+
+        if (list.size() > 0)
+        {
+            return list.get(0);
+        }
+
+        return null;
+    }
+
     public boolean updateAmountStatus(Serializable id, int newStatus)
     {
         this.jdbcOperation.updateField("amountStatus", newStatus, id, claz);

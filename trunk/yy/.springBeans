@@ -8,8 +8,6 @@
 		<config>src/application/applicationContext_common.xml</config>
 		<config>src/application/applicationContext_main.xml</config>
 		<config>src/application/applicationContext_JBPM.xml</config>
-		<config>src/application/applicationContext_Trigger.xml</config>
-		<config>src/application/DapplicationContext_JMS.xml</config>
 		<config>src/application/applicationContext_member.xml</config>
 		<config>src/application/applicationContext_flow.xml</config>
 	</configs>
@@ -23,8 +21,6 @@
 				<config>src/application/applicationContext_common.xml</config>
 				<config>src/application/applicationContext_main.xml</config>
 				<config>src/application/applicationContext_JBPM.xml</config>
-				<config>src/application/applicationContext_Trigger.xml</config>
-				<config>src/application/DapplicationContext_JMS.xml</config>
 				<config>src/application/applicationContext_member.xml</config>
 				<config>src/application/applicationContext_flow.xml</config>
 			</configs>
