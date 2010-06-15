@@ -45,6 +45,16 @@ public class MYException extends Exception
     }
 
     /**
+     * default constructor
+     */
+    public MYException(Throwable cause, String error)
+    {
+        super(cause);
+
+        this.errorContent = error;
+    }
+
+    /**
      * 动态获得异常信息
      */
     public MYException(Class claz, String errorContent)

@@ -17,8 +17,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.china.center.spring.ex.annotation.ExceptionalManager;
 
-import com.china.center.common.MYException;
-
 
 /**
  * MyExceptionalManager
@@ -58,11 +56,7 @@ public class MyExceptionalManager implements ExceptionalManager
 
         try
         {
-            MYException oo = (MYException)con.newInstance(ex);
-
-            oo.setErrorContent("系统内部错误,请重新操作");
-
-            return oo;
+            return (Throwable)con.newInstance(ex, "系统内部错误,请重新操作");
         }
         catch (InstantiationException e)
         {
