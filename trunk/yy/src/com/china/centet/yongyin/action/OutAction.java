@@ -1148,7 +1148,7 @@ public class OutAction extends DispatchAction
     }
 
     /**
-     * 管理员【出库单管理】需要翻页的实现
+     * 管理员【出库单管理】需要翻页的实现/咨询员
      * 
      * @param mapping
      * @param form
@@ -1268,7 +1268,8 @@ public class OutAction extends DispatchAction
                     setCondition(request, condtion);
                 }
 
-                if (user.getRole() == Role.FLOW)
+                if (LocationHelper.isSystemLocation(user.getLocationID())
+                    && (user.getRole() == Role.FLOW || user.getRole() == Role.THR || user.getRole() == Role.ADMIN))
                 {
                     condtion.addCondition("order by managerTime desc");
                 }

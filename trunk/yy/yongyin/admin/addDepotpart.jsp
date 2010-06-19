@@ -8,9 +8,11 @@
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <c:if test='${param.add != "1"}'>
 	<c:set var="dis" value="修改" />
+	<c:set var="red" value="readonly=true" />
 </c:if>
 <c:if test='${param.add == "1"}'>
 	<c:set var="dis" value="增加" />
+	<c:set var="red" value="" />
 </c:if>
 <script language="javascript">
 function addApplys()
@@ -56,7 +58,7 @@ function load()
 
 			<p:pro field="name" value="${depotpart.name}" />
 			
-			<p:pro field="type" value="${depotpart.type}" innerString="readonly=true">
+			<p:pro field="type" value="${depotpart.type}" innerString="${red}">
 				<option value="1">良品仓</option>
 				<option value="0">次品仓</option>
 				<option value="2">报废仓</option>
