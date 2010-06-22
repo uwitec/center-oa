@@ -90,8 +90,8 @@ function init()
 			<p:pro field="amount" />
             
             <p:cell title="询价方式">
-            <input type="checkbox" name="type_list_0" value="0" onclick=init()>内部询价
             <input type="checkbox" name="type_list_1" value="1" onclick=init()>外网询价
+            <input type="checkbox" name="type_list_0" value="0" onclick=init()>内部询价
             </p:cell>
 
 			<p:pro field="instancy" innerString="style='width: 240px'">
