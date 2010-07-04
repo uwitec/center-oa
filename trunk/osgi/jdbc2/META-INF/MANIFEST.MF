@@ -8,6 +8,7 @@ Export-Package: com.china.center.common;version="1.0.0",
  com.china.center.jdbc.annosql.tools;version="1.0.0",
  com.china.center.jdbc.annotation;version="1.0.0",
  com.china.center.jdbc.annotation.enums;version="1.0.0",
+ com.china.center.jdbc.annosql.constant;version="1.0.0",
  com.china.center.jdbc.inter;version="1.0.0",
  com.china.center.jdbc.inter.impl;version="1.0.0",
  com.china.center.jdbc.util;version="1.0.0"
