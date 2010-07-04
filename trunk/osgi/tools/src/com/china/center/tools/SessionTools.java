@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 import org.apache.catalina.session.StandardSession;
 import org.apache.catalina.session.StandardSessionFacade;
 
-import com.center.china.osgi.annotation.NotCommon;
+import com.center.china.osgi.publics.annotation.NotCommon;
 
 
 /**
