@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<comment>cache的配置</comment>
+	<comment>JDBC的配置</comment>
 	<entry key="adapter.className">com.china.center.jdbc.inter.adapter.MySqlDBAdapter</entry>
 	<entry key="jdbc.driverClassName">com.mysql.jdbc.Driver</entry>
 	<entry key="jdbc.url">jdbc:mysql://127.0.0.1:3306/uportal?useUnicode=true&amp;characterEncoding=utf8</entry>
@@ -10,5 +10,5 @@
 	<entry key="sqlMap">config/sql-map-config.xml</entry>
 	<entry key="databaseEncoding">UTF-8</entry>
 	<entry key="systemEncoding">UTF-8</entry>
-	<entry key="show_sql">true</entry>
+	<entry key="show_sql">false</entry>
 </properties>
