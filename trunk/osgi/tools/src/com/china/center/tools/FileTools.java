@@ -341,7 +341,7 @@ public class FileTools
     }
 
     /**
-     * get format path
+     * get format path(end with /)
      * 
      * @param path
      * @return
@@ -361,7 +361,7 @@ public class FileTools
     }
 
     /**
-     * get format path
+     * get format path(not end with /)
      * 
      * @param path
      * @return

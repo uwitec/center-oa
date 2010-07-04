@@ -73,5 +73,10 @@
 	<classpathentry kind="lib" path="/jar_depend/lib/spring-osgi-io.jar"/>
 	<classpathentry kind="lib" path="/jar_depend/lib/spring-osgi-test.jar"/>
 	<classpathentry kind="lib" path="/jar_depend/lib/spring-osgi-web.jar"/>
+	<classpathentry kind="lib" path="/jar_depend/lib_self/buffalo-2.0-osgi.jar"/>
+	<classpathentry kind="lib" path="/jar_depend/lib_self/com.china.center.osgi.public_1.0.0.jar"/>
+	<classpathentry kind="lib" path="/jar_depend/lib_self/jxl.jar"/>
+	<classpathentry kind="lib" path="/jar_depend/lib_self/poi-2.5.1.jar"/>
+	<classpathentry kind="lib" path="/jar_depend/lib_self/readWord.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

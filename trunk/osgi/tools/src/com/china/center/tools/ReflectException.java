@@ -4,7 +4,7 @@
 package com.china.center.tools;
 
 /**
- * 〈一句话功能简述〉
+ * ReflectException
  * 
  * @author ZHUZHU
  * @version 2007-7-30
