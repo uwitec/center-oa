@@ -52,7 +52,8 @@
 	</bean>
 
 	<bean id="jdbcTemplate"
-		class="org.springframework.jdbc.core.JdbcTemplate" scope="prototype">
+		class="org.springframework.jdbc.core.JdbcTemplate"
+		scope="prototype">
 	</bean>
 
 	<bean id="jdbcOperation"
@@ -65,11 +66,10 @@
 		</property>
 	</bean>
 
-	<bean id="baseDAO"
-		class="com.china.center.jdbc.inter.impl.BaseDAO"
+	<bean id="baseDAO" class="com.china.center.jdbc.inter.impl.BaseDAO"
 		abstract="true">
 	</bean>
-	
+
 	<bean id="convertEncode"
 		class="com.china.center.jdbc.inter.impl.ConvertEncode">
 		<property name="databaseEncoding">
@@ -109,28 +109,32 @@
 	</bean>
 
 	<bean id="exceptionalManager"
-		class="com.china.center.common.ex.MyExceptionalManager" />
-		
+		class="com.china.center.common.ex.MyExceptionalManager">
+		<property name="unifyException">
+			<value>com.china.center.common.MYException</value>
+		</property>
+	</bean>
+
 	<bean id="dynamicJdbcOperation"
 		class="com.china.center.jdbc.inter.impl.MyDynamicJdbcOperationImpl">
-		<property name="jdbcOperationMap">  
-          <map key-type="java.lang.String">  
-             <entry key="default" value-ref="jdbcOperation"/>  
-             <entry key="more1" value-ref="jdbcOperation_more1"/>  
-          </map>  
-       </property>
-	   <property name="platformTransactionManagerMap">  
-          <map key-type="java.lang.String">  
-             <entry key="default" value-ref="transactionManager"/>  
-             <entry key="more1" value-ref="transactionManager_more1"/>  
-          </map>  
-       </property>
-       <property name="defaultJdbcOperation">
+		<property name="jdbcOperationMap">
+			<map key-type="java.lang.String">
+				<entry key="default" value-ref="jdbcOperation" />
+				<entry key="more1" value-ref="jdbcOperation_more1" />
+			</map>
+		</property>
+		<property name="platformTransactionManagerMap">
+			<map key-type="java.lang.String">
+				<entry key="default" value-ref="transactionManager" />
+				<entry key="more1" value-ref="transactionManager_more1" />
+			</map>
+		</property>
+		<property name="defaultJdbcOperation">
 			<ref bean="jdbcOperation" />
-		</property> 
-       <property name="defaultPlatformTransactionManager">
+		</property>
+		<property name="defaultPlatformTransactionManager">
 			<ref bean="transactionManager" />
-		</property> 
+		</property>
 	</bean>
-		
+
 </beans>

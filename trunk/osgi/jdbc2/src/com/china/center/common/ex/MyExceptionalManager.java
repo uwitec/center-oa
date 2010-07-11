@@ -40,10 +40,10 @@ public class MyExceptionalManager implements ExceptionalManager
      * default constructor
      */
     public MyExceptionalManager()
-    {}
+    {
+    }
 
-    public Throwable processSensitiveException(int switchFlag, Throwable ex, Method method,
-                                               Class claz)
+    public Throwable processSensitiveException(int switchFlag, Throwable ex, Method method, Class claz)
     {
         initExceptional();
 
@@ -97,7 +97,7 @@ public class MyExceptionalManager implements ExceptionalManager
             {
                 exceptionalClass = Class.forName(unifyException);
 
-                con = exceptionalClass.getDeclaredConstructor(Throwable.class);
+                con = exceptionalClass.getDeclaredConstructor(Throwable.class, String.class);
             }
             catch (ClassNotFoundException e)
             {
