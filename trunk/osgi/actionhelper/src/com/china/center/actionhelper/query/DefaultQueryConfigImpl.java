@@ -24,6 +24,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import com.center.china.osgi.publics.tools.ObjectTools;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.ResourceLocator;
 import com.china.center.tools.StringTools;
@@ -121,7 +122,7 @@ public class DefaultQueryConfigImpl implements QueryConfig
                     {
                         QueryItemBean queryItemBean = configMap.get(alias);
 
-                        QueryItemBean deepCopy = (QueryItemBean)CommonTools.deepCopy(queryItemBean);
+                        QueryItemBean deepCopy = (QueryItemBean)ObjectTools.deepCopy(queryItemBean);
 
                         deepCopy.setName(name);
 
@@ -221,7 +222,8 @@ public class DefaultQueryConfigImpl implements QueryConfig
                     in.close();
                 }
                 catch (IOException e)
-                {}
+                {
+                }
             }
         }
     }

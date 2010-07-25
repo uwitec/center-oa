@@ -75,8 +75,8 @@ public abstract class QueryTools
      * @param pagesize
      *            获取的数量
      */
-    public static void commonQueryVO(String key, HttpServletRequest request, List list,
-                                     ConditionParse condtion, DAO dao, int... pagesize)
+    public static void commonQueryVO(String key, HttpServletRequest request, List list, ConditionParse condtion,
+                                     DAO dao, int... pagesize)
     {
         int size = 10;
 
@@ -106,14 +106,14 @@ public abstract class QueryTools
      * @param pagesize
      *            获取的数量
      */
-    private static List<?> commonQueryVOInner(String key, HttpServletRequest request,
-                                              ConditionParse condtion, DAO dao, int pagesize)
+    private static List<?> commonQueryVOInner(String key, HttpServletRequest request, ConditionParse condtion, DAO dao,
+                                              int pagesize)
     {
         int size = pagesize;
 
         if (OldPageSeparateTools.isFirstLoad(request))
         {
-            int total = dao.countVOBycondition(condtion.toString());
+            int total = dao.countVOByCondition(condtion.toString());
 
             PageSeparate page = new PageSeparate(total, size);
 
@@ -121,7 +121,7 @@ public abstract class QueryTools
         }
         else if (OldPageSeparateTools.isMemory(request))
         {
-            int total = dao.countVOBycondition(OldPageSeparateTools.getCondition(request, key).toString());
+            int total = dao.countVOByCondition(OldPageSeparateTools.getCondition(request, key).toString());
 
             OldPageSeparateTools.processMemory(total, request, key);
         }
@@ -130,12 +130,12 @@ public abstract class QueryTools
             OldPageSeparateTools.processSeparate(request, key);
         }
 
-        return dao.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(request, key),
-            OldPageSeparateTools.getPageSeparate(request, key));
+        return dao.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(request, key), OldPageSeparateTools
+            .getPageSeparate(request, key));
     }
 
-    public static void commonQueryBean(String key, HttpServletRequest request, List list,
-                                       ConditionParse condtion, DAO dao, int... pagesize)
+    public static void commonQueryBean(String key, HttpServletRequest request, List list, ConditionParse condtion,
+                                       DAO dao, int... pagesize)
     {
         int size = 10;
 
@@ -151,14 +151,14 @@ public abstract class QueryTools
         list.addAll(commonQueryBeanInner(key, request, condtion, dao, size));
     }
 
-    private static List<?> commonQueryBeanInner(String key, HttpServletRequest request,
-                                                ConditionParse condtion, DAO dao, int pagesize)
+    private static List<?> commonQueryBeanInner(String key, HttpServletRequest request, ConditionParse condtion,
+                                                DAO dao, int pagesize)
     {
         int size = pagesize;
 
         if (OldPageSeparateTools.isFirstLoad(request))
         {
-            int total = dao.countBycondition(condtion.toString());
+            int total = dao.countByCondition(condtion.toString());
 
             PageSeparate page = new PageSeparate(total, size);
 
@@ -166,7 +166,7 @@ public abstract class QueryTools
         }
         else if (OldPageSeparateTools.isMemory(request))
         {
-            int total = dao.countBycondition(OldPageSeparateTools.getCondition(request, key).toString());
+            int total = dao.countByCondition(OldPageSeparateTools.getCondition(request, key).toString());
 
             OldPageSeparateTools.processMemory(total, request, key);
         }
@@ -175,7 +175,7 @@ public abstract class QueryTools
             OldPageSeparateTools.processSeparate(request, key);
         }
 
-        return dao.queryEntityBeansBycondition(OldPageSeparateTools.getCondition(request, key),
-            OldPageSeparateTools.getPageSeparate(request, key));
+        return dao.queryEntityBeansBycondition(OldPageSeparateTools.getCondition(request, key), OldPageSeparateTools
+            .getPageSeparate(request, key));
     }
 }
