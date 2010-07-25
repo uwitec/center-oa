@@ -63,7 +63,7 @@ public class Expression
 
         OprationType conditionTP = OprationType.AND;
 
-        CompareType ct = CompareType.ISUNIQUE;
+        CompareType ct = CompareType.UNIQUE;
 
         // 0 value 1 操作条件 2 DAO条件
         int postion = 0;
@@ -122,25 +122,25 @@ public class Expression
                 continue;
             }
 
-            if (CompareType.ISUNIQUE.toString().equalsIgnoreCase(each))
+            if ( ("&" + CompareType.UNIQUE.toString()).equalsIgnoreCase(each))
             {
                 postion = 1;
 
-                ct = CompareType.ISUNIQUE;
+                ct = CompareType.UNIQUE;
 
                 continue;
             }
 
-            if (CompareType.ISUNIQUE2.toString().equalsIgnoreCase(each))
+            if ( ("&" + CompareType.UNIQUE2.toString()).equalsIgnoreCase(each))
             {
                 postion = 1;
 
-                ct = CompareType.ISUNIQUE2;
+                ct = CompareType.UNIQUE2;
 
                 continue;
             }
 
-            if (CompareType.NOTIN.toString().equalsIgnoreCase(each))
+            if ( ("&" + CompareType.NOTIN.toString()).equalsIgnoreCase(each))
             {
                 postion = 1;
 
@@ -149,7 +149,7 @@ public class Expression
                 continue;
             }
 
-            if (CompareType.IN.toString().equalsIgnoreCase(each))
+            if ( ("&" + CompareType.IN.toString()).equalsIgnoreCase(each))
             {
                 postion = 1;
 
@@ -185,7 +185,7 @@ public class Expression
         }
 
         // ISUNIQUE
-        if (ct == CompareType.ISUNIQUE)
+        if (ct == CompareType.UNIQUE)
         {
             // 都不在的时候
             if (valueOT == OprationType.AND)
@@ -239,7 +239,7 @@ public class Expression
         }
 
         // 更新中不能重复
-        if (ct == CompareType.ISUNIQUE2)
+        if (ct == CompareType.UNIQUE2)
         {
             String idColumn = BeanTools.getIdColumn(this.dataBean.getClass());
 

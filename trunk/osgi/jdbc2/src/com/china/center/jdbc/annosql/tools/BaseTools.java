@@ -112,6 +112,12 @@ public abstract class BaseTools
             }
         }
 
+        if (1 == 1)
+        {
+            throw new RuntimeException(oldValue.getClass() + " must impl DataClone");
+        }
+
+        // in OSGi it is a bug
         Object newValue = null;
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         ObjectOutputStream oos = null;

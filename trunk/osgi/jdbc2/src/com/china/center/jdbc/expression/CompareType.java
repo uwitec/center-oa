@@ -18,5 +18,5 @@ package com.china.center.jdbc.expression;
  */
 public enum CompareType
 {
-    ISUNIQUE, ISUNIQUE2, NOTIN, IN
+    UNIQUE, UNIQUE2, NOTIN, IN
 }

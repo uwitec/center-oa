@@ -19,7 +19,8 @@ public class ConditionParse implements Serializable
      *
      */
     public ConditionParse()
-    {}
+    {
+    }
 
     /**
      * 根据条件字段、运算符和条件值拼凑查询条件
@@ -36,17 +37,45 @@ public class ConditionParse implements Serializable
         if ( ! (conditionValue == null || "".equals(conditionValue)))
         {
             String tempOper = oper.trim().toUpperCase();
+
             if (tempOper.indexOf("LIKE") != -1)
             {
-                condition.append(" AND ").append(dbValueString(fieldName)).append(" ").append(
-                    dbValueString(oper)).append(" ");
-                condition.append("'%").append(dbValueString(conditionValue)).append("%'");
+                if (conditionValue.startsWith("%") || conditionValue.endsWith("%"))
+                {
+                    condition
+                        .append(" AND ")
+                        .append(dbValueString(fieldName))
+                        .append(" ")
+                        .append(dbValueString(oper))
+                        .append(" ")
+                        .append("'")
+                        .append(dbValueString(conditionValue))
+                        .append("'");
+                }
+                else
+                {
+                    condition
+                        .append(" AND ")
+                        .append(dbValueString(fieldName))
+                        .append(" ")
+                        .append(dbValueString(oper))
+                        .append(" ")
+                        .append("'%")
+                        .append(dbValueString(conditionValue))
+                        .append("%'");
+                }
             }
             else
             {
-                condition.append(" AND ").append(dbValueString(fieldName)).append(" ").append(
-                    dbValueString(oper)).append(" ");
-                condition.append("'").append(dbValueString(conditionValue)).append("'");
+                condition
+                    .append(" AND ")
+                    .append(dbValueString(fieldName))
+                    .append(" ")
+                    .append(dbValueString(oper))
+                    .append(" ")
+                    .append("'")
+                    .append(dbValueString(conditionValue))
+                    .append("'");
             }
         }
     }
@@ -85,8 +114,8 @@ public class ConditionParse implements Serializable
         String tempValue = String.valueOf(conditionValue);
         if ( ! (tempValue == null || "".equals(tempValue)))
         {
-            condition.append(" AND ").append(dbValueString(fieldName)).append(" ").append(
-                dbValueString(oper)).append(" ").append(dbValueString(tempValue)).append(" ");
+            condition.append(" AND ").append(dbValueString(fieldName)).append(" ").append(dbValueString(oper)).append(
+                " ").append(dbValueString(tempValue)).append(" ");
         }
     }
 
@@ -104,8 +133,8 @@ public class ConditionParse implements Serializable
         if ( ! (conditionValue == null || "".equals(conditionValue)))
         {
             int tempValue = Integer.parseInt(conditionValue);
-            condition.append(" AND ").append(dbValueString(fieldName)).append(" ").append(
-                dbValueString(oper)).append(tempValue);
+            condition.append(" AND ").append(dbValueString(fieldName)).append(" ").append(dbValueString(oper)).append(
+                tempValue);
         }
 
     }
@@ -117,16 +146,16 @@ public class ConditionParse implements Serializable
 
     public void addIntCondition(String fieldName, String oper, int conditionValue)
     {
-        condition.append(" AND ").append(dbValueString(fieldName)).append(" ").append(
-            dbValueString(oper)).append(conditionValue);
+        condition.append(" AND ").append(dbValueString(fieldName)).append(" ").append(dbValueString(oper)).append(
+            conditionValue);
     }
 
     public void addCommonCondition(String fieldName, String oper, String conditionValue)
     {
         if ( ! (conditionValue == null || "".equals(conditionValue)))
         {
-            condition.append(" AND ").append(dbValueString(fieldName)).append(" ").append(
-                dbValueString(oper)).append(conditionValue);
+            condition.append(" AND ").append(dbValueString(fieldName)).append(" ").append(dbValueString(oper)).append(
+                conditionValue);
         }
     }
 

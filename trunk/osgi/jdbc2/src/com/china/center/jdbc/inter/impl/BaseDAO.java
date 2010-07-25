@@ -24,7 +24,7 @@ import com.china.center.jdbc.util.PageSeparate;
 
 
 /**
- * 普通的dao
+ * 普通的DAO
  * 
  * @author ZHUZHU
  * @version 2008-3-10
@@ -199,8 +199,7 @@ public abstract class BaseDAO<Bean extends Serializable, VO extends Serializable
         return jdbcOperation.queryForList(condtition, claz, args);
     }
 
-    public List<Bean> queryEntityBeansByCondition(ConditionParse condtition, PageSeparate page,
-                                                  Object... args)
+    public List<Bean> queryEntityBeansByCondition(ConditionParse condtition, PageSeparate page, Object... args)
     {
         condtition.addWhereStr();
 
@@ -362,8 +361,7 @@ public abstract class BaseDAO<Bean extends Serializable, VO extends Serializable
         return jdbcOperation.queryForList(condtition, clazVO, args);
     }
 
-    public List<VO> queryEntityVOsByCondition(ConditionParse condtition, PageSeparate page,
-                                              Object... args)
+    public List<VO> queryEntityVOsByCondition(ConditionParse condtition, PageSeparate page, Object... args)
     {
         condtition.addWhereStr();
 
@@ -470,8 +468,7 @@ public abstract class BaseDAO<Bean extends Serializable, VO extends Serializable
         return jdbcOperation.queryForList(condtition.toString(), clazVO, args);
     }
 
-    public List<VO> queryEntityVOsBycondition(ConditionParse condtition, PageSeparate page,
-                                              Object... args)
+    public List<VO> queryEntityVOsBycondition(ConditionParse condtition, PageSeparate page, Object... args)
     {
         condtition.addWhereStr();
 
@@ -485,8 +482,7 @@ public abstract class BaseDAO<Bean extends Serializable, VO extends Serializable
         return jdbcOperation.queryForList(condtition.toString(), claz, args);
     }
 
-    public List<Bean> queryEntityBeansBycondition(ConditionParse condtition, PageSeparate page,
-                                                  Object... args)
+    public List<Bean> queryEntityBeansBycondition(ConditionParse condtition, PageSeparate page, Object... args)
     {
         condtition.addWhereStr();
 
