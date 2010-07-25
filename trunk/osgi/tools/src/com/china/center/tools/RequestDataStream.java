@@ -37,7 +37,7 @@ public class RequestDataStream implements Serializable
 
     private boolean haveStream = false;
 
-    private String encoding = "GBK";
+    private String encoding = "UTF-8";
 
     private long size = 0L;
 
@@ -124,8 +124,8 @@ public class RequestDataStream implements Serializable
 
                 if (fi.isFormField())
                 {
-                    parmterMap.put(fi.getFieldName(), StringTools.getStringBySet(fi.getString(),
-                        "ISO8859-1", encoding));
+                    parmterMap
+                        .put(fi.getFieldName(), StringTools.getStringBySet(fi.getString(), "ISO8859-1", encoding));
                 }
                 else
                 {
@@ -145,7 +145,8 @@ public class RequestDataStream implements Serializable
             throw e;
         }
         finally
-        {}
+        {
+        }
 
         return true;
     }
@@ -163,7 +164,8 @@ public class RequestDataStream implements Serializable
                     in.close();
                 }
                 catch (IOException e)
-                {}
+                {
+                }
             }
         }
     }
