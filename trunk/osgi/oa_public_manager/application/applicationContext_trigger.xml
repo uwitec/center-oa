@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+    <bean id="everyDayCarryWithOutTransactionalJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="publicTrigger" />
+        <property name="targetMethod" value="everyDayCarryWithOutTransactional" />
+        <property name="concurrent" value="false" />
+    </bean>
+
+    <bean id="everyDayCarryWithOutTransactionalTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="everyDayCarryWithOutTransactionalJob" />
+        <property name="cronExpression" value="0 0 1 * * ?" />
+    </bean>
+    
+    <bean id="everyHourCarryWithOutTransactionalJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="publicTrigger" />
+        <property name="targetMethod" value="everyHourCarryWithOutTransactional" />
+        <property name="concurrent" value="false" />
+    </bean>
+    
+    <bean id="everyHourCarryWithOutTransactionalTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="everyHourCarryWithOutTransactionalJob" />
+        <property name="cronExpression" value="0 0 * * * ?" />
+    </bean>
+    
+    <bean id="hotLoadingParameterJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="parameterDAO" />
+        <property name="targetMethod" value="init" />
+        <property name="concurrent" value="false" />
+    </bean>
+    
+    <bean id="hotLoadingParameterTrigger"
+        class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail" ref="hotLoadingParameterJob" />
+        <property name="startDelay" value="30000" />
+        <property name="repeatInterval" value="30000" />
+    </bean>
+
+	<bean
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="everyDayCarryWithOutTransactionalTrigger" />
+				<ref bean="everyHourCarryWithOutTransactionalTrigger" />
+				<ref bean="hotLoadingParameterTrigger" />
+			</list>
+		</property>
+	</bean>
+</beans>
