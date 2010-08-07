@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<struts-config>
+	<action-mappings>
+		<action path="/admin/common" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="queryPost" path="/admin/queryPost.jsp" />
+			<forward name="updatePost"
+				path="/admin/addOrUpdatePost.jsp" />
+			<forward name="updateDepartment"
+				path="/admin/addOrUpdateDepartment.jsp" />
+			<forward name="queryDepartment"
+				path="/admin/queryDepartment.jsp" />
+		</action>
+		
+		<action path="/admin/staffer" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="queryStaffer" path="/admin/queryStaffer.jsp" />
+			<forward name="addStaffer" path="/admin/addStaffer.jsp" />
+			<forward name="updatePwkey" path="/admin/updatePwkey.jsp" />
+			<forward name="updateStaffer"
+				path="/admin/updateStaffer.jsp" />
+			<forward name="detailStaffer"
+				path="/admin/detailStaffer.jsp" />
+		</action>
+
+		<action path="/admin/down" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+		</action>
+
+		<action path="/admin/location" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="queryLocation"
+				path="/admin/queryLocation.jsp" />
+			<forward name="detailLocation"
+				path="/admin/detailLocation.jsp" />
+			<forward name="oprLocationVSCity"
+				path="/admin/oprLocationVSCity.jsp" />
+		</action>
+
+		<action path="/admin/checkuser" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="success" path="/admin/main.jsp"
+				redirect="true" />
+			<forward name="index" path="/admin/index.jsp"
+				redirect="false" />
+			<forward name="error" path="/admin/index.jsp"
+				redirect="true" />
+			<forward name="lock" path="/admin/lock.jsp" />
+			<forward name="password" path="/admin/modifyPassword.jsp" />
+		</action>
+
+		<action path="/admin/logout"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="success" path="/admin/index.jsp"
+				redirect="true" />
+		</action>
+
+		<action path="/admin/org" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="queryOrg" path="/admin/queryOrg.jsp" />
+			<forward name="addOrg" path="/admin/addOrg.jsp" />
+			<forward name="updateOrg" path="/admin/updateOrg.jsp" />
+			<forward name="queryStafferOrg"
+				path="/admin/queryStafferOrg.jsp" />
+			<forward name="popOrg" path="/pop/popOrg.jsp" />
+		</action>
+
+		<action path="/admin/pop" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="rptQueryProdcut"
+				path="/rpt/rptQueryProduct.jsp" />
+			<forward name="rptQueryCustomer"
+				path="/rpt/rptQueryCustomer.jsp" />
+			<forward name="rptQueryAllCustomer"
+				path="/rpt/rptQueryAllCustomer.jsp" />
+			<forward name="popExamineLog" path="/pop/popExamineLog.jsp" />
+			<forward name="rptQueryStaffer"
+				path="/rpt/rptQueryStaffer.jsp" />
+			<forward name="rptQueryStaffer2"
+				path="/rpt/rptQueryStaffer2.jsp" />
+			<forward name="rptQueryGroupMember"
+				path="/rpt/rptQueryGroupMember.jsp" />
+			<forward name="rptQueryLog" path="/rpt/rptQueryLog.jsp" />
+			<forward name="rptQueryGroup" path="/rpt/rptQueryGroup.jsp" />
+			<forward name="rptQueryTemplateFile"
+				path="/rpt/rptQueryTemplateFile.jsp" />
+			<forward name="rptQuerySubFlow"
+				path="/rpt/rptQuerySubFlow.jsp" />
+		</action>
+
+		<action path="/admin/query" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+		</action>
+
+		<action path="/admin/role" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="queryRole" path="/admin/queryRole.jsp" />
+			<forward name="addRole" path="/admin/addRole.jsp" />
+			<forward name="queryUser" path="/admin/queryUser.jsp" />
+			<forward name="updateRole" path="/admin/updateRole.jsp" />
+		</action>
+
+		<action path="/admin/user" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="queryUser" path="/admin/queryUser.jsp" />
+			<forward name="addUser" path="/admin/addUser.jsp" />
+			<forward name="updateUser" path="/admin/updateUser.jsp" />
+		</action>
+		
+		<action path="/admin/duty" parameter="method" folder="/admin/" bean="Duty"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+		</action>
+	</action-mappings>
+</struts-config>
