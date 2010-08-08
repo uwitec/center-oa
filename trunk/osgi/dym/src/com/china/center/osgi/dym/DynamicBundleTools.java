@@ -55,6 +55,32 @@ public class DynamicBundleTools
     }
 
     /**
+     * isBundleActive
+     * 
+     * @param bundleName
+     * @return
+     */
+    public static boolean isBundleActive(String bundleName)
+    {
+        if ( !ready)
+        {
+            return false;
+        }
+
+        Bundle[] bundles = bundleContext.getBundles();
+
+        for (Bundle bundle : bundles)
+        {
+            if (bundle.getSymbolicName().equalsIgnoreCase(bundleName) && bundle.getState() == Bundle.ACTIVE)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * isServiceExist
      * 
      * @param serviceClassName
