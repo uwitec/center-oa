@@ -89,4 +89,6 @@
 
 	<bean id="commonFacade" class="com.china.center.oa.publics.facade.impl.CommonFacadeImpl" />
 
+	<bean id="stafferVSPriDAO" class="com.china.center.oa.publics.dao.impl.StafferVSPriDAOImpl" />
+
 </beans>

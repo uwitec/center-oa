@@ -39,6 +39,9 @@ public class DutyBean implements DataClone<DutyBean>, Serializable
     @Html(title = "名称", must = true, maxLength = 100)
     private String name = "";
 
+    @Html(title = "纳税类型", must = true, type = Element.SELECT)
+    private int type = 0;
+
     @Html(title = "税务证号", must = true, maxLength = 100)
     private String icp = "";
 
@@ -169,5 +172,22 @@ public class DutyBean implements DataClone<DutyBean>, Serializable
     public DutyBean clones()
     {
         return new DutyBean(this);
+    }
+
+    /**
+     * @return the type
+     */
+    public int getType()
+    {
+        return type;
+    }
+
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(int type)
+    {
+        this.type = type;
     }
 }

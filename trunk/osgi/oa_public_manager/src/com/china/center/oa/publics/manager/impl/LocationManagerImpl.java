@@ -99,8 +99,10 @@ public class LocationManagerImpl implements LocationManager
 
         org.setName(bean.getName());
 
-        // 默认销售分公司都是二级组织
-        org.setLevel(2);
+        org.setParentId(bean.getParentId());
+
+        // 默认销售分公司都是三级组织
+        org.setLevel(3);
 
         List<OrgBean> parentOrgList = new ArrayList();
 

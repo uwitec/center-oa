@@ -20,6 +20,7 @@ import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.Unique;
 import com.china.center.jdbc.annotation.enums.Element;
+import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.vs.RoleAuthBean;
 
@@ -43,7 +44,7 @@ public class RoleBean implements Serializable
     @Html(title = "角色名称", must = true, maxLength = 100)
     private String name = "";
 
-    @Join(tagClass = LocationBean.class)
+    @Join(tagClass = LocationBean.class, type = JoinType.LEFT)
     @Html(title = "所属分公司", must = true, type = Element.SELECT)
     private String locationId = "";
 

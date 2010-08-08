@@ -10,10 +10,13 @@ package com.china.center.oa.publics.bean;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Html;
 import com.china.center.jdbc.annotation.Id;
+import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.JCheck;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
@@ -22,6 +25,7 @@ import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.constant.StafferConstant;
+import com.china.center.oa.publics.vs.StafferVSPriBean;
 
 
 /**
@@ -83,7 +87,7 @@ public class StafferBean implements Serializable
 
     @Html(title = "组织岗位", type = Element.INPUT, name = "principalshipName", must = true)
     @Join(tagClass = PrincipalshipBean.class, type = JoinType.LEFT)
-    private String principalshipId = "";
+    private String principalshipId = "-1";
 
     @Html(title = "民族", maxLength = 20)
     private String nation = "";
@@ -123,11 +127,14 @@ public class StafferBean implements Serializable
     /**
      * 信用额度
      */
-    @Html(title = "信用额度", oncheck = JCheck.ONLY_FLOAT, maxLength = 20)
+    @Html(title = "信用额度", must = true, oncheck = JCheck.ONLY_FLOAT, maxLength = 20)
     private double credit = 0.0d;
 
     @Html(title = "其他", type = Element.TEXTAREA, maxLength = 200)
     private String description = "";
+
+    @Ignore
+    private List<StafferVSPriBean> priList = new ArrayList();
 
     /**
      * default constructor
@@ -637,5 +644,22 @@ public class StafferBean implements Serializable
     public void setCredit(double credit)
     {
         this.credit = credit;
+    }
+
+    /**
+     * @return the priList
+     */
+    public List<StafferVSPriBean> getPriList()
+    {
+        return priList;
+    }
+
+    /**
+     * @param priList
+     *            the priList to set
+     */
+    public void setPriList(List<StafferVSPriBean> priList)
+    {
+        this.priList = priList;
     }
 }

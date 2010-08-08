@@ -22,7 +22,6 @@ import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.Unique;
 import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.oa.publics.vs.LocationVSCityBean;
-import com.china.center.oa.publics.vs.OrgBean;
 
 
 /**
@@ -48,7 +47,7 @@ public class LocationBean implements Serializable
     private String code = "";
 
     @Html(name = "parentName", title = "二级组织", must = true, maxLength = 20)
-    @Join(tagClass = OrgBean.class)
+    @Join(tagClass = PrincipalshipBean.class)
     private String parentId = "";
 
     @Html(title = "描述", maxLength = 100, type = Element.TEXTAREA)

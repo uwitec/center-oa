@@ -9,10 +9,13 @@
 package com.china.center.oa.publics.manager;
 
 
+import java.util.Collection;
+
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.listener.StafferListener;
+import com.china.center.oa.publics.vo.StafferVO;
 
 
 /**
@@ -36,6 +39,14 @@ public interface StafferManager
 
     boolean delBean(User user, String stafferId)
         throws MYException;
+
+    /**
+     * 获得本职员的上级
+     * 
+     * @param stafferId
+     * @return
+     */
+    Collection<StafferVO> querySuperiorStaffer(String stafferId);
 
     /**
      * putListener

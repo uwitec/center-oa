@@ -10,6 +10,7 @@ import org.osgi.framework.BundleContext;
 
 import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.common.taglib.MapBean;
+import com.china.center.oa.publics.constant.DutyComstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.constant.StafferConstant;
 
@@ -28,6 +29,7 @@ public class Activator implements BundleActivator
     {
         {
             add(StafferConstant.class);
+            add(DutyComstant.class);
         }
     };
 

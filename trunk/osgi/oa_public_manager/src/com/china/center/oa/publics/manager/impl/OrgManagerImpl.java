@@ -29,6 +29,7 @@ import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.OrgDAO;
 import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.publics.dao.StafferVSPriDAO;
 import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.publics.vs.OrgBean;
 import com.china.center.oa.publics.wrap.StafferOrgWrap;
@@ -56,11 +57,14 @@ public class OrgManagerImpl implements OrgManager
 
     private CommonDAO commonDAO = null;
 
+    private StafferVSPriDAO stafferVSPriDAO = null;
+
     /**
      * default constructor
      */
     public OrgManagerImpl()
-    {}
+    {
+    }
 
     /**
      * 查询下一级的岗位
@@ -286,6 +290,13 @@ public class OrgManagerImpl implements OrgManager
         {
             throw new MYException("组织下存在下级组织结构,不能删除");
         }
+
+        // 组织上没有人员
+        if (stafferVSPriDAO.countByFK(id, AnoConstant.FK_FIRST) > 0)
+        {
+            throw new MYException("组织上有人员挂靠,不能删除");
+        }
+
     }
 
     /**
@@ -451,24 +462,6 @@ public class OrgManagerImpl implements OrgManager
             }
         }
 
-        // 修改级别的时候注意下级的不能高于上级
-        List<OrgBean> subs = orgDAO.queryEntityBeansByFK(bean.getId());
-
-        for (OrgBean item : subs)
-        {
-            PrincipalshipBean ship = principalshipDAO.find(item.getSubId());
-
-            if (ship == null)
-            {
-                throw new MYException("下级主管组织不存在");
-            }
-
-            if (bean.getLevel() >= ship.getLevel())
-            {
-                throw new MYException("组织级别不能高于下级");
-            }
-        }
-
         if (modfiyParent)
         {
             for (OrgBean orgBean2 : parents)
@@ -565,5 +558,22 @@ public class OrgManagerImpl implements OrgManager
     public void setStafferDAO(StafferDAO stafferDAO)
     {
         this.stafferDAO = stafferDAO;
+    }
+
+    /**
+     * @return the stafferVSPriDAO
+     */
+    public StafferVSPriDAO getStafferVSPriDAO()
+    {
+        return stafferVSPriDAO;
+    }
+
+    /**
+     * @param stafferVSPriDAO
+     *            the stafferVSPriDAO to set
+     */
+    public void setStafferVSPriDAO(StafferVSPriDAO stafferVSPriDAO)
+    {
+        this.stafferVSPriDAO = stafferVSPriDAO;
     }
 }

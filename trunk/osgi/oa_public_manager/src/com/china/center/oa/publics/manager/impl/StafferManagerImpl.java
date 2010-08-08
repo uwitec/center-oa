@@ -10,8 +10,11 @@ package com.china.center.oa.publics.manager.impl;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,14 +22,21 @@ import org.springframework.transaction.annotation.Transactional;
 import com.center.china.osgi.publics.ParentListener;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.jdbc.annosql.constant.AnoConstant;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.StafferConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.publics.dao.StafferVSPriDAO;
 import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.listener.StafferListener;
 import com.china.center.oa.publics.manager.StafferManager;
+import com.china.center.oa.publics.vo.StafferVO;
+import com.china.center.oa.publics.vs.StafferVSPriBean;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.StringTools;
 
 
 /**
@@ -46,10 +56,15 @@ public class StafferManagerImpl implements StafferManager
 
     private CommonDAO commonDAO = null;
 
+    private StafferVSPriDAO stafferVSPriDAO = null;
+
+    private PrincipalshipDAO principalshipDAO = null;
+
     private List<StafferListener> listenerList = new ArrayList();
 
     public StafferManagerImpl()
-    {}
+    {
+    }
 
     /**
      * addBean
@@ -70,7 +85,22 @@ public class StafferManagerImpl implements StafferManager
 
         bean.setId(commonDAO.getSquenceString());
 
+        // save VS
+        List<StafferVSPriBean> priList = bean.getPriList();
+
+        if (priList.size() >= 1)
+        {
+            bean.setPrincipalshipId(priList.get(0).getPrincipalshipId());
+        }
+
         stafferDAO.saveEntityBean(bean);
+
+        for (StafferVSPriBean stafferVSPriBean : priList)
+        {
+            stafferVSPriBean.setStafferId(bean.getId());
+        }
+
+        stafferVSPriDAO.saveAllEntityBeans(priList);
 
         return true;
     }
@@ -103,7 +133,24 @@ public class StafferManagerImpl implements StafferManager
 
         bean.setPwkey(oldBean.getPwkey());
 
+        List<StafferVSPriBean> priList = bean.getPriList();
+
+        if (priList.size() >= 1)
+        {
+            bean.setPrincipalshipId(priList.get(0).getPrincipalshipId());
+        }
+
         stafferDAO.updateEntityBean(bean);
+
+        // save VS
+        stafferVSPriDAO.deleteEntityBeansByFK(bean.getId());
+
+        for (StafferVSPriBean stafferVSPriBean : priList)
+        {
+            stafferVSPriBean.setStafferId(bean.getId());
+        }
+
+        stafferVSPriDAO.saveAllEntityBeans(priList);
 
         return true;
     }
@@ -160,7 +207,45 @@ public class StafferManagerImpl implements StafferManager
 
         stafferDAO.updateEntityBean(bean);
 
+        stafferVSPriDAO.deleteEntityBeansByFK(stafferId);
+
         return true;
+    }
+
+    /**
+     * 获得本职员的上级
+     * 
+     * @param stafferId
+     * @return
+     */
+    public Collection<StafferVO> querySuperiorStaffer(String stafferId)
+    {
+        Set<StafferVO> set = new HashSet<StafferVO>();
+
+        // 获得人员的组织结构
+        List<StafferVSPriBean> vsList = stafferVSPriDAO.queryEntityBeansByFK(stafferId);
+
+        // 循环获得所有可以操作的人员
+        for (StafferVSPriBean stafferVSPriBean : vsList)
+        {
+            PrincipalshipBean pri = principalshipDAO.find(stafferVSPriBean.getPrincipalshipId());
+
+            if (pri == null || StringTools.isNullOrNone(pri.getParentId()))
+            {
+                continue;
+            }
+
+            String parentId = pri.getParentId();
+
+            List<StafferVSPriBean> svsp = stafferVSPriDAO.queryEntityBeansByFK(parentId, AnoConstant.FK_FIRST);
+
+            for (StafferVSPriBean each : svsp)
+            {
+                set.add(stafferDAO.findVO(each.getStafferId()));
+            }
+        }
+
+        return set;
     }
 
     /**
@@ -278,5 +363,39 @@ public class StafferManagerImpl implements StafferManager
     public void setCommonDAO(CommonDAO commonDAO)
     {
         this.commonDAO = commonDAO;
+    }
+
+    /**
+     * @return the stafferVSPriDAO
+     */
+    public StafferVSPriDAO getStafferVSPriDAO()
+    {
+        return stafferVSPriDAO;
+    }
+
+    /**
+     * @param stafferVSPriDAO
+     *            the stafferVSPriDAO to set
+     */
+    public void setStafferVSPriDAO(StafferVSPriDAO stafferVSPriDAO)
+    {
+        this.stafferVSPriDAO = stafferVSPriDAO;
+    }
+
+    /**
+     * @return the principalshipDAO
+     */
+    public PrincipalshipDAO getPrincipalshipDAO()
+    {
+        return principalshipDAO;
+    }
+
+    /**
+     * @param principalshipDAO
+     *            the principalshipDAO to set
+     */
+    public void setPrincipalshipDAO(PrincipalshipDAO principalshipDAO)
+    {
+        this.principalshipDAO = principalshipDAO;
     }
 }

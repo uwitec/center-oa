@@ -84,4 +84,6 @@
 
 	<osgi:service ref="commonFacade" interface="com.china.center.oa.publics.facade.CommonFacade" />
 
+	<osgi:service ref="stafferVSPriDAO" interface="com.china.center.oa.publics.dao.StafferVSPriDAO" />
+
 </beans>

@@ -41,6 +41,8 @@ public class PrincipalshipBean implements Serializable
     @Html(title = "组织名称", must = true, maxLength = 20)
     private String name = "";
 
+    private String parentId = "";
+
     /**
      * 职务的级别
      */
@@ -126,5 +128,22 @@ public class PrincipalshipBean implements Serializable
     public void setParentOrgList(List<OrgBean> parentOrgList)
     {
         this.parentOrgList = parentOrgList;
+    }
+
+    /**
+     * @return the parentId
+     */
+    public String getParentId()
+    {
+        return parentId;
+    }
+
+    /**
+     * @param parentId
+     *            the parentId to set
+     */
+    public void setParentId(String parentId)
+    {
+        this.parentId = parentId;
     }
 }
