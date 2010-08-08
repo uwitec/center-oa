@@ -29,6 +29,8 @@ import com.center.china.osgi.publics.User;
 import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
+import com.china.center.actionhelper.jsonimpl.JSONArray;
+import com.china.center.actionhelper.jsonimpl.JSONObject;
 import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.actionhelper.query.QueryConfig;
 import com.china.center.actionhelper.query.QueryItemBean;
@@ -45,13 +47,17 @@ import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
+import com.china.center.oa.publics.dao.OrgDAO;
 import com.china.center.oa.publics.dao.PostDAO;
 import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.publics.dao.StafferVSPriDAO;
 import com.china.center.oa.publics.facade.PublicFacade;
 import com.china.center.oa.publics.helper.StafferHelper;
 import com.china.center.oa.publics.manager.LocationManager;
+import com.china.center.oa.publics.vo.OrgVO;
 import com.china.center.oa.publics.vo.StafferVO;
+import com.china.center.oa.publics.vs.StafferVSPriBean;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.DecSecurity;
@@ -85,6 +91,10 @@ public class StafferAction extends DispatchAction
 
     private PostDAO postDAO = null;
 
+    private OrgDAO orgDAO = null;
+
+    private StafferVSPriDAO stafferVSPriDAO = null;
+
     private QueryConfig queryConfig = null;
 
     private PublicFacade publicFacade = null;
@@ -95,7 +105,8 @@ public class StafferAction extends DispatchAction
      * default constructor
      */
     public StafferAction()
-    {}
+    {
+    }
 
     /**
      * queryStaffer
@@ -185,6 +196,8 @@ public class StafferAction extends DispatchAction
 
         List<PostBean> postList = postDAO.listEntityBeans();
         request.setAttribute("postList", postList);
+
+        preForListAllOrgTree(request);
 
         return mapping.findForward("addStaffer");
     }
@@ -341,6 +354,20 @@ public class StafferAction extends DispatchAction
 
             bean.setLogTime(TimeTools.now());
 
+            String[] pris = request.getParameterValues("tree_checkbox");
+
+            if (pris != null)
+            {
+                for (String each : pris)
+                {
+                    StafferVSPriBean vs = new StafferVSPriBean();
+
+                    vs.setPrincipalshipId(each);
+
+                    bean.getPriList().add(vs);
+                }
+            }
+
             User user = Helper.getUser(request);
 
             publicFacade.addStafferBean(user, bean);
@@ -382,6 +409,20 @@ public class StafferAction extends DispatchAction
             bean.setLogTime(TimeTools.now());
 
             User user = Helper.getUser(request);
+
+            String[] pris = request.getParameterValues("tree_checkbox");
+
+            if (pris != null)
+            {
+                for (String each : pris)
+                {
+                    StafferVSPriBean vs = new StafferVSPriBean();
+
+                    vs.setPrincipalshipId(each);
+
+                    bean.getPriList().add(vs);
+                }
+            }
 
             publicFacade.updateStafferBean(user, bean);
 
@@ -462,19 +503,53 @@ public class StafferAction extends DispatchAction
             List<LocationBean> locationList = locationDAO.listEntityBeans();
             request.setAttribute("locationList", locationList);
 
-            List<PrincipalshipBean> priList = principalshipDAO.listEntityBeans();
-            request.setAttribute("priList", priList);
-
             List<DepartmentBean> depList = departmentDAO.listEntityBeans();
             request.setAttribute("depList", depList);
 
             List<PostBean> postList = postDAO.listEntityBeans();
             request.setAttribute("postList", postList);
 
+            preForListAllOrgTree(request);
+
+            List<StafferVSPriBean> priList = stafferVSPriDAO.queryEntityBeansByFK(id);
+
+            JSONArray jarr = new JSONArray(priList, true);
+
+            request.setAttribute("myPris", jarr.toString());
+
             return mapping.findForward("updateStaffer");
         }
 
         return mapping.findForward("detailStaffer");
+    }
+
+    /**
+     * 为准备显示整个组织树准备
+     * 
+     * @param request
+     */
+    private void preForListAllOrgTree(HttpServletRequest request)
+    {
+        List<PrincipalshipBean> plist = principalshipDAO.listEntityBeans("order by level");
+
+        JSONArray jarr = new JSONArray(plist, true);
+
+        request.setAttribute("shipList", jarr.toString());
+
+        Map<String, List<OrgVO>> map = new HashMap<String, List<OrgVO>>();
+
+        for (PrincipalshipBean principalshipBean : plist)
+        {
+            List<OrgVO> vos = orgDAO.queryEntityVOsByFK(principalshipBean.getId());
+
+            map.put(principalshipBean.getId(), vos);
+        }
+
+        JSONObject object = new JSONObject();
+
+        object.createMapList(map, true);
+
+        request.setAttribute("mapJSON", object.toString());
     }
 
     /**
@@ -611,5 +686,39 @@ public class StafferAction extends DispatchAction
     public void setQueryConfig(QueryConfig queryConfig)
     {
         this.queryConfig = queryConfig;
+    }
+
+    /**
+     * @return the orgDAO
+     */
+    public OrgDAO getOrgDAO()
+    {
+        return orgDAO;
+    }
+
+    /**
+     * @param orgDAO
+     *            the orgDAO to set
+     */
+    public void setOrgDAO(OrgDAO orgDAO)
+    {
+        this.orgDAO = orgDAO;
+    }
+
+    /**
+     * @return the stafferVSPriDAO
+     */
+    public StafferVSPriDAO getStafferVSPriDAO()
+    {
+        return stafferVSPriDAO;
+    }
+
+    /**
+     * @param stafferVSPriDAO
+     *            the stafferVSPriDAO to set
+     */
+    public void setStafferVSPriDAO(StafferVSPriDAO stafferVSPriDAO)
+    {
+        this.stafferVSPriDAO = stafferVSPriDAO;
     }
 }

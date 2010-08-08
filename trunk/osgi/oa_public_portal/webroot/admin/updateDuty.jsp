@@ -40,6 +40,10 @@ function addBean()
 		<p:table cells="1">
 
 			<p:pro field="name" />
+			
+			<p:pro field="type" innerString="readonly=true">
+				<p:option type="dutyType"/>
+			</p:pro>
 
 			<p:pro field="icp"  />
 

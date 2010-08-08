@@ -85,11 +85,11 @@ function disp()
 
 function load()
 {
-    var itemNode = snode(root.name, true, root.id);
+    var itemNode = snode(root.name + ' ${rootStaffer}', true, root.id);
     
     tv.add(itemNode);
     
-    itemNode.sname = root.name;
+    itemNode.sname = root.name + ' <font color=blue>${rootStaffer}</font>';
     
     nodeList.push(itemNode);
     

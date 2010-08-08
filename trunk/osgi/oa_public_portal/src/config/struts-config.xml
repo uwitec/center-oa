@@ -92,8 +92,8 @@
 			<forward name="rptQueryGroup" path="/rpt/rptQueryGroup.jsp" />
 			<forward name="rptQueryTemplateFile"
 				path="/rpt/rptQueryTemplateFile.jsp" />
-			<forward name="rptQuerySubFlow"
-				path="/rpt/rptQuerySubFlow.jsp" />
+			<forward name="rptQuerySuperiorStaffer"
+				path="/rpt/rptQuerySuperiorStaffer.jsp" />
 		</action>
 
 		<action path="/admin/query" parameter="method"

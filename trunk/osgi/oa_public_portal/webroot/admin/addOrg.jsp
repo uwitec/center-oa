@@ -7,7 +7,7 @@
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
-<script language="JavaScript" src="../js/tree_debug.js"></script>
+<script language="JavaScript" src="../js/tree.js"></script>
 <script language="JavaScript" src="../js/json.js"></script>
 <script language="JavaScript" src="../admin_js/org.js"></script>
 <script language="javascript">

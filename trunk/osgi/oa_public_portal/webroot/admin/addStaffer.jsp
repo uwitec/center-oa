@@ -8,29 +8,27 @@
 <script language="JavaScript" src="../js/cnchina.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
+<script language="JavaScript" src="../js/json.js"></script>
+<script language="JavaScript" src="../js/tree.js"></script>
+<script language="JavaScript" src="../admin_js/org.js"></script>
 <script language="javascript">
 function addBean()
 {
 	submit('确定增加人员?');
 }
 
-//选择职位
-function selectPrin()
-{
-    window.common.modal('../admin/org.do?method=popOrg');
-}
+var shipList = JSON.parse('${shipList}');
 
-function setOrgFromPop(id, name)
-{
-    $O('principalshipId').value = id;
-    
-    $O('principalshipName').value = name;
-}
+var shipMap = JSON.parse('${mapJSON}');
+
+var levelMap = {};
+
+var tv = new treeview("treeview","../js/tree", 1, false);
 
 </script>
 
 </head>
-<body class="body_class">
+<body class="body_class" onload="load()">
 <form name="addApply" action="../admin/staffer.do"><input
 	type="hidden" name="method" value="addStaffer"> 
 <input
@@ -84,10 +82,6 @@ function setOrgFromPop(id, name)
 					<option value="${item.id}">${item.name}</option>
 				</c:forEach>
 			</p:pro>
-			<p:pro field="principalshipId" innerString="readonly=true">
-				<input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectPrin()">&nbsp;&nbsp;
-			</p:pro>
 
 			<p:pro field="graduateSchool" />
 			<p:pro field="graduateDate" />
@@ -106,11 +100,21 @@ function setOrgFromPop(id, name)
             <p:pro field="handphone" />
             
             <p:pro field="subphone"/>
-            <p:pro field="credit" value="0.0"/>
+            
+            <p:pro field="credit" cell="0"/>
             
             <p:pro field="address" cell="0" innerString="size=80"/>
 
 			<p:pro field="description" cell="0" innerString="rows=4 cols=60" />
+			
+			
+			<p:cells celspan="2" title="所属岗位" >
+			    <span style="cursor: pointer;" onclick="allSelect(true)">全部展开</span> | <span
+                    style="cursor: pointer;" onclick="allSelect(false)">全部收起</span>
+                <br>
+                <br>
+				<div id=tree></div>
+			</p:cells>
 
 		</p:table>
 	</p:subBody>

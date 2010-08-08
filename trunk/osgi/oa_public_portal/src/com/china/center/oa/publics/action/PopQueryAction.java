@@ -11,7 +11,9 @@ package com.china.center.oa.publics.action;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,16 +25,21 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
 import com.china.center.actionhelper.common.PageSeparateTools;
+import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.publics.bean.LocationBean;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.constant.StafferConstant;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.LogDAO;
+import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.publics.dao.StafferVSPriDAO;
 import com.china.center.oa.publics.vo.LogVO;
 import com.china.center.oa.publics.vo.StafferVO;
+import com.china.center.oa.publics.vs.StafferVSPriBean;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.StringTools;
 
@@ -52,6 +59,10 @@ public class PopQueryAction extends DispatchAction
     private LocationDAO locationDAO = null;
 
     private LogDAO logDAO = null;
+
+    private StafferVSPriDAO stafferVSPriDAO = null;
+
+    private PrincipalshipDAO principalshipDAO = null;
 
     private static String RPTQUERYSTAFFER = "rptQueryStaffer";
 
@@ -138,6 +149,54 @@ public class PopQueryAction extends DispatchAction
     }
 
     /**
+     * rptQuerySuperiorStaffer(查询上级)
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQuerySuperiorStaffer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                                 HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        String stafferId = request.getParameter("stafferId");
+
+        Set<StafferVO> set = new HashSet<StafferVO>();
+
+        // 获得人员的组织结构
+        List<StafferVSPriBean> vsList = stafferVSPriDAO.queryEntityBeansByFK(stafferId);
+
+        // 循环获得所有可以操作的人员
+        for (StafferVSPriBean stafferVSPriBean : vsList)
+        {
+            PrincipalshipBean pri = principalshipDAO.find(stafferVSPriBean.getPrincipalshipId());
+
+            if (pri == null || StringTools.isNullOrNone(pri.getParentId()))
+            {
+                continue;
+            }
+
+            String parentId = pri.getParentId();
+
+            List<StafferVSPriBean> svsp = stafferVSPriDAO.queryEntityBeansByFK(parentId, AnoConstant.FK_FIRST);
+
+            for (StafferVSPriBean each : svsp)
+            {
+                set.add(stafferDAO.findVO(each.getStafferId()));
+            }
+        }
+
+        request.setAttribute("beanList", set);
+
+        return mapping.findForward("rptQuerySuperiorStaffer");
+    }
+
+    /**
      * query log
      * 
      * @param mapping
@@ -220,5 +279,39 @@ public class PopQueryAction extends DispatchAction
     public void setLogDAO(LogDAO logDAO)
     {
         this.logDAO = logDAO;
+    }
+
+    /**
+     * @return the stafferVSPriDAO
+     */
+    public StafferVSPriDAO getStafferVSPriDAO()
+    {
+        return stafferVSPriDAO;
+    }
+
+    /**
+     * @param stafferVSPriDAO
+     *            the stafferVSPriDAO to set
+     */
+    public void setStafferVSPriDAO(StafferVSPriDAO stafferVSPriDAO)
+    {
+        this.stafferVSPriDAO = stafferVSPriDAO;
+    }
+
+    /**
+     * @return the principalshipDAO
+     */
+    public PrincipalshipDAO getPrincipalshipDAO()
+    {
+        return principalshipDAO;
+    }
+
+    /**
+     * @param principalshipDAO
+     *            the principalshipDAO to set
+     */
+    public void setPrincipalshipDAO(PrincipalshipDAO principalshipDAO)
+    {
+        this.principalshipDAO = principalshipDAO;
     }
 }

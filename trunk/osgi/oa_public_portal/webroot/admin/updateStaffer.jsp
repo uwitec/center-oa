@@ -8,30 +8,66 @@
 <script language="JavaScript" src="../js/cnchina.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
+<script language="JavaScript" src="../js/json.js"></script>
+<script language="JavaScript" src="../js/tree_debug.js"></script>
+<script language="JavaScript" src="../admin_js/org.js"></script>
 <script language="javascript">
 function updateBean()
 {
 	submit('确定修改人员?');
 }
 
-//选择职位
-function selectPrin()
-{
-    window.common.modal('../admin/org.do?method=popOrg');
-}
+var shipList = JSON.parse('${shipList}');
 
-function setOrgFromPop(id, name)
+var shipMap = JSON.parse('${mapJSON}');
+
+var myAuth = JSON.parse('${myPris}');
+
+var levelMap = {};
+
+var tv = new treeview("treeview","../js/tree", true, false);
+
+function containAuth(authId)
 {
-    $O('principalshipId').value = id;
+    for(var i = 0; i < myAuth.length; i++)
+    {
+        if (myAuth[i].principalshipId == authId)
+        {
+            return true;
+        }
+    }
     
-    $O('principalshipName').value = name;
+    return false;
 }
 
+function setAuth()
+{
+    for (var att in gNodeMap)
+    {
+        var node = gNodeMap[att];
+        
+        if (containAuth(node.id))
+        {
+            node.checkNode.checked = true;
+        }
+        else
+        {
+            node.checkNode.checked = false;
+        }
+    }
+}
+
+function inits()
+{
+	load(true);
+	
+	setAuth();
+}
 
 </script>
 
 </head>
-<body class="body_class">
+<body class="body_class" onload="inits()">
 <form name="addApply" action="../admin/staffer.do"><input
 	type="hidden" name="method" value="updateStaffer"><input
 	type="hidden" name="principalshipId" value="${bean.principalshipId}"> <input
@@ -87,11 +123,6 @@ function setOrgFromPop(id, name)
 					<option value="${item.id}">${item.name}</option>
 				</c:forEach>
 			</p:pro>
-			<p:pro field="principalshipId" value="${bean.principalshipName}"
-				innerString="readonly=true">
-				<input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-					class="button_class" onclick="selectPrin()">&nbsp;&nbsp;
-			</p:pro>
 
 			<p:pro field="graduateSchool" value="${bean.graduateSchool}" />
 			<p:pro field="graduateDate" value="${bean.graduateDate}" />
@@ -110,13 +141,22 @@ function setOrgFromPop(id, name)
 			<p:pro field="handphone" value="${bean.handphone}" />
 
 			<p:pro field="subphone" value="${bean.subphone}" />
-			<p:pro field="credit" value="${bean.credit}" />
+			
+			<p:pro field="credit" value="${bean.credit}" cell="0"/>
 
 			<p:pro field="address" cell="0" innerString="size=80"
 				value="${bean.address}" />
 
 			<p:pro field="description" cell="0" innerString="rows=4 cols=60"
 				value="${bean.description}" />
+				
+			<p:cells title="所属岗位" celspan="2">
+			    <span style="cursor: pointer;" onclick="allSelect(true)">全部展开</span> | <span
+                    style="cursor: pointer;" onclick="allSelect(false)">全部收起</span>
+                <br>
+                <br>
+				<div id=tree></div>
+			</p:cells>
 
 		</p:table>
 	</p:subBody>

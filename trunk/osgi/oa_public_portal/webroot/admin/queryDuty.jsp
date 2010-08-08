@@ -27,11 +27,12 @@ function load()
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
              {display: '名称', name : 'name', width : '25%'},
+             {display: '类型', name : 'type', cc: 'dutyType', width : '10%'},
              {display: '税务证号', name : 'icp', width : '25%'},
              {display: '其他', name : 'description', width : 'auto'}
              ],
          extAtt: {
-             name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
+             //name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: '010801'},

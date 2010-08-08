@@ -1,5 +1,7 @@
 var levelMap = {};
 
+var gNodeMap = {};
+
 function digui(node)
 {
     var subList = shipMap[node.id];
@@ -20,6 +22,8 @@ function digui(node)
         subNode.sname = ele.subName;
         
         subNode.subLevel = ele.subLevel;
+        
+        gNodeMap[ele.subId] = subNode;
         
         node.add(subNode);
         
@@ -52,6 +56,8 @@ function load(expand)
     itemNode.sname = '董事会';
     
     tv.add(itemNode);
+    
+    gNodeMap[0] = itemNode;
     
     levelMap['0'] = 0;
     

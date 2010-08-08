@@ -34,14 +34,15 @@ import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
-import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.OrgDAO;
 import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.publics.dao.StafferVSPriDAO;
 import com.china.center.oa.publics.facade.PublicFacade;
 import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.publics.vo.OrgVO;
+import com.china.center.oa.publics.vo.StafferVSPriVO;
 import com.china.center.oa.publics.vs.OrgBean;
 import com.china.center.oa.publics.wrap.StafferOrgWrap;
 import com.china.center.tools.BeanUtil;
@@ -71,6 +72,8 @@ public class OrgAction extends DispatchAction
     private StafferDAO stafferDAO = null;
 
     private OrgManager orgManager = null;
+
+    private StafferVSPriDAO stafferVSPriDAO = null;
 
     /**
      * default constructor
@@ -199,52 +202,13 @@ public class OrgAction extends DispatchAction
 
             for (PrincipalshipBean orgBean : vos)
             {
-                // 子组织下的人员
-                List<StafferBean> pplist = stafferDAO.queryStafferByPrincipalshipId(orgBean.getId());
-
-                if (pplist.isEmpty())
-                {
-                    StafferOrgWrap wrap = new StafferOrgWrap();
-
-                    wrap.setStafferId(orgBean.getId());
-
-                    wrap.setStafferName("缺 额");
-
-                    wrap.setPrincipalshipId(orgBean.getId());
-
-                    wrap.setPrincipalshipName(orgBean.getName());
-
-                    wrap.setPersonal(1);
-
-                    wraps.add(wrap);
-                }
-                else
-                {
-                    StafferOrgWrap wrap = new StafferOrgWrap();
-
-                    wrap.setStafferId(orgBean.getId());
-
-                    StringBuilder buffer = new StringBuilder();
-
-                    for (StafferBean stafferBean2 : pplist)
-                    {
-                        buffer.append(stafferBean2.getName()).append("/");
-                    }
-
-                    buffer.deleteCharAt(buffer.length() - 1);
-
-                    wrap.setStafferName(buffer.toString());
-
-                    wrap.setPrincipalshipId(orgBean.getId());
-
-                    wrap.setPrincipalshipName(orgBean.getName());
-
-                    wraps.add(wrap);
-                }
+                createWrap(wraps, orgBean);
             }
 
             map.put(principalshipBean.getId(), wraps);
         }
+
+        PrincipalshipBean root = principalshipDAO.find(prinRootId);
 
         JSONObject object = new JSONObject();
 
@@ -252,11 +216,61 @@ public class OrgAction extends DispatchAction
 
         request.setAttribute("mapJSON", object.toString());
 
-        PrincipalshipBean root = principalshipDAO.find(prinRootId);
-
         JSONObject rootObj = new JSONObject(root);
 
+        List<StafferOrgWrap> rootWraps = new ArrayList<StafferOrgWrap>();
+
+        createWrap(rootWraps, root);
+
+        request.setAttribute("rootStaffer", rootWraps.get(0).getStafferName());
+
         request.setAttribute("root", rootObj.toString());
+    }
+
+    private void createWrap(List<StafferOrgWrap> wraps, PrincipalshipBean orgBean)
+    {
+        // 子组织下的人员
+        List<StafferVSPriVO> pplist = stafferVSPriDAO.queryEntityVOsByFK(orgBean.getId(), AnoConstant.FK_FIRST);
+
+        if (pplist.isEmpty())
+        {
+            StafferOrgWrap wrap = new StafferOrgWrap();
+
+            wrap.setStafferId(orgBean.getId());
+
+            wrap.setStafferName("缺 额");
+
+            wrap.setPrincipalshipId(orgBean.getId());
+
+            wrap.setPrincipalshipName(orgBean.getName());
+
+            wrap.setPersonal(1);
+
+            wraps.add(wrap);
+        }
+        else
+        {
+            StafferOrgWrap wrap = new StafferOrgWrap();
+
+            wrap.setStafferId(orgBean.getId());
+
+            StringBuilder buffer = new StringBuilder();
+
+            for (StafferVSPriVO stafferBean2 : pplist)
+            {
+                buffer.append(stafferBean2.getStafferName()).append("/");
+            }
+
+            buffer.deleteCharAt(buffer.length() - 1);
+
+            wrap.setStafferName(buffer.toString());
+
+            wrap.setPrincipalshipId(orgBean.getId());
+
+            wrap.setPrincipalshipName(orgBean.getName());
+
+            wraps.add(wrap);
+        }
     }
 
     /**
@@ -617,6 +631,23 @@ public class OrgAction extends DispatchAction
     public void setLocationDAO(LocationDAO locationDAO)
     {
         this.locationDAO = locationDAO;
+    }
+
+    /**
+     * @return the stafferVSPriDAO
+     */
+    public StafferVSPriDAO getStafferVSPriDAO()
+    {
+        return stafferVSPriDAO;
+    }
+
+    /**
+     * @param stafferVSPriDAO
+     *            the stafferVSPriDAO to set
+     */
+    public void setStafferVSPriDAO(StafferVSPriDAO stafferVSPriDAO)
+    {
+        this.stafferVSPriDAO = stafferVSPriDAO;
     }
 
 }
