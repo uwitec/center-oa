@@ -97,7 +97,8 @@ public class FileTools
             path = new String(path.getBytes(Constant.DEFAULT_CHAESET));
         }
         catch (UnsupportedEncodingException e)
-        {}
+        {
+        }
 
         return path;
     }
@@ -106,6 +107,27 @@ public class FileTools
         throws IOException
     {
         deleteIn(getLocalString(path));
+    }
+
+    /**
+     * deleteFile(no exception)
+     * 
+     * @param filePath
+     */
+    public static void deleteFile(String filePath)
+    {
+        try
+        {
+            File file = new File(filePath);
+            if (file.exists())
+            {
+                file.delete();
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public static File newFile(String path)

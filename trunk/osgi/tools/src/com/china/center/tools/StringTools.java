@@ -52,8 +52,21 @@ public class StringTools
      */
     public static String formatString(String name)
     {
-        String s = "0000000000" + name;
-        return s.substring(s.length() - 10, s.length());
+        return formatString(name, 10);
+    }
+
+    public static String formatString(String name, int length)
+    {
+        String pfix = "";
+
+        for (int i = 0; i < length; i++ )
+        {
+            pfix += "0";
+        }
+
+        String s = pfix + name;
+
+        return s.substring(s.length() - length, s.length());
     }
 
     /**

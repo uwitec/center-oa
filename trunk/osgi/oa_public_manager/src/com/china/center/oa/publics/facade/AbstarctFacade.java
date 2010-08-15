@@ -15,6 +15,7 @@ import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
+import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.publics.vs.RoleAuthBean;
 
 
@@ -28,6 +29,8 @@ import com.china.center.oa.publics.vs.RoleAuthBean;
  */
 public abstract class AbstarctFacade
 {
+    protected UserManager userManager = null;
+
     public boolean containAuth(User user, String authId)
     {
         if (authId.equals(AuthConstant.PUNLIC_AUTH))
@@ -65,5 +68,22 @@ public abstract class AbstarctFacade
     protected MYException noAuth()
     {
         return new MYException("没有权限");
+    }
+
+    /**
+     * @return the userManager
+     */
+    public UserManager getUserManager()
+    {
+        return userManager;
+    }
+
+    /**
+     * @param userManager
+     *            the userManager to set
+     */
+    public void setUserManager(UserManager userManager)
+    {
+        this.userManager = userManager;
     }
 }

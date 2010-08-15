@@ -23,7 +23,8 @@ public class PageBodyTr extends BodyTagCenterSupport
      * 默认构建器
      */
     public PageBodyTr()
-    {}
+    {
+    }
 
     public int doStartTag()
         throws JspException
@@ -39,10 +40,19 @@ public class PageBodyTr extends BodyTagCenterSupport
 
     private void write(StringBuffer buffer)
     {
+        // 定义的每行CELL的数量
+        int cells = 2;
+
+        Integer ic = ((Integer)pageContext.getAttribute(TagLibConstant.CENTER_CELLS_INIT));
+
+        if (ic != null)
+        {
+            cells = ic * 2;
+        }
+
         String line = "\r\n";
         buffer.append("<tr height='" + height + "'>").append(line);
-        buffer.append("<td height='" + height + "' colspan='2' align='" + align + "'>").append(
-            line);
+        buffer.append("<td height='" + height + "' colspan='" + cells + "' align='" + align + "'>").append(line);
     }
 
     public int doEndTag()

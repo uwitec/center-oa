@@ -465,7 +465,7 @@ public abstract class WriteBeanProperty
             buffer.append("<input type=checkbox").append(name).append(inner).append(values).append(style).append(
                 oncheck);
 
-            buffer.append(">");
+            buffer.append("/>");
         }
 
         if (html.type() == Element.RADIO)
@@ -474,7 +474,16 @@ public abstract class WriteBeanProperty
             // name="description">${description}</textarea>
             buffer.append("<input type=radio").append(name).append(inner).append(values).append(style).append(oncheck);
 
-            buffer.append(">");
+            buffer.append("/>");
+        }
+
+        if (html.type() == Element.FILE)
+        {
+            // <textarea rows="3" cols="55"
+            // name="description">${description}</textarea>
+            buffer.append("<input type=file").append(name).append(inner).append(style).append(oncheck);
+
+            buffer.append("/>");
         }
 
         return new String[] {buffer.toString(), end.toString()};

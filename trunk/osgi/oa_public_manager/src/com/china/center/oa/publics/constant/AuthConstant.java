@@ -309,6 +309,31 @@ public interface AuthConstant
     String PRODUCT_ORDER = "1001";
 
     /**
+     * 查询产品
+     */
+    String PRODUCT_QUERY = "1002";
+
+    /**
+     * 操作产品
+     */
+    String PRODUCT_OPR = "1003";
+
+    /**
+     * 审核产品
+     */
+    String PRODUCT_CHECK = "1004";
+
+    /**
+     * 产品合成/分解
+     */
+    String PRODUCT_CD = "1005";
+
+    /**
+     * 产品调价
+     */
+    String PRODUCT_CHANGE_PRICE = "1006";
+
+    /**
      * 税务实体的操作
      */
     String DUTY_OPR = "010801";

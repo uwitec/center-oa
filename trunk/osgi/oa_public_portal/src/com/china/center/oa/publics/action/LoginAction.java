@@ -262,6 +262,15 @@ public class LoginAction extends DispatchAction
 
         boolean real = parameterDAO.getBoolean("REAL_LOGIN");
 
+        User suser = Helper.getUser(request);
+
+        if (suser == null)
+        {
+            request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "请重新登录");
+
+            return mapping.findForward("error");
+        }
+
         UserVO user = userDAO.findUserByName(Helper.getUser(request).getName());
 
         if (user == null)

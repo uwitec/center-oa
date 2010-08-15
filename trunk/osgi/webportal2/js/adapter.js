@@ -23,22 +23,7 @@ function preload()
                 }
      });
      
-     // bing Esc to close modal query
-     document.onkeydown = function ()
-     {
-	    //防止body.onmouseup已经绑定
-	    if (document.body.onkeydown == null)
-	    {
-	        var event = getEvent();
-	        
-	        if (event.keyCode == 27)
-	        {
-	            closeModal();
-	            
-	            return false;
-	        }
-	    }
-     }
+     $ESC('modalQuery');
 }
 
 function resetsModal()
@@ -173,8 +158,20 @@ function querySure()
 
 var keyArray = [];
 
+var divArray = [];
+
 function $ESC(id)
 {
+	 if (typeof id == 'string')
+	 {
+	 	divArray.push(id);
+	 }
+	 
+	 if (typeof id == 'object')
+	 {
+	 	 divArray.concat(id);
+	 }
+	 
 	 // bing Esc to close modal query
      document.onkeydown = function ()
      {
@@ -185,8 +182,11 @@ function $ESC(id)
             
             if (event.keyCode == 27)
             {
-                $('#' + id).dialog({closed:true});
-                
+        		for (var i = 0; i < divArray.length; i++)
+        		{
+        			$('#' + divArray[i]).dialog({closed:true});
+        		}
+            	
                 return false;
             }
         }

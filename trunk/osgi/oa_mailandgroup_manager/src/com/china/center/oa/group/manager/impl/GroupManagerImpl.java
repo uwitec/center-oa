@@ -237,20 +237,8 @@ public class GroupManagerImpl extends AbstractListenerManager<GroupListener> imp
 
         for (GroupListener groupListener : listeners)
         {
-            // TODO_OSGI 群组已经被流程定义绑定/群组已经被流程查阅绑定
             groupListener.onDeleteGroup(user, id);
         }
-
-        // if (tokenVSHanderDAO.countByFK(id, AnoConstant.FK_FIRST) > 0)
-        // {
-        // throw new MYException("群组已经被流程定义绑定,不能删除");
-        // }
-        //
-        // // flow view can bing grop flowViewerDAO
-        // if (flowViewerDAO.countByProcesser(id) > 0)
-        // {
-        // throw new MYException("群组已经被流程查阅绑定,不能删除");
-        // }
     }
 
     /**

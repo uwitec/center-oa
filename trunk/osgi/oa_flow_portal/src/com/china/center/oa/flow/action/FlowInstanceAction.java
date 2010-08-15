@@ -690,7 +690,7 @@ public class FlowInstanceAction extends DispatchAction
     {
         FlowInstanceBean bean = new FlowInstanceBean();
 
-        // 模板最多1M
+        // 模板最多10M
         RequestDataStream rds = new RequestDataStream(request, 1024 * 1024 * 10L);
 
         try
