@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<struts-config>
+	<action-mappings>
+		 <action path="/product/product" parameter="method" folder="/product/" bean="Product"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+            <forward name="configProductVSLocation"/>
+        </action>
+		
+	</action-mappings>
+</struts-config>
