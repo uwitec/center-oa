@@ -11,6 +11,7 @@ package com.china.center.oa.publics.manager;
 
 import java.util.Collection;
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.publics.bean.StafferBean;
@@ -26,7 +27,7 @@ import com.china.center.oa.publics.vo.StafferVO;
  * @see StafferManager
  * @since 1.0
  */
-public interface StafferManager
+public interface StafferManager extends ListenerManager<StafferListener>
 {
     boolean addBean(User user, StafferBean bean)
         throws MYException;
@@ -47,18 +48,4 @@ public interface StafferManager
      * @return
      */
     Collection<StafferVO> querySuperiorStaffer(String stafferId);
-
-    /**
-     * putListener
-     * 
-     * @param listener
-     */
-    void putListener(StafferListener listener);
-
-    /**
-     * removeListener
-     * 
-     * @param listener
-     */
-    void removeListener(String listener);
 }

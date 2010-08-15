@@ -10,12 +10,11 @@ package com.china.center.oa.publics.manager.impl;
 
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.expression.Expression;
@@ -36,10 +35,8 @@ import com.china.center.tools.JudgeTools;
  * @since 1.0
  */
 @Exceptional
-public class DutyManagerImpl implements DutyManager
+public class DutyManagerImpl extends AbstractListenerManager<DutyListener> implements DutyManager
 {
-    private Map<String, DutyListener> dutyListenerMap = new HashMap();
-
     private DutyDAO dutyDAO = null;
 
     private CommonDAO commonDAO = null;
@@ -86,7 +83,7 @@ public class DutyManagerImpl implements DutyManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        Collection<DutyListener> values = this.dutyListenerMap.values();
+        Collection<DutyListener> values = this.listenerMap.values();
 
         for (DutyListener dutyListener : values)
         {
@@ -96,26 +93,6 @@ public class DutyManagerImpl implements DutyManager
         dutyDAO.deleteEntityBean(id);
 
         return true;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.china.center.oa.publics.manager.DutyManager#putListener(com.china.center.oa.publics.listener.DutyListener)
-     */
-    public void putListener(DutyListener listener)
-    {
-        dutyListenerMap.put(listener.getListenerType(), listener);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.china.center.oa.publics.manager.DutyManager#removeListener(java.lang.String)
-     */
-    public void removeListener(String listener)
-    {
-        dutyListenerMap.remove(listener);
     }
 
     /*

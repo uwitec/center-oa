@@ -9,6 +9,7 @@
 package com.china.center.oa.publics.manager;
 
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.publics.bean.DutyBean;
@@ -23,7 +24,7 @@ import com.china.center.oa.publics.listener.DutyListener;
  * @see DutyManager
  * @since 1.0
  */
-public interface DutyManager
+public interface DutyManager extends ListenerManager<DutyListener>
 {
     boolean addBean(User user, DutyBean bean)
         throws MYException;
@@ -33,18 +34,4 @@ public interface DutyManager
 
     boolean deleteBean(User user, String id)
         throws MYException;
-
-    /**
-     * putListener
-     * 
-     * @param listener
-     */
-    void putListener(DutyListener listener);
-
-    /**
-     * removeListener
-     * 
-     * @param listener
-     */
-    void removeListener(String listener);
 }

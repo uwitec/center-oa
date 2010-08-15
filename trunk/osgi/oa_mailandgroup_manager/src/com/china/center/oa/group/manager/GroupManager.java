@@ -9,6 +9,7 @@
 package com.china.center.oa.group.manager;
 
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.group.bean.GroupBean;
@@ -23,7 +24,7 @@ import com.china.center.oa.group.listener.GroupListener;
  * @see GroupManager
  * @since 1.0
  */
-public interface GroupManager
+public interface GroupManager extends ListenerManager<GroupListener>
 {
     boolean addBean(User user, GroupBean bean)
         throws MYException;
@@ -33,18 +34,4 @@ public interface GroupManager
 
     boolean delBean(User user, String id)
         throws MYException;
-
-    /**
-     * putListener
-     * 
-     * @param listener
-     */
-    void putListener(GroupListener listener);
-
-    /**
-     * removeListener
-     * 
-     * @param listener
-     */
-    void removeListener(String listener);
 }

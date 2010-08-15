@@ -50,4 +50,14 @@ public interface LocationListener extends ParentListener
      */
     void onDeleteLocationVSCity(User user, String locationId, List<LocationVSCityBean> deleteList)
         throws MYException;
+
+    /**
+     * 删除区域的时候
+     * 
+     * @param user
+     * @param locationId
+     * @throws MYException
+     */
+    void onDeleteLocation(User user, String locationId)
+        throws MYException;
 }

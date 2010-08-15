@@ -11,6 +11,7 @@ package com.china.center.oa.publics.manager;
 
 import java.util.List;
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.publics.bean.LocationBean;
@@ -27,7 +28,7 @@ import com.china.center.oa.publics.vs.LocationVSCityBean;
  * @see LocationManager
  * @since 1.0
  */
-public interface LocationManager
+public interface LocationManager extends ListenerManager<LocationListener>
 {
     boolean addBean(User user, LocationBean bean)
         throws MYException;
@@ -40,18 +41,4 @@ public interface LocationManager
 
     boolean addLocationVSCity(User user, String locationId, List<LocationVSCityBean> list)
         throws MYException;
-
-    /**
-     * putListener
-     * 
-     * @param listener
-     */
-    void putListener(LocationListener listener);
-
-    /**
-     * removeListener
-     * 
-     * @param listener
-     */
-    void removeListener(String listener);
 }

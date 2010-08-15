@@ -81,7 +81,7 @@
 	<osgi:service ref="dutyDAO" interface="com.china.center.oa.publics.dao.DutyDAO" />
 
 	<osgi:service ref="dutyManager" interface="com.china.center.oa.publics.manager.DutyManager" />
-
+	
 	<osgi:service ref="commonFacade" interface="com.china.center.oa.publics.facade.CommonFacade" />
 
 	<osgi:service ref="stafferVSPriDAO" interface="com.china.center.oa.publics.dao.StafferVSPriDAO" />

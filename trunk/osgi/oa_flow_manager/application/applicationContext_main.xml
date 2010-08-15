@@ -13,7 +13,7 @@
 	  http://www.springframework.org/schema/ex 
   	  http://www.springframework.org/schema/ex/spring-ex-2.0.xsd
 	  http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"
-	default-autowire="byName" default-init-method="init">
+	default-autowire="byName" default-init-method="init" default-destroy-method="destroy">
 
 	<bean id="flowBelongDAO" class="com.china.center.oa.flow.dao.impl.FlowBelongDAOImpl" />
 
@@ -73,5 +73,17 @@
 	<bean id="flowManager" class="com.china.center.oa.flow.manager.impl.FlowManagerImpl" />
 
 	<bean id="workFlowFacade" class="com.china.center.oa.flow.facade.impl.WorkFlowFacadeImpl" />
-
+	
+	<bean id="flowGroupListenerImpl" class="com.china.center.oa.flow.listener.impl.FlowGroupListenerImpl" />
+	
+	<bean id="defaultLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
+		<property name="listenerManager">
+			<ref bean="groupManager"/>
+		</property>
+		<property name="listenerList">
+			<list>
+				<ref bean="flowGroupListenerImpl" />
+			</list>
+		</property>
+	</bean>
 </beans>

@@ -9,17 +9,15 @@
 package com.china.center.oa.publics.manager.impl;
 
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.center.china.osgi.publics.ParentListener;
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.annosql.constant.AnoConstant;
@@ -48,7 +46,7 @@ import com.china.center.tools.StringTools;
  * @since 1.0
  */
 @Exceptional
-public class StafferManagerImpl implements StafferManager
+public class StafferManagerImpl extends AbstractListenerManager<StafferListener> implements StafferManager
 {
     private UserDAO userDAO = null;
 
@@ -59,8 +57,6 @@ public class StafferManagerImpl implements StafferManager
     private StafferVSPriDAO stafferVSPriDAO = null;
 
     private PrincipalshipDAO principalshipDAO = null;
-
-    private List<StafferListener> listenerList = new ArrayList();
 
     public StafferManagerImpl()
     {
@@ -285,7 +281,7 @@ public class StafferManagerImpl implements StafferManager
         }
 
         // 职员下存在客户 TODO_OSGI 这里需要stafferVSCustomerDAO注入countByFK监听
-        for (StafferListener listener : listenerList)
+        for (StafferListener listener : this.listenerMap.values())
         {
             listener.onDelete(stafferId);
         }
@@ -294,24 +290,6 @@ public class StafferManagerImpl implements StafferManager
         // {
         // throw new MYException("职员下面还有客户,不能删除");
         // }
-    }
-
-    public void putListener(StafferListener listener)
-    {
-        listenerList.add(listener);
-    }
-
-    public void removeListener(String listener)
-    {
-        for (Iterator iterator = listenerList.iterator(); iterator.hasNext();)
-        {
-            ParentListener each = (ParentListener)iterator.next();
-
-            if (each.getListenerType().equals(listener))
-            {
-                iterator.remove();
-            }
-        }
     }
 
     /**

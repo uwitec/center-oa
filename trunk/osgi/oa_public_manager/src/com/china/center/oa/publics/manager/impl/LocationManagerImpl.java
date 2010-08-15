@@ -10,13 +10,12 @@ package com.china.center.oa.publics.manager.impl;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.center.china.osgi.publics.ParentListener;
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.annosql.constant.AnoConstant;
@@ -50,7 +49,7 @@ import com.china.center.tools.StringTools;
  * @since 1.0
  */
 @Exceptional
-public class LocationManagerImpl implements LocationManager
+public class LocationManagerImpl extends AbstractListenerManager<LocationListener> implements LocationManager
 {
     private LocationDAO locationDAO = null;
 
@@ -63,8 +62,6 @@ public class LocationManagerImpl implements LocationManager
     private OrgManager orgManager = null;
 
     private LocationVSCityDAO locationVSCityDAO = null;
-
-    private List<LocationListener> listenerList = new ArrayList();
 
     private CityDAO cityDAO = null;
 
@@ -125,7 +122,7 @@ public class LocationManagerImpl implements LocationManager
     {
         JudgeTools.judgeParameterIsNull(user, locationId);
 
-        checkDelBean(locationId);
+        checkDelBean(user, locationId);
 
         locationDAO.deleteEntityBean(locationId);
 
@@ -187,7 +184,7 @@ public class LocationManagerImpl implements LocationManager
 
         locationVSCityDAO.deleteEntityBeansByFK(locationId);
 
-        for (LocationListener listener : listenerList)
+        for (LocationListener listener : this.listenerMap.values())
         {
             // TODO_OSGI 对于客户的分公司属性的更新(先更新到总部)
             // customerDAO.updateCustomerLocation(locationId, PublicConstant.CENTER_LOCATION);
@@ -224,7 +221,7 @@ public class LocationManagerImpl implements LocationManager
 
             locationVSCityDAO.saveEntityBean(locationVSCityBean);
 
-            for (LocationListener listener : listenerList)
+            for (LocationListener listener : this.listenerMap.values())
             {
                 // TODO_OSGI 更新区域下客户
                 // customerDAO.updateCustomerLocationByCity(locationVSCityBean.getCityId(), locationId);
@@ -236,7 +233,7 @@ public class LocationManagerImpl implements LocationManager
         // 本次删除的地市
         List<LocationVSCityBean> delCity = analyseDelCity(oldList, list);
 
-        for (LocationListener listener : listenerList)
+        for (LocationListener listener : this.listenerMap.values())
         {
             // TODO_OSGI 处理删除多余的区域(客户关系的变化)
             // handleDelCity(delCity);
@@ -290,7 +287,7 @@ public class LocationManagerImpl implements LocationManager
      * @param bean
      * @throws MYException
      */
-    private void checkDelBean(String locationId)
+    private void checkDelBean(User user, String locationId)
         throws MYException
     {
         if (PublicConstant.VIRTUAL_LOCATION.equals(locationId))
@@ -308,6 +305,12 @@ public class LocationManagerImpl implements LocationManager
         if (stafferDAO.countByLocationId(locationId) > 0)
         {
             throw new MYException("分公司下存在注册职员");
+        }
+
+        // 注入监听
+        for (LocationListener listener : this.listenerMap.values())
+        {
+            listener.onDeleteLocation(user, locationId);
         }
     }
 
@@ -404,24 +407,6 @@ public class LocationManagerImpl implements LocationManager
     public void setCityDAO(CityDAO cityDAO)
     {
         this.cityDAO = cityDAO;
-    }
-
-    public void putListener(LocationListener listener)
-    {
-        listenerList.add(listener);
-    }
-
-    public void removeListener(String listener)
-    {
-        for (Iterator iterator = listenerList.iterator(); iterator.hasNext();)
-        {
-            ParentListener each = (ParentListener)iterator.next();
-
-            if (each.getListenerType().equals(listener))
-            {
-                iterator.remove();
-            }
-        }
     }
 
     /**

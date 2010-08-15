@@ -15,6 +15,7 @@ Export-Package:
  com.china.center.oa.mail.dao;version="1.0.0",
  com.china.center.oa.mail.helper;version="1.0.0",
  com.china.center.oa.mail.manager;version="1.0.0",
+ com.china.center.oa.group.listener;version="1.0.0",
  com.china.center.oa.mg.facade;version="1.0.0"
 Require-Bundle: com.china.center.osgi.jdbc;bundle-version="1.0.0",
  com.china.center.osgi.tools;bundle-version="1.0.0",

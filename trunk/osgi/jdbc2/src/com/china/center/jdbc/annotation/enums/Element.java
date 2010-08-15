@@ -18,5 +18,5 @@ package com.china.center.jdbc.annotation.enums;
  */
 public enum Element
 {
-    INPUT, HIDDEN, SELECT, RADIO, CHECKBOX, TEXTAREA, DATE, DATETIME, PASSWORD, FILE
+    INPUT, HIDDEN, SELECT, RADIO, CHECKBOX, TEXTAREA, DATE, DATETIME, PASSWORD, FILE, NUMBER, DOUBLE
 }

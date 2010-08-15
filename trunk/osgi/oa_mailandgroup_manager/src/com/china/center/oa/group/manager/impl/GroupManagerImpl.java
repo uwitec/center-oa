@@ -10,13 +10,12 @@ package com.china.center.oa.group.manager.impl;
 
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.gm.constant.GroupConstant;
@@ -40,13 +39,11 @@ import com.china.center.tools.ListTools;
  * @since 1.0
  */
 @Exceptional
-public class GroupManagerImpl implements GroupManager
+public class GroupManagerImpl extends AbstractListenerManager<GroupListener> implements GroupManager
 {
     private GroupDAO groupDAO = null;
 
     private CommonDAO commonDAO = null;
-
-    private Map<String, GroupListener> groupListenerMap = new HashMap();
 
     private GroupVSStafferDAO groupVSStafferDAO = null;
 
@@ -236,7 +233,7 @@ public class GroupManagerImpl implements GroupManager
             throw new MYException("不能删除系统群组");
         }
 
-        Collection<GroupListener> listeners = this.groupListenerMap.values();
+        Collection<GroupListener> listeners = this.listenerMap.values();
 
         for (GroupListener groupListener : listeners)
         {
@@ -305,15 +302,5 @@ public class GroupManagerImpl implements GroupManager
     public void setGroupVSStafferDAO(GroupVSStafferDAO groupVSStafferDAO)
     {
         this.groupVSStafferDAO = groupVSStafferDAO;
-    }
-
-    public void putListener(GroupListener listener)
-    {
-        groupListenerMap.put(listener.getListenerType(), listener);
-    }
-
-    public void removeListener(String listener)
-    {
-        groupListenerMap.remove(listener);
     }
 }

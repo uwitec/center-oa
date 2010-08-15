@@ -47,4 +47,6 @@
 	
 	<osgi:reference id="groupVSStafferDAO" interface="com.china.center.oa.group.dao.GroupVSStafferDAO" />
 	
+	<osgi:reference id="groupManager" interface="com.china.center.oa.group.manager.GroupManager" />
+	
 </beans>
