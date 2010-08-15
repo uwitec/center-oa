@@ -23,10 +23,10 @@ import com.china.center.oa.group.listener.GroupListener;
  * 
  * @author ZHUZHU
  * @version 2010-8-15
- * @see FlowGroupListenerImpl
+ * @see GroupListenerFlowImpl
  * @since 1.0
  */
-public class FlowGroupListenerImpl implements GroupListener
+public class GroupListenerFlowImpl implements GroupListener
 {
     private TokenVSHanderDAO tokenVSHanderDAO = null;
 
@@ -35,7 +35,7 @@ public class FlowGroupListenerImpl implements GroupListener
     /**
      * default constructor
      */
-    public FlowGroupListenerImpl()
+    public GroupListenerFlowImpl()
     {
     }
 

@@ -74,7 +74,7 @@
 
 	<bean id="workFlowFacade" class="com.china.center.oa.flow.facade.impl.WorkFlowFacadeImpl" />
 	
-	<bean id="flowGroupListenerImpl" class="com.china.center.oa.flow.listener.impl.FlowGroupListenerImpl" />
+	<bean id="groupListenerFlowImpl" class="com.china.center.oa.flow.listener.impl.GroupListenerFlowImpl" />
 	
 	<bean id="defaultLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
 		<property name="listenerManager">
@@ -82,7 +82,7 @@
 		</property>
 		<property name="listenerList">
 			<list>
-				<ref bean="flowGroupListenerImpl" />
+				<ref bean="groupListenerFlowImpl" />
 			</list>
 		</property>
 	</bean>
