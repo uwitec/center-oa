@@ -157,7 +157,16 @@ public class RegisterActionConfig implements ApplicationContextAware
 
                     forward.setName(forwardElement.attributeValue("name"));
 
-                    forward.setPath(forwardElement.attributeValue("path"));
+                    String path = forwardElement.attributeValue("path");
+
+                    if (StringTools.isNullOrNone(path))
+                    {
+                        forward.setPath(config.getFolder() + forward.getName() + ".jsp");
+                    }
+                    else
+                    {
+                        forward.setPath(forwardElement.attributeValue("path"));
+                    }
 
                     forward.setRedirect(Boolean.valueOf(forwardElement.attributeValue("redirect")));
 
