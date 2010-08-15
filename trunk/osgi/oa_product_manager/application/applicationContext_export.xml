@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:ex="http://www.springframework.org/schema/ex"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="
+  http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/tx 
+  http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+  http://www.springframework.org/schema/ex 
+  http://www.springframework.org/schema/ex/spring-ex-2.0.xsd
+  http://www.springframework.org/schema/osgi
+  http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+	<osgi:service ref="productCombinationDAO" interface="com.china.center.oa.product.dao.ProductCombinationDAO" />
+
+	<osgi:service ref="productDAO" interface="com.china.center.oa.product.dao.ProductDAO" />
+
+	<osgi:service ref="productVSLocationDAO" interface="com.china.center.oa.product.dao.ProductVSLocationDAO" />
+
+	<osgi:service ref="productFacade" interface="com.china.center.oa.product.facade.ProductFacade" />
+
+	<osgi:service ref="productManager" interface="com.china.center.oa.product.manager.ProductManager" />
+
+</beans>
