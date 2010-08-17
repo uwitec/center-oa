@@ -15,6 +15,7 @@ import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.publics.bean.DepartmentBean;
 import com.china.center.oa.publics.bean.DutyBean;
+import com.china.center.oa.publics.bean.EnumBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.PostBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
@@ -116,5 +117,14 @@ public interface PublicFacade
         throws MYException;
 
     boolean deleteDutyBean(User user, String id)
+        throws MYException;
+
+    boolean addEnumBean(String userId, EnumBean bean)
+        throws MYException;
+
+    boolean updateEnumBean(String userId, EnumBean bean)
+        throws MYException;
+
+    boolean deleteEnumBean(String userId, String id)
         throws MYException;
 }

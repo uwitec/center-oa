@@ -57,7 +57,7 @@ public class DutyManagerImpl extends AbstractListenerManager<DutyListener> imple
 
         Expression exp = new Expression(bean, this);
 
-        exp.check("#name && #icp &unique @dutyDAO", "名称或者税务证号已经存在");
+        exp.check("#name || #icp &unique @dutyDAO", "名称或者税务证号已经存在");
 
         dutyDAO.saveEntityBean(bean);
 

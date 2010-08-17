@@ -122,5 +122,10 @@
 			type="org.springframework.web.struts.DelegatingActionProxy"
 			validate="false">
 		</action>
+		
+		<action path="/admin/enum" parameter="method" folder="/admin/" bean="Enum"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+		</action>
 	</action-mappings>
 </struts-config>

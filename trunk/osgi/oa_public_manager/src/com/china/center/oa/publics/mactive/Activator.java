@@ -28,6 +28,7 @@ public class Activator implements BundleActivator
     private List<Class> parserClass = new LinkedList<Class>()
     {
         {
+            add(PublicConstant.class);
             add(StafferConstant.class);
             add(DutyComstant.class);
         }

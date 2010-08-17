@@ -91,4 +91,6 @@
 
 	<bean id="stafferVSPriDAO" class="com.china.center.oa.publics.dao.impl.StafferVSPriDAOImpl" />
 
+	<bean id="enumDefineDAO" class="com.china.center.oa.publics.dao.impl.EnumDefineDAOImpl" />
+
 </beans>

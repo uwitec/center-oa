@@ -337,4 +337,9 @@ public interface AuthConstant
      * 税务实体的操作
      */
     String DUTY_OPR = "010801";
+
+    /**
+     * 配置的操作
+     */
+    String ENUM_OPR = "0109";
 }

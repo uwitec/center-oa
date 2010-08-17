@@ -12,6 +12,7 @@ package com.china.center.oa.publics.dao.impl;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.publics.bean.EnumBean;
 import com.china.center.oa.publics.dao.EnumDAO;
+import com.china.center.oa.publics.vo.EnumVO;
 
 
 /**
@@ -22,7 +23,7 @@ import com.china.center.oa.publics.dao.EnumDAO;
  * @see EnumDAOImpl
  * @since 1.0
  */
-public class EnumDAOImpl extends BaseDAO<EnumBean, EnumBean> implements EnumDAO
+public class EnumDAOImpl extends BaseDAO<EnumBean, EnumVO> implements EnumDAO
 {
     /**
      * findByTypeAndEnumIndex

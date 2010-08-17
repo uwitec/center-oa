@@ -84,5 +84,8 @@
 		
 	<bean name="/admin/duty"
 		class="com.china.center.oa.publics.action.DutyAction" />
+		
+	<bean name="/admin/enum"
+		class="com.china.center.oa.publics.action.EnumAction" />
 
 </beans>

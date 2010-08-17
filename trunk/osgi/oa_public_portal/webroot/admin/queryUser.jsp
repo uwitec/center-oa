@@ -50,6 +50,7 @@ function load()
 		 showTableToggleBtn: true,
 		 height: 'page',
 		 rpOptions: [20,40,80,100],
+		 rp: 20,
 		 def: allDef,
 		 callBack: $callBack //for firefox load ext att
 	 };

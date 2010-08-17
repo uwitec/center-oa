@@ -11,6 +11,7 @@ package com.china.center.oa.publics.dao;
 
 import com.china.center.jdbc.inter.DAO;
 import com.china.center.oa.publics.bean.EnumBean;
+import com.china.center.oa.publics.vo.EnumVO;
 
 
 /**
@@ -21,7 +22,7 @@ import com.china.center.oa.publics.bean.EnumBean;
  * @see EnumDAO
  * @since 1.0
  */
-public interface EnumDAO extends DAO<EnumBean, EnumBean>
+public interface EnumDAO extends DAO<EnumBean, EnumVO>
 {
     EnumBean findByTypeAndEnumIndex(int type, String key);
 }

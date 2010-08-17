@@ -25,7 +25,7 @@
 	<osgi:service ref="departmentDAO" interface="com.china.center.oa.publics.dao.DepartmentDAO" />
 
 	<osgi:service ref="enumDAO" interface="com.china.center.oa.publics.dao.EnumDAO" />
-
+	
 	<osgi:service ref="locationDAO" interface="com.china.center.oa.publics.dao.LocationDAO" />
 
 	<osgi:service ref="locationVSCityDAO" interface="com.china.center.oa.publics.dao.LocationVSCityDAO" />
@@ -85,5 +85,7 @@
 	<osgi:service ref="commonFacade" interface="com.china.center.oa.publics.facade.CommonFacade" />
 
 	<osgi:service ref="stafferVSPriDAO" interface="com.china.center.oa.publics.dao.StafferVSPriDAO" />
+
+	<osgi:service ref="enumDefineDAO" interface="com.china.center.oa.publics.dao.EnumDefineDAO" />
 
 </beans>

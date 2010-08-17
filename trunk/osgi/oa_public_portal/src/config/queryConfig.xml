@@ -61,7 +61,7 @@
 		</condtion>
 		<condtion name="status" caption="状态">
 			<opr>=</opr>
-			<datatype>0</datatype>
+			<datatype>1</datatype>
 			<type>select</type>
 			<option>$userStatus</option>
 		</condtion>
@@ -101,6 +101,19 @@
 		<condtion name="name" caption="名称">
 			<opr>like</opr>
 			<type>text</type>
+		</condtion>
+	</item>
+	
+	<item name="queryEnum" deaultpfix="EnumBean">
+		<condtion name="val" caption="配置项">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="type" caption="类型">
+			<opr>=</opr>
+			<datatype>0</datatype>
+			<type>select</type>
+			<option>$enumDefine</option>
 		</condtion>
 	</item>
 

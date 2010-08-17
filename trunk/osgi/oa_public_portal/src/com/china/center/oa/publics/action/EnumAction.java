@@ -9,6 +9,8 @@
 package com.china.center.oa.publics.action;
 
 
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,39 +30,43 @@ import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.publics.Helper;
-import com.china.center.oa.publics.bean.DutyBean;
-import com.china.center.oa.publics.dao.DutyDAO;
+import com.china.center.oa.publics.bean.EnumBean;
+import com.china.center.oa.publics.bean.EnumDefineBean;
+import com.china.center.oa.publics.dao.EnumDAO;
+import com.china.center.oa.publics.dao.EnumDefineDAO;
 import com.china.center.oa.publics.facade.PublicFacade;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 
 
 /**
- * DutyAction
+ * EnumAction
  * 
  * @author ZHUZHU
  * @version 2010-6-27
- * @see DutyAction
+ * @see EnumAction
  * @since 1.0
  */
-public class DutyAction extends DispatchAction
+public class EnumAction extends DispatchAction
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
     private PublicFacade publicFacade = null;
 
-    private DutyDAO dutyDAO = null;
+    private EnumDAO enumDAO = null;
 
-    private static final String QUERYDUTY = "queryDuty";
+    private EnumDefineDAO enumDefineDAO = null;
+
+    private static final String QUERYENUM = "queryEnum";
 
     /**
      * default constructor
      */
-    public DutyAction()
+    public EnumAction()
     {
     }
 
-    public ActionForward queryDuty(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward queryEnum(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                    HttpServletResponse response)
         throws ServletException
     {
@@ -68,15 +74,15 @@ public class DutyAction extends DispatchAction
 
         condtion.addWhereStr();
 
-        ActionTools.processJSONQueryCondition(QUERYDUTY, request, condtion);
+        ActionTools.processJSONQueryCondition(QUERYENUM, request, condtion);
 
-        String jsonstr = ActionTools.queryBeanByJSONAndToString(QUERYDUTY, request, condtion, this.dutyDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYENUM, request, condtion, this.enumDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
 
     /**
-     * addDuty
+     * addEnum
      * 
      * @param mapping
      * @param form
@@ -85,11 +91,11 @@ public class DutyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addDuty(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward addEnum(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response)
         throws ServletException
     {
-        DutyBean bean = new DutyBean();
+        EnumBean bean = new EnumBean();
 
         try
         {
@@ -97,20 +103,20 @@ public class DutyAction extends DispatchAction
 
             User user = Helper.getUser(request);
 
-            publicFacade.addDutyBean(user, bean);
+            publicFacade.addEnumBean(user.getId(), bean);
 
-            request.setAttribute(KeyConstant.MESSAGE, "成功增加税务实体:" + bean.getName());
+            request.setAttribute(KeyConstant.MESSAGE, "成功增加配置");
         }
         catch (MYException e)
         {
             _logger.warn(e, e);
 
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "增加失败:" + e.getMessage());
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "增加配置失败:" + e.getMessage());
         }
 
         CommonTools.removeParamers(request);
 
-        return mapping.findForward("queryDuty");
+        return mapping.findForward("queryEnum");
     }
 
     /**
@@ -123,11 +129,11 @@ public class DutyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateDuty(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward updateEnum(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                     HttpServletResponse response)
         throws ServletException
     {
-        DutyBean bean = new DutyBean();
+        EnumBean bean = new EnumBean();
 
         try
         {
@@ -135,24 +141,24 @@ public class DutyAction extends DispatchAction
 
             User user = Helper.getUser(request);
 
-            publicFacade.updateDutyBean(user, bean);
+            publicFacade.updateEnumBean(user.getId(), bean);
 
-            request.setAttribute(KeyConstant.MESSAGE, "成功操作税务实体:" + bean.getName());
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作配置");
         }
         catch (MYException e)
         {
             _logger.warn(e, e);
 
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作配置失败:" + e.getMessage());
         }
 
         CommonTools.removeParamers(request);
 
-        return mapping.findForward("queryDuty");
+        return mapping.findForward("queryEnum");
     }
 
     /**
-     * delLocation
+     * deleteEnum
      * 
      * @param mapping
      * @param form
@@ -161,7 +167,7 @@ public class DutyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteDuty(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward deleteEnum(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                     HttpServletResponse response)
         throws ServletException
     {
@@ -173,22 +179,22 @@ public class DutyAction extends DispatchAction
 
             User user = Helper.getUser(request);
 
-            publicFacade.deleteDutyBean(user, id);
+            publicFacade.deleteEnumBean(user.getId(), id);
 
-            ajax.setSuccess("成功删除税务实体");
+            ajax.setSuccess("成功操作配置");
         }
         catch (MYException e)
         {
             _logger.warn(e, e);
 
-            ajax.setError("删除失败:" + e.getMessage());
+            ajax.setError("操作配置失败:" + e.getMessage());
         }
 
         return JSONTools.writeResponse(response, ajax);
     }
 
     /**
-     * findDuty
+     * findEnumDefine
      * 
      * @param mapping
      * @param form
@@ -197,31 +203,15 @@ public class DutyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findDuty(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse response)
+    public ActionForward preForAddEnum(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse response)
         throws ServletException
     {
-        String id = request.getParameter("id");
+        List<EnumDefineBean> enumDefineList = enumDefineDAO.listEntityBeans();
 
-        DutyBean bean = dutyDAO.findVO(id);
+        request.setAttribute("enumDefineList", enumDefineList);
 
-        if (bean == null)
-        {
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据异常,请重新操作");
-
-            return mapping.findForward("queryDuty");
-        }
-
-        request.setAttribute("bean", bean);
-
-        String update = request.getParameter("update");
-
-        if ("1".equals(update))
-        {
-            return mapping.findForward("updateDuty");
-        }
-
-        return mapping.findForward("detailDuty");
+        return mapping.findForward("addEnum");
     }
 
     /**
@@ -242,19 +232,37 @@ public class DutyAction extends DispatchAction
     }
 
     /**
-     * @return the dutyDAO
+     * @return the enumDAO
      */
-    public DutyDAO getDutyDAO()
+    public EnumDAO getEnumDAO()
     {
-        return dutyDAO;
+        return enumDAO;
     }
 
     /**
-     * @param dutyDAO
-     *            the dutyDAO to set
+     * @param enumDAO
+     *            the enumDAO to set
      */
-    public void setDutyDAO(DutyDAO dutyDAO)
+    public void setEnumDAO(EnumDAO enumDAO)
     {
-        this.dutyDAO = dutyDAO;
+        this.enumDAO = enumDAO;
     }
+
+    /**
+     * @return the enumDefineDAO
+     */
+    public EnumDefineDAO getEnumDefineDAO()
+    {
+        return enumDefineDAO;
+    }
+
+    /**
+     * @param enumDefineDAO
+     *            the enumDefineDAO to set
+     */
+    public void setEnumDefineDAO(EnumDefineDAO enumDefineDAO)
+    {
+        this.enumDefineDAO = enumDefineDAO;
+    }
+
 }

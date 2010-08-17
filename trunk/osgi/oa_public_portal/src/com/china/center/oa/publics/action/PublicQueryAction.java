@@ -9,6 +9,7 @@
 package com.china.center.oa.publics.action;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,12 +36,14 @@ import com.china.center.common.taglib.PageSelectOption;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.LocationHelper;
 import com.china.center.oa.publics.bean.DepartmentBean;
+import com.china.center.oa.publics.bean.EnumDefineBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.PostBean;
 import com.china.center.oa.publics.bean.ProvinceBean;
 import com.china.center.oa.publics.bean.RoleBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.dao.DepartmentDAO;
+import com.china.center.oa.publics.dao.EnumDefineDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.PostDAO;
 import com.china.center.oa.publics.dao.PrincipalshipDAO;
@@ -85,11 +88,14 @@ public class PublicQueryAction extends DispatchAction
 
     private ProvinceDAO provinceDAO = null;
 
+    private EnumDefineDAO enumDefineDAO = null;
+
     /**
      * default constructor
      */
     public PublicQueryAction()
-    {}
+    {
+    }
 
     /**
      * popStafferQuery
@@ -243,7 +249,8 @@ public class PublicQueryAction extends DispatchAction
             ppmap = new HashMap();
         }
 
-        sb.append("<table align='center' width='98%' cellpadding='0' id='default_table' cellspacing='1' class='table0'>");
+        sb
+            .append("<table align='center' width='98%' cellpadding='0' id='default_table' cellspacing='1' class='table0'>");
 
         for (int i = 0; i < hidenConditions.size(); i++ )
         {
@@ -258,16 +265,18 @@ public class PublicQueryAction extends DispatchAction
 
             if ("text".equals(eachItem.getType()))
             {
-                sb.append(StringTools.format(
-                    "<input type=text name='%s' id='%s' size=35 onkeypress='enterKeyPress(querySure)' frister=%s %s value='%s'/>",
-                    eachItem.getName(), eachItem.getName(), (i == 0 ? "1" : "0"), eachItem.getInner(), value));
+                sb
+                    .append(StringTools
+                        .format(
+                            "<input type=text name='%s' id='%s' size=35 onkeypress='enterKeyPress(querySure)' frister=%s %s value='%s'/>",
+                            eachItem.getName(), eachItem.getName(), (i == 0 ? "1" : "0"), eachItem.getInner(), value));
             }
             else if ("select".equals(eachItem.getType()))
             {
                 sb.append(StringTools.format(
                     "<select name='%s' id='%s' quick=true %s class='select_class' values='%s' style='width:250px'>",
-                    eachItem.getName(), eachItem.getName(), eachItem.getInner(),
-                    StringTools.print((String)ppmap.get(eachItem.getName()))));
+                    eachItem.getName(), eachItem.getName(), eachItem.getInner(), StringTools.print((String)ppmap
+                        .get(eachItem.getName()))));
 
                 sb.append("<option value=''>--</option>");
 
@@ -282,19 +291,23 @@ public class PublicQueryAction extends DispatchAction
             }
             else if ("date".equals(eachItem.getType()))
             {
-                sb.append(StringTools.format(
-                    "<input type=text name = '%s' id='%s'  value = '%s' %s readonly=readonly >"
-                        + "<img src='%s/images/calendar.gif' style='cursor: pointer' title='请选择时间' align='top' onclick='return calDate(\"%s\");' height='20px' width='20px'/>",
-                    eachItem.getName(), eachItem.getName(), value, eachItem.getInner(), request.getContextPath(),
-                    eachItem.getName()));
+                sb
+                    .append(StringTools
+                        .format(
+                            "<input type=text name = '%s' id='%s'  value = '%s' %s readonly=readonly >"
+                                + "<img src='%s/images/calendar.gif' style='cursor: pointer' title='请选择时间' align='top' onclick='return calDate(\"%s\");' height='20px' width='20px'/>",
+                            eachItem.getName(), eachItem.getName(), value, eachItem.getInner(), request
+                                .getContextPath(), eachItem.getName()));
             }
             else if ("datetime".equals(eachItem.getType()))
             {
-                sb.append(StringTools.format(
-                    "<input type=text name = '%s' id='%s'  value = '%s' %s readonly=readonly >"
-                        + "<img src='%s/images/calendar.gif' style='cursor: pointer' title='请选择时间' align='top' onclick='return calDateTime(\"%s\");' height='20px' width='20px'/>",
-                    eachItem.getName(), eachItem.getName(), value, eachItem.getInner(), request.getContextPath(),
-                    eachItem.getName()));
+                sb
+                    .append(StringTools
+                        .format(
+                            "<input type=text name = '%s' id='%s'  value = '%s' %s readonly=readonly >"
+                                + "<img src='%s/images/calendar.gif' style='cursor: pointer' title='请选择时间' align='top' onclick='return calDateTime(\"%s\");' height='20px' width='20px'/>",
+                            eachItem.getName(), eachItem.getName(), value, eachItem.getInner(), request
+                                .getContextPath(), eachItem.getName()));
             }
 
             sb.append("</td>");
@@ -425,7 +438,8 @@ public class PublicQueryAction extends DispatchAction
                 selectMap.put(key, list);
             }
             catch (MYException e)
-            {}
+            {
+            }
 
             return;
         }
@@ -445,6 +459,29 @@ public class PublicQueryAction extends DispatchAction
             }
 
             selectMap.put(key, list);
+
+            return;
+        }
+
+        if ("$enumDefine".equals(key))
+        {
+            // MapBean 获得所有的enum定义
+            List<EnumDefineBean> enumDefineList = enumDefineDAO.listEntityBeans();
+
+            List<MapBean> mapList = new ArrayList();
+
+            for (EnumDefineBean enumDefineBean : enumDefineList)
+            {
+                MapBean mbean = new MapBean();
+
+                mbean.setKey(enumDefineBean.getName());
+
+                mbean.setValue(enumDefineBean.getCnname());
+
+                mapList.add(mbean);
+            }
+
+            selectMap.put(key, mapList);
 
             return;
         }
@@ -628,5 +665,22 @@ public class PublicQueryAction extends DispatchAction
     public void setPublicQueryManager(PublicQueryManager publicQueryManager)
     {
         this.publicQueryManager = publicQueryManager;
+    }
+
+    /**
+     * @return the enumDefineDAO
+     */
+    public EnumDefineDAO getEnumDefineDAO()
+    {
+        return enumDefineDAO;
+    }
+
+    /**
+     * @param enumDefineDAO
+     *            the enumDefineDAO to set
+     */
+    public void setEnumDefineDAO(EnumDefineDAO enumDefineDAO)
+    {
+        this.enumDefineDAO = enumDefineDAO;
     }
 }

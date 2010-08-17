@@ -50,6 +50,7 @@ function load()
          cache: 0,
          height: 'page',
 		 rpOptions: [20,40,80,100],
+		 rp: 20,
          queryCondition: null,
          showTableToggleBtn: true,
          def: allDef,
@@ -63,6 +64,7 @@ function $callBack()
 {
     loadForm();
     
+    highlights($("#mainTable").get(0), ['不启用库存模型'], 'red');
 }
 
 function addBean(opr, grid)

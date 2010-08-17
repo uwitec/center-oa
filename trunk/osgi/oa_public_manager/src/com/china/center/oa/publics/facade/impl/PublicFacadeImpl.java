@@ -15,6 +15,7 @@ import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.publics.bean.DepartmentBean;
 import com.china.center.oa.publics.bean.DutyBean;
+import com.china.center.oa.publics.bean.EnumBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.PostBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
@@ -27,6 +28,7 @@ import com.china.center.oa.publics.facade.PublicFacade;
 import com.china.center.oa.publics.helper.RoleHelper;
 import com.china.center.oa.publics.manager.DepartmentManager;
 import com.china.center.oa.publics.manager.DutyManager;
+import com.china.center.oa.publics.manager.EnumManager;
 import com.china.center.oa.publics.manager.LocationManager;
 import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.publics.manager.PostManager;
@@ -62,6 +64,8 @@ public class PublicFacadeImpl extends AbstarctFacade implements PublicFacade
     private PostManager postManager = null;
 
     private DutyManager dutyManager = null;
+
+    private EnumManager enumManager = null;
 
     /**
      * default constructor
@@ -882,5 +886,79 @@ public class PublicFacadeImpl extends AbstarctFacade implements PublicFacade
     public void setDutyManager(DutyManager dutyManager)
     {
         this.dutyManager = dutyManager;
+    }
+
+    public boolean addEnumBean(String userId, EnumBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.ENUM_OPR))
+        {
+            return enumManager.addBean(user, bean);
+        }
+        else
+        {
+            throw new MYException("没有权限");
+        }
+    }
+
+    public boolean deleteEnumBean(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.ENUM_OPR))
+        {
+            return enumManager.deleteBean(user, id);
+        }
+        else
+        {
+            throw new MYException("没有权限");
+        }
+    }
+
+    public boolean updateEnumBean(String userId, EnumBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.ENUM_OPR))
+        {
+            return enumManager.updateBean(user, bean);
+        }
+        else
+        {
+            throw new MYException("没有权限");
+        }
+    }
+
+    /**
+     * @return the enumManager
+     */
+    public EnumManager getEnumManager()
+    {
+        return enumManager;
+    }
+
+    /**
+     * @param enumManager
+     *            the enumManager to set
+     */
+    public void setEnumManager(EnumManager enumManager)
+    {
+        this.enumManager = enumManager;
     }
 }

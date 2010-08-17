@@ -88,5 +88,7 @@
 	<osgi:reference id="dutyManager" interface="com.china.center.oa.publics.manager.DutyManager" />
 	
 	<osgi:reference id="stafferVSPriDAO" interface="com.china.center.oa.publics.dao.StafferVSPriDAO" />
+	
+	<osgi:reference id="enumDefineDAO" interface="com.china.center.oa.publics.dao.EnumDefineDAO" />
 
 </beans>

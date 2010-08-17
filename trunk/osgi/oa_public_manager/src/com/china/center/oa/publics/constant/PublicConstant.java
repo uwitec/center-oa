@@ -8,6 +8,10 @@
  */
 package com.china.center.oa.publics.constant;
 
+
+import com.china.center.jdbc.annotation.Defined;
+
+
 /**
  * PublicConstant
  * 
@@ -160,5 +164,11 @@ public interface PublicConstant
      * 全局session区域表示
      */
     String CURRENTLOCATIONID = "currentLocationId";
+
+    @Defined(key = "enumStatus", value = "系统初始")
+    int ENUM_INIT = 0;
+
+    @Defined(key = "enumStatus", value = "人工添加")
+    int ENUM_ADD = 1;
 
 }
