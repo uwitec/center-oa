@@ -27,7 +27,8 @@ public class PageSelectOption extends BodyTagCenterSupport
      * 默认构建器
      */
     public PageSelectOption()
-    {}
+    {
+    }
 
     public int doStartTag()
         throws JspException
@@ -45,14 +46,33 @@ public class PageSelectOption extends BodyTagCenterSupport
     {
         String line = "\r\n";
 
-        List<MapBean> list = optionMap.get(type);
-
-        if (list != null)
+        if (type.startsWith("[") && type.endsWith("]"))
         {
-            for (MapBean mapBean : list)
+            String[] splits = type.substring(1, type.length() - 1).split(",");
+
+            int begin = Integer.parseInt(splits[0].trim());
+            int end = Integer.parseInt(splits[1].trim());
+            for (int i = begin; i <= end; i++ )
             {
-                buffer.append("<option value=").append(mapBean.getKey()).append(">").append(
-                    mapBean.getValue()).append("</option>").append(line);
+                buffer.append("<option value=").append(i).append(">").append(i).append("</option>").append(line);
+            }
+        }
+        else
+        {
+            List<MapBean> list = optionMap.get(type);
+
+            if (list != null)
+            {
+                for (MapBean mapBean : list)
+                {
+                    buffer
+                        .append("<option value=")
+                        .append(mapBean.getKey())
+                        .append(">")
+                        .append(mapBean.getValue())
+                        .append("</option>")
+                        .append(line);
+                }
             }
         }
     }
