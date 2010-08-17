@@ -69,6 +69,7 @@ function load()
 		 cache: 0,
 		 height: 'page',
 		 rpOptions: [20,40,80,100],
+		 rp: 20,
 		 queryCondition: null,
 		 showTableToggleBtn: true,
 		 def: allDef,
