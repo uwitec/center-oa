@@ -171,4 +171,8 @@ public interface PublicConstant
     @Defined(key = "enumStatus", value = "人工添加")
     int ENUM_ADD = 1;
 
+    int ENUMDEFINE_TYPE_STRING = 0;
+
+    int ENUMDEFINE_TYPE_INT = 1;
+
 }

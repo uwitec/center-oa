@@ -25,7 +25,7 @@ function load()
          title: '配置项列表',
          url: gurl + 'query' + ukey,
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
+             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lvalue={value}>', width : 40, align: 'center'},
              {display: '名称', name : 'value', width : '30%'},
              {display: '类型', name : 'typeName', width : '30%'},
              {display: '状态', name : 'status', cc : 'enumStatus', width : 'auto'}
@@ -35,7 +35,7 @@ function load()
          },
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: '0109'},
-             {id: 'update', bclass: 'update', onpress : updateBean, auth: '0109'},
+             {id: 'update', bclass: 'update', onpress : preUpdateBean, auth: '0109'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '0109'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
@@ -54,6 +54,22 @@ function load()
      };
      
      $("#mainTable").flexigrid(guidMap, thisObj);
+     
+     $('#dlg').dialog({
+                //iconCls: 'icon-save',
+                modal:true,
+                closed:true,
+                buttons:{
+                    '确 定':function(){
+                        updateBean();
+                    },
+                    '取 消':function(){
+                        $('#dlg').dialog({closed:true});
+                    }
+                }
+     });
+     
+     $ESC('dlg');
 }
  
 function $callBack()
@@ -83,14 +99,41 @@ function delBean(opr, grid)
     $error('不能操作');
 }
 
-function updateBean()
+function preUpdateBean()
 {
 	if (getRadio('checkb') && getRadioValue('checkb'))
 	{	
-		$l(gurl + 'find' + ukey + '&update=1&id=' + getRadioValue('checkb'));
+		$O('configItemName').value = getRadio('checkb').lvalue;
+		
+		$('#dlg').dialog({closed:false});
 	}
 	else
 	$error('不能操作');
+}
+
+function updateBean(opr, grid)
+{
+	var vv = $O('configItemName').value;
+	
+	if (vv == '')
+	{
+		alert('不能为空');
+		return false;
+	}
+	
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {    
+        $ajax2(gurl + 'update' + ukey + '&id=' + getRadioValue('checkb'), [{name:"value",value:ajaxPararmter(vv)}], callSucess);
+    }
+    else
+    $error('不能操作');
+}
+
+function callSucess(data)
+{
+    $('#dlg').dialog({closed:true});
+    
+    callBackFun(data);
 }
 
 function doSearch()
@@ -106,5 +149,10 @@ function doSearch()
 </form>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
+<div id="dlg" title="修改配置项" style="width:320px;">
+    <div style="padding:20px;height:200px;" id="dia_inner" title="">
+    配置项：<input type="text" id="configItemName" name="configItemName" />
+   </div>
+</div>
 <p:query/>
 </body>

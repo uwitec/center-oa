@@ -798,7 +798,7 @@ var gobal_guid;
                         var mmaps = {};
                         
                         mmaps['name'] = att;
-                        mmaps['value'] = p.queryCondition[att];
+                        mmaps['value'] = ajaxPararmter(p.queryCondition[att]);
                         
                         param.push(mmaps);
                     }   
@@ -2013,11 +2013,36 @@ function $ajax(urls, successFun, errorFun)
            });
 }
 
+function $ajax2(urls, datas, successFun, errorFun)
+{
+    $.ajax({
+            type: 'POST',
+            url: urls,
+            data: datas,
+            dataType: 'json',
+            success: successFun,
+            error: errorFun ? errorFun : function(data) 
+            {
+                alert('system error'); 
+            }
+           });
+}
+
 function commonQuery(par)
 {
     gobal_guid.p.queryCondition = par;
     
     gobal_guid.grid.populate(true);
+}
+
+//ajax中post的escape对有些特殊字符无法转换，例如：+ % &号，因此需要对其进行转义。
+function ajaxPararmter(str)
+{
+	str = str.replace(/\+/g, "%2B"); 
+	str = str.replace(/\%/g, "%25"); 
+	str = str.replace(/\&/g, "%26");
+	
+	return str;
 }
 
 function checkAll(obj)

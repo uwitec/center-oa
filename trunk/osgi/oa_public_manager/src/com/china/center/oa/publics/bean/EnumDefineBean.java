@@ -15,6 +15,7 @@ import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.Unique;
+import com.china.center.oa.publics.constant.PublicConstant;
 
 
 /**
@@ -36,6 +37,11 @@ public class EnumDefineBean implements Serializable
     private String name = "";
 
     private String cnname = "";
+
+    /**
+     * 0:字符 1:数字
+     */
+    private int type = PublicConstant.ENUMDEFINE_TYPE_STRING;
 
     private String ref = "";
 
@@ -144,6 +150,23 @@ public class EnumDefineBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the type
+     */
+    public int getType()
+    {
+        return type;
+    }
+
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(int type)
+    {
+        this.type = type;
     }
 
 }

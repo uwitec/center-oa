@@ -133,28 +133,33 @@ public class EnumAction extends DispatchAction
                                     HttpServletResponse response)
         throws ServletException
     {
-        EnumBean bean = new EnumBean();
+        AjaxResult ajax = new AjaxResult();
 
         try
         {
-            BeanUtil.getBean(bean, request);
+            String id = request.getParameter("id");
+
+            EnumBean old = enumDAO.find(id);
+
+            String value = request.getParameter("value").trim();
+
+            old.setValue(value);
 
             User user = Helper.getUser(request);
 
-            publicFacade.updateEnumBean(user.getId(), bean);
+            publicFacade.updateEnumBean(user.getId(), old);
 
-            request.setAttribute(KeyConstant.MESSAGE, "成功操作配置");
+            ajax.setSuccess("成功操作配置");
         }
         catch (MYException e)
         {
             _logger.warn(e, e);
 
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作配置失败:" + e.getMessage());
+            ajax.setError("操作配置失败:" + e.getMessage());
         }
 
-        CommonTools.removeParamers(request);
+        return JSONTools.writeResponse(response, ajax);
 
-        return mapping.findForward("queryEnum");
     }
 
     /**

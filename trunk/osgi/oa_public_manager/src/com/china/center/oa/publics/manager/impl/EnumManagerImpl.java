@@ -77,15 +77,23 @@ public class EnumManagerImpl implements EnumManager
         {
             List<MapBean> iList = PageSelectOption.optionMap.get(String.valueOf(enumBean.getType()));
 
+            if (iList != null)
+            {
+                // 先清空
+                iList.clear();
+            }
+        }
+
+        for (EnumBean enumBean : list)
+        {
+            List<MapBean> iList = PageSelectOption.optionMap.get(String.valueOf(enumBean.getType()));
+
             if (iList == null)
             {
                 iList = new ArrayList<MapBean>();
 
                 PageSelectOption.optionMap.put(String.valueOf(enumBean.getType()), iList);
             }
-
-            // 先清空
-            iList.clear();
 
             iList.add(new MapBean(enumBean.getKey(), enumBean.getValue()));
         }
