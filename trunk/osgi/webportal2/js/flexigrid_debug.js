@@ -2013,6 +2013,21 @@ function $ajax(urls, successFun, errorFun)
            });
 }
 
+function $ajax2(urls, datas, successFun, errorFun)
+{
+    $.ajax({
+            type: 'POST',
+            url: urls,
+            data: datas,
+            dataType: 'json',
+            success: successFun,
+            error: errorFun ? errorFun : function(data) 
+            {
+                alert('system error'); 
+            }
+           });
+}
+
 function commonQuery(par)
 {
     gobal_guid.p.queryCondition = par;
