@@ -63,24 +63,49 @@ function addBean()
 				<p:option type="productStockType"/>
 			</p:pro>
 
-			<p:pro field="typeName"/>
+			<p:pro field="typeName">
+				<p:option type="116"/>
+			</p:pro>
 			<p:pro field="specification"/>
 			<p:pro field="model"/>
-			<p:pro field="amountUnit"/>
-			<p:pro field="weightUnit"/>
-			<p:pro field="cubageUnit"/>
+			
+			<p:pro field="amountUnit">
+				<p:option type="117"/>
+			</p:pro>
+			<p:pro field="weightUnit">
+				<p:option type="118"/>
+			</p:pro>
+			<p:pro field="cubageUnit">
+				<p:option type="119"/>
+			</p:pro>
 			<p:pro field="version"/>
 			<p:pro field="design"/>
 			<p:pro field="materielSource"/>
-			<p:pro field="storeUnit"/>
+			<p:pro field="storeUnit">
+				<p:option type="120"/>
+			</p:pro>
 			<p:pro field="abc"/>
-			<p:pro field="batchModal"/>
-			<p:pro field="checkDays"/>
-			<p:pro field="maxStoreDays"/>
-			<p:pro field="safeStoreDays"/>
-			<p:pro field="makeDays"/>
-			<p:pro field="flowDays"/>
-			<p:pro field="minAmount"/>
+			<p:pro field="batchModal">
+				<p:option type="115"/>
+			</p:pro>
+			<p:pro field="checkDays">
+				<p:option type="[1,30]"/>
+			</p:pro>
+			<p:pro field="maxStoreDays">
+				<p:option type="[1,30]"/>
+			</p:pro>
+			<p:pro field="safeStoreDays">
+				<p:option type="[1,30]"/>
+			</p:pro>
+			<p:pro field="makeDays">
+				<p:option type="[1,30]"/>
+			</p:pro>
+			<p:pro field="flowDays">
+				<p:option type="[1,30]"/>
+			</p:pro>
+			<p:pro field="minAmount">
+				<p:option type="[1,100]"/>
+			</p:pro>
 			<p:pro field="assembleFlag"/>
 			<p:pro field="consumeInDay"/>
 			<p:pro field="orderAmount"/>
@@ -126,7 +151,9 @@ function addBean()
 			<p:pro field="checkType">
 				<p:option type="productCheckType"/>
 			</p:pro>
-			<p:pro field="checkStandard" cell="0"/>
+			<p:pro field="checkStandard" cell="0">
+			<p:option type="121"/>
+			</p:pro>
 			
 			<p:pro field="picPath" cell="0" innerString="size=60 class=button_class"/>
 			

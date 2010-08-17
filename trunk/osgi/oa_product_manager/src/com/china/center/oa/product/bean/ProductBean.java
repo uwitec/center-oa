@@ -86,7 +86,7 @@ public class ProductBean implements Serializable
     /**
      * 品种
      */
-    @Html(title = "品种", maxLength = 100)
+    @Html(title = "品种", type = Element.SELECT, must = true)
     private String typeName = "";
 
     /**
@@ -104,19 +104,19 @@ public class ProductBean implements Serializable
     /**
      * 计量单位
      */
-    @Html(title = "计量单位", maxLength = 20)
+    @Html(title = "计量单位", type = Element.SELECT, must = true)
     private String amountUnit = "";
 
     /**
      * 重量单位
      */
-    @Html(title = "重量单位", maxLength = 20)
+    @Html(title = "重量单位", type = Element.SELECT, must = true)
     private String weightUnit = "";
 
     /**
      * 体积单位
      */
-    @Html(title = "体积单位", maxLength = 20)
+    @Html(title = "体积单位", type = Element.SELECT, must = true)
     private String cubageUnit = "";
 
     /**
@@ -146,7 +146,7 @@ public class ProductBean implements Serializable
     /**
      * 库存单位
      */
-    @Html(title = "库存单位", maxLength = 100)
+    @Html(title = "库存单位", type = Element.SELECT, must = true)
     private String storeUnit = "";
 
     /**
@@ -158,43 +158,43 @@ public class ProductBean implements Serializable
     /**
      * 批量规则
      */
-    @Html(title = "批量规则", maxLength = 100)
+    @Html(title = "批量规则", type = Element.SELECT, must = true)
     private String batchModal = "";
 
     /**
      * 盘点周期
      */
-    @Html(title = "盘点周期", must = true, type = Element.NUMBER)
+    @Html(title = "盘点周期（天）", must = true, type = Element.SELECT)
     private int checkDays = 0;
 
     /**
      * 积压期限
      */
-    @Html(title = "积压期限", must = true, type = Element.NUMBER)
+    @Html(title = "积压期限（天）", must = true, type = Element.SELECT)
     private int maxStoreDays = 0;
 
     /**
      * 安全库存量
      */
-    @Html(title = "安全库存量", type = Element.NUMBER, must = true)
+    @Html(title = "安全库存量", type = Element.SELECT, must = true)
     private int safeStoreDays = 0;
 
     /**
      * 生产期（天）
      */
-    @Html(title = "生产期（天）", type = Element.NUMBER, must = true)
+    @Html(title = "生产期（天）", type = Element.SELECT, must = true)
     private int makeDays = 0;
 
     /**
      * 物流期（天）
      */
-    @Html(title = "物流期期（天）", type = Element.NUMBER, must = true)
+    @Html(title = "物流期期（天）", type = Element.SELECT, must = true)
     private int flowDays = 0;
 
     /**
      * 最小批量的个数
      */
-    @Html(title = "最小批量的个数", type = Element.NUMBER, must = true)
+    @Html(title = "最小批量的个数", type = Element.SELECT, must = true)
     private int minAmount = 0;
 
     /**
@@ -313,7 +313,7 @@ public class ProductBean implements Serializable
     /**
      * 检验标准
      */
-    @Html(title = "检测标识")
+    @Html(title = "检验标准", type = Element.SELECT, must = true)
     private String checkStandard = "";
 
     /**
