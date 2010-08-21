@@ -73,7 +73,26 @@ public abstract class DefinedCommon
         }
 
         return oo.get(index).getValue();
+    }
 
+    public static String getValue(String key, String indexKey)
+    {
+        List<MapBean> oo = definedMap.get(key);
+
+        if (oo == null)
+        {
+            return "";
+        }
+
+        for (MapBean mapBean : oo)
+        {
+            if (mapBean.getKey().equals(indexKey))
+            {
+                return mapBean.getValue();
+            }
+        }
+
+        return "";
     }
 
     /**

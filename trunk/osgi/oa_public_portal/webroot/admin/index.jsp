@@ -100,8 +100,17 @@ function CheckuserName(str)
     return re.test(str)||str=="";
 }
 
+var ie6 = is_ie && /MSIE 6.0/.test(navigator.userAgent) && !(/MSIE 8.0/.test(navigator.userAgent)) && !(/MSIE 7.0/.test(navigator.userAgent));
+
 function VerifyInput()
 {
+	if (is_ie && ie6)
+	{
+		alert('请使用IE7以上的版本,当前系统不支持IE6');
+		
+        return;
+	}
+	
     if (isUseActive && !isActive && is_ie)
     {
         alert('安全控件初始化失败,请下载安全控件或者请插入加密锁');
@@ -190,6 +199,13 @@ function load()
     loginform.userName.focus();
     
     loginform.userName.select();
+    
+    if (is_ie && ie6)
+	{
+		alert('请使用IE7以上的版本,当前系统不支持IE6');
+		
+        return;
+	}
     
     if (isUseActive)
     {
