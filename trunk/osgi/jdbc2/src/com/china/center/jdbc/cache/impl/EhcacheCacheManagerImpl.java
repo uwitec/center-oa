@@ -70,14 +70,12 @@ public class EhcacheCacheManagerImpl implements CacheManager
 
             cache.put(element);
 
-            cache.flush();
-
             eff.addCache_incr();
 
             if (_logger.isDebugEnabled())
             {
-                _logger.debug("in " + cache.getName() + " put element:" + moreCache.getKey()
-                              + ";Element:" + BaseTools.toStrings(moreCache));
+                _logger.debug("in " + cache.getName() + " put element:" + moreCache.getKey() + ";Element:"
+                              + BaseTools.toStrings(moreCache));
             }
 
             return true;
@@ -131,14 +129,12 @@ public class EhcacheCacheManagerImpl implements CacheManager
 
             cache.put(element);
 
-            cache.flush();
-
             eff.addCache_incr();
 
             if (_logger.isDebugEnabled())
             {
-                _logger.debug("in " + cache.getName() + " put element:" + singleCache.getKey()
-                              + ";Element:" + BaseTools.toStrings(singleCache));
+                _logger.debug("in " + cache.getName() + " put element:" + singleCache.getKey() + ";Element:"
+                              + BaseTools.toStrings(singleCache));
             }
 
             return true;
@@ -213,8 +209,7 @@ public class EhcacheCacheManagerImpl implements CacheManager
         {
             if (_logger.isDebugEnabled())
             {
-                _logger.debug("in " + cache.getName()
-                              + " can not find(element is not instanceof InnerMoreCacheBean):"
+                _logger.debug("in " + cache.getName() + " can not find(element is not instanceof InnerMoreCacheBean):"
                               + key);
             }
 
@@ -231,8 +226,7 @@ public class EhcacheCacheManagerImpl implements CacheManager
             {
                 if (_logger.isDebugEnabled())
                 {
-                    _logger.debug("in " + cache.getName()
-                                  + " can not find(condtition is not equal):" + key);
+                    _logger.debug("in " + cache.getName() + " can not find(condtition is not equal):" + key);
                 }
 
                 return null;
@@ -245,8 +239,7 @@ public class EhcacheCacheManagerImpl implements CacheManager
         {
             if (_logger.isDebugEnabled())
             {
-                _logger.debug("in " + cache.getName() + " can not find(parameters is not equal):"
-                              + key);
+                _logger.debug("in " + cache.getName() + " can not find(parameters is not equal):" + key);
             }
 
             return null;
@@ -329,8 +322,7 @@ public class EhcacheCacheManagerImpl implements CacheManager
             if (_logger.isDebugEnabled())
             {
                 _logger.debug("in " + cache.getName()
-                              + " can not find(element is not instanceof InnerSingleCacheBean):"
-                              + key);
+                              + " can not find(element is not instanceof InnerSingleCacheBean):" + key);
             }
 
             cache.remove(key);
@@ -362,8 +354,8 @@ public class EhcacheCacheManagerImpl implements CacheManager
             // 通知集群的缓存清除 采用MulticastSocket通知
             try
             {
-                MulticastNotifySender sender = new MulticastNotifySender(
-                    InetAddress.getByName(this.group), this.mprot, this.timeToLive);
+                MulticastNotifySender sender = new MulticastNotifySender(InetAddress.getByName(this.group), this.mprot,
+                    this.timeToLive);
 
                 sender.sendNotify(NOTIFY_INSERT + ":" + claz.getName());
 
@@ -428,8 +420,8 @@ public class EhcacheCacheManagerImpl implements CacheManager
             // 通知集群的缓存清除 采用MulticastSocket通知
             try
             {
-                MulticastNotifySender sender = new MulticastNotifySender(
-                    InetAddress.getByName(this.group), this.mprot, this.timeToLive);
+                MulticastNotifySender sender = new MulticastNotifySender(InetAddress.getByName(this.group), this.mprot,
+                    this.timeToLive);
 
                 sender.sendNotify(NOTIFY_UPDATE + ":" + claz.getName());
 
@@ -504,8 +496,6 @@ public class EhcacheCacheManagerImpl implements CacheManager
         {
             cache.removeAll();
 
-            cache.flush();
-
             eff.clear_incr();
         }
     }
@@ -529,7 +519,6 @@ public class EhcacheCacheManagerImpl implements CacheManager
         if (cache != null)
         {
             cache.removeAll();
-            cache.flush();
 
             eff.clear_incr();
         }
@@ -696,8 +685,7 @@ public class EhcacheCacheManagerImpl implements CacheManager
         {
             try
             {
-                receiver = new MulticastNotifyReceiver(InetAddress.getByName(this.group),
-                    this.mprot, this);
+                receiver = new MulticastNotifyReceiver(InetAddress.getByName(this.group), this.mprot, this);
 
                 receiver.start();
             }
