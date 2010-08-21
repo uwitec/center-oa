@@ -41,6 +41,7 @@ import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.dao.ProductVSLocationDAO;
 import com.china.center.oa.product.facade.ProductFacade;
 import com.china.center.oa.product.manager.ProductManager;
+import com.china.center.oa.product.vo.ProductVSLocationVO;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.LocationBean;
@@ -360,6 +361,17 @@ public class ProductAction extends DispatchAction
         {
             return mapping.findForward("updateProduct");
         }
+
+        // 销售范围
+        List<ProductVSLocationVO> voList = productVSLocationDAO.queryEntityVOsByFK(id);
+
+        StringBuilder builder = new StringBuilder();
+        for (ProductVSLocationVO productVSLocationVO : voList)
+        {
+            builder.append(productVSLocationVO.getLocationName()).append(" ");
+        }
+
+        request.setAttribute("locationNames", builder);
 
         return mapping.findForward("detailProduct");
     }

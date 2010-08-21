@@ -10,6 +10,7 @@ package com.china.center.oa.product.dao;
 
 
 import com.china.center.jdbc.inter.DAO;
+import com.china.center.oa.product.vo.ProductVSLocationVO;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
 
 
@@ -21,7 +22,7 @@ import com.china.center.oa.product.vs.ProductVSLocationBean;
  * @see ProductVSLocationDAO
  * @since 1.0
  */
-public interface ProductVSLocationDAO extends DAO<ProductVSLocationBean, ProductVSLocationBean>
+public interface ProductVSLocationDAO extends DAO<ProductVSLocationBean, ProductVSLocationVO>
 {
 
 }

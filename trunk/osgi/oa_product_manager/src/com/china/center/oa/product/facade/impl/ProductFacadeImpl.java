@@ -14,8 +14,11 @@ import java.util.List;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.product.bean.ProductBean;
+import com.china.center.oa.product.bean.ProviderBean;
+import com.china.center.oa.product.bean.ProviderUserBean;
 import com.china.center.oa.product.facade.ProductFacade;
 import com.china.center.oa.product.manager.ProductManager;
+import com.china.center.oa.product.manager.ProviderManager;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.facade.AbstarctFacade;
@@ -33,6 +36,8 @@ import com.china.center.tools.JudgeTools;
 public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
 {
     private ProductManager productManager = null;
+
+    private ProviderManager providerManager = null;
 
     /**
      * default constructor
@@ -166,6 +171,196 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
     }
 
     /**
+     * checkHisProvider
+     * 
+     * @param userId
+     * @param cid
+     * @return
+     * @throws MYException
+     */
+    public boolean checkHisProvider(String userId, String cid)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, cid);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CUSTOMER_HIS_CHECK))
+        {
+            return providerManager.checkHisProvider(user, cid);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
+     * 增加供应商
+     * 
+     * @param userId
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    public boolean addProvider(String userId, ProviderBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CUSTOMER_OPR_PROVIDER))
+        {
+            return providerManager.addBean(user, bean);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
+     * addOrUpdateUserBean
+     * 
+     * @param userId
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    public boolean bingProductTypeToCustmer(String userId, String pid, String[] productTypeIds)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, pid, productTypeIds);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CUSTOMER_OPR_PROVIDER))
+        {
+            return providerManager.bingProductTypeToCustmer(user, pid, productTypeIds);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
+     * addOrUpdateUserBean
+     * 
+     * @param userId
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    public boolean addOrUpdateUserBean(String userId, ProviderUserBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CUSTOMER_OPR_PROVIDER))
+        {
+            return providerManager.addOrUpdateUserBean(user, bean);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
+     * updateUserPassword
+     * 
+     * @param userId
+     * @param id
+     * @param newpwd
+     * @return
+     * @throws MYException
+     */
+    public boolean updateUserPassword(String userId, String id, String newpwd)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id, newpwd);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CUSTOMER_OPR_PROVIDER))
+        {
+            return providerManager.updateUserPassword(user, id, newpwd);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
+     * 修改供应商
+     * 
+     * @param userId
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    public boolean updateProvider(String userId, ProviderBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CUSTOMER_OPR_PROVIDER))
+        {
+            return providerManager.updateBean(user, bean);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
+     * 删除供应商
+     * 
+     * @param userId
+     * @param providerId
+     * @return
+     * @throws MYException
+     */
+    public boolean delProvider(String userId, String providerId)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, providerId);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CUSTOMER_OPR_PROVIDER))
+        {
+            return providerManager.delBean(user, providerId);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
      * @return the productManager
      */
     public ProductManager getProductManager()
@@ -180,6 +375,23 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
     public void setProductManager(ProductManager productManager)
     {
         this.productManager = productManager;
+    }
+
+    /**
+     * @return the providerManager
+     */
+    public ProviderManager getProviderManager()
+    {
+        return providerManager;
+    }
+
+    /**
+     * @param providerManager
+     *            the providerManager to set
+     */
+    public void setProviderManager(ProviderManager providerManager)
+    {
+        this.providerManager = providerManager;
     }
 
 }

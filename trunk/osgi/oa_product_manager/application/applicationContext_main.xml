@@ -38,4 +38,14 @@
 
 	<bean id="productManager" class="com.china.center.oa.product.manager.impl.ProductManagerImpl" />
 
+	<bean id="providerDAO" class="com.china.center.oa.product.dao.impl.ProviderDAOImpl" />
+
+	<bean id="providerHisDAO" class="com.china.center.oa.product.dao.impl.ProviderHisDAOImpl" />
+
+	<bean id="providerUserDAO" class="com.china.center.oa.product.dao.impl.ProviderUserDAOImpl" />
+
+	<bean id="productTypeVSCustomerDAO" class="com.china.center.oa.product.dao.impl.ProductTypeVSCustomerDAOImpl" />
+
+	<bean id="providerManager" class="com.china.center.oa.product.manager.impl.ProviderManagerImpl" />
+
 </beans>

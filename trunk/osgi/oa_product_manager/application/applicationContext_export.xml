@@ -24,4 +24,14 @@
 
 	<osgi:service ref="productManager" interface="com.china.center.oa.product.manager.ProductManager" />
 
+	<osgi:service ref="providerDAO" interface="com.china.center.oa.product.dao.ProviderDAO" />
+
+	<osgi:service ref="providerHisDAO" interface="com.china.center.oa.product.dao.ProviderHisDAO" />
+
+	<osgi:service ref="providerUserDAO" interface="com.china.center.oa.product.dao.ProviderUserDAO" />
+
+	<osgi:service ref="productTypeVSCustomerDAO" interface="com.china.center.oa.product.dao.ProductTypeVSCustomerDAO" />
+
+	<osgi:service ref="providerManager" interface="com.china.center.oa.product.manager.ProviderManager" />
+
 </beans>

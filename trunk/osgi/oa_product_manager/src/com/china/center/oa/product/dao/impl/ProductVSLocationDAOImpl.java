@@ -11,6 +11,7 @@ package com.china.center.oa.product.dao.impl;
 
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.product.dao.ProductVSLocationDAO;
+import com.china.center.oa.product.vo.ProductVSLocationVO;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
 
 
@@ -22,6 +23,6 @@ import com.china.center.oa.product.vs.ProductVSLocationBean;
  * @see ProductVSLocationDAOImpl
  * @since 1.0
  */
-public class ProductVSLocationDAOImpl extends BaseDAO<ProductVSLocationBean, ProductVSLocationBean> implements ProductVSLocationDAO
+public class ProductVSLocationDAOImpl extends BaseDAO<ProductVSLocationBean, ProductVSLocationVO> implements ProductVSLocationDAO
 {
 }

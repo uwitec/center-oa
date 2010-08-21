@@ -35,5 +35,39 @@
 			<option>$productStockType</option>
 		</condtion>
 	</item>
+	
+	<item name="queryProvider" deaultpfix="ProviderBean">
+		<condtion name="name" caption="供应商名称">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="code" caption="供应商编码">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="type" caption="供应商类型">
+			<opr>=</opr>
+			<datatype>1</datatype>
+			<type>select</type>
+			<option>$109</option>
+		</condtion>
+	</item>
+	
+	<item name="queryCheckHisProvider" deaultpfix="ProviderHisBean">
+		<condtion name="name" caption="供应商名称">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="code" caption="供应商编码">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="type" caption="供应商类型">
+			<opr>=</opr>
+			<datatype>1</datatype>
+			<type>select</type>
+			<option>$109</option>
+		</condtion>
+	</item>
 
 </query>

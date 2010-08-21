@@ -34,5 +34,15 @@
 	<osgi:reference id="productFacade" interface="com.china.center.oa.product.facade.ProductFacade" />
 
 	<osgi:reference id="productManager" interface="com.china.center.oa.product.manager.ProductManager" />
+	
+	<osgi:reference id="providerDAO" interface="com.china.center.oa.product.dao.ProviderDAO" />
+
+	<osgi:reference id="providerHisDAO" interface="com.china.center.oa.product.dao.ProviderHisDAO" />
+
+	<osgi:reference id="providerUserDAO" interface="com.china.center.oa.product.dao.ProviderUserDAO" />
+
+	<osgi:reference id="productTypeVSCustomerDAO" interface="com.china.center.oa.product.dao.ProductTypeVSCustomerDAO" />
+
+	<osgi:reference id="providerManager" interface="com.china.center.oa.product.manager.ProviderManager" />
 
 </beans>

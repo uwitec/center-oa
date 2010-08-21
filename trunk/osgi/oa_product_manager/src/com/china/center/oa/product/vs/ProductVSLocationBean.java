@@ -14,7 +14,10 @@ import java.io.Serializable;
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
+import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.oa.product.bean.ProductBean;
+import com.china.center.oa.publics.bean.LocationBean;
 
 
 /**
@@ -33,8 +36,10 @@ public class ProductVSLocationBean implements Serializable
     private String id = "";
 
     @FK
+    @Join(tagClass = ProductBean.class)
     private String productId = "";
 
+    @Join(tagClass = LocationBean.class)
     private String locationId = "";
 
     /**

@@ -161,6 +161,8 @@ function addBean()
 			</c:if>
 			
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
+			
+			<p:cells celspan="2" title="销售范围">${locationNames}</p:cells>
 
 		</p:table>
 	</p:subBody>

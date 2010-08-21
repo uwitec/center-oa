@@ -6,6 +6,20 @@
             validate="false">
             <forward name="configProductVSLocation"/>
         </action>
+        
+		<action path="/provider/provider" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="queryProvider" path="/provider/queryProvider.jsp" />
+			<forward name="bingProductType" path="/provider/bingProductType.jsp" />
+			<forward name="addOrUpdateProviderUser" path="/provider/addOrUpdateProviderUser.jsp" />
+			<forward name="updateProvider"
+				path="/provider/updateProvider.jsp" />
+			<forward name="detailProvider"
+				path="/provider/detailProvider.jsp" />
+			<forward name="addOrUpdateUser"
+                path="/provider/addOrUpdateUser.jsp" />
+		</action>
 		
 	</action-mappings>
 </struts-config>

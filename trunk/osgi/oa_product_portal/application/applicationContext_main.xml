@@ -30,5 +30,8 @@
 	
 	<bean name="/product/product"
 		class="com.china.center.oa.product.action.ProductAction"/>
+		
+	<bean name="/provider/provider"
+		class="com.china.center.oa.product.action.ProviderAction" />
 	
 </beans>

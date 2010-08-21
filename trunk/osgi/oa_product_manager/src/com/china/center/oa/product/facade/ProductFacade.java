@@ -13,6 +13,8 @@ import java.util.List;
 
 import com.china.center.common.MYException;
 import com.china.center.oa.product.bean.ProductBean;
+import com.china.center.oa.product.bean.ProviderBean;
+import com.china.center.oa.product.bean.ProviderUserBean;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
 
 
@@ -39,5 +41,26 @@ public interface ProductFacade
         throws MYException;
 
     boolean changeProductStatus(String userId, String productId, int oldStatus, int newStatus)
+        throws MYException;
+
+    boolean checkHisProvider(String userId, String cid)
+        throws MYException;
+
+    boolean addProvider(String userId, ProviderBean bean)
+        throws MYException;
+
+    boolean bingProductTypeToCustmer(String userId, String pid, String[] productTypeIds)
+        throws MYException;
+
+    boolean addOrUpdateUserBean(String userId, ProviderUserBean bean)
+        throws MYException;
+
+    boolean updateUserPassword(String userId, String id, String newpwd)
+        throws MYException;
+
+    boolean updateProvider(String userId, ProviderBean bean)
+        throws MYException;
+
+    boolean delProvider(String userId, String providerId)
         throws MYException;
 }
