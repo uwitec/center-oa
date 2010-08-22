@@ -34,4 +34,8 @@
 
 	<osgi:service ref="providerManager" interface="com.china.center.oa.product.manager.ProviderManager" />
 
+	<osgi:service ref="depotDAO" interface="com.china.center.oa.product.dao.DepotDAO" />
+
+	<osgi:service ref="depotManager" interface="com.china.center.oa.product.manager.DepotManager" />
+
 </beans>

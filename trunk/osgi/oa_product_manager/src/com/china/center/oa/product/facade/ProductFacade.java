@@ -12,6 +12,7 @@ package com.china.center.oa.product.facade;
 import java.util.List;
 
 import com.china.center.common.MYException;
+import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.product.bean.ProviderUserBean;
@@ -62,5 +63,14 @@ public interface ProductFacade
         throws MYException;
 
     boolean delProvider(String userId, String providerId)
+        throws MYException;
+
+    boolean addDepotBean(String userId, DepotBean bean)
+        throws MYException;
+
+    boolean updateDepotBean(String userId, DepotBean bean)
+        throws MYException;
+
+    boolean deleteDepotBean(String userId, String id)
         throws MYException;
 }

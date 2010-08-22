@@ -13,10 +13,12 @@ import java.util.List;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.product.bean.ProviderUserBean;
 import com.china.center.oa.product.facade.ProductFacade;
+import com.china.center.oa.product.manager.DepotManager;
 import com.china.center.oa.product.manager.ProductManager;
 import com.china.center.oa.product.manager.ProviderManager;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
@@ -38,6 +40,8 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
     private ProductManager productManager = null;
 
     private ProviderManager providerManager = null;
+
+    private DepotManager depotManager = null;
 
     /**
      * default constructor
@@ -360,6 +364,63 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
         }
     }
 
+    public boolean addDepotBean(String userId, DepotBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.DEPOT_OPR))
+        {
+            return depotManager.addDepotBean(user, bean);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    public boolean deleteDepotBean(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.DEPOT_OPR))
+        {
+            return depotManager.deleteDepotBean(user, id);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    public boolean updateDepotBean(String userId, DepotBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.DEPOT_OPR))
+        {
+            return depotManager.updateDepotBean(user, bean);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
     /**
      * @return the productManager
      */
@@ -394,4 +455,20 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
         this.providerManager = providerManager;
     }
 
+    /**
+     * @return the depotManager
+     */
+    public DepotManager getDepotManager()
+    {
+        return depotManager;
+    }
+
+    /**
+     * @param depotManager
+     *            the depotManager to set
+     */
+    public void setDepotManager(DepotManager depotManager)
+    {
+        this.depotManager = depotManager;
+    }
 }

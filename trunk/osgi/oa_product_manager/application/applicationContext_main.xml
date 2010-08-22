@@ -48,4 +48,8 @@
 
 	<bean id="providerManager" class="com.china.center.oa.product.manager.impl.ProviderManagerImpl" />
 
+	<bean id="depotDAO" class="com.china.center.oa.product.dao.impl.DepotDAOImpl" />
+
+	<bean id="depotManager" class="com.china.center.oa.product.manager.impl.DepotManagerImpl" />
+
 </beans>

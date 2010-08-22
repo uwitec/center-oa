@@ -18,7 +18,8 @@ function addBean()
 
 </head>
 <body class="body_class">
-<form name="addApply" action="../product/product.do?method=addProduct" method="post" enctype="multipart/form-data">
+<form name="addApply" action="../product/product.do?method=addProduct" 
+	method="post" enctype="multipart/form-data">
 <input type="hidden" name="mainProvider" value="">
 <input type="hidden" name="assistantProvider1" value="">
 <input type="hidden" name="assistantProvider2" value="">

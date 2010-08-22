@@ -24,5 +24,10 @@
                 path="/provider/addOrUpdateUser.jsp" />
 		</action>
 		
+		<action path="/depot/depot" parameter="method" folder="/depot/" bean="Depot"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+        </action>
+		
 	</action-mappings>
 </struts-config>

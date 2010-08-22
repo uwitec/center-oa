@@ -91,5 +91,12 @@
 			<option>$109</option>
 		</condtion>
 	</item>
+	
+	<item name="queryDepot" deaultpfix="DepotBean">
+		<condtion name="name" caption="名称">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+	</item>
 
 </query>

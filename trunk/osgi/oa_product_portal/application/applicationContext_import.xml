@@ -44,5 +44,9 @@
 	<osgi:reference id="productTypeVSCustomerDAO" interface="com.china.center.oa.product.dao.ProductTypeVSCustomerDAO" />
 
 	<osgi:reference id="providerManager" interface="com.china.center.oa.product.manager.ProviderManager" />
+	
+	<osgi:reference id="depotDAO" interface="com.china.center.oa.product.dao.DepotDAO" />
+
+	<osgi:reference id="depotManager" interface="com.china.center.oa.product.manager.DepotManager" />
 
 </beans>
