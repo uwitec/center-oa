@@ -16,7 +16,7 @@ function addBean()
 
 </head>
 <body class="body_class">
-<form name="addApply" action="../admin/duty.do"><input
+<form name="formEntry" action="../admin/duty.do" method="post"><input
 	type="hidden" name="method" value="addDuty">
 <p:navigation
 	height="22">

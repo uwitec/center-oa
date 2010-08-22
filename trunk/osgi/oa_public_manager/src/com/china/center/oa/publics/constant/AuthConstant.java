@@ -342,4 +342,34 @@ public interface AuthConstant
      * 配置的操作
      */
     String ENUM_OPR = "0109";
+
+    /**
+     * 查询仓库
+     */
+    String DEPOT_QUERY = "1101";
+
+    /**
+     * 操作仓库
+     */
+    String DEPOT_OPR = "1102";
+
+    /**
+     * 查询仓区
+     */
+    String DEPOTPART_QUERY = "1103";
+
+    /**
+     * 操作仓区
+     */
+    String DEPOTPART_OPR = "1104";
+
+    /**
+     * 查询储位
+     */
+    String STORAGE_QUERY = "1105";
+
+    /**
+     * 操作储位
+     */
+    String STORAGE_OPR = "1106";
 }
