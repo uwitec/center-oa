@@ -2015,10 +2015,22 @@ function $ajax(urls, successFun, errorFun)
 
 function $ajax2(urls, datas, successFun, errorFun)
 {
+	var param = [];
+	
+	for(var att in datas)
+    {
+        var mmaps = {};
+        
+        mmaps['name'] = att;
+        mmaps['value'] = ajaxPararmter(datas[att]);
+        
+        param.push(mmaps);
+    }
+    
     $.ajax({
             type: 'POST',
             url: urls,
-            data: datas,
+            data: param,
             dataType: 'json',
             success: successFun,
             error: errorFun ? errorFun : function(data) 
