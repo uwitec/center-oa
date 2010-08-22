@@ -2035,12 +2035,15 @@ function commonQuery(par)
     gobal_guid.grid.populate(true);
 }
 
-//ajax中post的escape对有些特殊字符无法转换，例如：+ % &号，因此需要对其进行转义。
+//ajax中post的escape对有些特殊字符无法转换，例如：+ % & ? # /号，因此需要对其进行转义。
 function ajaxPararmter(str)
 {
 	str = str.replace(/\+/g, "%2B"); 
 	str = str.replace(/\%/g, "%25"); 
 	str = str.replace(/\&/g, "%26");
+	str = str.replace(/\?/g, "%3F");
+	str = str.replace(/\#/g, "%23");
+	str = str.replace(/\//g, "%2F");
 	
 	return str;
 }
