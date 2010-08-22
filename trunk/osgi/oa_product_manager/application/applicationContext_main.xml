@@ -52,4 +52,10 @@
 
 	<bean id="depotManager" class="com.china.center.oa.product.manager.impl.DepotManagerImpl" />
 
+	<bean id="depotpartDAO" class="com.china.center.oa.product.dao.impl.DepotpartDAOImpl" />
+
+	<bean id="storageDAO" class="com.china.center.oa.product.dao.impl.StorageDAOImpl" />
+
+	<bean id="storageRelationDAO" class="com.china.center.oa.product.dao.impl.StorageRelationDAOImpl" />
+
 </beans>

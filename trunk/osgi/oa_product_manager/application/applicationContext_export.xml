@@ -38,4 +38,10 @@
 
 	<osgi:service ref="depotManager" interface="com.china.center.oa.product.manager.DepotManager" />
 
+	<osgi:service ref="depotpartDAO" interface="com.china.center.oa.product.dao.DepotpartDAO" />
+
+	<osgi:service ref="storageDAO" interface="com.china.center.oa.product.dao.StorageDAO" />
+
+	<osgi:service ref="storageRelationDAO" interface="com.china.center.oa.product.dao.StorageRelationDAO" />
+
 </beans>
