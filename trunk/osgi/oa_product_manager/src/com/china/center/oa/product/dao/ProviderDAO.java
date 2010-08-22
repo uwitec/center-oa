@@ -9,7 +9,10 @@
 package com.china.center.oa.product.dao;
 
 
+import java.util.List;
+
 import com.china.center.jdbc.inter.DAO;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.product.vo.ProviderVO;
 
@@ -27,4 +30,6 @@ public interface ProviderDAO extends DAO<ProviderBean, ProviderVO>
     int countProviderInOut(String providerId);
 
     int countProviderByName(String name);
+
+    List<ProviderBean> queryByLimit(ConditionParse condition, int limit);
 }

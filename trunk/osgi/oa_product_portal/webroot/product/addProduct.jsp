@@ -7,11 +7,13 @@
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
+<script language="JavaScript" src="../product_js/product.js"></script>
 <script language="javascript">
 function addBean()
 {
-	submit('确定增加产品?');
+	submit('确定增加产品?', null, checkDuplicate);
 }
+
 </script>
 
 </head>
@@ -47,7 +49,7 @@ function addBean()
 				<p:option type="productAbstractType"/>
 			</p:pro>
 			
-			<p:pro field="type">
+			<p:pro field="type" innerString="onchange=typeChange()">
 				<p:option type="productType"/>
 			</p:pro>
 			
@@ -111,19 +113,19 @@ function addBean()
 			<p:pro field="orderAmount"/>
 			<p:pro field="mainProvider" innerString="readonly=true">
 				<input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectProvider(this)">&nbsp;&nbsp;
+                    class="button_class" onclick="selectProvider(this, 0)">&nbsp;&nbsp;
 			</p:pro>
 			<p:pro field="assistantProvider1" innerString="readonly=true">
 				<input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectProvider(this)">&nbsp;&nbsp;
+                    class="button_class" onclick="selectProvider(this, 1)">&nbsp;&nbsp;
 			</p:pro>
 			<p:pro field="assistantProvider2" innerString="readonly=true">
 				<input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectProvider(this)">&nbsp;&nbsp;
+                    class="button_class" onclick="selectProvider(this, 2)">&nbsp;&nbsp;
 			</p:pro>
 			<p:pro field="assistantProvider3" innerString="readonly=true">
 				<input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectProvider(this)">&nbsp;&nbsp;
+                    class="button_class" onclick="selectProvider(this, 3)">&nbsp;&nbsp;
 			</p:pro>
 			
 			<p:pro field="sailType">

@@ -623,6 +623,57 @@ public class ProviderAction extends DispatchAction
     }
 
     /**
+     * rptProvider
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse reponse)
+        throws ServletException
+    {
+        List<ProviderBean> list = null;
+
+        ConditionParse condition = new ConditionParse();
+
+        String productType = request.getParameter("productType");
+
+        String name = request.getParameter("name");
+
+        if ( !StringTools.isNullOrNone(name))
+        {
+            condition.addCondition("t1.name", "like", name);
+            request.setAttribute("name", name);
+        }
+
+        String code = request.getParameter("code");
+
+        if ( !StringTools.isNullOrNone(code))
+        {
+            condition.addCondition("t1.code", "like", code);
+
+            request.setAttribute("code", code);
+        }
+
+        if ( !StringTools.isNullOrNone(productType))
+        {
+            condition.addCondition("t2.productTypeId", "=", productType);
+
+            request.setAttribute("productType", productType);
+        }
+
+        list = providerDAO.queryByLimit(condition, 100);
+
+        request.setAttribute("providerList", list);
+
+        return mapping.findForward("rptQueryProvider");
+    }
+
+    /**
      * @return the queryConfig
      */
     public QueryConfig getQueryConfig()

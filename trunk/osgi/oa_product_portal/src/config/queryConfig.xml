@@ -6,8 +6,8 @@
 			<opr>like</opr>
 			<type>text</type>
 		</condtion>
-		<condtion name="name" caption="编码">
-			<opr>code</opr>
+		<condtion name="code" caption="编码">
+			<opr>like</opr>
 			<type>text</type>
 		</condtion>
 		<condtion name="status" caption="状态">
@@ -33,6 +33,28 @@
 			<datatype>1</datatype>
 			<type>select</type>
 			<option>$productStockType</option>
+		</condtion>
+	</item>
+	
+	<item name="queryApplyProduct" deaultpfix="ProductBean">
+		<condtion name="name" caption="名称">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="code" caption="编码">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+	</item>
+	
+	<item name="queryCheckProduct" deaultpfix="ProductBean">
+		<condtion name="name" caption="名称">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="code" caption="编码">
+			<opr>like</opr>
+			<type>text</type>
 		</condtion>
 	</item>
 	

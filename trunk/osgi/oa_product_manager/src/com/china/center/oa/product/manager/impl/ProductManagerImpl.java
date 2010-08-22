@@ -98,6 +98,17 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
             productCombinationDAO.saveAllEntityBeans(vsList);
         }
 
+        // 如果是申请虚拟产品,自动绑定销售区域
+        if (bean.getAbstractType() == ProductConstant.ABSTRACT_TYPE_YES
+            && bean.getStatus() == ProductConstant.STATUS_APPLY)
+        {
+            ProductVSLocationBean vs = new ProductVSLocationBean();
+            vs.setLocationId(user.getLocationId());
+            vs.setProductId(bean.getId());
+
+            productVSLocationDAO.saveEntityBean(vs);
+        }
+
         executeAddListener(user, bean);
 
         return true;

@@ -9,7 +9,11 @@
 package com.china.center.oa.product.dao.impl;
 
 
+import java.util.List;
+
 import com.china.center.jdbc.inter.impl.BaseDAO;
+import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.product.dao.ProviderDAO;
 import com.china.center.oa.product.vo.ProviderVO;
@@ -41,5 +45,17 @@ public class ProviderDAOImpl extends BaseDAO<ProviderBean, ProviderVO> implement
     public int countProviderByName(String name)
     {
         return this.jdbcOperation.queryForInt("where name = ?", claz, name);
+    }
+
+    public List<ProviderBean> queryByLimit(ConditionParse condition, int limit)
+    {
+        condition.removeWhereStr();
+
+        String sql = "select t1.* from T_CENTER_PROVIDE t1, T_CENTER_PRODUCTTYPEVSCUSTOMER t2 where t1.id = t2.customerId "
+                     + condition.toString();
+
+        PageSeparate page = new PageSeparate(limit, limit);
+
+        return this.jdbcOperation.queryObjectsBySqlAndPageSeparate(sql, page, claz);
     }
 }

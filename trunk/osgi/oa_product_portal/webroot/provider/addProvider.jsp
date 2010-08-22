@@ -15,7 +15,6 @@ function addBean()
 	submit('确定申请增加供应商?');
 }
 
-
 </script>
 
 </head>

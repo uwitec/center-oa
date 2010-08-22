@@ -31,23 +31,32 @@ import com.center.china.osgi.publics.User;
 import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
+import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.product.bean.ProductBean;
+import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.product.constant.ProductConstant;
 import com.china.center.oa.product.dao.ProductCombinationDAO;
 import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.dao.ProductVSLocationDAO;
+import com.china.center.oa.product.dao.ProviderDAO;
 import com.china.center.oa.product.facade.ProductFacade;
 import com.china.center.oa.product.manager.ProductManager;
+import com.china.center.oa.product.vo.ProductCombinationVO;
+import com.china.center.oa.product.vo.ProductVO;
 import com.china.center.oa.product.vo.ProductVSLocationVO;
+import com.china.center.oa.product.vs.ProductCombinationBean;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.LocationBean;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.tools.BeanUtil;
+import com.china.center.tools.CommonTools;
 import com.china.center.tools.FileTools;
 import com.china.center.tools.RequestDataStream;
 import com.china.center.tools.RequestTools;
@@ -80,9 +89,17 @@ public class ProductAction extends DispatchAction
 
     private LocationDAO locationDAO = null;
 
+    private ProviderDAO providerDAO = null;
+
     private ProductVSLocationDAO productVSLocationDAO = null;
 
     private static String QUERYPRODUCT = "queryProduct";
+
+    private static String QUERYAPPLYPRODUCT = "queryApplyProduct";
+
+    private static String QUERYCHECKPRODUCT = "queryCheckProduct";
+
+    private static String RPTQUERYPRODUCT = "rptQueryProduct";
 
     /**
      * default constructor
@@ -109,11 +126,155 @@ public class ProductAction extends DispatchAction
 
         condtion.addWhereStr();
 
+        // 过滤非稳态的产品
+        condtion.addIntCondition("ProductBean.status", "<>", ProductConstant.STATUS_APPLY);
+
         ActionTools.processJSONQueryCondition(QUERYPRODUCT, request, condtion);
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPRODUCT, request, condtion, this.productDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryApplyProduct(查询申请的产品,主要是虚拟产品)
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryApplyProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                           HttpServletResponse response)
+        throws ServletException
+    {
+        User user = Helper.getUser(request);
+
+        final ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        condtion.addIntCondition("ProductBean.status", "=", ProductConstant.STATUS_APPLY);
+
+        condtion.addCondition("ProductBean.createrId", "=", user.getStafferId());
+
+        ActionTools.processJSONQueryCondition(QUERYAPPLYPRODUCT, request, condtion);
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYAPPLYPRODUCT, request, condtion, this.productDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * 查询产品申请
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryCheckProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                           HttpServletResponse response)
+        throws ServletException
+    {
+        final ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        condtion.addIntCondition("ProductBean.status", "=", ProductConstant.STATUS_APPLY);
+
+        ActionTools.processJSONQueryCondition(QUERYCHECKPRODUCT, request, condtion);
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKPRODUCT, request, condtion, this.productDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * 产品的选择
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                         HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        List<ProductVO> list = null;
+
+        if (PageSeparateTools.isFirstLoad(request))
+        {
+            ConditionParse condtion = new ConditionParse();
+
+            condtion.addWhereStr();
+
+            setProductInnerCondition(request, condtion);
+
+            int total = productDAO.countByCondition(condtion.toString());
+
+            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+
+            PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYPRODUCT);
+
+            list = productDAO.queryEntityVOsByCondition(condtion, page);
+        }
+        else
+        {
+            PageSeparateTools.processSeparate(request, RPTQUERYPRODUCT);
+
+            list = productDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, RPTQUERYPRODUCT),
+                PageSeparateTools.getPageSeparate(request, RPTQUERYPRODUCT));
+        }
+
+        request.setAttribute("beanList", list);
+
+        return mapping.findForward("rptQueryProduct");
+    }
+
+    /**
+     * @param request
+     * @param condtion
+     */
+    private void setProductInnerCondition(HttpServletRequest request, ConditionParse condtion)
+    {
+        String name = request.getParameter("name");
+
+        String code = request.getParameter("code");
+
+        String abstractType = request.getParameter("abstractType");
+
+        String status = request.getParameter("status");
+
+        if ( !StringTools.isNullOrNone(name))
+        {
+            condtion.addCondition("ProductBean.name", "like", name);
+        }
+
+        if ( !StringTools.isNullOrNone(code))
+        {
+            condtion.addCondition("ProductBean.code", "like", code);
+        }
+
+        if ( !StringTools.isNullOrNone(abstractType))
+        {
+            condtion.addIntCondition("ProductBean.abstractType", "=", abstractType);
+        }
+
+        if ( !StringTools.isNullOrNone(status))
+        {
+            condtion.addIntCondition("ProductBean.status", "=", ProductConstant.STATUS_COMMON);
+        }
+
     }
 
     /**
@@ -191,6 +352,80 @@ public class ProductAction extends DispatchAction
         }
 
         return mapping.findForward("queryProduct");
+    }
+
+    /**
+     * 管理员增加产品(虚拟产品)
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward addAbstractProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                            HttpServletResponse response)
+        throws ServletException
+    {
+        ProductBean bean = new ProductBean();
+
+        BeanUtil.getBean(bean, request);
+
+        bean.setId(commonDAO.getSquenceString());
+
+        setCombination(request, bean);
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            bean.setCreaterId(user.getStafferId());
+
+            bean.setLogTime(TimeTools.now());
+
+            bean.setStatus(ProductConstant.STATUS_APPLY);
+
+            bean.setAbstractType(ProductConstant.ABSTRACT_TYPE_YES);
+
+            productFacade.addProductBean(user.getId(), bean);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功保存产品");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "保存产品失败:" + e.getMessage());
+        }
+
+        return mapping.findForward("queryApplyProduct");
+    }
+
+    private void setCombination(HttpServletRequest request, ProductBean bean)
+    {
+        List<ProductCombinationBean> vsList = new ArrayList();
+
+        User user = Helper.getUser(request);
+
+        bean.setVsList(vsList);
+
+        // 获取组合方式 ProductCombinationBean
+        String[] srcProductIds = request.getParameterValues("srcProductId");
+
+        String[] srcAmounts = request.getParameterValues("srcAmount");
+
+        for (int i = 0; i < srcProductIds.length; i++ )
+        {
+            ProductCombinationBean com = new ProductCombinationBean();
+
+            com.setAmount(CommonTools.parseInt(srcAmounts[i]));
+            com.setVproductId(bean.getId());
+            com.setSproductId(srcProductIds[i]);
+            com.setCreaterId(user.getStafferId());
+
+            vsList.add(com);
+        }
     }
 
     /**
@@ -340,13 +575,11 @@ public class ProductAction extends DispatchAction
     {
         String id = request.getParameter("id");
 
-        ProductBean bean = productDAO.findVO(id);
+        ProductVO bean = productDAO.findVO(id);
 
         if (bean == null)
         {
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据异常,请重新操作");
-
-            return mapping.findForward("queryProduct");
+            return ActionTools.toError("数据异常,请重新操作", "queryProduct", mapping, request);
         }
 
         request.setAttribute("bean", bean);
@@ -355,10 +588,17 @@ public class ProductAction extends DispatchAction
 
         request.setAttribute("rootUrl", rootUrl);
 
+        setProviderName(bean);
+
         String update = request.getParameter("update");
 
         if ("1".equals(update))
         {
+            if (bean.getAbstractType() == ProductConstant.ABSTRACT_TYPE_YES)
+            {
+                return ActionTools.toError("虚拟产品不能修改", "queryProduct", mapping, request);
+            }
+
             return mapping.findForward("updateProduct");
         }
 
@@ -371,9 +611,62 @@ public class ProductAction extends DispatchAction
             builder.append(productVSLocationVO.getLocationName()).append(" ");
         }
 
+        // 虚拟产品的处理
+        if (bean.getAbstractType() == ProductConstant.ABSTRACT_TYPE_YES)
+        {
+            // 获取组合方式
+            List<ProductCombinationVO> comVOList = productCombinationDAO.queryEntityVOsByFK(id);
+
+            request.setAttribute("comVOList", comVOList);
+        }
+
         request.setAttribute("locationNames", builder);
 
         return mapping.findForward("detailProduct");
+    }
+
+    private void setProviderName(ProductVO bean)
+    {
+        // 查询4个供应商
+        if ( !StringTools.isNullOrNone(bean.getMainProvider()))
+        {
+            ProviderBean pro = providerDAO.find(bean.getMainProvider());
+
+            if (pro != null)
+            {
+                bean.setMainProviderName(pro.getName());
+            }
+        }
+
+        if ( !StringTools.isNullOrNone(bean.getAssistantProvider1()))
+        {
+            ProviderBean pro = providerDAO.find(bean.getAssistantProvider1());
+
+            if (pro != null)
+            {
+                bean.setAssistantProviderName1(pro.getName());
+            }
+        }
+
+        if ( !StringTools.isNullOrNone(bean.getAssistantProvider2()))
+        {
+            ProviderBean pro = providerDAO.find(bean.getAssistantProvider2());
+
+            if (pro != null)
+            {
+                bean.setAssistantProviderName2(pro.getName());
+            }
+        }
+
+        if ( !StringTools.isNullOrNone(bean.getAssistantProvider3()))
+        {
+            ProviderBean pro = providerDAO.find(bean.getAssistantProvider3());
+
+            if (pro != null)
+            {
+                bean.setAssistantProviderName3(pro.getName());
+            }
+        }
     }
 
     /**
@@ -426,6 +719,71 @@ public class ProductAction extends DispatchAction
             _logger.warn(e, e);
 
             ajax.setError("配置产品的销售范围失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * configProductVSLocation
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward configPrice(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        String batchPrice = request.getParameter("batchPrice");
+
+        String sailPrice = request.getParameter("sailPrice");
+
+        ProductBean bean = productDAO.find(id);
+
+        AjaxResult ajax = new AjaxResult();
+
+        if (bean == null)
+        {
+            ajax.setError("数据不存在,请重新操作");
+
+            return JSONTools.writeResponse(response, ajax);
+        }
+
+        double oldBatchPrice = bean.getBatchPrice();
+        double oldSailPrice = bean.getSailPrice();
+
+        double newBatchPrice = CommonTools.parseFloat(batchPrice);
+        double newSailPrice = CommonTools.parseFloat(sailPrice);
+
+        if (oldBatchPrice > newBatchPrice || oldSailPrice > newSailPrice)
+        {
+            ajax.setError("只能提高批发价和零售价,请重新操作");
+
+            return JSONTools.writeResponse(response, ajax);
+        }
+
+        bean.setBatchPrice(newBatchPrice);
+        bean.setSailPrice(newSailPrice);
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            productFacade.updateProductBean(user.getId(), bean);
+
+            ajax.setSuccess("成功配置产品");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("配置产品的失败:" + e.getMessage());
         }
 
         return JSONTools.writeResponse(response, ajax);
@@ -498,13 +856,50 @@ public class ProductAction extends DispatchAction
 
             productFacade.deleteProductBean(user.getId(), id);
 
-            ajax.setSuccess("成功删除产品");
+            ajax.setSuccess("成功操作");
         }
         catch (MYException e)
         {
             _logger.warn(e, e);
 
             ajax.setError("删除产品失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * deleteProduct
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward passApplyProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            productFacade.changeProductStatus(user.getId(), id, ProductConstant.STATUS_APPLY,
+                ProductConstant.STATUS_COMMON);
+
+            ajax.setSuccess("成功通过此申请");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
         }
 
         return JSONTools.writeResponse(response, ajax);
@@ -632,5 +1027,22 @@ public class ProductAction extends DispatchAction
     public void setLocationDAO(LocationDAO locationDAO)
     {
         this.locationDAO = locationDAO;
+    }
+
+    /**
+     * @return the providerDAO
+     */
+    public ProviderDAO getProviderDAO()
+    {
+        return providerDAO;
+    }
+
+    /**
+     * @param providerDAO
+     *            the providerDAO to set
+     */
+    public void setProviderDAO(ProviderDAO providerDAO)
+    {
+        this.providerDAO = providerDAO;
     }
 }

@@ -41,6 +41,8 @@ public class ProductCombinationBean implements Serializable
     @Join(tagClass = ProductBean.class, alias = "p2")
     private String sproductId = "";
 
+    private String createrId = "";
+
     private int amount = 1;
 
     /**
@@ -119,6 +121,23 @@ public class ProductCombinationBean implements Serializable
     }
 
     /**
+     * @return the createrId
+     */
+    public String getCreaterId()
+    {
+        return createrId;
+    }
+
+    /**
+     * @param createrId
+     *            the createrId to set
+     */
+    public void setCreaterId(String createrId)
+    {
+        this.createrId = createrId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -141,6 +160,9 @@ public class ProductCombinationBean implements Serializable
             .append(TAB)
             .append("sproductId = ")
             .append(this.sproductId)
+            .append(TAB)
+            .append("createrId = ")
+            .append(this.createrId)
             .append(TAB)
             .append("amount = ")
             .append(this.amount)

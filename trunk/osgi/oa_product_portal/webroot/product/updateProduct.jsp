@@ -7,11 +7,13 @@
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
+<script language="JavaScript" src="../product_js/product.js"></script>
 <script language="javascript">
 function addBean()
 {
-	submit('确定修改产品?');
+	submit('确定修改产品?', null, checkDuplicate);
 }
+
 </script>
 
 </head>
@@ -51,15 +53,15 @@ function addBean()
 				<p:option type="productAbstractType"/>
 			</p:pro>
 			
-			<p:pro field="type">
+			<p:pro field="type" innerString="onchange=typeChange() readonly=true">
 				<p:option type="productType"/>
 			</p:pro>
 			
-			<p:pro field="ptype">
+			<p:pro field="ptype" innerString="readonly=true">
 				<p:option type="productPtype"/>
 			</p:pro>
 			
-			<p:pro field="ctype">
+			<p:pro field="ctype" innerString="readonly=true">
 				<p:option type="productCtype"/>
 			</p:pro>
 			
@@ -113,21 +115,22 @@ function addBean()
 			<p:pro field="assembleFlag"/>
 			<p:pro field="consumeInDay"/>
 			<p:pro field="orderAmount"/>
-			<p:pro field="mainProvider" innerString="readonly=true">
+			
+			<p:pro field="mainProvider" innerString="readonly=true" value="${bean.mainProviderName}">
 				<input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectProvider(this)">&nbsp;&nbsp;
+                    class="button_class" onclick="selectProvider(this, 0)">&nbsp;&nbsp;
 			</p:pro>
-			<p:pro field="assistantProvider1" innerString="readonly=true">
+			<p:pro field="assistantProvider1" innerString="readonly=true" value="${bean.assistantProviderName1}">
 				<input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectProvider(this)">&nbsp;&nbsp;
+                    class="button_class" onclick="selectProvider(this, 1)">&nbsp;&nbsp;
 			</p:pro>
-			<p:pro field="assistantProvider2" innerString="readonly=true">
+			<p:pro field="assistantProvider2" innerString="readonly=true" value="${bean.assistantProviderName2}">
 				<input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectProvider(this)">&nbsp;&nbsp;
+                    class="button_class" onclick="selectProvider(this, 2)">&nbsp;&nbsp;
 			</p:pro>
-			<p:pro field="assistantProvider3" innerString="readonly=true">
+			<p:pro field="assistantProvider3" innerString="readonly=true" value="${bean.assistantProviderName3}">
 				<input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectProvider(this)">&nbsp;&nbsp;
+                    class="button_class" onclick="selectProvider(this, 3)">&nbsp;&nbsp;
 			</p:pro>
 			
 			<p:pro field="sailType">
@@ -146,10 +149,10 @@ function addBean()
 				<p:option type="114"/>
 			</p:pro>
 			
-			<p:pro field="cost"/>
+			<p:pro field="cost" innerString="readonly=true"/>
 			<p:pro field="planCost"/>
-			<p:pro field="batchPrice"/>
-			<p:pro field="sailPrice"/>
+			<p:pro field="batchPrice" innerString="readonly=true"/>
+			<p:pro field="sailPrice" innerString="readonly=true"/>
 			<p:pro field="checkFlag"/>
 			
 			<p:pro field="checkType">

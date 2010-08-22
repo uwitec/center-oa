@@ -5,6 +5,8 @@
             type="org.springframework.web.struts.DelegatingActionProxy"
             validate="false">
             <forward name="configProductVSLocation"/>
+            <forward name="rptQueryProduct"/>
+            <forward name="queryApplyProduct"/>
         </action>
         
 		<action path="/provider/provider" parameter="method"
@@ -12,6 +14,7 @@
 			validate="false">
 			<forward name="queryProvider" path="/provider/queryProvider.jsp" />
 			<forward name="bingProductType" path="/provider/bingProductType.jsp" />
+			<forward name="rptQueryProvider" path="/provider/rptQueryProvider.jsp" />
 			<forward name="addOrUpdateProviderUser" path="/provider/addOrUpdateProviderUser.jsp" />
 			<forward name="updateProvider"
 				path="/provider/updateProvider.jsp" />

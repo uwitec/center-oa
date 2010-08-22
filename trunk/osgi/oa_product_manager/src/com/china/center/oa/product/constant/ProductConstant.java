@@ -34,12 +34,6 @@ public interface ProductConstant
     int STATUS_APPLY = 3;
 
     /**
-     * 驳回
-     */
-    @Defined(key = "productStatus", value = "驳回态")
-    int STATUS_REJECT = 4;
-
-    /**
      * 自有
      */
     int TEMP_SELF = 0;

@@ -47,13 +47,15 @@ function addBean()
 			
 			<p:pro field="code" cell="0" innerString="size=60 readonly=true"/>
 			
-			<p:pro field="abstractType" value="0" innerString="readonly=true">
+			<p:pro field="abstractType" innerString="readonly=true">
 				<p:option type="productAbstractType"/>
 			</p:pro>
 			
 			<p:pro field="type">
 				<p:option type="productType"/>
 			</p:pro>
+			
+			<c:if test="${bean.abstractType == 0}">
 			
 			<p:pro field="ptype">
 				<p:option type="productPtype"/>
@@ -160,17 +162,42 @@ function addBean()
 			</p:tr>
 			</c:if>
 			
+			</c:if>
+			
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
 			
 			<p:cells celspan="2" title="销售范围">${locationNames}</p:cells>
-
+			
 		</p:table>
 	</p:subBody>
+	
+	<p:tr/>
+	
+	<p:subBody width="100%">
+		<p:table cells="2">
+			<tr align="center" class="content0">
+				<td width="50%" align="center">组合产品</td>
+				<td width="25%" align="center">编码</td>
+				<td width="25%" align="center">数量</td>
+			</tr>
+			
+			<c:forEach items="${comVOList}" var="item">
+			<tr align="center" class="content1">
+				<td width="50%" align="center">${item.sproductName}</td>
+				<td width="25%" align="center">${item.sproductCode}</td>
+				<td width="25%" align="center">${item.amount}</td>
+			</tr>
+			</c:forEach>
+		</p:table>
+	</p:subBody>
+	
+	
 
 	<p:line flag="1" />
 
 	<p:button leftWidth="100%" rightWidth="0%">
-		<div align="right"><input type="button" class="button_class" id="ok_b"
+		<div align="right">
+		<input type="button" class="button_class" id="ok_b"
 			style="cursor: pointer" value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"
 			onclick="javascript:history.go(-1)"></div>
 	</p:button>

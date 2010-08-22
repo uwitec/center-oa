@@ -135,7 +135,7 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
 
         checkUser(user);
 
-        if (containAuth(user, AuthConstant.PRODUCT_OPR))
+        if (containAuth(user, AuthConstant.PRODUCT_OPR) || containAuth(user, AuthConstant.PRODUCT_CHECK))
         {
             return productManager.deleteProductBean(user, id);
         }

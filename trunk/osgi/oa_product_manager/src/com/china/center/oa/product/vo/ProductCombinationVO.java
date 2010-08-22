@@ -31,6 +31,9 @@ public class ProductCombinationVO extends ProductCombinationBean
     @Relationship(relationField = "sproductId")
     private String sproductName = "";
 
+    @Relationship(relationField = "sproductId", tagField = "code")
+    private String sproductCode = "";
+
     /**
      * default constructor
      */
@@ -70,5 +73,22 @@ public class ProductCombinationVO extends ProductCombinationBean
     public void setSproductName(String sproductName)
     {
         this.sproductName = sproductName;
+    }
+
+    /**
+     * @return the sproductCode
+     */
+    public String getSproductCode()
+    {
+        return sproductCode;
+    }
+
+    /**
+     * @param sproductCode
+     *            the sproductCode to set
+     */
+    public void setSproductCode(String sproductCode)
+    {
+        this.sproductCode = sproductCode;
     }
 }
