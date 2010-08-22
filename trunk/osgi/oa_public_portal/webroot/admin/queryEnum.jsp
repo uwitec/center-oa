@@ -123,7 +123,7 @@ function updateBean(opr, grid)
 	
     if (getRadio('checkb') && getRadioValue('checkb'))
     {    
-        $ajax2(gurl + 'update' + ukey + '&id=' + getRadioValue('checkb'), [{name:"value",value:ajaxPararmter(vv)}], callSucess);
+        $ajax2(gurl + 'update' + ukey + '&id=' + getRadioValue('checkb'), {value: vv}, callSucess);
     }
     else
     $error('不能操作');
