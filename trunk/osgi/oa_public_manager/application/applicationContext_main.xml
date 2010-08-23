@@ -93,4 +93,6 @@
 
 	<bean id="enumDefineDAO" class="com.china.center.oa.publics.dao.impl.EnumDefineDAOImpl" />
 
+	<bean id="queryManager" class="com.china.center.oa.publics.manager.impl.QueryManagerImpl" />
+
 </beans>

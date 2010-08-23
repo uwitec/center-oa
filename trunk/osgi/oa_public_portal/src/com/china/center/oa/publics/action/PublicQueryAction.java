@@ -50,9 +50,11 @@ import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.ProvinceDAO;
 import com.china.center.oa.publics.dao.RoleDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.publics.listener.QueryListener;
 import com.china.center.oa.publics.manager.LocationManager;
 import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.publics.manager.PublicQueryManager;
+import com.china.center.oa.publics.manager.QueryManager;
 import com.china.center.oa.publics.wrap.StafferOrgWrap;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.StringTools;
@@ -81,6 +83,8 @@ public class PublicQueryAction extends DispatchAction
     private DepartmentDAO departmentDAO = null;
 
     private PublicQueryManager publicQueryManager = null;
+
+    private QueryManager queryManager = null;
 
     private PostDAO postDAO = null;
 
@@ -495,6 +499,16 @@ public class PublicQueryAction extends DispatchAction
 
             return;
         }
+
+        // 动态获取数据库里面的值
+        QueryListener queryListener = queryManager.getListenerMap().get(key);
+
+        if (queryListener != null)
+        {
+            selectMap.put(key, queryListener.getBeanList());
+
+            return;
+        }
     }
 
     /**
@@ -682,5 +696,22 @@ public class PublicQueryAction extends DispatchAction
     public void setEnumDefineDAO(EnumDefineDAO enumDefineDAO)
     {
         this.enumDefineDAO = enumDefineDAO;
+    }
+
+    /**
+     * @return the queryManager
+     */
+    public QueryManager getQueryManager()
+    {
+        return queryManager;
+    }
+
+    /**
+     * @param queryManager
+     *            the queryManager to set
+     */
+    public void setQueryManager(QueryManager queryManager)
+    {
+        this.queryManager = queryManager;
     }
 }

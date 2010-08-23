@@ -88,4 +88,6 @@
 
 	<osgi:service ref="enumDefineDAO" interface="com.china.center.oa.publics.dao.EnumDefineDAO" />
 
+	<osgi:service ref="queryManager" interface="com.china.center.oa.publics.manager.QueryManager" />
+
 </beans>
