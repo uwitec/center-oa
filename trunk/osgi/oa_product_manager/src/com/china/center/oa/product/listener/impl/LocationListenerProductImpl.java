@@ -104,8 +104,7 @@ public class LocationListenerProductImpl implements LocationListener
      */
     public String getListenerType()
     {
-
-        return null;
+        return "Product.Impl";
     }
 
     /**
@@ -124,5 +123,4 @@ public class LocationListenerProductImpl implements LocationListener
     {
         this.productVSLocationDAO = productVSLocationDAO;
     }
-
 }

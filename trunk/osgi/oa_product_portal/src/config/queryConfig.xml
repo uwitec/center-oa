@@ -98,5 +98,41 @@
 			<type>text</type>
 		</condtion>
 	</item>
+	
+	<item name="queryDepotpart" deaultpfix="DepotpartBean">
+		<condtion name="name" caption="名称">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="type" caption="类型">
+			<opr>=</opr>
+			<datatype>1</datatype>
+			<type>select</type>
+			<option>$depotpartType</option>
+		</condtion>
+		<condtion name="locationId" caption="仓库">
+			<opr>=</opr>
+			<datatype>0</datatype>
+			<type>select</type>
+			<option>$depotList</option>
+		</condtion>
+	</item>
+	
+	<item name="queryStorage" deaultpfix="StorageBean">
+		<condtion name="name" caption="名称">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="locationId" caption="仓库">
+			<opr>=</opr>
+			<datatype>0</datatype>
+			<type>select</type>
+			<option>$depotList</option>
+		</condtion>
+		<condtion name="sname" filed="name" caption="仓区" pfix="DepotpartBean">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+	</item>
 
 </query>

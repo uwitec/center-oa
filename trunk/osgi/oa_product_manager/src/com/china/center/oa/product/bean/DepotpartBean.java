@@ -36,12 +36,13 @@ public class DepotpartBean implements Serializable
      */
     @FK
     @Join(tagClass = DepotBean.class)
+    @Html(title = "所属仓库", type = Element.SELECT, must = true)
     private String locationId = "";
 
     /**
-     * 1可发(良品仓) 0(次品仓) and 2(报废仓)不可以
+     * 1可发(良品仓) 0(次品仓) and 2(报废仓)不可以($depotpartType)
      */
-    @Html(title = "仓区类型", type = Element.SELECT)
+    @Html(title = "仓区类型", type = Element.SELECT, must = true)
     private int type = DepotConstant.DEPOTPART_TYPE_OK;
 
     @Html(title = "描述", type = Element.TEXTAREA)

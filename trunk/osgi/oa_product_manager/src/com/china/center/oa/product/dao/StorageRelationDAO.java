@@ -25,4 +25,6 @@ import com.china.center.oa.product.vs.StorageRelationBean;
 public interface StorageRelationDAO extends DAO<StorageRelationBean, StorageRelationVO>
 {
     int sumProductInStorage(String storageId);
+
+    int sumProductByProductId(String productId);
 }

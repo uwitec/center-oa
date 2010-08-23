@@ -36,5 +36,11 @@
 		
 	<bean name="/depot/depot"
 		class="com.china.center.oa.product.action.DepotAction" />
+		
+	<bean name="/depot/depotpart"
+		class="com.china.center.oa.product.action.DepotpartAction" />
+		
+	<bean name="/depot/storage"
+		class="com.china.center.oa.product.action.StorageAction" />
 	
 </beans>

@@ -23,6 +23,8 @@
 	
 	<bean id="locationListenerProductImpl" class="com.china.center.oa.product.listener.impl.LocationListenerProductImpl" />
 	
+	<bean id="queryListenerDepotImpl" class="com.china.center.oa.product.listener.impl.QueryListenerDepotImpl" />
+	
 	<bean id="defaultLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
 		<property name="listenerManager">
 			<ref bean="locationManager"/>
@@ -30,6 +32,14 @@
 		<property name="listenerList">
 			<list>
 				<ref bean="locationListenerProductImpl" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="defaultLoadQueryListener" class="com.china.center.oa.publics.listener.DefaultLoadQueryListener">
+		<property name="listenerList">
+			<list>
+				<ref bean="queryListenerDepotImpl" />
 			</list>
 		</property>
 	</bean>
@@ -57,5 +67,9 @@
 	<bean id="storageDAO" class="com.china.center.oa.product.dao.impl.StorageDAOImpl" />
 
 	<bean id="storageRelationDAO" class="com.china.center.oa.product.dao.impl.StorageRelationDAOImpl" />
+
+	<bean id="storageManager" class="com.china.center.oa.product.manager.impl.StorageManagerImpl" />
+
+	<bean id="depotpartManager" class="com.china.center.oa.product.manager.impl.DepotpartManagerImpl" />
 
 </beans>

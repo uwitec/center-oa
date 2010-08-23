@@ -36,5 +36,7 @@
 	<osgi:reference id="stafferDAO" interface="com.china.center.oa.publics.dao.StafferDAO" />
 	
 	<osgi:reference id="locationManager" interface="com.china.center.oa.publics.manager.LocationManager" />
+	
+	<osgi:reference id="queryManager" interface="com.china.center.oa.publics.manager.QueryManager" />
 
 </beans>

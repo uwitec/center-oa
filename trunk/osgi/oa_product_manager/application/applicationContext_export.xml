@@ -44,4 +44,8 @@
 
 	<osgi:service ref="storageRelationDAO" interface="com.china.center.oa.product.dao.StorageRelationDAO" />
 
+	<osgi:service ref="storageManager" interface="com.china.center.oa.product.manager.StorageManager" />
+
+	<osgi:service ref="depotpartManager" interface="com.china.center.oa.product.manager.DepotpartManager" />
+
 </beans>

@@ -42,11 +42,21 @@
 	<osgi:reference id="providerUserDAO" interface="com.china.center.oa.product.dao.ProviderUserDAO" />
 
 	<osgi:reference id="productTypeVSCustomerDAO" interface="com.china.center.oa.product.dao.ProductTypeVSCustomerDAO" />
-
-	<osgi:reference id="providerManager" interface="com.china.center.oa.product.manager.ProviderManager" />
 	
 	<osgi:reference id="depotDAO" interface="com.china.center.oa.product.dao.DepotDAO" />
 
+	<osgi:reference id="depotpartDAO" interface="com.china.center.oa.product.dao.DepotpartDAO" />
+
+	<osgi:reference id="storageDAO" interface="com.china.center.oa.product.dao.StorageDAO" />
+
+	<osgi:reference id="storageRelationDAO" interface="com.china.center.oa.product.dao.StorageRelationDAO" />
+	
+	<osgi:reference id="providerManager" interface="com.china.center.oa.product.manager.ProviderManager" />
+	
 	<osgi:reference id="depotManager" interface="com.china.center.oa.product.manager.DepotManager" />
+
+	<osgi:reference id="storageManager" interface="com.china.center.oa.product.manager.StorageManager" />
+
+	<osgi:reference id="depotpartManager" interface="com.china.center.oa.product.manager.DepotpartManager" />
 
 </beans>

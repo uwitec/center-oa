@@ -11,6 +11,7 @@ package com.china.center.oa.product.vs;
 
 import java.io.Serializable;
 
+import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
@@ -44,6 +45,7 @@ public class StorageRelationBean implements Serializable
     @Join(tagClass = StorageBean.class)
     private String storageId = "";
 
+    @FK(index = AnoConstant.FK_FIRST)
     @Join(tagClass = ProductBean.class)
     private String productId = "";
 

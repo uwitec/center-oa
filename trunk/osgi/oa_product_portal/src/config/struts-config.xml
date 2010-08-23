@@ -28,6 +28,16 @@
             type="org.springframework.web.struts.DelegatingActionProxy"
             validate="false">
         </action>
+        
+        <action path="/depot/depotpart" parameter="method" folder="/depot/" bean="Depotpart"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+        </action>
+        
+        <action path="/depot/storage" parameter="method" folder="/depot/" bean="Storage"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+        </action>
 		
 	</action-mappings>
 </struts-config>

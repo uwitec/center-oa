@@ -19,7 +19,12 @@ import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.expression.Expression;
 import com.china.center.oa.product.bean.DepotBean;
+import com.china.center.oa.product.bean.DepotpartBean;
+import com.china.center.oa.product.bean.StorageBean;
+import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.dao.DepotDAO;
+import com.china.center.oa.product.dao.DepotpartDAO;
+import com.china.center.oa.product.dao.StorageDAO;
 import com.china.center.oa.product.listener.DepotListener;
 import com.china.center.oa.product.manager.DepotManager;
 import com.china.center.oa.publics.dao.CommonDAO;
@@ -40,6 +45,10 @@ public class DepotManagerImpl extends AbstractListenerManager<DepotListener> imp
     private DepotDAO depotDAO = null;
 
     private CommonDAO commonDAO = null;
+
+    private DepotpartDAO depotpartDAO = null;
+
+    private StorageDAO storageDAO = null;
 
     /**
      * default constructor
@@ -68,7 +77,37 @@ public class DepotManagerImpl extends AbstractListenerManager<DepotListener> imp
 
         depotDAO.saveEntityBean(bean);
 
+        addDefaultBean(bean);
+
         return true;
+    }
+
+    /**
+     * 这里自动生成默认仓区和默认储位
+     * 
+     * @param bean
+     */
+    private void addDefaultBean(DepotBean bean)
+    {
+        DepotpartBean dpart = new DepotpartBean();
+
+        dpart.setId(commonDAO.getSquenceString20());
+        dpart.setType(DepotConstant.DEPOTPART_TYPE_OK);
+        dpart.setLocationId(bean.getId());
+        dpart.setName(bean.getName() + "_默认仓区");
+        dpart.setDescription(bean.getName() + "的默认仓区");
+
+        depotpartDAO.saveEntityBean(dpart);
+
+        // 默认储位
+        StorageBean sbean = new StorageBean();
+        sbean.setId(commonDAO.getSquenceString20());
+        sbean.setDepotpartId(dpart.getId());
+        sbean.setLocationId(bean.getId());
+        sbean.setName("默认储位");
+        sbean.setDescription("默认储位");
+
+        storageDAO.saveEntityBean(sbean);
     }
 
     /*
@@ -88,6 +127,12 @@ public class DepotManagerImpl extends AbstractListenerManager<DepotListener> imp
         if (old == null)
         {
             throw new MYException("数据错误,请确认操作");
+        }
+
+        // 是否存在仓区
+        if (depotpartDAO.countByFK(id) > 0)
+        {
+            throw new MYException("仓库下存在仓区不能删除");
         }
 
         Collection<DepotListener> values = this.listenerMap.values();
@@ -163,6 +208,40 @@ public class DepotManagerImpl extends AbstractListenerManager<DepotListener> imp
     public void setCommonDAO(CommonDAO commonDAO)
     {
         this.commonDAO = commonDAO;
+    }
+
+    /**
+     * @return the depotpartDAO
+     */
+    public DepotpartDAO getDepotpartDAO()
+    {
+        return depotpartDAO;
+    }
+
+    /**
+     * @param depotpartDAO
+     *            the depotpartDAO to set
+     */
+    public void setDepotpartDAO(DepotpartDAO depotpartDAO)
+    {
+        this.depotpartDAO = depotpartDAO;
+    }
+
+    /**
+     * @return the storageDAO
+     */
+    public StorageDAO getStorageDAO()
+    {
+        return storageDAO;
+    }
+
+    /**
+     * @param storageDAO
+     *            the storageDAO to set
+     */
+    public void setStorageDAO(StorageDAO storageDAO)
+    {
+        this.storageDAO = storageDAO;
     }
 
 }

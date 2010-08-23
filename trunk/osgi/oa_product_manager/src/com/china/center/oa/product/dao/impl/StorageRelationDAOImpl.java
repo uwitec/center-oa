@@ -32,4 +32,11 @@ public class StorageRelationDAOImpl extends BaseDAO<StorageRelationBean, Storage
 
         return this.jdbcOperation.queryForInt(sql, storageId);
     }
+
+    public int sumProductByProductId(String productId)
+    {
+        String sql = BeanTools.getSumHead(claz, "amount") + "where productId = ?";
+
+        return this.jdbcOperation.queryForInt(sql, productId);
+    }
 }
