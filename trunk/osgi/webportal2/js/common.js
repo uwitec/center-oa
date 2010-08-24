@@ -179,7 +179,7 @@ function setSelectIndex(selectObj, index)
 /**
  * 在firfox里面增加属性
  */
-function $$E(attArray)
+function $$EEE(attArray)
 {
     if(window.HTMLElement)
     for (var i = 0; i < attArray.length; i++)
@@ -373,7 +373,7 @@ function eload(elements)
                 if (ele[aname] == undefined)
                 //if (aname.indexOf('ext') == 0)
                 {
-                    $$E([aname])
+                    $$EEE([aname])
                 }
             }
         }

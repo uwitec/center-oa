@@ -1,4 +1,4 @@
-function $$E(attArray)
+function $$EEE(attArray)
 {
 	if(window.HTMLElement)
 	for (var i = 0; i < attArray.length; i++)
