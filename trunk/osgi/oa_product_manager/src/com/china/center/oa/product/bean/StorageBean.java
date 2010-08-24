@@ -32,9 +32,11 @@ public class StorageBean implements Serializable
 
     @FK
     @Join(tagClass = DepotpartBean.class)
+    @Html(title = "所属仓区", name = "depotpartName", must = true, maxLength = 20)
     private String depotpartId = "";
 
     @Join(tagClass = DepotBean.class)
+    @Html(title = "所属仓库", type = Element.SELECT, must = true)
     private String locationId = "";
 
     @Html(title = "描述", type = Element.TEXTAREA, maxLength = 200)

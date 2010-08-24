@@ -32,9 +32,10 @@ function load()
              {display: '描述', name : 'description', width : 'auto'}
              ],
          extAtt: {
-             name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
+             //name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
+         	 {id: 'add', bclass: 'add', onpress : addBean, auth: '1106'},
              {id: 'update', bclass: 'update', onpress : updateBean, auth: '1106'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1106'},
              {id: 'search', bclass: 'search', onpress : doSearch}

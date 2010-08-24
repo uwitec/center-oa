@@ -32,6 +32,7 @@
         <action path="/depot/depotpart" parameter="method" folder="/depot/" bean="Depotpart"
             type="org.springframework.web.struts.DelegatingActionProxy"
             validate="false">
+            <forward name="rptQueryDepotpart" path="/depot/rptQueryDepotpart.jsp" />
         </action>
         
         <action path="/depot/storage" parameter="method" folder="/depot/" bean="Storage"

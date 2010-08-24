@@ -256,6 +256,31 @@ public class DepotpartAction extends DispatchAction
     }
 
     /**
+     * rptQueryDepotpart
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryDepotpart(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                           HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        String depotId = request.getParameter("depotId");
+
+        List<DepotpartBean> list = depotpartDAO.queryEntityBeansByFK(depotId);
+
+        request.setAttribute("beanList", list);
+
+        return mapping.findForward("rptQueryDepotpart");
+    }
+
+    /**
      * @return the productFacade
      */
     public ProductFacade getProductFacade()

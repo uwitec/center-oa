@@ -3,19 +3,30 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="修改产品"/>
+<p:link title="产品"/>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
-<script language="JavaScript" src="../js/key.js"></script>
+<script language="JavaScript" src="../product_js/CJL.0.1.min.js"></script>
+<script language="JavaScript" src="../product_js/ImageTrans.js"></script>
 <script language="javascript">
 function addBean()
 {
 }
+
+function load()
+{
+	loadForm();
+	
+	<c:if test="${fn:length(bean.picPath) > 0}">
+	loadImage('idContainer', "${rootUrl}pic${bean.picPath}");
+	</c:if>
+}
 </script>
 
 </head>
-<body class="body_class">
+
+<body class="body_class" onload="load()">
 <form name="addApply" action="../product/product.do?method=updateProduct" 
 	method="post" enctype="multipart/form-data">
 <input type="hidden" name="id" value="${bean.id}">
@@ -158,7 +169,7 @@ function addBean()
 			
 			<c:if test="${fn:length(bean.picPath) > 0}">
 			<p:tr align="left">
-				<img src="${rootUrl}pic${bean.picPath}">
+				<div id="idContainer"> </div>
 			</p:tr>
 			</c:if>
 			
