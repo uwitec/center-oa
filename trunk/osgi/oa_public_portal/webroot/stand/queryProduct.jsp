@@ -28,11 +28,12 @@ function load()
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
              {display: '名称', name : 'name', width : '15%'},
              {display: '编码', name : 'code', width : '10%'},
+             {display: '数量', name : 'amount', width : '10%', toFixed: 2},
              {display: '状态', name : 'status', cc : 'productStatus', width : '5%'},
              {display: '类型', name : 'type', cc : 'productType', width : '5%'},
              {display: '虚拟', name : 'abstractType', cc : 'productAbstractType', width : '5%'},
              {display: '库存模型', name : 'stockType', cc : 'productStockType', width : '5%'},
-             {display: '时间', name : 'logTime', sortable : true, width : 'auto'}
+             {display: '时间', name : 'logTime', content: '{logTime}',cname: 'logTime',  sortable : true, width : 'auto'}
              ],
          extAtt: {
              name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
