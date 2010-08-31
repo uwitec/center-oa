@@ -217,7 +217,7 @@ function exends()
 
 function downLoadAtt()
 {
-    window.location.href = '../admin/down.do?method=downFlowInstanceAttachment&id=${bean.id}';
+    window.location.href = '../flow/instance.do?method=downFlowInstanceAttachment&id=${bean.id}';
 }
 
 </script>

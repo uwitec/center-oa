@@ -9,8 +9,11 @@
 package com.china.center.oa.flow.action;
 
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -918,6 +921,51 @@ public class FlowInstanceAction extends DispatchAction
         }
 
         return mapping.findForward("queryFlowInstance2");
+    }
+
+    /**
+     * down mail attachment
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     * @throws IOException
+     */
+    public ActionForward downFlowInstanceAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                                    HttpServletResponse response)
+        throws ServletException, IOException
+    {
+        String id = request.getParameter("id");
+
+        FlowInstanceBean attachment = flowInstanceDAO.find(id);
+
+        if (attachment == null)
+        {
+            return null;
+        }
+
+        String path = FileTools.formatPath2(this.getFlowAtt()) + attachment.getAttachment();
+
+        File file = new File(path);
+
+        OutputStream out = response.getOutputStream();
+
+        response.setContentType("application/x-dbf");
+
+        response.setContentLength((int)file.length());
+
+        response.setHeader("Content-Disposition", "attachment; filename="
+                                                  + StringTools.getStringBySet(attachment.getFileName(), "GBK",
+                                                      "ISO8859-1"));
+
+        UtilStream us = new UtilStream(new FileInputStream(file), out);
+
+        us.copyAndCloseStream();
+
+        return null;
     }
 
     /**
