@@ -74,7 +74,7 @@ public class NoteManagerImpl implements NoteManager
     @Transactional(rollbackFor = {MYException.class})
     public void synReceiveToSend()
     {
-        triggerLog.info("synReceiveToSend begin...");
+        triggerLog.debug("synReceiveToSend begin...");
 
         ConditionParse con = new ConditionParse();
 
@@ -106,7 +106,7 @@ public class NoteManagerImpl implements NoteManager
             shortMessageTaskDAO.updateEntityBean(task);
         }
 
-        triggerLog.info("synReceiveToSend end...");
+        triggerLog.debug("synReceiveToSend end...");
     }
 
     /**
