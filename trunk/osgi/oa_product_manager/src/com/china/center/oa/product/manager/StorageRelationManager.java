@@ -43,4 +43,28 @@ public interface StorageRelationManager
      */
     boolean changeStorageRelationWithTransaction(User user, ProductChangeWrap bean)
         throws MYException;
+
+    /**
+     * deleteStorageRelation(删除产品数量为0的数据)
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean deleteStorageRelation(User user, String id)
+        throws MYException;
+
+    /**
+     * transferStorageRelation(储位产品转移)
+     * 
+     * @param user
+     * @param sourceStorageId
+     * @param dirStorageId
+     * @param relations
+     * @return
+     * @throws MYException
+     */
+    boolean transferStorageRelation(User user, String sourceStorageId, String dirStorageId, String[] relations)
+        throws MYException;
 }

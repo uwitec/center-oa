@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="储位管理" link="true" guid="true" cal="true" dialog="true" />
+<p:link title="库存管理" link="true" guid="true" cal="true" dialog="true" />
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
@@ -11,8 +11,8 @@
 <script type="text/javascript">
 
 var gurl = '../depot/storage.do?method=';
-var addUrl = '../depot/addStorage.jsp';
-var ukey = 'Storage';
+var addUrl = '../depot/addStorageRelation.jsp';
+var ukey = 'StorageRelation';
 
 var allDef = window.top.topFrame.allDef;
 var guidMap;
@@ -22,22 +22,22 @@ function load()
      preload();
      
      guidMap = {
-         title: '储位列表',
+         title: '库存列表',
          url: gurl + 'query' + ukey,
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
-             {display: '名称', name : 'name', width : '25%'},
-             {display: '仓区', name : 'depotpartName', width : '15%'},
-             {display: '仓库', name : 'locationName', width : '15%'},
-             {display: '描述', name : 'description', width : 'auto'}
+             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lamount={amount}>', width : 40, align: 'center'},
+             {display: '产品', name : 'productName', width : '15%', cname: 'StorageRelationBean.productId', sortable : true},
+             {display: '编码', name : 'productCode', width : '15%'},
+             {display: '数量', name : 'amount', width : '10%', sortable : true},
+             {display: '价格', name : 'price', toFixed: 2, sortable : true, width : '10%'},
+             {display: '储位', name : 'storageName', width : '10%'},
+             {display: '仓区', name : 'depotpartName', width : '10%'},
+             {display: '仓库', name : 'locationName', width : 'auto'}
              ],
          extAtt: {
              //name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
-         	 {id: 'add', bclass: 'add', onpress : addBean, auth: '1106'},
-             {id: 'update', bclass: 'update', onpress : updateBean, auth: '1106'},
-             {id: 'update1', bclass: 'update', caption: '产品转移', onpress : preForFindStorageToTransfer, auth: '1106'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1106'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
@@ -63,41 +63,16 @@ function $callBack()
     loadForm();
 }
 
-function addBean(opr, grid)
-{
-    $l(gurl + 'preForAdd' + ukey);
-    //$l(addUrl);
-}
 
 function delBean(opr, grid)
 {
-    if (getRadio('checkb') && getRadioValue('checkb'))
+    if (getRadio('checkb') && getRadioValue('checkb') &&getRadio('checkb').lamount == 0)
     {    
         if(window.confirm('确定删除?'))    
         $ajax(gurl + 'delete' + ukey + '&id=' + getRadioValue('checkb'), callBackFun);
     }
     else
-    $error('不能操作');
-}
-
-function updateBean()
-{
-	if (getRadio('checkb') && getRadioValue('checkb'))
-	{	
-		$l(gurl + 'find' + ukey + '&update=1&id=' + getRadioValue('checkb'));
-	}
-	else
-	$error('不能操作');
-}
-
-function preForFindStorageToTransfer()
-{
-	if (getRadio('checkb') && getRadioValue('checkb'))
-	{	
-		$l('../depot/storage.do?method=preForFindStorageToTransfer&id=' + getRadioValue('checkb'));
-	}
-	else
-	$error('不能操作');
+    $error('不能操作,只能删除数量为0的库存');
 }
 
 function doSearch()

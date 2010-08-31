@@ -9,6 +9,7 @@
 package com.china.center.oa.product.action;
 
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -30,13 +31,18 @@ import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.product.bean.DepotBean;
+import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.StorageBean;
 import com.china.center.oa.product.dao.DepotDAO;
+import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.dao.StorageDAO;
+import com.china.center.oa.product.dao.StorageRelationDAO;
 import com.china.center.oa.product.facade.ProductFacade;
+import com.china.center.oa.product.vo.StorageRelationVO;
 import com.china.center.oa.publics.Helper;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
+import com.china.center.tools.StringTools;
 
 
 /**
@@ -53,11 +59,17 @@ public class StorageAction extends DispatchAction
 
     private ProductFacade productFacade = null;
 
-    private StorageDAO StorageDAO = null;
+    private StorageDAO storageDAO = null;
+
+    private ProductDAO productDAO = null;
 
     private DepotDAO depotDAO = null;
 
+    private StorageRelationDAO storageRelationDAO = null;
+
     private static final String QUERYSTORAGE = "queryStorage";
+
+    private static final String QUERYSTORAGERELATION = "queryStorageRelation";
 
     /**
      * default constructor
@@ -76,7 +88,33 @@ public class StorageAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYSTORAGE, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSTORAGE, request, condtion, this.StorageDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSTORAGE, request, condtion, this.storageDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryStorageRelation
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryStorageRelation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                              HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        ActionTools.processJSONQueryCondition(QUERYSTORAGERELATION, request, condtion);
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSTORAGERELATION, request, condtion,
+            this.storageRelationDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -179,7 +217,7 @@ public class StorageAction extends DispatchAction
     }
 
     /**
-     * delLocation
+     * deleteStorage
      * 
      * @param mapping
      * @param form
@@ -215,6 +253,42 @@ public class StorageAction extends DispatchAction
     }
 
     /**
+     * deleteStorageRelation
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward deleteStorageRelation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                               HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            User user = Helper.getUser(request);
+
+            productFacade.deleteStorageRelation(user.getId(), id);
+
+            ajax.setSuccess("成功删除库存");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("删除失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
      * findDepot
      * 
      * @param mapping
@@ -230,7 +304,7 @@ public class StorageAction extends DispatchAction
     {
         String id = request.getParameter("id");
 
-        StorageBean bean = StorageDAO.findVO(id);
+        StorageBean bean = storageDAO.findVO(id);
 
         if (bean == null)
         {
@@ -256,6 +330,110 @@ public class StorageAction extends DispatchAction
     }
 
     /**
+     * 产品转移查询
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward preForFindStorageToTransfer(ActionMapping mapping, ActionForm form,
+                                                     HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        String id = request.getParameter("id");
+
+        String pname = request.getParameter("pname");
+
+        StorageBean bean = storageDAO.findVO(id);
+
+        if (bean == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据异常,请重新操作");
+
+            return mapping.findForward("queryDepot");
+        }
+
+        List<StorageBean> list = storageDAO.queryEntityBeansByFK(bean.getDepotpartId());
+
+        request.setAttribute("list", list);
+
+        request.setAttribute("bean", bean);
+
+        List<StorageRelationVO> relations = storageRelationDAO.queryEntityVOsByFK(id);
+
+        for (Iterator iterator = relations.iterator(); iterator.hasNext();)
+        {
+            StorageRelationVO storageRelationBean = (StorageRelationVO)iterator.next();
+
+            ProductBean product = productDAO.find(storageRelationBean.getProductId());
+
+            if (product != null)
+            {
+                storageRelationBean.setProductName(product.getName() + "     数量【" + storageRelationBean.getAmount()
+                                                   + "】");
+            }
+
+            if ( !StringTools.isNullOrNone(pname))
+            {
+                if (product.getName().indexOf(pname) == -1)
+                {
+                    iterator.remove();
+                }
+            }
+
+        }
+
+        request.setAttribute("relations", relations);
+
+        return mapping.findForward("transferStorageRelation");
+    }
+
+    /**
+     * 默认储位的产品的转移
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward transferStorageRelation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                                 HttpServletResponse reponse)
+        throws ServletException
+    {
+        String sourceStorage = request.getParameter("id");
+
+        String dirStorage = request.getParameter("dirStorage");
+
+        String productId = request.getParameter("productId");
+
+        String[] relations = productId.split("#");
+
+        User user = Helper.getUser(request);
+
+        try
+        {
+            productFacade.transferStorageRelation(user.getId(), sourceStorage, dirStorage, relations);
+        }
+        catch (MYException e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+            return mapping.findForward("queryStorage");
+        }
+
+        request.setAttribute(KeyConstant.MESSAGE, "产品储位间转移成功");
+
+        return mapping.findForward("queryStorage");
+    }
+
+    /**
      * @return the productFacade
      */
     public ProductFacade getProductFacade()
@@ -273,20 +451,20 @@ public class StorageAction extends DispatchAction
     }
 
     /**
-     * @return the StorageDAO
+     * @return the storageDAO
      */
     public StorageDAO getStorageDAO()
     {
-        return StorageDAO;
+        return storageDAO;
     }
 
     /**
-     * @param StorageDAO
-     *            the StorageDAO to set
+     * @param storageDAO
+     *            the storageDAO to set
      */
-    public void setStorageDAO(StorageDAO StorageDAO)
+    public void setStorageDAO(StorageDAO storageDAO)
     {
-        this.StorageDAO = StorageDAO;
+        this.storageDAO = storageDAO;
     }
 
     /**
@@ -304,5 +482,39 @@ public class StorageAction extends DispatchAction
     public void setDepotDAO(DepotDAO depotDAO)
     {
         this.depotDAO = depotDAO;
+    }
+
+    /**
+     * @return the storageRelationDAO
+     */
+    public StorageRelationDAO getStorageRelationDAO()
+    {
+        return storageRelationDAO;
+    }
+
+    /**
+     * @param storageRelationDAO
+     *            the storageRelationDAO to set
+     */
+    public void setStorageRelationDAO(StorageRelationDAO storageRelationDAO)
+    {
+        this.storageRelationDAO = storageRelationDAO;
+    }
+
+    /**
+     * @return the productDAO
+     */
+    public ProductDAO getProductDAO()
+    {
+        return productDAO;
+    }
+
+    /**
+     * @param productDAO
+     *            the productDAO to set
+     */
+    public void setProductDAO(ProductDAO productDAO)
+    {
+        this.productDAO = productDAO;
     }
 }

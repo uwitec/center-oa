@@ -28,12 +28,9 @@ public class ProductChangeWrap implements Serializable
 
     private String productId = "";
 
-    /**
-     * 价格主键
-     */
-    private String priceKey = "";
-
     private double price = 0.0d;
+
+    private String serializeId = "";
 
     private String description = "";
 
@@ -137,23 +134,6 @@ public class ProductChangeWrap implements Serializable
     }
 
     /**
-     * @return the priceKey
-     */
-    public String getPriceKey()
-    {
-        return priceKey;
-    }
-
-    /**
-     * @param priceKey
-     *            the priceKey to set
-     */
-    public void setPriceKey(String priceKey)
-    {
-        this.priceKey = priceKey;
-    }
-
-    /**
      * @return the price
      */
     public double getPrice()
@@ -168,5 +148,22 @@ public class ProductChangeWrap implements Serializable
     public void setPrice(double price)
     {
         this.price = price;
+    }
+
+    /**
+     * @return the serializeId
+     */
+    public String getSerializeId()
+    {
+        return serializeId;
+    }
+
+    /**
+     * @param serializeId
+     *            the serializeId to set
+     */
+    public void setSerializeId(String serializeId)
+    {
+        this.serializeId = serializeId;
     }
 }

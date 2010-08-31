@@ -49,6 +49,7 @@ public class StorageRelationBean implements Serializable
     @Join(tagClass = ProductBean.class)
     private String productId = "";
 
+    @FK(index = AnoConstant.FK_SECOND)
     @Join(tagClass = DepotBean.class)
     private String locationId = "";
 

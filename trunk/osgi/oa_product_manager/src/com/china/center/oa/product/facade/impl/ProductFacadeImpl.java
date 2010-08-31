@@ -25,6 +25,7 @@ import com.china.center.oa.product.manager.DepotpartManager;
 import com.china.center.oa.product.manager.ProductManager;
 import com.china.center.oa.product.manager.ProviderManager;
 import com.china.center.oa.product.manager.StorageManager;
+import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.facade.AbstarctFacade;
@@ -50,6 +51,8 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
     private DepotpartManager depotpartManager = null;
 
     private StorageManager storageManager = null;
+
+    private StorageRelationManager storageRelationManager = null;
 
     /**
      * default constructor
@@ -543,6 +546,45 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
         }
     }
 
+    public boolean deleteStorageRelation(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.STORAGE_OPR))
+        {
+            return storageRelationManager.deleteStorageRelation(user, id);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    public boolean transferStorageRelation(String userId, String sourceStorageId, String dirStorageId,
+                                           String[] relations)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, sourceStorageId, dirStorageId, relations);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.STORAGE_OPR))
+        {
+            return storageRelationManager.transferStorageRelation(user, sourceStorageId, dirStorageId, relations);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
     /**
      * @return the productManager
      */
@@ -626,5 +668,22 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
     public void setStorageManager(StorageManager storageManager)
     {
         this.storageManager = storageManager;
+    }
+
+    /**
+     * @return the storageRelationManager
+     */
+    public StorageRelationManager getStorageRelationManager()
+    {
+        return storageRelationManager;
+    }
+
+    /**
+     * @param storageRelationManager
+     *            the storageRelationManager to set
+     */
+    public void setStorageRelationManager(StorageRelationManager storageRelationManager)
+    {
+        this.storageRelationManager = storageRelationManager;
     }
 }

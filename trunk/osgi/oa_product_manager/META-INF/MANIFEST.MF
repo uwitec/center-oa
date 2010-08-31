@@ -13,6 +13,7 @@ Export-Package:
  com.china.center.oa.product.manager;version="1.0.0",
  com.china.center.oa.product.vo;version="1.0.0",
  com.china.center.oa.product.wrap;version="1.0.0",
+ com.china.center.oa.product.helper;version="1.0.0",
  com.china.center.oa.product.vs;version="1.0.0"
 Require-Bundle: com.china.center.osgi.jdbc;bundle-version="1.0.0",
  com.china.center.osgi.tools;bundle-version="1.0.0",

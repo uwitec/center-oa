@@ -9,6 +9,7 @@
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../product_js/CJL.0.1.min.js"></script>
 <script language="JavaScript" src="../product_js/ImageTrans.js"></script>
+<script language="JavaScript" src="../js/key.js"></script>
 <script language="javascript">
 function addBean()
 {

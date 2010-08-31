@@ -40,8 +40,14 @@ public class StorageLogBean implements Serializable
 
     private int type = StorageConstant.OPR_STORAGE_INIT;
 
+    /**
+     * 储位前数量
+     */
     private int preAmount = 0;
 
+    /**
+     * 储位后数量
+     */
     private int afterAmount = 0;
 
     /**

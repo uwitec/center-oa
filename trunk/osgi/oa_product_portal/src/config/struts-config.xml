@@ -38,6 +38,7 @@
         <action path="/depot/storage" parameter="method" folder="/depot/" bean="Storage"
             type="org.springframework.web.struts.DelegatingActionProxy"
             validate="false">
+            <forward name="transferStorageRelation" path="/depot/transferStorageRelation.jsp" />
         </action>
 		
 	</action-mappings>

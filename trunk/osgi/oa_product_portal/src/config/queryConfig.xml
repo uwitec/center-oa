@@ -134,5 +134,36 @@
 			<type>text</type>
 		</condtion>
 	</item>
+	
+	<item name="queryStorageRelation" deaultpfix="StorageRelationBean">
+		<condtion name="name" caption="名称" pfix="ProductBean">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="code" caption="编码" pfix="ProductBean">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="locationId" caption="仓库">
+			<opr>=</opr>
+			<datatype>0</datatype>
+			<type>select</type>
+			<option>$depotList</option>
+		</condtion>
+		<condtion name="dname" filed="name" caption="仓区" pfix="DepotpartBean">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="sname" filed="name" caption="储位" pfix="StorageBean">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="type" caption="类型" pfix="DepotpartBean">
+			<opr>=</opr>
+			<datatype>1</datatype>
+			<type>select</type>
+			<option>$depotpartType</option>
+		</condtion>
+	</item>
 
 </query>

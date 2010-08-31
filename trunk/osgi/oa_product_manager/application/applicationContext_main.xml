@@ -74,4 +74,6 @@
 
 	<bean id="storageLogDAO" class="com.china.center.oa.product.dao.impl.StorageLogDAOImpl" />
 
+	<bean id="storageRelationManager" class="com.china.center.oa.product.manager.impl.StorageRelationManagerImpl" />
+
 </beans>

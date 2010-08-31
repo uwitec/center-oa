@@ -50,4 +50,6 @@
 
 	<osgi:service ref="storageLogDAO" interface="com.china.center.oa.product.dao.StorageLogDAO" />
 
+	<osgi:service ref="storageRelationManager" interface="com.china.center.oa.product.manager.StorageRelationManager" />
+
 </beans>

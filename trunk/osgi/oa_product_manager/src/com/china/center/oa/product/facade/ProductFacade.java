@@ -93,4 +93,10 @@ public interface ProductFacade
 
     boolean deleteStorageBean(String userId, final String id)
         throws MYException;
+
+    boolean deleteStorageRelation(String userId, String id)
+        throws MYException;
+
+    boolean transferStorageRelation(String userId, String sourceStorageId, String dirStorageId, String[] relations)
+        throws MYException;
 }

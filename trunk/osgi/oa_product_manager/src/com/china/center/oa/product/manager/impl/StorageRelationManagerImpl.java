@@ -24,16 +24,19 @@ import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.StorageBean;
 import com.china.center.oa.product.bean.StorageLogBean;
 import com.china.center.oa.product.constant.ProductConstant;
+import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.DepotpartDAO;
 import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.dao.StorageDAO;
 import com.china.center.oa.product.dao.StorageLogDAO;
 import com.china.center.oa.product.dao.StorageRelationDAO;
+import com.china.center.oa.product.helper.StorageRelationHelper;
 import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.tools.JudgeTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -81,6 +84,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
     public synchronized boolean changeStorageRelationWithoutTransaction(User user, ProductChangeWrap bean)
         throws MYException
     {
+        JudgeTools.judgeParameterIsNull(user, bean);
+
         StorageBean storageBean = storageDAO.find(bean.getStorageId());
 
         if (storageBean == null)
@@ -115,7 +120,7 @@ public class StorageRelationManagerImpl implements StorageRelationManager
         }
 
         StorageRelationBean relation = storageRelationDAO.findByStorageIdAndProductIdAndPriceKey(bean.getStorageId(),
-            bean.getProductId(), bean.getPriceKey());
+            bean.getProductId(), StorageRelationHelper.getPriceKey(bean.getPrice()));
 
         if (relation == null && bean.getChange() < 0)
         {
@@ -133,9 +138,10 @@ public class StorageRelationManagerImpl implements StorageRelationManager
             newStorageRelation.setLocationId(depotBean.getId());
             newStorageRelation.setDepotpartId(depotpartBean.getId());
             newStorageRelation.setPrice(bean.getPrice());
-            newStorageRelation.setPriceKey(bean.getPriceKey());
+            newStorageRelation.setPriceKey(StorageRelationHelper.getPriceKey(bean.getPrice()));
             newStorageRelation.setAmount(0);
             newStorageRelation.setLastPrice(bean.getPrice());
+            newStorageRelation.setProductId(bean.getProductId());
 
             storageRelationDAO.saveEntityBean(newStorageRelation);
 
@@ -182,6 +188,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
 
         log.setAfterAmount(afterAmount);
 
+        log.setSerializeId(bean.getSerializeId());
+
         log.setPreAmount1(preAmount1);
 
         log.setAfterAmount1(afterAmount1);
@@ -225,6 +233,161 @@ public class StorageRelationManagerImpl implements StorageRelationManager
                     {
                         throw new RuntimeException(e.getErrorContent());
                     }
+
+                    return Boolean.TRUE;
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            _logger.error(e, e);
+
+            throw new MYException(e.getMessage());
+        }
+
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.china.center.oa.product.manager.StorageRelationManager#transferStorageRelation(com.center.china.osgi.publics.User,
+     *      java.lang.String, java.lang.String, java.lang.String[])
+     */
+    public synchronized boolean transferStorageRelation(final User user, final String sourceStorageId,
+                                                        final String dirStorageId, final String[] relations)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, sourceStorageId, dirStorageId, relations);
+
+        final StorageBean source = storageDAO.find(sourceStorageId);
+
+        if (source == null)
+        {
+            throw new MYException("源储位不存在,请确认操作");
+        }
+
+        final StorageBean dir = storageDAO.find(dirStorageId);
+
+        if (dir == null)
+        {
+            throw new MYException("目的储位不存在,请确认操作");
+        }
+
+        if ( !source.getDepotpartId().equals(dir.getDepotpartId()))
+        {
+            throw new MYException("不能跨仓区移动,请确认操作");
+        }
+
+        try
+        {
+            // 增加管理员操作在数据库事务中完成
+            TransactionTemplate tran = new TransactionTemplate(transactionManager);
+
+            tran.execute(new TransactionCallback()
+            {
+                public Object doInTransaction(TransactionStatus arg0)
+                {
+                    // 循环IDS
+                    for (String relation : relations)
+                    {
+                        // ProductChangeWrap
+                        StorageRelationBean srb = storageRelationDAO.find(relation);
+
+                        if (srb == null)
+                        {
+                            throw new RuntimeException("储位内没有产品数据,请重新操作");
+                        }
+
+                        if ( !srb.getStorageId().equals(sourceStorageId))
+                        {
+                            throw new RuntimeException("储位不对,请重新操作");
+                        }
+
+                        ProductChangeWrap addWrap = new ProductChangeWrap();
+
+                        String sid = commonDAO.getSquenceString();
+
+                        addWrap.setType(StorageConstant.OPR_STORAGE_MOVE);
+                        addWrap.setChange(srb.getAmount());
+                        addWrap.setDescription("从" + source.getName() + "转移到" + dir.getName() + "(" + sid + ")");
+                        addWrap.setPrice(srb.getPrice());
+                        addWrap.setProductId(srb.getProductId());
+                        addWrap.setStorageId(dirStorageId);
+                        addWrap.setSerializeId(sid);
+
+                        ProductChangeWrap deleteWrap = new ProductChangeWrap();
+
+                        deleteWrap.setType(StorageConstant.OPR_STORAGE_MOVE);
+                        deleteWrap.setChange( -srb.getAmount());
+                        deleteWrap.setDescription(addWrap.getDescription());
+                        deleteWrap.setPrice(srb.getPrice());
+                        deleteWrap.setProductId(srb.getProductId());
+                        deleteWrap.setStorageId(sourceStorageId);
+                        deleteWrap.setSerializeId(sid);
+
+                        try
+                        {
+                            changeStorageRelationWithoutTransaction(user, addWrap);
+
+                            changeStorageRelationWithoutTransaction(user, deleteWrap);
+                        }
+                        catch (MYException e)
+                        {
+                            throw new RuntimeException(e.getErrorContent());
+                        }
+
+                        // 删除为0的库存
+                        storageRelationDAO.deleteEntityBean(relation);
+                    }
+
+                    return Boolean.TRUE;
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            _logger.error(e, e);
+
+            throw new MYException(e.getMessage());
+        }
+
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.china.center.oa.product.manager.StorageRelationManager#deleteStorageRelation(com.center.china.osgi.publics.User,
+     *      java.lang.String)
+     */
+    public synchronized boolean deleteStorageRelation(User user, final String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        final StorageRelationBean old = storageRelationDAO.find(id);
+
+        if (old == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (old.getAmount() != 0)
+        {
+            throw new MYException("储位内产品数量大于0,不能删除,请确认操作");
+        }
+
+        try
+        {
+            // 增加管理员操作在数据库事务中完成
+            TransactionTemplate tran = new TransactionTemplate(transactionManager);
+
+            tran.execute(new TransactionCallback()
+            {
+                public Object doInTransaction(TransactionStatus arg0)
+                {
+                    storageRelationDAO.deleteEntityBean(id);
 
                     return Boolean.TRUE;
                 }
@@ -375,5 +538,4 @@ public class StorageRelationManagerImpl implements StorageRelationManager
     {
         this.commonDAO = commonDAO;
     }
-
 }
