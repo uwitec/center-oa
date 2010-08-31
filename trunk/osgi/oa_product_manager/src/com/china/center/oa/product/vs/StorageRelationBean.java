@@ -35,7 +35,7 @@ import com.china.center.oa.product.bean.StorageBean;
 @Table(name = "T_CENTER_STORAGERALATION")
 public class StorageRelationBean implements Serializable
 {
-    @Id(autoIncrement = true)
+    @Id
     private String id = "";
 
     @Join(tagClass = DepotpartBean.class)
@@ -52,7 +52,13 @@ public class StorageRelationBean implements Serializable
     @Join(tagClass = DepotBean.class)
     private String locationId = "";
 
+    private String priceKey = "";
+
     private int amount = 0;
+
+    private double price = 0.0d;
+
+    private double lastPrice = 0.0d;
 
     /**
      * default constructor
@@ -164,6 +170,57 @@ public class StorageRelationBean implements Serializable
     }
 
     /**
+     * @return the priceKey
+     */
+    public String getPriceKey()
+    {
+        return priceKey;
+    }
+
+    /**
+     * @param priceKey
+     *            the priceKey to set
+     */
+    public void setPriceKey(String priceKey)
+    {
+        this.priceKey = priceKey;
+    }
+
+    /**
+     * @return the price
+     */
+    public double getPrice()
+    {
+        return price;
+    }
+
+    /**
+     * @param price
+     *            the price to set
+     */
+    public void setPrice(double price)
+    {
+        this.price = price;
+    }
+
+    /**
+     * @return the lastPrice
+     */
+    public double getLastPrice()
+    {
+        return lastPrice;
+    }
+
+    /**
+     * @param lastPrice
+     *            the lastPrice to set
+     */
+    public void setLastPrice(double lastPrice)
+    {
+        this.lastPrice = lastPrice;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -193,8 +250,17 @@ public class StorageRelationBean implements Serializable
             .append("locationId = ")
             .append(this.locationId)
             .append(TAB)
+            .append("priceKey = ")
+            .append(this.priceKey)
+            .append(TAB)
             .append("amount = ")
             .append(this.amount)
+            .append(TAB)
+            .append("price = ")
+            .append(this.price)
+            .append(TAB)
+            .append("lastPrice = ")
+            .append(this.lastPrice)
             .append(TAB)
             .append(" )");
 

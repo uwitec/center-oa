@@ -26,17 +26,37 @@ import com.china.center.oa.product.vs.StorageRelationBean;
  */
 public class StorageRelationDAOImpl extends BaseDAO<StorageRelationBean, StorageRelationVO> implements StorageRelationDAO
 {
-    public int sumProductInStorage(String storageId)
+    public int sumAllProductInStorage(String storageId)
     {
         String sql = BeanTools.getSumHead(claz, "amount") + "where storageId = ?";
 
         return this.jdbcOperation.queryForInt(sql, storageId);
     }
 
-    public int sumProductByProductId(String productId)
+    public int sumAllProductByProductId(String productId)
     {
         String sql = BeanTools.getSumHead(claz, "amount") + "where productId = ?";
 
         return this.jdbcOperation.queryForInt(sql, productId);
+    }
+
+    public StorageRelationBean findByStorageIdAndProductIdAndPriceKey(String storageId, String productId,
+                                                                      String priceKey)
+    {
+        return findUnique("where storageId = ? and productId = ? and priceKey = ?", storageId, productId, priceKey);
+    }
+
+    public int sumProductInDepotpartId(String productId, String depotpartId)
+    {
+        String sql = BeanTools.getSumHead(claz, "amount") + "where productId = ? and depotpartId = ?";
+
+        return this.jdbcOperation.queryForInt(sql, productId, depotpartId);
+    }
+
+    public int sumProductInStorage(String productId, String storageId)
+    {
+        String sql = BeanTools.getSumHead(claz, "amount") + "where productId = ? and storageId = ?";
+
+        return this.jdbcOperation.queryForInt(sql, productId, storageId);
     }
 }

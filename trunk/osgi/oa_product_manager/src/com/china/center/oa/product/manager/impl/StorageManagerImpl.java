@@ -9,6 +9,7 @@
 package com.china.center.oa.product.manager.impl;
 
 
+import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
@@ -30,6 +31,7 @@ import com.china.center.tools.JudgeTools;
  * @see StorageManagerImpl
  * @since 1.0
  */
+@Exceptional
 public class StorageManagerImpl implements StorageManager
 {
     private StorageDAO storageDAO = null;
@@ -88,7 +90,7 @@ public class StorageManagerImpl implements StorageManager
         }
 
         // 储位里面有产品是不能删除的(这里是统计的产品的合计数量)
-        if (storageRelationDAO.sumProductInStorage(id) != 0)
+        if (storageRelationDAO.sumAllProductInStorage(id) != 0)
         {
             throw new MYException("储位下仍有产品不能删除,请确认操作");
         }

@@ -72,4 +72,6 @@
 
 	<bean id="depotpartManager" class="com.china.center.oa.product.manager.impl.DepotpartManagerImpl" />
 
+	<bean id="storageLogDAO" class="com.china.center.oa.product.dao.impl.StorageLogDAOImpl" />
+
 </beans>
