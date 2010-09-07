@@ -451,44 +451,6 @@ public abstract class BaseDAO<Bean extends Serializable, VO extends Serializable
         return jdbcOperation.queryObjects(condition, this.clazVO, args).uniqueResult(this.clazVO);
     }
 
-    public int countBycondition(String whereSql, Object... args)
-    {
-        return this.jdbcOperation.queryObjects(whereSql, this.claz, args).getCount();
-    }
-
-    public int countVOBycondition(String whereSql, Object... args)
-    {
-        return this.jdbcOperation.queryObjects(whereSql, this.clazVO, args).getCount();
-    }
-
-    public List<VO> queryEntityVOsBycondition(ConditionParse condtition, Object... args)
-    {
-        condtition.addWhereStr();
-
-        return jdbcOperation.queryForList(condtition.toString(), clazVO, args);
-    }
-
-    public List<VO> queryEntityVOsBycondition(ConditionParse condtition, PageSeparate page, Object... args)
-    {
-        condtition.addWhereStr();
-
-        return jdbcOperation.queryObjectsByPageSeparate(condtition.toString(), page, clazVO, args);
-    }
-
-    public List<Bean> queryEntityBeansBycondition(ConditionParse condtition, Object... args)
-    {
-        condtition.addWhereStr();
-
-        return jdbcOperation.queryForList(condtition.toString(), claz, args);
-    }
-
-    public List<Bean> queryEntityBeansBycondition(ConditionParse condtition, PageSeparate page, Object... args)
-    {
-        condtition.addWhereStr();
-
-        return jdbcOperation.queryObjectsByPageSeparate(condtition.toString(), page, claz, args);
-    }
-
     /**
      * @return the jdbcOperation
      */

@@ -130,7 +130,7 @@ public abstract class QueryTools
             OldPageSeparateTools.processSeparate(request, key);
         }
 
-        return dao.queryEntityVOsBycondition(OldPageSeparateTools.getCondition(request, key), OldPageSeparateTools
+        return dao.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request, key), OldPageSeparateTools
             .getPageSeparate(request, key));
     }
 
@@ -175,7 +175,7 @@ public abstract class QueryTools
             OldPageSeparateTools.processSeparate(request, key);
         }
 
-        return dao.queryEntityBeansBycondition(OldPageSeparateTools.getCondition(request, key), OldPageSeparateTools
+        return dao.queryEntityBeansByCondition(OldPageSeparateTools.getCondition(request, key), OldPageSeparateTools
             .getPageSeparate(request, key));
     }
 }

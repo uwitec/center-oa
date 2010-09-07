@@ -49,7 +49,8 @@ public abstract class BaseAutoCreateSql implements AutoCreateSql
      * default constructor
      */
     public BaseAutoCreateSql()
-    {}
+    {
+    }
 
     /*
      * (non-Javadoc)
@@ -366,8 +367,7 @@ public abstract class BaseAutoCreateSql implements AutoCreateSql
 
                     if (relationField == null)
                     {
-                        throwsLogger(ErrorConstant.JOIN_NULL, claz.getName() + "." + fieldName
-                                                              + " is not exist in "
+                        throwsLogger(ErrorConstant.JOIN_NULL, claz.getName() + "." + fieldName + " is not exist in "
                                                               + claz.getName());
                     }
 
@@ -375,8 +375,7 @@ public abstract class BaseAutoCreateSql implements AutoCreateSql
 
                     if (join == null)
                     {
-                        throwsLogger(ErrorConstant.JOIN_NULL, claz.getName() + "."
-                                                              + relationField.getName()
+                        throwsLogger(ErrorConstant.JOIN_NULL, claz.getName() + "." + relationField.getName()
                                                               + " miss join");
                     }
 
@@ -416,32 +415,40 @@ public abstract class BaseAutoCreateSql implements AutoCreateSql
 
                             // left join t_center_location t4 on (t1.locationId
                             // = t4.id and t1.kkkk = t4.bbbb)
-                            joinMap.get(key).append(" LEFT OUTER JOIN ").append(tagTableName).append(
-                                " ").append(tagPfix).append(" on (");
+                            joinMap.get(key).append(" LEFT OUTER JOIN ").append(tagTableName).append(" ").append(
+                                tagPfix).append(" on (");
                         }
 
                         // 此字段是否关联
                         if ( !joinClassAndField.containsKey(key + '$' + jointagField))
                         {
-                            joinMap.get(key).append(pfix1).append(
-                                BeanTools.getColumnName(relationField)).append(" = ").append(
-                                tagPfix + ".").append(BeanTools.getColumnName(ffx)).append(" ");
+                            joinMap
+                                .get(key)
+                                .append(pfix1)
+                                .append(BeanTools.getColumnName(relationField))
+                                .append(" = ")
+                                .append(tagPfix + ".")
+                                .append(BeanTools.getColumnName(ffx))
+                                .append(" ");
                         }
                     }
                     else if (join.type() == JoinType.EQUAL)
                     {
                         if ( !joinClass.containsKey(key))
                         {
-                            tableBuffer.append(tagTableName).append(" ").append(tagPfix).append(
-                                end);
+                            tableBuffer.append(tagTableName).append(" ").append(tagPfix).append(end);
                         }
 
                         if ( !joinClassAndField.containsKey(key + '$' + jointagField))
                         {
                             // where t1.locationId = t4.id
-                            euqalBuffer.append(pfix1).append(
-                                BeanTools.getColumnName(relationField)).append(" = ").append(
-                                tagPfix + ".").append(BeanTools.getColumnName(ffx)).append(" and ");
+                            euqalBuffer
+                                .append(pfix1)
+                                .append(BeanTools.getColumnName(relationField))
+                                .append(" = ")
+                                .append(tagPfix + ".")
+                                .append(BeanTools.getColumnName(ffx))
+                                .append(" and ");
                         }
                     }
                     else if (join.type() == JoinType.RIGHT)
@@ -453,16 +460,21 @@ public abstract class BaseAutoCreateSql implements AutoCreateSql
 
                             // left join t_center_location t4 on (t1.locationId
                             // = t4.id and t1.kkkk = t4.bbbb)
-                            joinMap.get(key).append(" RIGHT OUTER JOIN ").append(tagTableName).append(
-                                " ").append(tagPfix).append(" on (");
+                            joinMap.get(key).append(" RIGHT OUTER JOIN ").append(tagTableName).append(" ").append(
+                                tagPfix).append(" on (");
                         }
 
                         // 此字段是否关联
                         if ( !joinClassAndField.containsKey(key + jointagField))
                         {
-                            joinMap.get(key).append(pfix1).append(
-                                BeanTools.getColumnName(relationField)).append(" = ").append(
-                                tagPfix + ".").append(BeanTools.getColumnName(ffx)).append(" ");
+                            joinMap
+                                .get(key)
+                                .append(pfix1)
+                                .append(BeanTools.getColumnName(relationField))
+                                .append(" = ")
+                                .append(tagPfix + ".")
+                                .append(BeanTools.getColumnName(ffx))
+                                .append(" ");
                         }
                     }
                     else if (join.type() == JoinType.FULL)
@@ -474,16 +486,21 @@ public abstract class BaseAutoCreateSql implements AutoCreateSql
 
                             // left join t_center_location t4 on (t1.locationId
                             // = t4.id and t1.kkkk = t4.bbbb)
-                            joinMap.get(key).append(" FULL OUTER JOIN ").append(tagTableName).append(
-                                " ").append(tagPfix).append(" on (");
+                            joinMap.get(key).append(" FULL OUTER JOIN ").append(tagTableName).append(" ").append(
+                                tagPfix).append(" on (");
                         }
 
                         // 此字段是否关联
                         if ( !joinClassAndField.containsKey(key + jointagField))
                         {
-                            joinMap.get(key).append(pfix1).append(
-                                BeanTools.getColumnName(relationField)).append(" = ").append(
-                                tagPfix + ".").append(BeanTools.getColumnName(ffx)).append(" ");
+                            joinMap
+                                .get(key)
+                                .append(pfix1)
+                                .append(BeanTools.getColumnName(relationField))
+                                .append(" = ")
+                                .append(tagPfix + ".")
+                                .append(BeanTools.getColumnName(ffx))
+                                .append(" ");
                         }
                     }
                     else
@@ -507,12 +524,15 @@ public abstract class BaseAutoCreateSql implements AutoCreateSql
 
                     if (ff1 == null)
                     {
-                        throwsLogger(ErrorConstant.PARAMETER_NULL, tagClass.getName()
-                                                                   + " miss field:" + tagField);
+                        throwsLogger(ErrorConstant.PARAMETER_NULL, tagClass.getName() + " miss field:" + tagField);
                     }
 
-                    buffer.append(tagPfix + ".").append(BeanTools.getColumnName(ff1).toUpperCase()).append(
-                        " as ").append(field.getFieldName()).append(end);
+                    buffer
+                        .append(tagPfix + ".")
+                        .append(BeanTools.getColumnName(ff1).toUpperCase())
+                        .append(" as ")
+                        .append(field.getFieldName())
+                        .append(end);
                 }
                 // process alias
                 else if (field.isAlias())
@@ -741,8 +761,8 @@ public abstract class BaseAutoCreateSql implements AutoCreateSql
 
         String tableName = BeanTools.getTableName(claz);
 
-        return "update " + tableName + " set " + fieldColumnName + " = #" + fieldName + "# where "
-               + idColumn + "= #" + id + "#";
+        return "update " + tableName + " set " + fieldColumnName + " = #" + fieldName + "# where " + idColumn + "= #"
+               + id + "#";
     }
 
     protected void checkEntry(Class<?> claz)
@@ -751,10 +771,7 @@ public abstract class BaseAutoCreateSql implements AutoCreateSql
         // 是实体表
         if (claz.getAnnotation(Entity.class) == null)
         {
-            if (_logger.isDebugEnabled())
-            {
-                _logger.debug(claz + " is not Entry");
-            }
+            _logger.error(claz + " is not Entry");
 
             throwsLogger(ErrorConstant.OBJECT_NOT_ENTITY);
         }

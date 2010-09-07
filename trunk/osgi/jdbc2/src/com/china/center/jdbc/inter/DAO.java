@@ -245,24 +245,6 @@ public interface DAO<Bean extends Serializable, VO extends Serializable>
     List<Bean> queryEntityBeansByCondition(ConditionParse condition, PageSeparate page, Object... args);
 
     /**
-     * query entitys by special condition
-     * 
-     * @param condtition
-     * @param args
-     * @return
-     */
-    List<VO> queryEntityVOsBycondition(ConditionParse condtition, Object... args);
-
-    /**
-     * query entitys by special condition
-     * 
-     * @param condtition
-     * @param args
-     * @return
-     */
-    List<VO> queryEntityVOsBycondition(ConditionParse condtition, PageSeparate page, Object... args);
-
-    /**
      * query entitys by special condition and limit
      * 
      * @param condition
@@ -385,22 +367,4 @@ public interface DAO<Bean extends Serializable, VO extends Serializable>
      * @return
      */
     Class<VO> getVOClass();
-
-    /**
-     * query entitys by special condition
-     * 
-     * @param condtition
-     * @param args
-     * @return
-     */
-    List<Bean> queryEntityBeansBycondition(ConditionParse condtition, Object... args);
-
-    /**
-     * query entitys by special condition
-     * 
-     * @param condtition
-     * @param args
-     * @return
-     */
-    List<Bean> queryEntityBeansBycondition(ConditionParse condtition, PageSeparate page, Object... args);
 }
