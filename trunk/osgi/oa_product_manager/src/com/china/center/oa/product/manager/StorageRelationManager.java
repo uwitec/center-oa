@@ -71,4 +71,17 @@ public interface StorageRelationManager
      */
     boolean transferStorageRelation(User user, String sourceStorageId, String dirStorageId, String[] relations)
         throws MYException;
+
+    /**
+     * transferStorageRelationInDepotpart(仓区产品转移)
+     * 
+     * @param user
+     * @param sourceRelationId
+     * @param dirDepotpartId
+     * @param amount
+     * @return
+     * @throws MYException
+     */
+    boolean transferStorageRelationInDepotpart(User user, String sourceRelationId, String dirDepotpartId, int amount)
+        throws MYException;
 }

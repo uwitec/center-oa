@@ -29,13 +29,16 @@ import com.center.china.osgi.publics.User;
 import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
+import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.StorageBean;
 import com.china.center.oa.product.dao.DepotDAO;
+import com.china.center.oa.product.dao.DepotpartDAO;
 import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.dao.StorageDAO;
 import com.china.center.oa.product.dao.StorageLogDAO;
@@ -44,6 +47,7 @@ import com.china.center.oa.product.facade.ProductFacade;
 import com.china.center.oa.product.vo.StorageLogVO;
 import com.china.center.oa.product.vo.StorageRelationVO;
 import com.china.center.oa.publics.Helper;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -68,6 +72,8 @@ public class StorageAction extends DispatchAction
 
     private ProductDAO productDAO = null;
 
+    private DepotpartDAO depotpartDAO = null;
+
     private DepotDAO depotDAO = null;
 
     private StorageLogDAO storageLogDAO = null;
@@ -77,6 +83,8 @@ public class StorageAction extends DispatchAction
     private static final String QUERYSTORAGE = "queryStorage";
 
     private static final String QUERYSTORAGERELATION = "queryStorageRelation";
+
+    private static final String RPTQUERYPRODUCTINDEPOTPART = "rptQueryProductInDepotpart";
 
     /**
      * default constructor
@@ -525,6 +533,85 @@ public class StorageAction extends DispatchAction
     }
 
     /**
+     * queryProduct
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryProductInDepotpart(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                                    HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        List<StorageRelationVO> list = null;
+
+        if (PageSeparateTools.isFirstLoad(request))
+        {
+            ConditionParse condtion = setRptQueryProductCondition(request);
+
+            int total = storageRelationDAO.countByCondition(condtion.toString());
+
+            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+
+            PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYPRODUCTINDEPOTPART);
+
+            list = storageRelationDAO.queryEntityVOsByCondition(condtion, page);
+        }
+        else
+        {
+            PageSeparateTools.processSeparate(request, RPTQUERYPRODUCTINDEPOTPART);
+
+            list = storageRelationDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                RPTQUERYPRODUCTINDEPOTPART), PageSeparateTools.getPageSeparate(request, RPTQUERYPRODUCTINDEPOTPART));
+        }
+
+        request.setAttribute("beanList", list);
+
+        return mapping.findForward("rptQueryProductInDepotpart");
+    }
+
+    private ConditionParse setRptQueryProductCondition(HttpServletRequest request)
+    {
+        String name = request.getParameter("name");
+
+        String code = request.getParameter("code");
+
+        String storageName = request.getParameter("storageName");
+
+        String depotpartId = request.getParameter("depotpartId");
+
+        ConditionParse condtion = new ConditionParse();
+
+        if ( !StringTools.isNullOrNone(name))
+        {
+            condtion.addCondition("ProductBean.name", "like", name);
+        }
+
+        if ( !StringTools.isNullOrNone(code))
+        {
+            condtion.addCondition("ProductBean.code", "like", code);
+        }
+
+        // storageName
+        if ( !StringTools.isNullOrNone(storageName))
+        {
+            condtion.addCondition("StorageBean.name", "like", storageName);
+        }
+
+        if ( !StringTools.isNullOrNone(depotpartId))
+        {
+            condtion.addCondition("StorageRelationBean.depotpartId", "=", depotpartId);
+        }
+
+        return condtion;
+    }
+
+    /**
      * @return the productFacade
      */
     public ProductFacade getProductFacade()
@@ -624,5 +711,22 @@ public class StorageAction extends DispatchAction
     public void setStorageLogDAO(StorageLogDAO storageLogDAO)
     {
         this.storageLogDAO = storageLogDAO;
+    }
+
+    /**
+     * @return the depotpartDAO
+     */
+    public DepotpartDAO getDepotpartDAO()
+    {
+        return depotpartDAO;
+    }
+
+    /**
+     * @param depotpartDAO
+     *            the depotpartDAO to set
+     */
+    public void setDepotpartDAO(DepotpartDAO depotpartDAO)
+    {
+        this.depotpartDAO = depotpartDAO;
     }
 }

@@ -6,6 +6,7 @@
 <p:link title="仓区下日志列表" />
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
+<script language="JavaScript" src="../js/tableSort.js"></script>
 <script language="javascript">
 
 </script>

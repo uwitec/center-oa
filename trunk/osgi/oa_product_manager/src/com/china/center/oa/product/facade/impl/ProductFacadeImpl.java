@@ -585,6 +585,27 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
         }
     }
 
+    public boolean transferStorageRelationInDepotpart(String userId, String sourceRelationId, String dirDepotpartId,
+                                                      int amount)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, sourceRelationId, dirDepotpartId);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.DEPOTPART_OPR))
+        {
+            return storageRelationManager.transferStorageRelationInDepotpart(user, sourceRelationId, dirDepotpartId,
+                amount);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
     /**
      * @return the productManager
      */

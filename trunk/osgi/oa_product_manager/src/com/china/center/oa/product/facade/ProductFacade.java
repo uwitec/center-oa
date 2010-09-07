@@ -99,4 +99,7 @@ public interface ProductFacade
 
     boolean transferStorageRelation(String userId, String sourceStorageId, String dirStorageId, String[] relations)
         throws MYException;
+
+    boolean transferStorageRelationInDepotpart(String userId, String sourceRelationId, String dirDepotpartId, int amount)
+        throws MYException;
 }
