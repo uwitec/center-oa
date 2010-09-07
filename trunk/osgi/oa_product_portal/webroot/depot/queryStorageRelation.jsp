@@ -25,7 +25,9 @@ function load()
          title: '库存列表',
          url: gurl + 'query' + ukey,
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lamount={amount}>', width : 40, align: 'center'},
+             {display: '选择', name : 'check', content : 
+             '<input type=radio name=checkb value={id} lamount={amount} ldepotpartId={depotpartId} lproductId={productId} llocationId={locationId} lpriceKey={priceKey}>', 
+             		width : 40, align: 'center'},
              {display: '产品', name : 'productName', width : '15%', cname: 'StorageRelationBean.productId', sortable : true},
              {display: '编码', name : 'productCode', width : '15%'},
              {display: '数量', name : 'amount', width : '10%', sortable : true},
@@ -39,7 +41,11 @@ function load()
          },
          buttons : [
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1106'},
-             {id: 'search', bclass: 'search', onpress : doSearch}
+             {id: 'search', bclass: 'search', onpress : doSearch},
+             {id: 'search1', bclass: 'search', caption: '仓区下异动历史', onpress : depotpartLog},
+             {id: 'search2', bclass: 'search', caption: '仓区下异动(价格)', onpress : depotpartLog2},
+             {id: 'search2', bclass: 'search', caption: '仓库下异动历史', onpress : depotLog},
+             {id: 'search2', bclass: 'search', caption: '仓库下异动(价格)', onpress : depotLog2}
              ],
          usepager: true,
          useRp: true,
@@ -73,6 +79,52 @@ function delBean(opr, grid)
     }
     else
     $error('不能操作,只能删除数量为0的库存');
+}
+
+function depotpartLog(opr, grid)
+{
+	if (getRadio('checkb') && getRadioValue('checkb'))
+	{	
+		$l(gurl + 'queryStorageLog&queryType=1&productId=' 
+			+ getRadio('checkb').lproductId + '&depotpartId=' + getRadio('checkb').ldepotpartId);
+	}
+	else
+	$error('不能操作');
+}
+
+function depotpartLog2(opr, grid)
+{
+	if (getRadio('checkb') && getRadioValue('checkb'))
+	{	
+		$l(gurl + 'queryStorageLog&queryType=1&productId=' 
+			+ getRadio('checkb').lproductId + '&depotpartId=' + getRadio('checkb').ldepotpartId 
+			+ '&priceKey=' + getRadio('checkb').lpriceKey);
+	}
+	else
+	$error('不能操作');
+}
+
+function depotLog(opr, grid)
+{
+	if (getRadio('checkb') && getRadioValue('checkb'))
+	{	
+		$l(gurl + 'queryStorageLog&queryType=2&productId=' 
+			+ getRadio('checkb').lproductId + '&locationId=' + getRadio('checkb').llocationId);
+	}
+	else
+	$error('不能操作');
+}
+
+function depotLog2(opr, grid)
+{
+	if (getRadio('checkb') && getRadioValue('checkb'))
+	{	
+		$l(gurl + 'queryStorageLog&queryType=2&productId=' 
+			+ getRadio('checkb').lproductId + '&locationId=' + getRadio('checkb').llocationId 
+			+ '&priceKey=' + getRadio('checkb').lpriceKey);
+	}
+	else
+	$error('不能操作');
 }
 
 function doSearch()

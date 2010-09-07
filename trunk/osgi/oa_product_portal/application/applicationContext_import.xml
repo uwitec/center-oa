@@ -48,6 +48,8 @@
 	<osgi:reference id="depotpartDAO" interface="com.china.center.oa.product.dao.DepotpartDAO" />
 
 	<osgi:reference id="storageDAO" interface="com.china.center.oa.product.dao.StorageDAO" />
+	
+	<osgi:reference id="storageLogDAO" interface="com.china.center.oa.product.dao.StorageLogDAO" />
 
 	<osgi:reference id="storageRelationDAO" interface="com.china.center.oa.product.dao.StorageRelationDAO" />
 	

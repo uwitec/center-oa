@@ -9,6 +9,8 @@
 package com.china.center.oa.product.action;
 
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,10 +38,13 @@ import com.china.center.oa.product.bean.StorageBean;
 import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.dao.StorageDAO;
+import com.china.center.oa.product.dao.StorageLogDAO;
 import com.china.center.oa.product.dao.StorageRelationDAO;
 import com.china.center.oa.product.facade.ProductFacade;
+import com.china.center.oa.product.vo.StorageLogVO;
 import com.china.center.oa.product.vo.StorageRelationVO;
 import com.china.center.oa.publics.Helper;
+import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.StringTools;
@@ -64,6 +69,8 @@ public class StorageAction extends DispatchAction
     private ProductDAO productDAO = null;
 
     private DepotDAO depotDAO = null;
+
+    private StorageLogDAO storageLogDAO = null;
 
     private StorageRelationDAO storageRelationDAO = null;
 
@@ -117,6 +124,90 @@ public class StorageAction extends DispatchAction
             this.storageRelationDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryStorageLog
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryStorageLog(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                         HttpServletResponse reponse)
+        throws ServletException
+    {
+        ConditionParse condition = new ConditionParse();
+
+        setCondition(request, condition);
+
+        // 获取指定时间内的仓区的异动(仅仅查询最近的1000个)
+        List<StorageLogVO> list = storageLogDAO.queryEntityVOsByLimit(condition, 1000);
+
+        for (StorageLogVO storageLogBean : list)
+        {
+            storageLogBean.setTypeName(ElTools.get("storageType", storageLogBean.getType()));
+        }
+
+        Collections.sort(list, new Comparator<StorageLogVO>()
+        {
+            public int compare(StorageLogVO o1, StorageLogVO o2)
+            {
+                return Integer.parseInt(o1.getId()) - Integer.parseInt(o2.getId());
+            }
+        });
+
+        request.setAttribute("listStorageLog", list);
+
+        String queryType = request.getParameter("queryType");
+
+        // 仓区下
+        if ("1".equals(queryType))
+        {
+            return mapping.findForward("listStorageLog");
+        }
+
+        // 仓库下
+        return mapping.findForward("listStorageLog1");
+    }
+
+    private void setCondition(HttpServletRequest request, ConditionParse condition)
+    {
+        String productId = request.getParameter("productId");
+
+        String depotpartId = request.getParameter("depotpartId");
+
+        String depotId = request.getParameter("depotId");
+
+        String priceKey = request.getParameter("priceKey");
+
+        condition.addCondition("StorageLogBean.productId", "=", productId);
+
+        if ( !StringTools.isNullOrNone(depotpartId))
+        {
+            condition.addCondition("StorageLogBean.depotpartId", "=", depotpartId);
+        }
+
+        if ( !StringTools.isNullOrNone(depotId))
+        {
+            condition.addCondition("StorageLogBean.depotId", "=", depotId);
+        }
+
+        if ( !StringTools.isNullOrNone(priceKey))
+        {
+            condition.addCondition("StorageLogBean.priceKey", "=", priceKey);
+
+            request.setAttribute("priceKey", 1);
+        }
+        else
+        {
+            request.setAttribute("priceKey", 0);
+        }
+
+        condition.addCondition("order by StorageLogBean.id desc");
     }
 
     /**
@@ -375,7 +466,7 @@ public class StorageAction extends DispatchAction
             if (product != null)
             {
                 storageRelationBean.setProductName(product.getName() + "     数量【" + storageRelationBean.getAmount()
-                                                   + "】");
+                                                   + "】 价格【" + ElTools.formatNum(storageRelationBean.getPrice()) + "】");
             }
 
             if ( !StringTools.isNullOrNone(pname))
@@ -516,5 +607,22 @@ public class StorageAction extends DispatchAction
     public void setProductDAO(ProductDAO productDAO)
     {
         this.productDAO = productDAO;
+    }
+
+    /**
+     * @return the storageLogDAO
+     */
+    public StorageLogDAO getStorageLogDAO()
+    {
+        return storageLogDAO;
+    }
+
+    /**
+     * @param storageLogDAO
+     *            the storageLogDAO to set
+     */
+    public void setStorageLogDAO(StorageLogDAO storageLogDAO)
+    {
+        this.storageLogDAO = storageLogDAO;
     }
 }
