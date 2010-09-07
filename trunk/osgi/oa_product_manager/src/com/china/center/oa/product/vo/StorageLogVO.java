@@ -9,6 +9,8 @@
 package com.china.center.oa.product.vo;
 
 
+import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Relationship;
 import com.china.center.oa.product.bean.StorageLogBean;
 
@@ -21,6 +23,7 @@ import com.china.center.oa.product.bean.StorageLogBean;
  * @see StorageLogVO
  * @since 1.0
  */
+@Entity(inherit = true)
 public class StorageLogVO extends StorageLogBean
 {
     @Relationship(relationField = "depotpartId")
@@ -34,6 +37,9 @@ public class StorageLogVO extends StorageLogBean
 
     @Relationship(relationField = "locationId")
     private String locationName = "";
+
+    @Ignore
+    private String typeName = "";
 
     /**
      * default constructor
@@ -111,6 +117,23 @@ public class StorageLogVO extends StorageLogBean
     }
 
     /**
+     * @return the typeName
+     */
+    public String getTypeName()
+    {
+        return typeName;
+    }
+
+    /**
+     * @param typeName
+     *            the typeName to set
+     */
+    public void setTypeName(String typeName)
+    {
+        this.typeName = typeName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -136,6 +159,9 @@ public class StorageLogVO extends StorageLogBean
             .append(TAB)
             .append("locationName = ")
             .append(this.locationName)
+            .append(TAB)
+            .append("typeName = ")
+            .append(this.typeName)
             .append(TAB)
             .append(" )");
 

@@ -49,7 +49,7 @@ public interface StorageConstant
     /**
      * 移动
      */
-    @Defined(key = "storageType", value = "仓区移动")
+    @Defined(key = "storageType", value = "储位移动")
     int OPR_STORAGE_MOVE = 4;
 
     /**
@@ -57,4 +57,10 @@ public interface StorageConstant
      */
     @Defined(key = "storageType", value = "合成/分解")
     int OPR_STORAGE_COMPOSE = 5;
+
+    /**
+     * 移动
+     */
+    @Defined(key = "storageType", value = "仓区移动")
+    int OPR_DDEPOTPART_MOVE = 6;
 }

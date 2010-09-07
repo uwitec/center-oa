@@ -29,9 +29,11 @@ public interface StorageRelationManager
      * 
      * @param user
      * @param bean
+     * @param deleteZeroRelation
+     *            是否删除为0的产品库存
      * @return
      */
-    boolean changeStorageRelationWithoutTransaction(User user, ProductChangeWrap bean)
+    boolean changeStorageRelationWithoutTransaction(User user, ProductChangeWrap bean, boolean deleteZeroRelation)
         throws MYException;
 
     /**
@@ -39,9 +41,11 @@ public interface StorageRelationManager
      * 
      * @param user
      * @param bean
+     * @param deleteZeroRelation
+     *            是否删除为0的产品库存
      * @return
      */
-    boolean changeStorageRelationWithTransaction(User user, ProductChangeWrap bean)
+    boolean changeStorageRelationWithTransaction(User user, ProductChangeWrap bean, boolean deleteZeroRelation)
         throws MYException;
 
     /**

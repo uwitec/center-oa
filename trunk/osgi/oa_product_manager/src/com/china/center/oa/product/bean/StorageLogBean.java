@@ -55,10 +55,34 @@ public class StorageLogBean implements Serializable
      */
     private int preAmount1 = 0;
 
+    private int preAmount11 = 0;
+
     /**
      * 仓区下整个产品的数量
      */
     private int afterAmount1 = 0;
+
+    /**
+     * 仓区此价格下的数量
+     */
+    private int afterAmount11 = 0;
+
+    /**
+     * 仓库下整个产品的数量
+     */
+    private int preAmount2 = 0;
+
+    /**
+     * 仓库此价格下的数量
+     */
+    private int preAmount22 = 0;
+
+    /**
+     * 仓库下整个产品的数量
+     */
+    private int afterAmount2 = 0;
+
+    private int afterAmount22 = 0;
 
     private int changeAmount = 0;
 
@@ -75,6 +99,8 @@ public class StorageLogBean implements Serializable
     private String locationId = "";
 
     private String logTime = "";
+
+    private String priceKey = "";
 
     private double price = 0.0d;
 
@@ -351,6 +377,125 @@ public class StorageLogBean implements Serializable
     }
 
     /**
+     * @return the preAmount2
+     */
+    public int getPreAmount2()
+    {
+        return preAmount2;
+    }
+
+    /**
+     * @param preAmount2
+     *            the preAmount2 to set
+     */
+    public void setPreAmount2(int preAmount2)
+    {
+        this.preAmount2 = preAmount2;
+    }
+
+    /**
+     * @return the afterAmount2
+     */
+    public int getAfterAmount2()
+    {
+        return afterAmount2;
+    }
+
+    /**
+     * @param afterAmount2
+     *            the afterAmount2 to set
+     */
+    public void setAfterAmount2(int afterAmount2)
+    {
+        this.afterAmount2 = afterAmount2;
+    }
+
+    /**
+     * @return the priceKey
+     */
+    public String getPriceKey()
+    {
+        return priceKey;
+    }
+
+    /**
+     * @param priceKey
+     *            the priceKey to set
+     */
+    public void setPriceKey(String priceKey)
+    {
+        this.priceKey = priceKey;
+    }
+
+    /**
+     * @return the preAmount11
+     */
+    public int getPreAmount11()
+    {
+        return preAmount11;
+    }
+
+    /**
+     * @param preAmount11
+     *            the preAmount11 to set
+     */
+    public void setPreAmount11(int preAmount11)
+    {
+        this.preAmount11 = preAmount11;
+    }
+
+    /**
+     * @return the afterAmount11
+     */
+    public int getAfterAmount11()
+    {
+        return afterAmount11;
+    }
+
+    /**
+     * @param afterAmount11
+     *            the afterAmount11 to set
+     */
+    public void setAfterAmount11(int afterAmount11)
+    {
+        this.afterAmount11 = afterAmount11;
+    }
+
+    /**
+     * @return the preAmount22
+     */
+    public int getPreAmount22()
+    {
+        return preAmount22;
+    }
+
+    /**
+     * @param preAmount22
+     *            the preAmount22 to set
+     */
+    public void setPreAmount22(int preAmount22)
+    {
+        this.preAmount22 = preAmount22;
+    }
+
+    /**
+     * @return the afterAmount22
+     */
+    public int getAfterAmount22()
+    {
+        return afterAmount22;
+    }
+
+    /**
+     * @param afterAmount22
+     *            the afterAmount22 to set
+     */
+    public void setAfterAmount22(int afterAmount22)
+    {
+        this.afterAmount22 = afterAmount22;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -383,8 +528,26 @@ public class StorageLogBean implements Serializable
             .append("preAmount1 = ")
             .append(this.preAmount1)
             .append(TAB)
+            .append("preAmount11 = ")
+            .append(this.preAmount11)
+            .append(TAB)
             .append("afterAmount1 = ")
             .append(this.afterAmount1)
+            .append(TAB)
+            .append("afterAmount11 = ")
+            .append(this.afterAmount11)
+            .append(TAB)
+            .append("preAmount2 = ")
+            .append(this.preAmount2)
+            .append(TAB)
+            .append("preAmount22 = ")
+            .append(this.preAmount22)
+            .append(TAB)
+            .append("afterAmount2 = ")
+            .append(this.afterAmount2)
+            .append(TAB)
+            .append("afterAmount22 = ")
+            .append(this.afterAmount22)
             .append(TAB)
             .append("changeAmount = ")
             .append(this.changeAmount)
@@ -403,6 +566,9 @@ public class StorageLogBean implements Serializable
             .append(TAB)
             .append("logTime = ")
             .append(this.logTime)
+            .append(TAB)
+            .append("priceKey = ")
+            .append(this.priceKey)
             .append(TAB)
             .append("price = ")
             .append(this.price)

@@ -26,6 +26,8 @@ public class ProductChangeWrap implements Serializable
 {
     private String storageId = "";
 
+    private String depotpartId = "";
+
     private String productId = "";
 
     private double price = 0.0d;
@@ -165,5 +167,66 @@ public class ProductChangeWrap implements Serializable
     public void setSerializeId(String serializeId)
     {
         this.serializeId = serializeId;
+    }
+
+    /**
+     * @return the depotpartId
+     */
+    public String getDepotpartId()
+    {
+        return depotpartId;
+    }
+
+    /**
+     * @param depotpartId
+     *            the depotpartId to set
+     */
+    public void setDepotpartId(String depotpartId)
+    {
+        this.depotpartId = depotpartId;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("ProductChangeWrap ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("storageId = ")
+            .append(this.storageId)
+            .append(TAB)
+            .append("depotpartId = ")
+            .append(this.depotpartId)
+            .append(TAB)
+            .append("productId = ")
+            .append(this.productId)
+            .append(TAB)
+            .append("price = ")
+            .append(this.price)
+            .append(TAB)
+            .append("serializeId = ")
+            .append(this.serializeId)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("change = ")
+            .append(this.change)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }

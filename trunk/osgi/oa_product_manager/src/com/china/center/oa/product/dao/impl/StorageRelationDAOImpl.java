@@ -40,10 +40,10 @@ public class StorageRelationDAOImpl extends BaseDAO<StorageRelationBean, Storage
         return this.jdbcOperation.queryForInt(sql, productId);
     }
 
-    public StorageRelationBean findByStorageIdAndProductIdAndPriceKey(String storageId, String productId,
-                                                                      String priceKey)
+    public StorageRelationBean findByDepotpartIdAndProductIdAndPriceKey(String depotpartId, String productId,
+                                                                        String priceKey)
     {
-        return findUnique("where storageId = ? and productId = ? and priceKey = ?", storageId, productId, priceKey);
+        return findUnique("where depotpartId = ? and productId = ? and priceKey = ?", depotpartId, productId, priceKey);
     }
 
     public int sumProductInDepotpartId(String productId, String depotpartId)
@@ -58,5 +58,26 @@ public class StorageRelationDAOImpl extends BaseDAO<StorageRelationBean, Storage
         String sql = BeanTools.getSumHead(claz, "amount") + "where productId = ? and storageId = ?";
 
         return this.jdbcOperation.queryForInt(sql, productId, storageId);
+    }
+
+    public int sumProductInLocationId(String productId, String locationId)
+    {
+        String sql = BeanTools.getSumHead(claz, "amount") + "where productId = ? and locationId = ?";
+
+        return this.jdbcOperation.queryForInt(sql, productId, locationId);
+    }
+
+    public int sumProductInDepotpartIdAndPriceKey(String productId, String depotpartId, String priceKey)
+    {
+        String sql = BeanTools.getSumHead(claz, "amount") + "where productId = ? and depotpartId = ? and priceKey = ?";
+
+        return this.jdbcOperation.queryForInt(sql, productId, depotpartId, priceKey);
+    }
+
+    public int sumProductInLocationIdAndPriceKey(String productId, String locationId, String priceKey)
+    {
+        String sql = BeanTools.getSumHead(claz, "amount") + "where productId = ? and locationId = ? and priceKey = ?";
+
+        return this.jdbcOperation.queryForInt(sql, productId, locationId, priceKey);
     }
 }
