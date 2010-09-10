@@ -10,5 +10,5 @@
 	<entry key="sqlMap">config/sql-map-config.xml</entry>
 	<entry key="databaseEncoding">UTF-8</entry>
 	<entry key="systemEncoding">UTF-8</entry>
-	<entry key="show_sql">true</entry>
+	<entry key="show_sql">false</entry>
 </properties>
