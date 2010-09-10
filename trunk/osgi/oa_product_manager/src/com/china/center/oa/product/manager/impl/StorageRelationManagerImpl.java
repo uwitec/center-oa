@@ -400,6 +400,12 @@ public class StorageRelationManagerImpl implements StorageRelationManager
         return true;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.china.center.oa.product.manager.StorageRelationManager#transferStorageRelationInDepotpart(com.center.china.osgi.publics.User,
+     *      java.lang.String, java.lang.String, int)
+     */
     public synchronized boolean transferStorageRelationInDepotpart(final User user, final String sourceRelationId,
                                                                    final String dirDepotpartId, final int amount)
         throws MYException
@@ -469,12 +475,12 @@ public class StorageRelationManagerImpl implements StorageRelationManager
                     String sid = commonDAO.getSquenceString();
                     // 首先是源仓区减去产品数量
 
-                    String des = "从仓区[" + oldDepotpart.getName() + "]转移到[" + newDepotpart.getDescription() + "]";
+                    String des = "从仓区[" + oldDepotpart.getName() + "]转移到[" + newDepotpart.getName() + "]";
 
                     ProductChangeWrap deleteWrap = new ProductChangeWrap();
 
                     deleteWrap.setType(StorageConstant.OPR_DDEPOTPART_MOVE);
-                    deleteWrap.setChange( -srb.getAmount());
+                    deleteWrap.setChange( -amount);
                     deleteWrap.setDescription(des);
                     deleteWrap.setPrice(srb.getPrice());
                     deleteWrap.setProductId(srb.getProductId());
@@ -485,7 +491,7 @@ public class StorageRelationManagerImpl implements StorageRelationManager
                     ProductChangeWrap addWrap = new ProductChangeWrap();
 
                     addWrap.setType(StorageConstant.OPR_DDEPOTPART_MOVE);
-                    addWrap.setChange(srb.getAmount());
+                    addWrap.setChange(amount);
                     addWrap.setDescription(des);
                     addWrap.setPrice(srb.getPrice());
                     addWrap.setProductId(srb.getProductId());
@@ -505,7 +511,7 @@ public class StorageRelationManagerImpl implements StorageRelationManager
                     try
                     {
                         // 因为仓区、产品、价格是唯一主键(先删除再增加)
-                        changeStorageRelationWithoutTransaction(user, deleteWrap, true);
+                        changeStorageRelationWithoutTransaction(user, deleteWrap, false);
 
                         changeStorageRelationWithoutTransaction(user, addWrap, false);
                     }
