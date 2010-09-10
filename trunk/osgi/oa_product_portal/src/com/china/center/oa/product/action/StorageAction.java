@@ -35,6 +35,7 @@ import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.product.bean.DepotBean;
+import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.StorageBean;
 import com.china.center.oa.product.dao.DepotDAO;
@@ -304,6 +305,29 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
+    public ActionForward preForMoveDepotpart(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                             HttpServletResponse response)
+        throws ServletException
+    {
+        String depotId = request.getParameter("id");
+
+        List<DepotpartBean> depotpartList = depotpartDAO.queryEntityBeansByFK(depotId);
+
+        request.setAttribute("depotpartList", depotpartList);
+
+        return mapping.findForward("moveDepotpart");
+    }
+
+    /**
+     * preForMoveDepotpart
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
     public ActionForward preForAddStorage(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                           HttpServletResponse response)
         throws ServletException
@@ -533,6 +557,45 @@ public class StorageAction extends DispatchAction
     }
 
     /**
+     * 仓区里面的产品转移
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward moveDepotpart(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse reponse)
+        throws ServletException
+    {
+        String destDepotpartId = request.getParameter("dest");
+
+        String sourceRelationId = request.getParameter("sourceRelationId");
+
+        String amount = request.getParameter("amount");
+
+        User user = Helper.getUser(request);
+
+        try
+        {
+            productFacade.transferStorageRelationInDepotpart(user.getId(), sourceRelationId, destDepotpartId,
+                CommonTools.parseInt(amount));
+        }
+        catch (MYException e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+            return mapping.findForward("queryStorageRelation");
+        }
+
+        request.setAttribute(KeyConstant.MESSAGE, "产品仓区间转移成功");
+
+        return mapping.findForward("queryStorageRelation");
+    }
+
+    /**
      * queryProduct
      * 
      * @param mapping
@@ -554,7 +617,7 @@ public class StorageAction extends DispatchAction
         {
             ConditionParse condtion = setRptQueryProductCondition(request);
 
-            int total = storageRelationDAO.countByCondition(condtion.toString());
+            int total = storageRelationDAO.countVOByCondition(condtion.toString());
 
             PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
 
@@ -586,6 +649,8 @@ public class StorageAction extends DispatchAction
         String depotpartId = request.getParameter("depotpartId");
 
         ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
 
         if ( !StringTools.isNullOrNone(name))
         {

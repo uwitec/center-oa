@@ -10,18 +10,19 @@
 <script src="../js/public.js"></script>
 <script language="javascript">
 
-function getProduct(oo)
+function getProductRelation(oo)
 {
-	$('productId').value = $a(oo, 'productId');//oo.productId;
+	$O('sourceRelationId').value = oo[0].value;//oo.productId;
 	
-	$('productName').value = $a(oo, 'productName');//oo.productName;
+	$O('productName').value = oo[0].pname + '(' + oo[0].pprice + ')';//oo.productName;
+	
+	$O('amount').value = oo[0].pamount;
 }
 
 function reset()
 {
-	$('productName').value ='';
-	$('amount').value ='';
-	$('user').value ='';
+	$O('productName').value ='';
+	$O('amount').value ='';
 }
 
 function selectProducts()
@@ -34,7 +35,12 @@ function selectProducts()
 		return;
 	}
 	
-	window.common.modal('../admin/das.do?method=queryProduct&rpt=1&firstLoad=1&depotpartId='+ depotpartId);
+	window.common.modal('../depot/storage.do?method=rptQueryProductInDepotpart&load=1&selectMode=1&depotpartId='+ depotpartId);
+}
+
+function applyPasswords()
+{
+	submit('确定移动产品?');
 }
 
 
@@ -46,7 +52,10 @@ function load()
 
 </head>
 <body class="body_class" onload="load()">
-<form><input type="hidden" value="1" name="productId"> <p:navigation
+<form name="formEntry" action="../depot/storage.do" method="post">
+<input type="hidden" value="moveDepotpart" name="method"> 
+<input type="hidden" value="" name="sourceRelationId"> 
+<p:navigation
 	height="22">
 	<td width="550" class="navigation">仓区管理 &gt;&gt; <span
 		style="cursor: hand" onclick="javascript:history.go(-1)">仓区列表</span>
@@ -65,7 +74,7 @@ function load()
 	<p:subBody width="75%">
 		<p:table cells="1">
 			<p:cell title="源仓区" width="20">
-				<select name="src" oncheck="notNone;noEquals($F('dest'))" message="源仓区和目的仓区不能相同" style="width: 240px">
+				<select name="src" oncheck="notNone;noEquals($$('dest'))" message="源仓区和目的仓区不能相同" style="width: 240px">
 					<option value="">--</option>
 					<c:forEach items="${depotpartList}" var="item">
 						<option value="${item.id}">${item.name}</option>
@@ -94,11 +103,6 @@ function load()
 				<font color="#FF0000">*</font>
 			</p:cell>
 
-			<p:cell title="申请人" width="15">
-				<input type="text" name="user" oncheck="notNone;">
-				<font color="#FF0000">*</font>
-			</p:cell>
-
 		</p:table>
 	</p:subBody>
 
@@ -112,10 +116,8 @@ function load()
 			value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>
 	</p:button>
 
-	<tr>
-		<td colspan='2' align="center"><FONT color="blue">${MESSAGE_INFO}</FONT><FONT
-			color="red">${errorInfo}</FONT></td>
-	</tr>
+	<p:message2 />
+	
 </p:body></form>
 </body>
 </html>

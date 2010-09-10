@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="职员列表" />
+<p:link title="产品库存列表" />
 <base target="_self">
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
@@ -28,12 +28,12 @@ function add()
     
     if (oo && oo.length == 0)
     {
-        alert('请选择职员');
+        alert('请选择产品库存');
         return;
     }
     
     if (oo)
-    opener.getStaffers(oo);
+    opener.getProductRelation(oo);
 }
 
 function closes()
@@ -64,12 +64,14 @@ function closesd()
 
 </head>
 <body class="body_class" onload="load()">
-<form name="formEntry" action="../admin/pop.do" method="post"><input
-	type="hidden" name="method" value="rptQueryStaffer"><input
-	type="hidden" value="1" name="load"><input
-    type="hidden" value="${selectMode}" name="selectMode"> <p:navigation
+<form name="formEntry" action="../depot/storage.do" method="post"><input
+	type="hidden" name="method" value="rptQueryProductInDepotpart"><input
+	type="hidden" value="1" name="load">
+<input type="hidden" value="${depotpartId}" name="depotpartId">
+<input type="hidden" value="${selectMode}" name="selectMode">
+<p:navigation
 	height="22">
-	<td width="550" class="navigation">职员管理</td>
+	<td width="550" class="navigation">产品库存管理</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -78,25 +80,16 @@ function closesd()
 		<table width="100%" align="center" cellspacing='1' class="table0"
 			id="result">
 			<tr class="content1">
-				<td width="15%" align="center">职员名称</td>
+				<td width="15%" align="center">产品名称</td>
 				<td align="center"><input type="text" name="name" onkeypress="press()"
 					value="${name}"></td>
-				<td width="15%" align="center">职员编码</td>
+				<td width="15%" align="center">产品编码</td>
 				<td align="center"><input type="text" name="code" onkeypress="press()"
 					value="${code}"></td>
 			</tr>
 
 			<tr class="content1">
-			    <td width="15%" align="center">区域</td>
-                <td align="center">
-                <select class="select_class" name="locationId" values="${locationId}">
-                <option value="">--</option>
-                <c:forEach items="${locationList}" var="item">
-                <option value="${item.id}">${item.name}</option>
-                </c:forEach>
-                </select>
-                </td>
-				<td colspan="2" align="right"><input type="button"
+				<td colspan="4" align="right"><input type="button"
 					onclick="querys()" class="button_class"
 					value="&nbsp;&nbsp;查 询&nbsp;&nbsp;"></td>
 		</table>
@@ -114,25 +107,27 @@ function closesd()
 			id="result">
 			<tr align=center class="content0">
 				<td align="center">选择</td>
-				<td align="center"><strong>名称</strong></td>
-				<td align="center"><strong>编码</strong></td>
-				<td align="center"><strong>部门</strong></td>
-				<td align="center"><strong>区域</strong></td>
+				<td align="center"><strong>仓区</strong></td>
+				<td align="center"><strong>储位</strong></td>
+				<td align="center"><strong>产品</strong></td>
+				<td align="center"><strong>数量</strong></td>
+				<td align="center"><strong>价格</strong></td>
 			</tr>
 
 			<c:forEach items="${beanList}" var="item" varStatus="vs">
 				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
 					<td align="center"><input type='${selectMode == 1 ? "radio" : "checkbox"}' name="beans"
-						pname="${item.name}" pcode="${item.code}" value="${item.id}"/></td>
-					<td align="center" onclick="hrefAndSelect(this)">${item.name}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${item.code}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${item.departmentName}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${item.locationName}</td>
+						pname="${item.productName}" pprice="${my:formatNum(item.price)}" pamount="${item.amount}" value="${item.id}"/></td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.depotpartName}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.storageName}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.productName}(${item.productCode})</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.amount}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.price)}</td>
 				</tr>
 			</c:forEach>
 		</table>
 			
-		<p:formTurning form="formEntry" method="rptQueryStaffer"></p:formTurning>
+		<p:formTurning form="formEntry" method="rptQueryProductInDepotpart"></p:formTurning>
 
 	</p:subBody>
 
@@ -150,7 +145,7 @@ function closesd()
 		</div>
 	</p:button>
 
-	<p:message />
+	<p:message2 />
 
 </p:body></form>
 </body>

@@ -34,6 +34,7 @@ function load()
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1102'},
              {id: 'update', bclass: 'update', onpress : updateBean, auth: '1102'},
+             {id: 'update1', bclass: 'update', caption: '仓区转移', onpress : preForMoveDepotpart, auth: '1104'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1102'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
@@ -81,6 +82,16 @@ function updateBean()
 	if (getRadio('checkb') && getRadioValue('checkb'))
 	{	
 		$l(gurl + 'find' + ukey + '&update=1&id=' + getRadioValue('checkb'));
+	}
+	else
+	$error('不能操作');
+}
+
+function preForMoveDepotpart()
+{
+	if (getRadio('checkb') && getRadioValue('checkb'))
+	{	
+		$l('../depot/storage.do?method=preForMoveDepotpart&id=' + getRadioValue('checkb'));
 	}
 	else
 	$error('不能操作');
