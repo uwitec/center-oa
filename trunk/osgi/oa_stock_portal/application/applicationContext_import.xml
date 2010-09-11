@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:ex="http://www.springframework.org/schema/ex"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xsi:schemaLocation="
+  http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/tx 
+  http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+  http://www.springframework.org/schema/osgi
+  http://www.springframework.org/schema/osgi/spring-osgi.xsd"
+	default-autowire="byName" default-init-method="init">
+
+	<osgi:reference id="actionConfigManager" interface="com.china.center.struts.wrap.ActionConfigManager" />
+	
+	<osgi:reference id="publicFacade" interface="com.china.center.oa.publics.facade.PublicFacade" />
+	
+	<osgi:reference id="commonDAO" interface="com.china.center.oa.publics.dao.CommonDAO" />
+	
+	<osgi:reference id="userDAO" interface="com.china.center.oa.publics.dao.UserDAO" />
+	
+	<osgi:reference id="parameterDAO" interface="com.china.center.oa.publics.dao.ParameterDAO" />
+	
+	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+	
+	<osgi:reference id="providerUserDAO" interface="com.china.center.oa.product.dao.ProviderUserDAO" />
+	
+	<osgi:reference id="productDAO" interface="com.china.center.oa.product.dao.ProductDAO" />
+	
+	<osgi:reference id="priceAskDAO" interface="com.china.center.oa.stock.dao.PriceAskDAO" />
+
+	<osgi:reference id="priceAskProviderDAO" interface="com.china.center.oa.stock.dao.PriceAskProviderDAO" />
+
+	<osgi:reference id="priceAskManager" interface="com.china.center.oa.stock.manager.PriceAskManager" />
+	
+	<osgi:reference id="providerDAO" interface="com.china.center.oa.product.dao.ProviderDAO" />
+	
+	<osgi:reference id="productTypeVSCustomerDAO" interface="com.china.center.oa.product.dao.ProductTypeVSCustomerDAO" />
+	
+	<osgi:reference id="menuItemDAO" interface="com.china.center.oa.publics.dao.MenuItemDAO" />
+</beans>
