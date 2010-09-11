@@ -69,6 +69,14 @@ public class UserVO extends UserBean implements User
     }
 
     /**
+     * @return the roleName
+     */
+    public String getRole()
+    {
+        return "ROLE";
+    }
+
+    /**
      * @param roleName
      *            the roleName to set
      */

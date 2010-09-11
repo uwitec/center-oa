@@ -27,8 +27,7 @@ function load()
 	type="hidden" name="method" value=""> <input
     type="hidden" name="id" value="${bean.id}"><p:navigation
 	height="22">
-	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javascript:history.go(-1)">供应商管理</span> &gt;&gt; 供应商明细</td>
+	<td width="550" class="navigation">供应商明细</td>
 	<td width="85"></td>
 </p:navigation> <br>
 <p:body width="100%">

@@ -37,8 +37,7 @@ function load()
 <input type="hidden" name="assistantProvider3" value="${bean.assistantProvider3}">
 <p:navigation
 	height="22">
-	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javascript:history.go(-1)">产品管理</span> &gt;&gt; 产品明细</td>
+	<td width="550" class="navigation">产品明细</td>
 	<td width="85"></td>
 </p:navigation> <br>
 

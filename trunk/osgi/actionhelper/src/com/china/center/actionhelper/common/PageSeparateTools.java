@@ -33,8 +33,8 @@ public abstract class PageSeparateTools extends AbstractPage
      * @param page
      * @param request
      */
-    public static void initPageSeparate(ConditionParse condition, PageSeparate page,
-                                        HttpServletRequest request, String key)
+    public static void initPageSeparate(ConditionParse condition, PageSeparate page, HttpServletRequest request,
+                                        String key)
     {
         initPageSeparate(condition, page, request, key, isFirstLoad(request, key));
     }
@@ -46,8 +46,8 @@ public abstract class PageSeparateTools extends AbstractPage
      * @param page
      * @param request
      */
-    public static void initPageSeparate(ConditionParse condition, PageSeparate page,
-                                        HttpServletRequest request, String key, boolean isFirst)
+    public static void initPageSeparate(ConditionParse condition, PageSeparate page, HttpServletRequest request,
+                                        String key, boolean isFirst)
     {
         if (isFirst)
         {
@@ -57,8 +57,7 @@ public abstract class PageSeparateTools extends AbstractPage
 
             initParameterMap(request, key);
 
-            request.getSession().setAttribute(getConditionAttributeNameInSession(request, key),
-                condition);
+            request.getSession().setAttribute(getConditionAttributeNameInSession(request, key), condition);
 
             request.getSession().setAttribute(CONDITION_ATTRIBUTE_NAME, condition);
 
@@ -83,6 +82,8 @@ public abstract class PageSeparateTools extends AbstractPage
     public static boolean isFirstLoad(HttpServletRequest request)
     {
         String load = request.getParameter(LOAD);
+
+        String old_load = request.getParameter(OLD_LOAD);
 
         // 从一个action到另一个action使用forward
         Object oo = request.getAttribute(FORWARD);
@@ -111,7 +112,8 @@ public abstract class PageSeparateTools extends AbstractPage
             return false;
         }
 
-        return !StringTools.isNullOrNone(load) || !StringTools.isNullOrNone(forward);
+        return !StringTools.isNullOrNone(load) || !StringTools.isNullOrNone(old_load)
+               || !StringTools.isNullOrNone(forward);
     }
 
     /**

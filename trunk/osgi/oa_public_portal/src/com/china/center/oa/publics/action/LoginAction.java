@@ -30,6 +30,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
+import com.center.china.osgi.config.ConfigLoader;
 import com.center.china.osgi.publics.User;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.jsonimpl.JSONArray;
@@ -232,6 +233,13 @@ public class LoginAction extends DispatchAction
         request.getSession().setAttribute("hasEncLock", hasEncLock);
 
         request.getSession().setAttribute("g_stafferBean", stafferBean);
+
+        request.getSession().setAttribute("g_logout", "../admin/logout.do");
+
+        request.getSession().setAttribute("g_modifyPassword", "../admin/modifyPassword.jsp");
+
+        // OA系统/SKY软件【V2.14.20100509】
+        request.getSession().setAttribute("SN", "OA系统/SKY软件【" + ConfigLoader.getIntProperty("version") + "】");
 
         ActionForward forward = mapping.findForward("success");
 
@@ -545,6 +553,7 @@ public class LoginAction extends DispatchAction
                 continue;
             }
 
+            // 这里支持1101,1102
             String auth = item.getAuth();
 
             if (StringTools.isNullOrNone(auth))
@@ -596,13 +605,23 @@ public class LoginAction extends DispatchAction
 
     private boolean containAuth(User user, String auth)
     {
+        String[] authArr = auth.split(",");
+
         List<RoleAuthBean> auths = user.getAuth();
 
         for (RoleAuthBean roleAuthBean : auths)
         {
-            if (roleAuthBean.getAuthId().equals(auth))
+            for (String eachAuth : authArr)
             {
-                return true;
+                if (StringTools.isNullOrNone(eachAuth))
+                {
+                    continue;
+                }
+
+                if (roleAuthBean.getAuthId().equals(eachAuth.trim()))
+                {
+                    return true;
+                }
             }
         }
 

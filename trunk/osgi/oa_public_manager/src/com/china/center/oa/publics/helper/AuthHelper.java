@@ -45,4 +45,17 @@ public abstract class AuthHelper
 
         return false;
     }
+
+    public static boolean containAuth(User user, String... authId)
+    {
+        for (String auth : authId)
+        {
+            if (containAuth(user, auth))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

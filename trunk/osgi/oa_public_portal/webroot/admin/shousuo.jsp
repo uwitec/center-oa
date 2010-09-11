@@ -126,8 +126,8 @@ function load()
 		</ul>
 		</li>
 	</c:forEach>
-	<li><a href="../admin/modifyPassword.jsp" target="main">修改密码</a></li>
-	<li><a href="../admin/logout.do" target="_parent">退出</a></li>
+	<li><a href="${g_modifyPassword}" target="main">修改密码</a></li>
+	<li><a href="${g_logout}" target="_parent">退出</a></li>
 </ul>
 </div>
 </table>

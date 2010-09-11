@@ -36,10 +36,12 @@ import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.common.taglib.PageSelectOption;
 import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.product.bean.ProviderHisBean;
 import com.china.center.oa.product.bean.ProviderUserBean;
 import com.china.center.oa.product.constant.ProviderConstant;
+import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.dao.ProductTypeVSCustomerDAO;
 import com.china.center.oa.product.dao.ProviderDAO;
 import com.china.center.oa.product.dao.ProviderHisDAO;
@@ -74,6 +76,8 @@ public class ProviderAction extends DispatchAction
     private ProductFacade productFacade = null;
 
     private ProviderHisDAO providerHisDAO = null;
+
+    private ProductDAO productDAO = null;
 
     private ProviderUserDAO providerUserDAO = null;
 
@@ -644,6 +648,13 @@ public class ProviderAction extends DispatchAction
 
         String name = request.getParameter("name");
 
+        String productId = request.getParameter("productId");
+
+        if ( !StringTools.isNullOrNone(productId))
+        {
+            request.setAttribute("productId", productId);
+        }
+
         if ( !StringTools.isNullOrNone(name))
         {
             condition.addCondition("t1.name", "like", name);
@@ -668,9 +679,74 @@ public class ProviderAction extends DispatchAction
 
         list = providerDAO.queryByLimit(condition, 100);
 
+        setDefined(list, productId);
+
         request.setAttribute("providerList", list);
 
         return mapping.findForward("rptQueryProvider");
+    }
+
+    /**
+     * 设置产品定义的供应商
+     * 
+     * @param list
+     * @param productId
+     */
+    private void setDefined(List<ProviderBean> list, String productId)
+    {
+        // 增加产品自身的几个供应商
+        if ( !StringTools.isNullOrNone(productId))
+        {
+            int index = 0;
+            ProductBean product = productDAO.find(productId);
+
+            if (product != null)
+            {
+                if ( !StringTools.isNullOrNone(product.getMainProvider()))
+                {
+                    // 获取供应商
+                    ProviderBean main = providerDAO.find(product.getMainProvider());
+
+                    if (main != null)
+                    {
+                        list.add(index++ , main);
+                    }
+                }
+
+                if ( !StringTools.isNullOrNone(product.getAssistantProvider1()))
+                {
+                    // 获取供应商
+                    ProviderBean assistant1 = providerDAO.find(product.getAssistantProvider1());
+
+                    if (assistant1 != null)
+                    {
+                        list.add(index++ , assistant1);
+                    }
+                }
+
+                if ( !StringTools.isNullOrNone(product.getAssistantProvider2()))
+                {
+                    // 获取供应商
+                    ProviderBean assistant2 = providerDAO.find(product.getAssistantProvider2());
+
+                    if (assistant2 != null)
+                    {
+                        list.add(index++ , assistant2);
+                    }
+                }
+
+                if ( !StringTools.isNullOrNone(product.getAssistantProvider3()))
+                {
+                    // 获取供应商
+                    ProviderBean assistant3 = providerDAO.find(product.getAssistantProvider3());
+
+                    if (assistant3 != null)
+                    {
+                        list.add(index++ , assistant3);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -773,5 +849,22 @@ public class ProviderAction extends DispatchAction
     public void setProductTypeVSCustomerDAO(ProductTypeVSCustomerDAO productTypeVSCustomerDAO)
     {
         this.productTypeVSCustomerDAO = productTypeVSCustomerDAO;
+    }
+
+    /**
+     * @return the productDAO
+     */
+    public ProductDAO getProductDAO()
+    {
+        return productDAO;
+    }
+
+    /**
+     * @param productDAO
+     *            the productDAO to set
+     */
+    public void setProductDAO(ProductDAO productDAO)
+    {
+        this.productDAO = productDAO;
     }
 }

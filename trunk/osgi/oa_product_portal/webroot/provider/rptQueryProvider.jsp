@@ -35,8 +35,9 @@ function query()
 </head>
 <body class="body_class">
 <form action="../provider/provider.do" name="adminForm"><input type="hidden"
-	value="rptQueryProvider" name="method"> <input type="hidden"
-	value="${productType}" name="productType">
+	value="rptQueryProvider" name="method"> 
+<input type="hidden" value="${productType}" name="productType">
+<input type="hidden" value="${productId}" name="productId">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">供应商列表</td>

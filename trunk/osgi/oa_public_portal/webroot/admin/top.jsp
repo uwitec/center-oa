@@ -120,14 +120,14 @@ function checkLock()
 <table width="100%" border="0" cellspacing="0" cellpadding="0" background="../images/login/vistablue.jpg" style="height: 63px">
   <tr ondblclick="sho()" background="../images/login/vistablue.jpg">
     <td ondblclick="sho()"></td>
-    <td ondblclick="sho()"><font color="#FFFFFF" size="2"><b>&nbsp;OA系统/SKY软件【V2.14.20100509】</b></font></td>
+    <td ondblclick="sho()"><font color="#FFFFFF" size="2"><b>&nbsp;${SN}</b></font></td>
     
     
-    <td   ondblclick="sho()" align="right">
+    <td ondblclick="sho()" align="right">
     <font color="#FFFFFF">登录者：${g_stafferBean.name}</font>
     <a href="../pers/persional.do?method=queryPersionalDeskTop" target="main" title="我的桌面"><img src="../images/oa/desk.png" width="20px" height="20px" border="0"/></a>
     <a target="_blank" href="../help/main.jsp" title="联机帮助"><img src="../images/oa/help.png" width="20px" height="20px" border="0"/></a>
-    <a href="../admin/logout.do" target="_parent" title="退出登录"><img src="../images/oa/logout.gif" width="20px" height="20px" border="0"/></a>
+    <a href="${g_logout}" target="_parent" title="退出登录"><img src="../images/oa/logout.gif" width="20px" height="20px" border="0"/></a>
     </td>
     <td ondblclick="sho()" width="2%"></td>
     

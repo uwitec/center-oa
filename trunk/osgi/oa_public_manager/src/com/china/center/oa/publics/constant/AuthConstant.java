@@ -379,22 +379,33 @@ public interface AuthConstant
     String PRICE_ASK_ADD = "1201";
 
     /**
-     * 处理询价(询价员)
+     * 处理询价(询价员)-PRICE
      */
     String PRICE_ASK_PROCESS = "1202";
 
     /**
-     * 内网询价管理(采购主管)
+     * 内网询价管理(采购主管)-STOCK
      */
     String PRICE_ASK_MANAGER = "1203";
 
     /**
-     * 外网询价管理(外网采购主管)
+     * 外网询价管理(外网采购主管)-NETSTOCK
      */
     String PRICE_ASK_NET_MANAGER = "1204";
 
     /**
-     * 外网询价处理(外网询价员)
+     * 外网询价处理(外网供应商询价员)-NETASK
      */
     String PRICE_ASK_NET_PROCESS = "1205";
+
+    /**
+     * 外网询价处理(外网内部询价员)-NETCOMMON
+     */
+    String PRICE_ASK_NET_INNER_PROCESS = "1206";
+
+    /**
+     * (核价员)-REPRICE(废弃)
+     */
+    @Deprecated
+    String PRICE_ASK_REPRICE = "1207";
 }

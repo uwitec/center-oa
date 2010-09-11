@@ -20,6 +20,8 @@ public interface PageConstant
 {
     String LOAD = "load";
 
+    String OLD_LOAD = "firstLoad";
+
     String PAREXT = "parExt_";
 
     String JUST = "just";
