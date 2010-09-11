@@ -31,7 +31,7 @@ public abstract class AbstarctFacade
 {
     protected UserManager userManager = null;
 
-    public boolean containAuth(User user, String authId)
+    protected boolean containAuth(User user, String authId)
     {
         if (authId.equals(AuthConstant.PUNLIC_AUTH))
         {
@@ -51,7 +51,20 @@ public abstract class AbstarctFacade
         return false;
     }
 
-    public void checkUser(User user)
+    protected boolean containAuth(User user, String... authId)
+    {
+        for (String auth : authId)
+        {
+            if (containAuth(user, auth))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected void checkUser(User user)
         throws MYException
     {
         if (user == null)

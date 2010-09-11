@@ -27,7 +27,7 @@ import com.china.center.oa.publics.vs.RoleAuthBean;
 
 
 /**
- * ��Ա��
+ * UserBean
  * 
  * @author ZHUZHU
  * @version 2007-3-25
@@ -80,7 +80,8 @@ public class UserBean implements Serializable
      * default constructor
      */
     public UserBean()
-    {}
+    {
+    }
 
     /**
      * @return the id

@@ -372,4 +372,14 @@ public interface AuthConstant
      * 操作储位
      */
     String STORAGE_OPR = "1106";
+
+    /**
+     * 增加询价
+     */
+    String PRICE_ASK_ADD = "1201";
+
+    /**
+     * 处理询价
+     */
+    String PRICE_ASK_PROCESS = "1202";
 }
