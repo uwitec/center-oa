@@ -71,6 +71,17 @@
 			java.lang.String get(java.lang.String, int)
 		</function-signature>
 	</function>
+	
+	<function>
+		<description>auth</description>
+		<name>auth</name>
+		<function-class>
+			com.china.center.osgi.jsp.ElTools
+		</function-class>
+		<function-signature>
+			boolean auth(com.center.china.osgi.publics.User, java.lang.String)
+		</function-signature>
+	</function>
 
 	<function>
 		<description>parserInt</description>

@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
+import com.center.china.osgi.publics.User;
 import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.tools.RegularExpress;
 import com.china.center.tools.StringTools;
@@ -122,6 +123,26 @@ public final class ElTools
     public static String get(String key, int index)
     {
         return DefinedCommon.getValue(key, index);
+    }
+
+    public static boolean auth(User user, String authId)
+    {
+        if (authId.equals("0000"))
+        {
+            return true;
+        }
+
+        List<String> authList = user.getAuthIdList();
+
+        for (String auth : authList)
+        {
+            if (auth.equals(authId))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
