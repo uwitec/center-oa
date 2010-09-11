@@ -77,6 +77,13 @@ public interface User
     List getAuth();
 
     /**
+     * getAuthIdList
+     * 
+     * @return
+     */
+    List getAuthIdList();
+
+    /**
      * getStafferName
      * 
      * @return
