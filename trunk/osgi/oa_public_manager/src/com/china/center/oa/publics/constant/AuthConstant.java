@@ -374,12 +374,27 @@ public interface AuthConstant
     String STORAGE_OPR = "1106";
 
     /**
-     * 增加询价
+     * 增加询价(业务员)
      */
     String PRICE_ASK_ADD = "1201";
 
     /**
-     * 处理询价
+     * 处理询价(询价员)
      */
     String PRICE_ASK_PROCESS = "1202";
+
+    /**
+     * 内网询价管理(采购主管)
+     */
+    String PRICE_ASK_MANAGER = "1203";
+
+    /**
+     * 外网询价管理(外网采购主管)
+     */
+    String PRICE_ASK_NET_MANAGER = "1204";
+
+    /**
+     * 外网询价处理(外网询价员)
+     */
+    String PRICE_ASK_NET_PROCESS = "1205";
 }

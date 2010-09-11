@@ -9,12 +9,14 @@
 package com.china.center.oa.publics.vo;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Relationship;
 import com.china.center.oa.publics.bean.UserBean;
+import com.china.center.oa.publics.vs.RoleAuthBean;
 
 
 /**
@@ -38,7 +40,8 @@ public class UserVO extends UserBean implements User
     private String locationName = "";
 
     public UserVO()
-    {}
+    {
+    }
 
     /**
      * @return the stafferName
@@ -94,5 +97,19 @@ public class UserVO extends UserBean implements User
     public List getAuth()
     {
         return super.getAuth();
+    }
+
+    public List getAuthIdList()
+    {
+        List<RoleAuthBean> auth2 = super.getAuth();
+
+        List<String> idList = new ArrayList<String>();
+
+        for (RoleAuthBean roleAuthBean : auth2)
+        {
+            idList.add(roleAuthBean.getAuthId());
+        }
+
+        return idList;
     }
 }
