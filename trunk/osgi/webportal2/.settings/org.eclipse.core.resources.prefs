@@ -1,4 +1,4 @@
-#Tue Aug 24 23:25:59 CST 2010
+#Sat Sep 11 11:38:40 CST 2010
 eclipse.preferences.version=1
 encoding//common/common.jsp=UTF-8
 encoding//common/common_js.jsp=UTF-8
@@ -7,7 +7,6 @@ encoding//js/adapter.js=UTF-8
 encoding//js/allCompatible_debug.js=UTF-8
 encoding//js/calendar/calendar.js=UTF-8
 encoding//js/common.js=UTF-8
-encoding//js/common_debug.js=UTF-8
 encoding//js/compatible.js=UTF-8
 encoding//js/compatible_debug.js=UTF-8
 encoding//js/configExamine.js=UTF-8
