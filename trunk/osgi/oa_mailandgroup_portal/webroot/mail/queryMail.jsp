@@ -49,8 +49,7 @@ function load()
 		 queryCondition: null,
 		 showTableToggleBtn: true,
 		 def: joinMap2(allDef),
-		 rp: 20,
-		 rpOptions: [20,40,80,100],
+		 rp: ${g_page},
 		 callBack: loadForm
 	 };
 	 
