@@ -170,7 +170,7 @@ function updatePass(id)
 	value="1" name="firstLoad">
 	<input type="hidden" value="${updateMax}" name="updateMax">
 	 <p:navigation height="22">
-	<td width="550" class="navigation">询价管理 &gt;&gt; 询价列表</td>
+	<td width="550" class="navigation">询价管理 &gt;&gt; 我的询价</td>
 	<td width="85"></td>
 </p:navigation> <br>
 

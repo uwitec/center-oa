@@ -160,13 +160,13 @@ function updatePass(id)
 </head>
 <body class="body_class" onload="load()" onkeypress="tooltip.bingEsc(event)">
 <form name="formEntry" action="../stock/ask.do"><input
-	type="hidden" name="method" value="queryPriceAsk"> <input
+	type="hidden" name="method" value="queryPriceAskForNetManager"> <input
 	type="hidden" name="id" value=""> <input type="hidden"
 	name="productId" value="${productId}"><input type="hidden"
 	value="1" name="firstLoad">
 	<input type="hidden" value="${updateMax}" name="updateMax">
 	 <p:navigation height="22">
-	<td width="550" class="navigation">询价管理 &gt;&gt; 询价列表</td>
+	<td width="550" class="navigation">询价管理 &gt;&gt; 询价调整</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -322,7 +322,7 @@ function updatePass(id)
 			</c:forEach>
 		</table>
 
-		<p:formTurning form="formEntry" method="queryPriceAsk"></p:formTurning>
+		<p:formTurning form="formEntry" method="queryPriceAskForNetManager"></p:formTurning>
 	</p:subBody>
 
 	<p:line flag="1" />

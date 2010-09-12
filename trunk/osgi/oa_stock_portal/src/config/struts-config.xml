@@ -16,7 +16,7 @@
         <action path="/netask/checkuser" parameter="method"
             type="org.springframework.web.struts.DelegatingActionProxy"
             validate="false">
-           <forward name="success" path="/admin/main.jsp"
+           <forward name="success" path="/netask/main.jsp"
 				redirect="true" />
 			<forward name="index" path="/netask/index.jsp"
 				redirect="false" />

@@ -133,6 +133,7 @@ function rejectBean()
 	<input type="hidden" value="" name="reason">
 	<input type="hidden" value="1" name="askType">
 	<input type="hidden" value="${fw}" name="fw">
+	<input type="hidden" value="1" name="net">
 	<input
 	type="hidden" name="id" value="${bean.id}"> <p:navigation
 	height="22">

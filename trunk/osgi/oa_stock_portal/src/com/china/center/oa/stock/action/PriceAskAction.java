@@ -36,6 +36,7 @@ import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.helper.AuthHelper;
+import com.china.center.oa.stock.action.helper.NetLoginHelper;
 import com.china.center.oa.stock.action.helper.PriceAskHelper;
 import com.china.center.oa.stock.bean.PriceAskBean;
 import com.china.center.oa.stock.bean.PriceAskProviderBean;
@@ -288,6 +289,7 @@ public class PriceAskAction extends DispatchAction
         throws ServletException
     {
         String id = request.getParameter("id");
+
         String type = request.getParameter("type");
 
         PriceAskBeanVO bean = null;
@@ -308,7 +310,15 @@ public class PriceAskAction extends DispatchAction
 
             List<PriceAskProviderBeanVO> items = bean.getItemVO();
 
-            filterItem(user, items, CommonTools.parseInt(type));
+            if (NetLoginHelper.isNetLogin(request))
+            {
+                filterItem(user, items, 3);
+            }
+            else
+            {
+
+                filterItem(user, items, CommonTools.parseInt(type));
+            }
 
             request.setAttribute("bean", bean);
         }
@@ -717,7 +727,7 @@ public class PriceAskAction extends DispatchAction
 
                     if (items.size() > 0)
                     {
-                        map.put(priceAskBeanVO.getId(), PriceAskHelper.createTable(items, user, 0));
+                        map.put(priceAskBeanVO.getId(), PriceAskHelper.createTable(items, user, 1));
                     }
                 }
             }
@@ -872,6 +882,8 @@ public class PriceAskAction extends DispatchAction
                     if (items.size() > 0)
                     {
                         map.put(priceAskBeanVO.getId(), PriceAskHelper.createTable(items, user, 1));
+
+                        priceAskBeanVO.setHasItem(true);
                     }
                 }
             }
@@ -1122,6 +1134,14 @@ public class PriceAskAction extends DispatchAction
         condtion.addWhereStr();
 
         User user = Helper.getUser(request);
+
+        // 防止攻击登录
+        if (NetLoginHelper.isNetLogin(request))
+        {
+            condtion.addCondition("and 1 = 0");
+
+            return;
+        }
 
         // 只能看到自己的
         if (conditionType == 0)

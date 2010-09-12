@@ -169,7 +169,7 @@ function updatePass(id)
 	name="productId" value="${productId}"><input type="hidden"
 	value="1" name="firstLoad">
 	 <p:navigation height="22">
-	<td width="550" class="navigation">询价管理 &gt;&gt; 询价列表</td>
+	<td width="550" class="navigation">询价管理 &gt;&gt; 询价处理(内网)</td>
 	<td width="85"></td>
 </p:navigation> <br>
 

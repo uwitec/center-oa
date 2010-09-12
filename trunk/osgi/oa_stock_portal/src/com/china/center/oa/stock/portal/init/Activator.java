@@ -9,6 +9,7 @@ import org.osgi.framework.BundleContext;
 
 import com.china.center.webplugin.inter.FilterLoad;
 import com.china.center.webplugin.inter.ResourceLoad;
+import com.china.center.webportal.filter.FilterListenerService;
 
 
 public class Activator implements BundleActivator
@@ -29,6 +30,8 @@ public class Activator implements BundleActivator
         }
     };
 
+    private NetAskFilterListener netAskFL = new NetAskFilterListener();
+
     public void start(BundleContext context)
         throws Exception
     {
@@ -36,6 +39,8 @@ public class Activator implements BundleActivator
         ResourceLoad.init(context, "");
 
         FilterLoad.loadIgnoreFilterMatch(filterMatchList);
+
+        FilterListenerService.putFilterListener(netAskFL);
 
     }
 
@@ -49,6 +54,8 @@ public class Activator implements BundleActivator
         }
 
         FilterLoad.loadIgnoreFilterMatch(filterMatchList);
+
+        FilterListenerService.removeFilterListener(netAskFL.getListenerType());
     }
 
 }

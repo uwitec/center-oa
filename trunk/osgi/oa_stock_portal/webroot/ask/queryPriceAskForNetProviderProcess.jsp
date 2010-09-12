@@ -163,7 +163,7 @@ function updatePass(id)
 	value="1" name="firstLoad">
 	<input type="hidden" value="${updateMax}" name="updateMax">
 <p:navigation height="22">
-	<td width="550" class="navigation">询价管理 &gt;&gt; 询价列表</td>
+	<td width="550" class="navigation">询价管理 &gt;&gt; 供应商询价</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -204,8 +204,13 @@ function updatePass(id)
 					<td align="center" onclick="hrefAndSelect(this)"
 					onMouseOver="showDiv('${item.id}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"
 					>
-					<a onclick="hrefAndSelect(this)">
+					<a>
+					<c:if test="${item.hasItem}">
+					<b><font color="blue">${item.id}</font></b>
+					</c:if>
+					<c:if test="${!item.hasItem}">
 					${item.id}
+					</c:if>
 					</a></td>
 					<td align="center" onclick="hrefAndSelect(this)">
 					
