@@ -42,6 +42,9 @@ public class PriceAskBeanVO extends PriceAskBean
     @Ignore
     private List<PriceAskProviderBeanVO> itemVO = null;
 
+    @Ignore
+    private boolean hasItem = false;
+
     /**
      *
      */
@@ -166,5 +169,22 @@ public class PriceAskBeanVO extends PriceAskBean
     public void setOverMax(int overMax)
     {
         this.overMax = overMax;
+    }
+
+    /**
+     * @return the hasItem
+     */
+    public boolean isHasItem()
+    {
+        return hasItem;
+    }
+
+    /**
+     * @param hasItem
+     *            the hasItem to set
+     */
+    public void setHasItem(boolean hasItem)
+    {
+        this.hasItem = hasItem;
     }
 }

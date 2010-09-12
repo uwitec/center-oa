@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.taglib.DefinedCommon;
+import com.china.center.osgi.dym.DynamicBundleTools;
 import com.china.center.tools.RegularExpress;
 import com.china.center.tools.StringTools;
 
@@ -143,6 +144,11 @@ public final class ElTools
         }
 
         return false;
+    }
+
+    public static boolean dym(String bundleName)
+    {
+        return DynamicBundleTools.isBundleActive(bundleName);
     }
 
     /**

@@ -35,7 +35,7 @@ var gobal_guid;
              currentRows: 0, //total pages
              useRp: true, //use the results per page select box
              rp: 10, // results per page
-             rpOptions: [1,10,15,20,25,40],
+             rpOptions: [1,10,20,40,80,100],
              queryMode: 0, //0:memery 1:init
              oprAction: 0, //0:init 1:
              queryCondition: null, //0:memery 1:init

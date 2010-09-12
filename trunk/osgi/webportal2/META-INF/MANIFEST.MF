@@ -20,5 +20,6 @@ Spring-Context: application/applicationContext_*.xml
 Web-ContextPath: uportal
 Import-Package: com.china.center.common.taglib;version="1.0.0",
  com.china.center.tools;version="1.0.0",
+ com.china.center.osgi.dym;version="1.0.0",
  org.osgi.framework;version="1.3.0"
 

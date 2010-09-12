@@ -98,4 +98,9 @@ public interface SysConfigConstant
      */
     String MAX_LOCK_TIME = "MAX_LOCK_TIME";
 
+    /**
+     * 分页数
+     */
+    String GLOBAL_PAGE_SIZE = "GLOBAL_PAGE_SIZE";
+
 }

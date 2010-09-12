@@ -85,5 +85,6 @@
 	<classpathentry kind="lib" path="/jar_depend/lib_self/readWord.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/taglib"/>
 	<classpathentry kind="lib" path="/jar_depend/lib_self/buffalo-2.0-osgi.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/dym"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

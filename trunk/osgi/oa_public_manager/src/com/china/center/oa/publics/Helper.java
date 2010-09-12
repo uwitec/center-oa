@@ -39,6 +39,24 @@ public abstract class Helper
     }
 
     /**
+     * getPageSize
+     * 
+     * @param request
+     * @return
+     */
+    public static int getPageSize(HttpServletRequest request)
+    {
+        Object attribute = request.getSession().getAttribute("g_page");
+
+        if (attribute == null)
+        {
+            return 10;
+        }
+
+        return (Integer)attribute;
+    }
+
+    /**
      * 获得工程模板文件存放路径(end with /)
      * 
      * @return

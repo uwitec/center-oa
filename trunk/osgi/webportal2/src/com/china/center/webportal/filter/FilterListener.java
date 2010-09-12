@@ -35,7 +35,7 @@ public interface FilterListener extends ParentListener
      * @param req
      * @param resp
      * @param chain
-     * @return boolean(true就是直接在onDoFilterAfterCheckUser里面return)(false就是继续向下)
+     * @return boolean(true就是直接在onDoFilterAfterCheckUser里面return)(false就是继续向下下一个onDoFilterAfterCheckUser)
      */
     boolean onDoFilterAfterCheckUser(ServletRequest req, ServletResponse resp, FilterChain chain)
         throws ServletException, IOException;
