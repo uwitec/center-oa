@@ -23,6 +23,8 @@
 	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	
+	<osgi:reference id="mailDAO" interface="com.china.center.oa.mail.dao.MailDAO" />
+	
 	<osgi:reference id="flowBelongDAO" interface="com.china.center.oa.flow.dao.FlowBelongDAO" />
 
 	<osgi:reference id="flowDefineDAO" interface="com.china.center.oa.flow.dao.FlowDefineDAO" />

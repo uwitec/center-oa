@@ -49,8 +49,8 @@ function load()
 		 auth: window.top.topFrame.gAuth,
 		 showTableToggleBtn: true,
 		 height: 'page',
-		 rpOptions: [20,40,80,100],
-		 rp: 20,
+		 
+		 rp: ${g_page},
 		 def: allDef,
 		 callBack: $callBack //for firefox load ext att
 	 };

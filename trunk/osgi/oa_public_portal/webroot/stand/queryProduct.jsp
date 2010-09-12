@@ -50,8 +50,8 @@ function load()
          auth: allDef,
          cache: 0,
          height: 'page',
-		 rpOptions: [20,40,80,100],
-		 rp: 20,
+		 
+		 rp: ${g_page},
          queryCondition: null,
          showTableToggleBtn: true,
          def: allDef,

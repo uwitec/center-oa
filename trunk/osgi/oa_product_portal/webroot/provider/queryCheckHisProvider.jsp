@@ -38,8 +38,7 @@ function load()
 		 queryMode: 1,
 		 cache: 0,
 		 showTableToggleBtn: true,
-		 rpOptions: [20,40,80,100],
-		 rp: 20,
+		 rp: ${g_page},
 		 height: 'page',
 		 def: allDef,
 		 callBack: loadForm

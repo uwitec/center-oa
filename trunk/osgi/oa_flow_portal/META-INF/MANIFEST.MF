@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0
 Bundle-Activator: com.china.center.oa.flow.init.Activator
 Require-Bundle: 
  com.china.center.oa.flow.manager;bundle-version="1.0.0",
+ com.china.center.oa.mailgroup.manager;bundle-version="1.0.0",
  com.china.center.oa.publics.manager;bundle-version="1.0.0",
  com.china.center.osgi.config;bundle-version="1.0.0",
  com.china.center.osgi.jdbc;bundle-version="1.0.0",

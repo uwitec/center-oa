@@ -230,6 +230,9 @@ public class LoginAction extends DispatchAction
 
         request.getSession().setAttribute("gkey", key);
 
+        // 默认是20
+        request.getSession().setAttribute("g_page", parameterDAO.getInt(SysConfigConstant.GLOBAL_PAGE_SIZE));
+
         request.getSession().setAttribute("hasEncLock", hasEncLock);
 
         request.getSession().setAttribute("g_stafferBean", stafferBean);
@@ -239,7 +242,7 @@ public class LoginAction extends DispatchAction
         request.getSession().setAttribute("g_modifyPassword", "../admin/modifyPassword.jsp");
 
         // OA系统/SKY软件【V2.14.20100509】
-        request.getSession().setAttribute("SN", "OA系统/SKY软件【" + ConfigLoader.getIntProperty("version") + "】");
+        request.getSession().setAttribute("SN", "OA系统/SKY软件【" + ConfigLoader.getProperty("version") + "】");
 
         ActionForward forward = mapping.findForward("success");
 

@@ -82,6 +82,17 @@
 			boolean auth(com.center.china.osgi.publics.User, java.lang.String)
 		</function-signature>
 	</function>
+	
+	<function>
+		<description>dym</description>
+		<name>dym</name>
+		<function-class>
+			com.china.center.osgi.jsp.ElTools
+		</function-class>
+		<function-signature>
+			boolean dym(java.lang.String)
+		</function-signature>
+	</function>
 
 	<function>
 		<description>parserInt</description>

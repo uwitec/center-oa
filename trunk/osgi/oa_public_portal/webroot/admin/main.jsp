@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core"%>
+<%@include file="../common/common.jsp"%>
 <html>
 <head>
 <title>SKY-OA系统</title>
@@ -16,7 +16,13 @@ function Logout()
 
 		<frame src="shousuo.jsp" name="fun" noresize scrolling="auto">
 
+		<c:if test='${my:dym("com.china.center.oa.flow.portal")}'>
+	    <frame src="../pers/persional.do?method=queryPersionalDeskTop" name="main">
+	    </c:if>
+	    
+	    <c:if test="${!my:dym('com.china.center.oa.flow.portal')}">
 		<frame src="test.htm" name="main">
+		</c:if>
 	</frameset>
 </frameset>
 <noframes>

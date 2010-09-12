@@ -40,7 +40,8 @@ function load()
 		 cache: 0,
 		 auth: $auth(),
 		 showTableToggleBtn: true,
-		 height: DEFAULT_HEIGHT,
+		 height: 'page',
+		 rp: ${g_page},
 		 def: allDef,
 		 callBack: loadForm //for firefox load ext att
 	 };

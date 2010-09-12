@@ -30,6 +30,12 @@
             <forward name="updateTemplateFile" path="/flow/updateTemplateFile.jsp" />
             <forward name="rptQueryTemplateFile" path="/flow/rptQueryTemplateFile.jsp" />
         </action>
+        
+        <action path="/pers/persional" parameter="method"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+            <forward name="desktop" path="/desktop/desktop.jsp" />
+        </action>
 		
 	</action-mappings>
 </struts-config>

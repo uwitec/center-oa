@@ -125,7 +125,9 @@ function checkLock()
     
     <td ondblclick="sho()" align="right">
     <font color="#FFFFFF">登录者：${g_stafferBean.name}</font>
+    <c:if test="${my:dym('com.china.center.oa.flow.portal')}">
     <a href="../pers/persional.do?method=queryPersionalDeskTop" target="main" title="我的桌面"><img src="../images/oa/desk.png" width="20px" height="20px" border="0"/></a>
+    </c:if>
     <a target="_blank" href="../help/main.jsp" title="联机帮助"><img src="../images/oa/help.png" width="20px" height="20px" border="0"/></a>
     <a href="${g_logout}" target="_parent" title="退出登录"><img src="../images/oa/logout.gif" width="20px" height="20px" border="0"/></a>
     </td>

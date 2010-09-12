@@ -1136,7 +1136,7 @@ public class PriceAskAction extends DispatchAction
         User user = Helper.getUser(request);
 
         // 防止攻击登录
-        if (NetLoginHelper.isNetLogin(request))
+        if (NetLoginHelper.isNetLogin(request) && conditionType != 2)
         {
             condtion.addCondition("and 1 = 0");
 
@@ -1342,7 +1342,7 @@ public class PriceAskAction extends DispatchAction
     }
 
     /**
-     * 删除网站价格
+     * rejectPriceAsk
      * 
      * @param mapping
      * @param form
@@ -1358,6 +1358,8 @@ public class PriceAskAction extends DispatchAction
         String id = request.getParameter("id");
 
         String reason = request.getParameter("reason");
+
+        String fw = request.getParameter("fw");
 
         User user = Helper.getUser(request);
 
@@ -1376,7 +1378,32 @@ public class PriceAskAction extends DispatchAction
 
         QueryTools.setMemoryQuery(request);
 
-        return queryPriceAsk(mapping, form, request, reponse);
+        if ("queryPriceAsk".equals(fw))
+        {
+            return queryPriceAsk(mapping, form, request, reponse);
+        }
+
+        if ("queryPriceAskForProcess".equals(fw))
+        {
+            return queryPriceAskForProcess(mapping, form, request, reponse);
+        }
+
+        if ("queryPriceAskForNetProviderProcess".equals(fw))
+        {
+            return queryPriceAskForNetProviderProcess(mapping, form, request, reponse);
+        }
+
+        if ("queryPriceAskForNetProcess".equals(fw))
+        {
+            return queryPriceAskForNetProcess(mapping, form, request, reponse);
+        }
+
+        if ("queryPriceAskForNetManager".equals(fw))
+        {
+            return queryPriceAskForNetManager(mapping, form, request, reponse);
+        }
+
+        return queryPriceAskForProcess(mapping, form, request, reponse);
     }
 
     /**
