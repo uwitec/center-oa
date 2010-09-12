@@ -78,18 +78,35 @@ public abstract class QueryTools
     public static void commonQueryVO(String key, HttpServletRequest request, List list, ConditionParse condtion,
                                      DAO dao, int... pagesize)
     {
-        int size = 10;
+        int size = getPageSize(request);
 
         if (pagesize == null || pagesize.length == 0)
         {
-            size = 10;
+            size = getPageSize(request);
         }
         else
         {
             size = pagesize[0];
         }
 
+        if (size <= 0)
+        {
+            size = 10;
+        }
+
         list.addAll(commonQueryVOInner(key, request, condtion, dao, size));
+    }
+
+    private static int getPageSize(HttpServletRequest request)
+    {
+        Object attribute = request.getSession().getAttribute("g_page");
+
+        if (attribute == null)
+        {
+            return 10;
+        }
+
+        return (Integer)attribute;
     }
 
     /**
