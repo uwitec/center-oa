@@ -57,7 +57,9 @@ public class OutBean implements Serializable
     private int type = 0;
 
     /**
-     * 0:保存 1:提交 2:驳回 3:通过 4:会计审核通过 6:总经理审核通过
+     * 0:保存 1:提交 2:驳回 3:通过 4:会计审核通过 6:总经理审核通过 7:物流管理员通过<br>
+     * (一般此通过即是销售单已经OK status in (3, 4))<br>
+     * 预占库存 status in (1, 6, 7)
      */
     private int status = 0;
 

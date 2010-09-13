@@ -130,6 +130,8 @@ public class OutManager
 
     private DataSourceTransactionManager transactionManager = null;
 
+    private static Object LOCK = new Object();
+
     /**
      * default constructor
      */
@@ -367,12 +369,56 @@ public class OutManager
      * @return
      * @throws Exception
      */
-    @Transactional(rollbackFor = {MYException.class})
-    @Exceptional
     public boolean submit(final String fullId, final User user)
         throws MYException
     {
-        return submitWithOutAffair(fullId, user);
+        synchronized (LOCK)
+        {
+            _logger.info("in submit:" + fullId);
+
+            TransactionTemplate tran = new TransactionTemplate(transactionManager);
+
+            try
+            {
+                tran.execute(new TransactionCallback()
+                {
+                    public Object doInTransaction(TransactionStatus arg0)
+                    {
+                        try
+                        {
+                            submitWithOutAffair(fullId, user);
+                        }
+                        catch (MYException e)
+                        {
+                            _logger.warn(e, e);
+
+                            throw new RuntimeException(e.getErrorContent());
+                        }
+
+                        return Boolean.TRUE;
+                    }
+                });
+            }
+            catch (TransactionException e)
+            {
+                _logger.error(e, e);
+                throw new MYException("数据库内部错误");
+            }
+            catch (DataAccessException e)
+            {
+                _logger.error(e, e);
+                throw new MYException(e.getCause().toString());
+            }
+            catch (Exception e)
+            {
+                _logger.error(e, e);
+                throw new MYException("系统错误，请联系管理员");
+            }
+
+            _logger.info("out submit:" + fullId);
+        }
+
+        return true;
     }
 
     /**

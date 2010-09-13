@@ -1962,9 +1962,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public synchronized ActionForward modifyOutStatus(ActionMapping mapping, ActionForm form,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse reponse)
+    public ActionForward modifyOutStatus(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String fullId = request.getParameter("outId");
@@ -1988,13 +1987,20 @@ public class OutAction extends DispatchAction
 
         String depotpartId = request.getParameter("depotpartId");
 
-        logger1.info(fullId + ":" + user.getStafferName() + ":" + statuss);
+        logger1.info(fullId + ":" + user.getStafferName() + "(will):" + statuss);
 
         CommonTools.saveParamers(request);
 
         OutBean out = null;
 
         out = outDAO.findOutById(fullId);
+
+        if (out == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不存在，请重新操作!");
+
+            return mapping.findForward("error");
+        }
 
         if (out.getStatus() == statuss)
         {
@@ -2003,12 +2009,7 @@ public class OutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        if (out == null)
-        {
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不存在，请重新操作!");
-
-            return mapping.findForward("error");
-        }
+        logger1.info(fullId + ":" + user.getStafferName() + "(befor):" + out.getStatus());
 
         if (out.getStatus() != ioldStatus)
         {
@@ -2147,6 +2148,10 @@ public class OutAction extends DispatchAction
                 }
             }
         }
+
+        out = outDAO.findOutById(fullId);
+
+        logger1.info(fullId + ":" + user.getStafferName() + "(after):" + out.getStatus());
 
         request.setAttribute("forward", "10");
 
