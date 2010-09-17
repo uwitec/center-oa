@@ -412,7 +412,7 @@ public class OutManager
             catch (Exception e)
             {
                 _logger.error(e, e);
-                throw new MYException("系统错误，请联系管理员");
+                throw new MYException(e.getMessage());
             }
 
             _logger.info("out submit:" + fullId);
