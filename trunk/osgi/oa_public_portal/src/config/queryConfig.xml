@@ -104,6 +104,13 @@
 		</condtion>
 	</item>
 	
+	<item name="queryInvoice" deaultpfix="InvoiceBean">
+		<condtion name="name" caption="名称">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+	</item>
+	
 	<item name="queryEnum" deaultpfix="EnumBean">
 		<condtion name="val" caption="配置项">
 			<opr>like</opr>

@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -237,6 +238,12 @@ public class ProductAction extends DispatchAction
         }
 
         request.setAttribute("beanList", list);
+
+        request.setAttribute("random", new Random().nextInt());
+
+        String rootUrl = RequestTools.getRootUrl(request);
+
+        request.setAttribute("rootUrl", rootUrl);
 
         return mapping.findForward("rptQueryProduct");
     }

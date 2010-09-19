@@ -95,4 +95,8 @@
 
 	<bean id="queryManager" class="com.china.center.oa.publics.manager.impl.QueryManagerImpl" />
 
+	<bean id="invoiceDAO" class="com.china.center.oa.publics.dao.impl.InvoiceDAOImpl" />
+
+	<bean id="invoiceManager" class="com.china.center.oa.publics.manager.impl.InvoiceManagerImpl" />
+
 </beans>

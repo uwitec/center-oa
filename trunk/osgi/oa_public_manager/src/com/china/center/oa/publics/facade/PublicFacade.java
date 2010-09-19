@@ -16,6 +16,7 @@ import com.china.center.common.MYException;
 import com.china.center.oa.publics.bean.DepartmentBean;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.EnumBean;
+import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.PostBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
@@ -127,4 +128,8 @@ public interface PublicFacade
 
     boolean deleteEnumBean(String userId, String id)
         throws MYException;
+
+    boolean updateInvoiceBean(String userId, InvoiceBean bean)
+        throws MYException;
+
 }

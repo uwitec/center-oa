@@ -16,6 +16,7 @@ import com.china.center.common.MYException;
 import com.china.center.oa.publics.bean.DepartmentBean;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.EnumBean;
+import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.PostBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
@@ -29,6 +30,7 @@ import com.china.center.oa.publics.helper.RoleHelper;
 import com.china.center.oa.publics.manager.DepartmentManager;
 import com.china.center.oa.publics.manager.DutyManager;
 import com.china.center.oa.publics.manager.EnumManager;
+import com.china.center.oa.publics.manager.InvoiceManager;
 import com.china.center.oa.publics.manager.LocationManager;
 import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.publics.manager.PostManager;
@@ -66,6 +68,8 @@ public class PublicFacadeImpl extends AbstarctFacade implements PublicFacade
     private DutyManager dutyManager = null;
 
     private EnumManager enumManager = null;
+
+    private InvoiceManager invoiceManager = null;
 
     /**
      * default constructor
@@ -945,6 +949,25 @@ public class PublicFacadeImpl extends AbstarctFacade implements PublicFacade
         }
     }
 
+    public boolean updateInvoiceBean(String userId, InvoiceBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.INVOICE_OPR))
+        {
+            return invoiceManager.updateBean(user, bean);
+        }
+        else
+        {
+            throw new MYException("没有权限");
+        }
+    }
+
     /**
      * @return the enumManager
      */
@@ -960,5 +983,22 @@ public class PublicFacadeImpl extends AbstarctFacade implements PublicFacade
     public void setEnumManager(EnumManager enumManager)
     {
         this.enumManager = enumManager;
+    }
+
+    /**
+     * @return the invoiceManager
+     */
+    public InvoiceManager getInvoiceManager()
+    {
+        return invoiceManager;
+    }
+
+    /**
+     * @param invoiceManager
+     *            the invoiceManager to set
+     */
+    public void setInvoiceManager(InvoiceManager invoiceManager)
+    {
+        this.invoiceManager = invoiceManager;
     }
 }

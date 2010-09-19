@@ -235,6 +235,43 @@
         <bodycontent>JSP</bodycontent>
     </tag>
     
+    <tag>
+		<name>conf</name>
+		<tagclass>com.china.center.common.taglib.PageFlexigrid</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<description>配置Flexigrid的参数</description>
+		<attribute>
+			<name>queryMode</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>auth</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>height</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>rp</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>def</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>callBack</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+    
 	<tag>
 		<name>table</name>
 		<tagclass>

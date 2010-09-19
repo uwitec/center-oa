@@ -40,12 +40,12 @@ function load()
              //name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
-             {id: 'del', bclass: 'del',  onpress : delBean, auth: '1106'},
              {id: 'search', bclass: 'search', onpress : doSearch},
              {id: 'search1', bclass: 'search', caption: '仓区下异动历史', onpress : depotpartLog},
              {id: 'search2', bclass: 'search', caption: '仓区下异动(价格)', onpress : depotpartLog2},
              {id: 'search2', bclass: 'search', caption: '仓库下异动历史', onpress : depotLog},
-             {id: 'search2', bclass: 'search', caption: '仓库下异动(价格)', onpress : depotLog2}
+             {id: 'search2', bclass: 'search', caption: '仓库下异动(价格)', onpress : depotLog2},
+             {id: 'del', bclass: 'del',  onpress : delBean, auth: '1106'}
              ],
          usepager: true,
          useRp: true,

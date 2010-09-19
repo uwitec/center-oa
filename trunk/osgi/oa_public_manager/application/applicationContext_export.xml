@@ -90,4 +90,8 @@
 
 	<osgi:service ref="queryManager" interface="com.china.center.oa.publics.manager.QueryManager" />
 
+	<osgi:service ref="invoiceDAO" interface="com.china.center.oa.publics.dao.InvoiceDAO" />
+
+	<osgi:service ref="invoiceManager" interface="com.china.center.oa.publics.manager.InvoiceManager" />
+
 </beans>

@@ -344,6 +344,11 @@ public interface AuthConstant
     String ENUM_OPR = "0109";
 
     /**
+     * 发票的操作
+     */
+    String INVOICE_OPR = "0110";
+
+    /**
      * 查询仓库
      */
     String DEPOT_QUERY = "1101";

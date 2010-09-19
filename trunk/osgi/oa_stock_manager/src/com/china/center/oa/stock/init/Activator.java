@@ -9,6 +9,7 @@ import org.osgi.framework.BundleContext;
 
 import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.oa.stock.constant.PriceConstant;
+import com.china.center.oa.stock.constant.StockConstant;
 
 
 public class Activator implements BundleActivator
@@ -17,6 +18,7 @@ public class Activator implements BundleActivator
     {
         {
             add(PriceConstant.class);
+            add(StockConstant.class);
         }
     };
 
