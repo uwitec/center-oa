@@ -29,7 +29,7 @@ import com.china.center.oa.stock.constant.StockConstant;
 @Table(name = "T_CENTER_STOCK")
 public class StockBean implements Serializable
 {
-    @Id(autoIncrement = false)
+    @Id
     private String id = "";
 
     @Join(tagClass = UserBean.class, type = JoinType.LEFT)
@@ -45,16 +45,16 @@ public class StockBean implements Serializable
 
     private int exceptStatus = StockConstant.EXCEPTSTATUS_COMMON;
 
-    @Html(title = "到货时间", type = Element.DATE, must = true, maxLength = 100)
+    @Html(title = "到货时间", type = Element.DATE, must = true)
     private String needTime = "";
 
-    @Html(title = "预期帐期", type = Element.DATE, must = true, maxLength = 100)
+    @Html(title = "预期帐期", type = Element.DATE, must = true)
     private String willDate = "";
 
     /**
      * 采购主管必填,早于这个日期是不能付款的
      */
-    @Html(title = "最早付款日期", type = Element.DATE, must = true, maxLength = 100)
+    @Html(title = "最早付款日期", type = Element.DATE, must = true)
     private String nearlyPayDate = "";
 
     @Html(title = "询价方式", type = Element.SELECT, must = true)
@@ -63,11 +63,12 @@ public class StockBean implements Serializable
     /**
      * 采购属性【公卖、自卖】
      */
+    @Html(title = "采购类型", must = true, type = Element.SELECT)
     private int stockType = StockConstant.STOCK_SAILTYPE_PUBLIC;
 
     private String logTime = "";
 
-    @Html(title = "物流走向", must = true, maxLength = 100, type = Element.SELECT)
+    @Html(title = "物流走向", must = true, type = Element.SELECT)
     private String flow = "";
 
     private double total = 0.0d;
@@ -76,6 +77,12 @@ public class StockBean implements Serializable
      * 是否付款
      */
     private int pay = StockConstant.STOCK_PAY_NO;
+
+    @Html(title = "发票选择", must = true, type = Element.SELECT)
+    private int invoice = StockConstant.INVOICE_NO;
+
+    @Html(title = "发票", must = true)
+    private String invoiceType = "";
 
     @Html(title = "备注", type = Element.TEXTAREA, maxLength = 100)
     private String description = "";
@@ -380,6 +387,40 @@ public class StockBean implements Serializable
     }
 
     /**
+     * @return the invoice
+     */
+    public int getInvoice()
+    {
+        return invoice;
+    }
+
+    /**
+     * @param invoice
+     *            the invoice to set
+     */
+    public void setInvoice(int invoice)
+    {
+        this.invoice = invoice;
+    }
+
+    /**
+     * @return the invoiceType
+     */
+    public String getInvoiceType()
+    {
+        return invoiceType;
+    }
+
+    /**
+     * @param invoiceType
+     *            the invoiceType to set
+     */
+    public void setInvoiceType(String invoiceType)
+    {
+        this.invoiceType = invoiceType;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -439,6 +480,12 @@ public class StockBean implements Serializable
             .append("pay = ")
             .append(this.pay)
             .append(TAB)
+            .append("invoice = ")
+            .append(this.invoice)
+            .append(TAB)
+            .append("invoiceType = ")
+            .append(this.invoiceType)
+            .append(TAB)
             .append("description = ")
             .append(this.description)
             .append(TAB)
@@ -448,5 +495,39 @@ public class StockBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( (id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if ( ! (obj instanceof StockBean)) return false;
+        final StockBean other = (StockBean)obj;
+        if (id == null)
+        {
+            if (other.id != null) return false;
+        }
+        else if ( !id.equals(other.id)) return false;
+        return true;
     }
 }

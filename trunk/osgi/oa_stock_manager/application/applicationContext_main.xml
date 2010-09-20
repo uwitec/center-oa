@@ -22,4 +22,8 @@
 
 	<bean id="priceAskManager" class="com.china.center.oa.stock.manager.impl.PriceAskManagerImpl" />
 
+	<bean id="stockDAO" class="com.china.center.oa.stock.dao.impl.StockDAOImpl" />
+
+	<bean id="stockItemDAO" class="com.china.center.oa.stock.dao.impl.StockItemDAOImpl" />
+
 </beans>

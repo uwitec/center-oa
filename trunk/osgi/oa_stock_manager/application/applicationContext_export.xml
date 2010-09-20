@@ -20,4 +20,8 @@
 
 	<osgi:service ref="priceAskManager" interface="com.china.center.oa.stock.manager.PriceAskManager" />
 
+	<osgi:service ref="stockDAO" interface="com.china.center.oa.stock.dao.StockDAO" />
+
+	<osgi:service ref="stockItemDAO" interface="com.china.center.oa.stock.dao.StockItemDAO" />
+
 </beans>

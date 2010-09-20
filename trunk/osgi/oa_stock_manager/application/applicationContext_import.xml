@@ -39,4 +39,5 @@
 	
 	<osgi:reference id="queryManager" interface="com.china.center.oa.publics.manager.QueryManager" />
 
+	<osgi:reference id="flowLogDAO" interface="com.china.center.oa.publics.dao.FlowLogDAO" />
 </beans>

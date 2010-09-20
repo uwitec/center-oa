@@ -168,4 +168,16 @@ public interface StockConstant
     @Defined(key = "stockSailType", value = "自卖")
     int STOCK_SAILTYPE_SELF = 1;
 
+    /**
+     * 不要发票
+     */
+    @Defined(key = "stockInvoice", value = "不要发票")
+    int INVOICE_NO = 1;
+
+    /**
+     * 需要发票
+     */
+    @Defined(key = "stockInvoice", value = "需要发票")
+    int INVOICE_YES = 1;
+
 }

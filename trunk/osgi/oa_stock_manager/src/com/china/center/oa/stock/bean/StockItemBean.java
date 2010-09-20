@@ -69,6 +69,11 @@ public class StockItemBean implements Serializable
 
     private double prePrice = 0.0d;
 
+    /**
+     * 产品预期销售额
+     */
+    private double sailPrice = 0.0d;
+
     private double total = 0.0d;
 
     private String logTime = "";
@@ -377,5 +382,22 @@ public class StockItemBean implements Serializable
     public void setNetAskId(String netAskId)
     {
         this.netAskId = netAskId;
+    }
+
+    /**
+     * @return the sailPrice
+     */
+    public double getSailPrice()
+    {
+        return sailPrice;
+    }
+
+    /**
+     * @param sailPrice
+     *            the sailPrice to set
+     */
+    public void setSailPrice(double sailPrice)
+    {
+        this.sailPrice = sailPrice;
     }
 }
