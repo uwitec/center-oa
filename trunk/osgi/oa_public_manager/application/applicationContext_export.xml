@@ -94,4 +94,6 @@
 
 	<osgi:service ref="invoiceManager" interface="com.china.center.oa.publics.manager.InvoiceManager" />
 
+	<osgi:service ref="flowLogDAO" interface="com.china.center.oa.publics.dao.FlowLogDAO" />
+
 </beans>

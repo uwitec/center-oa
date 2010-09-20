@@ -99,4 +99,6 @@
 
 	<bean id="invoiceManager" class="com.china.center.oa.publics.manager.impl.InvoiceManagerImpl" />
 
+	<bean id="flowLogDAO" class="com.china.center.oa.publics.dao.impl.FlowLogDAOImpl" />
+
 </beans>
