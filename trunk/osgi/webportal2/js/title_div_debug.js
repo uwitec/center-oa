@@ -377,9 +377,9 @@ tooltip.hide = function ()
     tooltip.tip.style.display = "none";
 }
 
-if (window.Prototype)
+if (window.addEventCommon)
 {
-	Event.observe(window, 'load', tooltip.init, false);
+	window.addEventCommon(window, 'load', tooltip.init);
 }
 else
 {

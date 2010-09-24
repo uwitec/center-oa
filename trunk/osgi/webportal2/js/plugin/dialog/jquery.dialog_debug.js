@@ -1026,12 +1026,23 @@ var BUTTON_CANCEL = Res._Button['Cancel'];
             });
         },
         
-        prompt: function(title, msg, initValue, fn) {
+        prompt: function(title, msg, initValue, fn, type) {
             var win = $('<div></div>').appendTo(document.body);
+            
+            var typeStr = '';
+            var textStr = '';
+            
+            if (type == 1)
+            {
+            	typeStr = "<img src='../images/calendar.gif' style='cursor: pointer' align='top' onclick='return calDate(\"prompt-messager-input\");' height='20px' width='20px'/>";
+            	
+            	textStr = 'readonly=readonly'; 
+            }
             win.html('<div class="messager-icon messager-question"></div>'
                         + '<div>' + msg + '</div>'
                         + '<br/>'
-                        + '<input class="messager-input" id="prompt-messager-input" type="text" value="' + initValue + '" style="width:220px;"/>'
+                        + '<input class="messager-input" id="prompt-messager-input" type="text" ' + textStr + ' value="' + initValue + '" style="width:220px;"/>'
+                        + typeStr
                         + '<div style="clear:both;"/>');
             var bmap = {};
             

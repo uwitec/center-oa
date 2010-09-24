@@ -30,10 +30,25 @@ public class PageSeparate implements Serializable
     private int nowPage = 0;
 
     /**
+     * Copy Constructor
+     * 
+     * @param pageSeparate
+     *            a <code>PageSeparate</code> object
+     */
+    public PageSeparate(PageSeparate pageSeparate)
+    {
+        this.rowCount = pageSeparate.rowCount;
+        this.pageSize = pageSeparate.pageSize;
+        this.pageCount = pageSeparate.pageCount;
+        this.nowPage = pageSeparate.nowPage;
+    }
+
+    /**
      * 默认构建器
      */
     public PageSeparate()
-    {}
+    {
+    }
 
     public void reset(int rowCount, int pageSize)
     {

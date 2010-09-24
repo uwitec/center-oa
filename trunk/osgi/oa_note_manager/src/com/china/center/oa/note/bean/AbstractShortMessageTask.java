@@ -68,7 +68,7 @@ public abstract class AbstractShortMessageTask implements Serializable
     private String sendLog = "";
 
     /**
-     * 0:YYY;1:XXX
+     * 0:YYY;1:XXXX
      */
     private String menuReceives = "";
 
@@ -76,7 +76,8 @@ public abstract class AbstractShortMessageTask implements Serializable
      * default constructor
      */
     public AbstractShortMessageTask()
-    {}
+    {
+    }
 
     /**
      * @return the id
@@ -378,18 +379,62 @@ public abstract class AbstractShortMessageTask implements Serializable
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue.append("AbstractShortMessageTask ( ").append(super.toString()).append(tab).append(
-            "id = ").append(this.id).append(tab).append("fk = ").append(this.fk).append(tab).append(
-            "handId = ").append(this.handId).append(tab).append("type = ").append(this.type).append(
-            tab).append("fail = ").append(this.fail).append(tab).append("status = ").append(
-            this.status).append(tab).append("mtype = ").append(this.mtype).append(tab).append(
-            "fktoken = ").append(this.fktoken).append(tab).append("message = ").append(
-            this.message).append(tab).append("receiver = ").append(this.receiver).append(tab).append(
-            "receiveMsg = ").append(this.receiveMsg).append(tab).append("stafferId = ").append(
-            this.stafferId).append(tab).append("logTime = ").append(this.logTime).append(tab).append(
-            "sendTime = ").append(this.sendTime).append(tab).append("endTime = ").append(
-            this.endTime).append(tab).append("sendLog = ").append(this.sendLog).append(tab).append(
-            "menuReceives = ").append(this.menuReceives).append(tab).append(" )");
+        retValue
+            .append("AbstractShortMessageTask ( ")
+            .append(super.toString())
+            .append(tab)
+            .append("id = ")
+            .append(this.id)
+            .append(tab)
+            .append("fk = ")
+            .append(this.fk)
+            .append(tab)
+            .append("handId = ")
+            .append(this.handId)
+            .append(tab)
+            .append("type = ")
+            .append(this.type)
+            .append(tab)
+            .append("fail = ")
+            .append(this.fail)
+            .append(tab)
+            .append("status = ")
+            .append(this.status)
+            .append(tab)
+            .append("mtype = ")
+            .append(this.mtype)
+            .append(tab)
+            .append("fktoken = ")
+            .append(this.fktoken)
+            .append(tab)
+            .append("message = ")
+            .append(this.message)
+            .append(tab)
+            .append("receiver = ")
+            .append(this.receiver)
+            .append(tab)
+            .append("receiveMsg = ")
+            .append(this.receiveMsg)
+            .append(tab)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(tab)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(tab)
+            .append("sendTime = ")
+            .append(this.sendTime)
+            .append(tab)
+            .append("endTime = ")
+            .append(this.endTime)
+            .append(tab)
+            .append("sendLog = ")
+            .append(this.sendLog)
+            .append(tab)
+            .append("menuReceives = ")
+            .append(this.menuReceives)
+            .append(tab)
+            .append(" )");
 
         return retValue.toString();
     }
