@@ -12,6 +12,8 @@ package com.china.center.oa.stock.action.helper;
 import java.util.List;
 
 import com.center.china.osgi.publics.User;
+import com.china.center.oa.publics.constant.AuthConstant;
+import com.china.center.oa.publics.helper.AuthHelper;
 import com.china.center.oa.stock.constant.PriceConstant;
 import com.china.center.oa.stock.vo.PriceAskProviderBeanVO;
 
@@ -24,6 +26,22 @@ import com.china.center.oa.stock.vo.PriceAskProviderBeanVO;
  */
 public abstract class PriceAskHelper
 {
+    public static String createTable(List<PriceAskProviderBeanVO> list, User user)
+    {
+        int type = 0;
+
+        if (AuthHelper.containAuth(user, AuthConstant.PRICE_ASK_PROCESS))
+        {
+            type = 0;
+        }
+        else
+        {
+            type = 1;
+        }
+
+        return createTable(list, user, type);
+    }
+
     public static String createTable(List<PriceAskProviderBeanVO> list, User user, int type)
     {
         StringBuffer buffer = new StringBuffer();

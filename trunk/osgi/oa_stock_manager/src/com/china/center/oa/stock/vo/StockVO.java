@@ -19,10 +19,10 @@ import com.china.center.oa.stock.constant.StockConstant;
 @Entity(inherit = true)
 public class StockVO extends StockBean
 {
-    @Relationship(relationField = "userId", tagField = "stafferName")
+    @Relationship(relationField = "stafferId", tagField = "name")
     private String userName = "";
 
-    @Relationship(relationField = "locationId", tagField = "locationName")
+    @Relationship(relationField = "locationId", tagField = "name")
     private String locationName = "";
 
     /**

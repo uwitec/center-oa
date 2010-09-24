@@ -48,8 +48,8 @@ public class StockBean implements Serializable
     @Html(title = "到货时间", type = Element.DATE, must = true)
     private String needTime = "";
 
-    @Html(title = "预期帐期", type = Element.DATE, must = true)
-    private String willDate = "";
+    @Html(title = "预期帐期(天)", type = Element.NUMBER, must = true)
+    private int willDate = 0;
 
     /**
      * 采购主管必填,早于这个日期是不能付款的
@@ -81,7 +81,7 @@ public class StockBean implements Serializable
     @Html(title = "发票选择", must = true, type = Element.SELECT)
     private int invoice = StockConstant.INVOICE_NO;
 
-    @Html(title = "发票", must = true)
+    @Html(title = "发票类型", type = Element.SELECT)
     private String invoiceType = "";
 
     @Html(title = "备注", type = Element.TEXTAREA, maxLength = 100)
@@ -338,7 +338,7 @@ public class StockBean implements Serializable
     /**
      * @return the willDate
      */
-    public String getWillDate()
+    public int getWillDate()
     {
         return willDate;
     }
@@ -347,7 +347,7 @@ public class StockBean implements Serializable
      * @param willDate
      *            the willDate to set
      */
-    public void setWillDate(String willDate)
+    public void setWillDate(int willDate)
     {
         this.willDate = willDate;
     }

@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.china.center.jdbc.inter.IbatisDaoSupport;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.stock.bean.PriceAskProviderBean;
 import com.china.center.oa.stock.constant.PriceConstant;
@@ -30,6 +31,8 @@ import com.china.center.oa.stock.vo.PriceAskProviderBeanVO;
  */
 public class PriceAskProviderDAOImpl extends BaseDAO<PriceAskProviderBean, PriceAskProviderBeanVO> implements PriceAskProviderDAO
 {
+    private IbatisDaoSupport ibatisDaoSupport = null;
+
     public PriceAskProviderBean findBeanByAskIdAndProviderId(String askId, String providerId, int type)
     {
         return this.jdbcOperation.queryObjects("where askId = ? and providerId = ? and type = ?", this.claz, askId,
@@ -57,8 +60,7 @@ public class PriceAskProviderDAOImpl extends BaseDAO<PriceAskProviderBean, Price
 
         paramterMap.put("askDate", askDate);
 
-        return (List)this.jdbcOperation.getIbatisDaoSupport().queryForList("PriceAskProviderDAO.queryByCondition",
-            paramterMap);
+        return (List)this.ibatisDaoSupport.queryForList("PriceAskProviderDAOImpl.queryByCondition", paramterMap);
     }
 
     /**
@@ -73,5 +75,22 @@ public class PriceAskProviderDAOImpl extends BaseDAO<PriceAskProviderBean, Price
         this.jdbcOperation.delete("where askId = ? and providerId = ? and type = ?", claz, askId, providerId, type);
 
         return true;
+    }
+
+    /**
+     * @return the ibatisDaoSupport
+     */
+    public IbatisDaoSupport getIbatisDaoSupport()
+    {
+        return ibatisDaoSupport;
+    }
+
+    /**
+     * @param ibatisDaoSupport
+     *            the ibatisDaoSupport to set
+     */
+    public void setIbatisDaoSupport(IbatisDaoSupport ibatisDaoSupport)
+    {
+        this.ibatisDaoSupport = ibatisDaoSupport;
     }
 }

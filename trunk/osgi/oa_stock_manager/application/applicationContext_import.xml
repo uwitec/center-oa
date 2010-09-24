@@ -40,4 +40,10 @@
 	<osgi:reference id="queryManager" interface="com.china.center.oa.publics.manager.QueryManager" />
 
 	<osgi:reference id="flowLogDAO" interface="com.china.center.oa.publics.dao.FlowLogDAO" />
+	
+	<osgi:reference id="locationDAO" interface="com.china.center.oa.publics.dao.LocationDAO" />
+	
+	<osgi:reference id="parameterDAO" interface="com.china.center.oa.publics.dao.ParameterDAO" />
+	
+	<osgi:reference id="shortMessageTaskDAO" interface="com.china.center.oa.note.dao.ShortMessageTaskDAO" />
 </beans>

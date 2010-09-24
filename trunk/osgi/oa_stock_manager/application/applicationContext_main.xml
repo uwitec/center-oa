@@ -26,4 +26,6 @@
 
 	<bean id="stockItemDAO" class="com.china.center.oa.stock.dao.impl.StockItemDAOImpl" />
 
+	<bean id="stockManager" class="com.china.center.oa.stock.manager.impl.StockManagerImpl" />
+
 </beans>

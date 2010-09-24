@@ -11,23 +11,26 @@ package com.china.center.oa.stock.manager.impl;
 
 import java.util.List;
 
-import org.apache.catalina.Role;
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
-import com.china.center.jdbc.cache.bean.MoreHashMap;
+import com.china.center.oa.note.bean.ShortMessageTaskBean;
+import com.china.center.oa.note.constant.ShortMessageConstant;
 import com.china.center.oa.note.dao.ShortMessageTaskDAO;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.LocationBean;
+import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.publics.helper.AuthHelper;
 import com.china.center.oa.stock.bean.PriceAskProviderBean;
 import com.china.center.oa.stock.bean.StockBean;
 import com.china.center.oa.stock.bean.StockItemBean;
@@ -42,6 +45,7 @@ import com.china.center.oa.stock.vo.StockItemVO;
 import com.china.center.oa.stock.vo.StockVO;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.MathTools;
+import com.china.center.tools.RandomTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
@@ -79,12 +83,6 @@ public class StockManagerImpl implements StockManager
     private String stockLocation = "";
 
     private PriceAskProviderDAO priceAskProviderDAO = null;
-
-    private static MoreHashMap<Integer, Integer, Role> map = new MoreHashMap<Integer, Integer, Role>();
-
-    static
-    {
-    }
 
     /*
      * (non-Javadoc)
@@ -226,6 +224,8 @@ public class StockManagerImpl implements StockManager
         // 更新采购主单据
         stockDAO.updateStatus(id, nextStatus);
 
+        stockDAO.updateExceptStatus(id, StockConstant.EXCEPTSTATUS_COMMON);
+
         addLog(user, id, nextStatus, sb, oprMode, reason);
 
         return true;
@@ -296,21 +296,14 @@ public class StockManagerImpl implements StockManager
             throw new MYException("采购单不存在");
         }
 
-        // 这里外网询价员
-        /**
-         * TODO_OSGI 权限校验 Role role = user.getRole(); Role needRole = getOprRole(sb.getStatus()); if (needRole ==
-         * Role.STOCK) { if (role != Role.STOCK && role != Role.NETSTOCK) { throw new MYException("不能操作"); } } else { if
-         * (role != needRole) { throw new MYException("不能操作"); } }
-         */
-
-        int nextStatus = getNextStatus(sb.getStatus());
+        int nextStatus = getNextStatus(user, sb.getStatus());
 
         List<StockItemVO> itemList = stockItemDAO.queryEntityVOsByFK(id);
 
         double total = 0.0d;
 
-        // 如果是提交需要验证是否是外网询价
-        checkSubmit(sb, nextStatus, itemList);
+        // 如果是结束需要验证是否是外网询价
+        checkEndStock(sb, nextStatus, itemList);
 
         // 询价处理 需要全部的item都询价结束
         if (nextStatus == StockConstant.STOCK_STATUS_PRICEPASS)
@@ -344,13 +337,13 @@ public class StockManagerImpl implements StockManager
             {
                 stockDAO.updateExceptStatus(id, StockConstant.EXCEPTSTATUS_EXCEPTION_MONEY);
 
-                // 通知董事长(董事长的ID为5) TOSO_OSGI
-                // List<StafferBean> sbList = stafferDAO.queryByPostId("5");
-                //
-                // for (StafferBean2 stafferBean2 : sbList)
-                // {
-                // sendSMSInner(user, stafferBean2, id, sb, sbStr.toString());
-                // }
+                // 获得董事长的人员
+                List<StafferBean> sbList = stafferDAO.queryStafferByAuthId(AuthConstant.SPECIAL_AUTH_CHAIRMAN);
+
+                for (StafferBean stafferBean : sbList)
+                {
+                    sendSMSInner(user, stafferBean, id, sb, sbStr.toString());
+                }
 
                 nextStatus = StockConstant.STOCK_STATUS_STOCKPASS;
             }
@@ -448,7 +441,7 @@ public class StockManagerImpl implements StockManager
      * @param itemList
      * @throws MYException
      */
-    private void checkSubmit(StockBean sb, int nextStatus, List<StockItemVO> itemList)
+    private void checkEndStock(StockBean sb, int nextStatus, List<StockItemVO> itemList)
         throws MYException
     {
         if (nextStatus == StockConstant.STOCK_STATUS_END && sb.getType() == PriceConstant.PRICE_ASK_TYPE_NET)
@@ -487,10 +480,62 @@ public class StockManagerImpl implements StockManager
      * @param current
      * @param isPass
      * @return
+     * @throws MYException
      */
-    private int getNextStatus(int current)
+    private int getNextStatus(User user, int current)
+        throws MYException
     {
-        return map.getValue1(current);
+        if (current == StockConstant.STOCK_STATUS_INIT)
+        {
+            return StockConstant.STOCK_STATUS_SUBMIT;
+        }
+
+        if (current == StockConstant.STOCK_STATUS_REJECT)
+        {
+            return StockConstant.STOCK_STATUS_SUBMIT;
+        }
+
+        if (current == StockConstant.STOCK_STATUS_SUBMIT)
+        {
+            return StockConstant.STOCK_STATUS_MANAGERPASS;
+        }
+
+        if (current == StockConstant.STOCK_STATUS_MANAGERPASS)
+        {
+            if (AuthHelper.containAuth(user, AuthConstant.STOCK_MANAGER_PASS))
+            {
+                return StockConstant.STOCK_STATUS_PRICEPASS;
+            }
+            else
+            {
+                throw new MYException("没有权限");
+            }
+        }
+
+        // 这里是采购主管的操作(如果没有异常忽略采购经理)
+        if (current == StockConstant.STOCK_STATUS_PRICEPASS)
+        {
+            return StockConstant.STOCK_STATUS_STOCKMANAGERPASS;
+        }
+
+        if (current == StockConstant.STOCK_STATUS_STOCKPASS)
+        {
+            if (AuthHelper.containAuth(user, AuthConstant.STOCK_NET_STOCK_PASS, AuthConstant.STOCK_INNER_STOCK_PASS))
+            {
+                return StockConstant.STOCK_STATUS_STOCKMANAGERPASS;
+            }
+            else
+            {
+                throw new MYException("没有权限");
+            }
+        }
+
+        if (current == StockConstant.STOCK_STATUS_STOCKMANAGERPASS)
+        {
+            return StockConstant.STOCK_STATUS_END;
+        }
+
+        return StockConstant.STOCK_STATUS_INIT;
     }
 
     /*
@@ -517,11 +562,6 @@ public class StockManagerImpl implements StockManager
         {
             throw new MYException("采购单状态错误");
         }
-
-        /**
-         * TODO_OSGI 是否可以操作 Role role = rejectMap.getValue2(sb.getStatus()); if (user.getRole() != role) { if ( !
-         * (user.getRole() == Role.NETSTOCK && role == Role.STOCK)) { throw new MYException("不能操作"); } }
-         */
 
         int nextStatus = StockConstant.STOCK_STATUS_REJECT;
 
@@ -585,11 +625,10 @@ public class StockManagerImpl implements StockManager
             throw new MYException("采购单状态错误");
         }
 
-        // TODO_OSGI 权限校验
-        // if (user.getRole() != Role.STOCK)
-        // {
-        // throw new MYException("不能操作");
-        // }
+        if ( !AuthHelper.containAuth(user, AuthConstant.STOCK_INNER_STOCK_PASS))
+        {
+            throw new MYException("不能操作");
+        }
 
         recoverStockItemAsk(id);
 
@@ -705,6 +744,27 @@ public class StockManagerImpl implements StockManager
         return true;
     }
 
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean updateStockNearlyPayDate(User user, String id, String nearlyPayDate)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        StockBean sb = stockDAO.find(id);
+
+        if (sb == null)
+        {
+            throw new MYException("采购单不存在");
+        }
+
+        sb.setNearlyPayDate(nearlyPayDate);
+
+        // 更新采购主单据
+        stockDAO.updateEntityBean(sb);
+
+        return true;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -745,6 +805,52 @@ public class StockManagerImpl implements StockManager
         }
 
         return true;
+    }
+
+    /**
+     * sendSMSInner
+     * 
+     * @param user
+     * @param sb
+     * @param id
+     * @param sbvo
+     * @param message
+     */
+    private void sendSMSInner(User user, StafferBean sb, String id, StockVO sbvo, String message)
+    {
+        // send short message
+        ShortMessageTaskBean sms = new ShortMessageTaskBean();
+
+        sms.setId(commonDAO.getSquenceString20());
+
+        sms.setFk(id);
+
+        sms.setType(104);
+
+        sms.setHandId(RandomTools.getRandomMumber(4));
+
+        sms.setStatus(ShortMessageConstant.STATUS_INIT);
+
+        sms.setMtype(ShortMessageConstant.MTYPE_ONLY_SEND);
+
+        sms.setFktoken("0");
+
+        sms.setMessage(sbvo.getUserName() + "发起的采购单" + message);
+
+        sms.setReceiver(sb.getHandphone());
+
+        sms.setStafferId(sb.getId());
+
+        sms.setLogTime(TimeTools.now());
+
+        // 24 hour
+        sms.setEndTime(TimeTools.now(1));
+
+        // internal
+        sms.setSendTime(TimeTools.now());
+
+        // add sms
+        shortMessageTaskDAO.saveEntityBean(sms);
     }
 
     /**
@@ -916,5 +1022,4 @@ public class StockManagerImpl implements StockManager
     {
         this.priceAskProviderDAO = priceAskProviderDAO;
     }
-
 }

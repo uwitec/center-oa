@@ -33,5 +33,8 @@
 		
 	<bean name="/netask/checkuser"
 		class="com.china.center.oa.stock.action.NetLoginAction"/>
+		
+	<bean name="/stock/stock"
+		class="com.china.center.oa.stock.action.StockAction"/>
 	
 </beans>

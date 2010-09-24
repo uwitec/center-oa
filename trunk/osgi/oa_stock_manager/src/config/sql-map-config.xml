@@ -7,5 +7,5 @@
 		lazyLoadingEnabled="true" errorTracingEnabled="true" maxRequests="256"
 		maxSessions="150" maxTransactions="60" useStatementNamespaces="true" />
 
-	<sqlMap resource="ibatisSqlConf/PriceAskProviderDAO.xml" />
+	<sqlMap resource="ibatisSqlConf/PriceAskProviderDAOImpl.xml" />
 </sqlMapConfig>

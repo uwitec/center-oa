@@ -23,6 +23,17 @@
 			<forward name="error" path="/netask/index.jsp" redirect="true" />
 			<forward name="password" path="/netask/modifyPassword.jsp"/>
         </action>
+        
+        <action path="/stock/stock" parameter="method" folder="/stock/" bean="Stock"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+             <forward name="addStock"/>
+             <forward name="processStock"/>
+             <forward name="rptPriceAskProviderList"/>
+             <forward name="stockAskPriceForNet"/>
+             <forward name="stockAskPrice"/>
+             <forward name="stockAskChange"/>
+        </action>
 		
 	</action-mappings>
 </struts-config>

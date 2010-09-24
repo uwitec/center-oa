@@ -25,6 +25,18 @@
 	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	
+	<osgi:reference id="flowLogDAO" interface="com.china.center.oa.publics.dao.FlowLogDAO" />
+	
+	<osgi:reference id="invoiceDAO" interface="com.china.center.oa.publics.dao.InvoiceDAO" />
+	
+	<osgi:reference id="menuItemDAO" interface="com.china.center.oa.publics.dao.MenuItemDAO" />
+	
+	<osgi:reference id="locationDAO" interface="com.china.center.oa.publics.dao.LocationDAO" />
+	
+	<osgi:reference id="departmentDAO" interface="com.china.center.oa.publics.dao.DepartmentDAO" />
+	
+	<osgi:reference id="storageRelationDAO" interface="com.china.center.oa.product.dao.StorageRelationDAO" />
+	
 	<osgi:reference id="providerUserDAO" interface="com.china.center.oa.product.dao.ProviderUserDAO" />
 	
 	<osgi:reference id="productDAO" interface="com.china.center.oa.product.dao.ProductDAO" />
@@ -39,5 +51,9 @@
 	
 	<osgi:reference id="productTypeVSCustomerDAO" interface="com.china.center.oa.product.dao.ProductTypeVSCustomerDAO" />
 	
-	<osgi:reference id="menuItemDAO" interface="com.china.center.oa.publics.dao.MenuItemDAO" />
+	<osgi:reference id="stockDAO" interface="com.china.center.oa.stock.dao.StockDAO" />
+
+	<osgi:reference id="stockItemDAO" interface="com.china.center.oa.stock.dao.StockItemDAO" />
+	
+	<osgi:reference id="stockManager" interface="com.china.center.oa.stock.manager.StockManager" />
 </beans>

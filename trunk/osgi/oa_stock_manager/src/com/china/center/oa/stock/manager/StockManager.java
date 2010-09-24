@@ -45,6 +45,9 @@ public interface StockManager
     boolean updateStockBean(final User user, final StockBean bean)
         throws MYException;
 
+    boolean updateStockNearlyPayDate(final User user, final String id, String nearlyPayDate)
+        throws MYException;
+
     String endStock(final User user, final String id)
         throws MYException;
 
