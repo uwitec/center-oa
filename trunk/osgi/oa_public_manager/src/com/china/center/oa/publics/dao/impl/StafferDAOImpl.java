@@ -9,8 +9,11 @@
 package com.china.center.oa.publics.dao.impl;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.china.center.jdbc.inter.IbatisDaoSupport;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.StafferConstant;
@@ -29,6 +32,8 @@ import com.china.center.tools.ListTools;
  */
 public class StafferDAOImpl extends BaseDAO<StafferBean, StafferVO> implements StafferDAO
 {
+    private IbatisDaoSupport ibatisDaoSupport = null;
+
     public int countByLocationId(String locationId)
     {
         return jdbcOperation.queryForInt("where locationId = ? ", this.claz, locationId);
@@ -64,8 +69,7 @@ public class StafferDAOImpl extends BaseDAO<StafferBean, StafferVO> implements S
      */
     public List<StafferBean> queryStafferByLocationId(String locationId)
     {
-        return this.jdbcOperation.queryForList("where locationId = ? order by name", claz,
-            locationId);
+        return this.jdbcOperation.queryForList("where locationId = ? order by name", claz, locationId);
     }
 
     /**
@@ -81,8 +85,7 @@ public class StafferDAOImpl extends BaseDAO<StafferBean, StafferVO> implements S
      */
     public List<StafferBean> listCommonEntityBeans()
     {
-        return jdbcOperation.queryForList("where status < ? order by name", claz,
-            StafferConstant.STATUS_DROP);
+        return jdbcOperation.queryForList("where status < ? order by name", claz, StafferConstant.STATUS_DROP);
     }
 
     /**
@@ -106,5 +109,32 @@ public class StafferDAOImpl extends BaseDAO<StafferBean, StafferVO> implements S
         }
 
         return list.get(0);
+    }
+
+    public List<StafferBean> queryStafferByAuthId(String authId)
+    {
+        Map<String, Object> paramterMap = new HashMap();
+
+        paramterMap.put("authId", authId);
+
+        return (List<StafferBean>)this.ibatisDaoSupport
+            .queryForList("StafferDAOImpl.queryStafferByAuthId", paramterMap);
+    }
+
+    /**
+     * @return the ibatisDaoSupport
+     */
+    public IbatisDaoSupport getIbatisDaoSupport()
+    {
+        return ibatisDaoSupport;
+    }
+
+    /**
+     * @param ibatisDaoSupport
+     *            the ibatisDaoSupport to set
+     */
+    public void setIbatisDaoSupport(IbatisDaoSupport ibatisDaoSupport)
+    {
+        this.ibatisDaoSupport = ibatisDaoSupport;
     }
 }

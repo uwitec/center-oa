@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="StafferDAOImpl">
+
+	<select id="queryStafferByAuthId"
+		parameterClass="java.util.Map" resultClass="com.china.center.oa.publics.bean.StafferBean">
+		select x.* from t_center_oastaffer x where x.status = 0 and x.id in
+		(
+		    select DISTINCT(tt.STAFFERID) from t_center_oauser tt where tt.ROLEID in 
+		    (
+		    	select DISTINCT(ROLEID) from t_center_roleauth t where AUTHID = #authId#
+		    )
+		)
+	</select>
+
+</sqlMap>

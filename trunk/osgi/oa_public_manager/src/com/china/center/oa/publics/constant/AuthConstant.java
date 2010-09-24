@@ -413,4 +413,44 @@ public interface AuthConstant
      */
     @Deprecated
     String PRICE_ASK_REPRICE = "1207";
+
+    /**
+     * 增加询价(业务员)
+     */
+    String STOCK_ADD = "1301";
+
+    /**
+     * 区域经理审批(区域总经理)
+     */
+    String STOCK_MANAGER_PASS = "1302";
+
+    /**
+     * 内网采购主管审批(内网采购主管)
+     */
+    String STOCK_INNER_STOCK_PASS = "1303";
+
+    /**
+     * 外网采购主管审批(外网采购主管)
+     */
+    String STOCK_NET_STOCK_PASS = "1304";
+
+    /**
+     * 异常采购最终确认(采购经理)
+     */
+    String STOCK_STOCK_MANAGER_PASS = "1305";
+
+    /**
+     * 内网采购询价(询价员)
+     */
+    String STOCK_PRICE_PASS = "1306";
+
+    /**
+     * 董事长
+     */
+    String SPECIAL_AUTH_CHAIRMAN = "0901";
+
+    /**
+     * 总经理
+     */
+    String SPECIAL_AUTH_CEO = "0902";
 }

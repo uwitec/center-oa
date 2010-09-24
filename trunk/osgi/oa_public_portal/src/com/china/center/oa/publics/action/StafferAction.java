@@ -128,8 +128,7 @@ public class StafferAction extends DispatchAction
 
         User user = Helper.getUser(request);
 
-        if ( !LocationHelper.isVirtualLocation(user.getLocationId())
-            && !LocationHelper.isSystemLocation(user.getLocationId()))
+        if ( !LocationHelper.isVirtualLocation(user.getLocationId()))
         {
             condtion.addCondition("StafferBean.locationId", "=", user.getLocationId());
         }

@@ -23,24 +23,6 @@ import com.china.center.oa.publics.constant.PublicConstant;
 public abstract class LocationHelper
 {
     /**
-     * 是否是总部区域
-     * 
-     * @param locationId
-     * @return
-     */
-    public static boolean isSystemLocation(String locationId)
-    {
-        if (PublicConstant.CENTER_LOCATION.equals(locationId))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    /**
      * 是否是虚拟区域
      * 
      * @param locationId

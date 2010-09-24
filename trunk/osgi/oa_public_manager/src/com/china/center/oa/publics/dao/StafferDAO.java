@@ -45,4 +45,12 @@ public interface StafferDAO extends DAO<StafferBean, StafferVO>
     List<StafferBean> queryStafferByPrincipalshipId(String principalshipId);
 
     StafferBean findyStafferByName(String name);
+
+    /**
+     * 根据权限查询职员
+     * 
+     * @param authId
+     * @return
+     */
+    List<StafferBean> queryStafferByAuthId(String authId);
 }

@@ -175,4 +175,14 @@ public interface PublicConstant
 
     int ENUMDEFINE_TYPE_INT = 1;
 
+    /**
+     * 通过操作
+     */
+    int OPRMODE_PASS = 0;
+
+    /**
+     * 驳回
+     */
+    int OPRMODE_REJECT = 1;
+
 }
