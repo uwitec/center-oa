@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Jdbcconfiguration Plug-in
+Bundle-SymbolicName: com.china.center.osgi.config.configuration
+Bundle-Version: 1.0.0
+Fragment-Host: com.china.center.osgi.config
+
+
+
+
