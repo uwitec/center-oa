@@ -100,5 +100,17 @@
 	<bean id="invoiceManager" class="com.china.center.oa.publics.manager.impl.InvoiceManagerImpl" />
 
 	<bean id="flowLogDAO" class="com.china.center.oa.publics.dao.impl.FlowLogDAOImpl" />
+	
+	<bean id="publicTriggerHander" class="com.china.center.oa.publics.trigger.PublicTriggerHander">
+		<property name="publicTrigger">
+			<ref bean="publicTrigger"/>
+		</property>
+		<property name="dayJobList">
+			<list>
+				<ref bean="deleleTempPicJob" />
+				<ref bean="dbJob" />
+			</list>
+		</property>
+	</bean>
 
 </beans>

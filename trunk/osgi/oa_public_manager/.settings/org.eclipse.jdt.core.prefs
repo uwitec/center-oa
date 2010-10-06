@@ -1,4 +1,4 @@
-#Sun Jul 04 10:18:40 CST 2010
+#Thu Sep 30 21:13:15 CST 2010
 eclipse.preferences.version=1
 org.eclipse.jdt.core.codeComplete.argumentPrefixes=
 org.eclipse.jdt.core.codeComplete.argumentSuffixes=
@@ -23,7 +23,7 @@ org.eclipse.jdt.core.formatter.alignment_for_expressions_in_array_initializer=16
 org.eclipse.jdt.core.formatter.alignment_for_multiple_fields=16
 org.eclipse.jdt.core.formatter.alignment_for_parameters_in_constructor_declaration=18
 org.eclipse.jdt.core.formatter.alignment_for_parameters_in_method_declaration=18
-org.eclipse.jdt.core.formatter.alignment_for_selector_in_method_invocation=52
+org.eclipse.jdt.core.formatter.alignment_for_selector_in_method_invocation=4
 org.eclipse.jdt.core.formatter.alignment_for_superclass_in_type_declaration=0
 org.eclipse.jdt.core.formatter.alignment_for_superinterfaces_in_enum_declaration=48
 org.eclipse.jdt.core.formatter.alignment_for_superinterfaces_in_type_declaration=0
