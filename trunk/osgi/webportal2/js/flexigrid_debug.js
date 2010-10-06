@@ -90,6 +90,12 @@ var gobal_guid;
           	  // zhuzhu 
               p.height = ((document.documentElement.clientHeight==0)?document.body.clientHeight:document.documentElement.clientHeight) - 24 * 7;
           }
+          
+          // carry now
+          if (p.callBack)
+          {
+              p.callBack.apply(null);
+          }
                 
 
         $(t)

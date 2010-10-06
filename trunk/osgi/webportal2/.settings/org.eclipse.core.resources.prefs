@@ -1,4 +1,4 @@
-#Sat Sep 11 11:38:40 CST 2010
+#Tue Oct 05 18:12:13 CST 2010
 eclipse.preferences.version=1
 encoding//common/common.jsp=UTF-8
 encoding//common/common_js.jsp=UTF-8
@@ -15,6 +15,7 @@ encoding//js/fanye.js=UTF-8
 encoding//js/fanye_debug.js=UTF-8
 encoding//js/flexigrid.js=UTF-8
 encoding//js/flexigrid_debug.js=UTF-8
+encoding//js/math.js=UTF-8
 encoding//js/string.js=UTF-8
 encoding//js/tableSort.js=UTF-8
 encoding//js/test.js=UTF-8

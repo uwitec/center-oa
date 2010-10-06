@@ -24,8 +24,6 @@ import com.china.center.tools.StringTools;
 public final class ElTools
 {
     /**
-     * Description:��ö���ĳ��� <br>
-     * 
      * @param o
      * @return int
      */
@@ -55,8 +53,6 @@ public final class ElTools
     }
 
     /**
-     * Description: �������ĳ���<br>
-     * 
      * @param o
      * @return int
      */
@@ -66,8 +62,6 @@ public final class ElTools
     }
 
     /**
-     * Description: �ڽ�����ʾ��ʱ��ض��ַ�<br>
-     * 
      * @param s
      * @param begin
      * @param end

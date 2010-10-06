@@ -957,6 +957,34 @@ function getTrObject(obj)
     return par;
 }
 
+function $duplicate(arr)
+{
+	var map = {};
+	
+	for (var i = 0; i < arr.length; i++)
+	{
+		var vv;
+		
+		if (typeof arr[i] == 'string')
+		{
+			vv = arr[i];
+		}
+		else
+		{
+			vv = arr[i].value;
+		}
+		
+		if (map[vv] != null)
+		{
+			return true;
+		}
+		
+		map[vv] = vv;
+	}
+	
+	return false;
+}
+
 function $encode(str)
 {
 	//+ %20 
