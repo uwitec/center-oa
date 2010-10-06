@@ -24,17 +24,19 @@ public class PageBodyCell extends BodyTagCenterSupport
 
     private String id = "";
 
+    private boolean end = false;
+
     /**
      * 默认构建器
      */
     public PageBodyCell()
-    {}
+    {
+    }
 
     public int getLastWidth()
     {
         int tatol = 100;
-        Integer ints = (Integer)pageContext.getAttribute(TagLibConstant.CENTER_CELLS_INIT
-                                                         + this.index);
+        Integer ints = (Integer)pageContext.getAttribute(TagLibConstant.CENTER_CELLS_INIT + this.index);
 
         int ll = tatol / ints.intValue() - this.width;
 
@@ -47,22 +49,18 @@ public class PageBodyCell extends BodyTagCenterSupport
         // 页面显示的字符
         StringBuffer buffer = new StringBuffer();
 
-        // HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
-
         // 设置页面属性
-        int allIndex = ((Integer)pageContext.getAttribute(TagLibConstant.CENTER_CELL_INDEX
-                                                          + this.index)).intValue();
+        int allIndex = ((Integer)pageContext.getAttribute(TagLibConstant.CENTER_CELL_INDEX + this.index)).intValue();
 
-        int cells = ((Integer)pageContext.getAttribute(TagLibConstant.CENTER_CELLS_INIT
-                                                       + this.index)).intValue();
+        int cells = ((Integer)pageContext.getAttribute(TagLibConstant.CENTER_CELLS_INIT + this.index)).intValue();
 
-        int trIndex = ((Integer)pageContext.getAttribute(TagLibConstant.CENTER_TRS_INDEX
-                                                         + this.index)).intValue();
+        int trIndex = ((Integer)pageContext.getAttribute(TagLibConstant.CENTER_TRS_INDEX + this.index)).intValue();
 
         // 需要折行了
         if (allIndex % cells == 0)
         {
             String clc = null;
+
             if (trIndex % 2 == 0)
             {
                 clc = "content1";
@@ -82,7 +80,25 @@ public class PageBodyCell extends BodyTagCenterSupport
             buffer.append("<tr class='" + clc + "' " + trId + ">").append("\r\n");
         }
 
-        writeStart(buffer);
+        String colspan = "";
+
+        int colInt = 1;
+
+        if (end)
+        {
+            // 整个TR结束 colspan='2'
+            if ( (allIndex + 1) % cells != 0)
+            {
+                colInt = (cells * 2) - (allIndex % cells) * 2 - 1;
+            }
+
+            colspan = "colspan='" + colInt + "'";
+
+            pageContext.setAttribute(TagLibConstant.CENTER_CELL_INDEX + this.index, new Integer(
+                allIndex + (cells - (allIndex % cells)) - 1));
+        }
+
+        writeStart(buffer, colspan);
 
         this.writeContext(buffer.toString());
 
@@ -95,14 +111,11 @@ public class PageBodyCell extends BodyTagCenterSupport
         // 页面显示的字符
         StringBuffer buffer = new StringBuffer();
 
-        int allIndex = ((Integer)pageContext.getAttribute(TagLibConstant.CENTER_CELL_INDEX
-                                                          + this.index)).intValue() + 1;
+        int allIndex = ((Integer)pageContext.getAttribute(TagLibConstant.CENTER_CELL_INDEX + this.index)).intValue() + 1;
 
-        int cells = ((Integer)pageContext.getAttribute(TagLibConstant.CENTER_CELLS_INIT
-                                                       + this.index)).intValue();
+        int cells = ((Integer)pageContext.getAttribute(TagLibConstant.CENTER_CELLS_INIT + this.index)).intValue();
 
-        int trIndex = ((Integer)pageContext.getAttribute(TagLibConstant.CENTER_TRS_INDEX
-                                                         + this.index)).intValue();
+        int trIndex = ((Integer)pageContext.getAttribute(TagLibConstant.CENTER_TRS_INDEX + this.index)).intValue();
 
         writeEnd(buffer);
 
@@ -110,19 +123,17 @@ public class PageBodyCell extends BodyTagCenterSupport
         {
             buffer.append("</tr>");
 
-            pageContext.setAttribute(TagLibConstant.CENTER_TRS_INDEX + this.index, new Integer(
-                trIndex + 1));
+            pageContext.setAttribute(TagLibConstant.CENTER_TRS_INDEX + this.index, new Integer(trIndex + 1));
         }
 
-        pageContext.setAttribute(TagLibConstant.CENTER_CELL_INDEX + this.index, new Integer(
-            allIndex));
+        pageContext.setAttribute(TagLibConstant.CENTER_CELL_INDEX + this.index, new Integer(allIndex));
 
         this.writeContext(buffer.toString());
 
         return EVAL_PAGE;
     }
 
-    private void writeStart(StringBuffer buffer)
+    private void writeStart(StringBuffer buffer, String colspan)
     {
         String line = "\r\n";
 
@@ -140,11 +151,9 @@ public class PageBodyCell extends BodyTagCenterSupport
         {
             ti = title + '：';
         }
-        buffer.append(
-            "<td width='" + width + "%' align='" + align + "'" + temp + ">" + ti + "</td>").append(
-            line);
+        buffer.append("<td width='" + width + "%' align='" + align + "'" + temp + ">" + ti + "</td>").append(line);
 
-        buffer.append("<td width=" + getLastWidth() + "% " + temp1 + ">").append(line);
+        buffer.append("<td width=" + getLastWidth() + "% " + temp1 + " " + colspan + ">").append(line);
 
     }
 
@@ -203,6 +212,23 @@ public class PageBodyCell extends BodyTagCenterSupport
     public void setId(String id)
     {
         this.id = id;
+    }
+
+    /**
+     * @return the end
+     */
+    public boolean isEnd()
+    {
+        return end;
+    }
+
+    /**
+     * @param end
+     *            the end to set
+     */
+    public void setEnd(boolean end)
+    {
+        this.end = end;
     }
 
 }
