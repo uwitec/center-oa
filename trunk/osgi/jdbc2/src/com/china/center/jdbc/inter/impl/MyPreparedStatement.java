@@ -10,13 +10,16 @@ import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.NClob;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.Ref;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
+import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -24,10 +27,9 @@ import java.util.Calendar;
 import com.china.center.jdbc.inter.Convert;
 
 
-
 /**
  * ISPPreparedStatement的借用实现
- *
+ * 
  * @author ZHUZHU
  * @version 2007-3-7
  * @see MyPreparedStatement
@@ -503,5 +505,166 @@ public class MyPreparedStatement implements PreparedStatement
         throws SQLException
     {
         ps.setQueryTimeout(seconds);
+    }
+
+    public void setAsciiStream(int parameterIndex, InputStream x)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setAsciiStream(int parameterIndex, InputStream x, long length)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setBinaryStream(int parameterIndex, InputStream x)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setBinaryStream(int parameterIndex, InputStream x, long length)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setBlob(int parameterIndex, InputStream inputStream)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setBlob(int parameterIndex, InputStream inputStream, long length)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setCharacterStream(int parameterIndex, Reader reader)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setCharacterStream(int parameterIndex, Reader reader, long length)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setClob(int parameterIndex, Reader reader)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setClob(int parameterIndex, Reader reader, long length)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setNCharacterStream(int parameterIndex, Reader value)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setNCharacterStream(int parameterIndex, Reader value, long length)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setNClob(int parameterIndex, NClob value)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setNClob(int parameterIndex, Reader reader)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setNClob(int parameterIndex, Reader reader, long length)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setNString(int parameterIndex, String value)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setRowId(int parameterIndex, RowId x)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public void setSQLXML(int parameterIndex, SQLXML xmlObject)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public boolean isClosed()
+        throws SQLException
+    {
+        // Auto-generated method stub
+        return false;
+    }
+
+    public boolean isPoolable()
+        throws SQLException
+    {
+        // Auto-generated method stub
+        return false;
+    }
+
+    public void setPoolable(boolean poolable)
+        throws SQLException
+    {
+        // Auto-generated method stub
+
+    }
+
+    public boolean isWrapperFor(Class<?> iface)
+        throws SQLException
+    {
+        // Auto-generated method stub
+        return false;
+    }
+
+    public <T> T unwrap(Class<T> iface)
+        throws SQLException
+    {
+        // Auto-generated method stub
+        return null;
     }
 }
