@@ -1,3 +1,4 @@
+
 <%@ page contentType="text/html;charset=UTF-8" language="java"
 	errorPage="../common/error.jsp"%>
 <%@include file="../common/common.jsp"%>
@@ -38,14 +39,14 @@ function addBean()
 
 		<p:table cells="1">
 
-			<p:pro field="value" />
-			
 			<p:pro field="type">
 				<option value="">--</option>
 				<c:forEach items="${enumDefineList}" var="item">
 				<option value="${item.name}">${item.cnname}</option>
 				</c:forEach>
 			</p:pro>
+			
+			<p:pro field="value" />
 
 		</p:table>
 	</p:subBody>
