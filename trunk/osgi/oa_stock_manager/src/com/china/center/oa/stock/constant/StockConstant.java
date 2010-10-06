@@ -180,4 +180,22 @@ public interface StockConstant
     @Defined(key = "stockInvoice", value = "需要发票")
     int INVOICE_YES = 1;
 
+    /**
+     * 普通采购
+     */
+    @Defined(key = "stockStype", value = "普通采购")
+    int STOCK_STYPE_COMMON = 0;
+
+    /**
+     * 代销采购
+     */
+    @Defined(key = "stockStype", value = "代销采购")
+    int STOCK_STYPE_ISAIL = 1;
+
+    /**
+     * 外协加工
+     */
+    @Defined(key = "stockStype", value = "外协加工")
+    int STOCK_STYPE_NSAIL = 2;
+
 }

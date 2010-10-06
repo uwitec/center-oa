@@ -24,6 +24,7 @@ import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.AuthConstant;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
@@ -197,7 +198,7 @@ public class StockManagerImpl implements StockManager
         // TODO_OSGI 采购入库
 
         // 更新状态并且记录日志
-        updateStockStatus(user, id, StockConstant.STOCK_STATUS_LASTEND, 0, "");
+        updateStockStatus(user, id, StockConstant.STOCK_STATUS_LASTEND, PublicConstant.OPRMODE_PASS, "");
 
         return fullId;
     }
@@ -224,7 +225,11 @@ public class StockManagerImpl implements StockManager
         // 更新采购主单据
         stockDAO.updateStatus(id, nextStatus);
 
-        stockDAO.updateExceptStatus(id, StockConstant.EXCEPTSTATUS_COMMON);
+        // 只有驳回
+        if (oprMode == PublicConstant.OPRMODE_REJECT)
+        {
+            stockDAO.updateExceptStatus(id, StockConstant.EXCEPTSTATUS_COMMON);
+        }
 
         addLog(user, id, nextStatus, sb, oprMode, reason);
 
@@ -321,6 +326,37 @@ public class StockManagerImpl implements StockManager
             stockDAO.updateTotal(id, total);
         }
 
+        String reason = "";
+
+        // 区域经理通过的时候,要是代销采购直接跳过询价
+        if (nextStatus == StockConstant.STOCK_STATUS_MANAGERPASS)
+        {
+            if (sb.getStype() == StockConstant.STOCK_STYPE_ISAIL)
+            {
+                nextStatus = StockConstant.STOCK_STATUS_PRICEPASS;
+            }
+
+            total = 0.0d;
+
+            // 这里直接处理无需询价的逻辑
+            for (StockItemBean stockItemBean : itemList)
+            {
+                stockItemBean.setStatus(StockConstant.STOCK_ITEM_STATUS_ASK);
+
+                stockItemBean.setPrice(stockItemBean.getPrePrice());
+
+                stockItemBean.setTotal(stockItemBean.getPrice() * stockItemBean.getAmount());
+
+                stockItemDAO.updateEntityBean(stockItemBean);
+
+                total += stockItemBean.getTotal();
+            }
+
+            stockDAO.updateTotal(id, total);
+
+            reason = "代销采购无需询价";
+        }
+
         // 采购主管通过后到 单比金额大于5万，或者是选择价格不是最低，需要采购经理审核
         if (sb.getStatus() == StockConstant.STOCK_STATUS_PRICEPASS)
         {
@@ -364,8 +400,6 @@ public class StockManagerImpl implements StockManager
             }
         }
 
-        String reason = "";
-
         // 处理外网询价的特殊流程
         if (nextStatus == StockConstant.STOCK_STATUS_MANAGERPASS && sb.getType() == PriceConstant.PRICE_ASK_TYPE_NET)
         {
@@ -375,7 +409,7 @@ public class StockManagerImpl implements StockManager
             reason = "外网询价采购无需询价员询价";
         }
 
-        updateStockStatus(user, id, nextStatus, 0, reason);
+        updateStockStatus(user, id, nextStatus, PublicConstant.OPRMODE_PASS, reason);
 
         return true;
     }
@@ -466,8 +500,8 @@ public class StockManagerImpl implements StockManager
 
                 if (ppb.getSupportAmount() < sum)
                 {
-                    throw new MYException("外网采购中供应商[%s]提供的产品[%s]数量只有%d已经使用了%d,你请求的采购数量[%d]已经超出(可能其他业务员已经采购一空)", ppb
-                        .getProviderName(), ppb.getProductName(), ppb.getSupportAmount(), (sum - iitem.getAmount()),
+                    throw new MYException("外网采购中供应商[%s]提供的产品[%s]数量只有%d已经使用了%d,你请求的采购数量[%d]已经超出(可能其他业务员已经采购一空)",
+                        ppb.getProviderName(), ppb.getProductName(), ppb.getSupportAmount(), (sum - iitem.getAmount()),
                         iitem.getAmount());
                 }
             }
@@ -567,7 +601,7 @@ public class StockManagerImpl implements StockManager
 
         recoverStockItemAsk(id);
 
-        return updateStockStatus(user, id, nextStatus, 1, reason);
+        return updateStockStatus(user, id, nextStatus, PublicConstant.OPRMODE_REJECT, reason);
     }
 
     /**
@@ -632,7 +666,8 @@ public class StockManagerImpl implements StockManager
 
         recoverStockItemAsk(id);
 
-        return updateStockStatus(user, id, StockConstant.STOCK_STATUS_MANAGERPASS, 1, reason);
+        return updateStockStatus(user, id, StockConstant.STOCK_STATUS_MANAGERPASS, PublicConstant.OPRMODE_REJECT,
+            reason);
     }
 
     /*

@@ -61,9 +61,15 @@ public class StockBean implements Serializable
     private int type = PriceConstant.PRICE_ASK_TYPE_INNER;
 
     /**
+     * 采购类型
+     */
+    @Html(title = "采购类型", type = Element.SELECT, must = true)
+    private int stype = StockConstant.STOCK_STYPE_COMMON;
+
+    /**
      * 采购属性【公卖、自卖】
      */
-    @Html(title = "采购类型", must = true, type = Element.SELECT)
+    @Html(title = "采购属性", must = true, type = Element.SELECT)
     private int stockType = StockConstant.STOCK_SAILTYPE_PUBLIC;
 
     private String logTime = "";
@@ -431,68 +437,17 @@ public class StockBean implements Serializable
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue
-            .append("StockBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("userId = ")
-            .append(this.userId)
-            .append(TAB)
-            .append("stafferId = ")
-            .append(this.stafferId)
-            .append(TAB)
-            .append("locationId = ")
-            .append(this.locationId)
-            .append(TAB)
-            .append("status = ")
-            .append(this.status)
-            .append(TAB)
-            .append("exceptStatus = ")
-            .append(this.exceptStatus)
-            .append(TAB)
-            .append("needTime = ")
-            .append(this.needTime)
-            .append(TAB)
-            .append("willDate = ")
-            .append(this.willDate)
-            .append(TAB)
-            .append("nearlyPayDate = ")
-            .append(this.nearlyPayDate)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("stockType = ")
-            .append(this.stockType)
-            .append(TAB)
-            .append("logTime = ")
-            .append(this.logTime)
-            .append(TAB)
-            .append("flow = ")
-            .append(this.flow)
-            .append(TAB)
-            .append("total = ")
-            .append(this.total)
-            .append(TAB)
-            .append("pay = ")
-            .append(this.pay)
-            .append(TAB)
-            .append("invoice = ")
-            .append(this.invoice)
-            .append(TAB)
-            .append("invoiceType = ")
-            .append(this.invoiceType)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append("item = ")
-            .append(this.item)
-            .append(TAB)
-            .append(" )");
+        retValue.append("StockBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(TAB).append(
+            "userId = ").append(this.userId).append(TAB).append("stafferId = ").append(this.stafferId).append(TAB).append(
+            "locationId = ").append(this.locationId).append(TAB).append("status = ").append(this.status).append(TAB).append(
+            "exceptStatus = ").append(this.exceptStatus).append(TAB).append("needTime = ").append(this.needTime).append(
+            TAB).append("willDate = ").append(this.willDate).append(TAB).append("nearlyPayDate = ").append(
+            this.nearlyPayDate).append(TAB).append("type = ").append(this.type).append(TAB).append("stockType = ").append(
+            this.stockType).append(TAB).append("logTime = ").append(this.logTime).append(TAB).append("flow = ").append(
+            this.flow).append(TAB).append("total = ").append(this.total).append(TAB).append("pay = ").append(this.pay).append(
+            TAB).append("invoice = ").append(this.invoice).append(TAB).append("invoiceType = ").append(this.invoiceType).append(
+            TAB).append("description = ").append(this.description).append(TAB).append("item = ").append(this.item).append(
+            TAB).append(" )");
 
         return retValue.toString();
     }
@@ -529,5 +484,22 @@ public class StockBean implements Serializable
         }
         else if ( !id.equals(other.id)) return false;
         return true;
+    }
+
+    /**
+     * @return the stype
+     */
+    public int getStype()
+    {
+        return stype;
+    }
+
+    /**
+     * @param stype
+     *            the stype to set
+     */
+    public void setStype(int stype)
+    {
+        this.stype = stype;
     }
 }
