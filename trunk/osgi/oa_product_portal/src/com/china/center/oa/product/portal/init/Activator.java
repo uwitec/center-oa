@@ -30,7 +30,7 @@ public class Activator implements BundleActivator
     public void start(BundleContext context)
         throws Exception
     {
-        // 加载jsp资源到webapp下面
+        // 加载JSP资源到WEBAPP下面
         ResourceLoad.init(context, "");
 
         FilterLoad.loadIgnoreFilterMatch(filterMatchList);

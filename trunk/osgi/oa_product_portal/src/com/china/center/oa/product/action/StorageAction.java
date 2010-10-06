@@ -31,6 +31,7 @@ import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.actionhelper.json.AjaxResult;
+import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
@@ -130,7 +131,17 @@ public class StorageAction extends DispatchAction
         ActionTools.processJSONQueryCondition(QUERYSTORAGERELATION, request, condtion);
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSTORAGERELATION, request, condtion,
-            this.storageRelationDAO);
+            this.storageRelationDAO, new HandleResult<StorageRelationVO>()
+            {
+                public void handle(StorageRelationVO vo)
+                {
+                    if (StringTools.isNullOrNone(vo.getStafferName()))
+                    {
+                        vo.setStafferName("公共");
+                    }
+
+                }
+            });
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -633,6 +644,14 @@ public class StorageAction extends DispatchAction
                 RPTQUERYPRODUCTINDEPOTPART), PageSeparateTools.getPageSeparate(request, RPTQUERYPRODUCTINDEPOTPART));
         }
 
+        for (StorageRelationVO vo : list)
+        {
+            if (StringTools.isNullOrNone(vo.getStafferName()))
+            {
+                vo.setStafferName("公共");
+            }
+        }
+
         request.setAttribute("beanList", list);
 
         return mapping.findForward("rptQueryProductInDepotpart");
@@ -643,6 +662,8 @@ public class StorageAction extends DispatchAction
         String name = request.getParameter("name");
 
         String code = request.getParameter("code");
+
+        String stafferId = request.getParameter("stafferId");
 
         String storageName = request.getParameter("storageName");
 
@@ -671,6 +692,11 @@ public class StorageAction extends DispatchAction
         if ( !StringTools.isNullOrNone(depotpartId))
         {
             condtion.addCondition("StorageRelationBean.depotpartId", "=", depotpartId);
+        }
+
+        if ( !StringTools.isNullOrNone(stafferId))
+        {
+            condtion.addCondition("StorageRelationBean.stafferId", "=", stafferId);
         }
 
         return condtion;

@@ -21,6 +21,8 @@
 	
 	<osgi:reference id="commonDAO" interface="com.china.center.oa.publics.dao.CommonDAO" />
 	
+	<osgi:reference id="enumDAO" interface="com.china.center.oa.publics.dao.EnumDAO" />
+	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	
 	<osgi:reference id="locationDAO" interface="com.china.center.oa.publics.dao.LocationDAO" />
@@ -60,5 +62,9 @@
 	<osgi:reference id="storageManager" interface="com.china.center.oa.product.manager.StorageManager" />
 
 	<osgi:reference id="depotpartManager" interface="com.china.center.oa.product.manager.DepotpartManager" />
-
+	
+	<osgi:reference id="composeProductDAO" interface="com.china.center.oa.product.dao.ComposeProductDAO" />
+	
+	<osgi:reference id="priceChangeDAO" interface="com.china.center.oa.product.dao.PriceChangeDAO" />
+	
 </beans>

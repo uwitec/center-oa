@@ -7,6 +7,11 @@
             <forward name="configProductVSLocation"/>
             <forward name="rptQueryProduct"/>
             <forward name="queryApplyProduct"/>
+            <forward name="composeProduct"/>
+            <forward name="detailCompose"/>
+            <forward name="priceChange"/>
+            <forward name="queryPriceChange"/>
+            <forward name="detailPriceChange"/>
         </action>
         
 		<action path="/provider/provider" parameter="method"

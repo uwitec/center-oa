@@ -35,7 +35,7 @@ function selectProducts()
 		return;
 	}
 	
-	window.common.modal('../depot/storage.do?method=rptQueryProductInDepotpart&load=1&selectMode=1&depotpartId='+ depotpartId);
+	window.common.modal('../depot/storage.do?method=rptQueryProductInDepotpart&load=1&stafferId=0&selectMode=1&depotpartId='+ depotpartId);
 }
 
 function applyPasswords()

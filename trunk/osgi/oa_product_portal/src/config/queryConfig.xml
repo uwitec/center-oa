@@ -165,5 +165,65 @@
 			<option>$depotpartType</option>
 		</condtion>
 	</item>
+	
+	<item name="queryCompose" deaultpfix="ComposeProductBean">
+		<condtion name="id" caption="标识">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="pname" filed="name" caption="合成产品名称" pfix="ProductBean">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="pcode" filed="code" caption="合成产品编码" pfix="ProductBean">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="stafferId" caption="合成人">
+			<opr>=</opr>
+			<datatype>0</datatype>
+			<type>select</type>
+			<option>$staffer</option>
+		</condtion>
+		<condtion name="type" caption="类型">
+			<opr>=</opr>
+			<datatype>1</datatype>
+			<type>select</type>
+			<option>$composeType</option>
+		</condtion>
+	</item>
+	
+	<item name="queryPriceChange" deaultpfix="PriceChangeBean">
+		<condtion name="alogTime" filed="logTime" caption="开始时间">
+            <opr>&gt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="blogTime" filed="logTime" caption="结束时间">
+            <opr>&lt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+		<condtion name="id" caption="标识">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="status" caption="状态">
+			<opr>=</opr>
+			<datatype>1</datatype>
+			<type>select</type>
+			<option>$priceChangeStatus</option>
+		</condtion>
+		<condtion name="stafferId" caption="调价人">
+			<opr>=</opr>
+			<datatype>0</datatype>
+			<type>select</type>
+			<option>$staffer</option>
+		</condtion>
+		<condtion name="description" caption="原因">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+	</item>
 
 </query>

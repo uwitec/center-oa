@@ -213,7 +213,7 @@ function load()
 			onclick="javascript:history.go(-1)"></div>
 	</p:button>
 
-	<p:message/>
+	<p:message2/>
 </p:body></form>
 </body>
 </html>

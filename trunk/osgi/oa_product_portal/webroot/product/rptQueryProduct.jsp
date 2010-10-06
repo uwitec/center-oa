@@ -74,6 +74,7 @@ function pop(obj)
 	type="hidden" value="1" name="load"><input
     type="hidden" value="${selectMode}" name="selectMode"> 
 <input type="hidden" value="${abstractType}" name="abstractType">
+<input type="hidden" value="${ctype}" name="ctype">
 <input type="hidden" value="${status}" name="status">
 
 <p:navigation

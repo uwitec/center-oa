@@ -68,6 +68,7 @@ function closesd()
 	type="hidden" name="method" value="rptQueryProductInDepotpart"><input
 	type="hidden" value="1" name="load">
 <input type="hidden" value="${depotpartId}" name="depotpartId">
+<input type="hidden" value="${stafferId}" name="stafferId">
 <input type="hidden" value="${selectMode}" name="selectMode">
 <p:navigation
 	height="22">
@@ -97,7 +98,7 @@ function closesd()
 	</p:subBody>
 
 	<p:title>
-		<td class="caption"><strong>职员列表：</strong></td>
+		<td class="caption"><strong>库存列表：</strong></td>
 	</p:title>
 
 	<p:line flag="0" />
@@ -112,17 +113,19 @@ function closesd()
 				<td align="center"><strong>产品</strong></td>
 				<td align="center"><strong>数量</strong></td>
 				<td align="center"><strong>价格</strong></td>
+				<td align="center"><strong>职员</strong></td>
 			</tr>
 
 			<c:forEach items="${beanList}" var="item" varStatus="vs">
 				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
-					<td align="center"><input type='${selectMode == 1 ? "radio" : "checkbox"}' name="beans"
+					<td align="center"><input type='${selectMode == 1 ? "radio" : "checkbox"}' name="beans" ppid="${item.productId}"
 						pname="${item.productName}" pprice="${my:formatNum(item.price)}" pamount="${item.amount}" value="${item.id}"/></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.depotpartName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.storageName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.productName}(${item.productCode})</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.amount}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.price)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
 				</tr>
 			</c:forEach>
 		</table>

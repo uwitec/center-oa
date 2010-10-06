@@ -34,7 +34,8 @@ function load()
              {display: '价格', name : 'price', toFixed: 2, sortable : true, width : '10%'},
              {display: '储位', name : 'storageName', width : '10%'},
              {display: '仓区', name : 'depotpartName', width : '10%'},
-             {display: '仓库', name : 'locationName', width : 'auto'}
+             {display: '仓库', name : 'locationName', width : '10%'},
+             {display: '职员', name : 'stafferName', width : 'auto'}
              ],
          extAtt: {
              //name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
