@@ -39,22 +39,22 @@ function lverify()
 			
 			isSelect = true;
 
-			if ($O(customerName_' + i).value == '' || $O(customerId_' + i).value == '' )
+			if ($O('customerName_' + i).value == '' || $O('customerId_' + i).value == '' )
 			{
 				alert('供应商不能为空');
 				return false;
 			}
 
 
-			if (imap[$O(customerId_' + i).value] == $O(customerId_' + i).value)
+			if (imap[$O('customerId_' + i).value] == $O('customerId_' + i).value)
 			{
 				alert('选择的供应商不能重复');
 				return false;
 			}
 			
-			tmpAmount += parseInt($O(amount_' + i).value);
+			tmpAmount += parseInt($O('amount_' + i).value);
 
-			imap[$O(customerId_' + i).value] = $O(customerId_' + i).value;
+			imap[$O('customerId_' + i).value] = $O('customerId_' + i).value;
 		}
 	}
 
@@ -72,6 +72,7 @@ function lverify()
 
 	return true;
 }
+
 function load()
 {
 	loadForm();
@@ -97,9 +98,9 @@ function init()
 		}
 		else
 		{
-			$O(price_' + index).value = '';
-			$O(customerName_' + index).value = '';
-			$O(customerId_' + index).value = '';
+			$O('price_' + index).value = '';
+			$O('customerName_' + index).value = '';
+			$O('customerId_' + index).value = '';
 			$d('qout_' + index);
 			$d('price_' + index);
 			$d('amount_' + index);
@@ -119,10 +120,10 @@ function getPriceAskProvider(oo)
 {
     if (cindex != -1)
     {
-        $("customerName_" + cindex).value = oo.pproviderName;
-        $("customerId_" + cindex).value = oo.pprovideriId;
-        $("price_" + cindex).value = oo.pp;
-        $("netaskId_" + cindex).value = oo.ppid;
+        $O("customerName_" + cindex).value = oo.pproviderName;
+        $O("customerId_" + cindex).value = oo.pprovideriId;
+        $O("price_" + cindex).value = oo.pp;
+        $O("netaskId_" + cindex).value = oo.ppid;
     }
 }
 

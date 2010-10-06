@@ -385,7 +385,7 @@ public class StockAction extends DispatchAction
             {
                 stockManager.passStock(user, id);
 
-                request.setAttribute(KeyConstant.MESSAGE, "成功修改采购单状态:" + id);
+                request.setAttribute(KeyConstant.MESSAGE, "成功处理采购单:" + id);
             }
             else
             {
@@ -394,7 +394,7 @@ public class StockAction extends DispatchAction
                     stockManager.rejectStock(user, id, reason);
                 }
 
-                request.setAttribute(KeyConstant.MESSAGE, "成功修改采购单状态:" + id);
+                request.setAttribute(KeyConstant.MESSAGE, "成功处理采购单:" + id);
 
                 if ("2".equals(reject))
                 {
@@ -408,7 +408,7 @@ public class StockAction extends DispatchAction
         {
             _logger.warn(e, e);
 
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "修改采购单状态失败:" + e.getMessage());
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理采购单失败:" + e.getMessage());
         }
 
         CommonTools.saveParamers(request);
@@ -1204,6 +1204,11 @@ public class StockAction extends DispatchAction
         {
             condtion.addIntCondition("StockBean.type", "=", PriceConstant.PRICE_ASK_TYPE_NET);
         }
+        else
+        {
+            // 采购里面只有内外询价或者外网询价，其他的没有
+            condtion.addIntCondition("StockBean.type", "=", PriceConstant.PRICE_ASK_TYPE_INNER);
+        }
 
         // manager
         if (type == 1)
@@ -1284,6 +1289,13 @@ public class StockAction extends DispatchAction
         if ( !StringTools.isNullOrNone(stype))
         {
             condtion.addIntCondition("StockBean.type", "=", stype);
+        }
+
+        String stockType = request.getParameter("stype");
+
+        if ( !StringTools.isNullOrNone(stockType))
+        {
+            condtion.addIntCondition("StockBean.stype", "=", stockType);
         }
 
         String id = request.getParameter("ids");

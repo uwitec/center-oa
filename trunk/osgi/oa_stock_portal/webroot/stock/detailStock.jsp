@@ -92,6 +92,11 @@ function out(id)
 				<option value="">--</option>
                <p:option type="stockSailType"></p:option>
             </p:pro>
+            
+            <p:pro field="stype">
+				<option value="">--</option>
+               <p:option type="stockStype"></p:option>
+            </p:pro>
 			
             <p:pro field="invoiceType" innerString="style='width: 240px'">
                 <option value="">没有发票</option>
@@ -126,7 +131,7 @@ function out(id)
             
             <p:pro field="willDate"/>
             
-            <p:pro field="nearlyPayDate"/>
+            <p:pro field="nearlyPayDate" cell="2"/>
 
 			<p:cells celspan="2" title="备注">
 			${bean.description}

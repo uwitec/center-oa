@@ -4,9 +4,12 @@
 <html>
 <head>
 <p:link title="采购单" />
+<link href="../js/plugin/dialog/css/dialog.css" type="text/css" rel="stylesheet"/>
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
+<script src="../js/jquery/jquery.js"></script>
+<script src="../js/plugin/dialog/jquery.dialog.js"></script>
 
 <script language="javascript">
 function ask(id)
@@ -16,11 +19,31 @@ function ask(id)
 
 function passTO()
 {
-	if (window.confirm('确定通过此采购单?'))
-	{
-		$O('pass').value = '1';
-		formEntry.submit();
-	}
+	$.messager.prompt('最早付款日期', '请选择最早付款日期', '', function(value, opr){
+                if (opr)
+                {
+                    $Dbuttons(true);
+                    
+                    var sss = value;
+                    
+                    if (!(sss == null || sss == ''))
+                    {
+                    	$O('nearlyPayDate').value = sss;
+                        $O('method').value = 'updateStockStatus';
+						$O('reject').value = '';
+						$O('pass').value = '1';
+						formEntry.submit();
+                    }
+                    else
+                    {
+                    	alert('请选择最早付款日期');
+                    	
+                        $Dbuttons(false);
+                        
+                        passTo(id, type);
+                    }
+                }
+            }, 1);
 }
 </script>
 
@@ -67,6 +90,11 @@ function passTO()
 				<option value="">--</option>
                <p:option type="stockSailType"></p:option>
             </p:pro>
+            
+             <p:pro field="stype">
+				<option value="">--</option>
+               <p:option type="stockStype"></p:option>
+            </p:pro>
 			
             <p:pro field="invoiceType" innerString="style='width: 240px'">
                 <option value="">没有发票</option>
@@ -101,7 +129,7 @@ function passTO()
             
             <p:pro field="willDate"/>
             
-            <p:pro field="nearlyPayDate"/>
+            <p:pro field="nearlyPayDate" cell="2"/>
 
 			<p:cells celspan="2" title="备注">
 			${bean.description}

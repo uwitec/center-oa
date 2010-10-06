@@ -128,7 +128,7 @@ function showDiv(id)
 
 function passTo(id, type)
 {
-	if (type != 4)
+	if (type != 4 && type != 2)
 	{
 		if (window.confirm('确定通过此采购单?'))
 		{
@@ -308,14 +308,11 @@ function exports()
 						<option value="${item.id}">${item.name}</option>
 					</c:forEach>
 				</select></td>
-				<td align="center">付款</td>
-				<td align="center" width="35%"><select name="pay"
-					class="select_class" values="${pay}">
+				<td align="center">采购类型</td>
+				<td align="center" width="35%"><select name="stype"
+					class="select_class" values="${stype}">
 					<option value="">--</option>
-					<option value="0">未付款</option>
-					<option value="1">已付款</option>
-					<option value="2">付款申请</option>
-					<option value="3">申请驳回</option>
+					<p:option type="stockStype"></p:option>
 				</select></td>
 			</tr>
 
@@ -373,7 +370,7 @@ function exports()
 				<td align="center" class="td_class" onclick="tableSort(this, true)"
 					width="10%"><strong>合计金额</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
-					width="5%"><strong>付款</strong></td>
+					width="5%"><strong>采购类型</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="10%"><strong>更新时间</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
@@ -388,8 +385,7 @@ function exports()
 						href="../stock/stock.do?method=findStock&id=${item.id}">
 					${item.id} </a></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.userName}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${my:get('stockStatus',
-					item.status)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:get('stockStatus', item.status)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.locationName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskType', item.type)}</td>
 					<c:if test="${item.overTime == 0}">
@@ -401,8 +397,9 @@ function exports()
 							color=red>${item.needTime}</font></td>
 					</c:if>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${my:get('stockPay', item.pay)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:get('stockStype', item.stype)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.logTime}</td>
+					
 					<td align="center" onclick="hrefAndSelect(this)">
 					<c:if test="${item.display == 0}">
 						<c:if test="${ltype == '0'}">
@@ -428,7 +425,7 @@ function exports()
 							<a title="采购单询价" href="javascript:ask('${item.id}')"> <img id="ask_img_${vs.index}"
 								src="../images/opr/change.gif" border="0" height="15" width="15"></a>
 
-							<a title="审批通过采购单" href="javascript:passTo('${item.id}')"> <img
+							<a title="审批通过采购单" href="javascript:passTo('${item.id}', '${ltype}')"> <img
 								src="../images/opr/realse.gif" border="0" height="15" width="15"></a>
 
 							<a title="驳回采购单" href="javascript:reject('${item.id}')"> <img
@@ -438,14 +435,19 @@ function exports()
 						<c:if test="${ltype == '2'}">
                             <a title="采购单询价" href="javascript:ask('${item.id}')"> <img id="ask_img_${vs.index}"
                                 src="../images/opr/change.gif" border="0" height="15" width="15"></a>
+                                
+                            <a title="审批通过采购单" href="javascript:passTo('${item.id}', '${ltype}')"> <img
+								src="../images/opr/realse.gif" border="0" height="15" width="15"></a>
 
                             <a title="驳回采购单" href="javascript:reject('${item.id}')"> <img
                                 src="../images/opr/reject.gif" border="0" height="15" width="15"></a>
                         </c:if>
 						
 						<c:if test="${ltype == '4'}">
+							<c:if test="${item.stype != 1}">
 							<a title="询价变动" href="javascript:askChange('${item.id}')"> <img
 								src="../images/opr/change.gif" border="0" height="15" width="15"></a>
+							</c:if>
 							<c:if test="${item.status == 7}">
 								<a title="采购结束" href="javascript:end('${item.id}')"> <img id="end_img_${vs.index}"
 									src="../images/opr/end.gif" border="0" height="15" width="15"></a>
@@ -462,7 +464,7 @@ function exports()
 					
 					</c:if> 
 					
-					<c:if test="${user.role == 'ADMIN' && item.status == 8}">
+					<c:if test="${item.status == 8}">
 						<a title="采购生成调出" href="javascript:out('${item.id}')"> <img
 							src="../images/opr/change.gif" border="0" height="15" width="15"></a>
 					</c:if> 

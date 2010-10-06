@@ -98,7 +98,7 @@ public abstract class StockHelper
 
         if (i == 4)
         {
-            return "核价员通过";
+            return "询价员通过";
         }
 
         if (i == 5)

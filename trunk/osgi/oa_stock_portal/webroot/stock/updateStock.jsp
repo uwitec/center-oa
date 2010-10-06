@@ -72,6 +72,8 @@ function load()
 	isel();
 
 	init();
+	
+	change();
 }
 
 function isel()
@@ -150,6 +152,39 @@ function getPriceAskProvider(oo)
     }
 }
 
+
+function change()
+{
+	if ($$('stype') == '1')
+	{
+		$hide('type_TR', true);
+		$hide('type', true);
+		$hide('stockType_TR', true);
+		$hide('stockType', true);
+		
+		return;
+	}
+	else
+	{
+		$hide('type_TR', false);
+		$hide('type', false);
+		$hide('stockType_TR', false);
+		$hide('stockType', false);
+	}
+	
+	if ($$('stype') == '2')
+	{
+		$hide('stockType_TR', true);
+		$hide('stockType', true);
+		
+		return;
+	}
+	else
+	{
+		$hide('stockType_TR', false);
+		$hide('stockType', false);
+	}
+}
 </script>
 
 </head>
@@ -188,6 +223,11 @@ function getPriceAskProvider(oo)
 		<p:class value="com.china.centet.yongyin.bean.StockBean" opr="1"/>
 
 		<p:table cells="1">
+			<p:pro field="stype" outString="代销采购不占用自有资金,付款方式使用委托代销清单付款,无需询价" innerString="onchange=change()">
+				<option value="">--</option>
+               <p:option type="stockStype"></p:option>
+            </p:pro>
+            
 			<p:pro field="needTime" value="${bean.needTime}"/>
 			
 			<p:pro field="willDate"/>

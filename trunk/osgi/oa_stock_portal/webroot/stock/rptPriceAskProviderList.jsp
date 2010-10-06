@@ -7,6 +7,7 @@
 <p:link title="外网询价查询" />
 <script src="../js/prototype.js"></script>
 <script src="../js/public.js"></script>
+<script src="../js/tableSort.js"></script>
 <script src="../js/common.js"></script>
 <script language="javascript">
 
@@ -40,101 +41,24 @@ function query()
 }
 
 </script>
-<title>外网询价列表</title>
-
-<link href="../css/center.css" type=text/css rel=stylesheet>
-<script src="../js/CommonScriptMethod.js"></script>
-</head>
-<body class="body_class" onload="loadForm(adminForm)">
-<form action="./common.do" name="adminForm"><input type="hidden"
-	value="rptUser" name="method">
+<body class="body_class" onload="loadForm()">
+<form>
 <input type="hidden" value="l" name="load">
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-	<tr>
-		<td height="22" valign="bottom">
-		<table width="100%" height="22" border="0" cellpadding="0"
-			cellspacing="0">
-			<tr valign="middle">
-				<td width="8"></td>
-				<td width="30">
-				<div align="center"><img src="../images/dot_a.gif" width="9"
-					height="9"></div>
-				</td>
-				<td width="550" class="navigation">日常管理 &gt;&gt; 外网询价列表</td>
-				<td width="85"></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
 
-	<tr>
-		<td height="6" valign="top">
-		<table width="100%" border="0" cellpadding="0" cellspacing="0">
-			<!--DWLayoutTable-->
-			<tr>
-				<td width="8" height="6"
-					background="../images/index_sp_welcome_center_10.gif"><img
-					src="../images/index_sp_welcome_center_07.gif" width="8" height="6"></td>
-				<td width="190"
-					background="../images/index_sp_welcome_center_08.gif"></td>
-				<td width="486"
-					background="../images/index_sp_welcome_center_10.gif"></td>
-				<td align="right"
-					background="../images/index_sp_welcome_center_10.gif">
-				<div align="right"><img
-					src="../images/index_sp_welcome_center_12.gif" width="23"
-					height="6"></div>
-				</td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-</table>
+<p:navigation
+	height="22">
+	<td width="550" class="navigation">外网询价列表</td>
+	<td width="85"></td>
+</p:navigation> <br>
 
-<br>
-<table width="98%" border="0" cellpadding="0" cellspacing="0"
-	align="center">
-	<tr>
-		<td valign="top" colspan='2'>
-		<table width="100%" border="0" cellpadding="0" cellspacing="0">
-			<!--DWLayoutTable-->
-			<tr>
-				<td width="784" height="6"></td>
-			</tr>
-			<tr>
-				<td align="center" valign="top">
-				<div align="left">
-				<table width="90%" border="0" cellspacing="2">
-					<tr>
-						<td>
-						<table width="100%" border="0" cellpadding="0" cellspacing="10">
-							<tr>
-								<td width="35">&nbsp;</td>
-								<td width="6"><img src="../images/dot_r.gif" width="6"
-									height="6"></td>
-								<td class="caption"><strong>浏览外网询价:</strong></td>
-							</tr>
-						</table>
-						</td>
-					</tr>
-				</table>
-				</td>
-			</tr>
-		</table>
-		</td>
-	</tr>
+<p:body width="100%">
+	<p:title>
+		<td class="caption"><strong>产品列表：</strong></td>
+	</p:title>
 
-
-	<tr>
-		<td background="../images/dot_line.gif" colspan='2'></td>
-	</tr>
-
-	<tr>
-		<td height="10" colspan='2'></td>
-	</tr>
-
-	<tr>
-		<td align='center' colspan='2'>
+	<p:line flag="0" />
+	
+	<p:subBody width="90%">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0"
 			class="border">
 			<tr>
@@ -172,33 +96,18 @@ function query()
 				</td>
 			</tr>
 		</table>
-		</td>
-	</tr>
-
-	<tr>
-		<td height="10" colspan='2'></td>
-	</tr>
-
-
-	<tr>
-		<td background="../images/dot_line.gif" colspan='2'></td>
-	</tr>
-
-	<tr>
-		<td height="10" colspan='2'></td>
-	</tr>
-
-	<tr>
-		<td width="100%">
+	</p:subBody>
+	
+	<p:line flag="1" />
+	
+	<p:button leftWidth="100%" rightWidth="0%">
 		<div align="right"><input type="button" class="button_class"
 			value="&nbsp;&nbsp;确 定&nbsp;&nbsp;" onClick="sure()">&nbsp;&nbsp;<input
 			type="button" class="button_class"
 			value="&nbsp;&nbsp;关 闭&nbsp;&nbsp;" onClick="closes()">&nbsp;&nbsp;</div>
-		</td>
-		<td width="0%"></td>
-	</tr>
-</table>
-
+	</p:button>
+	
+</p:body>
 </form>
 </body>
 </html>
