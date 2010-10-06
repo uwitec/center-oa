@@ -23,6 +23,7 @@ import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
+import com.china.center.oa.product.bean.PriceHistoryBean;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.StorageBean;
 import com.china.center.oa.product.bean.StorageLogBean;
@@ -30,6 +31,7 @@ import com.china.center.oa.product.constant.ProductConstant;
 import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.DepotpartDAO;
+import com.china.center.oa.product.dao.PriceHistoryDAO;
 import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.dao.StorageDAO;
 import com.china.center.oa.product.dao.StorageLogDAO;
@@ -40,11 +42,12 @@ import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
 
 /**
- * StorageRelationManagerImpl
+ * StorageRelationManagerImpl(CORE)核心的库存操作类
  * 
  * @author ZHUZHU
  * @version 2010-8-25
@@ -63,6 +66,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
 
     private DepotDAO depotDAO = null;
 
+    private PriceHistoryDAO priceHistoryDAO = null;
+
     private DepotpartDAO depotpartDAO = null;
 
     private StorageDAO storageDAO = null;
@@ -72,6 +77,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
     private CommonDAO commonDAO = null;
 
     private StorageRelationDAO storageRelationDAO = null;
+
+    private static boolean storageRelationLock = false;
 
     /**
      * default constructor
@@ -86,13 +93,54 @@ public class StorageRelationManagerImpl implements StorageRelationManager
      * @see com.china.center.oa.product.manager.StorageRelationManager#changeStorageRelationWithTransaction(com.center.china.osgi.publics.User,
      *      com.china.center.oa.product.wrap.ProductChangeWrap)
      */
-    public synchronized boolean changeStorageRelationWithoutTransaction(User user, ProductChangeWrap bean,
-                                                                        boolean deleteZeroRelation)
+    public synchronized StorageRelationBean changeStorageRelationWithoutTransaction(User user, ProductChangeWrap bean,
+                                                                                    boolean deleteZeroRelation)
         throws MYException
     {
-        String priceKey = StorageRelationHelper.getPriceKey(bean.getPrice());
+        if (StorageRelationManagerImpl.storageRelationLock)
+        {
+            throw new MYException("库存被锁定,请确认解锁库存操作");
+        }
 
-        JudgeTools.judgeParameterIsNull(user, bean, bean.getDepotpartId(), bean.getProductId(), priceKey);
+        JudgeTools.judgeParameterIsNull(user, bean, bean.getDepotpartId(), bean.getProductId(), bean.getStafferId());
+
+        StorageRelationBean relation = null;
+
+        String priceKey = "";
+
+        // 直接找到储位(优先级最高)
+        if ( !StringTools.isNullOrNone(bean.getRelationId()))
+        {
+            relation = storageRelationDAO.find(bean.getRelationId());
+
+            if (relation == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            bean.setStorageId(relation.getStorageId());
+
+            priceKey = StorageRelationHelper.getPriceKey(relation.getPrice());
+
+            bean.setPrice(relation.getPrice());
+        }
+        else
+        {
+            priceKey = StorageRelationHelper.getPriceKey(bean.getPrice());
+        }
+
+        // 防止直接插入的(先给默认储位)
+        if (StringTools.isNullOrNone(bean.getStorageId()))
+        {
+            StorageBean sb = storageDAO.findFristStorage(bean.getDepotpartId());
+
+            if (sb == null)
+            {
+                throw new MYException("仓区下没有储位,请确认操作");
+            }
+
+            bean.setStorageId(sb.getId());
+        }
 
         StorageBean storageBean = storageDAO.find(bean.getStorageId());
 
@@ -127,8 +175,11 @@ public class StorageRelationManagerImpl implements StorageRelationManager
             throw new MYException("虚拟产品没有库存,请确认操作");
         }
 
-        StorageRelationBean relation = storageRelationDAO.findByDepotpartIdAndProductIdAndPriceKey(bean
-            .getDepotpartId(), bean.getProductId(), priceKey);
+        if (relation == null)
+        {
+            relation = storageRelationDAO.findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(bean.getDepotpartId(),
+                bean.getProductId(), priceKey, bean.getStafferId());
+        }
 
         if (relation == null && bean.getChange() < 0)
         {
@@ -142,6 +193,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
             StorageRelationBean newStorageRelation = new StorageRelationBean();
 
             newStorageRelation.setId(commonDAO.getSquenceString20());
+
+            // 使用定义储位
             newStorageRelation.setStorageId(bean.getStorageId());
             newStorageRelation.setLocationId(depotBean.getId());
             newStorageRelation.setDepotpartId(depotpartBean.getId());
@@ -150,6 +203,7 @@ public class StorageRelationManagerImpl implements StorageRelationManager
             newStorageRelation.setAmount(0);
             newStorageRelation.setLastPrice(bean.getPrice());
             newStorageRelation.setProductId(bean.getProductId());
+            newStorageRelation.setStafferId(bean.getStafferId());
 
             storageRelationDAO.saveEntityBean(newStorageRelation);
 
@@ -160,8 +214,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
         if (relation.getAmount() + bean.getChange() < 0)
         {
             throw new MYException("仓库[%s]下仓区[%s]下储位[%s]的产品[%s]库存不够,当前库存为[%d],需要使用[%d]", depotBean.getName(),
-                depotpartBean.getName(), storageBean.getName(), productBean.getName(), relation.getAmount(), -bean
-                    .getChange());
+                depotpartBean.getName(), storageBean.getName(), productBean.getName(), relation.getAmount(),
+                -bean.getChange());
         }
 
         // 之前储位内产品的数量
@@ -169,8 +223,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
 
         int preAmount1 = storageRelationDAO.sumProductInDepotpartId(bean.getProductId(), depotpartBean.getId());
 
-        int preAmount11 = storageRelationDAO.sumProductInDepotpartIdAndPriceKey(bean.getProductId(), depotpartBean
-            .getId(), priceKey);
+        int preAmount11 = storageRelationDAO.sumProductInDepotpartIdAndPriceKey(bean.getProductId(),
+            depotpartBean.getId(), priceKey);
 
         int preAmount2 = storageRelationDAO.sumProductInLocationId(bean.getProductId(), depotBean.getId());
 
@@ -197,8 +251,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
 
         int afterAmount1 = storageRelationDAO.sumProductInDepotpartId(bean.getProductId(), depotpartBean.getId());
 
-        int afterAmount11 = storageRelationDAO.sumProductInDepotpartIdAndPriceKey(bean.getProductId(), depotpartBean
-            .getId(), priceKey);
+        int afterAmount11 = storageRelationDAO.sumProductInDepotpartIdAndPriceKey(bean.getProductId(),
+            depotpartBean.getId(), priceKey);
 
         int afterAmount2 = storageRelationDAO.sumProductInLocationId(bean.getProductId(), depotBean.getId());
 
@@ -248,7 +302,24 @@ public class StorageRelationManagerImpl implements StorageRelationManager
 
         monitorLog.info(log);
 
-        return true;
+        // 记录产品价格历史异动
+        PriceHistoryBean lastHis = priceHistoryDAO.findLastByProductId(bean.getProductId());
+
+        // 只有产品增加的时候才有价格异动历史
+        if ( (lastHis == null && bean.getChange() > 0)
+            || (lastHis != null && lastHis.getPrice() != relation.getPrice() && bean.getChange() > 0))
+        {
+            PriceHistoryBean his = new PriceHistoryBean();
+            his.setId(commonDAO.getSquenceString20());
+            his.setLogTime(TimeTools.now());
+            his.setPrice(relation.getPrice());
+            his.setProductId(bean.getProductId());
+            his.setType(bean.getType());
+
+            priceHistoryDAO.saveEntityBean(his);
+        }
+
+        return relation;
     }
 
     /*
@@ -257,29 +328,30 @@ public class StorageRelationManagerImpl implements StorageRelationManager
      * @see com.china.center.oa.product.manager.StorageRelationManager#changeStorageRelationWithoutTransaction(com.center.china.osgi.publics.User,
      *      com.china.center.oa.product.wrap.ProductChangeWrap)
      */
-    public synchronized boolean changeStorageRelationWithTransaction(final User user, final ProductChangeWrap bean,
-                                                                     final boolean deleteZeroRelation)
+    public synchronized StorageRelationBean changeStorageRelationWithTransaction(final User user,
+                                                                                 final ProductChangeWrap bean,
+                                                                                 final boolean deleteZeroRelation)
         throws MYException
     {
+        StorageRelationBean result = null;
+
         try
         {
             // 增加管理员操作在数据库事务中完成
             TransactionTemplate tran = new TransactionTemplate(transactionManager);
 
-            tran.execute(new TransactionCallback()
+            result = (StorageRelationBean)tran.execute(new TransactionCallback()
             {
                 public Object doInTransaction(TransactionStatus arg0)
                 {
                     try
                     {
-                        changeStorageRelationWithoutTransaction(user, bean, deleteZeroRelation);
+                        return changeStorageRelationWithoutTransaction(user, bean, deleteZeroRelation);
                     }
                     catch (MYException e)
                     {
                         throw new RuntimeException(e.getErrorContent());
                     }
-
-                    return Boolean.TRUE;
                 }
             });
         }
@@ -290,7 +362,7 @@ public class StorageRelationManagerImpl implements StorageRelationManager
             throw new MYException(e.getMessage());
         }
 
-        return true;
+        return result;
     }
 
     /*
@@ -349,6 +421,11 @@ public class StorageRelationManagerImpl implements StorageRelationManager
                         if ( !srb.getStorageId().equals(sourceStorageId))
                         {
                             throw new RuntimeException("储位不对,请重新操作");
+                        }
+
+                        if ( !StorageConstant.PUBLIC_STAFFER.equals(srb.getStafferId()))
+                        {
+                            throw new RuntimeException("只能操作公共储位,请重新操作");
                         }
 
                         ProductChangeWrap addWrap = new ProductChangeWrap();
@@ -429,6 +506,11 @@ public class StorageRelationManagerImpl implements StorageRelationManager
             throw new MYException("源仓区下产品数量不足[%d],请确认操作", srb.getAmount());
         }
 
+        if ( !StorageConstant.PUBLIC_STAFFER.equals(srb.getStafferId()))
+        {
+            throw new RuntimeException("只能操作公共储位,请重新操作");
+        }
+
         final DepotpartBean oldDepotpart = depotpartDAO.find(srb.getDepotpartId());
 
         if (oldDepotpart == null)
@@ -444,8 +526,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
         }
 
         // 自动找寻仓区下产品的位置
-        final StorageRelationBean newRelationBean = storageRelationDAO.findByDepotpartIdAndProductIdAndPriceKey(
-            dirDepotpartId, srb.getProductId(), srb.getPriceKey());
+        final StorageRelationBean newRelationBean = storageRelationDAO.findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(
+            dirDepotpartId, srb.getProductId(), srb.getPriceKey(), StorageConstant.PUBLIC_STAFFER);
 
         final List<StorageBean> sbs = new ArrayList();
 
@@ -582,6 +664,21 @@ public class StorageRelationManagerImpl implements StorageRelationManager
         return true;
     }
 
+    public boolean isStorageRelationLock()
+    {
+        return StorageRelationManagerImpl.storageRelationLock;
+    }
+
+    public synchronized void lockStorageRelation()
+    {
+        StorageRelationManagerImpl.storageRelationLock = true;
+    }
+
+    public synchronized void unlockStorageRelation()
+    {
+        StorageRelationManagerImpl.storageRelationLock = false;
+    }
+
     /**
      * @return the transactionManager
      */
@@ -716,5 +813,22 @@ public class StorageRelationManagerImpl implements StorageRelationManager
     public void setCommonDAO(CommonDAO commonDAO)
     {
         this.commonDAO = commonDAO;
+    }
+
+    /**
+     * @return the priceHistoryDAO
+     */
+    public PriceHistoryDAO getPriceHistoryDAO()
+    {
+        return priceHistoryDAO;
+    }
+
+    /**
+     * @param priceHistoryDAO
+     *            the priceHistoryDAO to set
+     */
+    public void setPriceHistoryDAO(PriceHistoryDAO priceHistoryDAO)
+    {
+        this.priceHistoryDAO = priceHistoryDAO;
     }
 }

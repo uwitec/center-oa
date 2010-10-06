@@ -17,14 +17,16 @@ import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.StorageBean;
+import com.china.center.oa.publics.bean.StafferBean;
 
 
 /**
- * 储位的关系
+ * 储位的关系(实际的产品库存表)(depotpartId, productId, priceKey, stafferId)
  * 
  * @author ZHUZHU
  * @version 2008-1-19
@@ -42,7 +44,7 @@ public class StorageRelationBean implements Serializable
     private String depotpartId = "";
 
     @FK
-    @Join(tagClass = StorageBean.class)
+    @Join(tagClass = StorageBean.class, type = JoinType.LEFT)
     private String storageId = "";
 
     @FK(index = AnoConstant.FK_FIRST)
@@ -52,6 +54,9 @@ public class StorageRelationBean implements Serializable
     @FK(index = AnoConstant.FK_SECOND)
     @Join(tagClass = DepotBean.class)
     private String locationId = "";
+
+    @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
+    private String stafferId = "";
 
     private String priceKey = "";
 
@@ -222,6 +227,23 @@ public class StorageRelationBean implements Serializable
     }
 
     /**
+     * @return the stafferId
+     */
+    public String getStafferId()
+    {
+        return stafferId;
+    }
+
+    /**
+     * @param stafferId
+     *            the stafferId to set
+     */
+    public void setStafferId(String stafferId)
+    {
+        this.stafferId = stafferId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -230,40 +252,15 @@ public class StorageRelationBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("StorageRelationBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("depotpartId = ")
-            .append(this.depotpartId)
-            .append(TAB)
-            .append("storageId = ")
-            .append(this.storageId)
-            .append(TAB)
-            .append("productId = ")
-            .append(this.productId)
-            .append(TAB)
-            .append("locationId = ")
-            .append(this.locationId)
-            .append(TAB)
-            .append("priceKey = ")
-            .append(this.priceKey)
-            .append(TAB)
-            .append("amount = ")
-            .append(this.amount)
-            .append(TAB)
-            .append("price = ")
-            .append(this.price)
-            .append(TAB)
-            .append("lastPrice = ")
-            .append(this.lastPrice)
-            .append(TAB)
-            .append(" )");
+        retValue.append("StorageRelationBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("depotpartId = ").append(this.depotpartId).append(TAB).append("storageId = ").append(
+            this.storageId).append(TAB).append("productId = ").append(this.productId).append(TAB).append(
+            "locationId = ").append(this.locationId).append(TAB).append("stafferId = ").append(this.stafferId).append(
+            TAB).append("priceKey = ").append(this.priceKey).append(TAB).append("amount = ").append(this.amount).append(
+            TAB).append("price = ").append(this.price).append(TAB).append("lastPrice = ").append(this.lastPrice).append(
+            TAB).append(" )");
 
         return retValue.toString();
     }

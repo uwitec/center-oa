@@ -11,6 +11,7 @@ package com.china.center.oa.product.manager;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
 
 
@@ -25,7 +26,7 @@ import com.china.center.oa.product.wrap.ProductChangeWrap;
 public interface StorageRelationManager
 {
     /**
-     * changeStorageRelationWithOutTransaction(没有事务的)
+     * changeStorageRelationWithOutTransaction(没有事务的,所有的库存逻辑都在此方法内实现,其他方法没有操作库存的)
      * 
      * @param user
      * @param bean
@@ -33,7 +34,8 @@ public interface StorageRelationManager
      *            是否删除为0的产品库存
      * @return
      */
-    boolean changeStorageRelationWithoutTransaction(User user, ProductChangeWrap bean, boolean deleteZeroRelation)
+    StorageRelationBean changeStorageRelationWithoutTransaction(User user, ProductChangeWrap bean,
+                                                                boolean deleteZeroRelation)
         throws MYException;
 
     /**
@@ -45,7 +47,8 @@ public interface StorageRelationManager
      *            是否删除为0的产品库存
      * @return
      */
-    boolean changeStorageRelationWithTransaction(User user, ProductChangeWrap bean, boolean deleteZeroRelation)
+    StorageRelationBean changeStorageRelationWithTransaction(User user, ProductChangeWrap bean,
+                                                             boolean deleteZeroRelation)
         throws MYException;
 
     /**
@@ -60,7 +63,7 @@ public interface StorageRelationManager
         throws MYException;
 
     /**
-     * transferStorageRelation(储位产品转移)
+     * transferStorageRelation(储位产品转移,只能是公共的库存)
      * 
      * @param user
      * @param sourceStorageId
@@ -84,4 +87,10 @@ public interface StorageRelationManager
      */
     boolean transferStorageRelationInDepotpart(User user, String sourceRelationId, String dirDepotpartId, int amount)
         throws MYException;
+
+    void lockStorageRelation();
+
+    void unlockStorageRelation();
+
+    boolean isStorageRelationLock();
 }

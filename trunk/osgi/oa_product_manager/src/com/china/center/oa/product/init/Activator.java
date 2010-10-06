@@ -8,7 +8,9 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.china.center.common.taglib.DefinedCommon;
+import com.china.center.oa.product.constant.ComposeConstant;
 import com.china.center.oa.product.constant.DepotConstant;
+import com.china.center.oa.product.constant.PriceChangeConstant;
 import com.china.center.oa.product.constant.ProductConstant;
 import com.china.center.oa.product.constant.ProviderConstant;
 import com.china.center.oa.product.constant.StorageConstant;
@@ -23,6 +25,8 @@ public class Activator implements BundleActivator
             add(ProviderConstant.class);
             add(DepotConstant.class);
             add(StorageConstant.class);
+            add(ComposeConstant.class);
+            add(PriceChangeConstant.class);
         }
     };
 

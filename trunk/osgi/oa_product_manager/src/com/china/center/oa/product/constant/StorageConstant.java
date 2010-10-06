@@ -63,4 +63,21 @@ public interface StorageConstant
      */
     @Defined(key = "storageType", value = "仓区移动")
     int OPR_DDEPOTPART_MOVE = 6;
+
+    /**
+     * 产品调价
+     */
+    @Defined(key = "storageType", value = "产品调价")
+    int OPR_DDEPOTPART_CHANGE = 7;
+
+    /**
+     * 调价回滚
+     */
+    @Defined(key = "storageType", value = "调价回滚")
+    int OPR_DDEPOTPART_CHANGE_ROLLBACK = 7;
+
+    /**
+     * 公共的职员
+     */
+    String PUBLIC_STAFFER = "0";
 }

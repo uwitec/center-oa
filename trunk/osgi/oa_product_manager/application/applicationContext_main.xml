@@ -76,4 +76,22 @@
 
 	<bean id="storageRelationManager" class="com.china.center.oa.product.manager.impl.StorageRelationManagerImpl" />
 
+	<bean id="composeFeeDAO" class="com.china.center.oa.product.dao.impl.ComposeFeeDAOImpl" />
+
+	<bean id="composeItemDAO" class="com.china.center.oa.product.dao.impl.ComposeItemDAOImpl" />
+
+	<bean id="composeProductDAO" class="com.china.center.oa.product.dao.impl.ComposeProductDAOImpl" />
+
+	<bean id="composeProductManager" class="com.china.center.oa.product.manager.impl.ComposeProductManagerImpl" />
+
+	<bean id="priceChangeDAO" class="com.china.center.oa.product.dao.impl.PriceChangeDAOImpl" />
+
+	<bean id="priceChangeNewItemDAO" class="com.china.center.oa.product.dao.impl.PriceChangeNewItemDAOImpl" />
+
+	<bean id="priceChangeSrcItemDAO" class="com.china.center.oa.product.dao.impl.PriceChangeSrcItemDAOImpl" />
+
+	<bean id="priceChangeManager" class="com.china.center.oa.product.manager.impl.PriceChangeManagerImpl" />
+
+	<bean id="priceHistoryDAO" class="com.china.center.oa.product.dao.impl.PriceHistoryDAOImpl" />
+
 </beans>

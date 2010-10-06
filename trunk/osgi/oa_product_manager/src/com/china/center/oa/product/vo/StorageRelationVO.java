@@ -41,6 +41,9 @@ public class StorageRelationVO extends StorageRelationBean
     @Relationship(relationField = "locationId")
     private String locationName = "";
 
+    @Relationship(relationField = "stafferId")
+    private String stafferName = "";
+
     @Ignore
     private int mayAmount = 0;
 
@@ -200,6 +203,23 @@ public class StorageRelationVO extends StorageRelationBean
     }
 
     /**
+     * @return the stafferName
+     */
+    public String getStafferName()
+    {
+        return stafferName;
+    }
+
+    /**
+     * @param stafferName
+     *            the stafferName to set
+     */
+    public void setStafferName(String stafferName)
+    {
+        this.stafferName = stafferName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -208,37 +228,15 @@ public class StorageRelationVO extends StorageRelationBean
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("StorageRelationVO ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("productName = ")
-            .append(this.productName)
-            .append(TAB)
-            .append("productCode = ")
-            .append(this.productCode)
-            .append(TAB)
-            .append("storageName = ")
-            .append(this.storageName)
-            .append(TAB)
-            .append("depotpartName = ")
-            .append(this.depotpartName)
-            .append(TAB)
-            .append("locationName = ")
-            .append(this.locationName)
-            .append(TAB)
-            .append("mayAmount = ")
-            .append(this.mayAmount)
-            .append(TAB)
-            .append("preassignAmount = ")
-            .append(this.preassignAmount)
-            .append(TAB)
-            .append("errorAmount = ")
-            .append(this.errorAmount)
-            .append(TAB)
-            .append(" )");
+        retValue.append("StorageRelationVO ( ").append(super.toString()).append(TAB).append("productName = ").append(
+            this.productName).append(TAB).append("productCode = ").append(this.productCode).append(TAB).append(
+            "storageName = ").append(this.storageName).append(TAB).append("depotpartName = ").append(this.depotpartName).append(
+            TAB).append("locationName = ").append(this.locationName).append(TAB).append("stafferName = ").append(
+            this.stafferName).append(TAB).append("mayAmount = ").append(this.mayAmount).append(TAB).append(
+            "preassignAmount = ").append(this.preassignAmount).append(TAB).append("errorAmount = ").append(
+            this.errorAmount).append(TAB).append(" )");
 
         return retValue.toString();
     }

@@ -70,6 +70,12 @@ public class DepotpartManagerImpl implements DepotpartManager
         return true;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.china.center.oa.product.manager.DepotpartManager#updateBean(com.center.china.osgi.publics.User,
+     *      com.china.center.oa.product.bean.DepotpartBean)
+     */
     @Transactional(rollbackFor = MYException.class)
     public boolean updateBean(User user, DepotpartBean bean)
         throws MYException
@@ -96,6 +102,12 @@ public class DepotpartManagerImpl implements DepotpartManager
         return true;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.china.center.oa.product.manager.DepotpartManager#deleteBean(com.center.china.osgi.publics.User,
+     *      java.lang.String)
+     */
     @Transactional(rollbackFor = MYException.class)
     public boolean deleteBean(User user, final String id)
         throws MYException

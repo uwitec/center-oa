@@ -39,12 +39,14 @@ public interface StorageRelationDAO extends DAO<StorageRelationBean, StorageRela
     int sumAllProductByProductId(String productId);
 
     /**
-     * findByStorageIdAndProductIdAndPriceKey(查询)
+     * findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(查询)
      * 
      * @param depotpartId
      * @param productId
      * @param priceKey
+     * @param stafferId
      * @return
      */
-    StorageRelationBean findByDepotpartIdAndProductIdAndPriceKey(String depotpartId, String productId, String priceKey);
+    StorageRelationBean findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(String depotpartId, String productId,
+                                                                             String priceKey, String stafferId);
 }

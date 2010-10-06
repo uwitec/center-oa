@@ -52,4 +52,22 @@
 
 	<osgi:service ref="storageRelationManager" interface="com.china.center.oa.product.manager.StorageRelationManager" />
 
+	<osgi:service ref="composeFeeDAO" interface="com.china.center.oa.product.dao.ComposeFeeDAO" />
+
+	<osgi:service ref="composeItemDAO" interface="com.china.center.oa.product.dao.ComposeItemDAO" />
+
+	<osgi:service ref="composeProductDAO" interface="com.china.center.oa.product.dao.ComposeProductDAO" />
+
+	<osgi:service ref="composeProductManager" interface="com.china.center.oa.product.manager.ComposeProductManager" />
+
+	<osgi:service ref="priceChangeDAO" interface="com.china.center.oa.product.dao.PriceChangeDAO" />
+
+	<osgi:service ref="priceChangeNewItemDAO" interface="com.china.center.oa.product.dao.PriceChangeNewItemDAO" />
+
+	<osgi:service ref="priceChangeSrcItemDAO" interface="com.china.center.oa.product.dao.PriceChangeSrcItemDAO" />
+
+	<osgi:service ref="priceChangeManager" interface="com.china.center.oa.product.manager.PriceChangeManager" />
+
+	<osgi:service ref="priceHistoryDAO" interface="com.china.center.oa.product.dao.PriceHistoryDAO" />
+
 </beans>

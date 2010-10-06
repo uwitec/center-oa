@@ -40,10 +40,11 @@ public class StorageRelationDAOImpl extends BaseDAO<StorageRelationBean, Storage
         return this.jdbcOperation.queryForInt(sql, productId);
     }
 
-    public StorageRelationBean findByDepotpartIdAndProductIdAndPriceKey(String depotpartId, String productId,
-                                                                        String priceKey)
+    public StorageRelationBean findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(String depotpartId, String productId,
+                                                                        String priceKey, String stafferId)
     {
-        return findUnique("where depotpartId = ? and productId = ? and priceKey = ?", depotpartId, productId, priceKey);
+        return findUnique("where depotpartId = ? and productId = ? and priceKey = ? and stafferId = ?", depotpartId,
+            productId, priceKey, stafferId);
     }
 
     public int sumProductInDepotpartId(String productId, String depotpartId)

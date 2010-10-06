@@ -30,11 +30,21 @@ public class ProductChangeWrap implements Serializable
 
     private String productId = "";
 
+    /**
+     * 如果有relationId,优先级最高
+     */
+    private String relationId = "";
+
     private double price = 0.0d;
 
     private String serializeId = "";
 
     private String description = "";
+
+    /**
+     * 谁的产品 主要是部分产品库存只能是某个人的
+     */
+    private String stafferId = "0";
 
     /**
      * 正数增加库存 负数减少库存
@@ -187,6 +197,40 @@ public class ProductChangeWrap implements Serializable
     }
 
     /**
+     * @return the stafferId
+     */
+    public String getStafferId()
+    {
+        return stafferId;
+    }
+
+    /**
+     * @param stafferId
+     *            the stafferId to set
+     */
+    public void setStafferId(String stafferId)
+    {
+        this.stafferId = stafferId;
+    }
+
+    /**
+     * @return the relationId
+     */
+    public String getRelationId()
+    {
+        return relationId;
+    }
+
+    /**
+     * @param relationId
+     *            the relationId to set
+     */
+    public void setRelationId(String relationId)
+    {
+        this.relationId = relationId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -195,37 +239,15 @@ public class ProductChangeWrap implements Serializable
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("ProductChangeWrap ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("storageId = ")
-            .append(this.storageId)
-            .append(TAB)
-            .append("depotpartId = ")
-            .append(this.depotpartId)
-            .append(TAB)
-            .append("productId = ")
-            .append(this.productId)
-            .append(TAB)
-            .append("price = ")
-            .append(this.price)
-            .append(TAB)
-            .append("serializeId = ")
-            .append(this.serializeId)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append("change = ")
-            .append(this.change)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append(" )");
+        retValue.append("ProductChangeWrap ( ").append(super.toString()).append(TAB).append("storageId = ").append(
+            this.storageId).append(TAB).append("depotpartId = ").append(this.depotpartId).append(TAB).append(
+            "productId = ").append(this.productId).append(TAB).append("relationId = ").append(this.relationId).append(
+            TAB).append("price = ").append(this.price).append(TAB).append("serializeId = ").append(this.serializeId).append(
+            TAB).append("description = ").append(this.description).append(TAB).append("stafferId = ").append(
+            this.stafferId).append(TAB).append("change = ").append(this.change).append(TAB).append("type = ").append(
+            this.type).append(TAB).append(" )");
 
         return retValue.toString();
     }

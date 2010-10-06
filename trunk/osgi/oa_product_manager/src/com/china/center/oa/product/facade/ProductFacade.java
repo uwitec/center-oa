@@ -12,12 +12,16 @@ package com.china.center.oa.product.facade;
 import java.util.List;
 
 import com.china.center.common.MYException;
+import com.china.center.oa.product.bean.ComposeProductBean;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
+import com.china.center.oa.product.bean.PriceChangeBean;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.product.bean.ProviderUserBean;
 import com.china.center.oa.product.bean.StorageBean;
+import com.china.center.oa.product.vo.ComposeProductVO;
+import com.china.center.oa.product.vo.PriceChangeVO;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
 
 
@@ -102,4 +106,62 @@ public interface ProductFacade
 
     boolean transferStorageRelationInDepotpart(String userId, String sourceRelationId, String dirDepotpartId, int amount)
         throws MYException;
+
+    /**
+     * addComposeProduct
+     * 
+     * @param userId
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    boolean addComposeProduct(String userId, ComposeProductBean bean)
+        throws MYException;
+
+    /**
+     * findComposeById
+     * 
+     * @param id
+     * @return
+     */
+    ComposeProductVO findComposeById(String id);
+
+    /**
+     * 产品调价(CORE)(这个事务比较大)
+     * 
+     * @param userId
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    boolean addPriceChange(String userId, PriceChangeBean bean)
+        throws MYException;
+
+    boolean rollbackPriceChange(String userId, String id)
+        throws MYException;
+
+    /**
+     * findPriceChangeById
+     * 
+     * @param id
+     * @return
+     */
+    PriceChangeVO findPriceChangeById(String id);
+
+    /**
+     * onPriceChange(是否可以change)
+     * 
+     * @param user
+     * @param bean
+     * @throws MYException
+     */
+    boolean onPriceChange(String userId, ProductBean bean);
+
+    void lockStorageRelation(String userId)
+        throws MYException;;
+
+    void unlockStorageRelation(String userId)
+        throws MYException;;
+
+    boolean isStorageRelationLock();
 }
