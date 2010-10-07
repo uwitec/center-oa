@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -88,7 +88,7 @@ public class CurOutManagerImpl implements CurOutManager
 
     private CustomerCreditManager customerCreditManager = null;
 
-    private DataSourceTransactionManager transactionManager = null;
+    private PlatformTransactionManager transactionManager = null;
 
     /**
      * default constructor
@@ -785,7 +785,7 @@ public class CurOutManagerImpl implements CurOutManager
     /**
      * @return the transactionManager
      */
-    public DataSourceTransactionManager getTransactionManager()
+    public PlatformTransactionManager getTransactionManager()
     {
         return transactionManager;
     }
@@ -794,7 +794,7 @@ public class CurOutManagerImpl implements CurOutManager
      * @param transactionManager
      *            the transactionManager to set
      */
-    public void setTransactionManager(DataSourceTransactionManager transactionManager)
+    public void setTransactionManager(PlatformTransactionManager transactionManager)
     {
         this.transactionManager = transactionManager;
     }

@@ -33,5 +33,11 @@
 		
 	<bean name="/customer/check"
 		class="com.china.center.oa.customer.action.CustomerCheckAction" />
+		
+	<bean name="/credit/credit"
+		class="com.china.center.oa.credit.action.CreditItemAction" />
+		
+	<bean name="/credit/customer"
+		class="com.china.center.oa.credit.action.CustomerCreditAction" />
 	
 </beans>
