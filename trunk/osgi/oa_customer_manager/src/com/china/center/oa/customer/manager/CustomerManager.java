@@ -70,4 +70,6 @@ public interface CustomerManager
 
     boolean hasCustomerAuth(String stafferId, String customerId)
         throws MYException;
+
+    void synchronizationAllCustomerLocation();
 }

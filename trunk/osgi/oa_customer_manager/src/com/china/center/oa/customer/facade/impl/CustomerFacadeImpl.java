@@ -547,6 +547,25 @@ public class CustomerFacadeImpl extends AbstarctFacade implements CustomerFacade
         }
     }
 
+    public void synchronizationAllCustomerLocation(String userId)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CUSTOMER_SYNCHRONIZATION))
+        {
+            customerManager.synchronizationAllCustomerLocation();
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
     /**
      * delCheckBean
      * 

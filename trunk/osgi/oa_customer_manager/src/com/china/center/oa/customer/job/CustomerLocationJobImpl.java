@@ -9,17 +9,11 @@
 package com.china.center.oa.customer.job;
 
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.china.center.common.MYException;
-import com.china.center.oa.customer.dao.CustomerDAO;
-import com.china.center.oa.publics.dao.LocationVSCityDAO;
+import com.china.center.oa.customer.manager.CustomerManager;
 import com.china.center.oa.publics.trigger.CommonJob;
-import com.china.center.oa.publics.vs.LocationVSCityBean;
 
 
 /**
@@ -34,9 +28,7 @@ public class CustomerLocationJobImpl implements CommonJob
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
-    private LocationVSCityDAO locationVSCityDAO = null;
-
-    private CustomerDAO customerDAO = null;
+    private CustomerManager customerManager = null;
 
     /**
      * default constructor
@@ -50,20 +42,11 @@ public class CustomerLocationJobImpl implements CommonJob
      * 
      * @see com.china.center.oa.publics.trigger.CommonJob#excuteJob()
      */
-    @Transactional(rollbackFor = {MYException.class})
     public void excuteJob()
     {
         try
         {
-            List<LocationVSCityBean> list = locationVSCityDAO.listEntityBeans();
-
-            customerDAO.initCustomerLocation();
-
-            for (LocationVSCityBean locationVSCityBean : list)
-            {
-                customerDAO.updateCustomerLocationByCity(locationVSCityBean.getCityId(),
-                    locationVSCityBean.getLocationId());
-            }
+            customerManager.synchronizationAllCustomerLocation();
         }
         catch (Exception e)
         {
@@ -80,6 +63,23 @@ public class CustomerLocationJobImpl implements CommonJob
     public String getJobName()
     {
         return "CustomerLocationJob.Impl";
+    }
+
+    /**
+     * @return the customerManager
+     */
+    public CustomerManager getCustomerManager()
+    {
+        return customerManager;
+    }
+
+    /**
+     * @param customerManager
+     *            the customerManager to set
+     */
+    public void setCustomerManager(CustomerManager customerManager)
+    {
+        this.customerManager = customerManager;
     }
 
 }

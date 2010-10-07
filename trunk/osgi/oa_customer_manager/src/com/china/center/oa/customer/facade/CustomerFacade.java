@@ -115,4 +115,7 @@ public interface CustomerFacade
 
     boolean interposeCredit(String userId, String cid, double newCreditVal)
         throws MYException;
+
+    void synchronizationAllCustomerLocation(String userId)
+        throws MYException;
 }

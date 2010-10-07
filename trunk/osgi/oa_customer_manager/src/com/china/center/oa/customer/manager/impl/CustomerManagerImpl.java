@@ -9,6 +9,10 @@
 package com.china.center.oa.customer.manager.impl;
 
 
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +60,8 @@ import com.china.center.tools.TimeTools;
 @Exceptional
 public class CustomerManagerImpl implements CustomerManager
 {
+    private final Log _logger = LogFactory.getLog(getClass());
+
     private CustomerApplyDAO customerApplyDAO = null;
 
     private CustomerDAO customerDAO = null;
@@ -896,6 +902,27 @@ public class CustomerManagerImpl implements CustomerManager
         return stafferVSCustomerDAO.countByStafferIdAndCustomerId(stafferId, customerId) > 0;
     }
 
+    @Transactional(rollbackFor = MYException.class)
+    public void synchronizationAllCustomerLocation()
+    {
+        try
+        {
+            List<LocationVSCityBean> list = locationVSCityDAO.listEntityBeans();
+
+            customerDAO.initCustomerLocation();
+
+            for (LocationVSCityBean locationVSCityBean : list)
+            {
+                customerDAO.updateCustomerLocationByCity(locationVSCityBean.getCityId(),
+                    locationVSCityBean.getLocationId());
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.error(e, e);
+        }
+    }
+
     /**
      * @param bean
      * @throws MYException
@@ -1151,5 +1178,4 @@ public class CustomerManagerImpl implements CustomerManager
     {
         this.changeLogDAO = changeLogDAO;
     }
-
 }
