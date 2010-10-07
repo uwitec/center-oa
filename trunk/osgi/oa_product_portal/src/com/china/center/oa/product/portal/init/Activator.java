@@ -17,6 +17,9 @@ public class Activator implements BundleActivator
     {
         {
             add("product");
+            add("depot");
+            add("provider");
+            add("product_js");
         }
     };
 
