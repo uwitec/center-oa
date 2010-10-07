@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<query>
+	<item name="queryCustomer" deaultpfix="CustomerBean">
+		<condtion name="name" caption="客户名称">
+			<opr>like</opr>
+			<type>text</type>
+			<inner></inner>
+		</condtion>
+		<condtion name="code" caption="客户编码">
+			<opr>like</opr>
+			<type>text</type>
+			<inner></inner>
+		</condtion>
+		<condtion name="connector" caption="联系人">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="selltype" caption="客户类型">
+			<opr>=</opr>
+			<datatype>1</datatype>
+			<type>select</type>
+			<option>$101</option>
+		</condtion>
+		<condtion name="creditLevelId" caption="客户等级">
+			<opr>=</opr>
+			<datatype>0</datatype>
+			<type>select</type>
+			<option>$creditLevel</option>
+		</condtion>
+		<condtion name="htype" caption="行业属性">
+			<opr>=</opr>
+			<datatype>0</datatype>
+			<type>select</type>
+			<option>$108</option>
+		</condtion>
+	</item>
+
+	<item name="queryCanAssignCustomer" deaultpfix="CustomerBean">
+		<condtion name="name" caption="客户名称">
+			<opr>like</opr>
+			<type>text</type>
+			<inner></inner>
+		</condtion>
+		<condtion name="code" caption="客户编码">
+			<opr>like</opr>
+			<type>text</type>
+			<inner></inner>
+		</condtion>
+		<condtion name="selltype" caption="客户类型">
+			<opr>=</opr>
+			<datatype>1</datatype>
+			<type>select</type>
+			<option>$101</option>
+		</condtion>
+		<condtion name="creditLevelId" caption="客户等级">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$creditLevel</option>
+        </condtion>
+		<condtion name="mtype" caption="客户性质">
+			<opr>=</opr>
+			<datatype>0</datatype>
+			<type>select</type>
+			<option>$107</option>
+		</condtion>
+		<condtion name="htype" caption="行业属性">
+			<opr>=</opr>
+			<datatype>0</datatype>
+			<type>select</type>
+			<option>$108</option>
+		</condtion>
+	</item>
+
+	<item name="queryCustomerAssign" deaultpfix="t1">
+		<condtion name="name" caption="客户名称">
+			<opr>like</opr>
+			<type>text</type>
+			<inner></inner>
+		</condtion>
+		<condtion name="code" caption="客户编码">
+			<opr>like</opr>
+			<type>text</type>
+			<inner></inner>
+		</condtion>
+		<condtion name="selltype" caption="客户类型">
+			<opr>=</opr>
+			<datatype>1</datatype>
+			<type>select</type>
+			<option>$101</option>
+		</condtion>
+		<condtion name="stafferId" caption="职员" pfix="t2">
+			<opr>=</opr>
+			<datatype>0</datatype>
+			<type>select</type>
+			<option>$staffer_location</option>
+		</condtion>
+	</item>
+	
+	<item name="queryCheckHisCustomer" deaultpfix="CustomerHisBean">
+		<condtion name="name" caption="客户名称">
+			<opr>like</opr>
+			<type>text</type>
+			<inner></inner>
+		</condtion>
+		<condtion name="code" caption="客户编码">
+			<opr>like</opr>
+			<type>text</type>
+			<inner></inner>
+		</condtion>
+		<condtion name="selltype" caption="客户类型">
+			<opr>=</opr>
+			<datatype>1</datatype>
+			<type>select</type>
+			<option>$101</option>
+		</condtion>
+	</item>
+	
+</query>
