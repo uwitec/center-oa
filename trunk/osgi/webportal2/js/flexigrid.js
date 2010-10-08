@@ -45,7 +45,7 @@ var gobal_guid;
              def: null,
              title: false,
              callBack: null,
-             cache: 1,
+             cache: 1, //0:user cache 1:do not use cache
              cacheEle: null,
              cacheFlag: null,
              cacheData: null,

@@ -13,7 +13,7 @@ import java.util.List;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
-import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.oa.product.dao.ProductVSLocationDAO;
 import com.china.center.oa.publics.listener.LocationListener;
 import com.china.center.oa.publics.vs.LocationVSCityBean;
@@ -62,27 +62,13 @@ public class LocationListenerProductImpl implements LocationListener
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.china.center.oa.publics.listener.LocationListener#onDeleteLocation(com.center.china.osgi.publics.User,
-     *      java.lang.String)
+    /**
+     * 直接删除区域和产品的绑定关系
      */
     public void onDeleteLocation(User user, String locationId)
         throws MYException
     {
-        ConditionParse condition = new ConditionParse();
-
-        condition.addWhereStr();
-
-        condition.addCondition("locationId", "=", locationId);
-
-        int count = productVSLocationDAO.countByCondition(condition.toString());
-
-        if (count > 0)
-        {
-            throw new MYException("分公司被产品引用,不能删除");
-        }
+        productVSLocationDAO.deleteEntityBeansByFK(locationId, AnoConstant.FK_FIRST);
     }
 
     /*
@@ -104,7 +90,7 @@ public class LocationListenerProductImpl implements LocationListener
      */
     public String getListenerType()
     {
-        return "Product.Impl";
+        return "LocationListener.ProductImpl";
     }
 
     /**

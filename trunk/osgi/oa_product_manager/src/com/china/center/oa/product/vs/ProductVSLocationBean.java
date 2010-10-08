@@ -11,6 +11,7 @@ package com.china.center.oa.product.vs;
 
 import java.io.Serializable;
 
+import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
@@ -39,6 +40,7 @@ public class ProductVSLocationBean implements Serializable
     @Join(tagClass = ProductBean.class)
     private String productId = "";
 
+    @FK(index = AnoConstant.FK_FIRST)
     @Join(tagClass = LocationBean.class)
     private String locationId = "";
 

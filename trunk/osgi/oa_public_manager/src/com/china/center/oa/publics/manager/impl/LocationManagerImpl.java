@@ -186,8 +186,6 @@ public class LocationManagerImpl extends AbstractListenerManager<LocationListene
 
         for (LocationListener listener : this.listenerMap.values())
         {
-            // TODO_OSGI 对于客户的分公司属性的更新(先更新到总部)
-            // customerDAO.updateCustomerLocation(locationId, PublicConstant.CENTER_LOCATION);
             listener.onAddLocationVSCityBefore(user, locationId, list);
         }
 
@@ -223,8 +221,6 @@ public class LocationManagerImpl extends AbstractListenerManager<LocationListene
 
             for (LocationListener listener : this.listenerMap.values())
             {
-                // TODO_OSGI 更新区域下客户
-                // customerDAO.updateCustomerLocationByCity(locationVSCityBean.getCityId(), locationId);
                 listener.onAddLocationVSCityEach(user, locationId, locationVSCityBean);
             }
 
@@ -235,8 +231,6 @@ public class LocationManagerImpl extends AbstractListenerManager<LocationListene
 
         for (LocationListener listener : this.listenerMap.values())
         {
-            // TODO_OSGI 处理删除多余的区域(客户关系的变化)
-            // handleDelCity(delCity);
             listener.onDeleteLocationVSCity(user, locationId, delCity);
         }
 

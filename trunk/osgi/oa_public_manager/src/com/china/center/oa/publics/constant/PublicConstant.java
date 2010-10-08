@@ -60,11 +60,13 @@ public interface PublicConstant
     /**
      * 锁定
      */
+    @Defined(key = "userStatus", value = "锁定")
     int LOGIN_STATUS_LOCK = 1;
 
     /**
      * 状态正常
      */
+    @Defined(key = "userStatus", value = "正常")
     int LOGIN_STATUS_COMMON = 0;
 
     /**
@@ -88,7 +90,7 @@ public interface PublicConstant
     String VIRTUAL_LOCATION = "-1";
 
     /**
-     * 总部区域
+     * 总部区域(OSGi改造后就是虚拟的,实际上不存在的)
      */
     String CENTER_LOCATION = "0";
 

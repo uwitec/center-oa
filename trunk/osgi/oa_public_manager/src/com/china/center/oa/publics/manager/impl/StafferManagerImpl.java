@@ -280,16 +280,10 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
             throw new MYException("人员下存在注册登录用户,请先删除登录用户");
         }
 
-        // 职员下存在客户 TODO_OSGI 这里需要stafferVSCustomerDAO注入countByFK监听
         for (StafferListener listener : this.listenerMap.values())
         {
             listener.onDelete(stafferId);
         }
-
-        // if (stafferVSCustomerDAO.countByFK(stafferId) > 0)
-        // {
-        // throw new MYException("职员下面还有客户,不能删除");
-        // }
     }
 
     /**

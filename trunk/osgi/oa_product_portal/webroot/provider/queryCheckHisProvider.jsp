@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="核对供应商修改" link="true" guid="true" cal="false"/>
+<p:link title="核对供应商修改" link="true" guid="true" cal="true" dialog="true"/>
 <script src="../js/json.js"></script>
 <script src="../js/common.js"></script>
 <script src="../js/pop.js"></script>
@@ -15,6 +15,8 @@ var guidMap;
 var thisObj;
 function load()
 {
+	 preload();
+	 
 	 guidMap = {
 		 title: '核对供应商',
 		 url: '../provider/provider.do?method=queryCheckHisProvider',
@@ -49,7 +51,7 @@ function load()
 
 function doSearch()
 {
-    window.common.qmodal('../admin/query.do?method=popCommonQuery&key=queryCheckHisProvider');
+    $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryCheckHisProvider');
 }
  
 function checkHis(opr)
@@ -93,4 +95,5 @@ function commonQuery(par)
 </form>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
+<p:query/>
 </body>
