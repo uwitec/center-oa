@@ -71,6 +71,8 @@ public class MyJdbcTemplate implements JdbcOperation
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
+    private final Log sqllog = LogFactory.getLog("sqllog");
+
     private Convert convertEncode = null;
 
     private JdbcTemplate jdbcTemplate = null;
@@ -108,7 +110,8 @@ public class MyJdbcTemplate implements JdbcOperation
      * default constructor
      */
     public MyJdbcTemplate()
-    {}
+    {
+    }
 
     public void query(String sql, MyPreparedStatementSetter pss, final RowCallbackHandler handler)
         throws DataAccessException
@@ -126,15 +129,14 @@ public class MyJdbcTemplate implements JdbcOperation
     public void query(String sql, PreparedStatementSetter pss, final RowCallbackHandler handler)
         throws DataAccessException
     {
-        jdbcTemplate.query(getSql(sql), new MyPreparedStatementSetterImpl(pss, convertEncode),
-            new RowCallbackHandler()
+        jdbcTemplate.query(getSql(sql), new MyPreparedStatementSetterImpl(pss, convertEncode), new RowCallbackHandler()
+        {
+            public void processRow(ResultSet rs)
+                throws SQLException
             {
-                public void processRow(ResultSet rs)
-                    throws SQLException
-                {
-                    handler.processRow(new MyResultSet(rs, convertEncode));
-                }
-            });
+                handler.processRow(new MyResultSet(rs, convertEncode));
+            }
+        });
     }
 
     public void query(String sql, Object[] arg, final RowCallbackHandler handler)
@@ -168,8 +170,7 @@ public class MyJdbcTemplate implements JdbcOperation
     {
         if (requiredType == String.class)
         {
-            return convertEncode.decode((String)jdbcTemplate.queryForObject(getSql(sql),
-                requiredType));
+            return convertEncode.decode((String)jdbcTemplate.queryForObject(getSql(sql), requiredType));
         }
         else
         {
@@ -201,8 +202,7 @@ public class MyJdbcTemplate implements JdbcOperation
 
         if (requiredType == String.class)
         {
-            return convertEncode.decode((String)jdbcTemplate.queryForObject(getSql(sql), dir,
-                requiredType));
+            return convertEncode.decode((String)jdbcTemplate.queryForObject(getSql(sql), dir, requiredType));
         }
         else
         {
@@ -241,8 +241,7 @@ public class MyJdbcTemplate implements JdbcOperation
     {
         try
         {
-            return convertEncode.decodeMap(jdbcTemplate.queryForMap(getSql(sql),
-                getEncodeArray(args)));
+            return convertEncode.decodeMap(jdbcTemplate.queryForMap(getSql(sql), getEncodeArray(args)));
         }
         catch (EmptyResultDataAccessException e)
         {
@@ -264,8 +263,7 @@ public class MyJdbcTemplate implements JdbcOperation
     public List<Map> queryForList(String sql, Object... args)
         throws DataAccessException
     {
-        return convertEncode.decodeMapInList(jdbcTemplate.queryForList(getSql(sql),
-            getEncodeArray(args)));
+        return convertEncode.decodeMapInList(jdbcTemplate.queryForList(getSql(sql), getEncodeArray(args)));
     }
 
     public int update(final String sql)
@@ -314,8 +312,7 @@ public class MyJdbcTemplate implements JdbcOperation
      * @return int
      * @throws DataAccessException
      */
-    public int update(String sql, final MyPreparedStatementSetter myPss,
-                      final List<Integer> columnType)
+    public int update(String sql, final MyPreparedStatementSetter myPss, final List<Integer> columnType)
         throws DataAccessException
     {
         return this.updateInner(sql, getPreparedStatementSetter(myPss, columnType));
@@ -425,8 +422,7 @@ public class MyJdbcTemplate implements JdbcOperation
     public int[] batchUpdate(String sql, final BatchPreparedStatementSetter pss)
         throws DataAccessException
     {
-        return this.batchUpdateInner(sql, new MyBatchPreparedStatementSetterImpl(pss,
-            convertEncode));
+        return this.batchUpdateInner(sql, new MyBatchPreparedStatementSetterImpl(pss, convertEncode));
     }
 
     /**
@@ -465,6 +461,8 @@ public class MyJdbcTemplate implements JdbcOperation
             _logger.debug("prepare sql:" + sql);
         }
 
+        sqllog.info(sql);
+
         if (this.show_sql)
         {
             System.out.println(sql);
@@ -473,8 +471,7 @@ public class MyJdbcTemplate implements JdbcOperation
         return sql;
     }
 
-    private PreparedStatementSetter getPreparedStatementSetter(
-                                                               final MyPreparedStatementSetter myPss)
+    private PreparedStatementSetter getPreparedStatementSetter(final MyPreparedStatementSetter myPss)
     {
         return new PreparedStatementSetter()
         {
@@ -488,8 +485,7 @@ public class MyJdbcTemplate implements JdbcOperation
         };
     }
 
-    private PreparedStatementSetter getPreparedStatementSetter(
-                                                               final MyPreparedStatementSetter myPss,
+    private PreparedStatementSetter getPreparedStatementSetter(final MyPreparedStatementSetter myPss,
                                                                final List<Integer> columnType)
     {
         return new PreparedStatementSetter()
@@ -504,8 +500,7 @@ public class MyJdbcTemplate implements JdbcOperation
         };
     }
 
-    private BatchPreparedStatementSetter getBatchPreparedStatementSetter(
-                                                                         final MyBatchPreparedStatementSetter myBps)
+    private BatchPreparedStatementSetter getBatchPreparedStatementSetter(final MyBatchPreparedStatementSetter myBps)
     {
         return new BatchPreparedStatementSetter()
         {
@@ -532,8 +527,7 @@ public class MyJdbcTemplate implements JdbcOperation
      *            prepare for ps.setNull
      * @throws SQLException
      */
-    private void setPreparedStatement(List list, PreparedStatement ps,
-                                      final List<Integer> columnType)
+    private void setPreparedStatement(List list, PreparedStatement ps, final List<Integer> columnType)
         throws SQLException
     {
         int pos = 1;
@@ -675,15 +669,15 @@ public class MyJdbcTemplate implements JdbcOperation
     public Object query(String sql, PreparedStatementSetter pss, final ResultSetExtractor rse)
         throws DataAccessException
     {
-        return jdbcTemplate.query(getSql(sql), new MyPreparedStatementSetterImpl(pss,
-            convertEncode), new ResultSetExtractor()
-        {
-            public Object extractData(ResultSet rs)
-                throws SQLException, DataAccessException
+        return jdbcTemplate.query(getSql(sql), new MyPreparedStatementSetterImpl(pss, convertEncode),
+            new ResultSetExtractor()
             {
-                return rse.extractData(new MyResultSet(rs, convertEncode));
-            }
-        });
+                public Object extractData(ResultSet rs)
+                    throws SQLException, DataAccessException
+                {
+                    return rse.extractData(new MyResultSet(rs, convertEncode));
+                }
+            });
     }
 
     public void execute(final String sql)
@@ -840,45 +834,44 @@ public class MyJdbcTemplate implements JdbcOperation
             objectList.add(bean);
         }
 
-        return this.batchUpdate(getAutoSql(sql, parameterList),
-            new MyBatchPreparedStatementSetter()
+        return this.batchUpdate(getAutoSql(sql, parameterList), new MyBatchPreparedStatementSetter()
+        {
+            public int getBatchSize()
             {
-                public int getBatchSize()
-                {
-                    return objectList.size();
-                }
+                return objectList.size();
+            }
 
-                public void setValues(List list, int i)
-                    throws SQLException
+            public void setValues(List list, int i)
+                throws SQLException
+            {
+                for (String str : parameterList)
                 {
-                    for (String str : parameterList)
+                    try
                     {
-                        try
-                        {
-                            list.add(BeanUtils.getPropertyValue(objectList.get(i), str));
+                        list.add(BeanUtils.getPropertyValue(objectList.get(i), str));
 
-                            Field field = BeanTools.getFieldIgnoreCase(str, claz);
+                        Field field = BeanTools.getFieldIgnoreCase(str, claz);
 
-                            parameterTypeList.add(BeanTools.getFieldType(field));
-                        }
-                        catch (IllegalAccessException e)
-                        {
-                            _logger.warn(e, e);
-                            throw new RuntimeException(e);
-                        }
-                        catch (InvocationTargetException e)
-                        {
-                            _logger.warn(e, e);
-                            throw new RuntimeException(e);
-                        }
-                        catch (NoSuchMethodException e)
-                        {
-                            _logger.warn(e, e);
-                            throw new RuntimeException(e);
-                        }
+                        parameterTypeList.add(BeanTools.getFieldType(field));
+                    }
+                    catch (IllegalAccessException e)
+                    {
+                        _logger.warn(e, e);
+                        throw new RuntimeException(e);
+                    }
+                    catch (InvocationTargetException e)
+                    {
+                        _logger.warn(e, e);
+                        throw new RuntimeException(e);
+                    }
+                    catch (NoSuchMethodException e)
+                    {
+                        _logger.warn(e, e);
+                        throw new RuntimeException(e);
                     }
                 }
-            });
+            }
+        });
     }
 
     /**
@@ -943,8 +936,7 @@ public class MyJdbcTemplate implements JdbcOperation
         return result.get(0);
     }
 
-    private <T> List<T> queryForListByFieldsInner(String[] fieldName, Class<T> claz,
-                                                  Object... args)
+    private <T> List<T> queryForListByFieldsInner(String[] fieldName, Class<T> claz, Object... args)
         throws DataAccessException
     {
         String sql = getUniqueQuerySql(fieldName, claz);
@@ -1112,8 +1104,7 @@ public class MyJdbcTemplate implements JdbcOperation
 
         String columnName = BeanTools.getColumnName(field);
 
-        return this.queryForList(
-            "where " + autoCreateSql.prefix(claz) + '.' + columnName + " = ?", claz, args);
+        return this.queryForList("where " + autoCreateSql.prefix(claz) + '.' + columnName + " = ?", claz, args);
     }
 
     public <T> List<T> queryForList(String condtition, Class<T> claz, Object... args)
@@ -1246,52 +1237,50 @@ public class MyJdbcTemplate implements JdbcOperation
             objectList.add(bean);
         }
 
-        return this.batchUpdate(getAutoSql(sql, parameterList),
-            new MyBatchPreparedStatementSetter()
+        return this.batchUpdate(getAutoSql(sql, parameterList), new MyBatchPreparedStatementSetter()
+        {
+            public int getBatchSize()
             {
-                public int getBatchSize()
-                {
-                    return objectList.size();
-                }
+                return objectList.size();
+            }
 
-                public void setValues(List list, int i)
-                    throws SQLException
+            public void setValues(List list, int i)
+                throws SQLException
+            {
+                for (String str : parameterList)
                 {
-                    for (String str : parameterList)
+                    try
                     {
-                        try
-                        {
-                            list.add(BeanUtils.getPropertyValue(objectList.get(i), str));
+                        list.add(BeanUtils.getPropertyValue(objectList.get(i), str));
 
-                            Field field = BeanTools.getFieldIgnoreCase(str, claz);
+                        Field field = BeanTools.getFieldIgnoreCase(str, claz);
 
-                            parameterTypeList.add(BeanTools.getFieldType(field));
-                        }
-                        catch (IllegalAccessException e)
-                        {
-                            _logger.error(e, e);
-                            throw new RuntimeException(e);
-                        }
-                        catch (InvocationTargetException e)
-                        {
-                            _logger.error(e, e);
-                            throw new RuntimeException(e);
-                        }
-                        catch (NoSuchMethodException e)
-                        {
-                            _logger.error(e, e);
-                            throw new RuntimeException(e);
-                        }
+                        parameterTypeList.add(BeanTools.getFieldType(field));
+                    }
+                    catch (IllegalAccessException e)
+                    {
+                        _logger.error(e, e);
+                        throw new RuntimeException(e);
+                    }
+                    catch (InvocationTargetException e)
+                    {
+                        _logger.error(e, e);
+                        throw new RuntimeException(e);
+                    }
+                    catch (NoSuchMethodException e)
+                    {
+                        _logger.error(e, e);
+                        throw new RuntimeException(e);
                     }
                 }
-            });
+            }
+        });
     }
 
     /**
      * 根据ID更新字段
      */
-    public int updateField(final String fieldName, final Object fieldValue, final Object id,
-                           Class claz)
+    public int updateField(final String fieldName, final Object fieldValue, final Object id, Class claz)
         throws DataAccessException
     {
         Field field = BeanTools.getFieldIgnoreCase(fieldName, claz);
@@ -1759,8 +1748,7 @@ public class MyJdbcTemplate implements JdbcOperation
     /**
      * 通过分页对象查询列表
      */
-    public <T> List<T> queryObjectsByPageSeparate(String condtition, PageSeparate page,
-                                                  Class<T> claz, Object... args)
+    public <T> List<T> queryObjectsByPageSeparate(String condtition, PageSeparate page, Class<T> claz, Object... args)
         throws DataAccessException
     {
         int max = page.getPageSize();
@@ -1769,8 +1757,8 @@ public class MyJdbcTemplate implements JdbcOperation
             max = page.getRowCount() - page.getSectionFoot();
         }
 
-        return this.queryObjects(condtition, claz, args).setFirstResult(page.getSectionFoot()).setMaxResults(
-            max).list(claz);
+        return this.queryObjects(condtition, claz, args).setFirstResult(page.getSectionFoot()).setMaxResults(max).list(
+            claz);
     }
 
     /**
@@ -1858,8 +1846,7 @@ public class MyJdbcTemplate implements JdbcOperation
         return this.queryObjectsBySql(sql, claz, id);
     }
 
-    public <T> List<T> queryObjectsBySqlAndPageSeparate(String sql, PageSeparate page,
-                                                        Class<T> claz, Object... args)
+    public <T> List<T> queryObjectsBySqlAndPageSeparate(String sql, PageSeparate page, Class<T> claz, Object... args)
         throws DataAccessException
     {
         int max = page.getPageSize();
@@ -1868,8 +1855,7 @@ public class MyJdbcTemplate implements JdbcOperation
             max = page.getRowCount() - page.getSectionFoot();
         }
 
-        return this.queryObjectsBySql(sql, args).setFirstResult(page.getSectionFoot()).setMaxResults(
-            max).list(claz);
+        return this.queryObjectsBySql(sql, args).setFirstResult(page.getSectionFoot()).setMaxResults(max).list(claz);
     }
 
     /**
@@ -1945,8 +1931,7 @@ public class MyJdbcTemplate implements JdbcOperation
     public int queryForInt(String sql, Class claz, Object... arg)
         throws DataAccessException
     {
-        return this.queryForInt(
-            "select count(1) from " + BeanTools.getTableName(claz) + " " + sql, arg);
+        return this.queryForInt("select count(1) from " + BeanTools.getTableName(claz) + " " + sql, arg);
     }
 
     public int update(String sql, Class claz, Object... args)
