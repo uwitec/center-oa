@@ -39,16 +39,7 @@ function load()
 		     {id: 'pass', caption: '通过',bclass: 'pass', auth: '0203', onpress : doPass},
 		     {id: 'reject', caption: '驳回',bclass: 'reject', auth: '0203', onpress : doReject}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 auth: window.top.topFrame.gAuth,
-		 queryMode: 0,
-		 cache: 0,
-		 queryCondition: null,
-		 showTableToggleBtn: true,
-		 height: 'page',
-		 def: allDef,
-		 callBack: loadForm
+		 <p:conf callBack="loadForm" queryMode="0"/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);

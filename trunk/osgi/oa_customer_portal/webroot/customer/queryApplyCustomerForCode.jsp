@@ -35,16 +35,7 @@ function load()
 		 buttons : [
 		     {id: 'assign', caption: '分配编码',bclass: 'update', auth: '0214', onpress : doAssignCode}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 auth: window.top.topFrame.gAuth,
-		 queryMode: 0,
-		 cache: 0,
-		 queryCondition: null,
-		 showTableToggleBtn: true,
-		 height: 'page',
-		 def: allDef,
-		 callBack: loadForm
+		 <p:conf callBack="loadForm" queryMode="0"/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);

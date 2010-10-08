@@ -360,9 +360,9 @@ public class CustomerAction extends DispatchAction
 
         condtion.addWhereStr();
 
-        condtion.addCondition("order by logTime desc");
-
         ActionTools.processJSONQueryCondition(QUERYCHANGELOG, request, condtion);
+
+        condtion.addCondition("order by logTime desc");
 
         String jsonstr = ActionTools.queryBeanByJSONAndToString(QUERYCHANGELOG, request, condtion, this.changeLogDAO);
 

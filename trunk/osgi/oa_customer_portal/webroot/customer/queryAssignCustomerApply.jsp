@@ -19,7 +19,7 @@ function load()
 		 title: '可分配客户申请列表',
 		 url: '../customer/customer.do?method=queryAssignApply',
 		 colModel : [
-		     {display: '选择', name : 'check', content : '<input type=checkbox name=checkb id={id} value={id} lname={name}>', width : 40, sortable : false, align: 'center'},
+		     {display: '<input type=checkbox id=flexi_Check onclick=checkAll(this)>选择', name : 'check', content : '<input type=checkbox name=checkb id={id} value={id} lname={name}>', width : 40, sortable : false, align: 'center'},
 		     {display: '申请客户', name : 'customerName', width : '40%', sortable : false, align: 'left'},
 		     {display: '客户编码', name : 'customerCode', width : '10%', sortable : false, align: 'left'},
 		     {display: '客户类型', name : 'customerSellType', width : '15%', sortable : false, align: 'left', cc: 101},
@@ -32,17 +32,7 @@ function load()
 		     {id: 'pass', caption: '通过',bclass: 'pass', auth: '0203', onpress : doPass},
              {id: 'reject', caption: '驳回',bclass: 'reject', auth: '0203', onpress : doReject}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 queryMode: 0,
-		 cache: 0,
-         cacheEle: $O('cacheEle'),
-         cacheFlag: $O('cacheFlag'),
-		 auth: window.top.topFrame.gAuth,
-		 showTableToggleBtn: true,
-		 def: allDef,
-		 height: 'page',
-		 callBack: loadForm
+		 <p:conf callBack="loadForm"/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);

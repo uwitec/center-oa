@@ -50,15 +50,7 @@ function load()
 		     {id: 'queryVistor', caption: '拜访记录', bclass: 'search', onpress : queryVistor},
 		     {id: 'search', bclass: 'search', onpress : doSearch}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 queryMode: 0,
-		 cache: 0,
-		 auth: window.top.topFrame.gAuth,
-		 showTableToggleBtn: true,
-		 height: 'page',
-		 def: allDef,
-		 callBack: loadForm //for firefox load ext att
+		 <p:conf callBack="loadForm" queryMode="0"/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);

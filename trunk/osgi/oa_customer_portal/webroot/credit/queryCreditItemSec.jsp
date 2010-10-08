@@ -38,16 +38,7 @@ function load()
             {id: 'update', bclass: 'update', caption: '修改比例/分值', onpress : updateBean, auth: 'true'},
             {id: 'search', bclass: 'search', onpress : doSearch, auth: 'true'}
              ],
-         usepager: true,
-         useRp: true,
-         queryMode: 0,
-         auth: window.top.topFrame.gAuth,
-         cache: 0,
-         height: 'page',
-         queryCondition: null,
-         showTableToggleBtn: true,
-         def: allDef,
-         callBack: $callBack
+         <p:conf queryMode="0"/>
      };
      
      $("#mainTable").flexigrid(guidMap, thisObj);

@@ -109,7 +109,7 @@ public class CustomerCheckManagerImpl implements CustomerCheckManager
 
         int current = customerCheckItemDAO.countByFK(id);
 
-        // 如果是gonon的审核通过,则不需要下面的操作
+        // 如果是GONON的审核通过,则不需要下面的操作
         if (current > 0)
         {
             return true;
@@ -387,7 +387,8 @@ public class CustomerCheckManagerImpl implements CustomerCheckManager
             throw new MYException("数据不完备");
         }
 
-        if ( ! (old.getStatus() != CommonConstant.STATUS_INIT || old.getStatus() != CommonConstant.STATUS_REJECT || old.getStatus() != CommonConstant.STATUS_PASS))
+        if ( ! (old.getStatus() != CommonConstant.STATUS_INIT || old.getStatus() != CommonConstant.STATUS_REJECT || old
+            .getStatus() != CommonConstant.STATUS_PASS))
         {
             throw new MYException("状态错误,不能删除");
         }

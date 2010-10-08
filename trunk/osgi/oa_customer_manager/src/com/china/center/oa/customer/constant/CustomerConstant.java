@@ -25,67 +25,83 @@ public interface CustomerConstant
     /**
      * ok
      */
+    @Defined(key = "customerStatus", value = "正常")
     int STATUS_OK = 0;
 
     /**
      * apply
      */
+    @Defined(key = "customerStatus", value = "申请")
     int STATUS_APPLY = 1;
 
     /**
      * 审批后等待分配code
      */
+    @Defined(key = "customerStatus", value = "等待分配编码")
     int STATUS_WAIT_CODE = 3;
 
     /**
      * reject
      */
+    @Defined(key = "customerStatus", value = "驳回")
     int STATUS_REJECT = 2;
 
+    // customerOpr
+    @Defined(key = "customerOpr", value = "增加")
     int OPR_ADD = 0;
 
+    @Defined(key = "customerOpr", value = "更新")
     int OPR_UPDATE = 1;
 
+    @Defined(key = "customerOpr", value = "删除")
     int OPR_DEL = 2;
 
     /**
      * UPATE_CREDIT
      */
+    @Defined(key = "customerOpr", value = "更新客户信用")
     int OPR_UPATE_CREDIT = 3;
 
     /**
      * 空闲的客户
      */
+    @Defined(key = "realCustomerStatus", value = "空闲")
     int REAL_STATUS_IDLE = 0;
 
     /**
      * 被使用的客户
      */
+    @Defined(key = "realCustomerStatus", value = "使用")
     int REAL_STATUS_USED = 1;
 
     /**
      * 申请中的客户
      */
+    @Defined(key = "realCustomerStatus", value = "申请中")
     int REAL_STATUS_APPLY = 2;
 
     /**
      * 无成交记录
      */
+    @Defined(key = "blog", value = "无历史成交")
     int BLOG_NO = 0;
 
     /**
      * 有成交记录
      */
+    @Defined(key = "blog", value = "有历史成交")
     int BLOG_YES = 1;
 
     /**
      * 无名片
      */
+    @Defined(key = "card", value = "无名片")
     int CARD_NO = 0;
 
     /**
      * 有名片
      */
+    @Defined(key = "card", value = "有名片")
     int CARD_YES = 1;
 
     /**

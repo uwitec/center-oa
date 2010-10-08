@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="客户日志" link="true" guid="true" cal="false"/>
+<p:link title="客户日志" link="true" guid="true" cal="true" dialog="true"/>
 <script src="../js/json.js"></script>
 <script src="../js/common.js"></script>
 <script src="../js/pop.js"></script>
@@ -15,6 +15,8 @@ var guidMap;
 var thisObj;
 function load()
 {
+	 preload();
+	 
 	 guidMap = {
 		 title: '客户职员关系变动日志',
 		 url: '../customer/customer.do?method=queryChangeLog',
@@ -31,14 +33,7 @@ function load()
 		 buttons : [
 		     {id: 'search', bclass: 'search', onpress : doSearch}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 queryMode: 1,
-		 cache: 0,
-		 showTableToggleBtn: true,
-		 height: 'page',
-		 def: allDef,
-		 callBack: loadForm
+		 <p:conf callBack="loadForm"/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);
@@ -46,7 +41,7 @@ function load()
 
 function doSearch()
 {
-    window.common.qmodal('../admin/query.do?method=popCommonQuery&key=queryChangeLog');
+    $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryChangeLog');
 }
 
 function callBackFun(data)
@@ -64,4 +59,5 @@ function callBackFun(data)
 </form>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
+<p:query/>
 </body>

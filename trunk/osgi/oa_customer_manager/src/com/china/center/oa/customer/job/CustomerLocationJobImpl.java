@@ -59,7 +59,6 @@ public class CustomerLocationJobImpl implements CommonJob
      * 
      * @see com.china.center.oa.publics.trigger.CommonJob#getJobName()
      */
-    @Override
     public String getJobName()
     {
         return "CustomerLocationJob.Impl";

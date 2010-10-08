@@ -69,6 +69,13 @@ public class CustomerCheckBean implements Serializable
     private String description = "";
 
     /**
+     * default constructor
+     */
+    public CustomerCheckBean()
+    {
+    }
+
+    /**
      * @return the id
      */
     public String getId()

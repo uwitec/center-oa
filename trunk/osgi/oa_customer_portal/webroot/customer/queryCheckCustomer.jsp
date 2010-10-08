@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="客户信息审核" link="true" guid="true" cal="false"/>
+<p:link title="客户信息审核" link="true" guid="true" cal="true" dialog="true"/>
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
@@ -17,6 +17,8 @@ var thisObj;
 var updatFlag = window.top.topFrame.containAuth('021602') ? '1' : '0';
 function load()
 {
+	 preload();
+	 
 	 guidMap = {
 		 title: '客户信息审核申请',
 		 url: '../customer/check.do?method=queryCustomerCheck',
@@ -43,15 +45,7 @@ function load()
 		     {id: 'queryItem', bclass: 'search', caption: '审核信息', onpress : queryItem, auth: '021601'},
 		     {id: 'search', bclass: 'search', onpress : doSearch}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 queryMode: 1,
-		 cache: 0,
-		 auth: window.top.topFrame.gAuth,
-		 showTableToggleBtn: true,
-		 height: 'page',
-		 def: allDef,
-		 callBack: loadForm //for firefox load ext att
+		 <p:conf callBack="loadForm"/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);
@@ -59,7 +53,7 @@ function load()
  
 function doSearch()
 {
-    window.common.qmodal('../admin/query.do?method=popCommonQuery&key=queryCustomerCheck');
+    $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryCustomerCheck');
 }
 
 function delBean()
@@ -154,4 +148,5 @@ function goonBean(opr, grid)
 </form>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
+<p:query/>
 </body>

@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="客户回收管理" link="true" guid="true" cal="false"/>
+<p:link title="客户回收管理" link="true" guid="true" cal="true" dialog="true"/>
 <script src="../js/common.js"></script>
 <script src="../js/cnchina.js"></script>
 <script src="../js/jquery.blockUI.js"></script>
@@ -21,6 +21,7 @@ var thisObj;
 
 function load()
 {
+	preload();
     guidMap = {
          title: '客户列表',
          url: '../customer/customer.do?method=queryCustomerAssign',
@@ -41,15 +42,7 @@ function load()
              {id: 'table', caption: '职员客户分布', bclass: 'table', onpress : queryCustomerDistribute, auth: '0209'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
-         usepager: true,
-         useRp: true,
-         queryMode: 1,
-         cache: 0,
-         auth: window.top.topFrame.gAuth,
-         showTableToggleBtn: true,
-         height: 'page',
-         def: allDef,
-         callBack: loadForm //for firefox load ext att
+         <p:conf callBack="loadForm" queryMode="1"/>
      };
      
      $("#mainTable").flexigrid(guidMap, thisObj);	 
@@ -57,7 +50,7 @@ function load()
  
 function doSearch()
 {
-    window.common.qmodal('../admin/query.do?method=popCommonQuery&key=queryCustomerAssign');
+    $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryCustomerAssign');
 }
 
 function queryCustomerDistribute()
@@ -172,4 +165,5 @@ function commonQuery(par)
 </div>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
+<p:query/>
 </body>

@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="可分配客户列表" link="true" guid="true" cal="false"/>
+<p:link title="可分配客户列表" link="true" guid="true" cal="true" dialog="true"/>
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
@@ -15,11 +15,13 @@ var guidMap;
 var thisObj;
 function load()
 {
+	 preload();
+	 
 	 guidMap = {
 		 title: '可分配客户列表(通过检索可以查询终端客户)',
 		 url: '../customer/customer.do?method=queryCanAssignCustomer',
 		 colModel : [
-		     {display: '选择', name : 'check', content : '<input type=checkbox name=checkb value={id} lname={name}>', width : 40, sortable : false, align: 'center'},
+		     {display: '<input type=checkbox id=flexi_Check onclick=checkAll(this)>选择', name : 'check', content : '<input type=checkbox name=checkb value={id} lname={name}>', width : 40, sortable : false, align: 'center'},
 		     {display: '客户', name : 'name', width : '20%', sortable : false, align: 'left'},
 		     {display: '编码', name : 'code', width : '10%', sortable : false, align: 'left'},
 		     {display: '类型', name : 'selltype', width : '10%', sortable : false, align: 'left', cc: 101},
@@ -37,14 +39,7 @@ function load()
 		     {id: 'search', bclass: 'search', onpress : doSearch},
 		     {separator: true}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 queryMode: 0,
-		 queryCondition: null,
-		 showTableToggleBtn: true,
-		 height: 'page',
-		 def: allDef,
-		 callBack: loadForm
+		 <p:conf callBack="loadForm"/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);
@@ -71,7 +66,7 @@ function addBean()
 
 function doSearch()
 {
-    window.common.qmodal('../admin/query.do?method=popCommonQuery&key=queryCanAssignCustomer');
+    $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryCanAssignCustomer');
 }
 
 function callBackFun(data)
@@ -92,7 +87,9 @@ function commonQuery(par)
 </head>
 <body onload="load()" class="body_class">
 <form>
+<p:cache/>
 </form>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
+<p:query/>
 </body>

@@ -266,6 +266,7 @@ public class CustomerManagerImpl implements CustomerManager
     private void checkDelCustomer(CustomerApplyBean bean)
         throws MYException
     {
+        // NOTIFY 这里应该是OSGi实现的,当前暂时不动
         if (customerDAO.countCustomerInOut(bean.getId()) > 0 || customerDAO.countCustomerInBill(bean.getId()) > 0)
         {
             throw new MYException("客户[%s]已经被使用,不能删除", bean.getName());
@@ -913,8 +914,8 @@ public class CustomerManagerImpl implements CustomerManager
 
             for (LocationVSCityBean locationVSCityBean : list)
             {
-                customerDAO.updateCustomerLocationByCity(locationVSCityBean.getCityId(),
-                    locationVSCityBean.getLocationId());
+                customerDAO.updateCustomerLocationByCity(locationVSCityBean.getCityId(), locationVSCityBean
+                    .getLocationId());
             }
         }
         catch (Exception e)

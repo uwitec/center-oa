@@ -4,6 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <p:link title="历史客户" link="true" guid="true" cal="false"/>
+<script src="../js/common.js"></script>
 <script src="../js/json.js"></script>
 <script type="text/javascript">
 
@@ -30,13 +31,7 @@ function load()
 		 buttons : [
 		     {id: 'back', caption: '返回上一页', bclass: 'back', onpress : gback}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 queryMode: 1,
-		 cache: 0,
-		 showTableToggleBtn: true,
-		 height: 'page',
-		 def: allDef
+		 <p:conf callBack="loadForm" queryMode="1"/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);

@@ -33,16 +33,7 @@ function load()
          buttons : [
             {id: 'update', bclass: 'update', caption: '修改比例', onpress : updateBean, auth: 'true'}
              ],
-         usepager: true,
-         useRp: true,
-         queryMode: 1,
-         auth: window.top.topFrame.gAuth,
-         cache: 0,
-         height: 'page',
-         queryCondition: null,
-         showTableToggleBtn: true,
-         def: allDef,
-         callBack: $callBack
+         <p:conf/>
      };
      
      $("#mainTable").flexigrid(guidMap, thisObj);

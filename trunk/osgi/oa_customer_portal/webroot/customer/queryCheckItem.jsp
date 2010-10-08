@@ -3,13 +3,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="客户信息审核" link="true" guid="true" cal="false"/>
+<p:link title="客户信息审核" link="true" guid="true" cal="true" dialog="true"/>
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
 <script src="../js/json.js"></script>
 <script src="../js/JCheck.js"></script>
 <script src="../js/jquery.blockUI.js"></script>
+<script src="../js/plugin/highlight/jquery.highlight.js"></script>
 <script type="text/javascript">
 
 var allDef = window.top.topFrame.allDef;
@@ -19,6 +20,8 @@ var thisObj;
 var updatFlag = window.top.topFrame.containAuth('021602') ? '1' : '0';
 function load()
 {
+	 preload();
+	 
 	 guidMap = {
 		 title: '客户信息审核',
 		 url: '../customer/check.do?method=queryCheckItem&look=${param.look}&id=${param.id}',
@@ -42,15 +45,7 @@ function load()
 		     {id: 'reject', bclass: 'reject', caption: '信息有误', onpress : rejectBean, auth: '021601'},
 		     {id: 'search', bclass: 'search', onpress : doSearch}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 queryMode: 0,
-		 cache: 0,
-		 auth: window.top.topFrame.gAuth,
-		 showTableToggleBtn: true,
-		 height: 'page',
-		 def: allDef,
-		 callBack: loadForm //for firefox load ext att
+		<p:conf queryMode="0"/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);
@@ -58,7 +53,15 @@ function load()
  
 function doSearch()
 {
-    window.common.qmodal('../admin/query.do?method=popCommonQuery&key=queryCheckItem');
+    $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryCheckItem');
+}
+
+function $callBack()
+{
+    loadForm();
+    
+    highlights($("#mainTable").get(0), ['异常'], 'red');
+    
 }
 
 function callBackFun(data)
@@ -162,4 +165,5 @@ function $process()
 </div>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
+<p:query/>
 </body>

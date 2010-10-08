@@ -32,16 +32,7 @@ function load()
 		     {id: 'search', bclass: 'search', onpress : doSearch, auth: 'true'},
 		     {id: 'back', bclass: 'back', caption:'返回上一页', onpress : doBack}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 queryMode: 1,
-		 auth: window.top.topFrame.gAuth,
-		 cache: 0,
-		 height: 'page',
-		 queryCondition: null,
-		 showTableToggleBtn: true,
-		 def: allDef,
-		 callBack: $callBack
+		 <p:conf queryMode="1"/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);
