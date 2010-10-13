@@ -102,6 +102,7 @@ function init()
 				<option value="4">я╞╪ш(обнГ15:30╫АйЬ)</option>
 			</p:pro>
 			
+			<p:pro field="description" innerString="rows=3 cols=55"/>
 		</p:table>
 	</p:subBody>
 

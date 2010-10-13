@@ -70,6 +70,10 @@
 			</c:if>
 			</p:cell>
 			
+			<p:cells title="备注" celspan="2">
+            ${bean.description}
+            </p:cells>
+            
 			<p:cells title="驳回原因" celspan="2">
 			${bean.reason}
 			</p:cells>

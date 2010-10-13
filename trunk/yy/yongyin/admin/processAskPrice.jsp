@@ -187,6 +187,10 @@ function rejectBean()
 			<p:cell title="处理时间">
 			${bean.processTime}
 			</p:cell>
+			
+			<p:cells title="备注" celspan="2">
+            ${bean.description}
+            </p:cells>
 
 			<p:cells id="selects" celspan="2" title="询价处理">
 				<table id="mselect">
