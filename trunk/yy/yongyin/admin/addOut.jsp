@@ -430,7 +430,7 @@ function managerChange()
 		$('customerId').value = '0';
 		$('customerName').disabled  = true;
 		//$('arriveDate').disabled  = true;
-		$('reday').value = '90';
+		$('reday').value = '30';
 		$('reday').readOnly = true;
 	}
 }

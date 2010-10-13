@@ -345,7 +345,7 @@ function managerChange()
 		$('customerName').value = '个人领样';
 		$('customerId').value = '0';
 		$('customerName').disabled  = true;
-		$('reday').value = '7';
+		$('reday').value = '30';
 		$('reday').readOnly = true;
 	}
 }
