@@ -776,17 +776,18 @@ public class CustomerAction extends DispatchAction
      * 
      * @param condtion
      */
-    public void exportAssign(HttpServletRequest request)
+    public ActionForward exportC(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response)
     {
-        User user = Helper.getUser(request);
+        // User user = Helper.getUser(request);
 
         ConditionParse condtion = new ConditionParse();
 
         condtion.addWhereStr();
 
-        condtion.addCondition("CustomerBean.locationId", "=", user.getLocationId());
+        // condtion.addCondition("CustomerBean.locationId", "=", user.getLocationId());
 
-        condtion.addIntCondition("CustomerBean.status", "=", CustomerConstant.REAL_STATUS_IDLE);
+        // condtion.addIntCondition("CustomerBean.status", "=", CustomerConstant.REAL_STATUS_IDLE);
 
         OutputStream out = null;
 
@@ -807,7 +808,7 @@ public class CustomerAction extends DispatchAction
             // create a excel
             wwb = Workbook.createWorkbook(out);
 
-            ws = wwb.createSheet("exportAssign", 0);
+            ws = wwb.createSheet("exportC", 0);
 
             int i = 0, j = 0;
 
@@ -830,6 +831,9 @@ public class CustomerAction extends DispatchAction
             ws.addCell(new Label(j++ , i, "手机", format));
             ws.addCell(new Label(j++ , i, "固话", format));
             ws.addCell(new Label(j++ , i, "地址", format));
+            ws.addCell(new Label(j++ , i, "QQ", format));
+            ws.addCell(new Label(j++ , i, "E-Mail", format));
+            ws.addCell(new Label(j++ , i, "类型(0:终端 1:拓展)", format));
 
             for (Iterator iter = list.iterator(); iter.hasNext();)
             {
@@ -848,6 +852,9 @@ public class CustomerAction extends DispatchAction
                 ws.addCell(new Label(j++ , i, element.getHandphone()));
                 ws.addCell(new Label(j++ , i, element.getTel()));
                 ws.addCell(new Label(j++ , i, element.getAddress()));
+                ws.addCell(new Label(j++ , i, element.getQq()));
+                ws.addCell(new Label(j++ , i, element.getMail()));
+                ws.addCell(new Label(j++ , i, String.valueOf(element.getSelltype())));
 
             }
         }
@@ -877,6 +884,8 @@ public class CustomerAction extends DispatchAction
                 {}
             }
         }
+
+        return null;
     }
 
     /**

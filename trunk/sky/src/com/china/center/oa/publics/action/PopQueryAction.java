@@ -61,7 +61,7 @@ import com.china.centet.yongyin.constant.Constant;
 /**
  * DownFileAction
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2009-2-5
  * @see PopQueryAction
  * @since 1.0
