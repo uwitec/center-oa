@@ -135,7 +135,7 @@ public class DepotManagerImpl extends AbstractListenerManager<DepotListener> imp
             throw new MYException("仓库下存在仓区不能删除");
         }
 
-        Collection<DepotListener> values = this.listenerMap.values();
+        Collection<DepotListener> values = this.listenerMapValues();
 
         for (DepotListener depotListener : values)
         {

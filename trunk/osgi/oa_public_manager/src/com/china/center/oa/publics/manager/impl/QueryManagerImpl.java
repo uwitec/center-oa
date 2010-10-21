@@ -26,7 +26,7 @@ import com.china.center.oa.publics.manager.QueryManager;
  */
 public class QueryManagerImpl implements QueryManager
 {
-    private Map<String, QueryListener> listenerMap = new HashMap();
+    private static Map<String, QueryListener> listenerMap = new HashMap();
 
     /*
      * (non-Javadoc)

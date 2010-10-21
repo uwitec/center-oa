@@ -83,7 +83,7 @@ public class DutyManagerImpl extends AbstractListenerManager<DutyListener> imple
             throw new MYException("数据错误,请确认操作");
         }
 
-        Collection<DutyListener> values = this.listenerMap.values();
+        Collection<DutyListener> values = this.listenerMapValues();
 
         for (DutyListener dutyListener : values)
         {

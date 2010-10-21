@@ -230,7 +230,7 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
         throws MYException
     {
         // 实现监听
-        Collection<ProductListener> values = this.listenerMap.values();
+        Collection<ProductListener> values = this.listenerMapValues();
 
         for (ProductListener productListener : values)
         {
@@ -249,7 +249,7 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
         throws MYException
     {
         // 实现监听
-        Collection<ProductListener> values = this.listenerMap.values();
+        Collection<ProductListener> values = this.listenerMapValues();
 
         for (ProductListener productListener : values)
         {
@@ -268,7 +268,7 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
         throws MYException
     {
         // 实现监听
-        Collection<ProductListener> values = this.listenerMap.values();
+        Collection<ProductListener> values = this.listenerMapValues();
 
         for (ProductListener productListener : values)
         {
@@ -287,7 +287,7 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
         throws MYException
     {
         // 实现监听
-        Collection<ProductListener> values = this.listenerMap.values();
+        Collection<ProductListener> values = this.listenerMapValues();
 
         for (ProductListener productListener : values)
         {

@@ -231,7 +231,7 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
      */
     public boolean onPriceChange(User user, ProductBean bean)
     {
-        Collection<PriceChangeListener> listenerList = this.listenerMap.values();
+        Collection<PriceChangeListener> listenerList = this.listenerMapValues();
 
         for (PriceChangeListener priceChangeListener : listenerList)
         {

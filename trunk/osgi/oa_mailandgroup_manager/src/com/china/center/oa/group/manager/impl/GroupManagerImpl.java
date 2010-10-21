@@ -233,7 +233,7 @@ public class GroupManagerImpl extends AbstractListenerManager<GroupListener> imp
             throw new MYException("不能删除系统群组");
         }
 
-        Collection<GroupListener> listeners = this.listenerMap.values();
+        Collection<GroupListener> listeners = this.listenerMapValues();
 
         for (GroupListener groupListener : listeners)
         {

@@ -185,7 +185,7 @@ public class LocationManagerImpl extends AbstractListenerManager<LocationListene
 
         locationVSCityDAO.deleteEntityBeansByFK(locationId);
 
-        for (LocationListener listener : this.listenerMap.values())
+        for (LocationListener listener : this.listenerMapValues())
         {
             listener.onAddLocationVSCityBefore(user, locationId, list);
         }
@@ -220,7 +220,7 @@ public class LocationManagerImpl extends AbstractListenerManager<LocationListene
 
             locationVSCityDAO.saveEntityBean(locationVSCityBean);
 
-            for (LocationListener listener : this.listenerMap.values())
+            for (LocationListener listener : this.listenerMapValues())
             {
                 listener.onAddLocationVSCityEach(user, locationId, locationVSCityBean);
             }
@@ -230,7 +230,7 @@ public class LocationManagerImpl extends AbstractListenerManager<LocationListene
         // 本次删除的地市
         List<LocationVSCityBean> delCity = analyseDelCity(oldList, list);
 
-        for (LocationListener listener : this.listenerMap.values())
+        for (LocationListener listener : this.listenerMapValues())
         {
             listener.onDeleteLocationVSCity(user, locationId, delCity);
         }
@@ -303,7 +303,7 @@ public class LocationManagerImpl extends AbstractListenerManager<LocationListene
         }
 
         // 注入监听
-        for (LocationListener listener : this.listenerMap.values())
+        for (LocationListener listener : this.listenerMapValues())
         {
             listener.onDeleteLocation(user, locationId);
         }

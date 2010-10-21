@@ -280,7 +280,7 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
             throw new MYException("人员下存在注册登录用户,请先删除登录用户");
         }
 
-        for (StafferListener listener : this.listenerMap.values())
+        for (StafferListener listener : this.listenerMapValues())
         {
             listener.onDelete(stafferId);
         }
