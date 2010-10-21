@@ -9,6 +9,7 @@
 package com.center.china.osgi.publics;
 
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +24,10 @@ import java.util.Map;
  */
 public abstract class AbstractListenerManager<Listener extends ParentListener> implements ListenerManager<Listener>
 {
-    protected Map<String, Listener> listenerMap = new HashMap();
+    /**
+     * 静态的在bundle重新加载的时候不会丢失数据
+     */
+    protected static Map listenerMap = new HashMap();
 
     public void putListener(Listener listener)
     {
@@ -33,5 +37,10 @@ public abstract class AbstractListenerManager<Listener extends ParentListener> i
     public void removeListener(String listener)
     {
         listenerMap.remove(listener);
+    }
+
+    public Collection<Listener> listenerMapValues()
+    {
+        return listenerMap.values();
     }
 }
