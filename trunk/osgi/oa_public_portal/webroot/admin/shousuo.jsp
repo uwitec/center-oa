@@ -121,7 +121,7 @@ function load()
 		<ul id="ChildMenu${vs.index}" class="collapsed">
 			<c:forEach var="item1" items="${menuItemMap[item.id]}"
 				varStatus="vs1">
-				<li><a href="${item1.url}" target="main" id="a_${item1.id}">${item1.menuItemName}</a></li>
+				<li><a href="${item1.url}" target="main" id="a_${item1.id}" title="${item1.description}">${item1.menuItemName}</a></li>
 			</c:forEach>
 		</ul>
 		</li>

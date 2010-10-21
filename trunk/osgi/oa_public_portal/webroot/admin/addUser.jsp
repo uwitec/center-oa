@@ -53,6 +53,8 @@ var tv = new treeview("treeview","../js/tree",true,false);
 
 var nmap = {};
 
+var gAuth = [];
+
 function load()
 {
     
@@ -139,6 +141,62 @@ function allSelect(check)
     }
 }
 
+function copyAuth()
+{
+	window.common.modal('../admin/pop.do?method=rptQueryUser&load=1&selectMode=1');
+}
+
+var myAuth;
+
+function getUsers(oos)
+{
+	myAuth = JSON.parse(oos[0].pauth);
+	
+	//展开后才能全部赋值
+	tv.expandAll();
+	
+	gAuth = [];
+	
+	for(var i = 0; i < myAuth.length; i++)
+    {
+        gAuth[i] = myAuth[i].authId;
+    }
+	
+	setAuth();
+	
+	tv.collapseAll();
+}
+
+function setAuth()
+{
+    for (var att in nmap)
+    {
+        var node = nmap[att];
+        
+        if (containAuth(node.id))
+        {
+            node.checkNode.checked = true;
+        }
+        else
+        {
+            node.checkNode.checked = false;
+        }
+    }
+}
+
+function containAuth(authId)
+{
+    for(var i = 0; i < gAuth.length; i++)
+    {
+        if (gAuth[i] == authId)
+        {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 </script>
 
 </head>
@@ -180,7 +238,9 @@ function allSelect(check)
 			
 			<p:cell title="权限">
                 <br>
-                <span style="cursor: pointer;" onclick="allSelect(true)">全部展开</span> | <span
+                <span style="cursor: pointer;" onclick="copyAuth()">拷贝他人权限</span> | 
+                <span style="cursor: pointer;" onclick="allSelect(true)">全部展开</span> | 
+                <span
                     style="cursor: pointer;" onclick="allSelect(false)">全部收起</span>
                 <br>
                 <br>

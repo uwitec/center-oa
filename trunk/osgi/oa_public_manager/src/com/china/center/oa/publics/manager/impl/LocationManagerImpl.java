@@ -22,6 +22,7 @@ import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.oa.publics.bean.CityBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
+import com.china.center.oa.publics.constant.OrgConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CityDAO;
 import com.china.center.oa.publics.dao.CommonDAO;
@@ -98,8 +99,8 @@ public class LocationManagerImpl extends AbstractListenerManager<LocationListene
 
         org.setParentId(bean.getParentId());
 
-        // 默认销售分公司都是三级组织
-        org.setLevel(3);
+        // 默认销售分公司都是四级组织
+        org.setLevel(OrgConstant.LOCATION_LEVEL);
 
         List<OrgBean> parentOrgList = new ArrayList();
 

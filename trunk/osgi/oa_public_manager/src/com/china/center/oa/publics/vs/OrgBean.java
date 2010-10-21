@@ -23,7 +23,7 @@ import com.china.center.oa.publics.bean.PrincipalshipBean;
 /**
  * OrgBean
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2008-11-2
  * @see
  * @since
@@ -48,7 +48,8 @@ public class OrgBean implements Serializable
      * default constructor
      */
     public OrgBean()
-    {}
+    {
+    }
 
     /**
      * @return the id

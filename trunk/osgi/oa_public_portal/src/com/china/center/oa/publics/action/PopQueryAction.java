@@ -24,7 +24,10 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
+import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.PageSeparateTools;
+import com.china.center.actionhelper.jsonimpl.JSONArray;
+import com.china.center.common.MYException;
 import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
@@ -37,8 +40,12 @@ import com.china.center.oa.publics.dao.LogDAO;
 import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.StafferVSPriDAO;
+import com.china.center.oa.publics.dao.UserDAO;
+import com.china.center.oa.publics.manager.RoleManager;
 import com.china.center.oa.publics.vo.LogVO;
+import com.china.center.oa.publics.vo.RoleVO;
 import com.china.center.oa.publics.vo.StafferVO;
+import com.china.center.oa.publics.vo.UserVO;
 import com.china.center.oa.publics.vs.StafferVSPriBean;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.StringTools;
@@ -60,11 +67,17 @@ public class PopQueryAction extends DispatchAction
 
     private LogDAO logDAO = null;
 
+    private UserDAO userDAO = null;
+
+    private RoleManager roleManager = null;
+
     private StafferVSPriDAO stafferVSPriDAO = null;
 
     private PrincipalshipDAO principalshipDAO = null;
 
     private static String RPTQUERYSTAFFER = "rptQueryStaffer";
+
+    private static String RPTQUERYUSER = "rptQueryUser";
 
     /**
      * @param request
@@ -92,6 +105,30 @@ public class PopQueryAction extends DispatchAction
         {
             condtion.addCondition("StafferBean.locationId", "=", locationId);
         }
+    }
+
+    /**
+     * @param request
+     * @param condtion
+     */
+    private void setUserInnerCondition(HttpServletRequest request, ConditionParse condtion)
+    {
+        String name = request.getParameter("name");
+
+        String sname = request.getParameter("sname");
+
+        if ( !StringTools.isNullOrNone(name))
+        {
+            condtion.addCondition("UserBean.name", "like", name);
+        }
+
+        if ( !StringTools.isNullOrNone(sname))
+        {
+            condtion.addCondition("StafferBean.name", "like", sname);
+        }
+
+        // 只显示正常的用户
+        condtion.addIntCondition("StafferBean.status", "=", StafferConstant.STATUS_COMMON);
     }
 
     /**
@@ -125,7 +162,7 @@ public class PopQueryAction extends DispatchAction
 
             setStafferInnerCondition(request, condtion);
 
-            int total = stafferDAO.countByCondition(condtion.toString());
+            int total = stafferDAO.countVOByCondition(condtion.toString());
 
             PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
 
@@ -146,6 +183,81 @@ public class PopQueryAction extends DispatchAction
         request.setAttribute("locationList", locationList);
 
         return mapping.findForward("rptQueryStaffer");
+    }
+
+    /**
+     * 用户的查询
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryUser(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        List<UserVO> list = null;
+
+        if (PageSeparateTools.isFirstLoad(request))
+        {
+            ConditionParse condtion = new ConditionParse();
+
+            condtion.addWhereStr();
+
+            setUserInnerCondition(request, condtion);
+
+            int total = userDAO.countVOByCondition(condtion.toString());
+
+            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+
+            PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYUSER);
+
+            list = userDAO.queryEntityVOsByCondition(condtion, page);
+        }
+        else
+        {
+            PageSeparateTools.processSeparate(request, RPTQUERYSTAFFER);
+
+            list = userDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, RPTQUERYUSER),
+                PageSeparateTools.getPageSeparate(request, RPTQUERYUSER));
+        }
+
+        for (UserVO userVO : list)
+        {
+            RoleVO bean = null;
+
+            try
+            {
+                bean = roleManager.findVO(userVO.getRoleId());
+
+                if (bean == null)
+                {
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, userVO.getName() + "的角色不存在");
+
+                    return mapping.findForward("error");
+                }
+
+                JSONArray jarr = new JSONArray(bean.getAuth(), true);
+
+                // 借用
+                userVO.setRoleName(jarr.toString());
+            }
+            catch (MYException e)
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, userVO.getName() + "的角色不存在");
+
+                return mapping.findForward("error");
+            }
+        }
+
+        request.setAttribute("beanList", list);
+
+        return mapping.findForward("rptQueryUser");
     }
 
     /**
@@ -313,5 +425,39 @@ public class PopQueryAction extends DispatchAction
     public void setPrincipalshipDAO(PrincipalshipDAO principalshipDAO)
     {
         this.principalshipDAO = principalshipDAO;
+    }
+
+    /**
+     * @return the userDAO
+     */
+    public UserDAO getUserDAO()
+    {
+        return userDAO;
+    }
+
+    /**
+     * @param userDAO
+     *            the userDAO to set
+     */
+    public void setUserDAO(UserDAO userDAO)
+    {
+        this.userDAO = userDAO;
+    }
+
+    /**
+     * @return the roleManager
+     */
+    public RoleManager getRoleManager()
+    {
+        return roleManager;
+    }
+
+    /**
+     * @param roleManager
+     *            the roleManager to set
+     */
+    public void setRoleManager(RoleManager roleManager)
+    {
+        this.roleManager = roleManager;
     }
 }

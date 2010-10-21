@@ -21,7 +21,7 @@ function selectPrin()
 
 function setOrgFromPop(id, name, level)
 {
-	if (level != 2)
+	if (level != 3)
 	{
 		alert('分公司只能挂靠二级组织');
 		

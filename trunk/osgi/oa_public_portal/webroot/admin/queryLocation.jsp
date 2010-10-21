@@ -13,7 +13,7 @@ function load()
 	 $("#mainTable").flexigrid
 	 (
 	 {
-		 title: '分公司(二级组织)列表',
+		 title: '分公司(四级组织)列表',
 		 url: '../admin/location.do?method=queryLocation',
 		 colModel : [
 		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lname={name}>', width : 40, sortable : false, align: 'center'},

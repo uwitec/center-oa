@@ -25,7 +25,7 @@ import com.china.center.jdbc.clone.DataClone;
  * @see
  * @since
  */
-@Entity(cache = false)
+@Entity
 @Table(name = "T_CENTER_OAMENUITEM")
 public class MenuItemBean implements DataClone<MenuItemBean>, Serializable
 {
@@ -44,6 +44,8 @@ public class MenuItemBean implements DataClone<MenuItemBean>, Serializable
 
     private int indexPos = 0;
 
+    private String description = "";
+
     /**
      * Copy Constructor
      * 
@@ -59,6 +61,7 @@ public class MenuItemBean implements DataClone<MenuItemBean>, Serializable
         this.url = menuItemBean.url;
         this.auth = menuItemBean.auth;
         this.indexPos = menuItemBean.indexPos;
+        this.description = menuItemBean.description;
     }
 
     /**
@@ -215,5 +218,22 @@ public class MenuItemBean implements DataClone<MenuItemBean>, Serializable
     public MenuItemBean clones()
     {
         return new MenuItemBean(this);
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription()
+    {
+        return description;
+    }
+
+    /**
+     * @param description
+     *            the description to set
+     */
+    public void setDescription(String description)
+    {
+        this.description = description;
     }
 }

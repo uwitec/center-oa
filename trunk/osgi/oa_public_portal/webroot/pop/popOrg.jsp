@@ -22,8 +22,12 @@ var currentName = null;
 
 var currentLevel = null;
 
+var selectEle;
+
 treeview.prototype.onnodeclick = function(me)
 {
+	selectEle = me;
+	
     currentId = me.id;
     
     currentName = me.sname;
@@ -43,7 +47,13 @@ function sure()
 
     if (currentId == null)
     {
-        alert('请选择职务');
+        alert('请选择组织');
+        return;
+    }
+    
+    if (selectEle.parent.id != '2')
+    {
+        alert('请选择大区下的三级组织');
         return;
     }
 

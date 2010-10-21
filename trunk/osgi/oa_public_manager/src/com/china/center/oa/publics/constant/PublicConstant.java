@@ -92,7 +92,7 @@ public interface PublicConstant
     /**
      * 总部区域(OSGi改造后就是虚拟的,实际上不存在的)
      */
-    String CENTER_LOCATION = "0";
+    String CENTER_LOCATION = "99";
 
     /**
      * 超级管理员
