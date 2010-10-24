@@ -27,20 +27,45 @@ public abstract class AbstractListenerManager<Listener extends ParentListener> i
     /**
      * 静态的在bundle重新加载的时候不会丢失数据
      */
-    protected static Map listenerMap = new HashMap();
+    protected static Map<String, Map> g_listenerMap = new HashMap<String, Map>();
 
     public void putListener(Listener listener)
     {
-        listenerMap.put(listener.getListenerType(), listener);
+        synchronized (g_listenerMap)
+        {
+            getMap().put(listener.getListenerType(), listener);
+        }
+    }
+
+    private Map<String, Listener> getMap()
+    {
+        Map<String, Listener> map = g_listenerMap.get(this.getClass().getName());
+
+        if (map == null)
+        {
+            map = new HashMap<String, Listener>();
+
+            g_listenerMap.put(this.getClass().getName(), map);
+        }
+
+        return map;
     }
 
     public void removeListener(String listener)
     {
-        listenerMap.remove(listener);
+        synchronized (g_listenerMap)
+        {
+            getMap().remove(listener);
+        }
     }
 
     public Collection<Listener> listenerMapValues()
     {
-        return listenerMap.values();
+        synchronized (g_listenerMap)
+        {
+            Collection<Listener> values = getMap().values();
+
+            return values;
+        }
     }
 }
