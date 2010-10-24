@@ -374,7 +374,7 @@ public class StockManagerImpl implements StockManager
                 stockDAO.updateExceptStatus(id, StockConstant.EXCEPTSTATUS_EXCEPTION_MONEY);
 
                 // 获得董事长的人员
-                List<StafferBean> sbList = stafferDAO.queryStafferByAuthId(AuthConstant.SPECIAL_AUTH_CHAIRMAN);
+                List<StafferBean> sbList = stafferDAO.queryStafferByAuthId(AuthConstant.STOCK_NOTICE_CHAIRMA);
 
                 for (StafferBean stafferBean : sbList)
                 {
@@ -500,8 +500,8 @@ public class StockManagerImpl implements StockManager
 
                 if (ppb.getSupportAmount() < sum)
                 {
-                    throw new MYException("外网采购中供应商[%s]提供的产品[%s]数量只有%d已经使用了%d,你请求的采购数量[%d]已经超出(可能其他业务员已经采购一空)",
-                        ppb.getProviderName(), ppb.getProductName(), ppb.getSupportAmount(), (sum - iitem.getAmount()),
+                    throw new MYException("外网采购中供应商[%s]提供的产品[%s]数量只有%d已经使用了%d,你请求的采购数量[%d]已经超出(可能其他业务员已经采购一空)", ppb
+                        .getProviderName(), ppb.getProductName(), ppb.getSupportAmount(), (sum - iitem.getAmount()),
                         iitem.getAmount());
                 }
             }

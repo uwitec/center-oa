@@ -1214,7 +1214,7 @@ public class StockAction extends DispatchAction
         if (type == 1)
         {
             // 总部的manager可以看到所有的
-            if ( !AuthHelper.containAuth(user, AuthConstant.SPECIAL_AUTH_CEO))
+            if ( !AuthHelper.containAuth(user, AuthConstant.STOCK_NOTICE_CEO))
             {
                 condtion.addCondition("StockBean.locationId", "=", user.getLocationId());
             }

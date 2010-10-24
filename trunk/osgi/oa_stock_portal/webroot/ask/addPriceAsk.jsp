@@ -102,6 +102,8 @@ function init()
 				<option value="4">询价(下午15:30结束)</option>
 			</p:pro>
 			
+			<p:pro field="description" innerString="rows=3 cols=55"/>
+			
 		</p:table>
 	</p:subBody>
 

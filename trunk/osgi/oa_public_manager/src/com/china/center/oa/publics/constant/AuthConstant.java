@@ -445,12 +445,12 @@ public interface AuthConstant
     String STOCK_PRICE_PASS = "1306";
 
     /**
-     * 董事长
+     * 董事长通知
      */
-    String SPECIAL_AUTH_CHAIRMAN = "0901";
+    String STOCK_NOTICE_CHAIRMA = "1307";
 
     /**
      * 总经理
      */
-    String SPECIAL_AUTH_CEO = "0902";
+    String STOCK_NOTICE_CEO = "1308";
 }
