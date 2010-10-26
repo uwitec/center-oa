@@ -177,6 +177,9 @@ public class ProductAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYPRODUCT, request, condtion);
 
+        // 默认虚拟产品在前面
+        condtion.addCondition("order by ProductBean.abstractType desc, ProductBean.logTime desc");
+
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPRODUCT, request, condtion, this.productDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
@@ -325,13 +328,15 @@ public class ProductAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYCOMPOSE, request, condtion);
 
+        condtion.addCondition("order by ComposeProductBean.logTime desc");
+
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCOMPOSE, request, condtion, this.composeProductDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
 
     /**
-     * queryApplyProduct(查询申请的产品,主要是虚拟产品)
+     * queryApplyProduct(查询申请的产品)
      * 
      * @param mapping
      * @param form
@@ -544,7 +549,7 @@ public class ProductAction extends DispatchAction
 
             bean.setLogTime(TimeTools.now());
 
-            bean.setStatus(ProductConstant.STATUS_COMMON);
+            bean.setStatus(ProductConstant.STATUS_APPLY);
 
             productFacade.addProductBean(user.getId(), bean);
 
@@ -887,13 +892,13 @@ public class ProductAction extends DispatchAction
         // 获取组合方式 ProductCombinationBean
         String[] srcProductIds = request.getParameterValues("srcProductId");
 
-        String[] srcAmounts = request.getParameterValues("srcAmount");
+        // String[] srcAmounts = request.getParameterValues("srcAmount");
 
         for (int i = 0; i < srcProductIds.length; i++ )
         {
             ProductCombinationBean com = new ProductCombinationBean();
 
-            com.setAmount(CommonTools.parseInt(srcAmounts[i]));
+            com.setAmount(1);
             com.setVproductId(bean.getId());
             com.setSproductId(srcProductIds[i]);
             com.setCreaterId(user.getStafferId());

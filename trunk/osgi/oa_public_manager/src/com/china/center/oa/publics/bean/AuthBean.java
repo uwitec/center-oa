@@ -21,7 +21,7 @@ import com.china.center.oa.publics.constant.PublicConstant;
 /**
  * AuthBean
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2007-12-15
  * @see
  * @since

@@ -326,7 +326,7 @@ public interface AuthConstant
     /**
      * 产品合成/分解
      */
-    String PRODUCT_CD = "1005";
+    String PRODUCT_CD = "100501";
 
     /**
      * 产品调价

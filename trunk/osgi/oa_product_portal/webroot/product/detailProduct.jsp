@@ -68,112 +68,119 @@ function load()
 			
 			<c:if test="${bean.abstractType == 0}">
 			
-			<p:pro field="ptype">
-				<p:option type="productPtype"/>
-			</p:pro>
-			
-			<p:pro field="ctype">
-				<p:option type="productCtype"/>
-			</p:pro>
-			
-			<p:pro field="stockType">
-				<p:option type="productStockType"/>
-			</p:pro>
-
-			<p:pro field="typeName">
-				<p:option type="116"/>
-			</p:pro>
-			<p:pro field="specification"/>
-			<p:pro field="model"/>
-			
-			<p:pro field="amountUnit">
-				<p:option type="117"/>
-			</p:pro>
-			<p:pro field="weightUnit">
-				<p:option type="118"/>
-			</p:pro>
-			<p:pro field="cubageUnit">
-				<p:option type="119"/>
-			</p:pro>
-			<p:pro field="version"/>
-			<p:pro field="design"/>
-			<p:pro field="materielSource"/>
-			<p:pro field="storeUnit">
-				<p:option type="120"/>
-			</p:pro>
-			<p:pro field="abc"/>
-			<p:pro field="batchModal">
-				<p:option type="115"/>
-			</p:pro>
-			<p:pro field="checkDays">
-				<p:option type="[1,30]"/>
-			</p:pro>
-			<p:pro field="maxStoreDays">
-				<p:option type="[1,30]"/>
-			</p:pro>
-			<p:pro field="safeStoreDays">
-				<p:option type="[1,30]"/>
-			</p:pro>
-			<p:pro field="makeDays">
-				<p:option type="[1,30]"/>
-			</p:pro>
-			<p:pro field="flowDays">
-				<p:option type="[1,30]"/>
-			</p:pro>
-			<p:pro field="minAmount">
-				<p:option type="[1,100]"/>
-			</p:pro>
-			<p:pro field="assembleFlag"/>
-			<p:pro field="consumeInDay"/>
-			<p:pro field="orderAmount"/>
-			
-			<p:pro field="mainProvider" value="${bean.mainProviderName}" innerString="readonly=true">
-			</p:pro>
-			<p:pro field="assistantProvider1" value="${bean.assistantProviderName1}" innerString="readonly=true">
-			</p:pro>
-			<p:pro field="assistantProvider2" value="${bean.assistantProviderName2}" innerString="readonly=true">
-			</p:pro>
-			<p:pro field="assistantProvider3" value="${bean.assistantProviderName3}" innerString="readonly=true">
-			</p:pro>
-			
-			<p:pro field="sailType">
-				<p:option type="productSailType"/>
-			</p:pro>
-			
-			<p:pro field="adjustPrice">
-				<p:option type="productAjustPrice"/>
-			</p:pro>
-			
-			<p:pro field="financeType">
-				<p:option type="113"/>
-			</p:pro>
-			
-			<p:pro field="dutyType">
-				<p:option type="114"/>
-			</p:pro>
-			
-			<p:pro field="cost"/>
-			<p:pro field="planCost"/>
-			<p:pro field="batchPrice"/>
-			<p:pro field="sailPrice"/>
-			<p:pro field="checkFlag"/>
-			
-			<p:pro field="checkType">
-				<p:option type="productCheckType"/>
-			</p:pro>
-			<p:pro field="checkStandard" cell="0">
-			<p:option type="121"/>
-			</p:pro>
-			
-			<p:pro field="picPath" cell="0" innerString="size=60 class=button_class"/>
-			
-			<c:if test="${fn:length(bean.picPath) > 0}">
-			<p:tr align="left">
-				<div id="idContainer"> </div>
-			</p:tr>
+				<p:pro field="ptype">
+					<p:option type="productPtype"/>
+				</p:pro>
+				
+				<p:pro field="ctype">
+					<p:option type="productCtype"/>
+				</p:pro>
+				
+				<p:pro field="stockType">
+					<p:option type="productStockType"/>
+				</p:pro>
+	
+				<p:pro field="typeName">
+					<p:option type="116"/>
+				</p:pro>
+				<p:pro field="specification"/>
+				<p:pro field="model"/>
+				
+				<p:pro field="amountUnit">
+					<p:option type="117"/>
+				</p:pro>
+				<p:pro field="weightUnit">
+					<p:option type="118"/>
+				</p:pro>
+				<p:pro field="cubageUnit">
+					<p:option type="119"/>
+				</p:pro>
+				<p:pro field="version"/>
+				<p:pro field="design"/>
+				<p:pro field="materielSource"/>
+				<p:pro field="storeUnit">
+					<p:option type="120"/>
+				</p:pro>
+				<p:pro field="abc"/>
+				<p:pro field="batchModal">
+					<p:option type="115"/>
+				</p:pro>
+				<p:pro field="checkDays">
+					<p:option type="[1,30]"/>
+				</p:pro>
+				<p:pro field="maxStoreDays">
+					<p:option type="[1,30]"/>
+				</p:pro>
+				<p:pro field="safeStoreDays">
+					<p:option type="[1,30]"/>
+				</p:pro>
+				<p:pro field="makeDays">
+					<p:option type="[1,30]"/>
+				</p:pro>
+				<p:pro field="flowDays">
+					<p:option type="[1,30]"/>
+				</p:pro>
+				<p:pro field="minAmount">
+					<p:option type="[1,100]"/>
+				</p:pro>
+				<p:pro field="assembleFlag"/>
+				<p:pro field="consumeInDay"/>
+				<p:pro field="orderAmount"/>
+				
+				<p:pro field="mainProvider" value="${bean.mainProviderName}" innerString="readonly=true">
+				</p:pro>
+				<p:pro field="assistantProvider1" value="${bean.assistantProviderName1}" innerString="readonly=true">
+				</p:pro>
+				<p:pro field="assistantProvider2" value="${bean.assistantProviderName2}" innerString="readonly=true">
+				</p:pro>
+				<p:pro field="assistantProvider3" value="${bean.assistantProviderName3}" innerString="readonly=true">
+				</p:pro>
+				
+				<p:pro field="sailType">
+					<p:option type="productSailType"/>
+				</p:pro>
+				
+				<p:pro field="adjustPrice">
+					<p:option type="productAjustPrice"/>
+				</p:pro>
+				
+				<p:pro field="financeType">
+					<p:option type="113"/>
+				</p:pro>
+				
+				<p:pro field="dutyType">
+					<p:option type="114"/>
+				</p:pro>
+				
+				<p:pro field="cost"/>
+				<p:pro field="planCost"/>
+				<p:pro field="batchPrice"/>
+				<p:pro field="sailPrice"/>
+				<p:pro field="checkFlag"/>
+				
+				<p:pro field="checkType">
+					<p:option type="productCheckType"/>
+				</p:pro>
+				<p:pro field="checkStandard" cell="0">
+				<p:option type="121"/>
+				</p:pro>
+				
+				<p:pro field="picPath" cell="0" innerString="size=60 class=button_class"/>
+				
+				<c:if test="${fn:length(bean.picPath) > 0}">
+				<p:tr align="left">
+					<div id="idContainer"> </div>
+				</p:tr>
+				</c:if>
+				
 			</c:if>
 			
-			</c:if>
+			<p:pro field="reserve1"/>
+			<p:pro field="reserve2"/>
+			<p:pro field="reserve3"/>
+			<p:pro field="reserve4"/>
+			<p:pro field="reserve5"/>
+			<p:pro field="reserve6"/>
 			
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
 			

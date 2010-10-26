@@ -170,6 +170,13 @@ function addBean()
 			</p:tr>
 			</c:if>
 			
+			<p:pro field="reserve1"/>
+			<p:pro field="reserve2"/>
+			<p:pro field="reserve3"/>
+			<p:pro field="reserve4"/>
+			<p:pro field="reserve5"/>
+			<p:pro field="reserve6"/>
+			
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
 
 		</p:table>

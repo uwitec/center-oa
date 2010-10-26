@@ -31,6 +31,7 @@ import com.china.center.oa.product.vs.ProductCombinationBean;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.tools.FileTools;
+import com.china.center.tools.JPTools;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.StringTools;
@@ -76,6 +77,8 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
         JudgeTools.judgeParameterIsNull(user, bean);
 
         createCode(bean);
+
+        createSpell(bean);
 
         Expression exp = new Expression(bean, this);
 
@@ -197,6 +200,8 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
 
         bean.setCode(old.getCode());
 
+        createSpell(bean);
+
         executeOnUpdateProduct(user, bean);
 
         productDAO.updateEntityBean(bean);
@@ -296,6 +301,18 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
     }
 
     /**
+     * createSpell(更新简拼)
+     * 
+     * @param bean
+     */
+    private void createSpell(ProductBean bean)
+    {
+        bean.setFullspell(JPTools.createFullSpell(bean.getName()));
+
+        bean.setShortspell(JPTools.createShortSpell(bean.getName()));
+    }
+
+    /**
      * 产品编码规则：<br>
      * 第一个字母分为下面几种，虚拟产品以v开头，物料s开头，合成后的产品是c开头，不需要模型计算的产品以w开头,普通产品是p开头。<br>
      * 第二个字母是产品类型纸币是z，金银币是j，古币是g，邮票是y，其他类型是q<br>
@@ -305,65 +322,61 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
      */
     private void createCode(ProductBean bean)
     {
-        String fl = "p";
+        String fl = "1";
 
         if (bean.getAbstractType() == ProductConstant.ABSTRACT_TYPE_YES)
         {
-            fl = "V";
+            fl = "2";
         }
         else if (bean.getPtype() == ProductConstant.PTYPE_WULIAO)
         {
-            fl = "s";
+            fl = "3";
         }
         else if (bean.getCtype() == ProductConstant.CTYPE_YES)
         {
-            fl = "c";
-        }
-        else if (bean.getStockType() == ProductConstant.STOCKTYPE_NO_USER)
-        {
-            fl = "w";
+            fl = "4";
         }
         else
         {
-            fl = "p";
+            fl = "1";
         }
 
-        String sl = "q";
+        String sl = "1";
 
         switch (bean.getType())
         {
             case ProductConstant.PRODUCT_TYPE_OTHER:
-                sl = "q";
+                sl = "9";
                 break;
             case ProductConstant.PRODUCT_TYPE_PAPER:
-                sl = "z";
+                sl = "1";
                 break;
             case ProductConstant.PRODUCT_TYPE_METAL:
-                sl = "j";
+                sl = "2";
                 break;
             case ProductConstant.PRODUCT_TYPE_NUMISMATICS:
-                sl = "g";
+                sl = "3";
                 break;
             case ProductConstant.PRODUCT_TYPE_STAMP:
-                sl = "y";
+                sl = "4";
                 break;
             default:
-                sl = "q";
+                sl = "9";
                 break;
         }
 
-        String tl = "s";
+        String tl = "1";
 
         if (bean.getSailType() == ProductConstant.SAILTYPE_SELF)
         {
-            tl = "s";
+            tl = "2";
         }
         else
         {
-            tl = "i";
+            tl = "1";
         }
 
-        String fol = "a";
+        String fol = "1";
 
         // 10位
         String squenceString = StringTools.formatString(bean.getId(), 10);

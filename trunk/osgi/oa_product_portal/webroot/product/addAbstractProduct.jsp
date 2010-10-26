@@ -110,7 +110,6 @@ function getNextInput(el)
                 <table width="100%" border="0" cellspacing='1' id="tables">
                     <tr align="center" class="content0">
                         <td width="50%" align="center">源产品</td>
-                        <td width="30%" align="center">使用数量</td>
                         <td width="5%" align="left"><input type="button" accesskey="A"
                             value="增加(A)" class="button_class" onclick="addTr()"></td>
                     </tr>
@@ -140,8 +139,6 @@ function getNextInput(el)
          style="width: 100%;cursor: pointer;" readonly="readonly" value="" oncheck="notNone" name="targerName" onclick="selectProduct(this)">
          <input type="hidden" name="srcProductId" value="">
          </td>
-         <td width="30%" align="center"><input type="text" style="width: 100%"
-                    name="srcAmount" value="" oncheck="notNone;isNumber"></td>
         <td width="5%" align="center"><input type=button
             value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
     </tr>

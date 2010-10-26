@@ -330,6 +330,34 @@ public class ProductBean implements Serializable
     @Html(title = "描述", type = Element.TEXTAREA, maxLength = 255)
     private String description = "";
 
+    /**
+     * 全拼
+     */
+    private String fullspell = "";
+
+    /**
+     * 简拼
+     */
+    private String shortspell = "";
+
+    @Html(title = "预留1")
+    private String reserve1 = "";
+
+    @Html(title = "预留2")
+    private String reserve2 = "";
+
+    @Html(title = "预留3")
+    private String reserve3 = "";
+
+    @Html(title = "预留4")
+    private String reserve4 = "";
+
+    @Html(title = "预留5")
+    private String reserve5 = "";
+
+    @Html(title = "预留6")
+    private String reserve6 = "";
+
     @Ignore
     private List<ProductCombinationBean> vsList = null;
 
@@ -1225,6 +1253,142 @@ public class ProductBean implements Serializable
     }
 
     /**
+     * @return the reserve1
+     */
+    public String getReserve1()
+    {
+        return reserve1;
+    }
+
+    /**
+     * @param reserve1
+     *            the reserve1 to set
+     */
+    public void setReserve1(String reserve1)
+    {
+        this.reserve1 = reserve1;
+    }
+
+    /**
+     * @return the reserve2
+     */
+    public String getReserve2()
+    {
+        return reserve2;
+    }
+
+    /**
+     * @param reserve2
+     *            the reserve2 to set
+     */
+    public void setReserve2(String reserve2)
+    {
+        this.reserve2 = reserve2;
+    }
+
+    /**
+     * @return the reserve3
+     */
+    public String getReserve3()
+    {
+        return reserve3;
+    }
+
+    /**
+     * @param reserve3
+     *            the reserve3 to set
+     */
+    public void setReserve3(String reserve3)
+    {
+        this.reserve3 = reserve3;
+    }
+
+    /**
+     * @return the reserve4
+     */
+    public String getReserve4()
+    {
+        return reserve4;
+    }
+
+    /**
+     * @param reserve4
+     *            the reserve4 to set
+     */
+    public void setReserve4(String reserve4)
+    {
+        this.reserve4 = reserve4;
+    }
+
+    /**
+     * @return the reserve5
+     */
+    public String getReserve5()
+    {
+        return reserve5;
+    }
+
+    /**
+     * @param reserve5
+     *            the reserve5 to set
+     */
+    public void setReserve5(String reserve5)
+    {
+        this.reserve5 = reserve5;
+    }
+
+    /**
+     * @return the reserve6
+     */
+    public String getReserve6()
+    {
+        return reserve6;
+    }
+
+    /**
+     * @param reserve6
+     *            the reserve6 to set
+     */
+    public void setReserve6(String reserve6)
+    {
+        this.reserve6 = reserve6;
+    }
+
+    /**
+     * @return the fullspell
+     */
+    public String getFullspell()
+    {
+        return fullspell;
+    }
+
+    /**
+     * @param fullspell
+     *            the fullspell to set
+     */
+    public void setFullspell(String fullspell)
+    {
+        this.fullspell = fullspell;
+    }
+
+    /**
+     * @return the shortspell
+     */
+    public String getShortspell()
+    {
+        return shortspell;
+    }
+
+    /**
+     * @param shortspell
+     *            the shortspell to set
+     */
+    public void setShortspell(String shortspell)
+    {
+        this.shortspell = shortspell;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -1391,6 +1555,30 @@ public class ProductBean implements Serializable
             .append(TAB)
             .append("description = ")
             .append(this.description)
+            .append(TAB)
+            .append("fullspell = ")
+            .append(this.fullspell)
+            .append(TAB)
+            .append("shortspell = ")
+            .append(this.shortspell)
+            .append(TAB)
+            .append("reserve1 = ")
+            .append(this.reserve1)
+            .append(TAB)
+            .append("reserve2 = ")
+            .append(this.reserve2)
+            .append(TAB)
+            .append("reserve3 = ")
+            .append(this.reserve3)
+            .append(TAB)
+            .append("reserve4 = ")
+            .append(this.reserve4)
+            .append(TAB)
+            .append("reserve5 = ")
+            .append(this.reserve5)
+            .append(TAB)
+            .append("reserve6 = ")
+            .append(this.reserve6)
             .append(TAB)
             .append("vsList = ")
             .append(this.vsList)
