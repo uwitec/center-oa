@@ -324,9 +324,19 @@ public interface AuthConstant
     String PRODUCT_CHECK = "1004";
 
     /**
-     * 产品合成/分解
+     * 申请产品合成/分解
      */
     String PRODUCT_CD = "100501";
+
+    /**
+     * 生产部经理审批
+     */
+    String PRODUCT_CD_MANGAER = "100502";
+
+    /**
+     * 运营总监审批
+     */
+    String PRODUCT_CD_CRO = "100503";
 
     /**
      * 产品调价
