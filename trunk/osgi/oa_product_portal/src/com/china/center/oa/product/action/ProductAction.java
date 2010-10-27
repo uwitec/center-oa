@@ -322,9 +322,21 @@ public class ProductAction extends DispatchAction
                                       HttpServletResponse response)
         throws ServletException
     {
+        String foward = request.getParameter("foward");
+
         final ConditionParse condtion = new ConditionParse();
 
         condtion.addWhereStr();
+
+        if ("1".equals(foward))
+        {
+            condtion.addIntCondition("ComposeProductBean.status", "=", ComposeConstant.STATUS_SUBMIT);
+        }
+
+        if ("2".equals(foward))
+        {
+            condtion.addIntCondition("ComposeProductBean.status", "=", ComposeConstant.STATUS_MANAGER_PASS);
+        }
 
         ActionTools.processJSONQueryCondition(QUERYCOMPOSE, request, condtion);
 
@@ -981,6 +993,9 @@ public class ProductAction extends DispatchAction
         // 数量大于0的库存
         condition.addIntCondition("StorageRelationBean.amount", ">", 0);
 
+        // 公共的库存
+        condition.addCondition("StorageRelationBean.stafferId", "=", "0");
+
         // 根据产品ID排序
         condition.addCondition("order by StorageRelationBean.productId");
 
@@ -1592,6 +1607,114 @@ public class ProductAction extends DispatchAction
             _logger.warn(e, e);
 
             ajax.setError("删除产品失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * passComposeBean
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward passCompose(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            productFacade.passComposeProduct(user.getId(), id);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * lastPassComposeBean
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward lastPassCompose(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                         HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            productFacade.lastPassComposeProduct(user.getId(), id);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * deleteComposeBean
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward deleteCompose(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            productFacade.rejectComposeProduct(user.getId(), id);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
         }
 
         return JSONTools.writeResponse(response, ajax);

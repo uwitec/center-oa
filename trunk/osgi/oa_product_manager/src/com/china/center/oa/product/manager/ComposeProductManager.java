@@ -36,5 +36,38 @@ public interface ComposeProductManager
     boolean addComposeProduct(User user, ComposeProductBean bean)
         throws MYException;
 
+    /**
+     * 生产部经理审批
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean passComposeProduct(User user, String id)
+        throws MYException;
+
+    /**
+     * 运营总监审批
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean lastPassComposeProduct(User user, String id)
+        throws MYException;
+
+    /**
+     * 驳回合成(就是删除)
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean rejectComposeProduct(User user, String id)
+        throws MYException;
+
     ComposeProductVO findById(String id);
 }

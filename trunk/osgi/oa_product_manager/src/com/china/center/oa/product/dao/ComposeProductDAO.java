@@ -24,5 +24,5 @@ import com.china.center.oa.product.vo.ComposeProductVO;
  */
 public interface ComposeProductDAO extends DAO<ComposeProductBean, ComposeProductVO>
 {
-
+    boolean updateStatus(String id, int status);
 }

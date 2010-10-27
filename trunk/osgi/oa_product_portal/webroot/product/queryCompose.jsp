@@ -23,21 +23,31 @@ function load()
      
      guidMap = {
          title: '产品合成列表',
-         url: gurl + 'query' + ukey,
+         url: gurl + 'query' + ukey + '&foward=${param.foward}',
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
+             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},
-             {display: '产品', name : 'productName', content: '{productName}({productCode})', width : '25%'},
-             {display: '数量', name : 'amount', width : '10%'},
-             {display: '价格', name : 'price', width : '10%', toFixed: 2},
-             {display: '类型', name : 'type', cc : 'composeType', width : '10%'},
-             {display: '合成人', name : 'stafferName', width : '10%'},
+             {display: '产品', name : 'productName', content: '{productName}({productCode})', width : '20%'},
+             {display: '数量', name : 'amount', width : '5%'},
+             {display: '价格', name : 'price', width : '8%', toFixed: 2},
+             {display: '类型', name : 'type', cc : 'composeType', width : '8%'},
+             {display: '状态', name : 'status', cc : 'composeStatus', width : '15%'},
+             {display: '合成人', name : 'stafferName', width : '8%'},
              {display: '时间', name : 'logTime', content: '{logTime}' ,cname: 'logTime',  sortable : true, width : 'auto'}
              ],
          extAtt: {
              id : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
+             <c:if test="${param.foward == 1}">
+         	 {id: 'pass', bclass: 'pass', caption: '生产部经理通过', onpress : passBean, auth: '100502'},
+         	 </c:if>
+         	 <c:if test="${param.foward == 2}">
+         	 {id: 'pass1', bclass: 'pass', caption: '运营总监通过', onpress : lastPassBean, auth: '100503'},
+         	 </c:if>
+         	 <c:if test="${param.foward == 1 || param.foward == 2}">
+             {id: 'reject', bclass: 'reject', caption: '废弃合成', onpress : deleteBean, auth: '100502,100503'},
+             </c:if>
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
          <p:conf/>
@@ -51,6 +61,39 @@ function $callBack()
     loadForm();
     
     highlights($("#mainTable").get(0), ['合成'], 'blue');
+}
+
+function passBean(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 0)
+    {    
+        if(window.confirm('确定通过此合成单?'))    
+        $ajax(gurl + 'pass' + ukey + '&id=' + getRadioValue('checkb'), callBackFun);
+    }
+    else
+    $error('不能操作');
+}
+
+function lastPassBean(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 2)
+    {    
+        if(window.confirm('确定通过此合成单?'))    
+        $ajax(gurl + 'lastPass' + ukey + '&id=' + getRadioValue('checkb'), callBackFun);
+    }
+    else
+    $error('不能操作');
+}
+
+function deleteBean(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus != 3)
+    {    
+        if(window.confirm('确定废弃此合成单?'))    
+        $ajax(gurl + 'delete' + ukey + '&id=' + getRadioValue('checkb'), callBackFun);
+    }
+    else
+    $error('不能操作');
 }
 
 function doSearch()

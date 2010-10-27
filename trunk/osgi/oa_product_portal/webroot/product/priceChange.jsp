@@ -19,6 +19,8 @@ contentNN {
 <script language="JavaScript" src="../product_js/composeProduct.js"></script>
 <script language="javascript">
 
+var max = ${my:length(relationList)};
+
 function addBean()
 {
     submit('确定产品调价?', null, checks);
@@ -26,7 +28,40 @@ function addBean()
 
 function checks()
 {
-    return true;
+	var alertStr = "";
+	
+	//价格异动超过5%
+	for (var i = 0; i < max; i++)
+	{
+		var each = $O('p_' + i);
+		
+		var nowPrice = parseFloat(each.value);
+		
+		var oldPrice = parseFloat(each.ovalue);
+		
+		var pname = each.oname;
+		
+		var paddress = each.oaddress;
+		
+		if (oldPrice == 0)
+		{
+			alertStr += paddress + '[' + pname + '] 原价:' + oldPrice + ';现价:' + nowPrice + "\r\n";
+		}
+		
+		var per = ((nowPrice - oldPrice) / oldPrice) * 100;
+		
+		if (per >= 5)
+		{
+			alertStr += paddress + '[' + pname + '] 原价:' + oldPrice + ';现价:' + nowPrice + "\r\n";
+		}
+	}
+	
+	if (alertStr.length == 0)
+	{
+		return true;
+	}
+	
+	return window.confirm('以下产品价格异动超过5%,请核实\r\n' + alertStr);
 }
 
 
@@ -49,6 +84,50 @@ function copyLast(index)
 			trChange(index);
 		}
 	}
+}
+
+function copyNext(index)
+{
+	var cur = $O('p_' + index);
+	
+	if (cur == null)
+	{
+		return;
+	}
+	
+	var next = $O('p_' + (index + 1));
+	
+	if (next == null)
+	{
+		return;
+	}
+	
+	if (next.pid == cur.pid)
+	{
+		next.value = cur.value;
+		
+		trChange(index + 1);
+		
+		copyNext(index + 1);
+	}
+}
+
+function isFristProduct(index)
+{
+	if (index == 0)
+	{
+		return true;
+	}
+	
+	var pc = $O('p_' + (index - 1));
+	var pc1 = $O('p_' + index);
+	
+	if (pc.pid == pc1.pid)
+	{
+		return false;
+	}
+	
+	return true;
 }
 
 function trChange(index)
@@ -74,6 +153,12 @@ function trChange(index)
 			ac.value = ac.ovalue;
 			trChange(index);
 		}
+	}
+	
+	if (isFristProduct(index))
+	{
+		//下面的产品价格需要拷贝
+		copyNext(index);
 	}
 }
 
@@ -131,7 +216,8 @@ function trChange(index)
                         <td width="5%" align="center"><input type="text" name="changeAmount" ovalue="${item.amount}" value="${item.amount}" style="width: 100%" 
                         onkeyup="trChange(${vs.index}, this)" id="ac_${vs.index}" /></td>
                          <td align="center">${my:formatNum(item.price)}</td>
-                        <td align="center"><input type="text" name="changePrice" value="${my:formatNum(item.price)}"  
+                        <td align="center"><input type="text" name="changePrice" value="${my:formatNum(item.price)}"  oname="${item.productName}"
+                        oaddress="${item.locationName} -- ${item.depotpartName}"
                         ovalue="${my:formatNum(item.price)}" id="p_${vs.index}" pid="${item.productId}"
                         style="width: 100%" ondblclick="copyLast(${vs.index})" onkeyup="trChange(${vs.index}, this)"></td>
                         <td align="center">${item.locationName} --> ${item.depotpartName}</td>

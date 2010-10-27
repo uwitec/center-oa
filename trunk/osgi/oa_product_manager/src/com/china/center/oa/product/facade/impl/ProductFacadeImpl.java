@@ -754,6 +754,63 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
         }
     }
 
+    public boolean lastPassComposeProduct(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.PRODUCT_CD_CRO))
+        {
+            return composeProductManager.lastPassComposeProduct(user, id);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    public boolean passComposeProduct(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.PRODUCT_CD_MANGAER))
+        {
+            return composeProductManager.passComposeProduct(user, id);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    public boolean rejectComposeProduct(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.PRODUCT_CD_MANGAER, AuthConstant.PRODUCT_CD_CRO))
+        {
+            return composeProductManager.rejectComposeProduct(user, id);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
     public PriceChangeVO findPriceChangeById(String id)
     {
         return priceChangeManager.findById(id);

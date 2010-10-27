@@ -164,4 +164,37 @@ public interface ProductFacade
         throws MYException;;
 
     boolean isStorageRelationLock();
+
+    /**
+     * 生产部经理审批
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean passComposeProduct(String userId, String id)
+        throws MYException;
+
+    /**
+     * 运营总监审批
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean lastPassComposeProduct(String userId, String id)
+        throws MYException;
+
+    /**
+     * 驳回合成
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean rejectComposeProduct(String userId, String id)
+        throws MYException;
 }

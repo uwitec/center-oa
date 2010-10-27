@@ -75,11 +75,60 @@ public class ComposeProductManagerImpl implements ComposeProductManager
 
         saveInner(bean);
 
+        return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean lastPassComposeProduct(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        ComposeProductBean bean = findBeanById(id);
+
+        if (bean == null)
+        {
+            throw new MYException("合成单不存在");
+        }
+
+        if (bean.getStatus() != ComposeConstant.STATUS_MANAGER_PASS)
+        {
+            throw new MYException("合成单状态不正确,不能最终合成产品");
+        }
+
+        composeProductDAO.updateStatus(id, ComposeConstant.STATUS_CRO_PASS);
+
         // 修改库存(合成)
         if (bean.getType() == ComposeConstant.COMPOSE_TYPE_COMPOSE)
         {
             processCompose(user, bean);
         }
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean passComposeProduct(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        composeProductDAO.updateStatus(id, ComposeConstant.STATUS_MANAGER_PASS);
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean rejectComposeProduct(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        composeProductDAO.deleteEntityBean(id);
+
+        composeItemDAO.deleteEntityBeansByFK(id);
+
+        composeFeeDAO.deleteEntityBeansByFK(id);
 
         return true;
     }
@@ -93,11 +142,32 @@ public class ComposeProductManagerImpl implements ComposeProductManager
     {
         ComposeProductVO vo = composeProductDAO.findVO(id);
 
+        if (vo == null)
+        {
+            return null;
+        }
+
         vo.setItemVOList(composeItemDAO.queryEntityVOsByFK(id));
 
         vo.setFeeVOList(composeFeeDAO.queryEntityVOsByFK(id));
 
         return vo;
+    }
+
+    private ComposeProductBean findBeanById(String id)
+    {
+        ComposeProductBean bean = composeProductDAO.find(id);
+
+        if (bean == null)
+        {
+            return null;
+        }
+
+        bean.setItemList(composeItemDAO.queryEntityBeansByFK(id));
+
+        bean.setFeeList(composeFeeDAO.queryEntityBeansByFK(id));
+
+        return bean;
     }
 
     /**
@@ -149,6 +219,8 @@ public class ComposeProductManagerImpl implements ComposeProductManager
     private void saveInner(ComposeProductBean bean)
     {
         bean.setId(commonDAO.getSquenceString20());
+
+        bean.setStatus(ComposeConstant.STATUS_SUBMIT);
 
         composeProductDAO.saveEntityBean(bean);
 

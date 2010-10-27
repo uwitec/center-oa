@@ -25,4 +25,8 @@ import com.china.center.oa.product.vo.ComposeProductVO;
  */
 public class ComposeProductDAOImpl extends BaseDAO<ComposeProductBean, ComposeProductVO> implements ComposeProductDAO
 {
+    public boolean updateStatus(String id, int status)
+    {
+        return jdbcOperation.updateField("status", status, id, claz) > 0;
+    }
 }

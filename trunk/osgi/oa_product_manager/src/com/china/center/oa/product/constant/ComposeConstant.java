@@ -33,4 +33,16 @@ public interface ComposeConstant
      */
     @Defined(key = "composeType", value = "分解")
     int COMPOSE_TYPE_DECOMPOSE = 1;
+
+    @Defined(key = "composeStatus", value = "提交")
+    int STATUS_SUBMIT = 0;
+
+    @Defined(key = "composeStatus", value = "驳回")
+    int STATUS_REJECT = 1;
+
+    @Defined(key = "composeStatus", value = "生产部经理通过")
+    int STATUS_MANAGER_PASS = 2;
+
+    @Defined(key = "composeStatus", value = "运营总监通过(已合成)")
+    int STATUS_CRO_PASS = 3;
 }
