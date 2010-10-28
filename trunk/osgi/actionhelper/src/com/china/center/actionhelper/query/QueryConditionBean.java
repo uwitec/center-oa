@@ -48,15 +48,35 @@ public class QueryConditionBean implements Serializable
     private String value = "";
 
     /**
+     * Copy Constructor
+     * 
+     * @param queryConditionBean
+     *            a <code>QueryConditionBean</code> object
+     */
+    public QueryConditionBean(QueryConditionBean queryConditionBean)
+    {
+        this.name = queryConditionBean.name;
+        this.filed = queryConditionBean.filed;
+        this.caption = queryConditionBean.caption;
+        this.opr = queryConditionBean.opr;
+        this.type = queryConditionBean.type;
+        this.pfix = queryConditionBean.pfix;
+        this.inner = queryConditionBean.inner;
+        this.option = queryConditionBean.option;
+        this.datatype = queryConditionBean.datatype;
+        this.value = queryConditionBean.value;
+    }
+
+    /**
      * default constructor
      */
     public QueryConditionBean()
-    {}
+    {
+    }
 
     public String getAssistant()
     {
-        return "filed:" + this.filed + ";opr:" + this.opr + ";pfix:" + this.pfix + ";datatype:"
-               + this.datatype;
+        return "filed:" + this.filed + ";opr:" + this.opr + ";pfix:" + this.pfix + ";datatype:" + this.datatype;
     }
 
     public void parser(String str)

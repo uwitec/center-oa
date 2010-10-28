@@ -30,10 +30,24 @@ public class QueryItemBean implements Serializable
     private List<QueryConditionBean> conditions = null;
 
     /**
+     * Copy Constructor
+     * 
+     * @param queryItemBean
+     *            a <code>QueryItemBean</code> object
+     */
+    public QueryItemBean(QueryItemBean queryItemBean)
+    {
+        this.name = queryItemBean.name;
+        this.deaultpfix = queryItemBean.deaultpfix;
+        this.conditions = queryItemBean.conditions;
+    }
+
+    /**
      * default constructor
      */
     public QueryItemBean()
-    {}
+    {
+    }
 
     /**
      * @return the name
@@ -78,7 +92,8 @@ public class QueryItemBean implements Serializable
     }
 
     /**
-     * @param conditions the conditions to set
+     * @param conditions
+     *            the conditions to set
      */
     public void setConditions(List<QueryConditionBean> conditions)
     {
