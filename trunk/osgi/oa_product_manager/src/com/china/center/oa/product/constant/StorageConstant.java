@@ -77,7 +77,25 @@ public interface StorageConstant
     int OPR_DDEPOTPART_CHANGE_ROLLBACK = 7;
 
     /**
+     * 名下转移
+     */
+    @Defined(key = "storageType", value = "名下转移")
+    int OPR_DDEPOTPART_APPLY_MOVE = 8;
+
+    /**
      * 公共的职员
      */
     String PUBLIC_STAFFER = "0";
+
+    /**
+     * 申请
+     */
+    @Defined(key = "storageApplyStatus", value = "申请")
+    int STORAGEAPPLY_STATUS_SUBMIT = 0;
+
+    /**
+     * 通过
+     */
+    @Defined(key = "storageApplyStatus", value = "通过")
+    int STORAGEAPPLY_STATUS_PASS = 1;
 }

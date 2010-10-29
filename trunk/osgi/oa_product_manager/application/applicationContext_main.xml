@@ -94,4 +94,8 @@
 
 	<bean id="priceHistoryDAO" class="com.china.center.oa.product.dao.impl.PriceHistoryDAOImpl" />
 
+	<bean id="storageApplyDAO" class="com.china.center.oa.product.dao.impl.StorageApplyDAOImpl" />
+
+	<bean id="storageApplyManager" class="com.china.center.oa.product.manager.impl.StorageApplyManagerImpl" />
+
 </beans>

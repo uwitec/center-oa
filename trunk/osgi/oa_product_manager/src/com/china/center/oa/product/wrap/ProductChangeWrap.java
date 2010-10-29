@@ -31,7 +31,7 @@ public class ProductChangeWrap implements Serializable
     private String productId = "";
 
     /**
-     * 如果有relationId,优先级最高
+     * 如果有relationId,优先级最高(有的话storageId,depotpartId,productId,price,stafferId)
      */
     private String relationId = "";
 
@@ -241,13 +241,41 @@ public class ProductChangeWrap implements Serializable
 
         StringBuffer retValue = new StringBuffer();
 
-        retValue.append("ProductChangeWrap ( ").append(super.toString()).append(TAB).append("storageId = ").append(
-            this.storageId).append(TAB).append("depotpartId = ").append(this.depotpartId).append(TAB).append(
-            "productId = ").append(this.productId).append(TAB).append("relationId = ").append(this.relationId).append(
-            TAB).append("price = ").append(this.price).append(TAB).append("serializeId = ").append(this.serializeId).append(
-            TAB).append("description = ").append(this.description).append(TAB).append("stafferId = ").append(
-            this.stafferId).append(TAB).append("change = ").append(this.change).append(TAB).append("type = ").append(
-            this.type).append(TAB).append(" )");
+        retValue
+            .append("ProductChangeWrap ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("storageId = ")
+            .append(this.storageId)
+            .append(TAB)
+            .append("depotpartId = ")
+            .append(this.depotpartId)
+            .append(TAB)
+            .append("productId = ")
+            .append(this.productId)
+            .append(TAB)
+            .append("relationId = ")
+            .append(this.relationId)
+            .append(TAB)
+            .append("price = ")
+            .append(this.price)
+            .append(TAB)
+            .append("serializeId = ")
+            .append(this.serializeId)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("change = ")
+            .append(this.change)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

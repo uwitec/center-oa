@@ -70,4 +70,8 @@
 
 	<osgi:service ref="priceHistoryDAO" interface="com.china.center.oa.product.dao.PriceHistoryDAO" />
 
+	<osgi:service ref="storageApplyDAO" interface="com.china.center.oa.product.dao.StorageApplyDAO" />
+
+	<osgi:service ref="storageApplyManager" interface="com.china.center.oa.product.manager.StorageApplyManager" />
+
 </beans>

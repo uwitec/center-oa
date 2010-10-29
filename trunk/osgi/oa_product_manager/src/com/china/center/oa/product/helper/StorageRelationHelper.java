@@ -8,6 +8,11 @@
  */
 package com.china.center.oa.product.helper;
 
+
+import com.china.center.oa.product.vs.StorageRelationBean;
+import com.china.center.oa.product.wrap.ProductChangeWrap;
+
+
 /**
  * StorageRelationHelper
  * 
@@ -29,5 +34,19 @@ public abstract class StorageRelationHelper
         double last = value * 100;
 
         return String.valueOf(Math.round(last));
+    }
+
+    public static ProductChangeWrap createProductChangeWrap(StorageRelationBean bean)
+    {
+        ProductChangeWrap wrap = new ProductChangeWrap();
+
+        wrap.setDepotpartId(bean.getDepotpartId());
+        wrap.setProductId(bean.getProductId());
+        wrap.setStorageId(bean.getStorageId());
+
+        wrap.setPrice(bean.getPrice());
+
+        return wrap;
+
     }
 }
