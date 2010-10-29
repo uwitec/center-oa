@@ -355,15 +355,15 @@ public class LoginAction extends DispatchAction
         Map<String, List<MenuItemBean>> menuItemMap = new HashMap<String, List<MenuItemBean>>();
 
         // get auth by role
-        List<RoleAuthBean> auth = roleAuthDAO.queryEntityBeansByFK(user.getRoleId());
+        List<RoleAuthBean> authList = roleAuthDAO.queryEntityBeansByFK(user.getRoleId());
 
         RoleAuthBean publicAuth = new RoleAuthBean();
 
         publicAuth.setAuthId(AuthConstant.PUNLIC_AUTH);
 
-        auth.add(publicAuth);
+        authList.add(publicAuth);
 
-        user.setAuth(auth);
+        user.setAuth(authList);
 
         List<MenuItemBean> result = filterMenuItem(user, menuItemMap);
 
