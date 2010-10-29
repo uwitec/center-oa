@@ -86,6 +86,8 @@ public class StorageAction extends DispatchAction
 
     private static final String QUERYSTORAGERELATION = "queryStorageRelation";
 
+    private static final String QUERYSELFSTORAGERELATION = "querySelfStorageRelation";
+
     private static final String RPTQUERYPRODUCTINDEPOTPART = "rptQueryProductInDepotpart";
 
     /**
@@ -142,6 +144,36 @@ public class StorageAction extends DispatchAction
 
                 }
             });
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * querySelfStorageRelation
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward querySelfStorageRelation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                                  HttpServletResponse response)
+        throws ServletException
+    {
+        User user = Helper.getUser(request);
+
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        condtion.addCondition("StorageRelationBean.stafferId", "=", user.getStafferId());
+
+        ActionTools.processJSONQueryCondition(QUERYSELFSTORAGERELATION, request, condtion);
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFSTORAGERELATION, request, condtion,
+            this.storageRelationDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }

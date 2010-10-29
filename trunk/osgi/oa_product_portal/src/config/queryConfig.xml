@@ -166,6 +166,8 @@
 		</condtion>
 	</item>
 	
+	<item name="querySelfStorageRelation" alias="queryStorageRelation"/>
+	
 	<item name="queryCompose" deaultpfix="ComposeProductBean">
 		<condtion name="id" caption="标识">
 			<opr>like</opr>
