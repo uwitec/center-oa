@@ -102,7 +102,7 @@ public class StorageRelationManagerImpl implements StorageRelationManager
             throw new MYException("库存被锁定,请确认解锁库存操作");
         }
 
-        JudgeTools.judgeParameterIsNull(user, bean, bean.getDepotpartId(), bean.getProductId(), bean.getStafferId());
+        JudgeTools.judgeParameterIsNull(user, bean, bean.getStafferId());
 
         StorageRelationBean relation = null;
 
@@ -123,10 +123,18 @@ public class StorageRelationManagerImpl implements StorageRelationManager
             priceKey = StorageRelationHelper.getPriceKey(relation.getPrice());
 
             bean.setPrice(relation.getPrice());
+
+            bean.setProductId(relation.getProductId());
+
+            bean.setDepotpartId(relation.getDepotpartId());
+
+            bean.setStafferId(relation.getStafferId());
         }
         else
         {
             priceKey = StorageRelationHelper.getPriceKey(bean.getPrice());
+
+            JudgeTools.judgeParameterIsNull(bean.getDepotpartId(), bean.getProductId());
         }
 
         // 防止直接插入的(先给默认储位)
@@ -214,8 +222,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
         if (relation.getAmount() + bean.getChange() < 0)
         {
             throw new MYException("仓库[%s]下仓区[%s]下储位[%s]的产品[%s]库存不够,当前库存为[%d],需要使用[%d]", depotBean.getName(),
-                depotpartBean.getName(), storageBean.getName(), productBean.getName(), relation.getAmount(),
-                -bean.getChange());
+                depotpartBean.getName(), storageBean.getName(), productBean.getName(), relation.getAmount(), -bean
+                    .getChange());
         }
 
         // 之前储位内产品的数量
@@ -223,8 +231,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
 
         int preAmount1 = storageRelationDAO.sumProductInDepotpartId(bean.getProductId(), depotpartBean.getId());
 
-        int preAmount11 = storageRelationDAO.sumProductInDepotpartIdAndPriceKey(bean.getProductId(),
-            depotpartBean.getId(), priceKey);
+        int preAmount11 = storageRelationDAO.sumProductInDepotpartIdAndPriceKey(bean.getProductId(), depotpartBean
+            .getId(), priceKey);
 
         int preAmount2 = storageRelationDAO.sumProductInLocationId(bean.getProductId(), depotBean.getId());
 
@@ -251,8 +259,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
 
         int afterAmount1 = storageRelationDAO.sumProductInDepotpartId(bean.getProductId(), depotpartBean.getId());
 
-        int afterAmount11 = storageRelationDAO.sumProductInDepotpartIdAndPriceKey(bean.getProductId(),
-            depotpartBean.getId(), priceKey);
+        int afterAmount11 = storageRelationDAO.sumProductInDepotpartIdAndPriceKey(bean.getProductId(), depotpartBean
+            .getId(), priceKey);
 
         int afterAmount2 = storageRelationDAO.sumProductInLocationId(bean.getProductId(), depotBean.getId());
 
@@ -526,8 +534,9 @@ public class StorageRelationManagerImpl implements StorageRelationManager
         }
 
         // 自动找寻仓区下产品的位置
-        final StorageRelationBean newRelationBean = storageRelationDAO.findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(
-            dirDepotpartId, srb.getProductId(), srb.getPriceKey(), StorageConstant.PUBLIC_STAFFER);
+        final StorageRelationBean newRelationBean = storageRelationDAO
+            .findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(dirDepotpartId, srb.getProductId(),
+                srb.getPriceKey(), StorageConstant.PUBLIC_STAFFER);
 
         final List<StorageBean> sbs = new ArrayList();
 

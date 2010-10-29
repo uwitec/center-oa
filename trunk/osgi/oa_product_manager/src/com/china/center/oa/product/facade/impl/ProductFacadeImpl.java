@@ -20,6 +20,7 @@ import com.china.center.oa.product.bean.PriceChangeBean;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.product.bean.ProviderUserBean;
+import com.china.center.oa.product.bean.StorageApplyBean;
 import com.china.center.oa.product.bean.StorageBean;
 import com.china.center.oa.product.facade.ProductFacade;
 import com.china.center.oa.product.manager.ComposeProductManager;
@@ -28,6 +29,7 @@ import com.china.center.oa.product.manager.DepotpartManager;
 import com.china.center.oa.product.manager.PriceChangeManager;
 import com.china.center.oa.product.manager.ProductManager;
 import com.china.center.oa.product.manager.ProviderManager;
+import com.china.center.oa.product.manager.StorageApplyManager;
 import com.china.center.oa.product.manager.StorageManager;
 import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.vo.ComposeProductVO;
@@ -63,6 +65,8 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
     private ComposeProductManager composeProductManager = null;
 
     private StorageRelationManager storageRelationManager = null;
+
+    private StorageApplyManager storageApplyManager = null;
 
     private static Object LOCK = new Object();
 
@@ -811,6 +815,43 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
         }
     }
 
+    public boolean addStorageApply(String userId, StorageApplyBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        return storageApplyManager.addBean(user, bean);
+    }
+
+    public boolean passStorageApply(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        return storageApplyManager.passBean(user, id);
+
+    }
+
+    public boolean rejectStorageApply(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        return storageApplyManager.rejectBean(user, id);
+    }
+
     public PriceChangeVO findPriceChangeById(String id)
     {
         return priceChangeManager.findById(id);
@@ -950,5 +991,22 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
     public void setPriceChangeManager(PriceChangeManager priceChangeManager)
     {
         this.priceChangeManager = priceChangeManager;
+    }
+
+    /**
+     * @return the storageApplyManager
+     */
+    public StorageApplyManager getStorageApplyManager()
+    {
+        return storageApplyManager;
+    }
+
+    /**
+     * @param storageApplyManager
+     *            the storageApplyManager to set
+     */
+    public void setStorageApplyManager(StorageApplyManager storageApplyManager)
+    {
+        this.storageApplyManager = storageApplyManager;
     }
 }

@@ -67,4 +67,6 @@
 	
 	<osgi:reference id="priceChangeDAO" interface="com.china.center.oa.product.dao.PriceChangeDAO" />
 	
+	<osgi:reference id="storageApplyDAO" interface="com.china.center.oa.product.dao.StorageApplyDAO" />
+	
 </beans>

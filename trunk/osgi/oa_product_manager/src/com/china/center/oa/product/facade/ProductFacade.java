@@ -19,6 +19,7 @@ import com.china.center.oa.product.bean.PriceChangeBean;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.product.bean.ProviderUserBean;
+import com.china.center.oa.product.bean.StorageApplyBean;
 import com.china.center.oa.product.bean.StorageBean;
 import com.china.center.oa.product.vo.ComposeProductVO;
 import com.china.center.oa.product.vo.PriceChangeVO;
@@ -196,5 +197,14 @@ public interface ProductFacade
      * @throws MYException
      */
     boolean rejectComposeProduct(String userId, String id)
+        throws MYException;
+
+    boolean addStorageApply(String userId, StorageApplyBean bean)
+        throws MYException;
+
+    boolean passStorageApply(String userId, String id)
+        throws MYException;
+
+    boolean rejectStorageApply(String userId, String id)
         throws MYException;
 }

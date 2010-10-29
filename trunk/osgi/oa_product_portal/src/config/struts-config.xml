@@ -48,6 +48,8 @@
             <forward name="transferStorageRelation" path="/depot/transferStorageRelation.jsp" />
             <forward name="listStorageLog" path="/depot/listStorageLog.jsp" />
             <forward name="listStorageLog1" path="/depot/listStorageLog1.jsp" />
+            <forward name="addStorageApply" path="/depot/addStorageApply.jsp" />
+            <forward name="querySelfStorageRelation" path="/depot/querySelfStorageRelation.jsp" />
             <forward name="rptQueryProductInDepotpart" path="/depot/rptQueryProductInDepotpart.jsp" />
         </action>
 		

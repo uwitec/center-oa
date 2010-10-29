@@ -1021,12 +1021,12 @@ public class ProductAction extends DispatchAction
 
             if (bol == null)
             {
+                // TODO_OSGI 获取产品是否已经在销售途中(在销售的模块里面实现)
                 bol = !productFacade.onPriceChange(user.getId(), product);
 
                 cacheMap.put(product.getId(), bol);
             }
 
-            // TODO_OSGI 获取产品是否已经在销售途中(在销售的模块里面实现)
             if (bol)
             {
                 iterator.remove();

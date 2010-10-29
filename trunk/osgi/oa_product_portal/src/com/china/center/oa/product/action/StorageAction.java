@@ -38,10 +38,13 @@ import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.bean.ProductBean;
+import com.china.center.oa.product.bean.StorageApplyBean;
 import com.china.center.oa.product.bean.StorageBean;
+import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.DepotpartDAO;
 import com.china.center.oa.product.dao.ProductDAO;
+import com.china.center.oa.product.dao.StorageApplyDAO;
 import com.china.center.oa.product.dao.StorageDAO;
 import com.china.center.oa.product.dao.StorageLogDAO;
 import com.china.center.oa.product.dao.StorageRelationDAO;
@@ -54,6 +57,7 @@ import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.StringTools;
+import com.china.center.tools.TimeTools;
 
 
 /**
@@ -82,6 +86,8 @@ public class StorageAction extends DispatchAction
 
     private StorageRelationDAO storageRelationDAO = null;
 
+    private StorageApplyDAO storageApplyDAO = null;
+
     private static final String QUERYSTORAGE = "queryStorage";
 
     private static final String QUERYSTORAGERELATION = "queryStorageRelation";
@@ -89,6 +95,8 @@ public class StorageAction extends DispatchAction
     private static final String QUERYSELFSTORAGERELATION = "querySelfStorageRelation";
 
     private static final String RPTQUERYPRODUCTINDEPOTPART = "rptQueryProductInDepotpart";
+
+    private static final String QUERYSTORAGEAPPLY = "queryStorageApply";
 
     /**
      * default constructor
@@ -174,6 +182,38 @@ public class StorageAction extends DispatchAction
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFSTORAGERELATION, request, condtion,
             this.storageRelationDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * querySelfStorageRelation
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryStorageApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                           HttpServletResponse response)
+        throws ServletException
+    {
+        User user = Helper.getUser(request);
+
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        condtion.addCondition("StorageApplyBean.reveiver", "=", user.getStafferId());
+
+        condtion.addIntCondition("StorageApplyBean.status", "=", StorageConstant.STORAGEAPPLY_STATUS_SUBMIT);
+
+        ActionTools.processJSONQueryCondition(QUERYSTORAGEAPPLY, request, condtion);
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSTORAGEAPPLY, request, condtion,
+            this.storageApplyDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -362,7 +402,7 @@ public class StorageAction extends DispatchAction
     }
 
     /**
-     * preForMoveDepotpart
+     * preForAddStorage
      * 
      * @param mapping
      * @param form
@@ -380,6 +420,85 @@ public class StorageAction extends DispatchAction
         request.setAttribute("depotList", depotList);
 
         return mapping.findForward("addStorage");
+    }
+
+    /**
+     * preForApplyStorage
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward preForAddStorageApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                               HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        StorageRelationVO bean = storageRelationDAO.findVO(id);
+
+        request.setAttribute("bean", bean);
+
+        return mapping.findForward("addStorageApply");
+    }
+
+    /**
+     * addStorageApply
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward addStorageApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                         HttpServletResponse response)
+        throws ServletException
+    {
+        StorageApplyBean bean = new StorageApplyBean();
+
+        try
+        {
+            BeanUtil.getBean(bean, request);
+
+            User user = Helper.getUser(request);
+
+            StorageRelationVO relation = storageRelationDAO.findVO(bean.getStorageRelationId());
+
+            if (relation == null)
+            {
+                return ActionTools.toError("数据错误,请重新操作", mapping, request);
+            }
+
+            bean.setProductName(relation.getProductName());
+            bean.setApplyer(user.getStafferId());
+            bean.setLogTime(TimeTools.now());
+
+            if (bean.getAmount() > relation.getAmount() || bean.getAmount() == 0)
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "转移的数量非法");
+
+                return mapping.findForward("querySelfStorageRelation");
+            }
+
+            productFacade.addStorageApply(user.getId(), bean);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        return mapping.findForward("querySelfStorageRelation");
     }
 
     /**
@@ -413,6 +532,78 @@ public class StorageAction extends DispatchAction
             _logger.warn(e, e);
 
             ajax.setError("删除失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * passStorageApply
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward passStorageApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            User user = Helper.getUser(request);
+
+            productFacade.passStorageApply(user.getId(), id);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * passStorageApply
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rejectStorageApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                            HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            User user = Helper.getUser(request);
+
+            productFacade.rejectStorageApply(user.getId(), id);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
         }
 
         return JSONTools.writeResponse(response, ajax);
@@ -851,5 +1042,22 @@ public class StorageAction extends DispatchAction
     public void setDepotpartDAO(DepotpartDAO depotpartDAO)
     {
         this.depotpartDAO = depotpartDAO;
+    }
+
+    /**
+     * @return the storageApplyDAO
+     */
+    public StorageApplyDAO getStorageApplyDAO()
+    {
+        return storageApplyDAO;
+    }
+
+    /**
+     * @param storageApplyDAO
+     *            the storageApplyDAO to set
+     */
+    public void setStorageApplyDAO(StorageApplyDAO storageApplyDAO)
+    {
+        this.storageApplyDAO = storageApplyDAO;
     }
 }

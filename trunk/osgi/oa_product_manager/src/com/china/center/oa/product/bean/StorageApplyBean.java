@@ -12,10 +12,12 @@ package com.china.center.oa.product.bean;
 import java.io.Serializable;
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.Html;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.Unique;
+import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.publics.bean.StafferBean;
@@ -52,7 +54,11 @@ public class StorageApplyBean implements Serializable
 
     private int status = StorageConstant.STORAGEAPPLY_STATUS_SUBMIT;
 
+    @Html(title = "转移数量", must = true, type = Element.NUMBER)
     private int amount = 0;
+
+    @Html(title = "描述", type = Element.TEXTAREA, maxLength = 200)
+    private String description = "";
 
     /**
      * default constructor
@@ -273,6 +279,23 @@ public class StorageApplyBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription()
+    {
+        return description;
+    }
+
+    /**
+     * @param description
+     *            the description to set
+     */
+    public void setDescription(String description)
+    {
+        this.description = description;
     }
 
 }

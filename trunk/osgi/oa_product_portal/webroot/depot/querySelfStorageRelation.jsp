@@ -41,7 +41,7 @@ function load()
              //name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
-             {id: 'add', bclass: 'add', caption: '申请转移库存',  onpress : delBean},
+             {id: 'add', bclass: 'add', caption: '申请转移库存',  onpress : applyBean},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
          <p:conf/>
@@ -56,15 +56,14 @@ function $callBack()
 }
 
 
-function delBean(opr, grid)
+function applyBean(opr, grid)
 {
-    if (getRadio('checkb') && getRadioValue('checkb') &&getRadio('checkb').lamount == 0)
+    if (getRadio('checkb') && getRadioValue('checkb'))
     {    
-        if(window.confirm('确定删除?'))    
-        $ajax(gurl + 'delete' + ukey + '&id=' + getRadioValue('checkb'), callBackFun);
+        $l(gurl + 'preForAddStorageApply' + '&id=' + getRadioValue('checkb'));
     }
     else
-    $error('不能操作,只能删除数量为0的库存');
+    $error('不能操作');
 }
 
 

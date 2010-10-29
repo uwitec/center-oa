@@ -9,6 +9,7 @@
 package com.china.center.oa.product.manager.impl;
 
 
+import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
@@ -36,6 +37,7 @@ import com.china.center.tools.JudgeTools;
  * @see StorageApplyManagerImpl
  * @since 1.0
  */
+@Exceptional
 public class StorageApplyManagerImpl implements StorageApplyManager
 {
     private StorageApplyDAO storageApplyDAO = null;
@@ -97,6 +99,11 @@ public class StorageApplyManagerImpl implements StorageApplyManager
         if ( !user.getStafferId().equals(relation.getStafferId()))
         {
             throw new MYException("只能转移自己名下的库存");
+        }
+
+        if (user.getStafferId().equals(bean.getReveiver()))
+        {
+            throw new MYException("不能自己转移给自己");
         }
 
         Expression exp = new Expression(bean, this);
@@ -187,7 +194,7 @@ public class StorageApplyManagerImpl implements StorageApplyManager
 
         addWrap.setSerializeId(sequence);
 
-        addWrap.setStafferId(user.getStafferId());
+        addWrap.setStafferId(bean.getReveiver());
 
         addWrap.setChange(bean.getAmount());
 
