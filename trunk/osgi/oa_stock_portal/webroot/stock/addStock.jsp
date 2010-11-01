@@ -139,6 +139,17 @@ function getPriceAskProvider(oo)
 
 function change()
 {
+	//tr_CG
+	if ($$('stockType') == '1')
+	{
+		$hide('tr_CG', false);
+	}
+	else
+	{
+		clearValues();
+		$hide('tr_CG', true);
+	}
+	
 	if ($$('stype') == '1')
 	{
 		$hide('type_TR', true);
@@ -170,6 +181,25 @@ function change()
 	}
 }
 
+function selectStaffer()
+{
+    window.common.modal('../admin/pop.do?method=rptQueryStaffer&load=1&selectMode=1');
+}
+
+function getStaffers(oos)
+{
+	var oo = oos[0];
+	
+    $O('owerName').value = oo.pname;
+    $O('stafferId').value = oo.value;
+}
+
+function clearValues()
+{
+	$O('owerName').value = '';
+    $O('stafferId').value = '';
+}
+
 </script>
 
 </head>
@@ -188,6 +218,7 @@ function change()
     <input type="hidden" name="netaskId_3" value="">
     <input type="hidden" name="netaskId_4" value="">
     
+	<input type="hidden" name="stafferId" value="">
 	<input type="hidden" name="oprMode" value="">
 	<input
 	type="hidden" name="id" value="${bean.id}"> <p:navigation
@@ -230,15 +261,23 @@ function change()
 			</c:forEach>
 			</p:pro>
 			
-			<p:pro field="stockType" outString="公卖是全公司的都可销售 自卖是只有自己可以销售">
+			<p:pro field="stockType" outString="公卖是全公司的都可销售 自卖是只有自己可以销售" innerString="onchange=change()">
 				<option value="">--</option>
                <p:option type="stockSailType"></p:option>
             </p:pro>
             
-            <p:pro field="invoiceType" innerString="style='width: 240px'">
+            <p:cell title="采购人" id="CG">
+            <input type="text" readonly="readonly" name="owerName" style="width: 240px"/>
+            <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectStaffer()">&nbsp;&nbsp;
+            <input type="button" value="&nbsp;清 空&nbsp;" name="qout1" id="qout1"
+                    class="button_class" onclick="clearValues()">
+            </p:cell>
+            
+            <p:pro field="invoiceType" innerString="style='width: 300px'">
                 <option value="">没有发票</option>
                 <c:forEach items="${invoiceList}" var="item">
-				<option value="${item.id}">${item.name}(${my:formatNum(item.val)}%)</option>
+				<option value="${item.id}">${item.fullName}</option>
 				</c:forEach>
             </p:pro>
 

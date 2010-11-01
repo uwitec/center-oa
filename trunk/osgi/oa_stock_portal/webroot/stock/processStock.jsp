@@ -19,31 +19,13 @@ function ask(id)
 
 function passTO()
 {
-	$.messager.prompt('最早付款日期', '请选择最早付款日期', '', function(value, opr){
-                if (opr)
-                {
-                    $Dbuttons(true);
-                    
-                    var sss = value;
-                    
-                    if (!(sss == null || sss == ''))
-                    {
-                    	$O('nearlyPayDate').value = sss;
-                        $O('method').value = 'updateStockStatus';
-						$O('reject').value = '';
-						$O('pass').value = '1';
-						formEntry.submit();
-                    }
-                    else
-                    {
-                    	alert('请选择最早付款日期');
-                    	
-                        $Dbuttons(false);
-                        
-                        passTo(id, type);
-                    }
-                }
-            }, 1);
+	if (window.confirm('确定通过?'))
+    {
+        $O('method').value = 'updateStockStatus';
+		$O('reject').value = '';
+		$O('pass').value = '1';
+		formEntry.submit();
+    }
 }
 </script>
 
@@ -53,6 +35,8 @@ function passTO()
 <input type="hidden" name="method" value="updateStockStatus">
 <input type="hidden" name="id" value="${bean.id}">
 <input type="hidden" name="pass" value="1">
+<input type="hidden" name="nearlyPayDate" value="">
+<input type="hidden" name="reject" value="">
 <p:navigation height="22">
 	<td width="550" class="navigation">采购单明细</td>
 	<td width="85"></td>
@@ -96,10 +80,10 @@ function passTO()
                <p:option type="stockStype"></p:option>
             </p:pro>
 			
-            <p:pro field="invoiceType" innerString="style='width: 240px'">
+            <p:pro field="invoiceType" innerString="style='width: 300px'">
                 <option value="">没有发票</option>
                 <c:forEach items="${invoiceList}" var="item">
-				<option value="${item.id}">${item.name}(${my:formatNum(item.val)}%)</option>
+				<option value="${item.id}">${item.fullName}</option>
 				</c:forEach>
             </p:pro>
 

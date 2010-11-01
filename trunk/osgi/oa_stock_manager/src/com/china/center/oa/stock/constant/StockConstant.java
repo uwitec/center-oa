@@ -67,13 +67,13 @@ public interface StockConstant
     int STOCK_STATUS_LASTEND = 8;
 
     /**
-     * 采购item的开始
+     * 采购item的开始(没有询价)
      */
     @Defined(key = "stockItemStatus", value = "开始")
     int STOCK_ITEM_STATUS_INIT = 0;
 
     /**
-     * 采购item的结束
+     * 采购item的结束(已经询价)
      */
     @Defined(key = "stockItemStatus", value = "结束")
     int STOCK_ITEM_STATUS_END = 1;

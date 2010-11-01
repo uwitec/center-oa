@@ -331,30 +331,32 @@ public class StockManagerImpl implements StockManager
         // 区域经理通过的时候,要是代销采购直接跳过询价
         if (nextStatus == StockConstant.STOCK_STATUS_MANAGERPASS)
         {
+            // 代销采购
             if (sb.getStype() == StockConstant.STOCK_STYPE_ISAIL)
             {
                 nextStatus = StockConstant.STOCK_STATUS_PRICEPASS;
+
+                total = 0.0d;
+
+                // 这里直接处理无需询价的逻辑
+                for (StockItemBean stockItemBean : itemList)
+                {
+                    stockItemBean.setStatus(StockConstant.STOCK_ITEM_STATUS_ASK);
+
+                    stockItemBean.setPrice(stockItemBean.getPrePrice());
+
+                    stockItemBean.setTotal(stockItemBean.getPrice() * stockItemBean.getAmount());
+
+                    stockItemDAO.updateEntityBean(stockItemBean);
+
+                    total += stockItemBean.getTotal();
+                }
+
+                stockDAO.updateTotal(id, total);
+
+                reason = "代销采购无需询价";
             }
 
-            total = 0.0d;
-
-            // 这里直接处理无需询价的逻辑
-            for (StockItemBean stockItemBean : itemList)
-            {
-                stockItemBean.setStatus(StockConstant.STOCK_ITEM_STATUS_ASK);
-
-                stockItemBean.setPrice(stockItemBean.getPrePrice());
-
-                stockItemBean.setTotal(stockItemBean.getPrice() * stockItemBean.getAmount());
-
-                stockItemDAO.updateEntityBean(stockItemBean);
-
-                total += stockItemBean.getTotal();
-            }
-
-            stockDAO.updateTotal(id, total);
-
-            reason = "代销采购无需询价";
         }
 
         // 采购主管通过后到 单比金额大于5万，或者是选择价格不是最低，需要采购经理审核

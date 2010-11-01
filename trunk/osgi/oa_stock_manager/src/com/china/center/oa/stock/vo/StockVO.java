@@ -22,6 +22,9 @@ public class StockVO extends StockBean
     @Relationship(relationField = "stafferId", tagField = "name")
     private String userName = "";
 
+    @Relationship(relationField = "owerId", tagField = "name")
+    private String owerName = "";
+
     @Relationship(relationField = "locationId", tagField = "name")
     private String locationName = "";
 
@@ -120,5 +123,60 @@ public class StockVO extends StockBean
     public void setOverTime(int overTime)
     {
         this.overTime = overTime;
+    }
+
+    /**
+     * @return the owerName
+     */
+    public String getOwerName()
+    {
+        return owerName;
+    }
+
+    /**
+     * @param owerName
+     *            the owerName to set
+     */
+    public void setOwerName(String owerName)
+    {
+        this.owerName = owerName;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("StockVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("userName = ")
+            .append(this.userName)
+            .append(TAB)
+            .append("owerName = ")
+            .append(this.owerName)
+            .append(TAB)
+            .append("locationName = ")
+            .append(this.locationName)
+            .append(TAB)
+            .append("display = ")
+            .append(this.display)
+            .append(TAB)
+            .append("overTime = ")
+            .append(this.overTime)
+            .append(TAB)
+            .append("itemVO = ")
+            .append(this.itemVO)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }

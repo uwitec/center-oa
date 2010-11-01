@@ -35,8 +35,17 @@ public class StockBean implements Serializable
     @Join(tagClass = UserBean.class, type = JoinType.LEFT)
     private String userId = "";
 
+    /**
+     * 询价拥有者
+     */
     @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
     private String stafferId = "";
+
+    /**
+     * 提交人的ID(公卖的时候此属性没有意义)
+     */
+    @Join(tagClass = StafferBean.class, type = JoinType.LEFT, alias = "owe")
+    private String owerId = "";
 
     @Join(tagClass = LocationBean.class)
     private String locationId = "";
@@ -426,32 +435,6 @@ public class StockBean implements Serializable
         this.invoiceType = invoiceType;
     }
 
-    /**
-     * Constructs a <code>String</code> with all attributes in name = value format.
-     * 
-     * @return a <code>String</code> representation of this object.
-     */
-    public String toString()
-    {
-        final String TAB = ",";
-
-        StringBuilder retValue = new StringBuilder();
-
-        retValue.append("StockBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(TAB).append(
-            "userId = ").append(this.userId).append(TAB).append("stafferId = ").append(this.stafferId).append(TAB).append(
-            "locationId = ").append(this.locationId).append(TAB).append("status = ").append(this.status).append(TAB).append(
-            "exceptStatus = ").append(this.exceptStatus).append(TAB).append("needTime = ").append(this.needTime).append(
-            TAB).append("willDate = ").append(this.willDate).append(TAB).append("nearlyPayDate = ").append(
-            this.nearlyPayDate).append(TAB).append("type = ").append(this.type).append(TAB).append("stockType = ").append(
-            this.stockType).append(TAB).append("logTime = ").append(this.logTime).append(TAB).append("flow = ").append(
-            this.flow).append(TAB).append("total = ").append(this.total).append(TAB).append("pay = ").append(this.pay).append(
-            TAB).append("invoice = ").append(this.invoice).append(TAB).append("invoiceType = ").append(this.invoiceType).append(
-            TAB).append("description = ").append(this.description).append(TAB).append("item = ").append(this.item).append(
-            TAB).append(" )");
-
-        return retValue.toString();
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -501,5 +484,105 @@ public class StockBean implements Serializable
     public void setStype(int stype)
     {
         this.stype = stype;
+    }
+
+    /**
+     * @return the owerId
+     */
+    public String getOwerId()
+    {
+        return owerId;
+    }
+
+    /**
+     * @param owerId
+     *            the owerId to set
+     */
+    public void setOwerId(String owerId)
+    {
+        this.owerId = owerId;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("StockBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("userId = ")
+            .append(this.userId)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("owerId = ")
+            .append(this.owerId)
+            .append(TAB)
+            .append("locationId = ")
+            .append(this.locationId)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("exceptStatus = ")
+            .append(this.exceptStatus)
+            .append(TAB)
+            .append("needTime = ")
+            .append(this.needTime)
+            .append(TAB)
+            .append("willDate = ")
+            .append(this.willDate)
+            .append(TAB)
+            .append("nearlyPayDate = ")
+            .append(this.nearlyPayDate)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("stype = ")
+            .append(this.stype)
+            .append(TAB)
+            .append("stockType = ")
+            .append(this.stockType)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("flow = ")
+            .append(this.flow)
+            .append(TAB)
+            .append("total = ")
+            .append(this.total)
+            .append(TAB)
+            .append("pay = ")
+            .append(this.pay)
+            .append(TAB)
+            .append("invoice = ")
+            .append(this.invoice)
+            .append(TAB)
+            .append("invoiceType = ")
+            .append(this.invoiceType)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("item = ")
+            .append(this.item)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }

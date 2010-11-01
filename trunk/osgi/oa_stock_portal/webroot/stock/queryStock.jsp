@@ -126,9 +126,10 @@ function showDiv(id)
 	tooltip.showTable(jmap[id]);
 }
 
-function passTo(id, type)
+function passTo(id, type, stype)
 {
-	if (type != 4 && type != 2)
+	//正常审批 或者是 代销采购
+	if ((type != 4 && type != 2) || stype == '1')
 	{
 		if (window.confirm('确定通过此采购单?'))
 		{
@@ -163,7 +164,7 @@ function passTo(id, type)
                     	
                         $Dbuttons(false);
                         
-                        passTo(id, type);
+                        passTo(id, type, stype);
                     }
                 }
             }, 1);
@@ -414,7 +415,7 @@ function exports()
 						</c:if>
 
 						<c:if test="${ltype == '1'  || ltype == '4' || ltype == '5'}">
-							<a title="审批通过采购单" href="javascript:passTo('${item.id}', '${ltype}')"> <img id="img_${vs.index}"
+							<a title="审批通过采购单" href="javascript:passTo('${item.id}', '${ltype}', '${item.stype}')"> <img id="img_${vs.index}"
 								src="../images/opr/realse.gif" border="0" height="15" width="15"></a>
 
 							<a title="驳回采购单" href="javascript:reject('${item.id}')"> <img
@@ -425,7 +426,7 @@ function exports()
 							<a title="采购单询价" href="javascript:ask('${item.id}')"> <img id="ask_img_${vs.index}"
 								src="../images/opr/change.gif" border="0" height="15" width="15"></a>
 
-							<a title="审批通过采购单" href="javascript:passTo('${item.id}', '${ltype}')"> <img
+							<a title="审批通过采购单" href="javascript:passTo('${item.id}', '${ltype}', '${item.stype}')"> <img
 								src="../images/opr/realse.gif" border="0" height="15" width="15"></a>
 
 							<a title="驳回采购单" href="javascript:reject('${item.id}')"> <img
@@ -436,7 +437,7 @@ function exports()
                             <a title="采购单询价" href="javascript:ask('${item.id}')"> <img id="ask_img_${vs.index}"
                                 src="../images/opr/change.gif" border="0" height="15" width="15"></a>
                                 
-                            <a title="审批通过采购单" href="javascript:passTo('${item.id}', '${ltype}')"> <img
+                            <a title="审批通过采购单" href="javascript:passTo('${item.id}', '${ltype}', '${item.stype}')"> <img
 								src="../images/opr/realse.gif" border="0" height="15" width="15"></a>
 
                             <a title="驳回采购单" href="javascript:reject('${item.id}')"> <img

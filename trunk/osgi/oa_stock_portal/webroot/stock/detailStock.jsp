@@ -79,6 +79,10 @@ function out(id)
 			<p:cell title="采购人">
 			${bean.userName}
 			</p:cell>
+			
+			<p:cell title="提交人">
+			${bean.owerName}
+			</p:cell>
 
 			<p:cell title="区域">
 			${bean.locationName}
@@ -98,10 +102,10 @@ function out(id)
                <p:option type="stockStype"></p:option>
             </p:pro>
 			
-            <p:pro field="invoiceType" innerString="style='width: 240px'">
+            <p:pro field="invoiceType" innerString="style='width: 300px'">
                 <option value="">没有发票</option>
                 <c:forEach items="${invoiceList}" var="item">
-				<option value="${item.id}">${item.name}(${my:formatNum(item.val)}%)</option>
+				<option value="${item.id}">${item.fullName}</option>
 				</c:forEach>
             </p:pro>
 
@@ -131,7 +135,7 @@ function out(id)
             
             <p:pro field="willDate"/>
             
-            <p:pro field="nearlyPayDate" cell="2"/>
+            <p:pro field="nearlyPayDate" cell="1"/>
 
 			<p:cells celspan="2" title="备注">
 			${bean.description}
@@ -186,11 +190,12 @@ function out(id)
 					<td align="center">${my:formatNum(item.total)}</td>
 
 					<c:if test="${out == 1}">
-						<td align="center">
 						<c:if test="${item.hasRef == 0}">
-						<a title="采购调出" href="javascript:out('${item.id}')"> <img
-									src="../images/change.gif" border="0" height="15" width="15"></a>
-						</td>
+							<td align="center">
+							<a title="采购调出" href="javascript:out('${item.id}')"> <img
+										src="../images/change.gif" border="0" height="15" width="15">
+							</a>
+							</td>
 						</c:if>
 					</c:if>
 				</tr>

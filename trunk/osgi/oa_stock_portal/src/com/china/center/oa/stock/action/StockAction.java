@@ -45,6 +45,7 @@ import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.constant.AuthConstant;
+import com.china.center.oa.publics.constant.InvoiceConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DepartmentDAO;
@@ -155,7 +156,14 @@ public class StockAction extends DispatchAction
 
             bean.setLogTime(TimeTools.now());
 
-            bean.setStafferId(user.getStafferId());
+            // 提交人
+            bean.setOwerId(user.getStafferId());
+
+            if (StringTools.isNullOrNone(bean.getStafferId()))
+            {
+                // 自己的
+                bean.setStafferId(user.getStafferId());
+            }
 
             bean.setExceptStatus(StockConstant.EXCEPTSTATUS_COMMON);
 
@@ -533,6 +541,8 @@ public class StockAction extends DispatchAction
 
                 bean.setProductNum(num);
 
+                bean.setStatus(StockConstant.STOCK_ITEM_STATUS_INIT);
+
                 item.add(bean);
             }
         }
@@ -737,8 +747,12 @@ public class StockAction extends DispatchAction
 
         request.setAttribute("departementList", departementList);
 
+        ConditionParse condition = new ConditionParse();
+
+        condition.addIntCondition("forward", "=", InvoiceConstant.INVOICE_FORWARD_IN);
+
         // 获得所有的发票类型
-        List<InvoiceBean> invoiceList = invoiceDAO.listEntityBeans();
+        List<InvoiceBean> invoiceList = invoiceDAO.queryEntityBeansByCondition(condition);
 
         request.setAttribute("invoiceList", invoiceList);
 

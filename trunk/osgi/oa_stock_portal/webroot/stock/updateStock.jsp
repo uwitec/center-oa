@@ -203,8 +203,9 @@ function change()
     <input type="hidden" name="netaskId_3" value="${bean.itemVO[3].priceAskProviderId}">
     <input type="hidden" name="netaskId_4" value="${bean.itemVO[4].priceAskProviderId}">
     
-	<input
-	type="hidden" name="id" value="${bean.id}"> <p:navigation
+	<input type="hidden" name="id" value="${bean.id}"> 
+	<input type="hidden" name="owerId" value="${bean.owerId}"> 
+	<p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: hand"
 		onclick="javascript:history.go(-1)">采购管理</span> &gt;&gt; 更新采购</td>
@@ -223,7 +224,7 @@ function change()
 		<p:class value="com.china.centet.yongyin.bean.StockBean" opr="1"/>
 
 		<p:table cells="1">
-			<p:pro field="stype" outString="代销采购不占用自有资金,付款方式使用委托代销清单付款,无需询价" innerString="onchange=change()">
+			<p:pro field="stype" outString="代销采购不占用自有资金,付款方式使用委托代销清单付款,无需询价" innerString="readonly=true">
 				<option value="">--</option>
                <p:option type="stockStype"></p:option>
             </p:pro>
@@ -244,15 +245,15 @@ function change()
                 <option value="1">外网询价</option>
             </p:pro>
             
-            <p:pro field="stockType" outString="公卖是全公司的都可销售 自卖是只有自己可以销售">
+            <p:pro field="stockType" outString="公卖是全公司的都可销售 自卖是只有自己可以销售" innerString="readonly=true">
 				<option value="">--</option>
                <p:option type="stockSailType"></p:option>
             </p:pro>
 			
-            <p:pro field="invoiceType" innerString="style='width: 240px'">
+            <p:pro field="invoiceType" innerString="style='width: 300px' readonly=true" >
                 <option value="">没有发票</option>
                 <c:forEach items="${invoiceList}" var="item">
-				<option value="${item.id}">${item.name}(${my:formatNum(item.val)}%)</option>
+				<option value="${item.id}">${item.fullName}</option>
 				</c:forEach>
             </p:pro>
 
