@@ -58,7 +58,7 @@
 	<bean name="/admin/location"
 		class="com.china.center.oa.publics.action.LocationAction" />
 
-	<bean name="/admin/checkuser"
+	<bean name="/admin/checkuser" id="aaaa"
 		class="com.china.center.oa.publics.action.LoginAction" />
 
 	<bean name="/admin/logout"

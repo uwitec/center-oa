@@ -10,6 +10,7 @@ package com.china.center.oa.publics.bean;
 
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Html;
@@ -40,6 +41,12 @@ public class InvoiceBean implements Serializable
     @Html(title = "发票类型", must = true, type = Element.SELECT)
     private int type = InvoiceConstant.INVOICE_TYPE_SPECIAL;
 
+    @Html(title = "进销属性", must = true, type = Element.SELECT)
+    private int forward = InvoiceConstant.INVOICE_FORWARD_IN;
+
+    @Html(title = "抵扣属性", must = true, type = Element.SELECT)
+    private int counteract = InvoiceConstant.INVOICE_COUNTERACT_NO;
+
     @Html(title = "税点(%)", must = true, maxLength = 100, type = Element.DOUBLE)
     private double val = 0.0d;
 
@@ -51,6 +58,53 @@ public class InvoiceBean implements Serializable
      */
     public InvoiceBean()
     {
+    }
+
+    public String getFullName()
+    {
+        String forwardName = "";
+
+        if (this.forward == InvoiceConstant.INVOICE_FORWARD_IN)
+        {
+            forwardName = "进货";
+        }
+        else
+        {
+            forwardName = "销货";
+        }
+
+        String counteractName = "";
+
+        if (this.counteract == InvoiceConstant.INVOICE_COUNTERACT_NO)
+        {
+            counteractName = "不可抵扣";
+        }
+        else
+        {
+            counteractName = "可抵扣";
+        }
+
+        return forwardName + "-->" + this.name + "[" + counteractName + "]" + "(" + formatNum(this.val) + "%)";
+    }
+
+    /**
+     * formatNum
+     * 
+     * @param d
+     * @return
+     */
+    private String formatNum(double d)
+    {
+        DecimalFormat df = new DecimalFormat("####0.00");
+
+        String result = df.format(d);
+
+        if (".00".equals(result))
+        {
+            result = "0" + result;
+        }
+
+        return result;
     }
 
     /**
@@ -138,41 +192,6 @@ public class InvoiceBean implements Serializable
         this.description = description;
     }
 
-    /**
-     * Constructs a <code>String</code> with all attributes in name = value format.
-     * 
-     * @return a <code>String</code> representation of this object.
-     */
-    public String toString()
-    {
-        final String TAB = ",";
-
-        StringBuilder retValue = new StringBuilder();
-
-        retValue
-            .append("InvoiceBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("name = ")
-            .append(this.name)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("val = ")
-            .append(this.val)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append(" )");
-
-        return retValue.toString();
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -205,6 +224,81 @@ public class InvoiceBean implements Serializable
         }
         else if ( !id.equals(other.id)) return false;
         return true;
+    }
+
+    /**
+     * @return the forward
+     */
+    public int getForward()
+    {
+        return forward;
+    }
+
+    /**
+     * @param forward
+     *            the forward to set
+     */
+    public void setForward(int forward)
+    {
+        this.forward = forward;
+    }
+
+    /**
+     * @return the counteract
+     */
+    public int getCounteract()
+    {
+        return counteract;
+    }
+
+    /**
+     * @param counteract
+     *            the counteract to set
+     */
+    public void setCounteract(int counteract)
+    {
+        this.counteract = counteract;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("InvoiceBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("name = ")
+            .append(this.name)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("forward = ")
+            .append(this.forward)
+            .append(TAB)
+            .append("counteract = ")
+            .append(this.counteract)
+            .append(TAB)
+            .append("val = ")
+            .append(this.val)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 
 }

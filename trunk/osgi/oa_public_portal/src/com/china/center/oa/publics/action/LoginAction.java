@@ -697,6 +697,15 @@ public class LoginAction extends DispatchAction
     }
 
     /**
+     * @param userDAO
+     *            the userDAO to set
+     */
+    public void setUserDAO2(UserDAO service, Map properties)
+    {
+        this.userDAO = service;
+    }
+
+    /**
      * @return the locationDAO
      */
     public LocationDAO getLocationDAO()

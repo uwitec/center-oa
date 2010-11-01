@@ -44,6 +44,14 @@ function addBean()
 			<p:pro field="type" innerString="readonly=true">
 				<p:option type="invoiceType"/>
 			</p:pro>
+			
+			<p:pro field="forward" innerString="readonly=true">
+				<p:option type="invoiceForward"/>
+			</p:pro>
+			
+			<p:pro field="counteract" innerString="readonly=true">
+				<p:option type="invoiceCounteract"/>
+			</p:pro>
 
 			<p:pro field="val"  />
 

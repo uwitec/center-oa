@@ -57,7 +57,9 @@
 
 	<osgi:reference id="systemTemplateFileDAO" interface="com.china.center.oa.publics.dao.SystemTemplateFileDAO" />
 
-	<osgi:reference id="userDAO" interface="com.china.center.oa.publics.dao.UserDAO" />
+	<osgi:reference id="userDAO" interface="com.china.center.oa.publics.dao.UserDAO">
+		<!--  <osgi:listener ref="aaaa" bind-method="setUserDAO2" unbind-method="setUserDAO2"/>-->
+	</osgi:reference>
 
 	<osgi:reference id="commonManager" interface="com.china.center.oa.publics.manager.CommonManager" />
 

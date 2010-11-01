@@ -28,6 +28,8 @@ function load()
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
              {display: '名称', name : 'name', width : '25%'},
              {display: '类型', name : 'type', cc: 'invoiceType', width : '10%'},
+             {display: '进销属性', name : 'forward', cc: 'invoiceForward', width : '10%'},
+             {display: '抵扣属性', name : 'counteract', cc: 'invoiceCounteract', width : '10%'},
              {display: '税点(%)', name : 'val', toFixed: 2, width : '10%'},
              {display: '描述', name : 'description', width : 'auto'}
              ],
@@ -48,6 +50,7 @@ function $callBack()
 {
     loadForm();
     
+    highlights($("#mainTable").get(0), ['进货发票'], 'blue');
 }
 
 function addBean(opr, grid)
