@@ -56,7 +56,8 @@ public class PageBeanProperty extends BodyTagCenterSupport
      * 默认构建器
      */
     public PageBeanProperty()
-    {}
+    {
+    }
 
     public int getLastWidth()
     {
@@ -114,7 +115,8 @@ public class PageBeanProperty extends BodyTagCenterSupport
                         break;
                     }
                     catch (Throwable e)
-                    {}
+                    {
+                    }
                 }
 
                 if (cla == null)
@@ -185,7 +187,7 @@ public class PageBeanProperty extends BodyTagCenterSupport
 
                     if (oo != null)
                     {
-                        this.value = oo.toString();
+                        this.value = escapeHtml(oo.toString());
                     }
                 }
                 catch (Exception e)
@@ -236,6 +238,72 @@ public class PageBeanProperty extends BodyTagCenterSupport
         this.writeContext(buffer.toString());
 
         return EVAL_PAGE;
+    }
+
+    /**
+     * Filter the specified string for characters that are sensitive to HTML interpreters, returning the string with
+     * these characters replaced by the corresponding character entities.
+     * 
+     * @param value
+     *            The string to be filtered and returned
+     */
+    private String escapeHtml(String value)
+    {
+        if (value == null || value.length() == 0)
+        {
+            return value;
+        }
+
+        StringBuffer result = null;
+        String filtered = null;
+        for (int i = 0; i < value.length(); i++ )
+        {
+            filtered = null;
+            switch (value.charAt(i))
+            {
+                case '<':
+                    filtered = "&lt;";
+                    break;
+                case '>':
+                    filtered = "&gt;";
+                    break;
+                case '&':
+                    filtered = "&amp;";
+                    break;
+                case '"':
+                    filtered = "&quot;";
+                    break;
+                case '\'':
+                    filtered = "&#39;";
+                    break;
+            }
+
+            if (result == null)
+            {
+                if (filtered != null)
+                {
+                    result = new StringBuffer(value.length() + 50);
+                    if (i > 0)
+                    {
+                        result.append(value.substring(0, i));
+                    }
+                    result.append(filtered);
+                }
+            }
+            else
+            {
+                if (filtered == null)
+                {
+                    result.append(value.charAt(i));
+                }
+                else
+                {
+                    result.append(filtered);
+                }
+            }
+        }
+
+        return result == null ? value : result.toString();
     }
 
     private void writeEnd(StringBuffer buffer)
