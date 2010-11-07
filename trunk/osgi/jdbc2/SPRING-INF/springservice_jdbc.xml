@@ -69,6 +69,10 @@
 	<bean id="baseDAO" class="com.china.center.jdbc.inter.impl.BaseDAO"
 		abstract="true">
 	</bean>
+	
+	<bean id="simpleBaseDAO" class="com.china.center.jdbc.inter.impl.SimpleBaseDAO"
+		abstract="true">
+	</bean>
 
 	<bean id="convertEncode"
 		class="com.china.center.jdbc.inter.impl.ConvertEncode">
