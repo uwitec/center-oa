@@ -16,6 +16,7 @@ import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.clone.DataClone;
 import com.china.center.oa.customer.constant.CreditConstant;
 
 
@@ -29,7 +30,7 @@ import com.china.center.oa.customer.constant.CreditConstant;
  */
 @Entity(cache = true)
 @Table(name = "T_CENTER_CREDIT_ITEM02")
-public class CreditItemSecBean implements Serializable
+public class CreditItemSecBean implements DataClone<CreditItemSecBean>, Serializable
 {
     @Id
     private String id = "";
@@ -49,6 +50,24 @@ public class CreditItemSecBean implements Serializable
     private String unit = "";
 
     private double per = 0.0d;
+
+    /**
+     * Copy Constructor
+     * 
+     * @param creditItemSecBean
+     *            a <code>CreditItemSecBean</code> object
+     */
+    public CreditItemSecBean(CreditItemSecBean creditItemSecBean)
+    {
+        this.id = creditItemSecBean.id;
+        this.pid = creditItemSecBean.pid;
+        this.name = creditItemSecBean.name;
+        this.type = creditItemSecBean.type;
+        this.face = creditItemSecBean.face;
+        this.sub = creditItemSecBean.sub;
+        this.unit = creditItemSecBean.unit;
+        this.per = creditItemSecBean.per;
+    }
 
     /**
      * default constructor
@@ -221,10 +240,32 @@ public class CreditItemSecBean implements Serializable
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue.append("CreditItemSecBean ( ").append(super.toString()).append(tab).append("id = ").append(this.id).append(
-            tab).append("pid = ").append(this.pid).append(tab).append("name = ").append(this.name).append(tab).append(
-            "type = ").append(this.type).append(tab).append("face = ").append(this.face).append(tab).append("unit = ").append(
-            this.unit).append(tab).append("per = ").append(this.per).append(tab).append(" )");
+        retValue
+            .append("CreditItemSecBean ( ")
+            .append(super.toString())
+            .append(tab)
+            .append("id = ")
+            .append(this.id)
+            .append(tab)
+            .append("pid = ")
+            .append(this.pid)
+            .append(tab)
+            .append("name = ")
+            .append(this.name)
+            .append(tab)
+            .append("type = ")
+            .append(this.type)
+            .append(tab)
+            .append("face = ")
+            .append(this.face)
+            .append(tab)
+            .append("unit = ")
+            .append(this.unit)
+            .append(tab)
+            .append("per = ")
+            .append(this.per)
+            .append(tab)
+            .append(" )");
 
         return retValue.toString();
     }
@@ -244,5 +285,10 @@ public class CreditItemSecBean implements Serializable
     public void setSub(int sub)
     {
         this.sub = sub;
+    }
+
+    public CreditItemSecBean clones()
+    {
+        return new CreditItemSecBean(this);
     }
 }

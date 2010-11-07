@@ -707,7 +707,8 @@ public class CustomerCreditAction extends DispatchAction
 
                 each.setValueId(creditItemThr.getId());
 
-                each.setVal( (staticAmount * creditItem.getPer() * creditItemSec.getPer() * creditItemThr.getPer()) / 1000000.0d);
+                each
+                    .setVal( (staticAmount * creditItem.getPer() * creditItemSec.getPer() * creditItemThr.getPer()) / 1000000.0d);
 
                 each.setLog(user.getStafferName() + "导入修改:" + each.getVal());
 

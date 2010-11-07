@@ -39,10 +39,16 @@
 	
 	<osgi:reference id="queryManager" interface="com.china.center.oa.publics.manager.QueryManager" />
 	
+	<osgi:reference id="notifyManager" interface="com.china.center.oa.publics.manager.NotifyManager" />
+	
 	<osgi:reference id="publicTrigger" interface="com.china.center.oa.publics.trigger.PublicTrigger" />
 	
 	<osgi:reference id="locationVSCityDAO" interface="com.china.center.oa.publics.dao.LocationVSCityDAO" />
 	
 	<osgi:reference id="stafferManager" interface="com.china.center.oa.publics.manager.StafferManager" />
+	
+	<osgi:reference id="principalshipDAO" interface="com.china.center.oa.publics.dao.PrincipalshipDAO" />
+	
+	<osgi:reference id="cityDAO" interface="com.china.center.oa.publics.dao.CityDAO" />
 
 </beans>

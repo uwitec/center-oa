@@ -47,9 +47,24 @@ public interface CustomerFacade
     boolean rejectApplyCustomer(String userId, String cid, String reson)
         throws MYException;
 
+    /**
+     * 驳回分配申请
+     * 
+     * @param userId
+     * @param cid
+     * @return
+     * @throws MYException
+     */
+    boolean rejectApplyCustomerAssignPer(String userId, String cid)
+        throws MYException;
+
     boolean passApplyCustomer(String userId, String cid)
         throws MYException;
 
+    boolean passApplyCustomerAssignPer(String userId, String cid)
+        throws MYException;
+
+    @Deprecated
     boolean assignApplyCustomerCode(String userId, String cid, String code)
         throws MYException;
 
@@ -117,5 +132,11 @@ public interface CustomerFacade
         throws MYException;
 
     void synchronizationAllCustomerLocation(String userId)
+        throws MYException;
+
+    boolean updateCustomerLever(String userId, String id, int lever)
+        throws MYException;
+
+    boolean applyUpdateCustomeAssignPer(String userId, CustomerApplyBean bean)
         throws MYException;
 }

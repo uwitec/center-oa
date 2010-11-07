@@ -16,6 +16,7 @@ import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.Unique;
 import com.china.center.jdbc.annotation.enums.JoinType;
+import com.china.center.oa.customer.constant.CustomerConstant;
 import com.china.center.oa.publics.bean.StafferBean;
 
 
@@ -41,7 +42,7 @@ public class CustomerApplyBean extends AbstractBean
     /**
      * 0:add 1:update 2:delete 3:update2
      */
-    private int opr = 0;
+    private int opr = CustomerConstant.OPR_ADD;
 
     /**
      * updaterId

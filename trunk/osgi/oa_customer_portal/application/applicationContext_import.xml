@@ -80,4 +80,6 @@
 
 	<osgi:reference id="customerFacade" interface="com.china.center.oa.customer.facade.CustomerFacade" />
 	
+	<osgi:reference id="principalshipDAO" interface="com.china.center.oa.publics.dao.PrincipalshipDAO" />
+	
 </beans>

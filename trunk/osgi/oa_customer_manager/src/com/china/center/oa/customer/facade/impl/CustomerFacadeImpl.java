@@ -140,6 +140,25 @@ public class CustomerFacadeImpl extends AbstarctFacade implements CustomerFacade
         }
     }
 
+    public boolean applyUpdateCustomeAssignPer(String userId, CustomerApplyBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CUSTOMER_ASSIGNPER_APPLY))
+        {
+            return customerManager.applyUpdateCustomeAssignPer(user, bean);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
     /**
      * applyUpdateCustomer
      * 
@@ -194,6 +213,31 @@ public class CustomerFacadeImpl extends AbstarctFacade implements CustomerFacade
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.china.center.oa.customer.facade.CustomerFacade#rejectApplyCustomerAssignPer(java.lang.String,
+     *      java.lang.String)
+     */
+    public boolean rejectApplyCustomerAssignPer(String userId, String cid)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, cid);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CUSTOMER_ASSIGNPER_APPROVE))
+        {
+            return customerManager.rejectApplyCustomerAssignPer(user, cid);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
     /**
      * passApplyCustomer
      * 
@@ -222,6 +266,33 @@ public class CustomerFacadeImpl extends AbstarctFacade implements CustomerFacade
     }
 
     /**
+     * passApplyCustomer
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    public boolean passApplyCustomerAssignPer(String userId, String cid)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, cid);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CUSTOMER_ASSIGNPER_APPROVE))
+        {
+            return customerManager.passApplyCustomerAssignPer(user, cid);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    /**
      * assignApplyCustomerCode
      * 
      * @param userId
@@ -230,6 +301,7 @@ public class CustomerFacadeImpl extends AbstarctFacade implements CustomerFacade
      * @return
      * @throws MYException
      */
+    @Deprecated
     public boolean assignApplyCustomerCode(String userId, String cid, String code)
         throws MYException
     {
@@ -277,7 +349,7 @@ public class CustomerFacadeImpl extends AbstarctFacade implements CustomerFacade
     }
 
     /**
-     * passAssignApply
+     * passAssignApply(申请客户和职员的对于关系)
      * 
      * @param userId
      * @param bean
@@ -467,7 +539,7 @@ public class CustomerFacadeImpl extends AbstarctFacade implements CustomerFacade
     }
 
     /**
-     * passCheckBean
+     * passCheckBean(客户核对)
      * 
      * @param userId
      * @param bean
@@ -830,6 +902,25 @@ public class CustomerFacadeImpl extends AbstarctFacade implements CustomerFacade
         if (containAuth(user, AuthConstant.CREDIT_FORCE_UPDATE))
         {
             return customerCreditManager.interposeCredit(user, cid, newCreditVal);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    public boolean updateCustomerLever(String userId, String id, int lever)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.CUSTOMER_LEVER_OPR))
+        {
+            return customerManager.updateCustomerLever(user, id, lever);
         }
         else
         {

@@ -35,15 +35,67 @@ public interface CustomerManager
     boolean applyUpdateCustomer(User user, CustomerApplyBean bean)
         throws MYException;
 
+    /**
+     * 申请利润分配
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    boolean applyUpdateCustomeAssignPer(User user, CustomerApplyBean bean)
+        throws MYException;
+
     boolean applyDelCustomer(User user, CustomerApplyBean bean)
         throws MYException;
 
+    /**
+     * rejectApplyCustomer(增加和修改)
+     * 
+     * @param user
+     * @param cid
+     * @param reson
+     * @return
+     * @throws MYException
+     */
     boolean rejectApplyCustomer(User user, String cid, String reson)
         throws MYException;
 
+    /**
+     * rejectApplyCustomer(利润分配)
+     * 
+     * @param user
+     * @param cid
+     * @param reson
+     * @return
+     * @throws MYException
+     */
+    boolean rejectApplyCustomerAssignPer(User user, String cid)
+        throws MYException;
+
+    /**
+     * passApplyCustomer(修改和删除客户的)
+     * 
+     * @param user
+     * @param cid
+     * @return
+     * @throws MYException
+     */
+    boolean passApplyCustomerAssignPer(User user, String cid)
+        throws MYException;
+
+    /**
+     * passApplyCustomer(修改和删除客户的)
+     * 
+     * @param user
+     * @param cid
+     * @return
+     * @throws MYException
+     */
     boolean passApplyCustomer(User user, String cid)
         throws MYException;
 
+    @Deprecated
     boolean assignApplyCustomerCode(User user, String cid, String code)
         throws MYException;
 
@@ -60,6 +112,9 @@ public interface CustomerManager
         throws MYException;
 
     void addCustomer(User user, CustomerBean bean, String stafferId)
+        throws MYException;
+
+    boolean updateCustomerLever(User user, String id, int lever)
         throws MYException;
 
     boolean delApply(User user, String cid)

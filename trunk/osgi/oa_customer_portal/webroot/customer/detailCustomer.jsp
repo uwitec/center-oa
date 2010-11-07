@@ -104,17 +104,6 @@ var boocopy = true;
 
 function copy()
 {
-    boocopy = false;
-    
-    var conTex = window.common.getSelectText();
-    
-    var buffalo2 = new Buffalo(END_POINT);
-    
-    buffalo2.remoteCall("commonManager.logD",['${bean.id}~' + conTex], function(reply) {
-        });
-        
-   boocopy = true;     
-        
    return false;
 }
 
@@ -162,7 +151,7 @@ function testclip()
 
 	<p:subBody width="98%">
 	
-		<p:class opr="1" />
+		<p:class value="com.china.center.oa.customer.bean.CustomerBean" opr="2"/>
 
 		<p:table cells="2">
 			<p:pro field="name" cell="2" innerString="size=60"/>
@@ -218,6 +207,13 @@ function testclip()
                 <p:option type="card"></p:option>
             </p:pro>
             
+            <p:pro field="hlocal" cell="2">
+                <option value="">--</option>
+                <c:forEach items="${sybList}" var="item">
+                <option value="${item.id}">${item.name}</option>
+                </c:forEach>
+            </p:pro>
+            
             <p:pro field="beginConnectTime" />
             <p:pro field="post" />
 
@@ -249,6 +245,12 @@ function testclip()
             <p:pro field="birthday" cell="2"/>
 
             <p:pro field="description" cell="0" innerString="rows=4 cols=60" />
+            
+            <p:pro field="assignPer1" />
+            <p:pro field="assignPer2" />
+            <p:pro field="assignPer3" />
+            <p:pro field="assignPer4" />
+            
 		</p:table>
 	</p:subBody>
 
@@ -256,11 +258,6 @@ function testclip()
 	
 	<p:button leftWidth="100%" rightWidth="0%">
         <div align="right">
-        <c:if test="${updateCode == '1'}">
-        <input type="button" class="button_class"
-            style="cursor: pointer" value="&nbsp;&nbsp;提交客户编码&nbsp;&nbsp;"
-            onclick="subCode()">&nbsp;&nbsp;
-        </c:if>
         <input type="button" class="button_class"
             style="cursor: pointer" value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"
             onclick="javascript:history.go(-1)"></div>

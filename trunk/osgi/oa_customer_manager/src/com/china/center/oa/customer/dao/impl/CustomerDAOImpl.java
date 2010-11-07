@@ -54,9 +54,10 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
 
     public int countByCreditLevelId(String creditLevelId)
     {
-        return this.jdbcOperation.queryForInt(
-            "select count(1) from (select distinct(t1.id) from T_CENTER_CUSTOMER_NOW t1, t_center_out t2 where t1.id = t2.customerId and t2.outTime >= ? and t1.creditLevelId = ?) tt",
-            OATools.getFinanceBeginDate(), creditLevelId);
+        return this.jdbcOperation
+            .queryForInt(
+                "select count(1) from (select distinct(t1.id) from T_CENTER_CUSTOMER_NOW t1, t_center_out t2 where t1.id = t2.customerId and t2.outTime >= ? and t1.creditLevelId = ?) tt",
+                OATools.getFinanceBeginDate(), creditLevelId);
     }
 
     /**
@@ -385,14 +386,18 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
         {
             map.put("selltype", CustomerConstant.SELLTYPE_EXPEND);
 
-            this.jdbcOperation.getIbatisDaoSupport().update("CustomerDAOImpl.updateCustomerByStafferIdAndSelltype", map);
+            this.jdbcOperation
+                .getIbatisDaoSupport()
+                .update("CustomerDAOImpl.updateCustomerByStafferIdAndSelltype", map);
         }
 
         if (flag == CustomerConstant.RECLAIMSTAFFER_TER)
         {
             map.put("selltype", CustomerConstant.SELLTYPE_TER);
 
-            this.jdbcOperation.getIbatisDaoSupport().update("CustomerDAOImpl.updateCustomerByStafferIdAndSelltype", map);
+            this.jdbcOperation
+                .getIbatisDaoSupport()
+                .update("CustomerDAOImpl.updateCustomerByStafferIdAndSelltype", map);
         }
 
         return true;
@@ -472,5 +477,12 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
     {
         return this.jdbcOperation.getIbatisDaoSupport().update("CustomerDAOImpl.updayeCustomerNewTypeInTer", null);
 
+    }
+
+    public boolean updateCustomerLever(String id, int lever)
+    {
+        this.jdbcOperation.updateField("lever", lever, id, claz);
+
+        return true;
     }
 }

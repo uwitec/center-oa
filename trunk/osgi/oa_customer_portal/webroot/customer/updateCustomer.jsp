@@ -171,6 +171,13 @@ function changeArea(flag)
                 <p:option type="card"></p:option>
             </p:pro>
             
+            <p:pro field="hlocal" cell="2">
+                <option value="">--</option>
+                <c:forEach items="${sybList}" var="item">
+                <option value="${item.id}">${item.name}</option>
+                </c:forEach>
+            </p:pro>
+            
             <p:pro field="beginConnectTime" />
             <p:pro field="post" />
 

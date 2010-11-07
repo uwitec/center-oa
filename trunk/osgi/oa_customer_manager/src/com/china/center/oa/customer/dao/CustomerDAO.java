@@ -45,6 +45,8 @@ public interface CustomerDAO extends DAO<CustomerBean, CustomerVO>
 
     boolean updateCustomerstatus(String id, int status);
 
+    boolean updateCustomerLever(String id, int lever);
+
     boolean updateCustomerCreditUpdateTime(String id, int creditUpdateTime);
 
     List<String> listNotPayCustomerIds();

@@ -24,8 +24,10 @@
 				path="/customer/detailCustomer.jsp" />
 			<forward name="uploadCustomer"
 				path="/customer/uploadCustomer.jsp" />
-			<forward name="queryCustomerDistribute"
-				path="/customer/queryCustomerDistribute.jsp" />
+			<forward name="queryCustomerDistribute" path="/customer/queryCustomerDistribute.jsp" />
+			<forward name="rptQueryAllCustomer" path="/customer/rptQueryAllCustomer.jsp" />
+			<forward name="interposeLever" path="/customer/interposeLever.jsp" />
+			<forward name="applyAssignPer" path="/customer/applyAssignPer.jsp" />
 		</action>
 		
 		<action path="/customer/check" parameter="method"

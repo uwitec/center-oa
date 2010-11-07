@@ -14,6 +14,7 @@ import java.io.Serializable;
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.clone.DataClone;
 import com.china.center.oa.customer.constant.CreditConstant;
 
 
@@ -27,7 +28,7 @@ import com.china.center.oa.customer.constant.CreditConstant;
  */
 @Entity(cache = true)
 @Table(name = "T_CENTER_CREDIT_ITEM01")
-public class CreditItemBean implements Serializable
+public class CreditItemBean implements DataClone<CreditItemBean>, Serializable
 {
     @Id
     private String id = "";
@@ -37,6 +38,20 @@ public class CreditItemBean implements Serializable
     private int type = CreditConstant.CREDIT_TYPE_STATIC;
 
     private double per = 0.0d;
+
+    /**
+     * Copy Constructor
+     * 
+     * @param creditItemBean
+     *            a <code>CreditItemBean</code> object
+     */
+    public CreditItemBean(CreditItemBean creditItemBean)
+    {
+        this.id = creditItemBean.id;
+        this.name = creditItemBean.name;
+        this.type = creditItemBean.type;
+        this.per = creditItemBean.per;
+    }
 
     /**
      * default constructor
@@ -96,24 +111,6 @@ public class CreditItemBean implements Serializable
         this.per = per;
     }
 
-    /**
-     * Constructs a <code>String</code> with all attributes in name = value format.
-     * 
-     * @return a <code>String</code> representation of this object.
-     */
-    public String toString()
-    {
-        final String tab = ",";
-
-        StringBuilder retValue = new StringBuilder();
-
-        retValue.append("CreditItemBean ( ").append(super.toString()).append(tab).append("id = ").append(this.id).append(
-            tab).append("name = ").append(this.name).append(tab).append("per = ").append(this.per).append(tab).append(
-            " )");
-
-        return retValue.toString();
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -163,5 +160,42 @@ public class CreditItemBean implements Serializable
     public void setType(int type)
     {
         this.type = type;
+    }
+
+    public CreditItemBean clones()
+    {
+        return new CreditItemBean(this);
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("CreditItemBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("name = ")
+            .append(this.name)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("per = ")
+            .append(this.per)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }

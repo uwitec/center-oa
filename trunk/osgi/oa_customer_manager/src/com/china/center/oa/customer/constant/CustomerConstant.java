@@ -63,6 +63,12 @@ public interface CustomerConstant
     int OPR_UPATE_CREDIT = 3;
 
     /**
+     * 更新利润分配比例
+     */
+    @Defined(key = "customerOpr", value = "更新利润分配比例")
+    int OPR_UPATE_ASSIGNPER = 4;
+
+    /**
      * 空闲的客户
      */
     @Defined(key = "realCustomerStatus", value = "空闲")
@@ -129,9 +135,15 @@ public interface CustomerConstant
      */
     int SELLTYPE_EXPEND = 1;
 
+    /**
+     * 未核对
+     */
     @Defined(key = "checkStatus", value = "未核对")
     int HIS_CHECK_NO = 0;
 
+    /**
+     * 核对
+     */
     @Defined(key = "checkStatus", value = "核对")
     int HIS_CHECK_YES = 1;
 
@@ -161,4 +173,9 @@ public interface CustomerConstant
      * 默认级别
      */
     String CREDITLEVELID_DEFAULT = "90000000000000000001";
+
+    /**
+     * 默认信用杠杆倍数
+     */
+    int DEFAULT_LEVER = 1;
 }

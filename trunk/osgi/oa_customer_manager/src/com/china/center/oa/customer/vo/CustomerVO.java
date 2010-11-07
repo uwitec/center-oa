@@ -37,6 +37,9 @@ public class CustomerVO extends CustomerBean
     @Relationship(relationField = "creditLevelId")
     private String creditLevelName = "";
 
+    @Relationship(relationField = "hlocal")
+    private String hlocalName = "";
+
     /**
      * default constructor
      */
@@ -110,5 +113,41 @@ public class CustomerVO extends CustomerBean
     public void setCreditLevelName(String creditLevelName)
     {
         this.creditLevelName = creditLevelName;
+    }
+
+    /**
+     * @return the hlocalName
+     */
+    public String getHlocalName()
+    {
+        return hlocalName;
+    }
+
+    /**
+     * @param hlocalName
+     *            the hlocalName to set
+     */
+    public void setHlocalName(String hlocalName)
+    {
+        this.hlocalName = hlocalName;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue.append("CustomerVO ( ").append(super.toString()).append(TAB).append("provinceName = ").append(
+            this.provinceName).append(TAB).append("cityName = ").append(this.cityName).append(TAB).append(
+            "locationName = ").append(this.locationName).append(TAB).append("creditLevelName = ").append(
+            this.creditLevelName).append(TAB).append("hlocalName = ").append(this.hlocalName).append(TAB).append(" )");
+
+        return retValue.toString();
     }
 }

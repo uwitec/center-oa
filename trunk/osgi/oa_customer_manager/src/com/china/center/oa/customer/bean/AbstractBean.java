@@ -21,6 +21,7 @@ import com.china.center.oa.customer.constant.CustomerConstant;
 import com.china.center.oa.publics.bean.AreaBean;
 import com.china.center.oa.publics.bean.CityBean;
 import com.china.center.oa.publics.bean.LocationBean;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.ProvinceBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 
@@ -61,6 +62,13 @@ public abstract class AbstractBean implements Serializable
 
     @Html(title = "行业属性", must = true, type = Element.SELECT)
     private int htype = 0;
+
+    /**
+     * 事业部行业属性
+     */
+    @Html(title = "事业部属性", must = true, type = Element.SELECT)
+    @Join(tagClass = PrincipalshipBean.class, type = JoinType.LEFT)
+    private String hlocal = "";
 
     @Html(title = "联系时间", type = Element.DATE)
     private String beginConnectTime = "";
@@ -143,6 +151,12 @@ public abstract class AbstractBean implements Serializable
     private int formtype = 0;
 
     /**
+     * 客户信用的杠杆倍数(职员的信用*lever)
+     */
+    @Html(title = "信用杠杆倍数", type = Element.NUMBER)
+    private int lever = CustomerConstant.DEFAULT_LEVER;
+
+    /**
      * 0:ok 1:申请
      */
     private int status = 0;
@@ -195,9 +209,49 @@ public abstract class AbstractBean implements Serializable
     private double creditVal = 30.0d;
 
     /**
+     * 分配比例
+     */
+    @Html(title = "分配比例(事业部)", type = Element.NUMBER, maxLength = 6)
+    private double assignPer1 = 0.0d;
+
+    @Html(title = "分配比例(分公司)", type = Element.NUMBER, maxLength = 6)
+    private double assignPer2 = 0.0d;
+
+    @Html(title = "分配比例(产品部)", type = Element.NUMBER, maxLength = 6)
+    private double assignPer3 = 0.0d;
+
+    @Html(title = "分配比例(其他)", type = Element.NUMBER, maxLength = 6)
+    private double assignPer4 = 0.0d;
+
+    /**
      * 更新次数
      */
     private int creditUpdateTime = 0;
+
+    @Html(title = "预留1")
+    private String reserve1 = "";
+
+    @Html(title = "预留2")
+    private String reserve2 = "";
+
+    @Html(title = "预留3")
+    private String reserve3 = "";
+
+    @Html(title = "预留4")
+    private String reserve4 = "";
+
+    @Html(title = "预留5")
+    private String reserve5 = "";
+
+    @Html(title = "预留6")
+    private String reserve6 = "";
+
+    /**
+     * default constructor
+     */
+    public AbstractBean()
+    {
+    }
 
     /**
      * @return the description
@@ -914,43 +968,6 @@ public abstract class AbstractBean implements Serializable
     }
 
     /**
-     * Constructs a <code>String</code> with all attributes in name = value format.
-     * 
-     * @return a <code>String</code> representation of this object.
-     */
-    public String toString()
-    {
-        final String tab = ",";
-
-        StringBuilder retValue = new StringBuilder();
-
-        retValue.append("AbstractBean ( ").append(super.toString()).append(tab).append("code = ").append(this.code).append(
-            tab).append("provinceId = ").append(this.provinceId).append(tab).append("cityId = ").append(this.cityId).append(
-            tab).append("areaId = ").append(this.areaId).append(tab).append("sex = ").append(this.sex).append(tab).append(
-            "mtype = ").append(this.mtype).append(tab).append("htype = ").append(this.htype).append(tab).append(
-            "beginConnectTime = ").append(this.beginConnectTime).append(tab).append("blog = ").append(this.blog).append(
-            tab).append("card = ").append(this.card).append(tab).append("hasNew = ").append(this.hasNew).append(tab).append(
-            "post = ").append(this.post).append(tab).append("qq = ").append(this.qq).append(tab).append("msn = ").append(
-            this.msn).append(tab).append("web = ").append(this.web).append(tab).append("birthday = ").append(
-            this.birthday).append(tab).append("connector = ").append(this.connector).append(tab).append(
-            "cdepartement = ").append(this.cdepartement).append(tab).append("locationId = ").append(this.locationId).append(
-            tab).append("selltype = ").append(this.selltype).append(tab).append("protype = ").append(this.protype).append(
-            tab).append("newtype = ").append(this.newtype).append(tab).append("qqtype = ").append(this.qqtype).append(
-            tab).append("rtype = ").append(this.rtype).append(tab).append("formtype = ").append(this.formtype).append(
-            tab).append("status = ").append(this.status).append(tab).append("createrId = ").append(this.createrId).append(
-            tab).append("company = ").append(this.company).append(tab).append("address = ").append(this.address).append(
-            tab).append("handphone = ").append(this.handphone).append(tab).append("tel = ").append(this.tel).append(tab).append(
-            "mail = ").append(this.mail).append(tab).append("fax = ").append(this.fax).append(tab).append("postcode = ").append(
-            this.postcode).append(tab).append("bank = ").append(this.bank).append(tab).append("accounts = ").append(
-            this.accounts).append(tab).append("dutycode = ").append(this.dutycode).append(tab).append("flowcom = ").append(
-            this.flowcom).append(tab).append("loginTime = ").append(this.loginTime).append(tab).append("description = ").append(
-            this.description).append(tab).append("creditLevelId = ").append(this.creditLevelId).append(tab).append(
-            "creditVal = ").append(this.creditVal).append(tab).append(" )");
-
-        return retValue.toString();
-    }
-
-    /**
      * @return the createTime
      */
     public String getCreateTime()
@@ -982,5 +999,394 @@ public abstract class AbstractBean implements Serializable
     public void setCreditUpdateTime(int creditUpdateTime)
     {
         this.creditUpdateTime = creditUpdateTime;
+    }
+
+    /**
+     * @return the hlocal
+     */
+    public String getHlocal()
+    {
+        return hlocal;
+    }
+
+    /**
+     * @return the reserve1
+     */
+    public String getReserve1()
+    {
+        return reserve1;
+    }
+
+    /**
+     * @param reserve1
+     *            the reserve1 to set
+     */
+    public void setReserve1(String reserve1)
+    {
+        this.reserve1 = reserve1;
+    }
+
+    /**
+     * @return the reserve2
+     */
+    public String getReserve2()
+    {
+        return reserve2;
+    }
+
+    /**
+     * @param reserve2
+     *            the reserve2 to set
+     */
+    public void setReserve2(String reserve2)
+    {
+        this.reserve2 = reserve2;
+    }
+
+    /**
+     * @return the reserve3
+     */
+    public String getReserve3()
+    {
+        return reserve3;
+    }
+
+    /**
+     * @param reserve3
+     *            the reserve3 to set
+     */
+    public void setReserve3(String reserve3)
+    {
+        this.reserve3 = reserve3;
+    }
+
+    /**
+     * @return the reserve4
+     */
+    public String getReserve4()
+    {
+        return reserve4;
+    }
+
+    /**
+     * @param reserve4
+     *            the reserve4 to set
+     */
+    public void setReserve4(String reserve4)
+    {
+        this.reserve4 = reserve4;
+    }
+
+    /**
+     * @return the reserve5
+     */
+    public String getReserve5()
+    {
+        return reserve5;
+    }
+
+    /**
+     * @param reserve5
+     *            the reserve5 to set
+     */
+    public void setReserve5(String reserve5)
+    {
+        this.reserve5 = reserve5;
+    }
+
+    /**
+     * @return the reserve6
+     */
+    public String getReserve6()
+    {
+        return reserve6;
+    }
+
+    /**
+     * @param reserve6
+     *            the reserve6 to set
+     */
+    public void setReserve6(String reserve6)
+    {
+        this.reserve6 = reserve6;
+    }
+
+    /**
+     * @return the assignPer1
+     */
+    public double getAssignPer1()
+    {
+        return assignPer1;
+    }
+
+    /**
+     * @param assignPer1
+     *            the assignPer1 to set
+     */
+    public void setAssignPer1(double assignPer1)
+    {
+        this.assignPer1 = assignPer1;
+    }
+
+    /**
+     * @return the assignPer2
+     */
+    public double getAssignPer2()
+    {
+        return assignPer2;
+    }
+
+    /**
+     * @param assignPer2
+     *            the assignPer2 to set
+     */
+    public void setAssignPer2(double assignPer2)
+    {
+        this.assignPer2 = assignPer2;
+    }
+
+    /**
+     * @return the assignPer3
+     */
+    public double getAssignPer3()
+    {
+        return assignPer3;
+    }
+
+    /**
+     * @param assignPer3
+     *            the assignPer3 to set
+     */
+    public void setAssignPer3(double assignPer3)
+    {
+        this.assignPer3 = assignPer3;
+    }
+
+    /**
+     * @return the assignPer4
+     */
+    public double getAssignPer4()
+    {
+        return assignPer4;
+    }
+
+    /**
+     * @param assignPer4
+     *            the assignPer4 to set
+     */
+    public void setAssignPer4(double assignPer4)
+    {
+        this.assignPer4 = assignPer4;
+    }
+
+    /**
+     * @param hlocal
+     *            the hlocal to set
+     */
+    public void setHlocal(String hlocal)
+    {
+        this.hlocal = hlocal;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("AbstractBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("code = ")
+            .append(this.code)
+            .append(TAB)
+            .append("provinceId = ")
+            .append(this.provinceId)
+            .append(TAB)
+            .append("cityId = ")
+            .append(this.cityId)
+            .append(TAB)
+            .append("areaId = ")
+            .append(this.areaId)
+            .append(TAB)
+            .append("sex = ")
+            .append(this.sex)
+            .append(TAB)
+            .append("mtype = ")
+            .append(this.mtype)
+            .append(TAB)
+            .append("htype = ")
+            .append(this.htype)
+            .append(TAB)
+            .append("hlocal = ")
+            .append(this.hlocal)
+            .append(TAB)
+            .append("beginConnectTime = ")
+            .append(this.beginConnectTime)
+            .append(TAB)
+            .append("blog = ")
+            .append(this.blog)
+            .append(TAB)
+            .append("card = ")
+            .append(this.card)
+            .append(TAB)
+            .append("hasNew = ")
+            .append(this.hasNew)
+            .append(TAB)
+            .append("post = ")
+            .append(this.post)
+            .append(TAB)
+            .append("qq = ")
+            .append(this.qq)
+            .append(TAB)
+            .append("msn = ")
+            .append(this.msn)
+            .append(TAB)
+            .append("web = ")
+            .append(this.web)
+            .append(TAB)
+            .append("birthday = ")
+            .append(this.birthday)
+            .append(TAB)
+            .append("connector = ")
+            .append(this.connector)
+            .append(TAB)
+            .append("cdepartement = ")
+            .append(this.cdepartement)
+            .append(TAB)
+            .append("locationId = ")
+            .append(this.locationId)
+            .append(TAB)
+            .append("selltype = ")
+            .append(this.selltype)
+            .append(TAB)
+            .append("protype = ")
+            .append(this.protype)
+            .append(TAB)
+            .append("newtype = ")
+            .append(this.newtype)
+            .append(TAB)
+            .append("qqtype = ")
+            .append(this.qqtype)
+            .append(TAB)
+            .append("rtype = ")
+            .append(this.rtype)
+            .append(TAB)
+            .append("formtype = ")
+            .append(this.formtype)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("createrId = ")
+            .append(this.createrId)
+            .append(TAB)
+            .append("company = ")
+            .append(this.company)
+            .append(TAB)
+            .append("address = ")
+            .append(this.address)
+            .append(TAB)
+            .append("handphone = ")
+            .append(this.handphone)
+            .append(TAB)
+            .append("tel = ")
+            .append(this.tel)
+            .append(TAB)
+            .append("mail = ")
+            .append(this.mail)
+            .append(TAB)
+            .append("fax = ")
+            .append(this.fax)
+            .append(TAB)
+            .append("postcode = ")
+            .append(this.postcode)
+            .append(TAB)
+            .append("bank = ")
+            .append(this.bank)
+            .append(TAB)
+            .append("accounts = ")
+            .append(this.accounts)
+            .append(TAB)
+            .append("dutycode = ")
+            .append(this.dutycode)
+            .append(TAB)
+            .append("flowcom = ")
+            .append(this.flowcom)
+            .append(TAB)
+            .append("loginTime = ")
+            .append(this.loginTime)
+            .append(TAB)
+            .append("createTime = ")
+            .append(this.createTime)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("creditLevelId = ")
+            .append(this.creditLevelId)
+            .append(TAB)
+            .append("creditVal = ")
+            .append(this.creditVal)
+            .append(TAB)
+            .append("assignPer1 = ")
+            .append(this.assignPer1)
+            .append(TAB)
+            .append("assignPer2 = ")
+            .append(this.assignPer2)
+            .append(TAB)
+            .append("assignPer3 = ")
+            .append(this.assignPer3)
+            .append(TAB)
+            .append("assignPer4 = ")
+            .append(this.assignPer4)
+            .append(TAB)
+            .append("creditUpdateTime = ")
+            .append(this.creditUpdateTime)
+            .append(TAB)
+            .append("reserve1 = ")
+            .append(this.reserve1)
+            .append(TAB)
+            .append("reserve2 = ")
+            .append(this.reserve2)
+            .append(TAB)
+            .append("reserve3 = ")
+            .append(this.reserve3)
+            .append(TAB)
+            .append("reserve4 = ")
+            .append(this.reserve4)
+            .append(TAB)
+            .append("reserve5 = ")
+            .append(this.reserve5)
+            .append(TAB)
+            .append("reserve6 = ")
+            .append(this.reserve6)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
+    }
+
+    /**
+     * @return the lever
+     */
+    public int getLever()
+    {
+        return lever;
+    }
+
+    /**
+     * @param lever
+     *            the lever to set
+     */
+    public void setLever(int lever)
+    {
+        this.lever = lever;
     }
 }

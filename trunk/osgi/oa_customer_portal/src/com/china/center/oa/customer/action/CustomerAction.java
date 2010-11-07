@@ -49,6 +49,7 @@ import com.china.center.actionhelper.query.QueryConfig;
 import com.china.center.actionhelper.query.QueryItemBean;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.credit.dao.OutStatDAO;
 import com.china.center.oa.customer.bean.AssignApplyBean;
 import com.china.center.oa.customer.bean.CustomerApplyBean;
@@ -74,10 +75,13 @@ import com.china.center.oa.customer.wrap.NotPayWrap;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.CityBean;
 import com.china.center.oa.publics.bean.LocationBean;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.AuthConstant;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CityDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
+import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.ProvinceDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.manager.UserManager;
@@ -129,6 +133,8 @@ public class CustomerAction extends DispatchAction
 
     private UserManager userManager = null;
 
+    private PrincipalshipDAO principalshipDAO = null;
+
     private static String QUERYCUSTOMER = "queryCustomer";
 
     private static String QUERYAPPLYCUSTOMER = "queryApplyCustomer";
@@ -148,6 +154,10 @@ public class CustomerAction extends DispatchAction
     private static String QUERYAPPLYCUSTOMERFORCODE = "queryApplyCustomerForCode";
 
     private static String QUERYAPPLYCUSTOMERFORCREDIT = "queryApplyCustomerForCredit";
+
+    private static String QUERYAPPLYCUSTOMERFORLEVER = "queryApplyCustomerForLever";
+
+    private static String RPTQUERYALLCUSTOMER = "rptQueryAllCustomer";
 
     /**
      * default constructor
@@ -193,6 +203,8 @@ public class CustomerAction extends DispatchAction
 
             ActionTools.processJSONQueryCondition(QUERYCUSTOMER, request, condtion);
 
+            condtion.addCondition("order by CustomerBean.loginTime desc");
+
             jsonstr = ActionTools.querySelfBeanByJSONAndToString(QUERYCUSTOMER, request, condtion, new CommonQuery()
             {
                 public int getCount(String key, HttpServletRequest request, ConditionParse condition)
@@ -219,6 +231,113 @@ public class CustomerAction extends DispatchAction
         }
 
         return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * 查询客户
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryAllCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                             HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        List<CustomerBean> list = null;
+
+        if (PageSeparateTools.isFirstLoad(request))
+        {
+            ConditionParse condtion = new ConditionParse();
+
+            condtion.addWhereStr();
+
+            setInnerCondition(request, condtion);
+
+            int total = customerDAO.countByCondition(condtion.toString());
+
+            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+
+            PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYALLCUSTOMER);
+
+            list = customerDAO.queryEntityBeansByCondition(condtion, page);
+        }
+        else
+        {
+            PageSeparateTools.processSeparate(request, RPTQUERYALLCUSTOMER);
+
+            list = customerDAO.queryEntityBeansByCondition(
+                PageSeparateTools.getCondition(request, RPTQUERYALLCUSTOMER), PageSeparateTools.getPageSeparate(
+                    request, RPTQUERYALLCUSTOMER));
+        }
+
+        request.setAttribute("list", list);
+
+        return mapping.findForward("rptQueryAllCustomer");
+    }
+
+    /**
+     * 人为干预等级
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward interposeLever(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                        HttpServletResponse response)
+        throws ServletException
+    {
+        String cid = request.getParameter("cid");
+
+        int newcval = CommonTools.parseInt(request.getParameter("newcval"));
+
+        User user = Helper.getUser(request);
+
+        try
+        {
+            customerFacade.updateCustomerLever(user.getId(), cid, newcval);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+        }
+        catch (MYException e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+            return mapping.findForward("error");
+        }
+
+        return mapping.findForward("interposeLever");
+    }
+
+    /**
+     * @param request
+     * @param condtion
+     */
+    private void setInnerCondition(HttpServletRequest request, ConditionParse condtion)
+    {
+        String name = request.getParameter("name");
+
+        String code = request.getParameter("code");
+
+        if ( !StringTools.isNullOrNone(name))
+        {
+            condtion.addCondition("name", "like", name);
+        }
+
+        if ( !StringTools.isNullOrNone(code))
+        {
+            condtion.addCondition("code", "like", code);
+        }
+
+        condtion.addCondition("order by creditVal desc");
     }
 
     /**
@@ -604,6 +723,8 @@ public class CustomerAction extends DispatchAction
 
         condtion.addIntCondition("CustomerApplyBean.opr", "<>", CustomerConstant.OPR_UPATE_CREDIT);
 
+        condtion.addIntCondition("CustomerApplyBean.opr", "<>", CustomerConstant.OPR_UPATE_ASSIGNPER);
+
         if (userManager.containAuth(user, AuthConstant.CUSTOMER_CHECK))
         {
             condtion.addCondition("CustomerApplyBean.locationId", "=", user.getLocationId());
@@ -659,6 +780,36 @@ public class CustomerAction extends DispatchAction
     }
 
     /**
+     * queryApplyCustomerForAssignPer(利润分配申请查询,事业部填写--总裁审批)
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryApplyCustomerForAssignPer(ActionMapping mapping, ActionForm form,
+                                                        HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        condtion.addIntCondition("CustomerApplyBean.opr", "=", CustomerConstant.OPR_UPATE_ASSIGNPER);
+
+        condtion.addIntCondition("CustomerApplyBean.status", "=", CustomerConstant.STATUS_APPLY);
+
+        ActionTools.processJSONQueryCondition(QUERYAPPLYCUSTOMERFORLEVER, request, condtion);
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYAPPLYCUSTOMERFORLEVER, request, condtion,
+            this.customerApplyDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
      * queryApplyCustomerForCode
      * 
      * @param mapping
@@ -677,6 +828,8 @@ public class CustomerAction extends DispatchAction
         condtion.addWhereStr();
 
         condtion.addIntCondition("CustomerApplyBean.opr", "<>", CustomerConstant.OPR_UPATE_CREDIT);
+
+        condtion.addIntCondition("CustomerApplyBean.opr", "<>", CustomerConstant.OPR_UPATE_ASSIGNPER);
 
         condtion.addIntCondition("CustomerApplyBean.status", "=", CustomerConstant.STATUS_WAIT_CODE);
 
@@ -872,7 +1025,17 @@ public class CustomerAction extends DispatchAction
                                                 HttpServletResponse response)
         throws ServletException
     {
+        setSYB(request);
+
         return mapping.findForward("addCustomer");
+    }
+
+    private void setSYB(HttpServletRequest request)
+    {
+        // 查询事业部
+        List<PrincipalshipBean> sybList = principalshipDAO.listSYBSubPrincipalship();
+
+        request.setAttribute("sybList", sybList);
     }
 
     /**
@@ -925,6 +1088,7 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
+    @Deprecated
     public ActionForward assignApplyCustomerCode(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                                  HttpServletResponse response)
         throws ServletException
@@ -1000,6 +1164,54 @@ public class CustomerAction extends DispatchAction
         CommonTools.removeParamers(request);
 
         return mapping.findForward("queryApplyCustomer");
+    }
+
+    /**
+     * addAssignPerApplyCustomer
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward addAssignPerApplyCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                                   HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("cid");
+
+        // 防止某些隐藏值被修改
+        CustomerBean bean = customerDAO.find(id);
+
+        if (bean == null)
+        {
+            ActionTools.toError("客户不存在", "applyAssignPer", mapping, request);
+        }
+
+        CustomerApplyBean apply = new CustomerApplyBean();
+
+        try
+        {
+            BeanUtil.getBean(bean, request);
+
+            User user = Helper.getUser(request);
+
+            BeanUtil.copyProperties(apply, bean);
+
+            customerFacade.applyUpdateCustomeAssignPer(user.getId(), apply);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作客户:" + bean.getName());
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        return mapping.findForward("applyAssignPer");
     }
 
     /**
@@ -1163,6 +1375,8 @@ public class CustomerAction extends DispatchAction
 
         request.setAttribute("bean", vo);
 
+        setSYB(request);
+
         try
         {
             // 修改，需要验证权限
@@ -1316,6 +1530,8 @@ public class CustomerAction extends DispatchAction
 
         User user = Helper.getUser(request);
 
+        setSYB(request);
+
         try
         {
             CustomerApplyVO vo = customerApplyDAO.findVO(id);
@@ -1380,6 +1596,8 @@ public class CustomerAction extends DispatchAction
     {
         String id = request.getParameter("id");
 
+        setSYB(request);
+
         CustomerHisVO vo = customerHisDAO.findVO(id);
 
         if (vo == null)
@@ -1442,6 +1660,60 @@ public class CustomerAction extends DispatchAction
 
                 resultMsg = "成功删除申请";
             }
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            resultMsg = "处理申请失败:" + e.getMessage();
+
+            ajax.setError();
+        }
+
+        CommonTools.removeParamers(request);
+
+        ajax.setMsg(resultMsg);
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * processApplyAssignPer
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward processApplyAssignPer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                               HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        String operation = request.getParameter("operation");
+
+        String resultMsg = "";
+
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            if ("0".equals(operation))
+            {
+                customerFacade.passApplyCustomerAssignPer(user.getId(), id);
+            }
+
+            if ("1".equals(operation))
+            {
+                customerFacade.rejectApplyCustomerAssignPer(user.getId(), id);
+            }
+
+            resultMsg = "成功处理申请";
         }
         catch (MYException e)
         {
@@ -2402,6 +2674,23 @@ public class CustomerAction extends DispatchAction
     public void setOutStatDAO(OutStatDAO outStatDAO)
     {
         this.outStatDAO = outStatDAO;
+    }
+
+    /**
+     * @return the principalshipDAO
+     */
+    public PrincipalshipDAO getPrincipalshipDAO()
+    {
+        return principalshipDAO;
+    }
+
+    /**
+     * @param principalshipDAO
+     *            the principalshipDAO to set
+     */
+    public void setPrincipalshipDAO(PrincipalshipDAO principalshipDAO)
+    {
+        this.principalshipDAO = principalshipDAO;
     }
 
 }

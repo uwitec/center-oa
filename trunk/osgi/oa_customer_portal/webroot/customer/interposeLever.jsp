@@ -3,14 +3,14 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="人为干预等级变化" />
+<p:link title="信用杠杆" />
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="javascript">
 function addBean()
 {
-	submit('确定人为干预等级变化?');
+	submit('确定变化信用杠杆?');
 }
 
 function selectCus()
@@ -22,27 +22,27 @@ function getCustomer(obj)
 {
     $O('cid').value = obj.value;
     $O('cname').value = obj.pname;
-    $O('oldcval').value = obj.pval;
+    $O('oldcval').value = obj.plever;
 }
 
 </script>
 
 </head>
 <body class="body_class">
-<form name="formEntry" action="../credit/customer.do"><input
-	type="hidden" name="method" value="interposeCredit">
+<form name="formEntry" action="../customer/customer.do"><input
+	type="hidden" name="method" value="interposeLever">
 <input type="hidden" name="cid" value=""> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javascript:history.go(-1)">定制产品管理</span> &gt;&gt; 人为干预等级</td>
+		onclick="javascript:history.go(-1)">信用杠杆管理</span> &gt;&gt; 信用杠杆维护</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
 <p:body width="100%">
 
 	<p:title>
-		<td class="caption"><strong>人为干预等级：</strong></td>
+		<td class="caption"><strong>信用杠杆调整：</strong></td>
 	</p:title>
 
 	<p:line flag="0" />
@@ -56,12 +56,12 @@ function getCustomer(obj)
                     class="button_class" onclick="selectCus()">&nbsp;&nbsp; 
 			</p:cell>
 			
-			<p:cell title="客户原始信用">
+			<p:cell title="客户原始信用杠杆">
                 <input type="text" class="input_class" name="oldcval" id="oldcval" readonly="readonly">
             </p:cell>
             
-            <p:cell title="更新后客户信用">
-                <input type="text" class="input_class" name="newcval" id="newcval" oncheck="notNone;isFloat;range(0, 99)"> <font color="red">*</font>
+            <p:cell title="更新后客户信用杠杆">
+                <input type="text" class="input_class" name="newcval" id="newcval" oncheck="notNone;isInt;range(1)"> <font color="red">*</font>
             </p:cell>
 
 		</p:table>

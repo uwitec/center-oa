@@ -19,6 +19,7 @@ import com.china.center.jdbc.annotation.JCheck;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.Unique;
+import com.china.center.jdbc.clone.DataClone;
 
 
 /**
@@ -31,7 +32,7 @@ import com.china.center.jdbc.annotation.Unique;
  */
 @Entity(cache = true)
 @Table(name = "T_CENTER_CREDIT_ITEM03")
-public class CreditItemThrBean implements Serializable
+public class CreditItemThrBean implements DataClone<CreditItemThrBean>, Serializable
 {
     @Id
     private String id = "";
@@ -51,6 +52,22 @@ public class CreditItemThrBean implements Serializable
 
     @Html(title = "得分(百分制/实际值)", must = true, oncheck = JCheck.ONLY_FLOAT)
     private double per = 0.0d;
+
+    /**
+     * Copy Constructor
+     * 
+     * @param creditItemThrBean
+     *            a <code>CreditItemThrBean</code> object
+     */
+    public CreditItemThrBean(CreditItemThrBean creditItemThrBean)
+    {
+        this.id = creditItemThrBean.id;
+        this.pid = creditItemThrBean.pid;
+        this.name = creditItemThrBean.name;
+        this.unit = creditItemThrBean.unit;
+        this.indexPos = creditItemThrBean.indexPos;
+        this.per = creditItemThrBean.per;
+    }
 
     /**
      * default constructor
@@ -172,10 +189,29 @@ public class CreditItemThrBean implements Serializable
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue.append("CreditItemThrBean ( ").append(super.toString()).append(tab).append("id = ").append(this.id).append(
-            tab).append("pid = ").append(this.pid).append(tab).append("name = ").append(this.name).append(tab).append(
-            "unit = ").append(this.unit).append(tab).append("indexPos = ").append(this.indexPos).append(tab).append(
-            "per = ").append(this.per).append(tab).append(" )");
+        retValue
+            .append("CreditItemThrBean ( ")
+            .append(super.toString())
+            .append(tab)
+            .append("id = ")
+            .append(this.id)
+            .append(tab)
+            .append("pid = ")
+            .append(this.pid)
+            .append(tab)
+            .append("name = ")
+            .append(this.name)
+            .append(tab)
+            .append("unit = ")
+            .append(this.unit)
+            .append(tab)
+            .append("indexPos = ")
+            .append(this.indexPos)
+            .append(tab)
+            .append("per = ")
+            .append(this.per)
+            .append(tab)
+            .append(" )");
 
         return retValue.toString();
     }
@@ -212,5 +248,10 @@ public class CreditItemThrBean implements Serializable
         }
         else if ( !id.equals(other.id)) return false;
         return true;
+    }
+
+    public CreditItemThrBean clones()
+    {
+        return new CreditItemThrBean(this);
     }
 }

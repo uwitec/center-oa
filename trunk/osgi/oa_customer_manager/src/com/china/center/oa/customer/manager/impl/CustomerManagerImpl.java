@@ -42,6 +42,8 @@ import com.china.center.oa.publics.dao.CityDAO;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.LocationVSCityDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.publics.helper.NotifyHelper;
+import com.china.center.oa.publics.manager.NotifyManager;
 import com.china.center.oa.publics.vs.LocationVSCityBean;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.JudgeTools;
@@ -78,6 +80,8 @@ public class CustomerManagerImpl implements CustomerManager
 
     private CommonDAO commonDAO = null;
 
+    private NotifyManager notifyManager = null;
+
     private AssignApplyDAO assignApplyDAO = null;
 
     private StafferDAO stafferDAO = null;
@@ -87,7 +91,7 @@ public class CustomerManagerImpl implements CustomerManager
     }
 
     /**
-     * applyAddCustomer(申请增加客户的code事系统自动生成的)
+     * applyAddCustomer(申请增加客户的code自动生成,且自动提交)(本质就是增加客户)
      * 
      * @param user
      * @param bean
@@ -105,6 +109,9 @@ public class CustomerManagerImpl implements CustomerManager
 
         checkAddBean(bean);
 
+        // 自动生成code
+        String code = commonDAO.getSquenceString20();
+
         CustomerHelper.encryptCustomer(bean);
 
         bean.setStatus(CustomerConstant.STATUS_APPLY);
@@ -117,13 +124,21 @@ public class CustomerManagerImpl implements CustomerManager
 
         bean.setId(commonDAO.getSquenceString());
 
-        bean.setCode(bean.getId());
+        bean.setCode(code);
 
         bean.setLoginTime(TimeTools.now());
 
         bean.setCreateTime(TimeTools.now());
 
+        bean.setLever(CustomerConstant.DEFAULT_LEVER);
+
         customerApplyDAO.saveEntityBean(bean);
+
+        // 移植分配code的逻辑 -----------------------------------
+
+        checkAssignCode(bean, code);
+
+        handleAdd(user, bean.getId(), bean);
 
         return true;
     }
@@ -221,6 +236,41 @@ public class CustomerManagerImpl implements CustomerManager
     }
 
     /**
+     * applyUpdateCustomer
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean passApplyCustomerAssignPer(User user, CustomerApplyBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, bean, bean.getId());
+
+        // 删除存在的(直接覆盖)
+        customerApplyDAO.deleteEntityBean(bean.getId());
+
+        bean.setUpdaterId(user.getStafferId());
+
+        CustomerHelper.encryptCustomer(bean);
+
+        bean.setStatus(CustomerConstant.STATUS_APPLY);
+
+        bean.setOpr(CustomerConstant.OPR_UPATE_ASSIGNPER);
+
+        bean.setLocationId(user.getLocationId());
+
+        bean.setLoginTime(TimeTools.now());
+
+        customerApplyDAO.saveEntityBean(bean);
+
+        return true;
+    }
+
+    /**
      * applyDelCustomer
      * 
      * @param user
@@ -302,6 +352,35 @@ public class CustomerManagerImpl implements CustomerManager
     }
 
     /**
+     * rejectApplyCustomerAssignPer
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean rejectApplyCustomerAssignPer(User user, String cid)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, cid);
+
+        CustomerApplyBean bean = customerApplyDAO.find(cid);
+
+        if (bean.getOpr() != CustomerConstant.OPR_UPATE_ASSIGNPER)
+        {
+            throw new MYException("数据错误,请重新操作");
+        }
+
+        customerApplyDAO.deleteEntityBean(cid);
+
+        notifyManager.notifyWithoutTransaction(bean.getUpdaterId(), NotifyHelper.simpleNotify(
+            "您的客户[%s]分配比例申请已经被[%s]废弃", bean.getName(), user.getStafferName()));
+
+        return true;
+    }
+
+    /**
      * updateBean
      * 
      * @param user
@@ -309,7 +388,6 @@ public class CustomerManagerImpl implements CustomerManager
      * @return
      * @throws MYException
      */
-
     @Transactional(rollbackFor = {MYException.class})
     public synchronized boolean passApplyCustomer(User user, String cid)
         throws MYException
@@ -342,8 +420,26 @@ public class CustomerManagerImpl implements CustomerManager
         return true;
     }
 
+    @Transactional(rollbackFor = {MYException.class})
+    public synchronized boolean passApplyCustomerAssignPer(User user, String cid)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, cid);
+
+        CustomerApplyBean bean = customerApplyDAO.find(cid);
+
+        checkPass(bean);
+
+        handleUpdateAssignPer(user, cid, bean);
+
+        notifyManager.notifyWithoutTransaction(bean.getUpdaterId(), NotifyHelper.simpleNotify(
+            "您的客户[%s]分配比例申请已经被[%s]通过", bean.getName(), user.getStafferName()));
+
+        return true;
+    }
+
     /**
-     * 分配编码
+     * 分配编码(就是客户的增加)
      * 
      * @param user
      * @param cid
@@ -351,23 +447,12 @@ public class CustomerManagerImpl implements CustomerManager
      * @throws MYException
      */
 
+    @Deprecated
     @Transactional(rollbackFor = {MYException.class})
     public synchronized boolean assignApplyCustomerCode(User user, String cid, String code)
         throws MYException
     {
-        JudgeTools.judgeParameterIsNull(user, cid, code);
-
-        CustomerApplyBean bean = customerApplyDAO.find(cid);
-
-        checkAssignCode(bean, code);
-
-        bean.setCode(code);
-
-        customerApplyDAO.updateCode(cid, code);
-
-        handleAdd(user, cid, bean);
-
-        return true;
+        throw new MYException("can not find assignApplyCustomerCode");
     }
 
     /**
@@ -631,8 +716,13 @@ public class CustomerManagerImpl implements CustomerManager
             throw new MYException("修改的客户不存在");
         }
 
-        cbean.setStatus(oldBean.getStatus());
         cbean.setCreditUpdateTime(oldBean.getCreditUpdateTime());
+        cbean.setStatus(oldBean.getStatus());
+        cbean.setLever(oldBean.getLever());
+        cbean.setAssignPer1(oldBean.getAssignPer1());
+        cbean.setAssignPer2(oldBean.getAssignPer2());
+        cbean.setAssignPer3(oldBean.getAssignPer3());
+        cbean.setAssignPer4(oldBean.getAssignPer4());
 
         // 加入到正表里面
         customerDAO.updateEntityBean(cbean);
@@ -641,6 +731,38 @@ public class CustomerManagerImpl implements CustomerManager
 
         // 记录到his
         customerHisDAO.saveEntityBean(hisbean);
+    }
+
+    /**
+     * handleUpdateAssignPer
+     * 
+     * @param user
+     * @param cid
+     * @param bean
+     * @throws MYException
+     */
+    private void handleUpdateAssignPer(User user, String cid, CustomerApplyBean bean)
+        throws MYException
+    {
+        CustomerBean cbean = customerDAO.find(cid);
+
+        if (cbean == null)
+        {
+            throw new MYException("修改的客户不存在");
+        }
+
+        cbean.setLoginTime(TimeTools.now());
+
+        // 从apply里面删除
+        customerApplyDAO.deleteEntityBean(cid);
+
+        cbean.setAssignPer1(bean.getAssignPer1());
+        cbean.setAssignPer2(bean.getAssignPer2());
+        cbean.setAssignPer3(bean.getAssignPer3());
+        cbean.setAssignPer4(bean.getAssignPer4());
+
+        // 加入到正表里面
+        customerDAO.updateEntityBean(cbean);
     }
 
     /**
@@ -673,8 +795,8 @@ public class CustomerManagerImpl implements CustomerManager
 
         cbean.setStatus(CustomerConstant.REAL_STATUS_IDLE);
 
-        // 保存对应关系
-        if (stafferVSCustomerDAO.countByUnique(bean.getId()) == 0)
+        // 如果客户所在的分公司和用户所在分公司相同,则默认给这个申请人
+        if (stafferVSCustomerDAO.countByUnique(bean.getId()) == 0 && user.getLocationId().equals(bean.getLocationId()))
         {
             StafferVSCustomerBean vs = new StafferVSCustomerBean();
 
@@ -684,7 +806,6 @@ public class CustomerManagerImpl implements CustomerManager
 
             addStafferVSCustomer(vs);
 
-            // 修改成被使用的客户(这里没有区域的划分了，是一个bug)
             cbean.setStatus(CustomerConstant.REAL_STATUS_USED);
         }
 
@@ -787,11 +908,6 @@ public class CustomerManagerImpl implements CustomerManager
         if (bean == null)
         {
             throw new MYException("审批的客户不存在");
-        }
-
-        if (bean.getStatus() != CustomerConstant.STATUS_WAIT_CODE)
-        {
-            throw new MYException("审批的客户不在等待编码分配状态");
         }
 
         // 检查code是否重复
@@ -924,6 +1040,55 @@ public class CustomerManagerImpl implements CustomerManager
         }
     }
 
+    @Transactional(rollbackFor = MYException.class)
+    public boolean updateCustomerLever(User user, String id, int lever)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        // 最小是1
+        if (lever < 1)
+        {
+            lever = 1;
+        }
+
+        customerDAO.updateCustomerLever(id, lever);
+
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.china.center.oa.customer.manager.CustomerManager#applyUpdateCustomeAssignPer(com.center.china.osgi.publics.User,
+     *      com.china.center.oa.customer.bean.CustomerApplyBean)
+     */
+    @Transactional(rollbackFor = MYException.class)
+    public boolean applyUpdateCustomeAssignPer(User user, CustomerApplyBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, bean, bean.getId());
+
+        // 删除存在的(直接覆盖)
+        customerApplyDAO.deleteEntityBean(bean.getId());
+
+        bean.setUpdaterId(user.getStafferId());
+
+        CustomerHelper.encryptCustomer(bean);
+
+        bean.setStatus(CustomerConstant.STATUS_APPLY);
+
+        bean.setOpr(CustomerConstant.OPR_UPATE_ASSIGNPER);
+
+        bean.setLocationId(user.getLocationId());
+
+        bean.setLoginTime(TimeTools.now());
+
+        customerApplyDAO.saveEntityBean(bean);
+
+        return true;
+    }
+
     /**
      * @param bean
      * @throws MYException
@@ -1002,9 +1167,10 @@ public class CustomerManagerImpl implements CustomerManager
 
         if (cbean != null)
         {
-            if (cbean.getOpr() == CustomerConstant.OPR_UPATE_CREDIT)
+            if (cbean.getOpr() == CustomerConstant.OPR_UPATE_CREDIT
+                || cbean.getOpr() == CustomerConstant.OPR_UPATE_ASSIGNPER)
             {
-                throw new MYException("客户[%s]存在静态属性修改,请先结束此审批", bean.getName());
+                throw new MYException("客户[%s]存在信用或者利润分配修改,请先结束此审批", bean.getName());
             }
         }
         return old;
@@ -1179,4 +1345,22 @@ public class CustomerManagerImpl implements CustomerManager
     {
         this.changeLogDAO = changeLogDAO;
     }
+
+    /**
+     * @return the notifyManager
+     */
+    public NotifyManager getNotifyManager()
+    {
+        return notifyManager;
+    }
+
+    /**
+     * @param notifyManager
+     *            the notifyManager to set
+     */
+    public void setNotifyManager(NotifyManager notifyManager)
+    {
+        this.notifyManager = notifyManager;
+    }
+
 }
