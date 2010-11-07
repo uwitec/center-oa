@@ -31,7 +31,7 @@ import com.china.center.jdbc.util.PageSeparate;
  * @see
  * @since
  */
-public abstract class BaseDAO<Bean extends Serializable, VO extends Serializable> implements DAO<Bean, VO>
+public abstract class BaseDAO<Bean extends Serializable, VO extends Bean> implements DAO<Bean, VO>
 {
     protected JdbcOperation jdbcOperation = null;
 
