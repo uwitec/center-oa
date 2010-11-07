@@ -92,7 +92,7 @@ public class PageBeanProperty extends BodyTagCenterSupport
 
         Object oval = null;
 
-        if (opr == TagLibConstant.BEAN_UPDATE)
+        if (opr == TagLibConstant.BEAN_UPDATE || opr == TagLibConstant.BEAN_DISPLAY)
         {
             oval = request.getAttribute(TagLibConstant.CENTER_BEAN_UPDATBEAN);
         }
