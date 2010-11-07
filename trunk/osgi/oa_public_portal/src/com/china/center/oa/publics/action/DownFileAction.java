@@ -43,7 +43,8 @@ public class DownFileAction extends DispatchAction
      * default constructor
      */
     public DownFileAction()
-    {}
+    {
+    }
 
     /**
      * 下载模板
@@ -60,7 +61,7 @@ public class DownFileAction extends DispatchAction
                                           HttpServletResponse response)
         throws ServletException, IOException
     {
-        String path = servlet.getServletContext().getRealPath("/");
+        String path = Helper.getRootPath();
 
         path = FileTools.formatPath(path) + "template/template.xls";
 
@@ -94,7 +95,7 @@ public class DownFileAction extends DispatchAction
                                                 HttpServletResponse response)
         throws ServletException, IOException
     {
-        String path = Helper.getTemplateRootPath();
+        String path = Helper.getRootPath();
 
         path = FileTools.formatPath(path) + "template/profitTemplate.xls";
 
@@ -130,7 +131,7 @@ public class DownFileAction extends DispatchAction
     {
         String fileName = request.getParameter("fileName");
 
-        String path = Helper.getTemplateRootPath();
+        String path = Helper.getRootPath();
 
         path = path + "template/" + fileName;
 

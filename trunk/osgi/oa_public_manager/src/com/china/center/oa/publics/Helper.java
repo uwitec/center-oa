@@ -11,6 +11,7 @@ package com.china.center.oa.publics;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.center.china.osgi.config.ConfigLoader;
 import com.center.china.osgi.publics.User;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.constant.StafferConstant;
@@ -61,9 +62,9 @@ public abstract class Helper
      * 
      * @return
      */
-    public static String getTemplateRootPath()
+    public static String getRootPath()
     {
-        return FileTools.formatPath(System.getProperty(PublicConstant.OSGI_TEMPLATE_PATH));
+        return FileTools.formatPath(ConfigLoader.getProperty("root_path"));
     }
 
     public static User getSystemUser()

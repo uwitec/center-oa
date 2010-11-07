@@ -34,6 +34,7 @@ public class Activator implements BundleActivator
             add("/js/");
             add("/admin_js/");
             add("/css/");
+            add("/down/");
         }
     };
 

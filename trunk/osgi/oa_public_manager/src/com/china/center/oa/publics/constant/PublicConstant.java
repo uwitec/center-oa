@@ -90,7 +90,7 @@ public interface PublicConstant
     String VIRTUAL_LOCATION = "-1";
 
     /**
-     * 总部区域(OSGi改造后就是虚拟的,实际上不存在的)
+     * 总部区域(OSGi改造后就是就是99)
      */
     String CENTER_LOCATION = "99";
 

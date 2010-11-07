@@ -54,6 +54,9 @@
 
 	<bean name="/admin/down"
 		class="com.china.center.oa.publics.action.DownFileAction" />
+		
+	<bean name="/down/down"
+		class="com.china.center.oa.publics.action.DownFileAction" />
 
 	<bean name="/admin/location"
 		class="com.china.center.oa.publics.action.LocationAction" />

@@ -227,8 +227,6 @@ function spellList()
 
               sel = sel.toUpperCase();
               
-              window.status = sel;
-              
               if (sel != '')
               oldSel = sel;
 

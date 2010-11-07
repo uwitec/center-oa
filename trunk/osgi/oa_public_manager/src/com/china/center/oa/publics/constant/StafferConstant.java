@@ -23,7 +23,7 @@ import com.china.center.jdbc.annotation.Defined;
 public interface StafferConstant
 {
     /**
-     * 99999999��������Ա
+     * 系统管理员
      */
     String SUPER_STAFFER = "99999999";
 

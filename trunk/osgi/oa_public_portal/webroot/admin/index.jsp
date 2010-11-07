@@ -315,7 +315,7 @@ function load()
 						<td class="forumRow" align="right" valign="middle" width="39%"><b>二次密码：</b></td>
 						<td class="forumRow"><input name=spassword value="" onkeypress=KeyPress()
 							class="FormInputEdit" type="text">
-							<a href="/oa/down/down.do?method=downTemplateFileByName&fileName=enc.zip" target="_blank">下载安全控件</a>
+							<a href="../down/down.do?method=downTemplateFileByName&fileName=enc.zip" target="_blank">下载安全控件</a>
 					</tr>
 					<tr>
 						<td colspan="2" class="forumRowHighlight" align="center"

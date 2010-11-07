@@ -96,4 +96,6 @@
 
 	<osgi:service ref="flowLogDAO" interface="com.china.center.oa.publics.dao.FlowLogDAO" />
 
+	<osgi:service ref="notifyManager" interface="com.china.center.oa.publics.manager.NotifyManager" />
+
 </beans>

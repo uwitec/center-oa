@@ -13,6 +13,7 @@ import java.util.List;
 
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
+import com.china.center.oa.publics.constant.OrgConstant;
 import com.china.center.oa.publics.dao.PrincipalshipDAO;
 
 
@@ -31,5 +32,10 @@ public class PrincipalshipDAOImpl extends BaseDAO<PrincipalshipBean, Principalsh
         String sql = "select t1.* from T_CENTER_PRINCIPALSHIP t1, t_center_org t2 where t1.id = t2.subid and t2.PARENTID = ?";
 
         return jdbcOperation.queryForListBySql(sql, claz, id);
+    }
+
+    public List<PrincipalshipBean> listSYBSubPrincipalship()
+    {
+        return queryEntityBeansByFK(OrgConstant.ORG_BIG_DEPARTMENT);
     }
 }

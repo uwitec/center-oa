@@ -113,4 +113,6 @@
 		</property>
 	</bean>
 
+	<bean id="notifyManager" class="com.china.center.oa.publics.manager.impl.NotifyManagerImpl" />
+
 </beans>

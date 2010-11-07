@@ -26,4 +26,11 @@ import com.china.center.oa.publics.bean.PrincipalshipBean;
 public interface PrincipalshipDAO extends DAO<PrincipalshipBean, PrincipalshipBean>
 {
     List<PrincipalshipBean> querySubPrincipalship(String id);
+
+    /**
+     * 查询事业部下面的组织(客户属性里面的行业就是事业部下面的分类)
+     * 
+     * @return
+     */
+    List<PrincipalshipBean> listSYBSubPrincipalship();
 }

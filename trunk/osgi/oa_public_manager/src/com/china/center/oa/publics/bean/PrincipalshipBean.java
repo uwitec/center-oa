@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Html;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Ignore;
@@ -41,6 +42,10 @@ public class PrincipalshipBean implements Serializable
     @Html(title = "组织名称", must = true, maxLength = 20)
     private String name = "";
 
+    /**
+     * 父级组织
+     */
+    @FK
     private String parentId = "";
 
     /**

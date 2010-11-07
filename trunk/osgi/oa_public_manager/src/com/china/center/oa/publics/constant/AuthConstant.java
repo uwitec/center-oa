@@ -154,6 +154,16 @@ public interface AuthConstant
     String CUSTOMER_CREDIT_CHECK = "0217";
 
     /**
+     * 利润分配申请
+     */
+    String CUSTOMER_ASSIGNPER_APPLY = "021801";
+
+    /**
+     * 利润分配审核
+     */
+    String CUSTOMER_ASSIGNPER_APPROVE = "021802";
+
+    /**
      * 查询地市考核配置
      */
     String CITYCONFIG_QUERY = "0301";
@@ -302,6 +312,11 @@ public interface AuthConstant
      * 导入
      */
     String CREDIT_IMPOTR = "0904";
+
+    /**
+     * 信用杠杆维护(总裁)
+     */
+    String CUSTOMER_LEVER_OPR = "0905";
 
     /**
      * 产品订货
