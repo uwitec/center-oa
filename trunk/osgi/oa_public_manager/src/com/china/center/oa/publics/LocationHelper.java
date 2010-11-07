@@ -39,4 +39,22 @@ public abstract class LocationHelper
             return false;
         }
     }
+
+    /**
+     * 是否是超级区域
+     * 
+     * @param locationId
+     * @return
+     */
+    public static boolean isSystemLocation(String locationId)
+    {
+        if (PublicConstant.CENTER_LOCATION.equals(locationId))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

@@ -103,4 +103,9 @@ public interface SysConfigConstant
      */
     String GLOBAL_PAGE_SIZE = "GLOBAL_PAGE_SIZE";
 
+    /**
+     * 个人领样的回款天数
+     */
+    String OUT_PERSONAL_REDAY = "OUT_PERSONAL_REDAY";
+
 }
