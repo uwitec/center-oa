@@ -34,5 +34,7 @@
 	<osgi:reference id="userManager" interface="com.china.center.oa.publics.manager.UserManager" />
 	
 	<osgi:reference id="stafferDAO" interface="com.china.center.oa.publics.dao.StafferDAO" />
+	
+	<osgi:reference id="notifyManager" interface="com.china.center.oa.publics.manager.NotifyManager" />
 
 </beans>
