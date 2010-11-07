@@ -11,6 +11,8 @@ package com.china.center.jdbc.inter.impl;
 
 import java.io.Serializable;
 
+import com.china.center.jdbc.inter.SimpleDAO;
+
 
 /**
  * 普通的DAO(独立的DAO版本)
@@ -20,6 +22,6 @@ import java.io.Serializable;
  * @see
  * @since
  */
-public abstract class SimpleBaseDAO<Bean extends Serializable> extends BaseDAO<Bean, Bean>
+public abstract class SimpleBaseDAO<Bean extends Serializable> extends BaseDAO<Bean, Bean> implements SimpleDAO<Bean>
 {
 }
