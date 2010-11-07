@@ -24,4 +24,15 @@ import com.china.center.oa.credit.bean.CreditCoreBean;
 public interface CreditCoreDAO extends DAO<CreditCoreBean, CreditCoreBean>
 {
     int synMaxBusinessToOld(int oldYear);
+
+    /**
+     * updateCurCreToInit(是在库存通过的时候,人工干预后的客户信用恢复到原来的)
+     * 
+     * @param pid
+     *            信用项ID
+     * @param cid
+     *            客户的ID
+     * @return
+     */
+    boolean updateCurCreToInit(String pid, String cid);
 }

@@ -18,7 +18,7 @@ import com.china.center.tools.StringTools;
 
 
 /**
- * 入库的bean(这里仅仅是为了解耦使用,后面采用其他方式引入)
+ * TODO_OSGI 入库的bean(这里仅仅是为了解耦使用,后面采用其他方式引入)
  * 
  * @author ZHUZHU
  * @version 2007-3-25
@@ -26,7 +26,7 @@ import com.china.center.tools.StringTools;
  * @since
  */
 @Entity
-@Table(name = "t_center_out")
+@Table(name = "T_CENTER_OUT")
 public class OutBean implements Serializable
 {
     @Id

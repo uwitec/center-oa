@@ -151,7 +151,7 @@ function testclip()
 
 	<p:subBody width="98%">
 	
-		<p:class value="com.china.center.oa.customer.bean.CustomerBean" opr="2"/>
+		<p:class opr="2"/>
 
 		<p:table cells="2">
 			<p:pro field="name" cell="2" innerString="size=60"/>
