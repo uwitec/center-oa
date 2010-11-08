@@ -70,10 +70,6 @@
 		abstract="true">
 	</bean>
 	
-	<bean id="simpleBaseDAO" class="com.china.center.jdbc.inter.impl.SimpleBaseDAO"
-		abstract="true">
-	</bean>
-
 	<bean id="convertEncode"
 		class="com.china.center.jdbc.inter.impl.ConvertEncode">
 		<property name="databaseEncoding">
