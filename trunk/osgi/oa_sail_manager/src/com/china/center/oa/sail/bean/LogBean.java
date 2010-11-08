@@ -12,7 +12,6 @@ package com.china.center.oa.sail.bean;
 import java.io.Serializable;
 
 import com.china.center.oa.sail.constanst.OutConstant;
-import com.china.center.oa.sail.constanst.SailConstant;
 
 
 /**
@@ -120,12 +119,12 @@ public class LogBean implements Serializable
 
     public String getTypes()
     {
-        if (this.type == SailConstant.OUT_TYPE_OUTBILL)
+        if (this.type == OutConstant.OUT_TYPE_OUTBILL)
         {
             return "销售单";
         }
 
-        if (this.type == SailConstant.OUT_TYPE_INBILL)
+        if (this.type == OutConstant.OUT_TYPE_INBILL)
         {
             return "入库单";
         }

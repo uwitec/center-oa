@@ -39,10 +39,13 @@ import com.china.center.oa.note.dao.ShortMessageTaskDAO;
 import com.china.center.oa.note.manager.HandleMessage;
 import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.bean.ProductBean;
+import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.DepotpartDAO;
 import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.dao.StorageDAO;
+import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.vs.StorageRelationBean;
+import com.china.center.oa.product.wrap.ProductChangeWrap;
 import com.china.center.oa.publics.LocationHelper;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.LocationBean;
@@ -89,8 +92,6 @@ public class OutManagerImpl implements OutManager
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
-    private final Log monitorLog = LogFactory.getLog("bill");
-
     private final Log importLog = LogFactory.getLog("sec");
 
     private LocationDAO locationDAO = null;
@@ -122,6 +123,8 @@ public class OutManagerImpl implements OutManager
     private CreditCoreDAO creditCoreDAO = null;
 
     private FlowLogDAO flowLogDAO = null;
+
+    private StorageRelationManager storageRelationManager = null;
 
     /**
      * 短信最大停留时间
@@ -187,16 +190,20 @@ public class OutManagerImpl implements OutManager
         outBean.setTotal(MathTools.parseDouble(totalss));
 
         // 保存库单
-        outBean.setStatus(SailConstant.STATUS_SAVE);
+        outBean.setStatus(OutConstant.STATUS_SAVE);
 
-        outBean.setInway(SailConstant.IN_WAY_NO);
+        outBean.setInway(OutConstant.IN_WAY_NO);
 
         // 获得baseList
         final String[] nameList = request.getParameter("nameList").split("~");
         final String[] idsList = request.getParameter("idsList").split("~");
+        final String[] showIdList = request.getParameter("showIdList").split("~");
+        final String[] showNameList = request.getParameter("showNameList").split("~");
+        final String[] ownerList = request.getParameter("ownerList").split("~");
         final String[] unitList = request.getParameter("unitList").split("~");
         final String[] amontList = request.getParameter("amontList").split("~");
         final String[] priceList = request.getParameter("priceList").split("~");
+        final String[] costPriceList = request.getParameter("costPriceList").split("~");
         final String[] totalList = request.getParameter("totalList").split("~");
         final String[] desList = (" " + request.getParameter("desList") + " ").split("~");
 
@@ -231,11 +238,6 @@ public class OutManagerImpl implements OutManager
                     // 保存入库单
                     outDAO.saveEntityBean(outBean);
 
-                    if (StringTools.isNullOrNone(outBean.getLocation()))
-                    {
-                        outBean.setLocation(outBean.getLocationId());
-                    }
-
                     // 组织BaseBean
                     for (int i = 0; i < nameList.length; i++ )
                     {
@@ -250,21 +252,14 @@ public class OutManagerImpl implements OutManager
 
                         base.setProductName(nameList[i]);
                         base.setUnit(unitList[i]);
-                        base.setPrice(Double.parseDouble(priceList[i]));
-                        base.setAmount(Integer.parseInt(amontList[i]));
-                        base.setValue(Double.parseDouble(totalList[i]));
+                        base.setPrice(MathTools.parseDouble(priceList[i]));
+                        base.setAmount(MathTools.parseInt(amontList[i]));
+                        base.setValue(MathTools.parseDouble(totalList[i]));
+                        base.setShowId(showIdList[i]);
+                        base.setShowName(showNameList[i]);
+                        base.setOwner(ownerList[i]);
+                        base.setCostPrice(MathTools.parseDouble(costPriceList[i]));
                         base.setLocationId(outBean.getLocation());
-
-                        // 总部的时候填写储位 TODO 这里修改后所有的都是基于仓库的
-                        if (LocationHelper.isSystemLocation(outBean.getLocation()))
-                        {
-                            /**
-                             * TODO 重新实现 <br>
-                             * StorageRelationBean sbean = storageDAO.findStorageRelationByDepotpartAndProcut(
-                             * defaultDepotpartId, base.getProductId()); if (sbean != null) {
-                             * base.setStorageId(sbean.getStorageId()); }
-                             */
-                        }
 
                         base.setDescription(desList[i].trim());
 
@@ -302,18 +297,10 @@ public class OutManagerImpl implements OutManager
     public String coloneOutAndSubmitAffair(final OutBean outBean, final User user)
         throws MYException
     {
-        return coloneOutAndSubmitWithOutAffair(outBean, user);
+        return coloneOutAndSubmitWithOutAffair(outBean, user, StorageConstant.OPR_STORAGE_REDEPLOY);
     }
 
-    /**
-     * 非事务的处理
-     * 
-     * @param outBean
-     * @param user
-     * @return
-     * @throws MYException
-     */
-    public String coloneOutAndSubmitWithOutAffair(OutBean outBean, User user)
+    public String coloneOutAndSubmitWithOutAffair(OutBean outBean, User user, int type)
         throws MYException
     {
         // 先保存
@@ -339,7 +326,7 @@ public class OutManagerImpl implements OutManager
         outBean.setFullId(fullId);
 
         // 保存库单
-        outBean.setStatus(SailConstant.STATUS_SAVE);
+        outBean.setStatus(OutConstant.STATUS_SAVE);
 
         // 保存入库单
         outDAO.saveEntityBean(outBean);
@@ -355,7 +342,7 @@ public class OutManagerImpl implements OutManager
         }
 
         // 提交
-        this.submitWithOutAffair(fullId, user);
+        this.submitWithOutAffair(fullId, user, type);
 
         return fullId;
     }
@@ -373,18 +360,16 @@ public class OutManagerImpl implements OutManager
     public boolean submit(final String fullId, final User user)
         throws MYException
     {
-        return submitWithOutAffair(fullId, user);
+        return submitWithOutAffair(fullId, user, StorageConstant.OPR_STORAGE_OUTBILLIN);
     }
 
-    /**
-     * 这里没有提交
+    /*
+     * (non-Javadoc)
      * 
-     * @param fullId
-     * @param user
-     * @return
-     * @throws MYException
+     * @see com.china.center.oa.sail.manager.OutManager#submitWithOutAffair(java.lang.String,
+     *      com.center.china.osgi.publics.User)
      */
-    public synchronized boolean submitWithOutAffair(final String fullId, final User user)
+    public synchronized boolean submitWithOutAffair(final String fullId, final User user, int type)
         throws MYException
     {
         final OutBean outBean = outDAO.find(fullId);
@@ -396,44 +381,30 @@ public class OutManagerImpl implements OutManager
 
         int preStatus = outBean.getStatus();
 
-        if (preStatus != 0 && preStatus != 2)
+        if (preStatus != OutConstant.STATUS_SAVE && preStatus != OutConstant.STATUS_REJECT)
         {
-            throw new MYException("单据已经提交,请重新操作");
+            throw new MYException("单据已经提交或者驳回,请重新操作");
         }
 
         final List<BaseBean> baseList = checkSubmit(fullId, outBean);
 
         final List<LogBean> logList = new ArrayList<LogBean>();
 
-        // TODO 这里的库存需要重新实现 处理base的入库
-        processBaseList(user, outBean, baseList, logList);
+        // 这里是入库单的直接库存变动
+        processBaseList(user, outBean, baseList, logList, type);
 
         // NOTE 修改库单的状态(信用额度处理)
         int status = processOutStutus(fullId, user, outBean);
 
-        // 处理在途
+        // TODO 后面继续处理,11.8才检查代码到这里 处理在途
         processOutInWay(fullId, outBean);
 
         // 增加数据库日志
-        addOutLog(fullId, user, outBean, "提交", SailConstant.OPR_OUT_PASS, SailConstant.STATUS_SUBMIT);
+        addOutLog(fullId, user, outBean, "提交", SailConstant.OPR_OUT_PASS, OutConstant.STATUS_SUBMIT);
 
         outBean.setStatus(status);
 
         sendSMS(outBean, user);
-
-        OutBean newOutBean = outDAO.find(fullId);
-
-        // 记录日志
-        for (LogBean logBean : logList)
-        {
-            logBean.setPreStatus(preStatus);
-
-            logBean.setAfterStatus(newOutBean.getStatus());
-
-            logBean.setUser(user.getName());
-
-            monitorLog.info(logBean);
-        }
 
         return true;
     }
@@ -445,19 +416,19 @@ public class OutManagerImpl implements OutManager
     private void processOutInWay(final String fullId, final OutBean outBean)
     {
         // 如果是入库的调入，需要把在途的入库单取消掉
-        if (outBean.getType() == SailConstant.OUT_TYPE_INBILL && outBean.getOutType() == SailConstant.INBILL_IN)
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL && outBean.getOutType() == OutConstant.INBILL_IN)
         {
             String ofullid = outBean.getRefOutFullId();
 
-            outDAO.updataInWay(ofullid, SailConstant.IN_WAY_OVER);
+            outDAO.updataInWay(ofullid, OutConstant.IN_WAY_OVER);
 
             importLog.info(ofullid + "的在途状态改变成在途结束");
         }
 
         // 如果是入库的调出
-        if (outBean.getType() == SailConstant.OUT_TYPE_INBILL && outBean.getOutType() == SailConstant.INBILL_OUT)
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL && outBean.getOutType() == OutConstant.INBILL_OUT)
         {
-            outDAO.updataInWay(fullId, SailConstant.IN_WAY);
+            outDAO.updataInWay(fullId, OutConstant.IN_WAY);
 
             importLog.info(fullId + "的在途状态改变成在途");
         }
@@ -474,18 +445,19 @@ public class OutManagerImpl implements OutManager
     {
         int result = 0;
 
-        if (outBean.getType() == SailConstant.OUT_TYPE_OUTBILL)
+        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
             importLog.info(fullId + ":" + user.getStafferName() + ":" + 1 + ":redrectFrom:" + outBean.getStatus());
+
             // 出库单
             try
             {
-                outDAO.modifyOutStatus2(fullId, 1);
+                outDAO.modifyOutStatus2(fullId, OutConstant.STATUS_SUBMIT);
 
                 result = 1;
 
-                // 只有销售单，剔除个人领样的
-                if (outBean.getOutType() == 0)
+                // 只有销售单才有信用，剔除个人领样的
+                if (outBean.getOutType() == OutConstant.OUTTYPE_OUT_COMMON)
                 {
                     boolean isCreditOutOf = false;
 
@@ -583,6 +555,7 @@ public class OutManagerImpl implements OutManager
                         }
                     }
 
+                    // 信用没有受限检查产品价格是否为0
                     if ( !isCreditOutOf)
                     {
                         boolean isZero = false;
@@ -595,7 +568,7 @@ public class OutManagerImpl implements OutManager
                             {
                                 isZero = true;
 
-                                outBean.setReserve6("存在价格为0的数据");
+                                outBean.setReserve6("存在价格为0的产品");
 
                                 outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_MIN, outBean.getReserve6());
 
@@ -631,7 +604,7 @@ public class OutManagerImpl implements OutManager
 
             try
             {
-                outDAO.modifyOutStatus2(fullId, 3);
+                outDAO.modifyOutStatus2(fullId, OutConstant.STATUS_PASS);
 
                 result = 3;
             }
@@ -656,79 +629,31 @@ public class OutManagerImpl implements OutManager
      * @throws MYException
      */
     private void processBaseList(final User user, final OutBean outBean, final List<BaseBean> baseList,
-                                 final List<LogBean> logList)
+                                 final List<LogBean> logList, int type)
         throws MYException
     {
+        // 入库单提交后就直接移动库存了,销售需要在库管通过后生成发货单前才会变动库存
+        if (outBean.getType() != OutConstant.OUT_TYPE_INBILL)
+        {
+            return;
+        }
+
+        String sequence = commonDAO.getSquenceString();
+
         for (BaseBean element : baseList)
         {
-            LogBean bean = LogBeanHelper.getLogBean(outBean, element, SailConstant.LOG_OPR_SUBMIT, user
-                .getStafferName());
+            ProductChangeWrap wrap = new ProductChangeWrap();
 
-            // 如果是总部的单子需要对仓区的数量操作且是入库单
-            if (LocationHelper.isSystemLocation(outBean.getLocation())
-                && outBean.getType() == SailConstant.OUT_TYPE_INBILL)
-            {
-                if (StringTools.isNullOrNone(outBean.getDepotpartId()))
-                {
-                    throw new MYException("请指定仓区");
-                }
+            wrap.setDepotpartId(outBean.getLocation());
+            wrap.setPrice(element.getCostPrice());
+            wrap.setProductId(element.getProductId());
+            wrap.setStafferId(element.getOwner());
+            wrap.setChange(element.getAmount());
+            wrap.setDescription("库单[" + outBean.getFullId() + "]操作");
+            wrap.setSerializeId(sequence);
+            wrap.setType(type);
 
-                // TODO 获取库存
-                StorageRelationBean relation = null;// storageDAO.findStorageRelationByDepotpartAndProcut(outBean
-                // .getDepotpartId(), element.getProductId());
-
-                DepotpartBean db = depotpartDAO.find(outBean.getDepotpartId());
-
-                if (db == null)
-                {
-                    throw new MYException("区域下缺少指定仓区");
-                }
-
-                ProductBean pro = productDAO.find(element.getProductId());
-
-                if (relation == null)
-                {
-                    relation = new StorageRelationBean();
-
-                    relation.setDepotpartId(outBean.getDepotpartId());
-
-                    // 默认储位
-                    relation.setStorageId("0");
-
-                    relation.setProductId(element.getProductId());
-
-                    relation.setLocationId(outBean.getLocation());
-                }
-
-                int old = relation.getAmount();
-
-                relation.setAmount(relation.getAmount() + element.getAmount());
-
-                if (relation.getAmount() < 0)
-                {
-                    throw new MYException("区域下仓区产品:" + pro.getName() + ",数量不足");
-                }
-
-                updateRelationInner(outBean.getFullId(), relation, old, element.getAmount(), user.getStafferName(),
-                    SailConstant.OPR_STORAGE_OUTBILLIN);
-
-                // 增加销售库存数量
-                saleProductChange(relation, element.getAmount(), bean);
-            }
-            else
-            {
-                // DROP 根据单子的类型直接操作销售库存(分部区域下的单据从分布的自己库存走)
-                /*
-                 * int last = 0; int tatol = productDAO.getTotal(element.getProductId(), element.getLocationId()); if
-                 * (outBean.getType() == SailConstant.OUT_TYPE_OUTBILL) { last = tatol - element.getAmount(); } else { //
-                 * 出库单需要增加库存 last = tatol + element.getAmount(); } bean.setBeforCount(tatol); bean.setAfterCount(last);
-                 * bean.setLocationId(element.getLocationId()); // 保证事务 if (last < 0) { throw new
-                 * MYException(element.getProductName() + "的数量不够.现存:" + tatol); }
-                 * productDAO.modifyTatol(element.getProductId(), last, element.getLocationId());
-                 */
-            }
-
-            logList.add(bean);
+            storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, true);
         }
     }
 
@@ -748,7 +673,7 @@ public class OutManagerImpl implements OutManager
             throw new MYException(fullId + " 不存在");
         }
 
-        if (outBean.getStatus() != SailConstant.STATUS_SAVE && outBean.getStatus() != SailConstant.STATUS_REJECT)
+        if (outBean.getStatus() != OutConstant.STATUS_SAVE && outBean.getStatus() != OutConstant.STATUS_REJECT)
         {
             throw new MYException(fullId + " 状态错误,不能提交");
         }
@@ -758,34 +683,31 @@ public class OutManagerImpl implements OutManager
         // 先检查入库
         for (BaseBean element : baseList)
         {
-            int last = 0;
+            ProductChangeWrap wrap = new ProductChangeWrap();
 
-            if (outBean.getType() == SailConstant.OUT_TYPE_OUTBILL)
+            wrap.setDepotpartId(outBean.getLocation());
+            wrap.setPrice(element.getCostPrice());
+            wrap.setProductId(element.getProductId());
+            wrap.setStafferId(element.getOwner());
+
+            // 销售单
+            if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
             {
-                // TODO 出库单验证出库区域的库存
-                int tatol = 0;// productDAO.getTotal(element.getProductId(), outBean.getLocation());
+                wrap.setChange( -element.getAmount());
 
-                if (tatol < element.getAmount())
-                {
-                    throw new MYException(element.getProductName() + "的数量不够.现存:" + tatol);
-                }
+                storageRelationManager.checkStorageRelation(wrap);
             }
             else
             {
-                // TODO 出库单需要增加库存 入库单需要验证自己区域的库存
-                int tatol = 0;// productDAO.getTotal(element.getProductId(), outBean.getLocationId());
+                // 入库单
+                wrap.setChange(element.getAmount());
 
-                last = tatol + element.getAmount();
-
-                if (last < 0)
-                {
-                    throw new MYException(element.getProductName() + "的数量不够.现存:" + tatol);
-                }
+                storageRelationManager.checkStorageRelation(wrap);
             }
         }
 
-        // 如果是入库的调入，需要有ref的单据
-        if (outBean.getType() == SailConstant.OUT_TYPE_INBILL && outBean.getOutType() == SailConstant.INBILL_IN)
+        // 如果是入库的调入，需要有REF的单据
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL && outBean.getOutType() == OutConstant.INBILL_IN)
         {
             String ofullid = outBean.getRefOutFullId();
 
@@ -801,58 +723,13 @@ public class OutManagerImpl implements OutManager
                 throw new MYException("选择调出的库单不存在，请重新操作选择调出的库单");
             }
 
-            if (temp.getInway() != SailConstant.IN_WAY)
+            if (temp.getInway() != OutConstant.IN_WAY)
             {
                 throw new MYException("选择调出的库单不是在途中，请确认");
             }
         }
 
         return baseList;
-    }
-
-    /**
-     * Description:处理销售库存的变动
-     * 
-     * @param temp
-     * @param bean
-     * @since <IVersion>
-     */
-    private void saleProductChange(StorageRelationBean bean, int change, LogBean log)
-    {
-        DepotpartBean temp = depotpartDAO.find(bean.getDepotpartId());
-
-        // TODO 当前销售库存
-        int current = 0;// productDAO.getTotal(bean.getProductId(), bean.getLocationId());
-
-        // 如果是良品仓的发生了变动，需要同步到库存里面
-        if (temp.getType() == SailConstant.TYPE_DEPOTPART_OK)
-        {
-            int count = current + change;
-
-            if (count < 0)
-            {
-                throw new RuntimeException("销售库存产品的数量变动后会小于0，确认实际库存和销售库存");
-            }
-
-            log.setBeforCount(current);
-
-            log.setLocationId(bean.getLocationId());
-
-            // TODO 同步到销售库存里面
-            // productDAO.modifyTatol(bean.getProductId(), count, bean.getLocationId());
-
-            log.setAfterCount(count);
-        }
-        else
-        {
-            log.setAfterCount(current);
-
-            log.setBeforCount(current);
-
-            log.setLog("入库到非良品仓区");
-
-            log.setLocationId(bean.getLocationId());
-        }
     }
 
     /**
@@ -921,7 +798,7 @@ public class OutManagerImpl implements OutManager
                         int tatol = 0;// productDAO.getTotal(element.getProductId(), locationId);
 
                         // 出库单需要增加库存
-                        if (outBean.getType() == SailConstant.OUT_TYPE_OUTBILL)
+                        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                         {
                             last = tatol + element.getAmount();
                         }
@@ -948,7 +825,7 @@ public class OutManagerImpl implements OutManager
 
                         // 如果入库单是总部的单子被驳回需要核算到相应的仓区里面(且单据中存在仓区)
                         if (SailConstant.SYSTEM_LOCATION.equals(outBean.getLocation())
-                            && outBean.getType() == SailConstant.OUT_TYPE_INBILL)
+                            && outBean.getType() == OutConstant.OUT_TYPE_INBILL)
                         {
                             processRejectIn(fullId, user, outBean, element);
                         }
@@ -957,7 +834,7 @@ public class OutManagerImpl implements OutManager
                     }
 
                     // 如果销售单，需要删除发货单
-                    if (outBean.getType() == SailConstant.OUT_TYPE_OUTBILL)
+                    if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                     {
                         ConsignBean beans = consignDAO.findConsignById(fullId);
 
@@ -967,24 +844,24 @@ public class OutManagerImpl implements OutManager
                         }
                     }
 
-                    if (outBean.getType() == SailConstant.OUT_TYPE_OUTBILL)
+                    if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                     {
-                        importLog.info(fullId + ":" + user.getStafferName() + ":" + SailConstant.STATUS_REJECT
+                        importLog.info(fullId + ":" + user.getStafferName() + ":" + OutConstant.STATUS_REJECT
                                        + ":redrectFrom:" + outBean.getStatus());
-                        outDAO.modifyOutStatus2(outBean.getFullId(), SailConstant.STATUS_REJECT);
+                        outDAO.modifyOutStatus2(outBean.getFullId(), OutConstant.STATUS_REJECT);
                     }
                     else
                     {
-                        importLog.info(fullId + ":" + user.getStafferName() + ":" + SailConstant.STATUS_SAVE
+                        importLog.info(fullId + ":" + user.getStafferName() + ":" + OutConstant.STATUS_SAVE
                                        + ":redrectFrom:" + outBean.getStatus());
 
-                        outDAO.modifyOutStatus2(outBean.getFullId(), SailConstant.STATUS_SAVE);
+                        outDAO.modifyOutStatus2(outBean.getFullId(), OutConstant.STATUS_SAVE);
                     }
 
                     // 驳回修改在途方式
-                    outDAO.updataInWay(fullId, SailConstant.IN_WAY_NO);
+                    outDAO.updataInWay(fullId, OutConstant.IN_WAY_NO);
 
-                    addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_REJECT, SailConstant.STATUS_REJECT);
+                    addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_REJECT, OutConstant.STATUS_REJECT);
 
                     return Boolean.TRUE;
                 }
@@ -1006,14 +883,6 @@ public class OutManagerImpl implements OutManager
             _logger.error("增加库单错误：", e);
             throw new MYException("系统错误,请重新操作");
         }
-
-        // 记录日志
-        for (LogBean logBean : logList)
-        {
-            logBean.setUser(user.getName());
-
-            monitorLog.info(logBean);
-        }
     }
 
     /**
@@ -1033,20 +902,20 @@ public class OutManagerImpl implements OutManager
         }
 
         boolean outbill = true;
-        if (outBean.getType() == SailConstant.OUT_TYPE_OUTBILL)
+        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
-            if (outBean.getStatus() == SailConstant.STATUS_SAVE || outBean.getStatus() == SailConstant.STATUS_REJECT
-                || outBean.getStatus() == SailConstant.STATUS_PASS)
+            if (outBean.getStatus() == OutConstant.STATUS_SAVE || outBean.getStatus() == OutConstant.STATUS_REJECT
+                || outBean.getStatus() == OutConstant.STATUS_PASS)
             {
                 throw new MYException("状态不可以驳回!");
             }
         }
 
-        if (outBean.getType() == SailConstant.OUT_TYPE_INBILL)
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL)
         {
             outbill = false;
             // 只有通过的入库单才可以被驳回
-            if (outBean.getStatus() != SailConstant.STATUS_PASS || outBean.getType() != SailConstant.INBILL_OUT)
+            if (outBean.getStatus() != OutConstant.STATUS_PASS || outBean.getType() != OutConstant.INBILL_OUT)
             {
                 throw new MYException("状态不可以驳回!");
             }
@@ -1109,8 +978,6 @@ public class OutManagerImpl implements OutManager
             throw new RuntimeException("区域下仓区[" + db.getName() + "]缺少产品:" + pro.getName());
         }
 
-        int old = relation.getAmount();
-
         relation.setAmount(relation.getAmount() - element.getAmount());
 
         if (relation.getAmount() < 0)
@@ -1118,8 +985,9 @@ public class OutManagerImpl implements OutManager
             throw new RuntimeException("区域下仓区产品:" + pro.getName() + ",数量不足");
         }
 
-        updateRelationInner(outBean.getFullId(), relation, old, element.getAmount(), user.getStafferName(),
-            SailConstant.OPR_STORAGE_OUTBILLIN);
+        // TODO
+        // updateRelationInner(outBean.getFullId(), relation, old, element.getAmount(), user.getStafferName(),
+        // SailConstant.OPR_STORAGE_OUTBILLIN);
     }
 
     /**
@@ -1144,7 +1012,7 @@ public class OutManagerImpl implements OutManager
         }
 
         // 检查pass的条件
-        if (outBean.getStatus() == SailConstant.STATUS_SAVE || outBean.getStatus() == SailConstant.STATUS_REJECT)
+        if (outBean.getStatus() == OutConstant.STATUS_SAVE || outBean.getStatus() == OutConstant.STATUS_REJECT)
         {
             throw new MYException("状态不可以通过!");
         }
@@ -1152,8 +1020,8 @@ public class OutManagerImpl implements OutManager
         final String location = outBean.getLocation();
 
         // 如果是总部物流通过且是销售单，需要发货单先通过
-        if (LocationHelper.isSystemLocation(location) && nextStatus == SailConstant.STATUS_FLOW_PASS
-            && outBean.getType() == SailConstant.OUT_TYPE_OUTBILL)
+        if (LocationHelper.isSystemLocation(location) && nextStatus == OutConstant.STATUS_FLOW_PASS
+            && outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
             ConsignBean beans = consignDAO.findConsignById(fullId);
 
@@ -1183,7 +1051,7 @@ public class OutManagerImpl implements OutManager
 
                         // 总部区域才会处理的(销售单)
                         if (LocationHelper.isSystemLocation(outBean.getLocation())
-                            && outBean.getType() == SailConstant.OUT_TYPE_OUTBILL)
+                            && outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                         {
                             // 修改仓区的产品数量
                             List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
@@ -1217,8 +1085,6 @@ public class OutManagerImpl implements OutManager
                                     throw new RuntimeException("区域的仓区下不存在指定的产品:" + product.getName());
                                 }
 
-                                int old = relation.getAmount();
-
                                 relation.setAmount(relation.getAmount() - baseBean.getAmount());
 
                                 if (relation.getAmount() < 0)
@@ -1226,9 +1092,9 @@ public class OutManagerImpl implements OutManager
                                     throw new RuntimeException("区域的仓区下指定的产品【" + product.getName() + "】的数量不足，请核实");
                                 }
 
-                                // 更新仓区内部的产品数量
-                                updateRelationInner(outBean.getFullId(), relation, old, -baseBean.getAmount(), user
-                                    .getStafferName(), SailConstant.OPR_STORAGE_OUTBILL);
+                                // TODO 更新仓区内部的产品数量
+                                // updateRelationInner(outBean.getFullId(), relation, old, -baseBean.getAmount(), user
+                                // .getStafferName(), SailConstant.OPR_STORAGE_OUTBILL);
                             }
                         }
 
@@ -1242,7 +1108,7 @@ public class OutManagerImpl implements OutManager
                         outDAO.modifyOutStatus2(outBean.getFullId(), nextStatus);
 
                         // 修改manager的入库时间
-                        if (nextStatus == SailConstant.STATUS_MANAGER_PASS)
+                        if (nextStatus == OutConstant.STATUS_MANAGER_PASS)
                         {
                             outDAO.modifyManagerTime(outBean.getFullId(), TimeTools.now());
                         }
@@ -1253,7 +1119,7 @@ public class OutManagerImpl implements OutManager
                     }
 
                     // 需要把回款日志敲定
-                    if (nextStatus == SailConstant.STATUS_PASS && outBean.getType() == SailConstant.OUT_TYPE_OUTBILL)
+                    if (nextStatus == OutConstant.STATUS_PASS && outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                     {
                         outDAO.modifyData(fullId, TimeTools.now("yyyy-MM-dd"));
 
@@ -1265,7 +1131,7 @@ public class OutManagerImpl implements OutManager
                     }
 
                     // 出库单总经理审核通过后，出库单转到物流管理员，同时自动生成发货单
-                    if (nextStatus == SailConstant.STATUS_MANAGER_PASS && LocationHelper.isSystemLocation(location))
+                    if (nextStatus == OutConstant.STATUS_MANAGER_PASS && LocationHelper.isSystemLocation(location))
                     {
                         ConsignBean bean = new ConsignBean();
 
@@ -1324,7 +1190,7 @@ public class OutManagerImpl implements OutManager
             throw new MYException("销售单不存在，请重新操作");
         }
 
-        if (outBean.getStatus() != SailConstant.STATUS_PASS)
+        if (outBean.getStatus() != OutConstant.STATUS_PASS)
         {
             throw new MYException("销售单不在库管通过状态，不能核对");
         }
@@ -1342,14 +1208,14 @@ public class OutManagerImpl implements OutManager
 
                     try
                     {
-                        outDAO.modifyOutStatus2(fullId, SailConstant.STATUS_SEC_PASS);
+                        outDAO.modifyOutStatus2(fullId, OutConstant.STATUS_SEC_PASS);
                     }
                     catch (Exception e)
                     {
                         throw new RuntimeException(e.toString());
                     }
 
-                    addOutLog(fullId, user, outBean, "核对", SailConstant.OPR_OUT_PASS, SailConstant.STATUS_SEC_PASS);
+                    addOutLog(fullId, user, outBean, "核对", SailConstant.OPR_OUT_PASS, OutConstant.STATUS_SEC_PASS);
 
                     return Boolean.TRUE;
                 }
@@ -1657,29 +1523,7 @@ public class OutManagerImpl implements OutManager
     }
 
     /**
-     * Description: 内部修改储位的产品数量
-     * 
-     * @param fullId
-     * @param bean
-     * @param old
-     * @param change
-     * @since <IVersion>
-     */
-    private void updateRelationInner(String fullId, StorageRelationBean bean, int old, int change, String stafferName,
-                                     int type)
-    {
-        /*
-         * TODO // 修改关系的产品数量 if (StringTools.isNullOrNone(bean.getId())) { storageDAO.addStorageRelation(bean); } else {
-         * storageDAO.updateStorageRelation(bean); } // 记录仓区的产品异动数量 StorageLogBean log = new StorageLogBean();
-         * BeanUtil.copyProperties(log, bean); log.setStorageId(bean.getStorageId()); log.setType(type);
-         * log.setPreAmount(old); log.setAfterAmount(bean.getAmount()); log.setChangeAmount(change);
-         * log.setLogTime(TimeTools.now()); log.setUser(stafferName); log.setDescription(fullId);
-         * storageDAO.addStorageLog(log);
-         */
-    }
-
-    /**
-     * 发送短信
+     * TODO 发送短信(只有销售单发送短信)(从短信接收模块来说需要修复回复短信处理结果)
      * 
      * @param out
      * @param user
@@ -2027,5 +1871,22 @@ public class OutManagerImpl implements OutManager
     public void setTransactionManager(PlatformTransactionManager transactionManager)
     {
         this.transactionManager = transactionManager;
+    }
+
+    /**
+     * @return the storageRelationManager
+     */
+    public StorageRelationManager getStorageRelationManager()
+    {
+        return storageRelationManager;
+    }
+
+    /**
+     * @param storageRelationManager
+     *            the storageRelationManager to set
+     */
+    public void setStorageRelationManager(StorageRelationManager storageRelationManager)
+    {
+        this.storageRelationManager = storageRelationManager;
     }
 }

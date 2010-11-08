@@ -56,66 +56,6 @@ public interface SailConstant
     int BOTTOMFLAG_YES = 1;
 
     /**
-     * 销售单
-     */
-    int OUT_TYPE_OUTBILL = 0;
-
-    /**
-     * 入库单
-     */
-    int OUT_TYPE_INBILL = 1;
-
-    /**
-     * 保存
-     */
-    int STATUS_SAVE = 0;
-
-    /**
-     * 提交
-     */
-    int STATUS_SUBMIT = 1;
-
-    /**
-     * 驳回
-     */
-    int STATUS_REJECT = 2;
-
-    /**
-     * ADMIN通过
-     */
-    int STATUS_PASS = 3;
-
-    /**
-     * 会计通过
-     */
-    int STATUS_SEC_PASS = 4;
-
-    /**
-     * 总经理通过
-     */
-    int STATUS_MANAGER_PASS = 6;
-
-    /**
-     * 物流管理员通过
-     */
-    int STATUS_FLOW_PASS = 7;
-
-    /**
-     * 未付款
-     */
-    int PAY_NOT = 0;
-
-    /**
-     * 付款
-     */
-    int PAY_YES = 1;
-
-    /**
-     * 过期
-     */
-    int PAY_OVER = 2;
-
-    /**
      * 收款单
      */
     int BILL_RECIVE = 0;
@@ -297,30 +237,6 @@ public interface SailConstant
 
     // <option value="1">调出</option>
     // <option value="4">调入</option>
-    /**
-     * 调出
-     */
-    int INBILL_OUT = 1;
-
-    /**
-     * 调入
-     */
-    int INBILL_IN = 4;
-
-    /**
-     * 非在途
-     */
-    int IN_WAY_NO = 0;
-
-    /**
-     * 在途
-     */
-    int IN_WAY = 1;
-
-    /**
-     * 在途结束
-     */
-    int IN_WAY_OVER = 2;
 
     /**
      * 货物异常单的初始态

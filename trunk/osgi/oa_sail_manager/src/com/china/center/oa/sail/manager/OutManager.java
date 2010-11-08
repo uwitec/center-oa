@@ -29,16 +29,32 @@ public interface OutManager
     String addOut(final OutBean outBean, final Map dataMap, final User user)
         throws MYException;
 
+    /**
+     * coloneOutAndSubmitAffair(自动生成调入的库单)
+     * 
+     * @param outBean
+     * @param user
+     * @return
+     * @throws MYException
+     */
     String coloneOutAndSubmitAffair(final OutBean outBean, final User user)
         throws MYException;
 
-    String coloneOutAndSubmitWithOutAffair(OutBean outBean, User user)
+    String coloneOutAndSubmitWithOutAffair(OutBean outBean, User user, int type)
         throws MYException;
 
     boolean submit(final String fullId, final User user)
         throws MYException;
 
-    boolean submitWithOutAffair(final String fullId, final User user)
+    /**
+     * submitWithOutAffair(采购入库的时候使用)
+     * 
+     * @param fullId
+     * @param user
+     * @return
+     * @throws MYException
+     */
+    boolean submitWithOutAffair(final String fullId, final User user, int type)
         throws MYException;
 
     boolean reject(final String fullId, final User user, final String reason)

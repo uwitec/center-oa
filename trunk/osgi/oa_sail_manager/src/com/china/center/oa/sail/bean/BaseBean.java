@@ -52,12 +52,28 @@ public class BaseBean implements Serializable
     private int inway = 0;
 
     /**
-     * 储位
+     * 储位(仓库下面是通过产品+价格+产品所有者获取具体的信息的,所以storageId不使用了)
      */
     private String storageId = "";
 
+    /**
+     * 产品的所有者
+     */
+    private String owner = "0";
+
+    /**
+     * 销售价格
+     */
     private double price = 0.0d;
 
+    /**
+     * 成本
+     */
+    private double costPrice = 0.0d;
+
+    /**
+     * 总销售价
+     */
     private double value = 0.0d;
 
     private String description = "";
@@ -307,6 +323,40 @@ public class BaseBean implements Serializable
     }
 
     /**
+     * @return the costPrice
+     */
+    public double getCostPrice()
+    {
+        return costPrice;
+    }
+
+    /**
+     * @param costPrice
+     *            the costPrice to set
+     */
+    public void setCostPrice(double costPrice)
+    {
+        this.costPrice = costPrice;
+    }
+
+    /**
+     * @return the owner
+     */
+    public String getOwner()
+    {
+        return owner;
+    }
+
+    /**
+     * @param owner
+     *            the owner to set
+     */
+    public void setOwner(String owner)
+    {
+        this.owner = owner;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -354,8 +404,14 @@ public class BaseBean implements Serializable
             .append("storageId = ")
             .append(this.storageId)
             .append(TAB)
+            .append("owner = ")
+            .append(this.owner)
+            .append(TAB)
             .append("price = ")
             .append(this.price)
+            .append(TAB)
+            .append("costPrice = ")
+            .append(this.costPrice)
             .append(TAB)
             .append("value = ")
             .append(this.value)

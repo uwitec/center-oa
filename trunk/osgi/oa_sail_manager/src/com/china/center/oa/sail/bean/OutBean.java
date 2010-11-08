@@ -49,12 +49,12 @@ public class OutBean implements Serializable
     private String managerTime = "";
 
     /**
-     * 库单类型 对于出入库都不一样
+     * 库单类型 对于出入库都不一样(0:销售单 1:个人领样)
      */
     private int outType = 0;
 
     /**
-     * 0:出库 1:入库
+     * 0:销售单 1:入库单
      */
     private int type = 0;
 

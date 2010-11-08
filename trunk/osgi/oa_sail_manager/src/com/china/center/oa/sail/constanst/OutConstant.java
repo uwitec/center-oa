@@ -18,6 +18,7 @@ package com.china.center.oa.sail.constanst;
  */
 public interface OutConstant
 {
+
     /**
      * 自主调入(从其他区域调出，但是单据属于其他区域)
      */
@@ -89,6 +90,11 @@ public interface OutConstant
     String BLACK_LEVEL = "90000000000000000000";
 
     /**
+     * 初始化
+     */
+    int STATUS_SAVE = 0;
+
+    /**
      * 提交
      */
     int STATUS_SUBMIT = 1;
@@ -117,4 +123,95 @@ public interface OutConstant
      * 物流管理员通过
      */
     int STATUS_FLOW_PASS = 7;
+
+    /**
+     * 未付款
+     */
+    int PAY_NOT = 0;
+
+    /**
+     * 付款
+     */
+    int PAY_YES = 1;
+
+    /**
+     * 过期
+     */
+    int PAY_OVER = 2;
+
+    /**
+     * 调出
+     */
+    int INBILL_OUT = 1;
+
+    /**
+     * 调入
+     */
+    int INBILL_IN = 4;
+
+    /**
+     * 非在途
+     */
+    int IN_WAY_NO = 0;
+
+    /**
+     * 在途
+     */
+    int IN_WAY = 1;
+
+    /**
+     * 在途结束
+     */
+    int IN_WAY_OVER = 2;
+
+    /**
+     * 销售出库
+     */
+    int OUTTYPE_OUT_COMMON = 0;
+
+    /**
+     * 个人领样
+     */
+    int OUTTYPE_OUT_SWATCH = 1;
+
+    /**
+     * 采购入库
+     */
+    int OUTTYPE_IN_COMMON = 0;
+
+    /**
+     * 调出
+     */
+    int OUTTYPE_IN_MOVEOUT = 1;
+
+    /**
+     * 盘亏出库
+     */
+    int OUTTYPE_IN_PANGKUI = 2;
+
+    /**
+     * 盘盈入库
+     */
+    int OUTTYPE_IN_PANGYING = 3;
+
+    /**
+     * 退换货入库
+     */
+    int OUTTYPE_IN_EXCHANGE = 5;
+
+    /**
+     * 报废出库
+     */
+    int OUTTYPE_IN_DROP = 6;
+
+    /**
+     * 采购退货
+     */
+    int OUTTYPE_IN_RECEDE = 7;
+
+    /**
+     * 调入
+     */
+    int OUTTYPE_IN_MOVEIN = 8;
+
 }
