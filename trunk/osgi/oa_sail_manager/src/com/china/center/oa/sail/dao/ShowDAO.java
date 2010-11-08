@@ -9,7 +9,7 @@
 package com.china.center.oa.sail.dao;
 
 
-import com.china.center.jdbc.inter.SimpleDAO;
+import com.china.center.jdbc.inter.DAO;
 import com.china.center.oa.sail.bean.ShowBean;
 
 
@@ -21,7 +21,7 @@ import com.china.center.oa.sail.bean.ShowBean;
  * @see ShowDAO
  * @since 1.0
  */
-public interface ShowDAO extends SimpleDAO<ShowBean>
+public interface ShowDAO extends DAO<ShowBean, ShowBean>
 {
 
 }

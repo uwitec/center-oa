@@ -9,7 +9,7 @@
 package com.china.center.oa.sail.dao;
 
 
-import com.china.center.jdbc.inter.SimpleDAO;
+import com.china.center.jdbc.inter.DAO;
 import com.china.center.oa.sail.bean.BaseBean;
 
 
@@ -21,7 +21,7 @@ import com.china.center.oa.sail.bean.BaseBean;
  * @see BaseDAO
  * @since 1.0
  */
-public interface BaseDAO extends SimpleDAO<BaseBean>
+public interface BaseDAO extends DAO<BaseBean, BaseBean>
 {
 
 }

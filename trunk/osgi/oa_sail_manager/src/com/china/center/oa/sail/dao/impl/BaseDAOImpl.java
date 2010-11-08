@@ -9,7 +9,6 @@
 package com.china.center.oa.sail.dao.impl;
 
 
-import com.china.center.jdbc.inter.impl.SimpleBaseDAO;
 import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.dao.BaseDAO;
 
@@ -22,7 +21,7 @@ import com.china.center.oa.sail.dao.BaseDAO;
  * @see BaseDAOImpl
  * @since 1.0
  */
-public class BaseDAOImpl extends SimpleBaseDAO<BaseBean> implements BaseDAO
+public class BaseDAOImpl extends com.china.center.jdbc.inter.impl.BaseDAO<BaseBean, BaseBean> implements BaseDAO
 {
 
 }

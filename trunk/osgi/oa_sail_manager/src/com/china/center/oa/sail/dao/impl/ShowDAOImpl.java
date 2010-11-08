@@ -9,7 +9,7 @@
 package com.china.center.oa.sail.dao.impl;
 
 
-import com.china.center.jdbc.inter.impl.SimpleBaseDAO;
+import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.sail.bean.ShowBean;
 import com.china.center.oa.sail.dao.ShowDAO;
 
@@ -22,6 +22,6 @@ import com.china.center.oa.sail.dao.ShowDAO;
  * @see ShowDAOImpl
  * @since 1.0
  */
-public class ShowDAOImpl extends SimpleBaseDAO<ShowBean> implements ShowDAO
+public class ShowDAOImpl extends BaseDAO<ShowBean, ShowBean> implements ShowDAO
 {
 }
