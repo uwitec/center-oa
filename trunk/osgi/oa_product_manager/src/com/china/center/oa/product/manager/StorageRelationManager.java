@@ -52,6 +52,16 @@ public interface StorageRelationManager
         throws MYException;
 
     /**
+     * 检查库存是否满足要求(这里的relationId不启用)
+     * 
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    boolean checkStorageRelation(ProductChangeWrap bean)
+        throws MYException;
+
+    /**
      * deleteStorageRelation(删除产品数量为0的数据)
      * 
      * @param user

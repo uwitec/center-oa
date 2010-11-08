@@ -87,6 +87,40 @@ public class StorageRelationManagerImpl implements StorageRelationManager
     {
     }
 
+    public boolean checkStorageRelation(ProductChangeWrap bean)
+        throws MYException
+    {
+        if (StorageRelationManagerImpl.storageRelationLock)
+        {
+            throw new MYException("库存被锁定,请确认解锁库存操作");
+        }
+
+        ProductBean productBean = productDAO.find(bean.getProductId());
+
+        if (productBean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 对库存增加是不校验的
+        if (bean.getChange() >= 0)
+        {
+            return true;
+        }
+
+        String priceKey = StorageRelationHelper.getPriceKey(bean.getPrice());
+
+        StorageRelationBean relation = storageRelationDAO.findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(bean
+            .getDepotpartId(), bean.getProductId(), priceKey, bean.getStafferId());
+
+        if (relation == null || relation.getAmount() + bean.getChange() < 0)
+        {
+            throw new MYException("产品[%s]库存不足", productBean.getName());
+        }
+
+        return true;
+    }
+
     /*
      * (non-Javadoc)
      * 

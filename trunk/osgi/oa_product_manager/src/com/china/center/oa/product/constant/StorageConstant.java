@@ -83,6 +83,12 @@ public interface StorageConstant
     int OPR_DDEPOTPART_APPLY_MOVE = 8;
 
     /**
+     * 产品调拨
+     */
+    @Defined(key = "storageType", value = "产品调拨")
+    int OPR_STORAGE_REDEPLOY = 9;
+
+    /**
      * 公共的职员
      */
     String PUBLIC_STAFFER = "0";

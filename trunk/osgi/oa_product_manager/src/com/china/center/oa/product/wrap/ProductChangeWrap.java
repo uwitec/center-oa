@@ -31,7 +31,7 @@ public class ProductChangeWrap implements Serializable
     private String productId = "";
 
     /**
-     * 如果有relationId,优先级最高(有的话storageId,depotpartId,productId,price,stafferId)
+     * 如果有relationId,优先级最高(有的话depotpartId,productId,price,stafferId)
      */
     private String relationId = "";
 
