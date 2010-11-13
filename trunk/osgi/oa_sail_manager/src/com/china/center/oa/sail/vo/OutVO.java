@@ -46,6 +46,12 @@ public class OutVO extends OutBean
     @Relationship(relationField = "customerId", tagField = "address")
     private String customerAddress = "";
 
+    @Relationship(relationField = "invoiceId")
+    private String invoiceName = "";
+
+    @Relationship(relationField = "dutyId")
+    private String dutyName = "";
+
     public OutVO()
     {
     }
@@ -135,6 +141,40 @@ public class OutVO extends OutBean
     }
 
     /**
+     * @return the invoiceName
+     */
+    public String getInvoiceName()
+    {
+        return invoiceName;
+    }
+
+    /**
+     * @param invoiceName
+     *            the invoiceName to set
+     */
+    public void setInvoiceName(String invoiceName)
+    {
+        this.invoiceName = invoiceName;
+    }
+
+    /**
+     * @return the dutyName
+     */
+    public String getDutyName()
+    {
+        return dutyName;
+    }
+
+    /**
+     * @param dutyName
+     *            the dutyName to set
+     */
+    public void setDutyName(String dutyName)
+    {
+        this.dutyName = dutyName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -146,7 +186,7 @@ public class OutVO extends OutBean
         StringBuilder retValue = new StringBuilder();
 
         retValue
-            .append("OutBeanVO ( ")
+            .append("OutVO ( ")
             .append(super.toString())
             .append(TAB)
             .append("locationName = ")
@@ -163,6 +203,12 @@ public class OutVO extends OutBean
             .append(TAB)
             .append("customerAddress = ")
             .append(this.customerAddress)
+            .append(TAB)
+            .append("invoiceName = ")
+            .append(this.invoiceName)
+            .append(TAB)
+            .append("dutyName = ")
+            .append(this.dutyName)
             .append(TAB)
             .append(" )");
 

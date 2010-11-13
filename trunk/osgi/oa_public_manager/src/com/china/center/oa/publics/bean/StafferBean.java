@@ -127,7 +127,7 @@ public class StafferBean implements Serializable
     /**
      * 信用额度
      */
-    @Html(title = "信用额度", must = true, oncheck = JCheck.ONLY_FLOAT, maxLength = 20)
+    @Html(title = "个人信用额度", must = true, oncheck = JCheck.ONLY_FLOAT, maxLength = 20)
     private double credit = 0.0d;
 
     @Html(title = "其他", type = Element.TEXTAREA, maxLength = 200)

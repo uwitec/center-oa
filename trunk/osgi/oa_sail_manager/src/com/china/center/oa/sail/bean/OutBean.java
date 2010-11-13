@@ -14,13 +14,15 @@ import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
+import com.china.center.oa.publics.bean.DutyBean;
+import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.tools.StringTools;
 
 
 /**
- * 库单(销售单、入库单、出库单)
+ * 库单(销售单、入库单)
  * 
  * @author ZHUZHU
  * @version 2007-3-25
@@ -57,6 +59,20 @@ public class OutBean implements Serializable
      * 0:销售单 1:入库单
      */
     private int type = OutConstant.OUT_TYPE_OUTBILL;
+
+    /**
+     * 是否开票
+     */
+    private int hasInvoice = OutConstant.HASINVOICE_NO;
+
+    /**
+     * 发票ID
+     */
+    @Join(tagClass = InvoiceBean.class, type = JoinType.LEFT)
+    private String invoiceId = "";
+
+    @Join(tagClass = DutyBean.class, type = JoinType.LEFT)
+    private String dutyId = "";
 
     /**
      * 0:保存 1:提交 2:驳回 3:通过 4:会计审核通过 6:总经理审核通过 7:物流管理员通过<br>
@@ -166,7 +182,7 @@ public class OutBean implements Serializable
     private int reserve2 = OutConstant.OUT_CREDIT_COMMON;
 
     /**
-     * 0:货到收款 1:款到发货(黑名单) 2:使用业务员信用额度
+     * 0:货到收款 1:款到发货(黑名单) 2:使用业务员信用额度 3:使用了分公司经理的信用
      */
     private int reserve3 = OutConstant.OUT_SAIL_TYPE_COMMON;
 
@@ -209,6 +225,11 @@ public class OutBean implements Serializable
      * 预占职员信用等级金额
      */
     private double staffcredit = 0.0d;
+
+    /**
+     * 预占分公司经理信用等级金额
+     */
+    private double managercredit = 0.0d;
 
     @Ignore
     private List<BaseBean> baseList = null;
@@ -1023,6 +1044,74 @@ public class OutBean implements Serializable
     }
 
     /**
+     * @return the managercredit
+     */
+    public double getManagercredit()
+    {
+        return managercredit;
+    }
+
+    /**
+     * @param managercredit
+     *            the managercredit to set
+     */
+    public void setManagercredit(double managercredit)
+    {
+        this.managercredit = managercredit;
+    }
+
+    /**
+     * @return the hasInvoice
+     */
+    public int getHasInvoice()
+    {
+        return hasInvoice;
+    }
+
+    /**
+     * @param hasInvoice
+     *            the hasInvoice to set
+     */
+    public void setHasInvoice(int hasInvoice)
+    {
+        this.hasInvoice = hasInvoice;
+    }
+
+    /**
+     * @return the invoiceId
+     */
+    public String getInvoiceId()
+    {
+        return invoiceId;
+    }
+
+    /**
+     * @param invoiceId
+     *            the invoiceId to set
+     */
+    public void setInvoiceId(String invoiceId)
+    {
+        this.invoiceId = invoiceId;
+    }
+
+    /**
+     * @return the dutyId
+     */
+    public String getDutyId()
+    {
+        return dutyId;
+    }
+
+    /**
+     * @param dutyId
+     *            the dutyId to set
+     */
+    public void setDutyId(String dutyId)
+    {
+        this.dutyId = dutyId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -1057,6 +1146,15 @@ public class OutBean implements Serializable
             .append(TAB)
             .append("type = ")
             .append(this.type)
+            .append(TAB)
+            .append("hasInvoice = ")
+            .append(this.hasInvoice)
+            .append(TAB)
+            .append("invoiceId = ")
+            .append(this.invoiceId)
+            .append(TAB)
+            .append("dutyId = ")
+            .append(this.dutyId)
             .append(TAB)
             .append("status = ")
             .append(this.status)
@@ -1171,6 +1269,9 @@ public class OutBean implements Serializable
             .append(TAB)
             .append("staffcredit = ")
             .append(this.staffcredit)
+            .append(TAB)
+            .append("managercredit = ")
+            .append(this.managercredit)
             .append(TAB)
             .append("baseList = ")
             .append(this.baseList)

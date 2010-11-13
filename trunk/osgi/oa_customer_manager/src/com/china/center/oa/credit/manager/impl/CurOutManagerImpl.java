@@ -51,7 +51,7 @@ import com.china.center.tools.TimeTools;
 
 
 /**
- * CurOutManagerImpl(CORE)
+ * CORE 客户信用自动统计
  * 
  * @author ZHUZHU
  * @version 2010-10-6
@@ -98,7 +98,7 @@ public class CurOutManagerImpl implements CurOutManager
     }
 
     /**
-     * 客户统计
+     * TODO 定期清理客户信用日志,防止日志过多 客户统计
      */
     public void statOut()
     {
@@ -144,7 +144,8 @@ public class CurOutManagerImpl implements CurOutManager
         {
             try
             {
-                handleEachCustomer(user, outItem, maxDelayThrItem, cid, maxBusiness, totalBusiness, staticAmount);
+                handleEachCustomer(user, outItem, maxDelayThrItem, cid, maxBusiness, totalBusiness,
+                    staticAmount);
             }
             catch (Throwable e)
             {
@@ -163,8 +164,9 @@ public class CurOutManagerImpl implements CurOutManager
      * @param maxDelayThrItem
      * @param customerBean
      */
-    private void handleEachCustomer(User user, CreditItemSecBean outItem, CreditItemThrBean maxDelayThrItem,
-                                    String cid, CreditItemThrBean maxBusiness, CreditItemThrBean totalBusiness,
+    private void handleEachCustomer(User user, CreditItemSecBean outItem,
+                                    CreditItemThrBean maxDelayThrItem, String cid,
+                                    CreditItemThrBean maxBusiness, CreditItemThrBean totalBusiness,
                                     int staticAmount)
     {
         // 从2009-12-01开始分析客户的行为
@@ -187,7 +189,8 @@ public class CurOutManagerImpl implements CurOutManager
             }
 
             // 还未付款的，看看是否已经超期
-            if (outBean.getPay() == CreditConstant.PAY_NOT && !StringTools.isNullOrNone(outBean.getRedate()))
+            if (outBean.getPay() == CreditConstant.PAY_NOT
+                && !StringTools.isNullOrNone(outBean.getRedate()))
             {
                 int delay = TimeTools.cdate(TimeTools.now_short(), outBean.getRedate());
 
@@ -206,8 +209,8 @@ public class CurOutManagerImpl implements CurOutManager
         // 单比最大交易额
         if (maxBusiness != null)
         {
-            double maxBusinessAmount = outStatDAO.queryMaxBusiness(cid, OATools.getFinanceBeginDate(),
-                OATools.getFinanceEndDate());
+            double maxBusinessAmount = outStatDAO.queryMaxBusiness(cid, OATools
+                .getFinanceBeginDate(), OATools.getFinanceEndDate());
 
             CreditCoreBean old = creditCoreDAO.findByUnique(cid);
 
@@ -217,7 +220,8 @@ public class CurOutManagerImpl implements CurOutManager
                 maxBusinessAmount = Math.max(old.getOldMaxBusiness(), maxBusinessAmount);
             }
 
-            CreditItemThrBean sigleItem = creditItemThrDAO.findSingleMaxBusinessByValue(maxBusinessAmount);
+            CreditItemThrBean sigleItem = creditItemThrDAO
+                .findSingleMaxBusinessByValue(maxBusinessAmount);
 
             handleSingle(user, cid, sigleItem, maxBusinessAmount);
         }
@@ -226,7 +230,8 @@ public class CurOutManagerImpl implements CurOutManager
         if (totalBusiness != null)
         {
             // 这里到了新的财务年度就会重新计算了
-            double sumBusiness = outStatDAO.sumBusiness(cid, OATools.getFinanceBeginDate(), OATools.getFinanceEndDate());
+            double sumBusiness = outStatDAO.sumBusiness(cid, OATools.getFinanceBeginDate(), OATools
+                .getFinanceEndDate());
 
             CreditItemThrBean sumItem = creditItemThrDAO.findTotalBusinessByValue(sumBusiness);
 
@@ -259,7 +264,8 @@ public class CurOutManagerImpl implements CurOutManager
 
         for (CustomerCreditBean customerCreditBean : ccList)
         {
-            CreditItemThrBean creditItemThr = creditItemThrDAO.find(customerCreditBean.getValueId());
+            CreditItemThrBean creditItemThr = creditItemThrDAO
+                .find(customerCreditBean.getValueId());
 
             if (creditItemThr == null)
             {
@@ -280,7 +286,8 @@ public class CurOutManagerImpl implements CurOutManager
                 continue;
             }
 
-            double itemValue = (staticAmount * creditItem.getPer() * creditItemSec.getPer() * creditItemThr.getPer()) / 1000000.0d;
+            double itemValue = (staticAmount * creditItem.getPer() * creditItemSec.getPer() * creditItemThr
+                .getPer()) / 1000000.0d;
 
             if (customerCreditBean.getVal() == itemValue)
             {
@@ -345,9 +352,11 @@ public class CurOutManagerImpl implements CurOutManager
      * @param cid
      * @param outItem
      */
-    private void handleCommon(final User user, final String cid, final CreditItemSecBean outItem, final OutBean outBean)
+    private void handleCommon(final User user, final String cid, final CreditItemSecBean outItem,
+                              final OutBean outBean)
     {
-        CustomerCreditBean customerCreditBean = customerCreditDAO.findByUnique(cid, CreditConstant.OUT_COMMON_ITEM);
+        CustomerCreditBean customerCreditBean = customerCreditDAO.findByUnique(cid,
+            CreditConstant.OUT_COMMON_ITEM);
 
         // 加分 记入日志(变成已经处理 reserve1=1)
         if (customerCreditBean == null)
@@ -362,9 +371,13 @@ public class CurOutManagerImpl implements CurOutManager
         }
         else
         {
-            customerCreditBean.setLog("销售单[" + outBean.getFullId() + "]正常付款,加分:"
-                                      + MathTools.formatNum(outItem.getPer()) + ".加分后:"
-                                      + MathTools.formatNum(customerCreditBean.getVal() + outItem.getPer()));
+            customerCreditBean.setLog("销售单["
+                                      + outBean.getFullId()
+                                      + "]正常付款,加分:"
+                                      + MathTools.formatNum(outItem.getPer())
+                                      + ".加分后:"
+                                      + MathTools.formatNum(customerCreditBean.getVal()
+                                                            + outItem.getPer()));
 
             customerCreditBean.setVal(outItem.getPer() + customerCreditBean.getVal());
         }
@@ -404,8 +417,9 @@ public class CurOutManagerImpl implements CurOutManager
                     }
 
                     // 更新out里面的状态
-                    outStatDAO.updateReserve1ByFullId(outBean.getFullId(), CreditConstant.CREDIT_OUT_END,
-                        MathTools.formatNum(fcustomerCreditBean.getVal()));
+                    outStatDAO.updateReserve1ByFullId(outBean.getFullId(),
+                        CreditConstant.CREDIT_OUT_END, MathTools.formatNum(fcustomerCreditBean
+                            .getVal()));
 
                     double minus = fcustomerCreditBean.getVal();
 
@@ -434,7 +448,8 @@ public class CurOutManagerImpl implements CurOutManager
     private void handleSingle(final User user, final String cid, final CreditItemThrBean sigleItem,
                               final double maxBusinessAmount)
     {
-        CustomerCreditBean customerCreditBean = customerCreditDAO.findByUnique(cid, CreditConstant.OUT_MAX_BUSINESS);
+        CustomerCreditBean customerCreditBean = customerCreditDAO.findByUnique(cid,
+            CreditConstant.OUT_MAX_BUSINESS);
 
         // 单比最大交易额
         if (customerCreditBean == null)
@@ -504,9 +519,11 @@ public class CurOutManagerImpl implements CurOutManager
      * @param sumItem
      * @param amount
      */
-    private void handleTotal(final User user, final String cid, final CreditItemThrBean sumItem, final double amount)
+    private void handleTotal(final User user, final String cid, final CreditItemThrBean sumItem,
+                             final double amount)
     {
-        CustomerCreditBean customerCreditBean = customerCreditDAO.findByUnique(cid, CreditConstant.OUT_TOTAL_BUSINESS);
+        CustomerCreditBean customerCreditBean = customerCreditDAO.findByUnique(cid,
+            CreditConstant.OUT_TOTAL_BUSINESS);
 
         // 单比最大交易额
         if (customerCreditBean == null)
@@ -580,7 +597,8 @@ public class CurOutManagerImpl implements CurOutManager
     private void handleDelay(final User user, final String cid, final OutBean outBean,
                              final CreditItemThrBean maxDelayThrItem, boolean isEnd)
     {
-        CustomerCreditBean customerCreditBean = customerCreditDAO.findByUnique(cid, CreditConstant.OUT_DELAY_ITEM);
+        CustomerCreditBean customerCreditBean = customerCreditDAO.findByUnique(cid,
+            CreditConstant.OUT_DELAY_ITEM);
 
         if ( !isEnd)
         {
@@ -589,7 +607,8 @@ public class CurOutManagerImpl implements CurOutManager
             outBean.setTempType(delay);
         }
 
-        final CreditItemThrBean delayItemThrBean = creditItemThrDAO.findDelayItemByDays(outBean.getTempType());
+        final CreditItemThrBean delayItemThrBean = creditItemThrDAO.findDelayItemByDays(outBean
+            .getTempType());
 
         // 设置延期时间
         if ( !isEnd)
@@ -617,15 +636,16 @@ public class CurOutManagerImpl implements CurOutManager
             // 负向指标
             customerCreditBean.setVal( -currentMinus);
 
-            customerCreditBean.setLog("销售单[" + outBean.getFullId() + "]延期[" + outBean.getTempType() + "天]付款,减分:"
-                                      + MathTools.formatNum(currentMinus) + ".减分后:"
+            customerCreditBean.setLog("销售单[" + outBean.getFullId() + "]延期[" + outBean.getTempType()
+                                      + "天]付款,减分:" + MathTools.formatNum(currentMinus) + ".减分后:"
                                       + MathTools.formatNum( -currentMinus));
         }
         else
         {
-            customerCreditBean.setLog("销售单[" + outBean.getFullId() + "]延期[" + outBean.getTempType() + "天]付款,减分:"
-                                      + MathTools.formatNum(currentMinus) + ".减分后:"
-                                      + MathTools.formatNum( (customerCreditBean.getVal() - currentMinus)));
+            customerCreditBean
+                .setLog("销售单[" + outBean.getFullId() + "]延期[" + outBean.getTempType() + "天]付款,减分:"
+                        + MathTools.formatNum(currentMinus) + ".减分后:"
+                        + MathTools.formatNum( (customerCreditBean.getVal() - currentMinus)));
 
             customerCreditBean.setVal(customerCreditBean.getVal() - currentMinus);
         }
@@ -670,13 +690,15 @@ public class CurOutManagerImpl implements CurOutManager
                     // 更新out里面的状态
                     if (fisEnd)
                     {
-                        outStatDAO.updateReserve1ByFullId(outBean.getFullId(), CreditConstant.CREDIT_OUT_END,
-                            MathTools.formatNum(fcustomerCreditBean.getVal()));
+                        outStatDAO.updateReserve1ByFullId(outBean.getFullId(),
+                            CreditConstant.CREDIT_OUT_END, MathTools.formatNum(fcustomerCreditBean
+                                .getVal()));
                     }
                     else
                     {
                         // 更新当前已经延期级别
-                        outStatDAO.updateReserve5ByFullId(outBean.getFullId(), delayItemThrBean.getId());
+                        outStatDAO.updateReserve5ByFullId(outBean.getFullId(), delayItemThrBean
+                            .getId());
                     }
 
                     saveCurLog(cid, outBean, fcustomerCreditBean.getVal());
@@ -700,7 +722,8 @@ public class CurOutManagerImpl implements CurOutManager
      * @param delayItemThrBean
      * @return
      */
-    private double handleCurrentMinus(final OutBean outBean, final CreditItemThrBean delayItemThrBean)
+    private double handleCurrentMinus(final OutBean outBean,
+                                      final CreditItemThrBean delayItemThrBean)
     {
         boolean isNearestDelay = false;
 

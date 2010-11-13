@@ -11,6 +11,19 @@
 	  http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
 	  http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"
 	default-autowire="byName" default-init-method="init" default-destroy-method="destroy">
+	
+	<bean id="priceChangeListenerSailImpl" class="com.china.center.oa.sail.listener.impl.PriceChangeListenerSailImpl" />
+	
+	<bean id="defaultLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
+		<property name="listenerManager">
+			<ref bean="productManager"/>
+		</property>
+		<property name="listenerList">
+			<list>
+				<ref bean="priceChangeListenerSailImpl" />
+			</list>
+		</property>
+	</bean>
 
 	
 </beans>

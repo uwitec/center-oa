@@ -513,4 +513,9 @@ public interface AuthConstant
      * 调拨处理
      */
     String SAIL_INVOKE = "1407";
+
+    /**
+     * 分公司经理审批(信用分担)
+     */
+    String SAIL_LOCATION_MANAGER = "1408";
 }

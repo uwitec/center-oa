@@ -422,7 +422,8 @@ public class OutManagerImpl implements OutManager
     private void processOutInWay(final String fullId, final OutBean outBean)
     {
         // 如果是入库的调入，需要把在途的入库单取消掉
-        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL && outBean.getOutType() == OutConstant.INBILL_IN)
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.INBILL_IN)
         {
             String ofullid = outBean.getRefOutFullId();
 
@@ -432,7 +433,8 @@ public class OutManagerImpl implements OutManager
         }
 
         // 如果是入库的调出
-        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL && outBean.getOutType() == OutConstant.INBILL_OUT)
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.INBILL_OUT)
         {
             outDAO.updataInWay(fullId, OutConstant.IN_WAY);
 
@@ -453,12 +455,21 @@ public class OutManagerImpl implements OutManager
 
         if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
-            importLog.info(fullId + ":" + user.getStafferName() + ":" + 1 + ":redrectFrom:" + outBean.getStatus());
+            importLog.info(fullId + ":" + user.getStafferName() + ":" + 1 + ":redrectFrom:"
+                           + outBean.getStatus());
 
-            // 出库单
+            // 销售单处理
             try
             {
-                outDAO.modifyOutStatus2(fullId, OutConstant.STATUS_SUBMIT);
+                if (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER)
+                {
+                    // 到分公司经理审核
+                    outDAO.modifyOutStatus2(fullId, OutConstant.STATUS_LOCATION_MANAGER_CHECK);
+                }
+                else
+                {
+                    outDAO.modifyOutStatus2(fullId, OutConstant.STATUS_SUBMIT);
+                }
 
                 result = 1;
 
@@ -486,14 +497,17 @@ public class OutManagerImpl implements OutManager
                     }
 
                     // 进行逻辑处理(必须是货到收款才能有此逻辑) 此逻辑已经废除
-                    if (outCredit && cbean != null && !StringTools.isNullOrNone(cbean.getCreditLevelId())
+                    if (outCredit && cbean != null
+                        && !StringTools.isNullOrNone(cbean.getCreditLevelId())
                         && outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_COMMON)
                     {
                         throw new MYException("不支持此类型,请重新操作");
                     }
 
-                    // 使用业务员的信用额度
-                    if (outCredit && outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_CREDIT_AND_CUR)
+                    // 使用业务员的信用额度(或者是分公司经理的)
+                    if (outCredit
+                        && (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_CREDIT_AND_CUR || outBean
+                            .getReserve3() == OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER))
                     {
                         StafferBean sb2 = stafferDAO.find(outBean.getStafferId());
 
@@ -502,16 +516,20 @@ public class OutManagerImpl implements OutManager
                             throw new MYException("数据不完备,请重新操作");
                         }
 
-                        // 先清空两个预占金额,主要是统计的时候方便
+                        // 先清空预占金额,主要是统计的时候方便
                         outDAO.updateCurcredit(fullId, 0.0d);
 
                         outDAO.updateStaffcredit(fullId, 0.0d);
 
-                        double noPayBusinessInCur = outDAO.sumNoPayBusiness(outBean.getCustomerId(), YYTools
-                            .getFinanceBeginDate(), YYTools.getFinanceEndDate());
+                        outDAO.updateManagercredit(fullId, 0.0d);
 
-                        double noPayBusiness = outDAO.sumNoPayAndAvouchBusinessByStafferId(outBean.getStafferId(),
-                            YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
+                        double noPayBusinessInCur = outDAO.sumNoPayBusiness(
+                            outBean.getCustomerId(), YYTools.getFinanceBeginDate(), YYTools
+                                .getFinanceEndDate());
+
+                        double noPayBusiness = outDAO.sumNoPayAndAvouchBusinessByStafferId(outBean
+                            .getStafferId(), YYTools.getFinanceBeginDate(), YYTools
+                            .getFinanceEndDate());
 
                         double remainInCur = clevel.getMoney() - noPayBusinessInCur;
 
@@ -520,7 +538,7 @@ public class OutManagerImpl implements OutManager
                             remainInCur = 0.0;
                         }
 
-                        // 全部使用客户的信用等级
+                        // TODO 职员信用不够可以使用客户信用倍数×个人抵押信用(需要) 全部使用客户的信用等级
                         if (remainInCur >= outBean.getTotal())
                         {
                             outDAO.updateCurcredit(fullId, outBean.getTotal());
@@ -540,6 +558,8 @@ public class OutManagerImpl implements OutManager
                             // 防止职员信用等级超支
                             if ( (noPayBusiness + remainInStaff) > sb2.getCredit())
                             {
+                                double lastNeed = (noPayBusiness + remainInStaff) - sb2.getCredit();
+
                                 outBean.setReserve6("客户信用最大额度是:"
                                                     + MathTools.formatNum(clevel.getMoney())
                                                     + ".当前客户未付款金额(不包括此单):"
@@ -549,12 +569,14 @@ public class OutManagerImpl implements OutManager
                                                     + ".职员信用已经使用额度是:"
                                                     + MathTools.formatNum(noPayBusiness)
                                                     + ".职员信用超支(包括此单):"
-                                                    + (MathTools.formatNum( (noPayBusiness + remainInStaff - sb2
-                                                        .getCredit()))));
+                                                    + (MathTools.formatNum(lastNeed))
+                                                    + ".此单所需补充额度(分公司经理)是:"
+                                                    + MathTools.formatNum(lastNeed));
 
                                 isCreditOutOf = true;
 
-                                outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_OVER, outBean.getReserve6());
+                                outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_OVER,
+                                    outBean.getReserve6());
                             }
 
                             outDAO.updateStaffcredit(fullId, remainInStaff);
@@ -576,7 +598,8 @@ public class OutManagerImpl implements OutManager
 
                                 outBean.setReserve6("存在价格为0的产品");
 
-                                outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_MIN, outBean.getReserve6());
+                                outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_MIN,
+                                    outBean.getReserve6());
 
                                 break;
                             }
@@ -586,7 +609,8 @@ public class OutManagerImpl implements OutManager
                         {
                             outBean.setReserve6("");
 
-                            outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_COMMON, outBean.getReserve6());
+                            outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_COMMON, outBean
+                                .getReserve6());
                         }
                     }
 
@@ -606,7 +630,8 @@ public class OutManagerImpl implements OutManager
         else
         {
             // 入库直接通过
-            importLog.info(fullId + ":" + user.getStafferName() + ":" + 3 + ":redrectFrom:" + outBean.getStatus());
+            importLog.info(fullId + ":" + user.getStafferName() + ":" + 3 + ":redrectFrom:"
+                           + outBean.getStatus());
 
             try
             {
@@ -634,8 +659,9 @@ public class OutManagerImpl implements OutManager
      * @param logList
      * @throws MYException
      */
-    private void processBaseList(final User user, final OutBean outBean, final List<BaseBean> baseList,
-                                 final List<LogBean> logList, int type)
+    private void processBaseList(final User user, final OutBean outBean,
+                                 final List<BaseBean> baseList, final List<LogBean> logList,
+                                 int type)
         throws MYException
     {
         // 入库单提交后就直接移动库存了,销售需要在库管通过后生成发货单前才会变动库存
@@ -700,7 +726,8 @@ public class OutManagerImpl implements OutManager
             throw new MYException(fullId + " 不存在");
         }
 
-        if (outBean.getStatus() != OutConstant.STATUS_SAVE && outBean.getStatus() != OutConstant.STATUS_REJECT)
+        if (outBean.getStatus() != OutConstant.STATUS_SAVE
+            && outBean.getStatus() != OutConstant.STATUS_REJECT)
         {
             throw new MYException(fullId + " 状态错误,不能提交");
         }
@@ -734,7 +761,8 @@ public class OutManagerImpl implements OutManager
         }
 
         // 如果是入库的调入，需要有REF的单据
-        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL && outBean.getOutType() == OutConstant.INBILL_IN)
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.INBILL_IN)
         {
             String ofullid = outBean.getRefOutFullId();
 
@@ -799,8 +827,9 @@ public class OutManagerImpl implements OutManager
      * @param deportId
      * @throws MYException
      */
-    private void doReject(final String fullId, final User user, final String reason, final OutBean outBean,
-                          final List<BaseBean> baseList, final String deportId)
+    private void doReject(final String fullId, final User user, final String reason,
+                          final OutBean outBean, final List<BaseBean> baseList,
+                          final String deportId)
         throws MYException
     {
         checkReject(outBean, baseList, deportId);
@@ -827,14 +856,16 @@ public class OutManagerImpl implements OutManager
                     // 修改状态
                     if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                     {
-                        importLog.info(fullId + ":" + user.getStafferName() + ":" + OutConstant.STATUS_REJECT
-                                       + ":redrectFrom:" + outBean.getStatus());
+                        importLog.info(fullId + ":" + user.getStafferName() + ":"
+                                       + OutConstant.STATUS_REJECT + ":redrectFrom:"
+                                       + outBean.getStatus());
                         outDAO.modifyOutStatus2(outBean.getFullId(), OutConstant.STATUS_REJECT);
                     }
                     else
                     {
-                        importLog.info(fullId + ":" + user.getStafferName() + ":" + OutConstant.STATUS_SAVE
-                                       + ":redrectFrom:" + outBean.getStatus());
+                        importLog.info(fullId + ":" + user.getStafferName() + ":"
+                                       + OutConstant.STATUS_SAVE + ":redrectFrom:"
+                                       + outBean.getStatus());
 
                         outDAO.modifyOutStatus2(outBean.getFullId(), OutConstant.STATUS_SAVE);
                     }
@@ -843,7 +874,8 @@ public class OutManagerImpl implements OutManager
                     outDAO.updataInWay(fullId, OutConstant.IN_WAY_NO);
 
                     // 操作日志
-                    addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_REJECT, OutConstant.STATUS_REJECT);
+                    addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_REJECT,
+                        OutConstant.STATUS_REJECT);
 
                     return Boolean.TRUE;
                 }
@@ -875,7 +907,8 @@ public class OutManagerImpl implements OutManager
      * @param locationId
      * @throws MYException
      */
-    private void checkReject(final OutBean outBean, final List<BaseBean> baseList, final String deportId)
+    private void checkReject(final OutBean outBean, final List<BaseBean> baseList,
+                             final String deportId)
         throws MYException
     {
         if (outBean == null)
@@ -890,7 +923,7 @@ public class OutManagerImpl implements OutManager
     }
 
     /**
-     * CORE 审核通过(这里只有销售单才有此操作)结算中心/物流审批/库管发货
+     * CORE 审核通过(这里只有销售单才有此操作)分公司经理审核/结算中心/物流审批/库管发货
      * 
      * @param outBean
      * @param user
@@ -899,8 +932,8 @@ public class OutManagerImpl implements OutManager
      * @return
      * @throws Exception
      */
-    public synchronized boolean pass(final String fullId, final User user, final int nextStatus, final String reason,
-                                     final String depotpartId)
+    public synchronized boolean pass(final String fullId, final User user, final int nextStatus,
+                                     final String reason, final String depotpartId)
         throws MYException
     {
         final OutBean outBean = outDAO.find(fullId);
@@ -919,7 +952,8 @@ public class OutManagerImpl implements OutManager
         }
 
         // 检查pass的条件
-        if (outBean.getStatus() == OutConstant.STATUS_SAVE || outBean.getStatus() == OutConstant.STATUS_REJECT)
+        if (outBean.getStatus() == OutConstant.STATUS_SAVE
+            || outBean.getStatus() == OutConstant.STATUS_REJECT)
         {
             throw new MYException("状态不可以通过!");
         }
@@ -932,7 +966,8 @@ public class OutManagerImpl implements OutManager
         }
 
         // 需要发货单先通过(只有中心仓库才有物流哦)
-        if (nextStatus == OutConstant.STATUS_FLOW_PASS && depot.getType() == DepotConstant.DEPOT_TYPE_CENTER)
+        if (nextStatus == OutConstant.STATUS_FLOW_PASS
+            && depot.getType() == DepotConstant.DEPOT_TYPE_CENTER)
         {
             ConsignBean consignBean = consignDAO.findConsignById(fullId);
 
@@ -964,11 +999,56 @@ public class OutManagerImpl implements OutManager
                         newNextStatus = OutConstant.STATUS_PASS;
                     }
 
-                    importLog.info(outBean.getFullId() + ":" + user.getStafferName() + ":" + newNextStatus
-                                   + ":redrectFrom:" + oldStatus);
+                    importLog.info(outBean.getFullId() + ":" + user.getStafferName() + ":"
+                                   + newNextStatus + ":redrectFrom:" + oldStatus);
 
                     // 修改状态
                     outDAO.modifyOutStatus2(outBean.getFullId(), newNextStatus);
+
+                    // 从分公司经理审核通过到提交
+                    if (newNextStatus == OutConstant.STATUS_SUBMIT)
+                    {
+                        // 只有信用已经超支的情况下才启用分公司经理的信用
+                        if (outBean.getReserve2() == OutConstant.OUT_CREDIT_OVER)
+                        {
+                            // 加入审批人的信用
+                            double noPayBusinessByManager = outDAO
+                                .sumNoPayAndAvouchBusinessByStafferId(user.getStafferId(), YYTools
+                                    .getFinanceBeginDate(), YYTools.getFinanceEndDate());
+
+                            StafferBean staffer = stafferDAO.find(user.getStafferId());
+
+                            // 这里分公司总经理的信用已经使用结束了,此时直接抛出异常
+                            if (noPayBusinessByManager > staffer.getCredit())
+                            {
+                                throw new RuntimeException("您的信用额度已经全部占用,不能再担保业务员的销售");
+                            }
+
+                            // 本次需要担保的信用
+                            double lastCredit = outBean.getTotal() - outBean.getStaffcredit()
+                                                - outBean.getCurcredit();
+
+                            if ( (lastCredit + noPayBusinessByManager) > staffer.getCredit())
+                            {
+                                throw new RuntimeException("您的信用额度是["
+                                                           + MathTools.formatNum(staffer
+                                                               .getCredit())
+                                                           + "],已经使用了["
+                                                           + MathTools
+                                                               .formatNum(noPayBusinessByManager)
+                                                           + "],本单需要您担保的额度是["
+                                                           + MathTools.formatNum(lastCredit)
+                                                           + "],加上本单已经超出您的最大额度,不能再担保业务员的销售");
+                            }
+
+                            // 这里使用分公司经理信用担保
+                            outDAO.updateManagercredit(outBean.getFullId(), lastCredit);
+
+                            // 此时信用不超支了
+                            outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_COMMON, outBean
+                                .getReserve6());
+                        }
+                    }
 
                     // 修改manager的入库时间
                     if (newNextStatus == OutConstant.STATUS_MANAGER_PASS)
@@ -984,20 +1064,23 @@ public class OutManagerImpl implements OutManager
                         long add = outBean.getReday() * 24 * 3600 * 1000L;
 
                         // 这里需要把出库单的回款日期修改
-                        outDAO.modifyReDate2(fullId, TimeTools.getStringByFormat(new Date(new Date().getTime() + add),
-                            "yyyy-MM-dd"));
+                        outDAO.modifyReDate2(fullId, TimeTools.getStringByFormat(new Date(
+                            new Date().getTime() + add), "yyyy-MM-dd"));
 
                         List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
 
                         try
                         {
                             // 变动库存
-                            processPass(user, outBean, baseList, StorageConstant.OPR_STORAGE_OUTBILL);
+                            processPass(user, outBean, baseList,
+                                StorageConstant.OPR_STORAGE_OUTBILL);
                         }
                         catch (MYException e)
                         {
                             throw new RuntimeException(e.getErrorContent());
                         }
+
+                        // TODO 销售单是发货后产生管理凭证
                     }
 
                     // 结算中心审核通过后，中心仓库的销售单转到物流管理员，同时自动生成发货单
@@ -1013,7 +1096,8 @@ public class OutManagerImpl implements OutManager
                         consignDAO.addConsign(bean);
                     }
 
-                    addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_PASS, newNextStatus);
+                    addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_PASS,
+                        newNextStatus);
 
                     outBean.setStatus(newNextStatus);
 
@@ -1052,7 +1136,8 @@ public class OutManagerImpl implements OutManager
      * @param logList
      * @throws MYException
      */
-    private void processPass(final User user, final OutBean outBean, final List<BaseBean> baseList, int type)
+    private void processPass(final User user, final OutBean outBean, final List<BaseBean> baseList,
+                             int type)
         throws MYException
     {
         String sequence = commonDAO.getSquenceString();
@@ -1115,7 +1200,8 @@ public class OutManagerImpl implements OutManager
 
                     // TODO_OSGI 核对此销售单的应收,看看是否正确结余(然后写到应收字段里面)
 
-                    addOutLog(fullId, user, outBean, "核对", SailConstant.OPR_OUT_PASS, OutConstant.STATUS_SEC_PASS);
+                    addOutLog(fullId, user, outBean, "核对", SailConstant.OPR_OUT_PASS,
+                        OutConstant.STATUS_SEC_PASS);
 
                     return Boolean.TRUE;
                 }
@@ -1456,7 +1542,8 @@ public class OutManagerImpl implements OutManager
         }
 
         // 0:保存 1:提交 2:驳回 3:发货 4:会计审核通过 6:总经理审核通过
-        if (out.getStatus() == OutConstant.STATUS_SAVE || out.getStatus() == OutConstant.STATUS_REJECT
+        if (out.getStatus() == OutConstant.STATUS_SAVE
+            || out.getStatus() == OutConstant.STATUS_REJECT
             || out.getStatus() == OutConstant.STATUS_SEC_PASS)
         {
             return;
@@ -1499,9 +1586,11 @@ public class OutManagerImpl implements OutManager
      * @param user
      * @param condtition
      */
-    private void queryUserToSendSMS(OutBean out, User user, ConditionParse condtition, String tokenName)
+    private void queryUserToSendSMS(OutBean out, User user, ConditionParse condtition,
+                                    String tokenName)
     {
-        List<UserBean> userList = ListTools.distinct(userDAO.queryEntityBeansByCondition(condtition));
+        List<UserBean> userList = ListTools.distinct(userDAO
+            .queryEntityBeansByCondition(condtition));
 
         for (UserBean baseUser : userList)
         {
@@ -1536,7 +1625,8 @@ public class OutManagerImpl implements OutManager
             return;
         }
 
-        ShortMessageTaskDAO shortMessageTaskDAO = DynamicBundleTools.getService(ShortMessageTaskDAO.class);
+        ShortMessageTaskDAO shortMessageTaskDAO = DynamicBundleTools
+            .getService(ShortMessageTaskDAO.class);
 
         if (shortMessageTaskDAO == null)
         {
@@ -1560,9 +1650,10 @@ public class OutManagerImpl implements OutManager
 
         sms.setFktoken(String.valueOf(out.getStatus()));
 
-        sms.setMessage(realStaffer.getName() + "发起销售单[" + out.getDescription() + "(回款天数:" + out.getReday() + ";总金额:"
-                       + MathTools.formatNum(out.getTotal()) + ")]" + "需您审批(" + tokenName + ").0通过,1驳回.回复格式["
-                       + sms.getHandId() + ":0]或[" + sms.getHandId() + ":1:理由]");
+        sms.setMessage(realStaffer.getName() + "发起销售单[" + out.getDescription() + "(回款天数:"
+                       + out.getReday() + ";总金额:" + MathTools.formatNum(out.getTotal()) + ")]"
+                       + "需您审批(" + tokenName + ").0通过,1驳回.回复格式[" + sms.getHandId() + ":0]或["
+                       + sms.getHandId() + ":1:理由]");
 
         sms.setReceiver(sb.getHandphone());
 
@@ -1621,8 +1712,8 @@ public class OutManagerImpl implements OutManager
      * @param user
      * @param outBean
      */
-    private void addOutLog(final String fullId, final User user, final OutBean outBean, String des, int mode,
-                           int astatus)
+    private void addOutLog(final String fullId, final User user, final OutBean outBean, String des,
+                           int mode, int astatus)
     {
         FlowLogBean log = new FlowLogBean();
 

@@ -55,15 +55,15 @@ public interface StockConstant
     int STOCK_STATUS_STOCKMANAGERPASS = 6;
 
     /**
-     * 采购结束
+     * 采购审批完毕
      */
-    @Defined(key = "stockStatus", value = "采购结束")
+    @Defined(key = "stockStatus", value = "采购审批完毕")
     int STOCK_STATUS_END = 7;
 
     /**
      * 采购结束(到货)
      */
-    @Defined(key = "stockStatus", value = "采购到货")
+    @Defined(key = "stockStatus", value = "采购到货(结束)")
     int STOCK_STATUS_LASTEND = 8;
 
     /**

@@ -101,7 +101,8 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         return true;
     }
 
-    public double sumNoPayAndAvouchBusinessByStafferId(String stafferId, String beginDate, String endDate)
+    public double sumNoPayAndAvouchBusinessByStafferId(String stafferId, String beginDate,
+                                                       String endDate)
     {
         Map<String, String> paramterMap = new HashMap();
 
@@ -120,6 +121,26 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         return (Double)max;
     }
 
+    public double sumNoPayAndAvouchBusinessByManagerId(String stafferId, String beginDate,
+                                                       String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("stafferId", stafferId);
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("endDate", endDate);
+
+        Object max = this.jdbcOperation.getIbatisDaoSupport().queryForObject(
+            "OutDAO.sumNoPayAndAvouchBusinessByManagerId", paramterMap);
+
+        if (max == null)
+        {
+            return 0.0d;
+        }
+
+        return (Double)max;
+    }
+
     public double sumNoPayBusiness(String cid, String beginDate, String endDate)
     {
         Map<String, String> paramterMap = new HashMap();
@@ -128,7 +149,8 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         paramterMap.put("beginDate", beginDate);
         paramterMap.put("endDate", endDate);
 
-        Object max = this.jdbcOperation.getIbatisDaoSupport().queryForObject("OutDAO.sumNoPayBusiness", paramterMap);
+        Object max = this.jdbcOperation.getIbatisDaoSupport().queryForObject(
+            "OutDAO.sumNoPayBusiness", paramterMap);
 
         if (max == null)
         {
@@ -140,8 +162,8 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
 
     public Integer sumPreassignAmount(Map parMap)
     {
-        Integer result = (Integer)jdbcOperation.getIbatisDaoSupport().queryForObject("OutDAO.sumPreassignAmount",
-            parMap);
+        Integer result = (Integer)jdbcOperation.getIbatisDaoSupport().queryForObject(
+            "OutDAO.sumPreassignAmount", parMap);
 
         if (result == null)
         {
@@ -150,6 +172,44 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
 
         return result;
 
+    }
+
+    public Integer countNotEndProductInIn(String productId, String beginDate, String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("productId", productId);
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("endDate", endDate);
+
+        Object count = this.jdbcOperation.getIbatisDaoSupport().queryForObject(
+            "OutDAO.countNotEndProductInIn", paramterMap);
+
+        if (count == null)
+        {
+            return 0;
+        }
+
+        return (Integer)count;
+    }
+
+    public Integer countNotEndProductInOut(String productId, String beginDate, String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("productId", productId);
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("endDate", endDate);
+
+        Object count = this.jdbcOperation.getIbatisDaoSupport().queryForObject(
+            "OutDAO.countNotEndProductInOut", paramterMap);
+
+        if (count == null)
+        {
+            return 0;
+        }
+
+        return (Integer)count;
     }
 
     public boolean updataInWay(String fullId, int inway)
@@ -178,6 +238,13 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
     public boolean updateStaffcredit(String fullId, double staffcredit)
     {
         jdbcOperation.updateField("staffcredit", staffcredit, fullId, this.claz);
+
+        return true;
+    }
+
+    public boolean updateManagercredit(String fullId, double managercredit)
+    {
+        jdbcOperation.updateField("managercredit", managercredit, fullId, this.claz);
 
         return true;
     }

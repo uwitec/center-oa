@@ -85,6 +85,11 @@ public interface OutConstant
     int OUT_SAIL_TYPE_CREDIT_AND_CUR = 2;
 
     /**
+     * 使用业务员信用额度和客户信用额度还不够的时候,分公司总经理担保
+     */
+    int OUT_SAIL_TYPE_LOCATION_MANAGER = 3;
+
+    /**
      * 黑名单客户
      */
     String BLACK_LEVEL = "90000000000000000000";
@@ -123,6 +128,11 @@ public interface OutConstant
      * 物流管理员通过
      */
     int STATUS_FLOW_PASS = 7;
+
+    /**
+     * 分公司总经理审批
+     */
+    int STATUS_LOCATION_MANAGER_CHECK = 8;
 
     /**
      * 未付款
@@ -218,5 +228,15 @@ public interface OutConstant
      * 调入
      */
     int OUTTYPE_IN_MOVEIN = 8;
+
+    /**
+     * 不需要发票
+     */
+    int HASINVOICE_NO = 0;
+
+    /**
+     * 需要
+     */
+    int HASINVOICE_YES = 1;
 
 }

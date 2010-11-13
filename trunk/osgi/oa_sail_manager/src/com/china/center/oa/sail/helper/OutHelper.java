@@ -39,8 +39,8 @@ public abstract class OutHelper
         buffer.append("<td width='5%' align='center'>单位</td>");
         buffer.append("<td width='10%' align='center'>数量</td>");
         buffer.append("<td width='15%' align='center'>单价</td>");
-        buffer.append("<td width='20%' align='left'>金额(总计:<span id='total'>" + MathTools.formatNum(tatol)
-                      + "</span>)</td>");
+        buffer.append("<td width='20%' align='left'>金额(总计:<span id='total'>"
+                      + MathTools.formatNum(tatol) + "</span>)</td>");
         buffer.append("<td width='25%' align='center'>成本</td></tr>");
 
         int index = 0;
@@ -61,9 +61,12 @@ public abstract class OutHelper
             buffer.append("<td width='20%' align='center'>" + bean.getProductName() + "</td>");
             buffer.append("<td width='5%' align='center'>" + bean.getUnit() + "</td>");
             buffer.append("<td width='10%' align='center'>" + bean.getAmount() + "</td>");
-            buffer.append(" <td width='15%' align='center'>" + MathTools.formatNum(bean.getPrice()) + "</td>");
-            buffer.append("<td width='15%' align='center'>" + MathTools.formatNum(bean.getValue()) + "</td>");
-            buffer.append("<td width='25%' align='center'>" + StringTools.print(bean.getDescription()) + "</td>");
+            buffer.append(" <td width='15%' align='center'>" + MathTools.formatNum(bean.getPrice())
+                          + "</td>");
+            buffer.append("<td width='15%' align='center'>" + MathTools.formatNum(bean.getValue())
+                          + "</td>");
+            buffer.append("<td width='25%' align='center'>"
+                          + StringTools.print(bean.getDescription()) + "</td>");
             index++ ;
         }
 
@@ -120,7 +123,7 @@ public abstract class OutHelper
 
         if (i == 1)
         {
-            return "提交";
+            return "提交结算中心";
         }
 
         if (i == 2)
@@ -153,6 +156,11 @@ public abstract class OutHelper
         if (i == 7)
         {
             return "物流通过";
+        }
+
+        if (i == 8)
+        {
+            return "分公司经理审核";
         }
 
         return "";
@@ -193,7 +201,8 @@ public abstract class OutHelper
         {
             // 调动分为两个单据 一个是源头的调出入库单 一个是目的的调入入库单
             // 源头调出后状态处于提交态,此时可以驳回的
-            if (outBean.getStatus() == OutConstant.STATUS_SUBMIT && outBean.getType() != OutConstant.INBILL_OUT)
+            if (outBean.getStatus() == OutConstant.STATUS_SUBMIT
+                && outBean.getType() != OutConstant.INBILL_OUT)
             {
                 return true;
             }
