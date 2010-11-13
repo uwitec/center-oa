@@ -478,4 +478,39 @@ public interface AuthConstant
      * 总经理
      */
     String STOCK_NOTICE_CEO = "1308";
+
+    /**
+     * 提交库单(业务员)
+     */
+    String SAIL_SUBMIT = "1401";
+
+    /**
+     * 结算中心审批
+     */
+    String SAIL_MONEY_CENTER = "1402";
+
+    /**
+     * 物流审批
+     */
+    String SAIL_FLOW = "1403";
+
+    /**
+     * 库管发货
+     */
+    String SAIL_ADMIN = "1404";
+
+    /**
+     * 财务开票
+     */
+    String SAIL_SEC = "1405";
+
+    /**
+     * 总裁审批
+     */
+    String SAIL_CEO = "1406";
+
+    /**
+     * 调拨处理
+     */
+    String SAIL_INVOKE = "1407";
 }
