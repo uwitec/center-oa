@@ -40,6 +40,10 @@ function addBean()
 		<p:table cells="1">
 
 			<p:pro field="name" innerString="size=60"/>
+			
+			<p:pro field="type" innerString="readonly=true">
+				<p:option type="depotType"/>
+			</p:pro>
 
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
 

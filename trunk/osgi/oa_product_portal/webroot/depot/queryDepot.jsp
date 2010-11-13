@@ -25,7 +25,8 @@ function load()
          url: gurl + 'query' + ukey,
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
-             {display: '名称', name : 'name', width : '25%'},
+             {display: '名称', name : 'name', width : '20%'},
+             {display: '类型', name : 'type', width : '15%', cc: 'depotType'},
              {display: '描述', name : 'description', width : 'auto'}
              ],
          extAtt: {

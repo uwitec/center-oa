@@ -17,6 +17,7 @@ import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.Unique;
 import com.china.center.jdbc.annotation.enums.Element;
+import com.china.center.oa.product.constant.DepotConstant;
 
 
 /**
@@ -37,6 +38,12 @@ public class DepotBean implements Serializable
     @Unique
     @Html(title = "名称", must = true)
     private String name = "";
+
+    /**
+     * 仓库类型
+     */
+    @Html(title = "名称", type = Element.SELECT, must = true)
+    private int type = DepotConstant.DEPOT_TYPE_LOCATION;
 
     @Html(title = "描述", type = Element.TEXTAREA, maxLength = 200)
     private String description = "";
@@ -126,6 +133,23 @@ public class DepotBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the type
+     */
+    public int getType()
+    {
+        return type;
+    }
+
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(int type)
+    {
+        this.type = type;
     }
 
 }

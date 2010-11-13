@@ -97,6 +97,12 @@
 			<opr>like</opr>
 			<type>text</type>
 		</condtion>
+		<condtion name="type" caption="类型">
+			<opr>=</opr>
+			<datatype>1</datatype>
+			<type>select</type>
+			<option>$depotType</option>
+		</condtion>
 	</item>
 	
 	<item name="queryDepotpart" deaultpfix="DepotpartBean">

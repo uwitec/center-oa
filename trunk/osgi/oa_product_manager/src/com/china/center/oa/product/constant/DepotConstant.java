@@ -23,6 +23,18 @@ import com.china.center.jdbc.annotation.Defined;
 public interface DepotConstant
 {
     /**
+     * 区域仓库
+     */
+    @Defined(key = "depotType", value = "区域仓库")
+    int DEPOT_TYPE_LOCATION = 0;
+
+    /**
+     * 中心仓库
+     */
+    @Defined(key = "depotType", value = "中心仓库")
+    int DEPOT_TYPE_CENTER = 1;
+
+    /**
      * 良品仓
      */
     @Defined(key = "depotpartType", value = "次品仓")
