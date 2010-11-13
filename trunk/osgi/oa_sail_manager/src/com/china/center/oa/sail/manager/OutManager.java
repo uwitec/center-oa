@@ -40,6 +40,15 @@ public interface OutManager
     String coloneOutAndSubmitAffair(final OutBean outBean, final User user)
         throws MYException;
 
+    /**
+     * 采购入库的操作(没有事务)
+     * 
+     * @param outBean
+     * @param user
+     * @param type
+     * @return
+     * @throws MYException
+     */
     String coloneOutAndSubmitWithOutAffair(OutBean outBean, User user, int type)
         throws MYException;
 

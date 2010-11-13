@@ -15,6 +15,7 @@ import java.util.List;
 
 import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.OutBean;
+import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.tools.MathTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
@@ -136,17 +137,17 @@ public abstract class OutHelper
 
         if (i == 3)
         {
-            return "发货";
+            return "库管发货";
         }
 
         if (i == 4)
         {
-            return "结束";
+            return "财务应收(结束)";
         }
 
         if (i == 6)
         {
-            return "经理通过";
+            return "结算中心通过";
         }
 
         if (i == 7)
@@ -155,5 +156,53 @@ public abstract class OutHelper
         }
 
         return "";
+    }
+
+    public static boolean canDelete(OutBean outBean)
+    {
+        int status = outBean.getStatus();
+
+        if (status == OutConstant.STATUS_SAVE || status == OutConstant.STATUS_REJECT)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public static boolean canReject(OutBean outBean)
+    {
+        int status = outBean.getStatus();
+
+        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+        {
+            if (status == OutConstant.STATUS_SAVE || status == OutConstant.STATUS_REJECT
+                || status == OutConstant.STATUS_PASS || status == OutConstant.STATUS_SEC_PASS)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL)
+        {
+            // 调动分为两个单据 一个是源头的调出入库单 一个是目的的调入入库单
+            // 源头调出后状态处于提交态,此时可以驳回的
+            if (outBean.getStatus() == OutConstant.STATUS_SUBMIT && outBean.getType() != OutConstant.INBILL_OUT)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        return false;
     }
 }

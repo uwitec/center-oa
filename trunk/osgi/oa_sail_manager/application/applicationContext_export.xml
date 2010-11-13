@@ -17,4 +17,6 @@
 
 	<osgi:service ref="showDAO" interface="com.china.center.oa.sail.dao.ShowDAO" />
 
+	<osgi:service ref="outUniqueDAO" interface="com.china.center.oa.sail.dao.OutUniqueDAO" />
+
 </beans>

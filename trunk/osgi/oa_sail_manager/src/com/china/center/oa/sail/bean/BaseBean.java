@@ -62,6 +62,11 @@ public class BaseBean implements Serializable
     private String owner = "0";
 
     /**
+     * 产品的所有者名称
+     */
+    private String ownerName = "公共";
+
+    /**
      * 销售价格
      */
     private double price = 0.0d;
@@ -70,6 +75,11 @@ public class BaseBean implements Serializable
      * 成本
      */
     private double costPrice = 0.0d;
+
+    /**
+     * 成本的string值
+     */
+    private String costPriceKey = "";
 
     /**
      * 总销售价
@@ -357,6 +367,40 @@ public class BaseBean implements Serializable
     }
 
     /**
+     * @return the ownerName
+     */
+    public String getOwnerName()
+    {
+        return ownerName;
+    }
+
+    /**
+     * @param ownerName
+     *            the ownerName to set
+     */
+    public void setOwnerName(String ownerName)
+    {
+        this.ownerName = ownerName;
+    }
+
+    /**
+     * @return the costPriceKey
+     */
+    public String getCostPriceKey()
+    {
+        return costPriceKey;
+    }
+
+    /**
+     * @param costPriceKey
+     *            the costPriceKey to set
+     */
+    public void setCostPriceKey(String costPriceKey)
+    {
+        this.costPriceKey = costPriceKey;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -407,11 +451,17 @@ public class BaseBean implements Serializable
             .append("owner = ")
             .append(this.owner)
             .append(TAB)
+            .append("ownerName = ")
+            .append(this.ownerName)
+            .append(TAB)
             .append("price = ")
             .append(this.price)
             .append(TAB)
             .append("costPrice = ")
             .append(this.costPrice)
+            .append(TAB)
+            .append("costPriceKey = ")
+            .append(this.costPriceKey)
             .append(TAB)
             .append("value = ")
             .append(this.value)

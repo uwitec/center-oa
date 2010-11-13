@@ -16,7 +16,7 @@ import com.china.center.jdbc.inter.IbatisDaoSupport;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.dao.OutDAO;
-import com.china.center.oa.sail.vo.OutBeanVO;
+import com.china.center.oa.sail.vo.OutVO;
 
 
 /**
@@ -27,7 +27,7 @@ import com.china.center.oa.sail.vo.OutBeanVO;
  * @see OutDAOImpl
  * @since 1.0
  */
-public class OutDAOImpl extends BaseDAO<OutBean, OutBeanVO> implements OutDAO
+public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
 {
     private IbatisDaoSupport ibatisDaoSupport = null;
 

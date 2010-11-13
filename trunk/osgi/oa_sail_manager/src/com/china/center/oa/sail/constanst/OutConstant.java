@@ -95,7 +95,7 @@ public interface OutConstant
     int STATUS_SAVE = 0;
 
     /**
-     * 提交
+     * 业务员提交
      */
     int STATUS_SUBMIT = 1;
 
@@ -105,17 +105,17 @@ public interface OutConstant
     int STATUS_REJECT = 2;
 
     /**
-     * ADMIN通过(一般此通过即是销售单已经OK status in (3, 4))
+     * 库管发货(这里的销售单库存就变动了)(一般此通过即是销售单已经OK status in (3, 4))
      */
     int STATUS_PASS = 3;
 
     /**
-     * 会计通过
+     * 财务应收
      */
     int STATUS_SEC_PASS = 4;
 
     /**
-     * 总经理通过
+     * 结算中心通过
      */
     int STATUS_MANAGER_PASS = 6;
 
@@ -138,6 +138,11 @@ public interface OutConstant
      * 过期
      */
     int PAY_OVER = 2;
+
+    /**
+     * 入库单--采购入库
+     */
+    int INBILL_COMMON = 0;
 
     /**
      * 调出

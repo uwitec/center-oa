@@ -26,7 +26,7 @@ import com.china.center.oa.sail.bean.OutBean;
  * @since 1.0
  */
 @Entity(inherit = true)
-public class OutBeanVO extends OutBean
+public class OutVO extends OutBean
 {
     @Relationship(relationField = "locationId")
     private String locationName = "";
@@ -46,7 +46,7 @@ public class OutBeanVO extends OutBean
     @Relationship(relationField = "customerId", tagField = "address")
     private String customerAddress = "";
 
-    public OutBeanVO()
+    public OutVO()
     {
     }
 

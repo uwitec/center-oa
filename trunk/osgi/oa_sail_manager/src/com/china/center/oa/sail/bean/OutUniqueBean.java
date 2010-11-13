@@ -31,6 +31,8 @@ public class OutUniqueBean implements Serializable
     @Id
     private String id = "";
 
+    private String ref = "";
+
     private String logTime = "";
 
     /**
@@ -75,6 +77,23 @@ public class OutUniqueBean implements Serializable
     }
 
     /**
+     * @return the ref
+     */
+    public String getRef()
+    {
+        return ref;
+    }
+
+    /**
+     * @param ref
+     *            the ref to set
+     */
+    public void setRef(String ref)
+    {
+        this.ref = ref;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -91,6 +110,9 @@ public class OutUniqueBean implements Serializable
             .append(TAB)
             .append("id = ")
             .append(this.id)
+            .append(TAB)
+            .append("ref = ")
+            .append(this.ref)
             .append(TAB)
             .append("logTime = ")
             .append(this.logTime)

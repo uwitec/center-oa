@@ -51,19 +51,19 @@ public class OutBean implements Serializable
     /**
      * 库单类型 对于出入库都不一样(0:销售单 1:个人领样)
      */
-    private int outType = 0;
+    private int outType = OutConstant.OUTTYPE_OUT_COMMON;
 
     /**
      * 0:销售单 1:入库单
      */
-    private int type = 0;
+    private int type = OutConstant.OUT_TYPE_OUTBILL;
 
     /**
      * 0:保存 1:提交 2:驳回 3:通过 4:会计审核通过 6:总经理审核通过 7:物流管理员通过<br>
      * (一般此通过即是销售单已经OK status in (3, 4))<br>
      * 预占库存 status in (1, 6, 7)
      */
-    private int status = 0;
+    private int status = OutConstant.STATUS_SAVE;
 
     private String department = "";
 
@@ -184,6 +184,21 @@ public class OutBean implements Serializable
      * 信用超支日志
      */
     private String reserve6 = "";
+
+    /**
+     * 应收的描述,当销售单结束的时候会填写
+     */
+    private String reserve7 = "";
+
+    /**
+     * 预留
+     */
+    private String reserve8 = "";
+
+    /**
+     * 预留
+     */
+    private String reserve9 = "";
 
     /**
      * 预占客户信用等级金额(优先使用客户的)
@@ -954,5 +969,214 @@ public class OutBean implements Serializable
     public void setManagerTime(String managerTime)
     {
         this.managerTime = managerTime;
+    }
+
+    /**
+     * @return the reserve7
+     */
+    public String getReserve7()
+    {
+        return reserve7;
+    }
+
+    /**
+     * @param reserve7
+     *            the reserve7 to set
+     */
+    public void setReserve7(String reserve7)
+    {
+        this.reserve7 = reserve7;
+    }
+
+    /**
+     * @return the reserve8
+     */
+    public String getReserve8()
+    {
+        return reserve8;
+    }
+
+    /**
+     * @param reserve8
+     *            the reserve8 to set
+     */
+    public void setReserve8(String reserve8)
+    {
+        this.reserve8 = reserve8;
+    }
+
+    /**
+     * @return the reserve9
+     */
+    public String getReserve9()
+    {
+        return reserve9;
+    }
+
+    /**
+     * @param reserve9
+     *            the reserve9 to set
+     */
+    public void setReserve9(String reserve9)
+    {
+        this.reserve9 = reserve9;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("OutBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("fullId = ")
+            .append(this.fullId)
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("flowId = ")
+            .append(this.flowId)
+            .append(TAB)
+            .append("outTime = ")
+            .append(this.outTime)
+            .append(TAB)
+            .append("managerTime = ")
+            .append(this.managerTime)
+            .append(TAB)
+            .append("outType = ")
+            .append(this.outType)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("department = ")
+            .append(this.department)
+            .append(TAB)
+            .append("customerId = ")
+            .append(this.customerId)
+            .append(TAB)
+            .append("customerName = ")
+            .append(this.customerName)
+            .append(TAB)
+            .append("locationId = ")
+            .append(this.locationId)
+            .append(TAB)
+            .append("location = ")
+            .append(this.location)
+            .append(TAB)
+            .append("connector = ")
+            .append(this.connector)
+            .append(TAB)
+            .append("phone = ")
+            .append(this.phone)
+            .append(TAB)
+            .append("stafferName = ")
+            .append(this.stafferName)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("total = ")
+            .append(this.total)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("checks = ")
+            .append(this.checks)
+            .append(TAB)
+            .append("reday = ")
+            .append(this.reday)
+            .append(TAB)
+            .append("redate = ")
+            .append(this.redate)
+            .append(TAB)
+            .append("depotpartId = ")
+            .append(this.depotpartId)
+            .append(TAB)
+            .append("marks = ")
+            .append(this.marks)
+            .append(TAB)
+            .append("mark = ")
+            .append(this.mark)
+            .append(TAB)
+            .append("consign = ")
+            .append(this.consign)
+            .append(TAB)
+            .append("pay = ")
+            .append(this.pay)
+            .append(TAB)
+            .append("inway = ")
+            .append(this.inway)
+            .append(TAB)
+            .append("tempType = ")
+            .append(this.tempType)
+            .append(TAB)
+            .append("hadPay = ")
+            .append(this.hadPay)
+            .append(TAB)
+            .append("arriveDate = ")
+            .append(this.arriveDate)
+            .append(TAB)
+            .append("destinationId = ")
+            .append(this.destinationId)
+            .append(TAB)
+            .append("refOutFullId = ")
+            .append(this.refOutFullId)
+            .append(TAB)
+            .append("tranNo = ")
+            .append(this.tranNo)
+            .append(TAB)
+            .append("reserve1 = ")
+            .append(this.reserve1)
+            .append(TAB)
+            .append("reserve2 = ")
+            .append(this.reserve2)
+            .append(TAB)
+            .append("reserve3 = ")
+            .append(this.reserve3)
+            .append(TAB)
+            .append("reserve4 = ")
+            .append(this.reserve4)
+            .append(TAB)
+            .append("reserve5 = ")
+            .append(this.reserve5)
+            .append(TAB)
+            .append("reserve6 = ")
+            .append(this.reserve6)
+            .append(TAB)
+            .append("reserve7 = ")
+            .append(this.reserve7)
+            .append(TAB)
+            .append("reserve8 = ")
+            .append(this.reserve8)
+            .append(TAB)
+            .append("reserve9 = ")
+            .append(this.reserve9)
+            .append(TAB)
+            .append("curcredit = ")
+            .append(this.curcredit)
+            .append(TAB)
+            .append("staffcredit = ")
+            .append(this.staffcredit)
+            .append(TAB)
+            .append("baseList = ")
+            .append(this.baseList)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }

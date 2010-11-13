@@ -13,7 +13,7 @@ import java.util.Map;
 
 import com.china.center.jdbc.inter.DAO;
 import com.china.center.oa.sail.bean.OutBean;
-import com.china.center.oa.sail.vo.OutBeanVO;
+import com.china.center.oa.sail.vo.OutVO;
 
 
 /**
@@ -24,7 +24,7 @@ import com.china.center.oa.sail.vo.OutBeanVO;
  * @see OutDAO
  * @since 1.0
  */
-public interface OutDAO extends DAO<OutBean, OutBeanVO>
+public interface OutDAO extends DAO<OutBean, OutVO>
 {
     boolean modifyOutStatus2(String fullId, int status);
 

@@ -18,4 +18,6 @@
 
 	<bean id="showDAO" class="com.china.center.oa.sail.dao.impl.ShowDAOImpl" />
 
+	<bean id="outUniqueDAO" class="com.china.center.oa.sail.dao.impl.OutUniqueDAOImpl" />
+
 </beans>

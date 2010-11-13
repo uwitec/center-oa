@@ -12,9 +12,11 @@ package com.china.center.oa.sail.bean;
 import java.io.Serializable;
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.Html;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.Unique;
+import com.china.center.jdbc.annotation.enums.Element;
 
 
 /**
@@ -33,7 +35,11 @@ public class ShowBean implements Serializable
     private String id = "";
 
     @Unique
+    @Html(title = "开单品名", must = true)
     private String name = "";
+
+    @Html(title = "描述", maxLength = 200, type = Element.TEXTAREA)
+    private String description = "";
 
     /**
      * default constructor
@@ -100,6 +106,23 @@ public class ShowBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription()
+    {
+        return description;
+    }
+
+    /**
+     * @param description
+     *            the description to set
+     */
+    public void setDescription(String description)
+    {
+        this.description = description;
     }
 
 }

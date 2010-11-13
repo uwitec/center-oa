@@ -66,5 +66,7 @@
 	<osgi:reference id="locationDAO" interface="com.china.center.oa.publics.dao.LocationDAO" />
 	
 	<osgi:reference id="StorageRelationManager" interface="com.china.center.oa.product.manager.StorageRelationManager" />
+	
+	<osgi:reference id="depotDAO" interface="com.china.center.oa.product.dao.DepotDAO" />
 
 </beans>
