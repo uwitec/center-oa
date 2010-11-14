@@ -24,13 +24,28 @@
         <property name="jobDetail" ref="statOutJob" />
         <property name="cronExpression" value="0 30 3 * * ?" />
     </bean>
+    
+    <bean id="deleteHisJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="curOutManager" />
+        <property name="targetMethod" value="deleteHis" />
+        <property name="concurrent" value="false" />
+    </bean>
+
+    <bean id="deleteHisTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="statOutJob" />
+        <property name="cronExpression" value="0 0 4 * * ?" />
+    </bean>
 
 	<bean
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
 				<ref bean="statOutTrigger" />
+				<ref bean="deleteHisTrigger" />
 			</list>
 		</property>
 	</bean>
+	
 </beans>

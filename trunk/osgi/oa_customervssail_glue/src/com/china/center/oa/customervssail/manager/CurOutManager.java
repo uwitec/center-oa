@@ -19,4 +19,9 @@ package com.china.center.oa.customervssail.manager;
 public interface CurOutManager
 {
     void statOut();
+
+    /**
+     * 清理三个月前的日志信息
+     */
+    void deleteHis();
 }

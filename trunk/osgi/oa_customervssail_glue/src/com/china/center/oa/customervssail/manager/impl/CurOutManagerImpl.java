@@ -97,6 +97,34 @@ public class CurOutManagerImpl implements CurOutManager
     {
     }
 
+    public void deleteHis()
+    {
+        final ConditionParse condition = new ConditionParse();
+
+        condition.addCondition("CreditlogBean.logTime", "<=", TimeTools.getDateFullString( -90));
+
+        // 操作在数据库事务中完成
+        TransactionTemplate tranTemplate = new TransactionTemplate(transactionManager);
+
+        try
+        {
+            tranTemplate.execute(new TransactionCallback()
+            {
+                public Object doInTransaction(TransactionStatus arg0)
+                {
+                    creditlogDAO.deleteEntityBeansByCondition(condition);
+
+                    return Boolean.TRUE;
+                }
+            });
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+        }
+
+    }
+
     /**
      * TODO 定期清理客户信用日志,防止日志过多 客户统计
      */
