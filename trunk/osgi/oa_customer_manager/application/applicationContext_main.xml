@@ -50,13 +50,9 @@
 
 	<bean id="customerCreditDAO" class="com.china.center.oa.credit.dao.impl.CustomerCreditDAOImpl" />
 
-	<bean id="outStatDAO" class="com.china.center.oa.credit.dao.impl.OutStatDAOImpl" />
-
 	<bean id="creditItemManager" class="com.china.center.oa.credit.manager.impl.CreditItemManagerImpl" />
 
 	<bean id="customerCreditManager" class="com.china.center.oa.credit.manager.impl.CustomerCreditManagerImpl" />
-	
-	<bean id="curOutManager" class="com.china.center.oa.credit.manager.impl.CurOutManagerImpl" />
 	
 	<bean id="customerFacade" class="com.china.center.oa.customer.facade.impl.CustomerFacadeImpl" />
 
