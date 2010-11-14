@@ -51,6 +51,7 @@
             <forward name="addStorageApply" path="/depot/addStorageApply.jsp" />
             <forward name="querySelfStorageRelation" path="/depot/querySelfStorageRelation.jsp" />
             <forward name="rptQueryProductInDepotpart" path="/depot/rptQueryProductInDepotpart.jsp" />
+            <forward name="rptQueryStorageRelationInDepot" path="/depot/rptQueryStorageRelationInDepot.jsp" />
         </action>
 		
 	</action-mappings>

@@ -9,6 +9,8 @@
 package com.china.center.oa.product.dao;
 
 
+import java.util.List;
+
 import com.china.center.jdbc.inter.DAO;
 import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.vo.DepotpartVO;
@@ -24,5 +26,5 @@ import com.china.center.oa.product.vo.DepotpartVO;
  */
 public interface DepotpartDAO extends DAO<DepotpartBean, DepotpartVO>
 {
-
+    List<DepotpartBean> queryOkDepotpartInDepot(String depotId);
 }

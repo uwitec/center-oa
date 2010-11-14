@@ -104,7 +104,7 @@ public class DepotManagerImpl extends AbstractListenerManager<DepotListener> imp
         sbean.setId(commonDAO.getSquenceString20());
         sbean.setDepotpartId(dpart.getId());
         sbean.setLocationId(bean.getId());
-        sbean.setName("默认储位");
+        sbean.setName(bean.getName() + "_默认储位");
         sbean.setDescription("默认储位");
 
         storageDAO.saveEntityBean(sbean);

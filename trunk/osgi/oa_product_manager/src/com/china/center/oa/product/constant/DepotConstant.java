@@ -37,14 +37,14 @@ public interface DepotConstant
     /**
      * 良品仓
      */
-    @Defined(key = "depotpartType", value = "次品仓")
-    int DEPOTPART_TYPE_INFERIOR = 0;
+    @Defined(key = "depotpartType", value = "良品仓")
+    int DEPOTPART_TYPE_OK = 0;
 
     /**
-     * 良品仓
+     * 次品仓
      */
-    @Defined(key = "depotpartType", value = "良品仓")
-    int DEPOTPART_TYPE_OK = 1;
+    @Defined(key = "depotpartType", value = "次品仓")
+    int DEPOTPART_TYPE_INFERIOR = 1;
 
     /**
      * 报废仓

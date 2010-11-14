@@ -52,6 +52,7 @@ import com.china.center.oa.product.bean.PriceChangeSrcItemBean;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.product.constant.ComposeConstant;
+import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.constant.ProductConstant;
 import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.ComposeProductDAO;
@@ -1004,6 +1005,9 @@ public class ProductAction extends DispatchAction
 
         // 数量大于0的库存
         condition.addIntCondition("StorageRelationBean.amount", ">", 0);
+
+        // 良品仓的
+        condition.addIntCondition("DepotpartBean.type", "=", DepotConstant.DEPOTPART_TYPE_OK);
 
         // 公共的库存
         condition.addCondition("StorageRelationBean.stafferId", "=", "0");

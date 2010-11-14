@@ -24,8 +24,14 @@ import com.china.center.oa.product.constant.StorageConstant;
  */
 public class ProductChangeWrap implements Serializable
 {
+    /**
+     * 储位
+     */
     private String storageId = "";
 
+    /**
+     * 仓区
+     */
     private String depotpartId = "";
 
     private String productId = "";
