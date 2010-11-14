@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<struts-config>
+	<action-mappings>
+		 <action path="/sail/out" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="addOut" path="/sail/addOut.jsp" />
+			<forward name="addOut1" path="/sail/addOut1.jsp" />
+			<forward name="listOut" path="/sail/listOut.jsp" />
+			<forward name="listOut1" path="/sail/listOut1.jsp" />
+			<forward name="error" path="/sail/error.jsp" />
+			<forward name="detailOut" path="/sail/detailOut.jsp" />
+			<forward name="print" path="/sail/print.jsp" />
+			<forward name="detailOut2" path="/sail/detailOut2.jsp" />
+			<forward name="detailOut3" path="/sail/detailOut3.jsp" />
+			<forward name="detailOut4" path="/sail/detailOut4.jsp" />
+			<forward name="processOut" path="/sail/processOut.jsp" />
+			<forward name="modifyOut" path="/sail/modifyOut.jsp" />
+			<forward name="modifyOut1" path="/sail/modifyOut1.jsp" />
+			<forward name="listOut2" path="/sail/listOutInAdmin.jsp" />
+			<forward name="listOut3" path="/sail/listOutInSec.jsp" />
+			<forward name="rptProvider" path="/sail/rptProvider.jsp" />
+			<forward name="rptAllCustomer" path="/sail/rptAllCustomer.jsp" />
+			<forward name="rptCustomerList"
+				path="/sail/rptCustomer.jsp" />
+			<forward name="warnOutList"
+				path="/sail/flagOutInCommon.jsp" redirect="false" />
+		</action>
+		
+	</action-mappings>
+</struts-config>

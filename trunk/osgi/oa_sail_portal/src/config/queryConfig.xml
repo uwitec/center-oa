@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<query>
+    
+    <item name="queryOut" deaultpfix="OutBean">
+        <condtion name="name" caption="指标项">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="face" caption="类型" pfix="CreditItemSecBean">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$creditItemFace</option>
+        </condtion>
+        <condtion name="pid" caption="父项">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$creditItemSecList</option>
+        </condtion>
+    </item>
+	
+</query>
