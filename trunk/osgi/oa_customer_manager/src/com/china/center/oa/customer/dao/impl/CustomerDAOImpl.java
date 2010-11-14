@@ -90,7 +90,8 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
      */
     public int countCustomerInOut(String id)
     {
-        return this.jdbcOperation.queryForInt("select count(1) from t_center_out where customerId = ?", id);
+        return this.jdbcOperation.queryForInt(
+            "select count(1) from t_center_out where customerId = ?", id);
     }
 
     /**
@@ -101,7 +102,8 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
      */
     public int countCustomerInBill(String id)
     {
-        return this.jdbcOperation.queryForInt("select count(1) from t_center_bill where customerId = ?", id);
+        return this.jdbcOperation.queryForInt(
+            "select count(1) from t_center_bill where customerId = ?", id);
     }
 
     /**
@@ -113,7 +115,8 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
      */
     public boolean updateCustomerLocation(String srcLocationId, String dirLocationId)
     {
-        this.jdbcOperation.update("set locationId = ? where locationId = ?", claz, dirLocationId, srcLocationId);
+        this.jdbcOperation.update("set locationId = ? where locationId = ?", claz, dirLocationId,
+            srcLocationId);
 
         return true;
     }
@@ -159,14 +162,15 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
 
         final List<String> result = new ArrayList();
 
-        this.jdbcOperation.query(sql, new Object[] {OATools.getFinanceBeginDate()}, new RowCallbackHandler()
-        {
-            public void processRow(ResultSet rst)
-                throws SQLException
+        this.jdbcOperation.query(sql, new Object[] {OATools.getFinanceBeginDate()},
+            new RowCallbackHandler()
             {
-                result.add(rst.getString("ID"));
-            }
-        });
+                public void processRow(ResultSet rst)
+                    throws SQLException
+                {
+                    result.add(rst.getString("ID"));
+                }
+            });
 
         return result;
     }
@@ -181,8 +185,8 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
      */
     public boolean updateCustomerCredit(String id, String creditLevelId, int creditVal)
     {
-        this.jdbcOperation.update("set creditLevelId = ? ,creditVal = ? where id = ?", claz, creditLevelId,
-            (double)creditVal, id);
+        this.jdbcOperation.update("set creditLevelId = ? ,creditVal = ? where id = ?", claz,
+            creditLevelId, (double)creditVal, id);
 
         return true;
     }
@@ -225,14 +229,16 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
      */
     public boolean updateCustomerLocationByCity(String cityId, String dirLocationId)
     {
-        this.jdbcOperation.update("set locationId = ? where cityId = ?", claz, dirLocationId, cityId);
+        this.jdbcOperation.update("set locationId = ? where cityId = ?", claz, dirLocationId,
+            cityId);
 
         return true;
     }
 
     public boolean initCustomerLocation()
     {
-        this.jdbcOperation.update("set locationId = ? where 1 = 1", claz, PublicConstant.CENTER_LOCATION);
+        this.jdbcOperation.update("set locationId = ? where 1 = 1", claz,
+            PublicConstant.CENTER_LOCATION);
 
         return true;
     }
@@ -271,7 +277,8 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
      * @param page
      * @return
      */
-    public List<CustomerAssignWrap> queryCustomerAssignByConstion(ConditionParse condition, PageSeparate page)
+    public List<CustomerAssignWrap> queryCustomerAssignByConstion(ConditionParse condition,
+                                                                  PageSeparate page)
     {
         // return jdbcOperation.queryObjectsByPageSeparate(condtition.toString(), page, claz, args);
         return jdbcOperation.queryObjectsBySqlAndPageSeparate(getLastQuerySql(condition), page,
@@ -293,20 +300,24 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
     private String getQuerySelfSql(String stafferId)
     {
         return "select CustomerBean.* " + "from T_CENTER_CUSTOMER_NOW CustomerBean, "
-               + "(select customerid from t_center_vs_stacus where STAFFERID = '" + stafferId + "') tt1 "
-               + "where CustomerBean.id = tt1.customerid";
+               + "(select customerid from t_center_vs_stacus where STAFFERID = '" + stafferId
+               + "') tt1 " + "where CustomerBean.id = tt1.customerid";
     }
 
     private String getLastQuerySelfSql(String stafferId, ConditionParse condition)
     {
-        condition.removeWhereStr();
+        ConditionParse newConditionParse = new ConditionParse();
 
-        if (StringTools.isNullOrNone(condition.toString()))
+        newConditionParse.setCondition(condition.toString());
+
+        newConditionParse.removeWhereStr();
+
+        if (StringTools.isNullOrNone(newConditionParse.toString()))
         {
-            condition.addString("1 = 1");
+            newConditionParse.addString("1 = 1");
         }
 
-        return getQuerySelfSql(stafferId) + " and " + condition.toString();
+        return getQuerySelfSql(stafferId) + " and " + newConditionParse.toString();
     }
 
     /**
@@ -318,7 +329,9 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
      */
     public int countSelfCustomerByConstion(String stafferId, ConditionParse condition)
     {
-        return jdbcOperation.queryObjectsBySql(getLastQuerySelfSql(stafferId, condition)).getCount();
+        return jdbcOperation
+            .queryObjectsBySql(getLastQuerySelfSql(stafferId, condition))
+            .getCount();
     }
 
     /**
@@ -329,11 +342,13 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
      * @param page
      * @return
      */
-    public List<CustomerBean> querySelfCustomerByConstion(String stafferId, ConditionParse condition, PageSeparate page)
+    public List<CustomerBean> querySelfCustomerByConstion(String stafferId,
+                                                          ConditionParse condition,
+                                                          PageSeparate page)
     {
         // return jdbcOperation.queryObjectsByPageSeparate(condtition.toString(), page, claz, args);
-        return jdbcOperation.queryObjectsBySqlAndPageSeparate(getLastQuerySelfSql(stafferId, condition), page,
-            CustomerBean.class);
+        return jdbcOperation.queryObjectsBySqlAndPageSeparate(getLastQuerySelfSql(stafferId,
+            condition), page, CustomerBean.class);
 
     }
 
@@ -344,9 +359,11 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
      */
     public int autoUpdateCustomerStatus()
     {
-        this.jdbcOperation.getIbatisDaoSupport().update("CustomerDAOImpl.preAutoUpdateCustomerStatus", null);
+        this.jdbcOperation.getIbatisDaoSupport().update(
+            "CustomerDAOImpl.preAutoUpdateCustomerStatus", null);
 
-        return this.jdbcOperation.getIbatisDaoSupport().update("CustomerDAOImpl.autoUpdateCustomerStatus", null);
+        return this.jdbcOperation.getIbatisDaoSupport().update(
+            "CustomerDAOImpl.autoUpdateCustomerStatus", null);
     }
 
     /**
@@ -357,7 +374,8 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
      */
     public boolean updateCityCustomerToInit(String cityId)
     {
-        this.jdbcOperation.getIbatisDaoSupport().update("CustomerDAOImpl.updateCityCustomerToInit", cityId);
+        this.jdbcOperation.getIbatisDaoSupport().update("CustomerDAOImpl.updateCityCustomerToInit",
+            cityId);
 
         return true;
     }
@@ -379,25 +397,24 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
 
         if (flag == CustomerConstant.RECLAIMSTAFFER_ALL)
         {
-            this.jdbcOperation.getIbatisDaoSupport().update("CustomerDAOImpl.updateAllCustomerByStafferId", map);
+            this.jdbcOperation.getIbatisDaoSupport().update(
+                "CustomerDAOImpl.updateAllCustomerByStafferId", map);
         }
 
         if (flag == CustomerConstant.RECLAIMSTAFFER_EXPEND)
         {
             map.put("selltype", CustomerConstant.SELLTYPE_EXPEND);
 
-            this.jdbcOperation
-                .getIbatisDaoSupport()
-                .update("CustomerDAOImpl.updateCustomerByStafferIdAndSelltype", map);
+            this.jdbcOperation.getIbatisDaoSupport().update(
+                "CustomerDAOImpl.updateCustomerByStafferIdAndSelltype", map);
         }
 
         if (flag == CustomerConstant.RECLAIMSTAFFER_TER)
         {
             map.put("selltype", CustomerConstant.SELLTYPE_TER);
 
-            this.jdbcOperation
-                .getIbatisDaoSupport()
-                .update("CustomerDAOImpl.updateCustomerByStafferIdAndSelltype", map);
+            this.jdbcOperation.getIbatisDaoSupport().update(
+                "CustomerDAOImpl.updateCustomerByStafferIdAndSelltype", map);
         }
 
         return true;
@@ -419,21 +436,24 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
 
         if (flag == CustomerConstant.RECLAIMSTAFFER_ALL)
         {
-            this.jdbcOperation.getIbatisDaoSupport().delete("CustomerDAOImpl.delAllCustomerByStafferId", map);
+            this.jdbcOperation.getIbatisDaoSupport().delete(
+                "CustomerDAOImpl.delAllCustomerByStafferId", map);
         }
 
         if (flag == CustomerConstant.RECLAIMSTAFFER_EXPEND)
         {
             map.put("selltype", CustomerConstant.SELLTYPE_EXPEND);
 
-            this.jdbcOperation.getIbatisDaoSupport().delete("CustomerDAOImpl.delCustomerByStafferIdAndSelltype", map);
+            this.jdbcOperation.getIbatisDaoSupport().delete(
+                "CustomerDAOImpl.delCustomerByStafferIdAndSelltype", map);
         }
 
         if (flag == CustomerConstant.RECLAIMSTAFFER_TER)
         {
             map.put("selltype", CustomerConstant.SELLTYPE_TER);
 
-            this.jdbcOperation.getIbatisDaoSupport().delete("CustomerDAOImpl.delCustomerByStafferIdAndSelltype", map);
+            this.jdbcOperation.getIbatisDaoSupport().delete(
+                "CustomerDAOImpl.delCustomerByStafferIdAndSelltype", map);
         }
 
         return true;
@@ -447,7 +467,8 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
      */
     public boolean updateApplyCityCustomerToInit(String cityId)
     {
-        this.jdbcOperation.getIbatisDaoSupport().update("CustomerDAOImpl.updateApplyCityCustomerToInit", cityId);
+        this.jdbcOperation.getIbatisDaoSupport().update(
+            "CustomerDAOImpl.updateApplyCityCustomerToInit", cityId);
 
         return true;
     }
@@ -464,7 +485,8 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
         map.put("begin", begin);
         map.put("end", end);
 
-        return this.jdbcOperation.getIbatisDaoSupport().update("CustomerDAOImpl.synCustomerNewTypeYear", map);
+        return this.jdbcOperation.getIbatisDaoSupport().update(
+            "CustomerDAOImpl.synCustomerNewTypeYear", map);
     }
 
     /**
@@ -475,7 +497,8 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
      */
     public int updayeCustomerNewTypeInTer()
     {
-        return this.jdbcOperation.getIbatisDaoSupport().update("CustomerDAOImpl.updayeCustomerNewTypeInTer", null);
+        return this.jdbcOperation.getIbatisDaoSupport().update(
+            "CustomerDAOImpl.updayeCustomerNewTypeInTer", null);
 
     }
 

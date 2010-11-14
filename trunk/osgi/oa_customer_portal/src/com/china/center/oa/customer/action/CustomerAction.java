@@ -159,6 +159,8 @@ public class CustomerAction extends DispatchAction
 
     private static String RPTQUERYALLCUSTOMER = "rptQueryAllCustomer";
 
+    private static String RPTQUERYSELFCUSTOMER = "rptQuerySelfCustomer";
+
     /**
      * default constructor
      */
@@ -287,6 +289,63 @@ public class CustomerAction extends DispatchAction
     }
 
     /**
+     * 查询自己名下的客户
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQuerySelfCustomer(ActionMapping mapping, ActionForm form,
+                                              HttpServletRequest request,
+                                              HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        String stafferId = request.getParameter("stafferId");
+
+        List<CustomerBean> list = null;
+
+        if (PageSeparateTools.isFirstLoad(request))
+        {
+            ConditionParse condtion = new ConditionParse();
+
+            condtion.addWhereStr();
+
+            setInnerCondition2(request, condtion);
+
+            int total = customerDAO.countSelfCustomerByConstion(stafferId, condtion);
+
+            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+
+            PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYSELFCUSTOMER);
+
+            list = customerDAO.querySelfCustomerByConstion(stafferId, condtion, page);
+        }
+        else
+        {
+            PageSeparateTools.processSeparate(request, RPTQUERYSELFCUSTOMER);
+
+            list = customerDAO.queryEntityBeansByCondition(PageSeparateTools.getCondition(request,
+                RPTQUERYSELFCUSTOMER), PageSeparateTools.getPageSeparate(request,
+                RPTQUERYSELFCUSTOMER));
+        }
+
+        // 自动解密
+        for (CustomerBean customerBean : list)
+        {
+            CustomerHelper.decryptCustomer(customerBean);
+        }
+
+        request.setAttribute("list", list);
+
+        return mapping.findForward("rptQuerySelfCustomer");
+    }
+
+    /**
      * 总裁配置信用等级
      * 
      * @param mapping
@@ -352,6 +411,29 @@ public class CustomerAction extends DispatchAction
         }
 
         condtion.addCondition("order by creditVal desc");
+    }
+
+    /**
+     * @param request
+     * @param condtion
+     */
+    private void setInnerCondition2(HttpServletRequest request, ConditionParse condtion)
+    {
+        String name = request.getParameter("name");
+
+        String code = request.getParameter("code");
+
+        if ( !StringTools.isNullOrNone(name))
+        {
+            condtion.addCondition("CustomerBean.name", "like", name);
+        }
+
+        if ( !StringTools.isNullOrNone(code))
+        {
+            condtion.addCondition("CustomerBean.code", "like", code);
+        }
+
+        condtion.addCondition("order by CustomerBean.creditVal desc");
     }
 
     /**
