@@ -34,7 +34,7 @@ import com.china.center.oa.publics.constant.PublicConstant;
 @Table(name = "T_CENTER_ENUM")
 public class EnumBean implements Serializable
 {
-    @Id
+    @Id(autoIncrement = true)
     private String id = "";
 
     @FK

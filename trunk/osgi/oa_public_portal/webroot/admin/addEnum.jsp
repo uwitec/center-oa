@@ -39,14 +39,14 @@ function addBean()
 
 		<p:table cells="1">
 
-			<p:pro field="type">
+			<p:pro field="type" innerString="style='width: 240px'"> 
 				<option value="">--</option>
 				<c:forEach items="${enumDefineList}" var="item">
 				<option value="${item.name}">${item.cnname}</option>
 				</c:forEach>
 			</p:pro>
 			
-			<p:pro field="value" />
+			<p:pro field="value" innerString="style='width: 240px'"/>
 
 		</p:table>
 	</p:subBody>

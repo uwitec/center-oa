@@ -75,7 +75,8 @@ public class EnumManagerImpl implements EnumManager
 
         for (EnumBean enumBean : list)
         {
-            List<MapBean> iList = PageSelectOption.optionMap.get(String.valueOf(enumBean.getType()));
+            List<MapBean> iList = PageSelectOption.optionMap
+                .get(String.valueOf(enumBean.getType()));
 
             if (iList != null)
             {
@@ -86,7 +87,8 @@ public class EnumManagerImpl implements EnumManager
 
         for (EnumBean enumBean : list)
         {
-            List<MapBean> iList = PageSelectOption.optionMap.get(String.valueOf(enumBean.getType()));
+            List<MapBean> iList = PageSelectOption.optionMap
+                .get(String.valueOf(enumBean.getType()));
 
             if (iList == null)
             {
@@ -107,8 +109,6 @@ public class EnumManagerImpl implements EnumManager
         Expression exp = new Expression(bean, this);
 
         exp.check("#type && #value &unique @enumDAO", "配置项已经存在");
-
-        bean.setId(commonDAO.getSquenceString());
 
         bean.setKey(commonDAO.getSquenceString());
 
@@ -231,7 +231,8 @@ public class EnumManagerImpl implements EnumManager
                     continue;
                 }
 
-                int count = enumDefineDAO.countRef(subSplits[0].trim(), subSplits[1].trim(), old.getKey());
+                int count = enumDefineDAO.countRef(subSplits[0].trim(), subSplits[1].trim(), old
+                    .getKey());
 
                 if (count > 0)
                 {

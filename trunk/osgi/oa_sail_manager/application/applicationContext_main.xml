@@ -20,4 +20,6 @@
 
 	<bean id="outUniqueDAO" class="com.china.center.oa.sail.dao.impl.OutUniqueDAOImpl" />
 
+	<bean id="outManager" class="com.china.center.oa.sail.manager.impl.OutManagerImpl" />
+
 </beans>

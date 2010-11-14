@@ -110,7 +110,7 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         paramterMap.put("beginDate", beginDate);
         paramterMap.put("endDate", endDate);
 
-        Object max = this.jdbcOperation.getIbatisDaoSupport().queryForObject(
+        Object max = getIbatisDaoSupport().queryForObject(
             "OutDAO.sumNoPayAndAvouchBusinessByStafferId", paramterMap);
 
         if (max == null)
@@ -130,7 +130,7 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         paramterMap.put("beginDate", beginDate);
         paramterMap.put("endDate", endDate);
 
-        Object max = this.jdbcOperation.getIbatisDaoSupport().queryForObject(
+        Object max = getIbatisDaoSupport().queryForObject(
             "OutDAO.sumNoPayAndAvouchBusinessByManagerId", paramterMap);
 
         if (max == null)
@@ -149,8 +149,7 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         paramterMap.put("beginDate", beginDate);
         paramterMap.put("endDate", endDate);
 
-        Object max = this.jdbcOperation.getIbatisDaoSupport().queryForObject(
-            "OutDAO.sumNoPayBusiness", paramterMap);
+        Object max = getIbatisDaoSupport().queryForObject("OutDAO.sumNoPayBusiness", paramterMap);
 
         if (max == null)
         {
@@ -182,8 +181,8 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         paramterMap.put("beginDate", beginDate);
         paramterMap.put("endDate", endDate);
 
-        Object count = this.jdbcOperation.getIbatisDaoSupport().queryForObject(
-            "OutDAO.countNotEndProductInIn", paramterMap);
+        Object count = getIbatisDaoSupport().queryForObject("OutDAO.countNotEndProductInIn",
+            paramterMap);
 
         if (count == null)
         {
@@ -201,8 +200,8 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         paramterMap.put("beginDate", beginDate);
         paramterMap.put("endDate", endDate);
 
-        Object count = this.jdbcOperation.getIbatisDaoSupport().queryForObject(
-            "OutDAO.countNotEndProductInOut", paramterMap);
+        Object count = getIbatisDaoSupport().queryForObject("OutDAO.countNotEndProductInOut",
+            paramterMap);
 
         if (count == null)
         {

@@ -239,4 +239,14 @@ public interface OutConstant
      */
     int HASINVOICE_YES = 1;
 
+    /**
+     * 流程中决定保存
+     */
+    String FLOW_DECISION_SAVE = "保存";
+
+    /**
+     * 流程中决定提交
+     */
+    String FLOW_DECISION_SUBMIT = "提交";
+
 }

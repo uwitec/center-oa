@@ -19,4 +19,6 @@
 
 	<osgi:service ref="outUniqueDAO" interface="com.china.center.oa.sail.dao.OutUniqueDAO" />
 
+	<osgi:service ref="outManager" interface="com.china.center.oa.sail.manager.OutManager" />
+
 </beans>

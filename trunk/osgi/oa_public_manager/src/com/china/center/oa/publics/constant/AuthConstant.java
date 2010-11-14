@@ -518,4 +518,9 @@ public interface AuthConstant
      * 分公司经理审批(信用分担)
      */
     String SAIL_LOCATION_MANAGER = "1408";
+
+    /**
+     * 全部库单查询
+     */
+    String SAIL_QUERY_ALL = "1409";
 }

@@ -136,7 +136,7 @@ public class OutBean implements Serializable
     /**
      * 0:没有付款 1:付款
      */
-    private int pay = 0;
+    private int pay = OutConstant.PAY_NOT;
 
     /**
      * 0：非在途 1：在途（入库单使用 调出）

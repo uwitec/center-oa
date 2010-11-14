@@ -52,9 +52,16 @@ public class BaseBean implements Serializable
     private int inway = 0;
 
     /**
-     * 储位(仓库下面是通过产品+价格+产品所有者获取具体的信息的,所以storageId不使用了)
+     * 储位(仓库下面是通过 仓区+产品+价格+产品所有者获取具体的信息的,所以storageId不使用了)
      */
     private String storageId = "";
+
+    /**
+     * 产品所在的仓区
+     */
+    private String depotpartId = "";
+
+    private String depotpartName = "";
 
     /**
      * 产品的所有者
@@ -472,5 +479,39 @@ public class BaseBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the depotpartId
+     */
+    public String getDepotpartId()
+    {
+        return depotpartId;
+    }
+
+    /**
+     * @param depotpartId
+     *            the depotpartId to set
+     */
+    public void setDepotpartId(String depotpartId)
+    {
+        this.depotpartId = depotpartId;
+    }
+
+    /**
+     * @return the depotpartName
+     */
+    public String getDepotpartName()
+    {
+        return depotpartName;
+    }
+
+    /**
+     * @param depotpartName
+     *            the depotpartName to set
+     */
+    public void setDepotpartName(String depotpartName)
+    {
+        this.depotpartName = depotpartName;
     }
 }

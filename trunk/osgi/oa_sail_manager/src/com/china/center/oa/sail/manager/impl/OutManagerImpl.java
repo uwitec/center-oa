@@ -273,7 +273,7 @@ public class OutManagerImpl implements OutManager
                         baseDAO.saveEntityBean(base);
                     }
 
-                    sendSMS(outBean, user);
+                    notifyOut(outBean, user);
 
                     return Boolean.TRUE;
                 }
@@ -410,7 +410,7 @@ public class OutManagerImpl implements OutManager
 
         outBean.setStatus(status);
 
-        sendSMS(outBean, user);
+        notifyOut(outBean, user);
 
         return true;
     }
@@ -671,7 +671,7 @@ public class OutManagerImpl implements OutManager
         {
             ProductChangeWrap wrap = new ProductChangeWrap();
 
-            wrap.setDepotpartId(outBean.getLocation());
+            wrap.setDepotpartId(element.getDepotpartId());
             wrap.setPrice(element.getCostPrice());
             wrap.setProductId(element.getProductId());
             wrap.setStafferId(element.getOwner());
@@ -734,7 +734,7 @@ public class OutManagerImpl implements OutManager
         {
             ProductChangeWrap wrap = new ProductChangeWrap();
 
-            wrap.setDepotpartId(outBean.getLocation());
+            wrap.setDepotpartId(element.getDepotpartId());
             wrap.setPrice(element.getCostPrice());
             wrap.setProductId(element.getProductId());
             wrap.setStafferId(element.getOwner());
@@ -867,6 +867,9 @@ public class OutManagerImpl implements OutManager
 
                     // 驳回修改在途方式
                     outDAO.updataInWay(fullId, OutConstant.IN_WAY_NO);
+
+                    // 变成没有付款
+                    outDAO.modifyPay2(fullId, OutConstant.PAY_NOT);
 
                     // 操作日志
                     addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_REJECT,
@@ -1047,10 +1050,17 @@ public class OutManagerImpl implements OutManager
                         }
                     }
 
-                    // 修改manager的入库时间
+                    // 结算中心通过 修改manager的入库时间
                     if (newNextStatus == OutConstant.STATUS_MANAGER_PASS)
                     {
                         outDAO.modifyManagerTime(outBean.getFullId(), TimeTools.now());
+
+                        // 验证是否是款到发货
+                        if (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_MONEY
+                            && outBean.getPay() != OutConstant.PAY_YES)
+                        {
+                            throw new RuntimeException("此单据是款到发货,当前此单未付款,不能通过");
+                        }
                     }
 
                     // 需要把回款日志敲定且变动库存
@@ -1098,7 +1108,7 @@ public class OutManagerImpl implements OutManager
 
                     outBean.setStatus(newNextStatus);
 
-                    sendSMS(outBean, user);
+                    notifyOut(outBean, user);
 
                     return Boolean.TRUE;
                 }
@@ -1143,7 +1153,7 @@ public class OutManagerImpl implements OutManager
         {
             ProductChangeWrap wrap = new ProductChangeWrap();
 
-            wrap.setDepotpartId(outBean.getLocation());
+            wrap.setDepotpartId(element.getDepotpartId());
             wrap.setPrice(element.getCostPrice());
             wrap.setProductId(element.getProductId());
             wrap.setStafferId(element.getOwner());
@@ -1531,47 +1541,53 @@ public class OutManagerImpl implements OutManager
      * @param out
      * @param user
      */
-    private void sendSMS(OutBean out, User user)
+    private void notifyOut(OutBean out, User user)
     {
-        if (out.getType() == 1 || true)
+        if (out.getType() == 1)
         {
             return;
         }
 
-        // 0:保存 1:提交 2:驳回 3:发货 4:会计审核通过 6:总经理审核通过
-        if (out.getStatus() == OutConstant.STATUS_SAVE
-            || out.getStatus() == OutConstant.STATUS_REJECT
-            || out.getStatus() == OutConstant.STATUS_SEC_PASS)
+        // TODO 邮件通知状态改变了
+
+        if (false)
         {
-            return;
-        }
+            // 0:保存 1:提交 2:驳回 3:发货 4:会计审核通过 6:总经理审核通过
+            if (out.getStatus() == OutConstant.STATUS_SAVE
+                || out.getStatus() == OutConstant.STATUS_REJECT
+                || out.getStatus() == OutConstant.STATUS_SEC_PASS)
+            {
+                return;
+            }
 
-        // 发送短信给区域总经理审核
-        if (out.getStatus() == OutConstant.STATUS_SUBMIT)
-        {
-            ConditionParse condtition = new ConditionParse();
+            // 发送短信给区域总经理审核
+            if (out.getStatus() == OutConstant.STATUS_SUBMIT)
+            {
+                ConditionParse condtition = new ConditionParse();
 
-            condtition.addCondition("locationId", "=", out.getLocationId());
+                condtition.addCondition("locationId", "=", out.getLocationId());
 
-            condtition.addIntCondition("status", "=", 0);
+                condtition.addIntCondition("status", "=", 0);
 
-            condtition.addIntCondition("role", "=", 4);
+                condtition.addIntCondition("role", "=", 4);
 
-            queryUserToSendSMS(out, user, condtition, "总经理审批");
-        }
+                queryUserToSendSMS(out, user, condtition, "总经理审批");
+            }
 
-        // 发送短信给库管审核(非总部)
-        if (out.getStatus() == OutConstant.STATUS_MANAGER_PASS && !"0".equals(out.getLocation()))
-        {
-            ConditionParse condtition = new ConditionParse();
+            // 发送短信给库管审核(非总部)
+            if (out.getStatus() == OutConstant.STATUS_MANAGER_PASS
+                && !"0".equals(out.getLocation()))
+            {
+                ConditionParse condtition = new ConditionParse();
 
-            condtition.addCondition("locationId", "=", out.getLocationId());
+                condtition.addCondition("locationId", "=", out.getLocationId());
 
-            condtition.addIntCondition("status", "=", 0);
+                condtition.addIntCondition("status", "=", 0);
 
-            condtition.addIntCondition("role", "=", 1);
+                condtition.addIntCondition("role", "=", 1);
 
-            queryUserToSendSMS(out, user, condtition, "库管员审批");
+                queryUserToSendSMS(out, user, condtition, "库管员审批");
+            }
         }
 
     }
