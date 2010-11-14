@@ -36,7 +36,7 @@ function load()
 		     {display: '电话', name : 'handphone', width : 'auto', sortable : false, align: 'left'}
 		     ],
 		 extAtt: {
-		     name : {begin : '<a href=../admin/staffer.do?method=findStaffer&id={id}&update=1 title=查看明细>', end : '</a>'}
+		     name : {begin : '<a href=../admin/staffer.do?method=findStaffer&id={id} title=查看明细>', end : '</a>'}
 		 },
 		 buttons : [
 		     {id: 'add', bclass: 'add', onpress : addBean},

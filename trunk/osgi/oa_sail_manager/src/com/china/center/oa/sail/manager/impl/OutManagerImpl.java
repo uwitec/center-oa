@@ -538,13 +538,16 @@ public class OutManagerImpl implements OutManager
                             remainInCur = 0.0;
                         }
 
-                        // TODO 职员信用不够可以使用客户信用倍数×个人抵押信用(需要) 全部使用客户的信用等级
+                        // 先客户信用 然后职员信用(信用*杠杆) 最后分公司经理
                         if (remainInCur >= outBean.getTotal())
                         {
                             outDAO.updateCurcredit(fullId, outBean.getTotal());
 
                             outDAO.updateStaffcredit(fullId, 0.0d);
                         }
+
+                        // 职员杠杆后的信用
+                        double staffCredit = sb2.getCredit() * sb2.getLever();
 
                         // 一半使用客户,一半使用职员的
                         if (remainInCur < outBean.getTotal())
@@ -556,9 +559,9 @@ public class OutManagerImpl implements OutManager
                             double remainInStaff = outBean.getTotal() - remainInCur;
 
                             // 防止职员信用等级超支
-                            if ( (noPayBusiness + remainInStaff) > sb2.getCredit())
+                            if ( (noPayBusiness + remainInStaff) > staffCredit)
                             {
-                                double lastNeed = (noPayBusiness + remainInStaff) - sb2.getCredit();
+                                double lastNeed = (noPayBusiness + remainInStaff) - staffCredit;
 
                                 outBean.setReserve6("客户信用最大额度是:"
                                                     + MathTools.formatNum(clevel.getMoney())
@@ -568,10 +571,14 @@ public class OutManagerImpl implements OutManager
                                                     + MathTools.formatNum(sb2.getCredit())
                                                     + ".职员信用已经使用额度是:"
                                                     + MathTools.formatNum(noPayBusiness)
-                                                    + ".职员信用超支(包括此单):"
-                                                    + (MathTools.formatNum(lastNeed))
-                                                    + ".此单所需补充额度(分公司经理)是:"
-                                                    + MathTools.formatNum(lastNeed));
+                                                    + ".信用超支(包括此单):"
+                                                    + (MathTools.formatNum(lastNeed)));
+
+                                // 这里如果不使用分公司经理直接不允许提交此单据
+                                if (outBean.getReserve3() != OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER)
+                                {
+                                    throw new MYException(outBean.getReserve6());
+                                }
 
                                 isCreditOutOf = true;
 
@@ -586,32 +593,20 @@ public class OutManagerImpl implements OutManager
                     // 信用没有受限检查产品价格是否为0
                     if ( !isCreditOutOf)
                     {
-                        boolean isZero = false;
+                        /**
+                         * DROP 删除价格为0的逻辑 <br>
+                         * boolean isZero = false; List<BaseBean> baseList =
+                         * baseDAO.queryEntityBeansByFK(outBean.getFullId()); for (BaseBean baseBean : baseList) { if
+                         * (baseBean.getPrice() == 0.0d) { isZero = true; outBean.setReserve6("存在价格为0的产品");
+                         * outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_MIN, outBean.getReserve6()); break; } }
+                         * if ( !isZero) { outBean.setReserve6(""); outDAO.updateOutReserve2(fullId,
+                         * OutConstant.OUT_CREDIT_COMMON, outBean .getReserve6()); }
+                         */
 
-                        List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
+                        outBean.setReserve6("");
 
-                        for (BaseBean baseBean : baseList)
-                        {
-                            if (baseBean.getPrice() == 0.0d)
-                            {
-                                isZero = true;
-
-                                outBean.setReserve6("存在价格为0的产品");
-
-                                outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_MIN,
-                                    outBean.getReserve6());
-
-                                break;
-                            }
-                        }
-
-                        if ( !isZero)
-                        {
-                            outBean.setReserve6("");
-
-                            outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_COMMON, outBean
-                                .getReserve6());
-                        }
+                        outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_COMMON, outBean
+                            .getReserve6());
                     }
 
                     // 修改人工干预,重新置为0
@@ -1028,11 +1023,13 @@ public class OutManagerImpl implements OutManager
                             double lastCredit = outBean.getTotal() - outBean.getStaffcredit()
                                                 - outBean.getCurcredit();
 
-                            if ( (lastCredit + noPayBusinessByManager) > staffer.getCredit())
+                            // 职员杠杆后的信用
+                            double staffCredit = staffer.getCredit() * staffer.getLever();
+
+                            if ( (lastCredit + noPayBusinessByManager) > staffCredit)
                             {
-                                throw new RuntimeException("您的信用额度是["
-                                                           + MathTools.formatNum(staffer
-                                                               .getCredit())
+                                throw new RuntimeException("您杠杆后的信用额度是["
+                                                           + MathTools.formatNum(staffCredit)
                                                            + "],已经使用了["
                                                            + MathTools
                                                                .formatNum(noPayBusinessByManager)

@@ -38,6 +38,9 @@ public interface StafferManager extends ListenerManager<StafferListener>
     boolean updatePwkey(User user, StafferBean bean)
         throws MYException;
 
+    boolean updateLever(User user, StafferBean bean)
+        throws MYException;
+
     boolean delBean(User user, String stafferId)
         throws MYException;
 

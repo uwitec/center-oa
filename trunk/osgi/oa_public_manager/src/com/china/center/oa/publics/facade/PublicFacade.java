@@ -51,6 +51,9 @@ public interface PublicFacade
     boolean updateStafferPwkey(User user, StafferBean bean)
         throws MYException;
 
+    boolean updateStafferLever(User user, StafferBean bean)
+        throws MYException;
+
     boolean delStafferBean(User user, String id)
         throws MYException;
 

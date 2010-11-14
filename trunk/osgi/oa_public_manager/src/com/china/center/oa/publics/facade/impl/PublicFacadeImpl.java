@@ -193,6 +193,27 @@ public class PublicFacadeImpl extends AbstarctFacade implements PublicFacade
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.china.center.oa.publics.facade.PublicFacade#updateStafferLever(com.center.china.osgi.publics.User,
+     *      com.china.center.oa.publics.bean.StafferBean)
+     */
+    public boolean updateStafferLever(User user, StafferBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, bean);
+
+        if (containAuth(user, AuthConstant.CUSTOMER_LEVER_OPR))
+        {
+            return stafferManager.updateLever(user, bean);
+        }
+        else
+        {
+            throw new MYException("没有权限");
+        }
+    }
+
     /**
      * delStafferBean
      * 

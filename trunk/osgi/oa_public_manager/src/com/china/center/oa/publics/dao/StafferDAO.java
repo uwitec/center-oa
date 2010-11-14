@@ -32,6 +32,8 @@ public interface StafferDAO extends DAO<StafferBean, StafferVO>
 
     boolean updatePwkey(String id, String pwkey);
 
+    boolean updateLever(String id, int lever);
+
     int countByDepartmentId(String departmentId);
 
     int countByPostId(String postId);

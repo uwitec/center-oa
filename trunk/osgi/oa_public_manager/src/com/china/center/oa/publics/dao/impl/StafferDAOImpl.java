@@ -51,6 +51,13 @@ public class StafferDAOImpl extends BaseDAO<StafferBean, StafferVO> implements S
         return true;
     }
 
+    public boolean updateLever(String id, int lever)
+    {
+        this.jdbcOperation.updateField("lever", lever, id, this.claz);
+
+        return true;
+    }
+
     public int countByDepartmentId(String departmentId)
     {
         return jdbcOperation.queryForInt("where departmentId = ? ", this.claz, departmentId);
@@ -69,7 +76,8 @@ public class StafferDAOImpl extends BaseDAO<StafferBean, StafferVO> implements S
      */
     public List<StafferBean> queryStafferByLocationId(String locationId)
     {
-        return this.jdbcOperation.queryForList("where locationId = ? order by name", claz, locationId);
+        return this.jdbcOperation.queryForList("where locationId = ? order by name", claz,
+            locationId);
     }
 
     /**
@@ -85,7 +93,8 @@ public class StafferDAOImpl extends BaseDAO<StafferBean, StafferVO> implements S
      */
     public List<StafferBean> listCommonEntityBeans()
     {
-        return jdbcOperation.queryForList("where status < ? order by name", claz, StafferConstant.STATUS_DROP);
+        return jdbcOperation.queryForList("where status < ? order by name", claz,
+            StafferConstant.STATUS_DROP);
     }
 
     /**
@@ -117,8 +126,8 @@ public class StafferDAOImpl extends BaseDAO<StafferBean, StafferVO> implements S
 
         paramterMap.put("authId", authId);
 
-        return (List<StafferBean>)this.ibatisDaoSupport
-            .queryForList("StafferDAOImpl.queryStafferByAuthId", paramterMap);
+        return (List<StafferBean>)this.ibatisDaoSupport.queryForList(
+            "StafferDAOImpl.queryStafferByAuthId", paramterMap);
     }
 
     /**

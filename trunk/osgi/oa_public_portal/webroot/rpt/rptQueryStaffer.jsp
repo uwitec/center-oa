@@ -87,7 +87,7 @@ function closesd()
 			</tr>
 
 			<tr class="content1">
-			    <td width="15%" align="center">区域</td>
+			    <td width="15%" align="center">分公司</td>
                 <td align="center">
                 <select class="select_class" name="locationId" values="${locationId}">
                 <option value="">--</option>
@@ -123,7 +123,7 @@ function closesd()
 			<c:forEach items="${beanList}" var="item" varStatus="vs">
 				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
 					<td align="center"><input type='${selectMode == 1 ? "radio" : "checkbox"}' name="beans"
-						pname="${item.name}" pcode="${item.code}" value="${item.id}"/></td>
+					plever="${item.lever}"	pname="${item.name}" pcode="${item.code}" value="${item.id}"/></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.name}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.code}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.departmentName}</td>

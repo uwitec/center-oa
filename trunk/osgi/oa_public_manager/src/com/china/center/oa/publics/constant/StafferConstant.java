@@ -41,4 +41,6 @@ public interface StafferConstant
 
     @Defined(key = "stafferStatus", value = "废弃")
     int STATUS_DROP = 99;
+
+    int LEVER_DEFAULT = 1;
 }

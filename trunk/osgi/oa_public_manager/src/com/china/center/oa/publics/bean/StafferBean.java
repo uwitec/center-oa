@@ -58,6 +58,12 @@ public class StafferBean implements Serializable
      */
     private int status = StafferConstant.STATUS_COMMON;
 
+    /**
+     * 信用杠杆倍数
+     */
+    @Html(title = "信用杠杆倍数")
+    private int lever = StafferConstant.LEVER_DEFAULT;
+
     @Html(title = "分公司", must = true, type = Element.SELECT)
     @Join(tagClass = LocationBean.class)
     private String locationId = "";
@@ -661,5 +667,132 @@ public class StafferBean implements Serializable
     public void setPriList(List<StafferVSPriBean> priList)
     {
         this.priList = priList;
+    }
+
+    /**
+     * @return the lever
+     */
+    public int getLever()
+    {
+        return lever;
+    }
+
+    /**
+     * @param lever
+     *            the lever to set
+     */
+    public void setLever(int lever)
+    {
+        this.lever = lever;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("StafferBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("name = ")
+            .append(this.name)
+            .append(TAB)
+            .append("code = ")
+            .append(this.code)
+            .append(TAB)
+            .append("examType = ")
+            .append(this.examType)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("lever = ")
+            .append(this.lever)
+            .append(TAB)
+            .append("locationId = ")
+            .append(this.locationId)
+            .append(TAB)
+            .append("sex = ")
+            .append(this.sex)
+            .append(TAB)
+            .append("graduateDate = ")
+            .append(this.graduateDate)
+            .append(TAB)
+            .append("specialty = ")
+            .append(this.specialty)
+            .append(TAB)
+            .append("graduate = ")
+            .append(this.graduate)
+            .append(TAB)
+            .append("graduateSchool = ")
+            .append(this.graduateSchool)
+            .append(TAB)
+            .append("departmentId = ")
+            .append(this.departmentId)
+            .append(TAB)
+            .append("postId = ")
+            .append(this.postId)
+            .append(TAB)
+            .append("principalshipId = ")
+            .append(this.principalshipId)
+            .append(TAB)
+            .append("nation = ")
+            .append(this.nation)
+            .append(TAB)
+            .append("city = ")
+            .append(this.city)
+            .append(TAB)
+            .append("address = ")
+            .append(this.address)
+            .append(TAB)
+            .append("visage = ")
+            .append(this.visage)
+            .append(TAB)
+            .append("idCard = ")
+            .append(this.idCard)
+            .append(TAB)
+            .append("birthday = ")
+            .append(this.birthday)
+            .append(TAB)
+            .append("handphone = ")
+            .append(this.handphone)
+            .append(TAB)
+            .append("subphone = ")
+            .append(this.subphone)
+            .append(TAB)
+            .append("picPath = ")
+            .append(this.picPath)
+            .append(TAB)
+            .append("idiograph = ")
+            .append(this.idiograph)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("pwkey = ")
+            .append(this.pwkey)
+            .append(TAB)
+            .append("credit = ")
+            .append(this.credit)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("priList = ")
+            .append(this.priList)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }

@@ -118,8 +118,8 @@ public class StafferAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryStaffer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward queryStaffer(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -137,8 +137,8 @@ public class StafferAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYSTAFFER, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSTAFFER, request, condtion, this.stafferDAO,
-            new HandleResult<StafferVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSTAFFER, request, condtion,
+            this.stafferDAO, new HandleResult<StafferVO>()
             {
                 public void handle(StafferVO vo)
                 {
@@ -166,8 +166,8 @@ public class StafferAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddStaffer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward preForAddStaffer(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -211,8 +211,8 @@ public class StafferAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForSetpwkey(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward preForSetpwkey(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -243,8 +243,8 @@ public class StafferAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updatePwkey(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward updatePwkey(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -253,7 +253,8 @@ public class StafferAction extends DispatchAction
 
         String md5key = Security.getSecurity(key);
 
-        String deskeygen = md5key.substring(0, 4) + md5key.substring(md5key.length() - 4, md5key.length());
+        String deskeygen = md5key.substring(0, 4)
+                           + md5key.substring(md5key.length() - 4, md5key.length());
 
         StafferBean bean = stafferDAO.find(id);
 
@@ -294,7 +295,8 @@ public class StafferAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward popStafferCommonQuery(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward popStafferCommonQuery(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
                                                HttpServletResponse response)
         throws ServletException
     {
@@ -341,8 +343,8 @@ public class StafferAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addStaffer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse response)
+    public ActionForward addStaffer(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         StafferBean bean = new StafferBean();
@@ -395,8 +397,8 @@ public class StafferAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateStaffer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward updateStaffer(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         StafferBean bean = new StafferBean();
@@ -449,8 +451,8 @@ public class StafferAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward delStaffer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse response)
+    public ActionForward delStaffer(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         try
@@ -485,8 +487,8 @@ public class StafferAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findStaffer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward findStaffer(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -497,25 +499,25 @@ public class StafferAction extends DispatchAction
 
         request.setAttribute("bean", bean);
 
+        List<LocationBean> locationList = locationDAO.listEntityBeans();
+        request.setAttribute("locationList", locationList);
+
+        List<DepartmentBean> depList = departmentDAO.listEntityBeans();
+        request.setAttribute("depList", depList);
+
+        List<PostBean> postList = postDAO.listEntityBeans();
+        request.setAttribute("postList", postList);
+
+        preForListAllOrgTree(request);
+
+        List<StafferVSPriBean> priList = stafferVSPriDAO.queryEntityBeansByFK(id);
+
+        JSONArray jarr = new JSONArray(priList, true);
+
+        request.setAttribute("myPris", jarr.toString());
+
         if ( !StringTools.isNullOrNone(update))
         {
-            List<LocationBean> locationList = locationDAO.listEntityBeans();
-            request.setAttribute("locationList", locationList);
-
-            List<DepartmentBean> depList = departmentDAO.listEntityBeans();
-            request.setAttribute("depList", depList);
-
-            List<PostBean> postList = postDAO.listEntityBeans();
-            request.setAttribute("postList", postList);
-
-            preForListAllOrgTree(request);
-
-            List<StafferVSPriBean> priList = stafferVSPriDAO.queryEntityBeansByFK(id);
-
-            JSONArray jarr = new JSONArray(priList, true);
-
-            request.setAttribute("myPris", jarr.toString());
-
             return mapping.findForward("updateStaffer");
         }
 

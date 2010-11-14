@@ -60,7 +60,7 @@ public interface OutConstant
     int OUT_CREDIT_COMMON = 0;
 
     /**
-     * 信用超支
+     * 信用超支(临时的)
      */
     int OUT_CREDIT_OVER = 1;
 

@@ -81,6 +81,8 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
 
         bean.setId(commonDAO.getSquenceString());
 
+        bean.setLever(StafferConstant.LEVER_DEFAULT);
+
         // save VS
         List<StafferVSPriBean> priList = bean.getPriList();
 
@@ -129,6 +131,8 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
 
         bean.setPwkey(oldBean.getPwkey());
 
+        bean.setLever(oldBean.getLever());
+
         List<StafferVSPriBean> priList = bean.getPriList();
 
         if (priList.size() >= 1)
@@ -166,6 +170,17 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
         JudgeTools.judgeParameterIsNull(user, bean);
 
         stafferDAO.updatePwkey(bean.getId(), bean.getPwkey());
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean updateLever(User user, StafferBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, bean);
+
+        stafferDAO.updateLever(bean.getId(), bean.getLever());
 
         return true;
     }
@@ -233,7 +248,8 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
 
             String parentId = pri.getParentId();
 
-            List<StafferVSPriBean> svsp = stafferVSPriDAO.queryEntityBeansByFK(parentId, AnoConstant.FK_FIRST);
+            List<StafferVSPriBean> svsp = stafferVSPriDAO.queryEntityBeansByFK(parentId,
+                AnoConstant.FK_FIRST);
 
             for (StafferVSPriBean each : svsp)
             {
