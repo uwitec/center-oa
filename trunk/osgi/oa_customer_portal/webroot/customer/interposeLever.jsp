@@ -15,11 +15,12 @@ function addBean()
 
 function selectCus()
 {
-    window.common.modal('../customer/customer.do?method=rptQueryAllCustomer&load=1');
+    window.common.modal('../admin/pop.do?method=rptQueryStaffer&load=1&selectMode=1');
 }
 
-function getCustomer(obj)
+function getStaffers(oos)
 {
+	var obj = oos[0];
     $O('cid').value = obj.value;
     $O('cname').value = obj.pname;
     $O('oldcval').value = obj.plever;
@@ -50,17 +51,17 @@ function getCustomer(obj)
 	<p:subBody width="98%">
 		<p:table cells="1">
 
-			<p:cell title="选择客户">
+			<p:cell title="选择职员">
 			    <input type="text" class="input_class" name="cname" id="cname" style="width: 240px">
 			    <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
                     class="button_class" onclick="selectCus()">&nbsp;&nbsp; 
 			</p:cell>
 			
-			<p:cell title="客户原始信用杠杆">
+			<p:cell title="职员原始信用杠杆">
                 <input type="text" class="input_class" name="oldcval" id="oldcval" readonly="readonly">
             </p:cell>
             
-            <p:cell title="更新后客户信用杠杆">
+            <p:cell title="更新后职员信用杠杆">
                 <input type="text" class="input_class" name="newcval" id="newcval" oncheck="notNone;isInt;range(1)"> <font color="red">*</font>
             </p:cell>
 

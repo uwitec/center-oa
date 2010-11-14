@@ -30,7 +30,6 @@ function load()
 		     {display: '联系人', name : 'connector', width : '10%', sortable : false, align: 'left'},
 		     {display: '类型', name : 'selltype', width : '8%', sortable : false, align: 'left', cc: 101},
 		     {display: '积分', name : 'creditVal', width : '8%', toFixed: 2},
-		     {display: '信用杠杆', name : 'lever', width : '10%', sortable : true, align: 'left'},
 		     {display: '信用更新', name : 'creditUpdateTime', width : '8%', sortable : false, align: 'left'},
 		     {display: '时间', name : 'createTime', width : 'auto', sortable : true, align: 'left'}
 		     ],

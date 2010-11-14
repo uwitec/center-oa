@@ -50,7 +50,6 @@ import com.china.center.actionhelper.query.QueryItemBean;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
-import com.china.center.oa.credit.dao.OutStatDAO;
 import com.china.center.oa.customer.bean.AssignApplyBean;
 import com.china.center.oa.customer.bean.CustomerApplyBean;
 import com.china.center.oa.customer.bean.CustomerBean;
@@ -84,6 +83,7 @@ import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.ProvinceDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.publics.facade.PublicFacade;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -104,8 +104,6 @@ public class CustomerAction extends DispatchAction
     private CustomerDAO customerDAO = null;
 
     private AssignApplyDAO assignApplyDAO = null;
-
-    private OutStatDAO outStatDAO = null;
 
     private CustomerHisDAO customerHisDAO = null;
 
@@ -128,6 +126,8 @@ public class CustomerAction extends DispatchAction
     private CityDAO cityDAO = null;
 
     private CustomerFacade customerFacade = null;
+
+    private PublicFacade publicFacade = null;
 
     private CustomerManager customerManager = null;
 
@@ -176,8 +176,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward querySelfCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse response)
+    public ActionForward querySelfCustomer(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -195,7 +195,8 @@ public class CustomerAction extends DispatchAction
 
             ActionTools.processJSONQueryCondition(QUERYCUSTOMER, request, condtion);
 
-            jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCUSTOMER, request, condtion, this.customerDAO);
+            jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCUSTOMER, request, condtion,
+                this.customerDAO);
         }
         else
         {
@@ -205,29 +206,33 @@ public class CustomerAction extends DispatchAction
 
             condtion.addCondition("order by CustomerBean.loginTime desc");
 
-            jsonstr = ActionTools.querySelfBeanByJSONAndToString(QUERYCUSTOMER, request, condtion, new CommonQuery()
-            {
-                public int getCount(String key, HttpServletRequest request, ConditionParse condition)
+            jsonstr = ActionTools.querySelfBeanByJSONAndToString(QUERYCUSTOMER, request, condtion,
+                new CommonQuery()
                 {
-                    return customerDAO.countSelfCustomerByConstion(stafferId, condition);
-                }
+                    public int getCount(String key, HttpServletRequest request,
+                                        ConditionParse condition)
+                    {
+                        return customerDAO.countSelfCustomerByConstion(stafferId, condition);
+                    }
 
-                public String getOrderPfix(String key, HttpServletRequest request)
-                {
-                    return "CustomerBean";
-                }
+                    public String getOrderPfix(String key, HttpServletRequest request)
+                    {
+                        return "CustomerBean";
+                    }
 
-                public List queryResult(String key, HttpServletRequest request, ConditionParse queryCondition)
-                {
-                    return customerDAO.querySelfCustomerByConstion(stafferId, PageSeparateTools.getCondition(request,
-                        key), PageSeparateTools.getPageSeparate(request, key));
-                }
+                    public List queryResult(String key, HttpServletRequest request,
+                                            ConditionParse queryCondition)
+                    {
+                        return customerDAO.querySelfCustomerByConstion(stafferId, PageSeparateTools
+                            .getCondition(request, key), PageSeparateTools.getPageSeparate(request,
+                            key));
+                    }
 
-                public String getSortname(HttpServletRequest request)
-                {
-                    return request.getParameter(ActionTools.SORTNAME);
-                }
-            });
+                    public String getSortname(HttpServletRequest request)
+                    {
+                        return request.getParameter(ActionTools.SORTNAME);
+                    }
+                });
         }
 
         return JSONTools.writeResponse(response, jsonstr);
@@ -243,8 +248,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryAllCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                             HttpServletResponse reponse)
+    public ActionForward rptQueryAllCustomer(ActionMapping mapping, ActionForm form,
+                                             HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -271,9 +276,9 @@ public class CustomerAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYALLCUSTOMER);
 
-            list = customerDAO.queryEntityBeansByCondition(
-                PageSeparateTools.getCondition(request, RPTQUERYALLCUSTOMER), PageSeparateTools.getPageSeparate(
-                    request, RPTQUERYALLCUSTOMER));
+            list = customerDAO.queryEntityBeansByCondition(PageSeparateTools.getCondition(request,
+                RPTQUERYALLCUSTOMER), PageSeparateTools.getPageSeparate(request,
+                RPTQUERYALLCUSTOMER));
         }
 
         request.setAttribute("list", list);
@@ -282,7 +287,7 @@ public class CustomerAction extends DispatchAction
     }
 
     /**
-     * 人为干预等级
+     * 总裁配置信用等级
      * 
      * @param mapping
      * @param form
@@ -291,27 +296,36 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward interposeLever(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward interposeLever(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
-        String cid = request.getParameter("cid");
+        String id = request.getParameter("cid");
 
-        int newcval = CommonTools.parseInt(request.getParameter("newcval"));
+        String newLever = request.getParameter("newcval");
 
-        User user = Helper.getUser(request);
+        StafferBean bean = stafferDAO.find(id);
+
+        if (bean == null)
+        {
+            return ActionTools.toError("职员不存在", "interposeLever", mapping, request);
+        }
+
+        bean.setLever(CommonTools.parseInt(newLever));
 
         try
         {
-            customerFacade.updateCustomerLever(user.getId(), cid, newcval);
+            User user = Helper.getUser(request);
 
-            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+            publicFacade.updateStafferLever(user, bean);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功设置职员的信用杠杆");
         }
         catch (MYException e)
         {
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+            _logger.warn(e, e);
 
-            return mapping.findForward("error");
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "修改失败:" + e.getMessage());
         }
 
         return mapping.findForward("interposeLever");
@@ -350,7 +364,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryCustomerAssign(ActionMapping mapping, ActionForm form, final HttpServletRequest request,
+    public ActionForward queryCustomerAssign(ActionMapping mapping, ActionForm form,
+                                             final HttpServletRequest request,
                                              HttpServletResponse response)
         throws ServletException
     {
@@ -364,8 +379,8 @@ public class CustomerAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYCUSTOMERASSIGN, request, condtion);
 
-        String jsonstr = ActionTools.querySelfBeanByJSONAndToString(QUERYCUSTOMERASSIGN, request, condtion,
-            new CommonQuery()
+        String jsonstr = ActionTools.querySelfBeanByJSONAndToString(QUERYCUSTOMERASSIGN, request,
+            condtion, new CommonQuery()
             {
                 public int getCount(String key, HttpServletRequest request, ConditionParse condition)
                 {
@@ -377,10 +392,12 @@ public class CustomerAction extends DispatchAction
                     return "t1";
                 }
 
-                public List queryResult(String key, HttpServletRequest request, ConditionParse queryCondition)
+                public List queryResult(String key, HttpServletRequest request,
+                                        ConditionParse queryCondition)
                 {
-                    return customerDAO.queryCustomerAssignByConstion(PageSeparateTools.getCondition(request, key),
-                        PageSeparateTools.getPageSeparate(request, key));
+                    return customerDAO.queryCustomerAssignByConstion(PageSeparateTools
+                        .getCondition(request, key), PageSeparateTools
+                        .getPageSeparate(request, key));
                 }
 
                 public String getSortname(HttpServletRequest request)
@@ -402,7 +419,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryCustomerDistribute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward queryCustomerDistribute(ActionMapping mapping, ActionForm form,
+                                                 HttpServletRequest request,
                                                  HttpServletResponse response)
         throws ServletException
     {
@@ -471,8 +489,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryChangeLog(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward queryChangeLog(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -483,7 +501,8 @@ public class CustomerAction extends DispatchAction
 
         condtion.addCondition("order by logTime desc");
 
-        String jsonstr = ActionTools.queryBeanByJSONAndToString(QUERYCHANGELOG, request, condtion, this.changeLogDAO);
+        String jsonstr = ActionTools.queryBeanByJSONAndToString(QUERYCHANGELOG, request, condtion,
+            this.changeLogDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -499,7 +518,8 @@ public class CustomerAction extends DispatchAction
      * @throws ServletException
      */
     public ActionForward queryStafferCustomerDistribute(ActionMapping mapping, ActionForm form,
-                                                        HttpServletRequest request, HttpServletResponse response)
+                                                        HttpServletRequest request,
+                                                        HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -540,7 +560,8 @@ public class CustomerAction extends DispatchAction
      * @throws ServletException
      */
     public ActionForward queryAllStafferCustomerDistribute(ActionMapping mapping, ActionForm form,
-                                                           HttpServletRequest request, HttpServletResponse response)
+                                                           HttpServletRequest request,
+                                                           HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -630,7 +651,8 @@ public class CustomerAction extends DispatchAction
         // 一个职员75
         int width = lop.size() * 60 > 900 ? lop.size() * 60 : 900;
 
-        pm.createBarChart(dataset, locationName + "公司职员", "客户数量", locationName + "客户分布", fileName, width);
+        pm.createBarChart(dataset, locationName + "公司职员", "客户数量", locationName + "客户分布", fileName,
+            width);
 
         return "../temp/" + ttemp + fileName;
     }
@@ -645,8 +667,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryHisCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward queryHisCustomer(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -667,7 +689,8 @@ public class CustomerAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYHISCUSTOMER, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYHISCUSTOMER, request, condtion, this.customerHisDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYHISCUSTOMER, request, condtion,
+            this.customerHisDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -682,7 +705,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryCheckHisCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward queryCheckHisCustomer(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
                                                HttpServletResponse response)
         throws ServletException
     {
@@ -695,8 +719,8 @@ public class CustomerAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYCHECKHISCUSTOMER, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKHISCUSTOMER, request, condtion,
-            this.customerHisDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKHISCUSTOMER, request,
+            condtion, this.customerHisDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -711,8 +735,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryApplyCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward queryApplyCustomer(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -723,13 +747,15 @@ public class CustomerAction extends DispatchAction
 
         condtion.addIntCondition("CustomerApplyBean.opr", "<>", CustomerConstant.OPR_UPATE_CREDIT);
 
-        condtion.addIntCondition("CustomerApplyBean.opr", "<>", CustomerConstant.OPR_UPATE_ASSIGNPER);
+        condtion.addIntCondition("CustomerApplyBean.opr", "<>",
+            CustomerConstant.OPR_UPATE_ASSIGNPER);
 
         if (userManager.containAuth(user, AuthConstant.CUSTOMER_CHECK))
         {
             condtion.addCondition("CustomerApplyBean.locationId", "=", user.getLocationId());
 
-            condtion.addIntCondition("CustomerApplyBean.status", "=", CustomerConstant.STATUS_APPLY);
+            condtion
+                .addIntCondition("CustomerApplyBean.status", "=", CustomerConstant.STATUS_APPLY);
         }
         else
         {
@@ -739,8 +765,8 @@ public class CustomerAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYAPPLYCUSTOMER, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYAPPLYCUSTOMER, request, condtion,
-            this.customerApplyDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYAPPLYCUSTOMER, request,
+            condtion, this.customerApplyDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -756,7 +782,8 @@ public class CustomerAction extends DispatchAction
      * @throws ServletException
      */
     public ActionForward queryApplyCustomerForCredit(ActionMapping mapping, ActionForm form,
-                                                     HttpServletRequest request, HttpServletResponse response)
+                                                     HttpServletRequest request,
+                                                     HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -773,8 +800,8 @@ public class CustomerAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYAPPLYCUSTOMERFORCREDIT, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYAPPLYCUSTOMERFORCREDIT, request, condtion,
-            this.customerApplyDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYAPPLYCUSTOMERFORCREDIT, request,
+            condtion, this.customerApplyDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -790,21 +817,23 @@ public class CustomerAction extends DispatchAction
      * @throws ServletException
      */
     public ActionForward queryApplyCustomerForAssignPer(ActionMapping mapping, ActionForm form,
-                                                        HttpServletRequest request, HttpServletResponse response)
+                                                        HttpServletRequest request,
+                                                        HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
 
         condtion.addWhereStr();
 
-        condtion.addIntCondition("CustomerApplyBean.opr", "=", CustomerConstant.OPR_UPATE_ASSIGNPER);
+        condtion
+            .addIntCondition("CustomerApplyBean.opr", "=", CustomerConstant.OPR_UPATE_ASSIGNPER);
 
         condtion.addIntCondition("CustomerApplyBean.status", "=", CustomerConstant.STATUS_APPLY);
 
         ActionTools.processJSONQueryCondition(QUERYAPPLYCUSTOMERFORLEVER, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYAPPLYCUSTOMERFORLEVER, request, condtion,
-            this.customerApplyDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYAPPLYCUSTOMERFORLEVER, request,
+            condtion, this.customerApplyDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -819,7 +848,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryApplyCustomerForCode(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward queryApplyCustomerForCode(ActionMapping mapping, ActionForm form,
+                                                   HttpServletRequest request,
                                                    HttpServletResponse response)
         throws ServletException
     {
@@ -829,14 +859,16 @@ public class CustomerAction extends DispatchAction
 
         condtion.addIntCondition("CustomerApplyBean.opr", "<>", CustomerConstant.OPR_UPATE_CREDIT);
 
-        condtion.addIntCondition("CustomerApplyBean.opr", "<>", CustomerConstant.OPR_UPATE_ASSIGNPER);
+        condtion.addIntCondition("CustomerApplyBean.opr", "<>",
+            CustomerConstant.OPR_UPATE_ASSIGNPER);
 
-        condtion.addIntCondition("CustomerApplyBean.status", "=", CustomerConstant.STATUS_WAIT_CODE);
+        condtion
+            .addIntCondition("CustomerApplyBean.status", "=", CustomerConstant.STATUS_WAIT_CODE);
 
         ActionTools.processJSONQueryCondition(QUERYAPPLYCUSTOMERFORCODE, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYAPPLYCUSTOMERFORCODE, request, condtion,
-            this.customerApplyDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYAPPLYCUSTOMERFORCODE, request,
+            condtion, this.customerApplyDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -851,7 +883,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryCanAssignCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward queryCanAssignCustomer(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
                                                 HttpServletResponse response)
         throws ServletException
     {
@@ -886,8 +919,8 @@ public class CustomerAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYCANASSIGNCUSTOMER, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCANASSIGNCUSTOMER, request, condtion,
-            this.customerDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCANASSIGNCUSTOMER, request,
+            condtion, this.customerDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -897,8 +930,8 @@ public class CustomerAction extends DispatchAction
      * 
      * @param condtion
      */
-    public ActionForward exportC(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward exportC(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response)
     {
         // User user = Helper.getUser(request);
 
@@ -1021,7 +1054,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddApplyCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward preForAddApplyCustomer(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
                                                 HttpServletResponse response)
         throws ServletException
     {
@@ -1048,8 +1082,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addApplyCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward addApplyCustomer(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         CustomerApplyBean bean = new CustomerApplyBean();
@@ -1089,7 +1123,8 @@ public class CustomerAction extends DispatchAction
      * @throws ServletException
      */
     @Deprecated
-    public ActionForward assignApplyCustomerCode(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward assignApplyCustomerCode(ActionMapping mapping, ActionForm form,
+                                                 HttpServletRequest request,
                                                  HttpServletResponse response)
         throws ServletException
     {
@@ -1126,7 +1161,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addUpdateApplyCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward addUpdateApplyCustomer(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
                                                 HttpServletResponse response)
         throws ServletException
     {
@@ -1176,7 +1212,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addAssignPerApplyCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward addAssignPerApplyCustomer(ActionMapping mapping, ActionForm form,
+                                                   HttpServletRequest request,
                                                    HttpServletResponse response)
         throws ServletException
     {
@@ -1224,7 +1261,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addDelApplyCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward addDelApplyCustomer(ActionMapping mapping, ActionForm form,
+                                             HttpServletRequest request,
                                              HttpServletResponse response)
         throws ServletException
     {
@@ -1274,7 +1312,8 @@ public class CustomerAction extends DispatchAction
      * @throws ServletException
      */
     public ActionForward synchronizationAllCustomerLocation(ActionMapping mapping, ActionForm form,
-                                                            HttpServletRequest request, HttpServletResponse response)
+                                                            HttpServletRequest request,
+                                                            HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -1314,8 +1353,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward delApplyCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward delApplyCustomer(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1350,8 +1389,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward findCustomer(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1520,8 +1559,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findApplyCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse response)
+    public ActionForward findApplyCustomer(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1546,7 +1585,8 @@ public class CustomerAction extends DispatchAction
             request.setAttribute("bean", vo);
 
             // 修改客户编码
-            if (userManager.containAuth(user, AuthConstant.CUSTOMER_ASSIGN_CODE) && "1".equals(updateCode))
+            if (userManager.containAuth(user, AuthConstant.CUSTOMER_ASSIGN_CODE)
+                && "1".equals(updateCode))
             {
                 CustomerHelper.handleCustomer(vo);
 
@@ -1559,7 +1599,8 @@ public class CustomerAction extends DispatchAction
 
             boolean hasAuth = customerManager.hasCustomerAuth(user.getStafferId(), id);
 
-            if ( !isSelfApply && !hasAuth && !userManager.containAuth(user, AuthConstant.CUSTOMER_CHECK))
+            if ( !isSelfApply && !hasAuth
+                && !userManager.containAuth(user, AuthConstant.CUSTOMER_CHECK))
             {
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "没有权限");
 
@@ -1590,8 +1631,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findHisCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward findHisCustomer(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1624,8 +1665,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward processApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward processApply(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1687,7 +1728,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward processApplyAssignPer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward processApplyAssignPer(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
                                                HttpServletResponse response)
         throws ServletException
     {
@@ -1741,8 +1783,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addAssignApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward addAssignApply(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -1795,8 +1837,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward checkHisCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward checkHisCustomer(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -1839,8 +1881,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryAssignApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward queryAssignApply(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -1853,7 +1895,8 @@ public class CustomerAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYASSIGNAPPLY, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYASSIGNAPPLY, request, condtion, this.assignApplyDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYASSIGNAPPLY, request, condtion,
+            this.assignApplyDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -1868,8 +1911,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward processAssignApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward processAssignApply(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -1922,7 +1965,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward reclaimAssignCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward reclaimAssignCustomer(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
                                                HttpServletResponse response)
         throws ServletException
     {
@@ -1966,7 +2010,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward reclaimStafferCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward reclaimStafferCustomer(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
                                                 HttpServletResponse response)
         throws ServletException
     {
@@ -1980,7 +2025,8 @@ public class CustomerAction extends DispatchAction
 
             String flag = request.getParameter("flag");
 
-            customerFacade.reclaimStafferAssignCustomer(user.getId(), stafferId, CommonTools.parseInt(flag));
+            customerFacade.reclaimStafferAssignCustomer(user.getId(), stafferId, CommonTools
+                .parseInt(flag));
 
             ajax.setSuccess("成功回收职员客户");
         }
@@ -2004,7 +2050,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward popStafferCommonQuery(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward popStafferCommonQuery(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
                                                HttpServletResponse response)
         throws ServletException
     {
@@ -2032,11 +2079,12 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward exportNotPay(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse reponse)
+    public ActionForward exportNotPay(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
-        List<NotPayWrap> beanList = outStatDAO.listNotPayWrap();
+        // TODO 应收客户导出在OutQueryDAOImpl里面实现了,转移到sail里面导出
+        List<NotPayWrap> beanList = null;// outStatDAO.listNotPayWrap();
 
         OutputStream out = null;
 
@@ -2148,8 +2196,8 @@ public class CustomerAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward uploadCustomer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward uploadCustomer(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -2212,8 +2260,8 @@ public class CustomerAction extends DispatchAction
                     }
                     else
                     {
-                        builder.append("第[" + currentNumber + "]错误:").append("数据长度不足34格,备注可以为空,但信息更新时间不可以为空").append(
-                            "<br>");
+                        builder.append("第[" + currentNumber + "]错误:").append(
+                            "数据长度不足34格,备注可以为空,但信息更新时间不可以为空").append("<br>");
                     }
 
                     if (addSucess)
@@ -2281,7 +2329,8 @@ public class CustomerAction extends DispatchAction
      * @param currentNumber
      * @return
      */
-    private boolean innerAdd(User user, StringBuilder builder, String[] obj, String stafferId, int currentNumber)
+    private boolean innerAdd(User user, StringBuilder builder, String[] obj, String stafferId,
+                             int currentNumber)
     {
         boolean addSucess = false;
 
@@ -2303,7 +2352,10 @@ public class CustomerAction extends DispatchAction
         {
             addSucess = false;
 
-            builder.append("<font color=red>第[" + currentNumber + "]行错误:").append(e.getMessage()).append("</font><br>");
+            builder
+                .append("<font color=red>第[" + currentNumber + "]行错误:")
+                .append(e.getMessage())
+                .append("</font><br>");
         }
 
         return addSucess;
@@ -2660,23 +2712,6 @@ public class CustomerAction extends DispatchAction
     }
 
     /**
-     * @return the outStatDAO
-     */
-    public OutStatDAO getOutStatDAO()
-    {
-        return outStatDAO;
-    }
-
-    /**
-     * @param outStatDAO
-     *            the outStatDAO to set
-     */
-    public void setOutStatDAO(OutStatDAO outStatDAO)
-    {
-        this.outStatDAO = outStatDAO;
-    }
-
-    /**
      * @return the principalshipDAO
      */
     public PrincipalshipDAO getPrincipalshipDAO()
@@ -2691,6 +2726,23 @@ public class CustomerAction extends DispatchAction
     public void setPrincipalshipDAO(PrincipalshipDAO principalshipDAO)
     {
         this.principalshipDAO = principalshipDAO;
+    }
+
+    /**
+     * @return the publicFacade
+     */
+    public PublicFacade getPublicFacade()
+    {
+        return publicFacade;
+    }
+
+    /**
+     * @param publicFacade
+     *            the publicFacade to set
+     */
+    public void setPublicFacade(PublicFacade publicFacade)
+    {
+        this.publicFacade = publicFacade;
     }
 
 }

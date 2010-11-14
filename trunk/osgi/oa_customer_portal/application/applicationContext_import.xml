@@ -70,13 +70,9 @@
 
 	<osgi:reference id="customerCreditDAO" interface="com.china.center.oa.credit.dao.CustomerCreditDAO" />
 
-	<osgi:reference id="outStatDAO" interface="com.china.center.oa.credit.dao.OutStatDAO" />
-
 	<osgi:reference id="creditItemManager" interface="com.china.center.oa.credit.manager.CreditItemManager" />
 
 	<osgi:reference id="customerCreditManager" interface="com.china.center.oa.credit.manager.CustomerCreditManager" />
-
-	<osgi:reference id="curOutManager" interface="com.china.center.oa.credit.manager.CurOutManager" />
 
 	<osgi:reference id="customerFacade" interface="com.china.center.oa.customer.facade.CustomerFacade" />
 	

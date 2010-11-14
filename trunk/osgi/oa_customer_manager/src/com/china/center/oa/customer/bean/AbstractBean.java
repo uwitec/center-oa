@@ -151,9 +151,10 @@ public abstract class AbstractBean implements Serializable
     private int formtype = 0;
 
     /**
-     * 客户信用的杠杆倍数(职员的信用*lever)
+     * 客户信用的杠杆倍数(职员的信用*lever)(废弃此属性)
      */
     @Html(title = "信用杠杆倍数", type = Element.NUMBER)
+    @Deprecated
     private int lever = CustomerConstant.DEFAULT_LEVER;
 
     /**
@@ -1376,6 +1377,7 @@ public abstract class AbstractBean implements Serializable
     /**
      * @return the lever
      */
+    @Deprecated
     public int getLever()
     {
         return lever;
@@ -1385,6 +1387,7 @@ public abstract class AbstractBean implements Serializable
      * @param lever
      *            the lever to set
      */
+    @Deprecated
     public void setLever(int lever)
     {
         this.lever = lever;

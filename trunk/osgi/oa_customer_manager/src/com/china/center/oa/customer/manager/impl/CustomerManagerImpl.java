@@ -130,8 +130,6 @@ public class CustomerManagerImpl implements CustomerManager
 
         bean.setCreateTime(TimeTools.now());
 
-        bean.setLever(CustomerConstant.DEFAULT_LEVER);
-
         customerApplyDAO.saveEntityBean(bean);
 
         // 移植分配code的逻辑 -----------------------------------
@@ -317,7 +315,8 @@ public class CustomerManagerImpl implements CustomerManager
         throws MYException
     {
         // NOTIFY 这里应该是OSGi实现的,当前暂时不动
-        if (customerDAO.countCustomerInOut(bean.getId()) > 0 || customerDAO.countCustomerInBill(bean.getId()) > 0)
+        if (customerDAO.countCustomerInOut(bean.getId()) > 0
+            || customerDAO.countCustomerInBill(bean.getId()) > 0)
         {
             throw new MYException("客户[%s]已经被使用,不能删除", bean.getName());
         }
@@ -718,7 +717,6 @@ public class CustomerManagerImpl implements CustomerManager
 
         cbean.setCreditUpdateTime(oldBean.getCreditUpdateTime());
         cbean.setStatus(oldBean.getStatus());
-        cbean.setLever(oldBean.getLever());
         cbean.setAssignPer1(oldBean.getAssignPer1());
         cbean.setAssignPer2(oldBean.getAssignPer2());
         cbean.setAssignPer3(oldBean.getAssignPer3());
@@ -796,7 +794,8 @@ public class CustomerManagerImpl implements CustomerManager
         cbean.setStatus(CustomerConstant.REAL_STATUS_IDLE);
 
         // 如果客户所在的分公司和用户所在分公司相同,则默认给这个申请人
-        if (stafferVSCustomerDAO.countByUnique(bean.getId()) == 0 && user.getLocationId().equals(bean.getLocationId()))
+        if (stafferVSCustomerDAO.countByUnique(bean.getId()) == 0
+            && user.getLocationId().equals(bean.getLocationId()))
         {
             StafferVSCustomerBean vs = new StafferVSCustomerBean();
 
@@ -1030,8 +1029,8 @@ public class CustomerManagerImpl implements CustomerManager
 
             for (LocationVSCityBean locationVSCityBean : list)
             {
-                customerDAO.updateCustomerLocationByCity(locationVSCityBean.getCityId(), locationVSCityBean
-                    .getLocationId());
+                customerDAO.updateCustomerLocationByCity(locationVSCityBean.getCityId(),
+                    locationVSCityBean.getLocationId());
             }
         }
         catch (Exception e)

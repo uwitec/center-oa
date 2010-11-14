@@ -49,13 +49,9 @@
 
 	<osgi:service ref="customerCreditDAO" interface="com.china.center.oa.credit.dao.CustomerCreditDAO" />
 
-	<osgi:service ref="outStatDAO" interface="com.china.center.oa.credit.dao.OutStatDAO" />
-
 	<osgi:service ref="creditItemManager" interface="com.china.center.oa.credit.manager.CreditItemManager" />
 
 	<osgi:service ref="customerCreditManager" interface="com.china.center.oa.credit.manager.CustomerCreditManager" />
-
-	<osgi:service ref="curOutManager" interface="com.china.center.oa.credit.manager.CurOutManager" />
 
 	<osgi:service ref="customerFacade" interface="com.china.center.oa.customer.facade.CustomerFacade" />
 
