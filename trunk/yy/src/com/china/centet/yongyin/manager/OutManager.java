@@ -621,14 +621,18 @@ public class OutManager
 
                             double remainInStaff = outBean.getTotal() - remainInCur;
 
-                            // 防止职员信用等级超支
+                            // 防止职员信用等级超支(这里单据的职员预占信用还没有写入数据库呢)
                             if ( (noPayBusiness + remainInStaff) > sb2.getCredit())
                             {
                                 outBean.setReserve6("客户信用最大额度是:"
                                                     + MathTools.formatNum(clevel.getMoney())
-                                                    + ".当前未付款金额(包括此单):"
+                                                    + ".当前客户未付款金额(不包括此单):"
+                                                    + MathTools.formatNum(noPayBusinessInCur)
+                                                    + ".职员信用额度是:"
+                                                    + MathTools.formatNum(sb2.getCredit())
+                                                    + ".职员信用已经使用额度是:"
                                                     + MathTools.formatNum(noPayBusiness)
-                                                    + ".超支:"
+                                                    + ".职员信用超支(包括此单):"
                                                     + (MathTools.formatNum( (noPayBusiness
                                                                              + remainInStaff - sb2.getCredit()))));
 
@@ -1078,6 +1082,15 @@ public class OutManager
 
                     // 驳回修改在途方式
                     outDAO.updataInWay(fullId, Constant.IN_WAY_NO);
+
+                    // 设置成未付款
+                    outDAO.modifyPay2(fullId, 0);
+
+                    // 回款日期待定
+                    outDAO.modifyReDate2(fullId, "");
+
+                    // 未延迟
+                    outDAO.modifyTempType(fullId, 0);
 
                     addOutLog(fullId, user, outBean, reason, Constant.OPR_OUT_REJECT,
                         Constant.STATUS_REJECT);
