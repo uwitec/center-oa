@@ -8,6 +8,10 @@
  */
 package com.china.center.oa.publics.facade;
 
+
+import com.center.china.osgi.publics.User;
+
+
 /**
  * CommonFacade
  * 
@@ -26,4 +30,23 @@ public interface CommonFacade
      * @return
      */
     boolean auth(String key, String value);
+
+    /**
+     * 登录接口
+     * 
+     * @param name
+     * @param password
+     * @return
+     */
+    User login(String name, String password);
+
+    /**
+     * login2
+     * 
+     * @param name
+     * @param password
+     * @param key
+     * @return
+     */
+    User login2(String name, String password, String rand, String key, String randKey);
 }
