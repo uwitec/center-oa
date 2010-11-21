@@ -83,18 +83,6 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
     }
 
     /**
-     * 在out里面统计客户的使用
-     * 
-     * @param id
-     * @return
-     */
-    public int countCustomerInOut(String id)
-    {
-        return this.jdbcOperation.queryForInt(
-            "select count(1) from t_center_out where customerId = ?", id);
-    }
-
-    /**
      * 在bill里面统计客户的使用
      * 
      * @param id

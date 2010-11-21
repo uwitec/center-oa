@@ -50,6 +50,8 @@ import com.china.center.actionhelper.query.QueryItemBean;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
+import com.china.center.oa.credit.bean.CreditLevelBean;
+import com.china.center.oa.credit.dao.CreditLevelDAO;
 import com.china.center.oa.customer.bean.AssignApplyBean;
 import com.china.center.oa.customer.bean.CustomerApplyBean;
 import com.china.center.oa.customer.bean.CustomerBean;
@@ -89,6 +91,7 @@ import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.CreateChartServiceImpl;
 import com.china.center.tools.FileTools;
+import com.china.center.tools.MathTools;
 import com.china.center.tools.RequestDataStream;
 import com.china.center.tools.SequenceTools;
 import com.china.center.tools.StringTools;
@@ -132,6 +135,8 @@ public class CustomerAction extends DispatchAction
     private CustomerManager customerManager = null;
 
     private UserManager userManager = null;
+
+    private CreditLevelDAO creditLevelDAO = null;
 
     private PrincipalshipDAO principalshipDAO = null;
 
@@ -329,15 +334,39 @@ public class CustomerAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYSELFCUSTOMER);
 
-            list = customerDAO.queryEntityBeansByCondition(PageSeparateTools.getCondition(request,
-                RPTQUERYSELFCUSTOMER), PageSeparateTools.getPageSeparate(request,
-                RPTQUERYSELFCUSTOMER));
+            list = customerDAO.querySelfCustomerByConstion(stafferId, PageSeparateTools
+                .getCondition(request, RPTQUERYSELFCUSTOMER), PageSeparateTools.getPageSeparate(
+                request, RPTQUERYSELFCUSTOMER));
         }
+
+        List<CreditLevelBean> levelList = creditLevelDAO.listEntityBeans();
 
         // 自动解密
         for (CustomerBean customerBean : list)
         {
             CustomerHelper.decryptCustomer(customerBean);
+
+            double totla = 0.0d;
+
+            for (CreditLevelBean creditLevelBean : levelList)
+            {
+                if (customerBean.getCreditLevelId().equals(creditLevelBean.getId()))
+                {
+                    customerBean.setReserve1(creditLevelBean.getName());
+
+                    totla = creditLevelBean.getMoney();
+
+                    break;
+                }
+            }
+
+            double sumNoPayBusiness = customerManager.sumNoPayBusiness(customerBean);
+
+            // 客户所欠金额
+            customerBean.setReserve2(MathTools.formatNum(sumNoPayBusiness));
+
+            // 剩余金额
+            customerBean.setReserve3(MathTools.formatNum(totla - sumNoPayBusiness));
         }
 
         request.setAttribute("list", list);
@@ -2825,6 +2854,23 @@ public class CustomerAction extends DispatchAction
     public void setPublicFacade(PublicFacade publicFacade)
     {
         this.publicFacade = publicFacade;
+    }
+
+    /**
+     * @return the creditLevelDAO
+     */
+    public CreditLevelDAO getCreditLevelDAO()
+    {
+        return creditLevelDAO;
+    }
+
+    /**
+     * @param creditLevelDAO
+     *            the creditLevelDAO to set
+     */
+    public void setCreditLevelDAO(CreditLevelDAO creditLevelDAO)
+    {
+        this.creditLevelDAO = creditLevelDAO;
     }
 
 }

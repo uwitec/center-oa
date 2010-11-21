@@ -9,6 +9,7 @@
 package com.china.center.oa.customer.manager.impl;
 
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -16,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.annosql.constant.AnoConstant;
@@ -32,6 +34,7 @@ import com.china.center.oa.customer.dao.CustomerDAO;
 import com.china.center.oa.customer.dao.CustomerHisDAO;
 import com.china.center.oa.customer.dao.StafferVSCustomerDAO;
 import com.china.center.oa.customer.helper.CustomerHelper;
+import com.china.center.oa.customer.listener.CustomerListener;
 import com.china.center.oa.customer.manager.CustomerManager;
 import com.china.center.oa.customer.vs.StafferVSCustomerBean;
 import com.china.center.oa.publics.bean.CityBean;
@@ -60,7 +63,7 @@ import com.china.center.tools.TimeTools;
  * @since 1.0
  */
 @Exceptional
-public class CustomerManagerImpl implements CustomerManager
+public class CustomerManagerImpl extends AbstractListenerManager<CustomerListener> implements CustomerManager
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
@@ -314,12 +317,28 @@ public class CustomerManagerImpl implements CustomerManager
     private void checkDelCustomer(CustomerApplyBean bean)
         throws MYException
     {
-        // NOTIFY 这里应该是OSGi实现的,当前暂时不动
-        if (customerDAO.countCustomerInOut(bean.getId()) > 0
-            || customerDAO.countCustomerInBill(bean.getId()) > 0)
+        if (bean.getId().equals(CustomerConstant.PUBLIC_CUSTOMER_ID))
+        {
+            throw new MYException("公共客户,不能删除");
+        }
+
+        Collection<CustomerListener> listenerMapValues = this.listenerMapValues();
+
+        CustomerBean oldBean = new CustomerBean();
+
+        BeanUtil.copyProperties(oldBean, bean);
+
+        for (CustomerListener customerListener : listenerMapValues)
+        {
+            customerListener.onDelete(oldBean);
+        }
+
+        // TODO_OSGI 这里应该是OSGi实现的,当前暂时不动
+        if (customerDAO.countCustomerInBill(bean.getId()) > 0)
         {
             throw new MYException("客户[%s]已经被使用,不能删除", bean.getName());
         }
+
     }
 
     /**
@@ -1088,6 +1107,20 @@ public class CustomerManagerImpl implements CustomerManager
         return true;
     }
 
+    public double sumNoPayBusiness(CustomerBean bean)
+    {
+        Collection<CustomerListener> listenerMapValues = this.listenerMapValues();
+
+        double result = 0.0d;
+
+        for (CustomerListener customerCreditListener : listenerMapValues)
+        {
+            result += customerCreditListener.onNoPayBusiness(bean);
+        }
+
+        return result;
+    }
+
     /**
      * @param bean
      * @throws MYException
@@ -1361,5 +1394,4 @@ public class CustomerManagerImpl implements CustomerManager
     {
         this.notifyManager = notifyManager;
     }
-
 }

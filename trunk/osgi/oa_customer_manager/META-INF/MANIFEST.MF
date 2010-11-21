@@ -11,6 +11,7 @@ Export-Package:
  com.china.center.oa.credit.vo;version="1.0.0",
  com.china.center.oa.credit.vs;version="1.0.0",
  com.china.center.oa.customer.bean;version="1.0.0",
+ com.china.center.oa.customer.listener;version="1.0.0",
  com.china.center.oa.customer.constant;version="1.0.0",
  com.china.center.oa.customer.dao;version="1.0.0",
  com.china.center.oa.customer.facade;version="1.0.0",

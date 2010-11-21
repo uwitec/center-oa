@@ -9,11 +9,13 @@
 package com.china.center.oa.customer.manager;
 
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.customer.bean.AssignApplyBean;
 import com.china.center.oa.customer.bean.CustomerApplyBean;
 import com.china.center.oa.customer.bean.CustomerBean;
+import com.china.center.oa.customer.listener.CustomerListener;
 
 
 /**
@@ -24,7 +26,7 @@ import com.china.center.oa.customer.bean.CustomerBean;
  * @see CustomerManager
  * @since 1.0
  */
-public interface CustomerManager
+public interface CustomerManager extends ListenerManager<CustomerListener>
 {
     boolean applyAddCustomer(User user, CustomerApplyBean bean)
         throws MYException;
@@ -127,4 +129,6 @@ public interface CustomerManager
         throws MYException;
 
     void synchronizationAllCustomerLocation();
+
+    double sumNoPayBusiness(CustomerBean bean);
 }

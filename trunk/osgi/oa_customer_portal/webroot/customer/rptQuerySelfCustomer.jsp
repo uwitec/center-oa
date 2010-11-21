@@ -93,12 +93,13 @@ function press()
 			id="result">
 			<tr align=center class="content0">
 				<td align="center" width="5%">选择</td>
-				<td align="center" width="20%"><strong>名称</strong></td>
-				<td align="center" width="20%"><strong>编码</strong></td>
+				<td align="center" width="15%"><strong>名称</strong></td>
+				<td align="center" width="15%"><strong>编码</strong></td>
 				
-				<td align="center" width="20%"><strong>信用分</strong></td>
-				<td align="center" width="20%"><strong>信用更新</strong></td>
-				<td align="center" width="20%"><strong>信用杠杆</strong></td>
+				<td align="center" width="10%"><strong>信用分</strong></td>
+				<td align="center" width="10%"><strong>信用等级</strong></td>
+				<td align="center" width="10%"><strong>欠款金额</strong></td>
+				<td align="center" width="10%"><strong>剩余信用</strong></td>
 			</tr>
 
 			<c:forEach items="${list}" var="item" varStatus="vs">
@@ -113,8 +114,9 @@ function press()
 					<td align="center" onclick="hrefAndSelect(this)">${item.code}</td>
 					
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.creditVal)}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${item.creditUpdateTime}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${item.lever}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.reserve1}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.reserve2}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.reserve3}</td>
 				</tr>
 			</c:forEach>
 		</table>

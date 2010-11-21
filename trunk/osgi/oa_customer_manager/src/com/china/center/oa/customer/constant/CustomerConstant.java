@@ -175,7 +175,19 @@ public interface CustomerConstant
     String CREDITLEVELID_DEFAULT = "90000000000000000001";
 
     /**
+     * 黑名单客户
+     */
+    String BLACK_LEVEL = "90000000000000000000";
+
+    /**
      * 默认信用杠杆倍数
      */
     int DEFAULT_LEVER = 1;
+
+    /**
+     * 系统内置的公共客户
+     */
+    String PUBLIC_CUSTOMER_ID = "99";
+
+    String PUBLIC_CUSTOMER_NAME = "公共客户";
 }

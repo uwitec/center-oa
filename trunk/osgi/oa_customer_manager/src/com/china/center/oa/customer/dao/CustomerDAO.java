@@ -37,8 +37,6 @@ public interface CustomerDAO extends DAO<CustomerBean, CustomerVO>
 
     CustomerBean findCustomerByCode(String code);
 
-    int countCustomerInOut(String id);
-
     int countCustomerInBill(String id);
 
     boolean updateCustomerLocation(String srcLocationId, String dirLocationId);
@@ -63,11 +61,13 @@ public interface CustomerDAO extends DAO<CustomerBean, CustomerVO>
 
     int countCustomerAssignByConstion(ConditionParse condition);
 
-    List<CustomerAssignWrap> queryCustomerAssignByConstion(ConditionParse condition, PageSeparate page);
+    List<CustomerAssignWrap> queryCustomerAssignByConstion(ConditionParse condition,
+                                                           PageSeparate page);
 
     int countSelfCustomerByConstion(String stafferId, ConditionParse condition);
 
-    List<CustomerBean> querySelfCustomerByConstion(String stafferId, ConditionParse condition, PageSeparate page);
+    List<CustomerBean> querySelfCustomerByConstion(String stafferId, ConditionParse condition,
+                                                   PageSeparate page);
 
     int autoUpdateCustomerStatus();
 
