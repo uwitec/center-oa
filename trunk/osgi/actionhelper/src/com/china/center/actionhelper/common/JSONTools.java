@@ -12,6 +12,7 @@ package com.china.center.actionhelper.common;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,7 +104,8 @@ public abstract class JSONTools
             response.getWriter().close();
         }
         catch (IOException e)
-        {}
+        {
+        }
 
         return null;
     }
@@ -115,8 +117,7 @@ public abstract class JSONTools
      * @param errorMessage
      * @return
      */
-    public static ActionForward writeErrorResponse(HttpServletResponse response,
-                                                   String errorMessage)
+    public static ActionForward writeErrorResponse(HttpServletResponse response, String errorMessage)
     {
         response.setContentType("html/txt");
         response.setStatus(500);
@@ -131,7 +132,8 @@ public abstract class JSONTools
             response.getWriter().close();
         }
         catch (IOException e)
-        {}
+        {
+        }
 
         return null;
     }
@@ -227,9 +229,11 @@ public abstract class JSONTools
                 fvalue = field.get(oo);
             }
             catch (IllegalArgumentException e)
-            {}
+            {
+            }
             catch (IllegalAccessException e)
-            {}
+            {
+            }
 
             if (fvalue != null)
             {
@@ -240,5 +244,41 @@ public abstract class JSONTools
                 map.put(innerBean.getFieldName(), "");
             }
         }
+    }
+
+    /**
+     * getMapListJSON(map里面是string:List[Bean])
+     * 
+     * @param map
+     * @return
+     */
+    public static String getMapListJSON(Map map)
+    {
+        Map result = new HashMap();
+
+        Collection<String> values = map.keySet();
+
+        for (String string : values)
+        {
+            List mapList = new ArrayList();
+
+            List each = (List)map.get(string);
+
+            for (Object object : each)
+            {
+                Map<String, String> vmap = new HashMap<String, String>();
+
+                createMapByObject(object, vmap);
+
+                mapList.add(vmap);
+            }
+
+            result.put(string, mapList);
+
+        }
+
+        JSONObject object = new JSONObject(result);
+
+        return object.toString();
     }
 }

@@ -4,6 +4,45 @@ var cco = 0;
 var telNumbers = 11;
 var sortIndex;
 var isAsc = 0;
+
+/**
+ * fix innerText/insertAdjacentElement in FF
+ */
+if(window.HTMLElement)
+{ 
+    HTMLElement.prototype.__defineSetter__("innerText",function(sText){ 
+        var parsedText=document.createTextNode(sText); 
+        this.innerHTML=parsedText; 
+        return parsedText; 
+        }); 
+    HTMLElement.prototype.__defineGetter__("innerText",function(){ 
+        var r=this.ownerDocument.createRange(); 
+        r.selectNodeContents(this); 
+        return r.toString(); 
+        }); 
+
+    HTMLElement.prototype.insertAdjacentElement=function(where,parsedNode){ 
+        switch(where){ 
+            case "beforeBegin": 
+                this.parentNode.insertBefore(parsedNode,this); 
+                break; 
+            case "afterBegin": 
+                this.insertBefore(parsedNode,this.firstChild); 
+                break; 
+            case "beforeEnd": 
+                this.appendChild(parsedNode); 
+                break; 
+            case "afterEnd": 
+                if(this.nextSibling) 
+                    this.parentNode.insertBefore(parsedNode,this.nextSibling); 
+                else 
+                    this.parentNode.appendChild(parsedNode); 
+                break; 
+            } 
+        };
+} 
+
+
 /**
  * 表格排序
  * cell TD
