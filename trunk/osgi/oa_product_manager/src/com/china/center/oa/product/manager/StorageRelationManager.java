@@ -9,8 +9,10 @@
 package com.china.center.oa.product.manager;
 
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.product.listener.StorageRelationListener;
 import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
 
@@ -23,7 +25,7 @@ import com.china.center.oa.product.wrap.ProductChangeWrap;
  * @see StorageRelationManager
  * @since 1.0
  */
-public interface StorageRelationManager
+public interface StorageRelationManager extends ListenerManager<StorageRelationListener>
 {
     /**
      * changeStorageRelationWithOutTransaction(没有事务的,所有的库存逻辑都在此方法内实现,其他方法没有操作库存的)
@@ -82,7 +84,8 @@ public interface StorageRelationManager
      * @return
      * @throws MYException
      */
-    boolean transferStorageRelation(User user, String sourceStorageId, String dirStorageId, String[] relations)
+    boolean transferStorageRelation(User user, String sourceStorageId, String dirStorageId,
+                                    String[] relations)
         throws MYException;
 
     /**
@@ -95,7 +98,8 @@ public interface StorageRelationManager
      * @return
      * @throws MYException
      */
-    boolean transferStorageRelationInDepotpart(User user, String sourceRelationId, String dirDepotpartId, int amount)
+    boolean transferStorageRelationInDepotpart(User user, String sourceRelationId,
+                                               String dirDepotpartId, int amount)
         throws MYException;
 
     void lockStorageRelation();
@@ -103,4 +107,12 @@ public interface StorageRelationManager
     void unlockStorageRelation();
 
     boolean isStorageRelationLock();
+
+    /**
+     * 合计已经在预占的库存
+     * 
+     * @param bean
+     * @return
+     */
+    int sumPreassignByStorageRelation(StorageRelationBean bean);
 }

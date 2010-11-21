@@ -146,6 +146,8 @@ public class ProductAction extends DispatchAction
 
     private static String RPTQUERYPRODUCT = "rptQueryProduct";
 
+    private static String RPTQUERYABSPRODUCT = "rptQueryAbsProduct";
+
     private static String QUERYPRICECHANGE = "queryPriceChange";
 
     /**
@@ -470,6 +472,90 @@ public class ProductAction extends DispatchAction
     }
 
     /**
+     * 虚拟产品的选择
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryAbsProduct(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        List<ProductVO> list = null;
+
+        if (PageSeparateTools.isFirstLoad(request))
+        {
+            ConditionParse condtion = new ConditionParse();
+
+            condtion.addWhereStr();
+
+            setAbsProductInnerCondition(request, condtion);
+
+            int total = productDAO.countByCondition(condtion.toString());
+
+            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+
+            PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYABSPRODUCT);
+
+            list = productDAO.queryEntityVOsByCondition(condtion, page);
+        }
+        else
+        {
+            PageSeparateTools.processSeparate(request, RPTQUERYPRODUCT);
+
+            list = productDAO
+                .queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                    RPTQUERYABSPRODUCT), PageSeparateTools.getPageSeparate(request,
+                    RPTQUERYABSPRODUCT));
+        }
+
+        Map<String, List<ProductBean>> map = new HashMap();
+
+        for (ProductVO productVO : list)
+        {
+            // 获取组合方式
+            List<ProductCombinationVO> comVOList = productCombinationDAO
+                .queryEntityVOsByFK(productVO.getId());
+
+            List<ProductBean> eachList = new ArrayList<ProductBean>();
+
+            String lastName = "&nbsp;<br>";
+
+            for (ProductCombinationVO productCombinationVO : comVOList)
+            {
+                ProductBean product = productDAO.find(productCombinationVO.getSproductId());
+
+                eachList.add(product);
+
+                lastName += product.getName() + "(" + product.getCode() + ")<br>&nbsp;";
+            }
+
+            productVO.setReserve1(lastName);
+
+            map.put(productVO.getId(), eachList);
+        }
+
+        request.setAttribute("beanList", list);
+
+        // var uAuth = JSON.parse('${authJSON}');
+        request.setAttribute("mapStr", JSONTools.getMapListJSON(map));
+
+        request.setAttribute("random", new Random().nextInt());
+
+        String rootUrl = RequestTools.getRootUrl(request);
+
+        request.setAttribute("rootUrl", rootUrl);
+
+        return mapping.findForward("rptQueryAbsProduct");
+    }
+
+    /**
      * @param request
      * @param condtion
      */
@@ -509,6 +595,31 @@ public class ProductAction extends DispatchAction
         {
             condtion.addIntCondition("ProductBean.ctype", "=", ProductConstant.CTYPE_YES);
         }
+    }
+
+    /**
+     * @param request
+     * @param condtion
+     */
+    private void setAbsProductInnerCondition(HttpServletRequest request, ConditionParse condtion)
+    {
+        String name = request.getParameter("name");
+
+        String code = request.getParameter("code");
+
+        if ( !StringTools.isNullOrNone(name))
+        {
+            condtion.addCondition("ProductBean.name", "like", name);
+        }
+
+        if ( !StringTools.isNullOrNone(code))
+        {
+            condtion.addCondition("ProductBean.code", "like", code);
+        }
+
+        condtion
+            .addIntCondition("ProductBean.abstractType", "=", ProductConstant.ABSTRACT_TYPE_YES);
+
     }
 
     /**

@@ -7,7 +7,9 @@
 <base target="_self">
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
+<script language="JavaScript" src="../js/tableSort.js"></script>
 <script language="javascript">
+
 function querys()
 {
 	formEntry.submit();
@@ -60,6 +62,25 @@ function closesd()
     window.close();
 }
 
+function resets()
+{
+    $O('name').value = '';
+    $O('code').value = '';
+    setSelectIndex($O('depotpartId'), 0);
+    setSelectIndex($O('stafferId'), 0);
+}
+
+function queryAbs()
+{
+    formEntry.action = '../product/product.do';
+    $O('method').value = 'rptQueryAbsProduct';
+    $O('load').value = '1';
+    $O('name').value = '';
+    $O('code').value = '';
+    
+    formEntry.submit();
+}
+
 </script>
 
 </head>
@@ -69,6 +90,7 @@ function closesd()
 	type="hidden" value="1" name="load">
 <input type="hidden" value="${depotId}" name="depotId">
 <input type="hidden" value="${selectMode}" name="selectMode">
+<input type="hidden" value="${showAbs}" name="showAbs">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">产品库存管理</td>
@@ -78,7 +100,7 @@ function closesd()
 <p:body width="100%">
 	<p:subBody width="90%">
 		<table width="100%" align="center" cellspacing='1' class="table0"
-			id="result">
+			id="condition">
 			<tr class="content1">
 				<td width="15%" align="center">产品名称</td>
 				<td align="center"><input type="text" name="name" onkeypress="press()"
@@ -101,6 +123,7 @@ function closesd()
 				<td width="15%" align="center">库存属性</td>
 				<td align="center">
 				<select name="stafferId" class="select_class" values="${stafferId}">
+						<option value="">--</option>
 						<option value="0">公共(公共库存)</option>
 						<option value="${user.stafferId}">${user.stafferName}(私有库存)</option>
 				</select>
@@ -108,9 +131,20 @@ function closesd()
 			</tr>
 
 			<tr class="content1">
-				<td colspan="4" align="right"><input type="button"
-					onclick="querys()" class="button_class"
-					value="&nbsp;&nbsp;查 询&nbsp;&nbsp;"></td>
+				<td colspan="4" align="right">
+				<c:if test="${showAbs == 1}">
+				<input type="button"
+                    onclick="queryAbs()" class="button_class"
+                    value="&nbsp;&nbsp;虚拟产品&nbsp;&nbsp;">
+                &nbsp;&nbsp;
+				</c:if>
+				<input type="button"
+                    onclick="querys()" class="button_class"
+                    value="&nbsp;&nbsp;查 询&nbsp;&nbsp;">
+				&nbsp;&nbsp;
+				<input type="button"
+					onclick="resets()" class="button_class"
+					value="&nbsp;&nbsp;重 置&nbsp;&nbsp;"></td>
 		</table>
 
 	</p:subBody>
@@ -126,26 +160,29 @@ function closesd()
 			id="result">
 			<tr align=center class="content0">
 				<td align="center">选择</td>
-				<td align="center"><strong>仓区</strong></td>
-				<td align="center"><strong>储位</strong></td>
-				<td align="center"><strong>产品</strong></td>
-				<td align="center"><strong>数量</strong></td>
-				<td align="center"><strong>价格</strong></td>
-				<td align="center"><strong>职员</strong></td>
+				<td align="center" onclick="tableSort(this)" class="td_class"><strong>仓区</strong></td>
+				<td align="center" onclick="tableSort(this)" class="td_class"><strong>储位</strong></td>
+				<td align="center" onclick="tableSort(this)" class="td_class"><strong>产品</strong></td>
+				<td align="center" onclick="tableSort(this, true)" class="td_class"><strong>可发数量</strong></td>
+				<td align="center" onclick="tableSort(this, true)" class="td_class"><strong>价格</strong></td>
+				<td align="center" onclick="tableSort(this)" class="td_class"><strong>职员</strong></td>
 			</tr>
 
 			<c:forEach items="${beanList}" var="item" varStatus="vs">
 				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
 					<td align="center"><input type='${selectMode == 1 ? "radio" : "checkbox"}' name="beans" ppid="${item.productId}"
 					pstaffername="${item.stafferName}"
-					pstaffernid="${item.stafferId}"
+					pstafferid="${item.stafferId}"
 					pdepotpartname="${item.depotpartName}"
 					pdepotpartid="${item.depotpartId}"
-					pname="${item.productName}" pprice="${my:formatNum(item.price)}" pamount="${item.amount}" value="${item.id}"/></td>
+					pname="${item.productName}" 
+					pcode="${item.productCode}" 
+					pprice="${my:formatNum(item.price)}" 
+					pamount="${item.amount}" value="${item.id}"/></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.depotpartName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.storageName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.productName}(${item.productCode})</td>
-					<td align="center" onclick="hrefAndSelect(this)">${item.amount}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.mayAmount}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.price)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
 				</tr>

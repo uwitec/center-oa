@@ -6,6 +6,7 @@
             validate="false">
             <forward name="configProductVSLocation"/>
             <forward name="rptQueryProduct"/>
+            <forward name="rptQueryAbsProduct"/>
             <forward name="queryApplyProduct"/>
             <forward name="composeProduct"/>
             <forward name="detailCompose"/>

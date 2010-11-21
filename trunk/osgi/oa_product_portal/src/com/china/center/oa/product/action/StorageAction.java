@@ -49,6 +49,7 @@ import com.china.center.oa.product.dao.StorageDAO;
 import com.china.center.oa.product.dao.StorageLogDAO;
 import com.china.center.oa.product.dao.StorageRelationDAO;
 import com.china.center.oa.product.facade.ProductFacade;
+import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.vo.StorageLogVO;
 import com.china.center.oa.product.vo.StorageRelationVO;
 import com.china.center.oa.publics.Helper;
@@ -83,6 +84,8 @@ public class StorageAction extends DispatchAction
     private DepotDAO depotDAO = null;
 
     private StorageLogDAO storageLogDAO = null;
+
+    private StorageRelationManager storageRelationManager = null;
 
     private StorageRelationDAO storageRelationDAO = null;
 
@@ -947,6 +950,14 @@ public class StorageAction extends DispatchAction
             {
                 vo.setStafferName("公共");
             }
+
+            int preassign = storageRelationManager.sumPreassignByStorageRelation(vo);
+
+            // 可发数量
+            vo.setMayAmount(vo.getAmount() - preassign);
+
+            // 预支数量
+            vo.setPreassignAmount(preassign);
         }
 
         // 查询仓库下的良品仓
@@ -1016,6 +1027,8 @@ public class StorageAction extends DispatchAction
 
         String code = request.getParameter("code");
 
+        User user = Helper.getUser(request);
+
         // 公共的就是0,私有的就是自己的ID
         String stafferId = request.getParameter("stafferId");
 
@@ -1046,12 +1059,14 @@ public class StorageAction extends DispatchAction
 
         if (StringTools.isNullOrNone(stafferId))
         {
-            stafferId = "0";
-
-            request.setAttribute("stafferId", stafferId);
+            condtion
+                .addCondition("and (StorageRelationBean.stafferId = '0' or StorageRelationBean.stafferId = '"
+                              + user.getStafferId() + "')");
         }
-
-        condtion.addCondition("StorageRelationBean.stafferId", "=", stafferId);
+        else
+        {
+            condtion.addCondition("StorageRelationBean.stafferId", "=", stafferId);
+        }
 
         return condtion;
     }
@@ -1190,5 +1205,22 @@ public class StorageAction extends DispatchAction
     public void setStorageApplyDAO(StorageApplyDAO storageApplyDAO)
     {
         this.storageApplyDAO = storageApplyDAO;
+    }
+
+    /**
+     * @return the storageRelationManager
+     */
+    public StorageRelationManager getStorageRelationManager()
+    {
+        return storageRelationManager;
+    }
+
+    /**
+     * @param storageRelationManager
+     *            the storageRelationManager to set
+     */
+    public void setStorageRelationManager(StorageRelationManager storageRelationManager)
+    {
+        this.storageRelationManager = storageRelationManager;
     }
 }

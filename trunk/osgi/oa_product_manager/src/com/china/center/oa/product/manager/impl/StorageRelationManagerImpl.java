@@ -10,6 +10,7 @@ package com.china.center.oa.product.manager.impl;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -19,6 +20,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.product.bean.DepotBean;
@@ -37,6 +39,7 @@ import com.china.center.oa.product.dao.StorageDAO;
 import com.china.center.oa.product.dao.StorageLogDAO;
 import com.china.center.oa.product.dao.StorageRelationDAO;
 import com.china.center.oa.product.helper.StorageRelationHelper;
+import com.china.center.oa.product.listener.StorageRelationListener;
 import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
@@ -54,7 +57,7 @@ import com.china.center.tools.TimeTools;
  * @see StorageRelationManagerImpl
  * @since 1.0
  */
-public class StorageRelationManagerImpl implements StorageRelationManager
+public class StorageRelationManagerImpl extends AbstractListenerManager<StorageRelationListener> implements StorageRelationManager
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
@@ -110,8 +113,9 @@ public class StorageRelationManagerImpl implements StorageRelationManager
 
         String priceKey = StorageRelationHelper.getPriceKey(bean.getPrice());
 
-        StorageRelationBean relation = storageRelationDAO.findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(bean
-            .getDepotpartId(), bean.getProductId(), priceKey, bean.getStafferId());
+        StorageRelationBean relation = storageRelationDAO
+            .findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(bean.getDepotpartId(), bean
+                .getProductId(), priceKey, bean.getStafferId());
 
         if (relation == null || relation.getAmount() + bean.getChange() < 0)
         {
@@ -127,7 +131,9 @@ public class StorageRelationManagerImpl implements StorageRelationManager
      * @see com.china.center.oa.product.manager.StorageRelationManager#changeStorageRelationWithTransaction(com.center.china.osgi.publics.User,
      *      com.china.center.oa.product.wrap.ProductChangeWrap)
      */
-    public synchronized StorageRelationBean changeStorageRelationWithoutTransaction(User user, ProductChangeWrap bean,
+    public synchronized StorageRelationBean changeStorageRelationWithoutTransaction(
+                                                                                    User user,
+                                                                                    ProductChangeWrap bean,
                                                                                     boolean deleteZeroRelation)
         throws MYException
     {
@@ -219,14 +225,15 @@ public class StorageRelationManagerImpl implements StorageRelationManager
 
         if (relation == null)
         {
-            relation = storageRelationDAO.findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(bean.getDepotpartId(),
-                bean.getProductId(), priceKey, bean.getStafferId());
+            relation = storageRelationDAO.findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(bean
+                .getDepotpartId(), bean.getProductId(), priceKey, bean.getStafferId());
         }
 
         if (relation == null && bean.getChange() < 0)
         {
-            throw new MYException("仓库[%s]下仓区[%s]下储位[%s]的产品[%s]库存不够,当前库存为[%d],需要使用[%d]", depotBean.getName(),
-                depotpartBean.getName(), storageBean.getName(), productBean.getName(), 0, -bean.getChange());
+            throw new MYException("仓库[%s]下仓区[%s]下储位[%s]的产品[%s]库存不够,当前库存为[%d],需要使用[%d]", depotBean
+                .getName(), depotpartBean.getName(), storageBean.getName(), productBean.getName(),
+                0, -bean.getChange());
         }
 
         if (relation == null && bean.getChange() >= 0)
@@ -255,23 +262,26 @@ public class StorageRelationManagerImpl implements StorageRelationManager
         // 查看库存大小
         if (relation.getAmount() + bean.getChange() < 0)
         {
-            throw new MYException("仓库[%s]下仓区[%s]下储位[%s]的产品[%s]库存不够,当前库存为[%d],需要使用[%d]", depotBean.getName(),
-                depotpartBean.getName(), storageBean.getName(), productBean.getName(), relation.getAmount(), -bean
-                    .getChange());
+            throw new MYException("仓库[%s]下仓区[%s]下储位[%s]的产品[%s]库存不够,当前库存为[%d],需要使用[%d]", depotBean
+                .getName(), depotpartBean.getName(), storageBean.getName(), productBean.getName(),
+                relation.getAmount(), -bean.getChange());
         }
 
         // 之前储位内产品的数量
-        int preAmount = storageRelationDAO.sumProductInStorage(bean.getProductId(), bean.getStorageId());
+        int preAmount = storageRelationDAO.sumProductInStorage(bean.getProductId(), bean
+            .getStorageId());
 
-        int preAmount1 = storageRelationDAO.sumProductInDepotpartId(bean.getProductId(), depotpartBean.getId());
+        int preAmount1 = storageRelationDAO.sumProductInDepotpartId(bean.getProductId(),
+            depotpartBean.getId());
 
-        int preAmount11 = storageRelationDAO.sumProductInDepotpartIdAndPriceKey(bean.getProductId(), depotpartBean
-            .getId(), priceKey);
+        int preAmount11 = storageRelationDAO.sumProductInDepotpartIdAndPriceKey(
+            bean.getProductId(), depotpartBean.getId(), priceKey);
 
-        int preAmount2 = storageRelationDAO.sumProductInLocationId(bean.getProductId(), depotBean.getId());
+        int preAmount2 = storageRelationDAO.sumProductInLocationId(bean.getProductId(), depotBean
+            .getId());
 
-        int preAmount22 = storageRelationDAO.sumProductInLocationIdAndPriceKey(bean.getProductId(), depotBean.getId(),
-            priceKey);
+        int preAmount22 = storageRelationDAO.sumProductInLocationIdAndPriceKey(bean.getProductId(),
+            depotBean.getId(), priceKey);
 
         int newAmount = relation.getAmount() + bean.getChange();
 
@@ -289,17 +299,20 @@ public class StorageRelationManagerImpl implements StorageRelationManager
         }
 
         // 之后储位内产品的数量
-        int afterAmount = storageRelationDAO.sumProductInStorage(bean.getProductId(), bean.getStorageId());
+        int afterAmount = storageRelationDAO.sumProductInStorage(bean.getProductId(), bean
+            .getStorageId());
 
-        int afterAmount1 = storageRelationDAO.sumProductInDepotpartId(bean.getProductId(), depotpartBean.getId());
+        int afterAmount1 = storageRelationDAO.sumProductInDepotpartId(bean.getProductId(),
+            depotpartBean.getId());
 
-        int afterAmount11 = storageRelationDAO.sumProductInDepotpartIdAndPriceKey(bean.getProductId(), depotpartBean
-            .getId(), priceKey);
+        int afterAmount11 = storageRelationDAO.sumProductInDepotpartIdAndPriceKey(bean
+            .getProductId(), depotpartBean.getId(), priceKey);
 
-        int afterAmount2 = storageRelationDAO.sumProductInLocationId(bean.getProductId(), depotBean.getId());
+        int afterAmount2 = storageRelationDAO.sumProductInLocationId(bean.getProductId(), depotBean
+            .getId());
 
-        int afterAmount22 = storageRelationDAO.sumProductInLocationIdAndPriceKey(bean.getProductId(),
-            depotBean.getId(), priceKey);
+        int afterAmount22 = storageRelationDAO.sumProductInLocationIdAndPriceKey(bean
+            .getProductId(), depotBean.getId(), priceKey);
 
         // save log
         // 记录仓区的产品异动数量
@@ -370,7 +383,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
      * @see com.china.center.oa.product.manager.StorageRelationManager#changeStorageRelationWithoutTransaction(com.center.china.osgi.publics.User,
      *      com.china.center.oa.product.wrap.ProductChangeWrap)
      */
-    public synchronized StorageRelationBean changeStorageRelationWithTransaction(final User user,
+    public synchronized StorageRelationBean changeStorageRelationWithTransaction(
+                                                                                 final User user,
                                                                                  final ProductChangeWrap bean,
                                                                                  final boolean deleteZeroRelation)
         throws MYException
@@ -388,7 +402,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
                 {
                     try
                     {
-                        return changeStorageRelationWithoutTransaction(user, bean, deleteZeroRelation);
+                        return changeStorageRelationWithoutTransaction(user, bean,
+                            deleteZeroRelation);
                     }
                     catch (MYException e)
                     {
@@ -413,8 +428,10 @@ public class StorageRelationManagerImpl implements StorageRelationManager
      * @see com.china.center.oa.product.manager.StorageRelationManager#transferStorageRelation(com.center.china.osgi.publics.User,
      *      java.lang.String, java.lang.String, java.lang.String[])
      */
-    public synchronized boolean transferStorageRelation(final User user, final String sourceStorageId,
-                                                        final String dirStorageId, final String[] relations)
+    public synchronized boolean transferStorageRelation(final User user,
+                                                        final String sourceStorageId,
+                                                        final String dirStorageId,
+                                                        final String[] relations)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, sourceStorageId, dirStorageId, relations);
@@ -474,7 +491,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
 
                         addWrap.setType(StorageConstant.OPR_STORAGE_MOVE);
                         addWrap.setChange(srb.getAmount());
-                        addWrap.setDescription("从" + source.getName() + "转移到" + dir.getName() + "(" + sid + ")");
+                        addWrap.setDescription("从" + source.getName() + "转移到" + dir.getName() + "("
+                                               + sid + ")");
                         addWrap.setPrice(srb.getPrice());
                         addWrap.setProductId(srb.getProductId());
                         addWrap.setStorageId(dirStorageId);
@@ -525,8 +543,10 @@ public class StorageRelationManagerImpl implements StorageRelationManager
      * @see com.china.center.oa.product.manager.StorageRelationManager#transferStorageRelationInDepotpart(com.center.china.osgi.publics.User,
      *      java.lang.String, java.lang.String, int)
      */
-    public synchronized boolean transferStorageRelationInDepotpart(final User user, final String sourceRelationId,
-                                                                   final String dirDepotpartId, final int amount)
+    public synchronized boolean transferStorageRelationInDepotpart(final User user,
+                                                                   final String sourceRelationId,
+                                                                   final String dirDepotpartId,
+                                                                   final int amount)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, sourceRelationId, dirDepotpartId);
@@ -569,8 +589,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
 
         // 自动找寻仓区下产品的位置
         final StorageRelationBean newRelationBean = storageRelationDAO
-            .findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(dirDepotpartId, srb.getProductId(),
-                srb.getPriceKey(), StorageConstant.PUBLIC_STAFFER);
+            .findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(dirDepotpartId, srb
+                .getProductId(), srb.getPriceKey(), StorageConstant.PUBLIC_STAFFER);
 
         final List<StorageBean> sbs = new ArrayList();
 
@@ -600,7 +620,8 @@ public class StorageRelationManagerImpl implements StorageRelationManager
                     String sid = commonDAO.getSquenceString();
                     // 首先是源仓区减去产品数量
 
-                    String des = "从仓区[" + oldDepotpart.getName() + "]转移到[" + newDepotpart.getName() + "]";
+                    String des = "从仓区[" + oldDepotpart.getName() + "]转移到[" + newDepotpart.getName()
+                                 + "]";
 
                     ProductChangeWrap deleteWrap = new ProductChangeWrap();
 
@@ -705,6 +726,20 @@ public class StorageRelationManagerImpl implements StorageRelationManager
         }
 
         return true;
+    }
+
+    public int sumPreassignByStorageRelation(StorageRelationBean bean)
+    {
+        Collection<StorageRelationListener> listenerMapValues = this.listenerMapValues();
+
+        int sum = 0;
+
+        for (StorageRelationListener storageRelationListener : listenerMapValues)
+        {
+            sum += storageRelationListener.onFindPreassignByStorageRelation(bean);
+        }
+
+        return sum;
     }
 
     public boolean isStorageRelationLock()
