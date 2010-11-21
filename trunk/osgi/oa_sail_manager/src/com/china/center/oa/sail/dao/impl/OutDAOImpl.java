@@ -12,11 +12,13 @@ package com.china.center.oa.sail.dao.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.IbatisDaoSupport;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.vo.OutVO;
+import com.china.center.tools.TimeTools;
 
 
 /**
@@ -211,6 +213,52 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         return (Integer)count;
     }
 
+    public Integer sumNotEndProductInInByStorageRelation(String productId, String depotpartId,
+                                                         String priceKey, String ower)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("productId", productId);
+        paramterMap.put("depotpartId", depotpartId);
+        paramterMap.put("costPriceKey", priceKey);
+        paramterMap.put("owner", ower);
+        paramterMap.put("beginDate", TimeTools.getDateShortString( -365));
+        paramterMap.put("endDate", TimeTools.now_short());
+
+        Object count = getIbatisDaoSupport().queryForObject(
+            "OutDAO.sumNotEndProductInInByStorageRelation", paramterMap);
+
+        if (count == null)
+        {
+            return 0;
+        }
+
+        return (Integer)count;
+    }
+
+    public Integer sumNotEndProductInOutByStorageRelation(String productId, String depotpartId,
+                                                          String priceKey, String ower)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("productId", productId);
+        paramterMap.put("depotpartId", depotpartId);
+        paramterMap.put("costPriceKey", priceKey);
+        paramterMap.put("owner", ower);
+        paramterMap.put("beginDate", TimeTools.getDateShortString( -365));
+        paramterMap.put("endDate", TimeTools.now_short());
+
+        Object count = getIbatisDaoSupport().queryForObject(
+            "OutDAO.sumNotEndProductInOutByStorageRelation", paramterMap);
+
+        if (count == null)
+        {
+            return 0;
+        }
+
+        return (Integer)count;
+    }
+
     public boolean updataInWay(String fullId, int inway)
     {
         jdbcOperation.updateField("inway", inway, fullId, this.claz);
@@ -249,6 +297,18 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
     }
 
     /**
+     * 在out里面统计客户的使用
+     * 
+     * @param id
+     * @return
+     */
+    public int countCustomerInOut(String id)
+    {
+        return this.jdbcOperation.queryForInt(
+            BeanTools.getCountHead(claz) + "where customerId = ?", id);
+    }
+
+    /**
      * @return the ibatisDaoSupport
      */
     public IbatisDaoSupport getIbatisDaoSupport()
@@ -264,5 +324,4 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
     {
         this.ibatisDaoSupport = ibatisDaoSupport;
     }
-
 }

@@ -38,7 +38,7 @@ import com.china.center.actionhelper.common.OldPageSeparateTools;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
-import com.china.center.oa.customer.bean.CustomerBean;
+import com.china.center.oa.customer.constant.CustomerConstant;
 import com.china.center.oa.customer.dao.CustomerDAO;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
@@ -55,14 +55,17 @@ import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.LocationHelper;
 import com.china.center.oa.publics.bean.DepartmentBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
+import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.AuthConstant;
+import com.china.center.oa.publics.constant.InvoiceConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
+import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
@@ -134,6 +137,8 @@ public class OutAction extends DispatchAction
     private FlowLogDAO flowLogDAO = null;
 
     private OutDAO outDAO = null;
+
+    private InvoiceDAO invoiceDAO = null;
 
     private BaseDAO baseDAO = null;
 
@@ -214,7 +219,10 @@ public class OutAction extends DispatchAction
                                                              - noPayBusiness));
         }
 
-        // TODO 发票查询
+        List<InvoiceBean> invoiceList = invoiceDAO.queryEntityBeansByCondition("where forward = ?",
+            InvoiceConstant.INVOICE_FORWARD_OUT);
+
+        request.setAttribute("invoiceList", invoiceList);
 
         // 增加入库单
         if ("1".equals(flag))
@@ -251,54 +259,6 @@ public class OutAction extends DispatchAction
         }
 
         return false;
-    }
-
-    /**
-     * TODO 增加库单时查询客户(供应商不在里面了)
-     * 
-     * @param mapping
-     * @param form
-     * @param request
-     * @param reponse
-     * @return
-     * @throws ServletException
-     */
-    public ActionForward queryCustomer(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse reponse)
-        throws ServletException
-    {
-        User user = (User)request.getSession().getAttribute("user");
-
-        List<CustomerBean> list = null;
-
-        ConditionParse condition = new ConditionParse();
-
-        condition.addWhereStr();
-
-        condition.addCondition("t2.stafferId", "=", user.getStafferId());
-
-        String name = request.getParameter("name");
-
-        if ( !StringTools.isNullOrNone(name))
-        {
-            condition.addCondition("name", "like", name);
-            request.setAttribute("name", name);
-        }
-
-        String code = request.getParameter("code");
-
-        if ( !StringTools.isNullOrNone(code))
-        {
-            condition.addCondition("code", "like", code);
-            request.setAttribute("code", code);
-        }
-
-        list = customerDAO.queryEntityBeansByCondition(condition);
-
-        request.setAttribute("customerList", list);
-
-        // rptCustomer.jsp
-        return mapping.findForward("rptCustomerList");
     }
 
     /**
@@ -720,7 +680,7 @@ public class OutAction extends DispatchAction
 
         String fullId = request.getParameter("fullId");
 
-        if ("saves".equals(saves))
+        if ("save".equals(saves))
         {
             saves = "保存";
         }
@@ -738,7 +698,8 @@ public class OutAction extends DispatchAction
 
         BeanUtil.getBean(outBean, request);
 
-        if (outBean.getOutType() == OutConstant.INBILL_SELF_IN)
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.INBILL_SELF_IN)
         {
             // 设置成调出
             outBean.setOutType(OutConstant.INBILL_OUT);
@@ -759,16 +720,19 @@ public class OutAction extends DispatchAction
 
         if (StringTools.isNullOrNone(outBean.getLocation()))
         {
-            outBean.setLocation(outBean.getLocationId());
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "没有库存属性,请重新操作");
+
+            return mapping.findForward("error");
         }
 
         ParamterMap map = new ParamterMap(request);
 
         ActionForward action = null;
+
         if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
             // 强制设置成OUT_SAIL_TYPE_MONEY
-            if (OutConstant.BLACK_LEVEL.equals(customercreditlevel))
+            if (CustomerConstant.BLACK_LEVEL.equals(customercreditlevel))
             {
                 outBean.setReserve3(OutConstant.OUT_SAIL_TYPE_MONEY);
             }
@@ -822,8 +786,7 @@ public class OutAction extends DispatchAction
         }
 
         // 设置去哪个查询页面
-
-        return queryOut(mapping, form, request, reponse);
+        return querySelfOut(mapping, form, request, reponse);
     }
 
     /**
@@ -893,7 +856,7 @@ public class OutAction extends DispatchAction
                                    HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
-        return queryOut(mapping, form, request, reponse);
+        return querySelfOut(mapping, form, request, reponse);
     }
 
     /**
@@ -907,7 +870,7 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryOut(ActionMapping mapping, ActionForm form,
+    public ActionForward querySelfOut(ActionMapping mapping, ActionForm form,
                                   HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
@@ -1588,7 +1551,7 @@ public class OutAction extends DispatchAction
         // TODO
         request.setAttribute("Bflagg", "1");
 
-        return queryOut(mapping, form, request, reponse);
+        return querySelfOut(mapping, form, request, reponse);
     }
 
     /**
@@ -1767,7 +1730,7 @@ public class OutAction extends DispatchAction
         // TODO
         request.setAttribute("Bflagg", "1");
 
-        return queryOut(mapping, form, request, reponse);
+        return querySelfOut(mapping, form, request, reponse);
     }
 
     public ActionForward mark(ActionMapping mapping, ActionForm form, HttpServletRequest request,
@@ -1782,7 +1745,7 @@ public class OutAction extends DispatchAction
 
         request.setAttribute("forward", "9");
 
-        return queryOut(mapping, form, request, reponse);
+        return querySelfOut(mapping, form, request, reponse);
     }
 
     /**
@@ -2036,7 +1999,7 @@ public class OutAction extends DispatchAction
 
         if (statuss == 1)
         {
-            return queryOut(mapping, form, request, reponse);
+            return querySelfOut(mapping, form, request, reponse);
         }
 
         return queryOut2(mapping, form, request, reponse);
@@ -2879,6 +2842,23 @@ public class OutAction extends DispatchAction
     public void setStorageRelationManager(StorageRelationManager storageRelationManager)
     {
         this.storageRelationManager = storageRelationManager;
+    }
+
+    /**
+     * @return the invoiceDAO
+     */
+    public InvoiceDAO getInvoiceDAO()
+    {
+        return invoiceDAO;
+    }
+
+    /**
+     * @param invoiceDAO
+     *            the invoiceDAO to set
+     */
+    public void setInvoiceDAO(InvoiceDAO invoiceDAO)
+    {
+        this.invoiceDAO = invoiceDAO;
     }
 
 }

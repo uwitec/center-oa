@@ -1,7 +1,7 @@
 function heji(obj)
 {
 	var os = obj.parentNode.parentNode;
-	//os.cells.length
+	
 	var m = os.cells[2].childNodes[0].value;
 	var p = os.cells[3].childNodes[0].value;
 	
@@ -120,6 +120,7 @@ function addTr()
 function removeTr(obj)
 {
 	obj.parentNode.parentNode.removeNode(true);
+	
 	//rows
 	var table = $O("tables");
 	
@@ -138,16 +139,26 @@ function removeTr(obj)
 	total();
 }
 
+function toUnqueStr1(ele)
+{
+	return ele.ppid + '-' + ele.pprice + '-' + ele.pstafferid + '-' + ele.pdepotpartid;
+}
+
+function toUnqueStr2(ele)
+{
+    return ele.productid + '-' + ele.price + '-' + ele.stafferid + '-' + ele.depotpartid;
+}
+
 function distinc(ox)
 {
-	//productId
+	//productid
 	var plist = document.getElementsByName('productName');
 	
 	var arr1 = new Array();
 	
 	for(var i = 0; i < plist.length; i++)
 	{
-		arr1[i] = plist[i].productId;
+		arr1[i] = toUnqueStr2(plist[i]);
 	}
 	
 	var arr = new Array();
@@ -157,7 +168,7 @@ function distinc(ox)
 		var ff = false;
 		for(var i = 0; i < arr1.length; i++)
 		{
-			if (arr1[i] == ox[k].value)
+			if (arr1[i] == toUnqueStr1(ox[k]))
 			{
 				ff = true;
 			}
@@ -165,7 +176,8 @@ function distinc(ox)
 		
 		if (!ff)
 		{
-			arr1.push(ox[k].value);
+			arr1.push(toUnqueStr1(ox[k]));
+			
 			arr[n++] = ox[k];
 		}
 	}
@@ -179,6 +191,8 @@ function clears()
 	document.getElementById('unAmount').title = '';
 	document.getElementById('unPrice').value = '';
 	document.getElementById('unProductName').value = '';
+	document.getElementById('unProductName').productid = '';
+	document.getElementById('unProductName').productcode = '';
 	document.getElementById('unDesciprt').value = '';
 	document.getElementById('unRstafferName').value = '';
 }
@@ -198,9 +212,22 @@ function clearArray(array)
 	for (var i = 0; i < array.length; i++)
 	{
 		array[i].value = '';
+		
+		if (array[i].productid)
+		{
+			array[i].productid = '';
+		}
+		
+		if (array[i].productcode)
+        {
+            array[i].productcode = '';
+        }
 	}
 }
 
+/**
+ * oo是在addout里面定义的
+ */
 function getProductRelation(ox)
 {
 	ox = distinc(ox);
@@ -210,44 +237,88 @@ function getProductRelation(ox)
 		return;
 	}
 	
-	if (false && ox.length == 1)
-	{
-		oo.value = ox[0].pname;
-		oo.productId = ox[0].value;
-		var os = oo.parentNode.parentNode;
-		os.cells[2].childNodes[0].title = '当前产品的最大数量:' + ox[0].pamount;
-		os.cells[5].childNodes[0].value = ox[0].pprice;
-		os.cells[6].childNodes[0].value = ox[0].pstaffername;
-	}
-	else
-	{
-		var indes = 0;
-		if (oo.value == '' || oo.value == null)
-		{
-			indes = 1;
-			oo.value = ox[0].pname;
-			oo.productId = ox[0].value;
-			var os = oo.parentNode.parentNode;
-			os.cells[2].childNodes[0].title = '当前产品的最大数量:' + ox[0].pamount;
-			os.cells[5].childNodes[0].value = ox[0].pprice;
-			os.cells[6].childNodes[0].value = ox[0].pstaffername;
-		}
-		
-		for(var i = indes; i < ox.length; i++)
-		{
-			var newTr = addTr();
-			
-			if (newTr == null)
-			{
-				break;
-			}
-			var inps = newTr.getElementsByTagName('INPUT');
-			
-			inps[0].value = ox[i].pname;
-			inps[0].productId = ox[i].value;
-			inps[1].title = '当前产品的最大数量:' + ox[i].pamount;
-			inps[4].value = ox[0].pprice;
-			inps[5].value = ox[0].pstaffername;
-		}
-	}
+	var indes = 0;
+        
+    if (indes == 0)
+    {
+        indes = 1;
+        
+        setObj(oo, ox[0]);
+        
+        var os = oo.parentNode.parentNode;
+        os.cells[2].childNodes[0].title = '当前产品的最大数量:' + ox[0].pamount;
+        os.cells[5].childNodes[0].value = ox[0].pprice;
+        os.cells[6].childNodes[0].value =  ox[0].pdepotpartname + '-->' + ox[0].pstaffername;
+    }
+    
+    for(var i = indes; i < ox.length; i++)
+    {
+        var newTr = addTr();
+        
+        if (newTr == null)
+        {
+            break;
+        }
+        
+        var inps = newTr.getElementsByTagName('INPUT');
+        
+        setObj(inps[0], ox[i]);
+        
+        inps[1].title = '当前产品的最大数量:' + ox[i].pamount;
+        inps[4].value = ox[i].pprice;
+        inps[5].value = ox[i].pdepotpartname + '-->' + ox[i].pstaffername;
+    }
+}
+
+/**
+ * 虚拟产品的选择
+ */
+function getProductAbs(ox)
+{
+    if (ox.length <= 0)
+    {
+        return;
+    }
+    
+    var indes = 0;
+        
+    if (indes == 0)
+    {
+        indes = 1;
+        
+        setObj2(oo, ox[0]);
+    }
+    
+    for(var i = indes; i < ox.length; i++)
+    {
+        var newTr = addTr();
+        
+        if (newTr == null)
+        {
+            break;
+        }
+        
+        var inps = newTr.getElementsByTagName('INPUT');
+        
+        setObj2(inps[0], ox[i]);
+    }
+}
+
+function setObj(src, dest)
+{
+	src.value = dest.pname;
+    src.productcode = dest.pcode;
+    
+    src.productid = dest.value;
+    src.price = dest.pprice;
+    src.stafferid = dest.pstafferid;
+    src.depotpartid = dest.pdepotpartid;
+}
+
+function setObj2(src, dest)
+{
+    src.value = dest.name;
+    src.productcode = dest.code;
+    
+    src.productid = dest.id;
 }

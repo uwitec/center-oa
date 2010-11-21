@@ -102,6 +102,28 @@ public interface OutDAO extends DAO<OutBean, OutVO>
     Integer countNotEndProductInOut(String productId, String beginDate, String endDate);
 
     /**
+     * 统计一个具体库存的产品被单据占据多少配额(销售单里面)
+     * 
+     * @param stafferId
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    Integer sumNotEndProductInOutByStorageRelation(String productId, String depotpartId,
+                                                   String priceKey, String ower);
+
+    /**
+     * 统计一个具体库存的产品被单据占据多少配额(入库单里面)
+     * 
+     * @param stafferId
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    Integer sumNotEndProductInInByStorageRelation(String productId, String depotpartId,
+                                                    String priceKey, String ower);
+
+    /**
      * 统计一个产品在系统的入库单在途的数量
      * 
      * @param stafferId
@@ -120,4 +142,6 @@ public interface OutDAO extends DAO<OutBean, OutVO>
      * @return
      */
     double sumNoPayAndAvouchBusinessByManagerId(String stafferId, String beginDate, String endDate);
+
+    int countCustomerInOut(String customerId);
 }

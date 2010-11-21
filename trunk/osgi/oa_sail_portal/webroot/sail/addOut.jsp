@@ -8,7 +8,9 @@
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/math.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
+<script language="JavaScript" src="../js/cnchina.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
+<script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../sail_js/addOut.js"></script>
 <script language="javascript">
 
@@ -29,7 +31,7 @@ function opens(obj)
 {
 	oo = obj;
 	
-	window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&load=1&depotId='+ $$('location'));
+	window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&showAbs=1&load=1&depotId='+ $$('location') + '&code=' + obj.productcode);
 }
 
 function selectCustomer()
@@ -50,7 +52,7 @@ function getCustomer(oos)
 	$O("customerId").value = obj.value;
 	$O("customercreditlevel").value = obj.pcreditlevelid;
 	
-	if (obj.pcreditlevelid == BLACK_LEVEL)
+	if (obj.pcreditlevelid == BLACK_LEVEL || $$('outType') == 2)
 	{
 	    removeAllItem($O('reserve3'));
 	    
@@ -58,12 +60,17 @@ function getCustomer(oos)
 	}
 	else
 	{
-	    removeAllItem($O('reserve3'));
-        
-        setOption($O('reserve3'), '2', '客户信用和业务员信用额度担保');  
-        setOption($O('reserve3'), '1', '款到发货(黑名单客户)');  
-        setOption($O('reserve3'), '3', '分公司经理担保');  
+	    resetReserve3();
 	}
+}
+
+function resetReserve3()
+{
+    removeAllItem($O('reserve3'));
+        
+    setOption($O('reserve3'), '2', '客户信用和业务员信用额度担保');  
+    setOption($O('reserve3'), '1', '款到发货(黑名单客户/零售)');  
+    setOption($O('reserve3'), '3', '分公司经理担保');  
 }
 
 function total()
@@ -86,43 +93,13 @@ function total()
 
 function titleChange()
 {
-	<c:if test="${ff}">
-	if ($$('outType') == '1' || $$('outType') == '4')
-	{
-		$O('outd').innerText = '调出部门：';
-	}
-	else
-	{
-		$O('outd').innerText = '供应商：';
-	}
-
-	if ($$('outType') == '1')
-	{
-		hides(false);
-	}
-	else
-	{
-		hides(true);
-	}
-
-	//调入的处理
-	if ($$('outType') == '4')
-	{
-		showTr(true);
-	}
-	else
-	{
-		showTr(false);
-
-		if ($O('refOutFullId'))
-		$O('refOutFullId').value = '';
-	}
-	</c:if>
+	
 }
 
 function load()
 {
 	titleChange();
+	
 	loadForm();
 
 	hides(true);
@@ -160,10 +137,15 @@ function check()
 
 	ids = '';
 	amous = '';
+	
 	$O('priceList').value = '';
 	$O('totalList').value = '';
 	$O('nameList').value = '';
 	$O('unitList').value = '';
+	$O('otherList').value = '';
+	$O('showIdList').value = '';
+	$O('showNameList').value = '';
+	
 	if (trim($O('outTime').value) == '')
 	{
 		alert('请选择销售日期');
@@ -200,20 +182,36 @@ function check()
 	var amounts = document.getElementsByName('amount');
 	var prices = document.getElementsByName('price');
 	var values = document.getElementsByName('value');
+	var outProductNames = document.getElementsByName('outProductName');
 
-
+    var tmpMap = {};
 	//isNumbers
 	for (var i = 1; i < proNames.length; i++)
 	{
-		if (proNames[i].value == '' || proNames[i].productId == '')
+		if (proNames[i].value == '' || proNames[i].productid == '')
 		{
 			alert('数据不完整,请选择产品名称!');
+			
 			return false;
 		}
 
-		ids = ids + proNames[i].productId + '~';
+		ids = ids + proNames[i].productid + '~';
 
 		$O('nameList').value = $O('nameList').value +  proNames[i].value + '~';
+		
+		var ikey = toUnqueStr2(proNames[i]);
+		
+		if (tmpMap[ikey])
+		{
+		    alert('选择的产品重复[仓区+产品+职员+价格],请核实!');
+            
+            return false;
+		}
+		
+		tmpMap[ikey] = ikey;
+		
+		//库存重要的标识
+		$O('otherList').value = $O('otherList').value + ikey + '~';
 
 		$O('idsList').value = ids;
 	}
@@ -238,6 +236,22 @@ function check()
 
 		$O('amontList').value = amous;
 	}
+	
+	for (var i = 1; i < outProductNames.length; i++)
+    {
+        if (trim(outProductNames[i].value) == '')
+        {
+            alert('数据不完整,请选择!');
+            outProductNames[i].focus();
+            return false;
+        }
+
+        amous = amous + amounts[i].value + '~';
+
+        $O('showIdList').value =  $O('showIdList').value + outProductNames[i].value + '~';
+        
+        $O('showNameList').value =  $O('showNameList').value + getOptionText(outProductNames[i]) + '~';
+    }
 
 	for (var i = 1; i < prices.length; i++)
 	{
@@ -268,6 +282,7 @@ function check()
 	}
 
 	var desList = document.getElementsByName('desciprt');
+	
 	for (var i = 1; i < desList.length; i++)
 	{
 		if (trim(desList[i].value) == '')
@@ -284,6 +299,7 @@ function check()
 			return false;
 		}
 	}
+	
 	for (var i = 1; i < values.length; i++)
 	{
 		$O('totalList').value = $O('totalList').value + values[i].value + '~';
@@ -321,9 +337,8 @@ function checkTotal()
 	 	 }
 	 }
 
-	if ($O('saves').value != '')
+	if ($O('saves').value == 'save')
     {
-
 	     if (window.confirm("确定保存库单?" + messk))
 	     {
 	     	$O('id').value = '';
@@ -366,7 +381,7 @@ function checkTotal()
 
 function save()
 {
-	$O('saves').value = 'saves';
+	$O('saves').value = 'save';
 	if (check())
 	{
 		checkTotal();
@@ -375,7 +390,7 @@ function save()
 
 function sub()
 {
-	$O('saves').value = '';
+	$O('saves').value = 'submit';
 	if (check())
 	{
 		checkTotal();
@@ -384,6 +399,7 @@ function sub()
 
 function managerChange()
 {
+    //普通销售
 	if ($$('outType') == 0)
 	{
 		$O('customerName').value = '';
@@ -391,26 +407,50 @@ function managerChange()
 		$O('customerName').disabled  = false;
 		$O('reday').value = '';
 		$O('reday').readOnly = false;
+		
+		if (obj.pcreditlevelid == BLACK_LEVEL)
+	    {
+	        removeAllItem($O('reserve3'));
+	        
+	        setOption($O('reserve3'), '1', '款到发货(黑名单客户)');   
+	    }
+	    else
+	    {
+	        resetReserve3();
+	    }
 	}
-	else
+	
+	//个人领样
+	if ($$('outType') == 1)
 	{
 		$O('customerName').value = '个人领样';
-		$O('customerId').value = '0';
+		$O('customerId').value = '99';
 		$O('customerName').disabled  = true;
 		$O('reday').value = '${goDays}';
 		$O('reday').readOnly = true;
+		
+		resetReserve3();
 	}
-}
-
-function selectOut()
-{
-	window.common.modal('../admin/out.do?method=queryOut3&load=1&flag=4');
+	
+	//零售 是给公共客户的
+	if ($$('outType') == 2)
+    {
+        $O('customerName').value = '公共客户';
+        $O('customerId').value = '99';
+        $O('customerName').disabled  = true;
+        $O('reday').value = '';
+        $O('reday').readOnly = false;
+        
+        removeAllItem($O('reserve3'));
+        
+        setOption($O('reserve3'), '1', '款到发货(黑名单客户/零售)');   
+    }
 }
 
 </script>
 </head>
 <body class="body_class" onload="load()">
-<form name="outForm" method=post action="./out.do?"><input
+<form name="outForm" method=post action="../sail/out.do"><input
 	type=hidden name="method" value="addOut" /><input type=hidden
 	name="nameList" /> <input type=hidden name="idsList" /> <input
 	type=hidden name="unitList" /> <input type=hidden name="amontList" />
@@ -419,6 +459,9 @@ function selectOut()
 	type=hidden name="customerId" /> <input type=hidden name="type"
 	value='0' /> <input type=hidden name="saves" value="" />
 <input type=hidden name="desList" value="" />
+<input type=hidden name="otherList" value="" />
+<input type=hidden name="showIdList" value="" />
+<input type=hidden name="showNameList" value="" />
 <input type=hidden name="customercreditlevel" value="" />
 <p:navigation
 	height="22">
@@ -495,6 +538,7 @@ function selectOut()
 							<td width="35%"><select name="outType" class="select_class" onchange="managerChange()">
 								<option value="0">销售出库</option>
 								<option value="1">个人领样</option>
+								<option value="2">零售</option>
 							</select><font color="#FF0000">*</font></td>
 						
 					</tr>
@@ -543,8 +587,20 @@ function selectOut()
                         <td colspan="3">
                         <select name="reserve3" class="select_class" oncheck="notNone;" head="付款方式" style="width: 240px">
                             <option value='2'>客户信用和业务员信用额度担保</option>
-                            <option value='1'>款到发货(黑名单客户)</option>
+                            <option value='1'>款到发货(黑名单客户/零售)</option>
                             <option value='3'>分公司经理担保</option>
+                        </select>
+                        <font color="#FF0000">*</font></td>
+                    </tr>
+                    
+                    <tr class="content2">
+                        <td align="right">发票类型：</td>
+                        <td colspan="3">
+                        <select name="invoiceId" class="select_class" head="发票类型" style="width: 400px">
+                           <option value="">没有发票</option>
+                            <c:forEach items="${invoiceList}" var="item">
+                            <option value="${item.id}">${item.fullName}</option>
+                            </c:forEach>
                         </select>
                         <font color="#FF0000">*</font></td>
                     </tr>
@@ -594,14 +650,22 @@ function selectOut()
 						<td width="10%" align="center">成本</td>
 						<td width="25%" align="center">类型</td>
 						<td width="15%" align="center">开单品名</td>
-						<td width="15%" align="center"><input type="button"
+						<td width="15%" align="center"><input type="button" accesskey="A"
 							value="增加" class="button_class" onclick="addTr()"></td>
 					</tr>
 
 					<tr class="content1" id="trCopy" style="display: none;">
-						<td><input type="text" name="productName"
-							onclick="opens(this)" productId="" readonly="readonly"
-							style="width: 100%; cursor: hand"></td>
+						<td>
+						<input type="text" name="productName"
+							onclick="opens(this)"
+							productid="" 
+							productcode="" 
+							price=""
+							stafferid=""
+							depotpartid=""
+							readonly="readonly"
+							style="width: 100%; cursor: hand">
+						</td>
 
 						<td><select name="unit" style="WIDTH: 50px;">
 							<option value="套">套</option>
@@ -628,7 +692,7 @@ function selectOut()
 							style="width: 100%" name="rstafferName"></td>
 							
 						<td  align="center">
-						<select name="outProductName" style="WIDTH: 150px;">
+						<select name="outProductName" style="WIDTH: 150px;" quick=true>
 							<p:option type="123"></p:option>
 						</select>
 						</td>
@@ -638,7 +702,13 @@ function selectOut()
 
 					<tr class="content2">
 						<td><input type="text" name="productName" id="unProductName"
-							onclick="opens(this)" productId="" readonly="readonly"
+							onclick="opens(this)" 
+							productid="" 
+                            productcode="" 
+                            price=""
+                            stafferid=""
+                            depotpartid=""
+							readonly="readonly"
 							style="width: 100%; cursor: pointer"></td>
 
 						<td><select name="unit" style="WIDTH: 50px;">
@@ -664,7 +734,7 @@ function selectOut()
 							style="width: 100%" name="rstafferName"></td>
 							
 						<td align="center">
-						<select name="outProductName" style="WIDTH: 150px;">
+						<select name="outProductName" style="WIDTH: 150px;" quick=true>
 							<p:option type="123"></p:option>
 						</select>
 						</td>

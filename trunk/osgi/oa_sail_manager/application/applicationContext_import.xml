@@ -70,5 +70,9 @@
 	<osgi:reference id="depotDAO" interface="com.china.center.oa.product.dao.DepotDAO" />
 	
 	<osgi:reference id="productManager" interface="com.china.center.oa.product.manager.ProductManager" />
+	
+	<osgi:reference id="customerManager" interface="com.china.center.oa.customer.manager.CustomerManager" />
+	
+	<osgi:reference id="storageRelationManager" interface="com.china.center.oa.product.manager.StorageRelationManager" />
 
 </beans>

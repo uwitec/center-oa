@@ -32,22 +32,26 @@ import com.china.center.oa.credit.bean.CreditLevelBean;
 import com.china.center.oa.credit.dao.CreditCoreDAO;
 import com.china.center.oa.credit.dao.CreditLevelDAO;
 import com.china.center.oa.customer.bean.CustomerBean;
+import com.china.center.oa.customer.constant.CustomerConstant;
 import com.china.center.oa.customer.dao.CustomerDAO;
 import com.china.center.oa.note.bean.ShortMessageTaskBean;
 import com.china.center.oa.note.constant.ShortMessageConstant;
 import com.china.center.oa.note.dao.ShortMessageTaskDAO;
 import com.china.center.oa.note.manager.HandleMessage;
 import com.china.center.oa.product.bean.DepotBean;
+import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.DepotpartDAO;
 import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.dao.StorageDAO;
+import com.china.center.oa.product.helper.StorageRelationHelper;
 import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.LocationBean;
+import com.china.center.oa.publics.bean.NotifyBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.bean.UserBean;
 import com.china.center.oa.publics.constant.SysConfigConstant;
@@ -57,6 +61,7 @@ import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
+import com.china.center.oa.publics.manager.NotifyManager;
 import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.ConsignBean;
 import com.china.center.oa.sail.bean.LogBean;
@@ -129,6 +134,8 @@ public class OutManagerImpl implements OutManager
     private FlowLogDAO flowLogDAO = null;
 
     private OutUniqueDAO outUniqueDAO = null;
+
+    private NotifyManager notifyManager = null;
 
     private StorageRelationManager storageRelationManager = null;
 
@@ -205,13 +212,12 @@ public class OutManagerImpl implements OutManager
         final String[] idsList = request.getParameter("idsList").split("~");
         final String[] showIdList = request.getParameter("showIdList").split("~");
         final String[] showNameList = request.getParameter("showNameList").split("~");
-        final String[] ownerList = request.getParameter("ownerList").split("~");
         final String[] unitList = request.getParameter("unitList").split("~");
         final String[] amontList = request.getParameter("amontList").split("~");
         final String[] priceList = request.getParameter("priceList").split("~");
-        final String[] costPriceList = request.getParameter("costPriceList").split("~");
         final String[] totalList = request.getParameter("totalList").split("~");
         final String[] desList = (" " + request.getParameter("desList") + " ").split("~");
+        final String[] otherList = request.getParameter("otherList").split("~");
 
         // 组织BaseBean
         double ttatol = 0.0d;
@@ -225,6 +231,23 @@ public class OutManagerImpl implements OutManager
         outBean.setCurcredit(0.0d);
 
         outBean.setStaffcredit(0.0d);
+
+        if (StringTools.isNullOrNone(outBean.getCustomerId())
+            || CustomerConstant.PUBLIC_CUSTOMER_ID.equals(outBean.getCustomerId()))
+        {
+            outBean.setCustomerId(CustomerConstant.PUBLIC_CUSTOMER_ID);
+
+            outBean.setCustomerName(CustomerConstant.PUBLIC_CUSTOMER_NAME);
+        }
+
+        if (StringTools.isNullOrNone(outBean.getInvoiceId()))
+        {
+            outBean.setHasInvoice(OutConstant.HASINVOICE_NO);
+        }
+        else
+        {
+            outBean.setHasInvoice(OutConstant.HASINVOICE_YES);
+        }
 
         // 增加管理员操作在数据库事务中完成
         TransactionTemplate tran = new TransactionTemplate(transactionManager);
@@ -248,12 +271,22 @@ public class OutManagerImpl implements OutManager
                     for (int i = 0; i < nameList.length; i++ )
                     {
                         BaseBean base = new BaseBean();
+
                         base.setOutId(outBean.getFullId());
+
                         base.setProductId(idsList[i]);
 
                         if (StringTools.isNullOrNone(base.getProductId()))
                         {
                             throw new RuntimeException("产品ID为空,数据不完备");
+                        }
+
+                        // ele.productid + '-' + ele.price + '-' + ele.stafferid + '-' + ele.depotpartid
+                        String[] coreList = otherList[i].split("-");
+
+                        if (coreList.length != 4)
+                        {
+                            throw new RuntimeException("数据不完备");
                         }
 
                         base.setProductName(nameList[i]);
@@ -263,8 +296,21 @@ public class OutManagerImpl implements OutManager
                         base.setValue(MathTools.parseDouble(totalList[i]));
                         base.setShowId(showIdList[i]);
                         base.setShowName(showNameList[i]);
-                        base.setOwner(ownerList[i]);
-                        base.setCostPrice(MathTools.parseDouble(costPriceList[i]));
+
+                        // 寻找具体的产品价格位置
+                        base.setCostPrice(MathTools.parseDouble(coreList[1]));
+                        base
+                            .setCostPriceKey(StorageRelationHelper.getPriceKey(base.getCostPrice()));
+                        base.setOwner(coreList[2]);
+                        base.setDepotpartId(coreList[3]);
+
+                        DepotpartBean deport = depotpartDAO.find(base.getDepotpartId());
+
+                        if (deport != null)
+                        {
+                            base.setDepotpartName(deport.getName());
+                        }
+
                         base.setLocationId(outBean.getLocation());
 
                         base.setDescription(desList[i].trim());
@@ -272,8 +318,6 @@ public class OutManagerImpl implements OutManager
                         // 增加单个产品到base表
                         baseDAO.saveEntityBean(base);
                     }
-
-                    notifyOut(outBean, user);
 
                     return Boolean.TRUE;
                 }
@@ -410,7 +454,7 @@ public class OutManagerImpl implements OutManager
 
         outBean.setStatus(status);
 
-        notifyOut(outBean, user);
+        notifyOut(outBean, user, 0);
 
         return true;
     }
@@ -473,7 +517,7 @@ public class OutManagerImpl implements OutManager
 
                 result = 1;
 
-                // 只有销售单才有信用，剔除个人领样的
+                // 只有销售单才有信用(但是个人领样没有客户,就是公共客户)
                 if (outBean.getOutType() == OutConstant.OUTTYPE_OUT_COMMON)
                 {
                     boolean isCreditOutOf = false;
@@ -533,24 +577,29 @@ public class OutManagerImpl implements OutManager
 
                         double remainInCur = clevel.getMoney() - noPayBusinessInCur;
 
-                        if (remainInCur < 0)
+                        // 不是公共客户
+                        if ( !cbean.getId().equals(CustomerConstant.PUBLIC_CUSTOMER_ID))
                         {
-                            remainInCur = 0.0;
-                        }
+                            if (remainInCur < 0)
+                            {
+                                remainInCur = 0.0;
+                            }
 
-                        // 先客户信用 然后职员信用(信用*杠杆) 最后分公司经理
-                        if (remainInCur >= outBean.getTotal())
-                        {
-                            outDAO.updateCurcredit(fullId, outBean.getTotal());
+                            // 先客户信用 然后职员信用(信用*杠杆) 最后分公司经理
+                            if (remainInCur >= outBean.getTotal())
+                            {
+                                outDAO.updateCurcredit(fullId, outBean.getTotal());
 
-                            outDAO.updateStaffcredit(fullId, 0.0d);
+                                outDAO.updateStaffcredit(fullId, 0.0d);
+                            }
                         }
 
                         // 职员杠杆后的信用
                         double staffCredit = sb2.getCredit() * sb2.getLever();
 
-                        // 一半使用客户,一半使用职员的
-                        if (remainInCur < outBean.getTotal())
+                        // 一半使用客户,一半使用职员的(且不是公共客户的)
+                        if (remainInCur < outBean.getTotal()
+                            && !cbean.getId().equals(CustomerConstant.PUBLIC_CUSTOMER_ID))
                         {
                             // 全部使用客户的信用等级
                             outDAO.updateCurcredit(fullId, remainInCur);
@@ -588,28 +637,51 @@ public class OutManagerImpl implements OutManager
 
                             outDAO.updateStaffcredit(fullId, remainInStaff);
                         }
+
+                        // 公共客户信用处理
+                        if (cbean.getId().equals(CustomerConstant.PUBLIC_CUSTOMER_ID))
+                        {
+                            // 当前单据需要使用的职员信用额度
+                            double remainInStaff = outBean.getTotal();
+
+                            // 防止职员信用等级超支
+                            if ( (noPayBusiness + remainInStaff) > staffCredit)
+                            {
+                                double lastNeed = (noPayBusiness + remainInStaff) - staffCredit;
+
+                                outBean.setReserve6("职员信用额度是:"
+                                                    + MathTools.formatNum(sb2.getCredit())
+                                                    + ".职员信用已经使用额度是:"
+                                                    + MathTools.formatNum(noPayBusiness)
+                                                    + ".信用超支(包括此单):"
+                                                    + (MathTools.formatNum(lastNeed)));
+
+                                // 这里如果不使用分公司经理直接不允许提交此单据
+                                if (outBean.getReserve3() != OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER)
+                                {
+                                    throw new MYException(outBean.getReserve6());
+                                }
+
+                                isCreditOutOf = true;
+
+                                outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_OVER,
+                                    outBean.getReserve6());
+                            }
+
+                            outDAO.updateStaffcredit(fullId, remainInStaff);
+                        }
                     }
 
                     // 信用没有受限检查产品价格是否为0
                     if ( !isCreditOutOf)
                     {
-                        /**
-                         * DROP 删除价格为0的逻辑 <br>
-                         * boolean isZero = false; List<BaseBean> baseList =
-                         * baseDAO.queryEntityBeansByFK(outBean.getFullId()); for (BaseBean baseBean : baseList) { if
-                         * (baseBean.getPrice() == 0.0d) { isZero = true; outBean.setReserve6("存在价格为0的产品");
-                         * outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_MIN, outBean.getReserve6()); break; } }
-                         * if ( !isZero) { outBean.setReserve6(""); outDAO.updateOutReserve2(fullId,
-                         * OutConstant.OUT_CREDIT_COMMON, outBean .getReserve6()); }
-                         */
-
                         outBean.setReserve6("");
 
                         outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_COMMON, outBean
                             .getReserve6());
                     }
 
-                    // 修改人工干预,重新置为0
+                    // 修改人工干预,重新置人工干预信用为0
                     String pid = "90000000000000009999";
 
                     creditCoreDAO.updateCurCreToInit(pid, outBean.getCustomerId());
@@ -875,6 +947,8 @@ public class OutManagerImpl implements OutManager
                     addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_REJECT,
                         OutConstant.STATUS_REJECT);
 
+                    notifyOut(outBean, user, 1);
+
                     return Boolean.TRUE;
                 }
 
@@ -1108,7 +1182,7 @@ public class OutManagerImpl implements OutManager
 
                     outBean.setStatus(newNextStatus);
 
-                    notifyOut(outBean, user);
+                    notifyOut(outBean, user, 0);
 
                     return Boolean.TRUE;
                 }
@@ -1541,14 +1615,25 @@ public class OutManagerImpl implements OutManager
      * @param out
      * @param user
      */
-    private void notifyOut(OutBean out, User user)
+    private void notifyOut(OutBean out, User user, int type)
     {
         if (out.getType() == 1)
         {
             return;
         }
 
-        // TODO 邮件通知状态改变了
+        NotifyBean notify = new NotifyBean();
+
+        if (type == 0)
+        {
+            notify.setMessage(out.getFullId() + "已经被[" + user.getStafferName() + "]审批通过");
+        }
+        else
+        {
+            notify.setMessage(out.getFullId() + "已经被[" + user.getStafferName() + "]驳回");
+        }
+
+        notifyManager.notifyWithoutTransaction(out.getStafferId(), notify);
 
         if (false)
         {
@@ -1946,5 +2031,22 @@ public class OutManagerImpl implements OutManager
     public void setDepotDAO(DepotDAO depotDAO)
     {
         this.depotDAO = depotDAO;
+    }
+
+    /**
+     * @return the notifyManager
+     */
+    public NotifyManager getNotifyManager()
+    {
+        return notifyManager;
+    }
+
+    /**
+     * @param notifyManager
+     *            the notifyManager to set
+     */
+    public void setNotifyManager(NotifyManager notifyManager)
+    {
+        this.notifyManager = notifyManager;
     }
 }

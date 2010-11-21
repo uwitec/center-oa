@@ -90,11 +90,6 @@ public interface OutConstant
     int OUT_SAIL_TYPE_LOCATION_MANAGER = 3;
 
     /**
-     * 黑名单客户
-     */
-    String BLACK_LEVEL = "90000000000000000000";
-
-    /**
      * 初始化
      */
     int STATUS_SAVE = 0;
@@ -188,6 +183,11 @@ public interface OutConstant
      * 个人领样
      */
     int OUTTYPE_OUT_SWATCH = 1;
+
+    /**
+     * 零售
+     */
+    int OUTTYPE_OUT_RETAIL = 2;
 
     /**
      * 采购入库
