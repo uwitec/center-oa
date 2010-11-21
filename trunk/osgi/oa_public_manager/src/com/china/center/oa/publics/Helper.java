@@ -31,7 +31,9 @@ public abstract class Helper
 {
     public static String getCurrentLocationId(HttpServletRequest request)
     {
-        return request.getSession().getAttribute(PublicConstant.CURRENTLOCATIONID).toString();
+        User user = getUser(request);
+
+        return user.getLocationId();
     }
 
     public static User getUser(HttpServletRequest request)
