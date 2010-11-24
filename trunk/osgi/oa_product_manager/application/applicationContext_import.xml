@@ -38,5 +38,7 @@
 	<osgi:reference id="locationManager" interface="com.china.center.oa.publics.manager.LocationManager" />
 	
 	<osgi:reference id="queryManager" interface="com.china.center.oa.publics.manager.QueryManager" />
+	
+	<osgi:reference id="authManager" interface="com.china.center.oa.publics.manager.AuthManager" />
 
 </beans>

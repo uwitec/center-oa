@@ -178,7 +178,7 @@ function queryAbs()
 					pname="${item.productName}" 
 					pcode="${item.productCode}" 
 					pprice="${my:formatNum(item.price)}" 
-					pamount="${item.amount}" value="${item.id}"/></td>
+					pamount="${item.amount}" value="${item.productId}"/></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.depotpartName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.storageName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.productName}(${item.productCode})</td>

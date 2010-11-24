@@ -69,4 +69,6 @@
 	
 	<osgi:reference id="storageApplyDAO" interface="com.china.center.oa.product.dao.StorageApplyDAO" />
 	
+	<osgi:reference id="storageRelationManager" interface="com.china.center.oa.product.manager.StorageRelationManager" />
+	
 </beans>
