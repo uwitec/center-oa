@@ -985,6 +985,9 @@ function $duplicate(arr)
 	return false;
 }
 
+/**
+ * 中文参数直接使用encodeURIComponent，解码使用decodeURIComponent
+ */
 function $encode(str)
 {
 	//+ %20 

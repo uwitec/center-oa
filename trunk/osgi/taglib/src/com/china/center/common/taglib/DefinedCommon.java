@@ -9,6 +9,7 @@
 package com.china.center.common.taglib;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,26 @@ public abstract class DefinedCommon
 
     public static void addDefined(String key, List<MapBean> definedList)
     {
+        definedMap.put(key, definedList);
+    }
+
+    public static void addDefined(String key, String[] ss)
+    {
+        List<MapBean> definedList = new ArrayList<MapBean>();
+
+        for (int i = 0; i < ss.length; i++ )
+        {
+            String string = ss[i];
+
+            MapBean map = new MapBean();
+
+            map.setKey(String.valueOf(i));
+
+            map.setValue(string);
+
+            definedList.add(map);
+        }
+
         definedMap.put(key, definedList);
     }
 
