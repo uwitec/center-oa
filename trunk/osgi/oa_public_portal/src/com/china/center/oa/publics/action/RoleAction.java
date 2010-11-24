@@ -42,6 +42,7 @@ import com.china.center.oa.publics.dao.AuthDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.RoleDAO;
 import com.china.center.oa.publics.facade.PublicFacade;
+import com.china.center.oa.publics.manager.AuthManager;
 import com.china.center.oa.publics.manager.RoleManager;
 import com.china.center.oa.publics.vo.RoleVO;
 import com.china.center.oa.publics.vs.RoleAuthBean;
@@ -68,6 +69,8 @@ public class RoleAction extends DispatchAction
 
     private AuthDAO authDAO = null;
 
+    private AuthManager authManager = null;
+
     private QueryConfig queryConfig = null;
 
     private LocationDAO locationDAO = null;
@@ -80,7 +83,8 @@ public class RoleAction extends DispatchAction
      * default constructor
      */
     public RoleAction()
-    {}
+    {
+    }
 
     /**
      * queryStaffer
@@ -92,8 +96,8 @@ public class RoleAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryRole(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                   HttpServletResponse response)
+    public ActionForward queryRole(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -110,7 +114,8 @@ public class RoleAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYROLE, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYROLE, request, condtion, this.roleDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYROLE, request, condtion,
+            this.roleDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -125,11 +130,11 @@ public class RoleAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddRole(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward preForAddRole(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
-        List<AuthBean> authtList = authDAO.listLocationAuth();
+        List<AuthBean> authtList = authManager.listAllConfigAuth();
 
         request.setAttribute("authtList", authtList);
 
@@ -167,7 +172,8 @@ public class RoleAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward popStafferCommonQuery(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward popStafferCommonQuery(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
                                                HttpServletResponse response)
         throws ServletException
     {
@@ -193,8 +199,8 @@ public class RoleAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addOrUpdateRole(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward addOrUpdateRole(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         RoleBean bean = new RoleBean();
@@ -267,8 +273,8 @@ public class RoleAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward delRole(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward delRole(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -303,20 +309,21 @@ public class RoleAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findRole(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse response)
+    public ActionForward findRole(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
 
         try
         {
-            List<AuthBean> authtList = authDAO.listLocationAuth();
+            List<AuthBean> authtList = authManager.listAllConfigAuth();
 
             request.setAttribute("authtList", authtList);
 
             User user = Helper.getUser(request);
 
+            // 超级管理员
             if (LocationHelper.isVirtualLocation(user.getLocationId()))
             {
                 List<LocationBean> locationList = locationDAO.listEntityBeans();
@@ -463,5 +470,22 @@ public class RoleAction extends DispatchAction
     public void setLocationDAO(LocationDAO locationDAO)
     {
         this.locationDAO = locationDAO;
+    }
+
+    /**
+     * @return the authManager
+     */
+    public AuthManager getAuthManager()
+    {
+        return authManager;
+    }
+
+    /**
+     * @param authManager
+     *            the authManager to set
+     */
+    public void setAuthManager(AuthManager authManager)
+    {
+        this.authManager = authManager;
     }
 }

@@ -25,5 +25,18 @@ import com.china.center.oa.publics.bean.AuthBean;
  */
 public interface AuthDAO extends DAO<AuthBean, AuthBean>
 {
+    /**
+     * 可配置权限
+     * 
+     * @return
+     */
     List<AuthBean> listLocationAuth();
+
+    /**
+     * querySubAuthByParendId(仅仅查询下一级的权限,不递归)
+     * 
+     * @param parendId
+     * @return
+     */
+    List<AuthBean> querySubAuthByParendId(String parendId);
 }

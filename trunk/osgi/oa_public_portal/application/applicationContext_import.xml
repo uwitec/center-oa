@@ -96,5 +96,7 @@
 	<osgi:reference id="queryManager" interface="com.china.center.oa.publics.manager.QueryManager" />
 	
 	<osgi:reference id="invoiceDAO" interface="com.china.center.oa.publics.dao.InvoiceDAO" />
+	
+	<osgi:reference id="authManager" interface="com.china.center.oa.publics.manager.AuthManager" />
 
 </beans>

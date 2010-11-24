@@ -46,6 +46,7 @@ import com.china.center.oa.publics.dao.RoleDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.facade.PublicFacade;
+import com.china.center.oa.publics.manager.AuthManager;
 import com.china.center.oa.publics.manager.RoleManager;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.publics.vs.RoleAuthBean;
@@ -74,6 +75,8 @@ public class UserAction extends DispatchAction
 
     private AuthDAO authDAO = null;
 
+    private AuthManager authManager = null;
+
     private StafferDAO stafferDAO = null;
 
     private UserManager userManager = null;
@@ -92,7 +95,8 @@ public class UserAction extends DispatchAction
      * default constructor
      */
     public UserAction()
-    {}
+    {
+    }
 
     /**
      * queryUser
@@ -104,8 +108,8 @@ public class UserAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryUser(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                   HttpServletResponse response)
+    public ActionForward queryUser(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -125,7 +129,8 @@ public class UserAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYUSER, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYUSER, request, condtion, this.userDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYUSER, request, condtion,
+            this.userDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -140,15 +145,15 @@ public class UserAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddUser(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward preForAddUser(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
 
         setArrForAddOrUpdate(request, user);
 
-        List<AuthBean> authtList = authDAO.listLocationAuth();
+        List<AuthBean> authtList = authManager.listAllConfigAuth();
 
         request.setAttribute("authtList", authtList);
 
@@ -216,8 +221,8 @@ public class UserAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addUser(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward addUser(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         UserBean bean = new UserBean();
@@ -245,7 +250,8 @@ public class UserAction extends DispatchAction
 
             publicFacade.addUserBean(user.getId(), bean);
 
-            request.setAttribute(KeyConstant.MESSAGE, "增加用户[" + bean.getName() + "]成功,密码：<input type=text value='"
+            request.setAttribute(KeyConstant.MESSAGE, "增加用户[" + bean.getName()
+                                                      + "]成功,密码：<input type=text value='"
                                                       + password + "' >" + ",请及时通知相应人员密码!");
         }
         catch (MYException e)
@@ -297,8 +303,8 @@ public class UserAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateUser(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse response)
+    public ActionForward updateUser(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         UserBean bean = new UserBean();
@@ -342,7 +348,8 @@ public class UserAction extends DispatchAction
      * @param bean
      * @throws ServletException
      */
-    private ActionForward checkAddOrUpdate(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    private ActionForward checkAddOrUpdate(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request,
                                            HttpServletResponse response, UserBean bean)
         throws ServletException
     {
@@ -375,8 +382,8 @@ public class UserAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward delUser(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward delUser(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -411,8 +418,8 @@ public class UserAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward initPassword(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward initPassword(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -501,8 +508,8 @@ public class UserAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateUserLocation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward updateUserLocation(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -539,8 +546,8 @@ public class UserAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findUser(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse response)
+    public ActionForward findUser(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -718,5 +725,22 @@ public class UserAction extends DispatchAction
     public void setStafferDAO(StafferDAO stafferDAO)
     {
         this.stafferDAO = stafferDAO;
+    }
+
+    /**
+     * @return the authManager
+     */
+    public AuthManager getAuthManager()
+    {
+        return authManager;
+    }
+
+    /**
+     * @param authManager
+     *            the authManager to set
+     */
+    public void setAuthManager(AuthManager authManager)
+    {
+        this.authManager = authManager;
     }
 }

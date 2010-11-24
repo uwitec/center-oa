@@ -9,6 +9,7 @@
 package com.china.center.oa.publics.manager.impl;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,11 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.oa.publics.bean.AuthBean;
 import com.china.center.oa.publics.bean.RoleBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.bean.UserBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.constant.StafferConstant;
+import com.china.center.oa.publics.dao.AuthDAO;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.RoleAuthDAO;
 import com.china.center.oa.publics.dao.RoleDAO;
@@ -51,6 +54,8 @@ public class UserManagerImpl implements UserManager
 
     private RoleDAO roleDAO = null;
 
+    private AuthDAO authDAO = null;
+
     private RoleAuthDAO roleAuthDAO = null;
 
     private StafferDAO stafferDAO = null;
@@ -58,7 +63,8 @@ public class UserManagerImpl implements UserManager
     private CommonDAO commonDAO = null;
 
     public UserManagerImpl()
-    {}
+    {
+    }
 
     /**
      * addBean
@@ -273,6 +279,37 @@ public class UserManagerImpl implements UserManager
         return user;
     }
 
+    public List<AuthBean> queryExpandAuthById(String userId, String expandKey)
+    {
+        List<AuthBean> result = new ArrayList<AuthBean>();
+
+        UserVO user = userDAO.findVO(userId);
+
+        if (user == null)
+        {
+            return result;
+        }
+
+        List<RoleAuthBean> authList = roleAuthDAO.queryEntityBeansByFK(user.getRoleId());
+
+        List<AuthBean> subList = authDAO.querySubAuthByParendId(expandKey);
+
+        for (RoleAuthBean roleAuthBean : authList)
+        {
+            for (AuthBean authBean : subList)
+            {
+                if (roleAuthBean.getAuthId().equals(authBean.getId()))
+                {
+                    result.add(authBean);
+
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
     public boolean containAuth(User user, String... authId)
     {
         List<RoleAuthBean> authList = user.getAuth();
@@ -467,5 +504,22 @@ public class UserManagerImpl implements UserManager
     public void setCommonDAO(CommonDAO commonDAO)
     {
         this.commonDAO = commonDAO;
+    }
+
+    /**
+     * @return the authDAO
+     */
+    public AuthDAO getAuthDAO()
+    {
+        return authDAO;
+    }
+
+    /**
+     * @param authDAO
+     *            the authDAO to set
+     */
+    public void setAuthDAO(AuthDAO authDAO)
+    {
+        this.authDAO = authDAO;
     }
 }

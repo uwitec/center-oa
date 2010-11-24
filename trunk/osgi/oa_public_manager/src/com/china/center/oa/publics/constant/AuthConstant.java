@@ -19,6 +19,11 @@ package com.china.center.oa.publics.constant;
 public interface AuthConstant
 {
     /**
+     * 扩展权限-仓库
+     */
+    String EXPAND_AUTH_DEPOT = "80";
+
+    /**
      * 默认都有的
      */
     String PUNLIC_AUTH = "0000";

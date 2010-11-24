@@ -98,4 +98,6 @@
 
 	<osgi:service ref="notifyManager" interface="com.china.center.oa.publics.manager.NotifyManager" />
 
+	<osgi:service ref="authManager" interface="com.china.center.oa.publics.manager.AuthManager" />
+
 </beans>

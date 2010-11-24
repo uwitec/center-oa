@@ -37,4 +37,10 @@ public class AuthDAOImpl extends BaseDAO<AuthBean, AuthBean> implements AuthDAO
         return this.jdbcOperation.queryForList("where type = ? order by LEVEL, id", claz,
             PublicConstant.AUTH_TYPE_LOCATION);
     }
+
+    public List<AuthBean> querySubAuthByParendId(String parendId)
+    {
+        return this.jdbcOperation.queryForList("where parentId = ? order by LEVEL, id", claz,
+            parendId);
+    }
 }

@@ -9,10 +9,12 @@
 package com.china.center.oa.publics.manager;
 
 
+import java.util.List;
 import java.util.Map;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.publics.bean.AuthBean;
 import com.china.center.oa.publics.bean.UserBean;
 
 
@@ -60,4 +62,13 @@ public interface UserManager
      * @return
      */
     Map queryStafferAndRoleByLocationId(String locationId);
+
+    /**
+     * 查询用户名下的扩展权限
+     * 
+     * @param userId
+     * @param expandKey
+     * @return
+     */
+    List<AuthBean> queryExpandAuthById(String userId, String expandKey);
 }
