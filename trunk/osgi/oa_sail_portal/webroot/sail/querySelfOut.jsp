@@ -4,35 +4,37 @@
 <html>
 <head>
 <p:link title="查询销售单" />
-<script src="../js/CommonScriptMethod.js"></script>
-<script src="../js/prototype.js"></script>
 <script src="../js/title_div.js"></script>
 <script src="../js/public.js"></script>
-<script language="JavaScript" src="../js/JCheck.js"></script>
+<script src="../js/JCheck.js"></script>
 <script src="../js/common.js"></script>
-<script src="../js/compatible.js"></script>
 <script language="javascript">
 function detail()
 {
-	document.location.href = '../admin/out.do?method=findOut&outId=' + getRadioValue("fullId");
+	document.location.href = '../sail/out.do?method=findOut&outId=' + getRadioValue("fullId");
 }
 
 function pagePrint()
 {
-	window.open('../admin/out.do?method=findOut&fow=4&outId=' + getRadioValue("fullId"));
+	window.open('../sail/out.do?method=findOut&fow=4&outId=' + getRadioValue("fullId"));
+}
+
+function selectCustomer()
+{
+    window.common.modal("../customer/customer.do?method=rptQuerySelfCustomer&stafferId=${user.stafferId}&load=1");
 }
 
 function exports()
 {
 	if (window.confirm("确定导出当前的全部查询的库单?"))
-	document.location.href = '../admin/out.do?method=export&flags=1';
+	document.location.href = '../sail/out.do?method=export&flags=1';
 }
 
 function mark()
 {
 	if (window.confirm("确定标记当前选择的库单?"))
 	{
-		adminForm.action = '../admin/out.do';
+		adminForm.action = '../sail/out.do';
 		adminForm.method.value = 'mark';
 		adminForm.outId.value = getRadioValue("fullId");
 
@@ -44,9 +46,9 @@ function comp()
 {
 	var now = '${now}';
 
-	var str1 = $('outTime').value;
+	var str1 = $O('outTime').value;
 
-	var str2 = $('outTime1').value;
+	var str2 = $O('outTime1').value;
 
 	//必须要有开始和结束时间一个
 	if (str1 == '' && str2 == '')
@@ -63,7 +65,7 @@ function comp()
 			return false;
 		}
 
-		$('outTime1').value = now;
+		$O('outTime1').value = now;
 	}
 
 	if (str1 == '' && str2 != '')
@@ -74,7 +76,7 @@ function comp()
 			return false;
 		}
 
-		$('outTime').value = now;
+		$O('outTime').value = now;
 	}
 
 	if (str1 != '' && str2 != '')
@@ -113,7 +115,7 @@ function modfiy()
 {
 	if (getRadio('fullId').statuss == '0' || getRadio('fullId').statuss == '2')
 	{
-		document.location.href = '../admin/out.do?method=findOut&outId=' + getRadioValue("fullId") + "&fow=1";
+		document.location.href = '../sail/out.do?method=findOut&outId=' + getRadioValue("fullId") + "&fow=1";
 	}
 	else
 	{
@@ -126,7 +128,7 @@ function del()
 	if (getRadio('fullId').statuss == '0' || getRadio('fullId').statuss == '2' || getRadio('fullId').tempType == '1')
 	{
 		 if (window.confirm("确定删除销售单?"))
-		document.location.href = '../admin/out.do?method=delOut&outId=' + getRadioValue("fullId");
+		document.location.href = '../sail/out.do?method=delOut&outId=' + getRadioValue("fullId");
 	}
 	else
 	{
@@ -140,10 +142,10 @@ function sub()
 	{
 		 if (window.confirm("确定提交销售单?"))
 		 {
-		 	$('method').value = 'modifyOutStatus';
-		 	$('oldStatus').value = getRadio('fullId').statuss;
-		 	$('statuss').value = '1';
-		 	$('outId').value = getRadioValue("fullId");
+		 	$O('method').value = 'modifyOutStatus';
+		 	$O('oldStatus').value = getRadio('fullId').statuss;
+		 	$O('statuss').value = '1';
+		 	$O('outId').value = getRadioValue("fullId");
 		 	
 		 	disableAllButton();
 		 	adminForm.submit();
@@ -163,22 +165,20 @@ function query()
 	}
 }
 
-function selectCustomer()
+function getCustomer(oos)
 {
-    window.common.modal("./out.do?method=queryCustomer&flagg=${GFlag}");
-}
-
-function getCustmeor(id, name, conn, phone)
-{
-	$("customerName").value = name;
-	$("customerId").value = id;
+    var obj = oos;
+    
+	$O("customerName").value = obj.pname;
+	
+	$O("customerId").value = obj.value;
 }
 
 function res()
 {
-	$('customerName').value = '';
-	$("customerId").value = '';
-	$("id").value = '';
+	$O('customerName').value = '';
+	$O("customerId").value = '';
+	$O("id").value = '';
 }
 
 var jmap = new Object();
@@ -201,8 +201,8 @@ function load()
 
 </head>
 <body class="body_class" onkeypress="tooltip.bingEsc(event)" onload="load()">
-<form action="./out.do" name="adminForm"><input type="hidden"
-	value="queryOut" name="method"> <input type="hidden" value="1"
+<form action="../sail/out.do" name="adminForm"><input type="hidden"
+	value="querySelfOut" name="method"> <input type="hidden" value="1"
 	name="firstLoad">
 	<input type="hidden" value="${customerId}"
 	name="customerId">
@@ -217,49 +217,13 @@ function load()
 	<input type="hidden" value=""
 	name="statuss">
 <c:set var="fg" value='销售'/>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-	<tr>
-		<td height="22" valign="bottom">
-		<table width="100%" height="22" border="0" cellpadding="0"
-			cellspacing="0">
-			<tr valign="middle">
-				<td width="8"></td>
-				<td width="30">
-				<div align="center"><img src="../images/dot_a.gif" width="9"
-					height="9"></div>
-				</td>
-				<td width="550" class="navigation">库单管理 &gt;&gt; 查询销售单</td>
-				<td width="85"></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
 
-	<tr>
-		<td height="6" valign="top">
-		<table width="100%" border="0" cellpadding="0" cellspacing="0">
-			<!--DWLayoutTable-->
-			<tr>
-				<td width="8" height="6"
-					background="../images/index_sp_welcome_center_10.gif"><img
-					src="../images/index_sp_welcome_center_07.gif" width="8" height="6"></td>
-				<td width="190"
-					background="../images/index_sp_welcome_center_08.gif"></td>
-				<td width="486"
-					background="../images/index_sp_welcome_center_10.gif"></td>
-				<td align="right"
-					background="../images/index_sp_welcome_center_10.gif">
-				<div align="right"><img
-					src="../images/index_sp_welcome_center_12.gif" width="23"
-					height="6"></div>
-				</td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-</table>
+<p:navigation
+    height="22">
+    <td width="550" class="navigation">库单管理 &gt;&gt; 查询销售单</td>
+                <td width="85"></td>
+</p:navigation> <br>
 
-<br>
 <table width="98%" border="0" cellpadding="0" cellspacing="0"
 	align="center">
 	<tr>
@@ -283,12 +247,7 @@ function load()
 						<c:if test="${!ff}">
 						<select name="status" class="select_class" values="${status}">
 							<option value="">--</option>
-							<option value="0">保存</option>
-							<option value="1">提交</option>
-							<option value="7">分公司总经理审批</option>
-							<option value="6">结算中心通过</option>
-							<option value="2">驳回</option>
-							<option value="3">发货</option>
+							<p:option type="outStatus"/>
 						</select>
 						</c:if>
 
@@ -303,10 +262,11 @@ function load()
 						<td width="15%" align="center">销售类型</td>
 						<td align="center">
 						<select name="outType"
-							class="select_class">
-							<option value=""  ${outType==""?"selected" : ""}>--</option>
-							<option value="0" ${outType=="0"?"selected" : ""}>销售出库</option>
-							<option value="1" ${outType=="1"?"selected" : ""}>个人领样</option>
+							class="select_class" values=${outType}>
+							<option value="">--</option>
+							<option value="0">销售出库</option>
+							<option value="1">个人领样</option>
+							<option value="2">零售</option>
 						</select>
 
 						</td>
@@ -316,29 +276,32 @@ function load()
 
 					<tr class="content2">
 						<td width="15%" align="center">是否回款</td>
-						<td align="center"><select name="pay" values="${pay}"
+						<td align="center" colspan="1"><select name="pay" values="${pay}"
 							class="select_class">
 							<option value="">--</option>
 							<option value="1">是</option>
 							<option value="0">否</option>
 						</select></td>
-
-						<td width="15%" align="center">在途方式</td>
-						<td colspan="1" align="center">
-						<select name="inway" values="${inway}"
-							class="select_class">
-							<option value="">--</option>
-							<option value="1">在途</option>
-							<option value="2">在途结束</option>
-							</select>
-						</td>
+						
+						<td width="15%" align="center">仓库</td>
+                        <td align="center">
+                        <select name="location"
+                            class="select_class" values=${location}>
+                            <option value="">--</option>
+                            <c:forEach items="${depotList}" var="item">
+                             <option value="${item.id}">${item.name}</option>
+                            </c:forEach>
+                        </select>
+                        </td>
+					
 					</tr>
 
 					<tr class="content1">
 
 						<td colspan="4" align="right"><input type="button" id="query_b"
 							onclick="query()" class="button_class"
-							value="&nbsp;&nbsp;查 询&nbsp;&nbsp;">&nbsp;&nbsp;<input type="button" onclick="res()" class="button_class" value="&nbsp;&nbsp;重 置&nbsp;&nbsp;"></td>
+							value="&nbsp;&nbsp;查 询&nbsp;&nbsp;">&nbsp;&nbsp;
+							<input type="button" onclick="res()" class="button_class" value="&nbsp;&nbsp;重 置&nbsp;&nbsp;"></td>
 					</tr>
 				</table>
 				</td>
@@ -396,17 +359,15 @@ function load()
 					<tr align="center" class="content0">
 						<td align="center" width="5%" align="center">选择</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">单据编号</td>
-						<td align="center" onclick="tableSort(this)" class="td_class">${ff ? "供应商" : "客户"}</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">客户</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">状态</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">${fg}类型</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">${fg}时间</td>
-						<c:if test="${!ff}">
 						<td align="center" onclick="tableSort(this)" class="td_class">回款日期</td>
-						</c:if>
 						<td align="center" onclick="tableSort(this)" class="td_class">金额</td>
-						<td align="center" onclick="tableSort(this)" class="td_class">在途</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">付款</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">${fg}人</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">仓库</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">发货单</td>
 					</tr>
 
@@ -416,36 +377,28 @@ function load()
 							<td align="center"><input type="radio" name="fullId" tempType="${item.tempType}"
 								statuss='${item.status}' value="${item.fullId}" ${vs.index== 0 ? "checked" : ""}/></td>
 							<td align="center"
-							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../admin/out.do?method=findOut&outId=${item.fullId}">${item.mark ? "<font color=blue><B>" : ""}
-							${item.fullId}${item.mark ? "</B></font>" : ""}</a></td>
+							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&outId=${item.fullId}">${item.mark ? "<font color=blue><B>" : ""}
+							${item.fullId} ${item.mark ? "</B></font>" : ""}</a></td>
 							<td align="center">${item.customerName}</td>
-							<td align="center">${my:status(item.status)}</td>
-							<c:if test="${!ff}">
-							<td align="center" onclick="hrefAndSelect(this)">${item.outType == 0 ? "销售出库" : "个人领样"}</td>
-							</c:if>
+							<td align="center">${my:get('outStatus', item.status)}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:get('outType_out', item.outType)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.outTime}</td>
-							<c:if test="${!ff}">
 							<c:if test="${item.pay == 0}">
 							<td align="center" onclick="hrefAndSelect(this)"><font color=red>${item.redate}</font></td>
 							</c:if>
 							<c:if test="${item.pay == 1}">
 							<td align="center" onclick="hrefAndSelect(this)"><font color=blue>${item.redate}</font></td>
 							</c:if>
-							</c:if>
 							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
-							<%
-								String[] sss1 = new String[]{"" , "<font color=red>在途</font>", "在途结束"};
-								request.setAttribute("sss1", sss1);
-							%>
-							<td align="center" onclick="hrefAndSelect(this)">${my:getValue(item.inway, sss1)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.hadPay}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.depotName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get("reprotType", item.consign)}</td>
 						</tr>
 					</c:forEach>
 				</table>
 
-				<p:formTurning form="adminForm" method="queryOut"></p:formTurning>
+				<p:formTurning form="adminForm" method="querySelfOut"></p:formTurning>
 				</td>
 			</tr>
 		</table>
@@ -469,20 +422,8 @@ function load()
 	<tr>
 		<td width="100%">
 		<div align="right">
-		<c:set var="adm" value='${user.role == "ADMIN"}'/>
-		<c:if test="${adm}">
-		<input type="button"
-			class="button_class" onclick="pagePrint()"
-			value="&nbsp;&nbsp;定制打印&nbsp;&nbsp;">&nbsp;&nbsp;
-		</c:if>
-		<c:if test="${!ff}">
 		<input type="button" class="button_class"
 			value="&nbsp;&nbsp;标 记&nbsp;&nbsp;" onClick="mark()">&nbsp;&nbsp;
-		</c:if>
-		<c:set var="ma" value='${user.role == "MANAGER"}'/>
-		<c:set var="ma1" value='${user.role == "FLOW"}'/>
-
-		<c:if test="${!ma && !ma1}">
 		<input
 			type="button" class="button_class"
 			value="&nbsp;&nbsp;修 改&nbsp;&nbsp;" onclick="modfiy()" />&nbsp;&nbsp;<input
@@ -490,20 +431,20 @@ function load()
 			value="&nbsp;&nbsp;提 交&nbsp;&nbsp;" onclick="sub()" />&nbsp;&nbsp; <input
 			type="button" class="button_class"
 			value="&nbsp;&nbsp;删 除&nbsp;&nbsp;" onclick="del()" />&nbsp;&nbsp;
-		</c:if>
-			<input
+		<input
 			type="button" class="button_class"
 			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" /></div>
 		</td>
 		<td width="0%"></td>
 	</tr>
+	
 	</c:if>
 
 	<tr height="10">
 		<td height="10" colspan='2'></td>
 	</tr>
 
-	<p:message></p:message>
+	<p:message2/>
 </table>
 
 </form>

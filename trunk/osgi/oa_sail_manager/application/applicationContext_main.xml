@@ -22,4 +22,6 @@
 
 	<bean id="outManager" class="com.china.center.oa.sail.manager.impl.OutManagerImpl" />
 
+	<bean id="consignDAO" class="com.china.center.oa.sail.dao.impl.ConsignDAOImpl" />
+
 </beans>

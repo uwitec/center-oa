@@ -64,5 +64,7 @@
 	
 	<osgi:reference id="depotpartDAO" interface="com.china.center.oa.product.dao.DepotpartDAO" />
 	
+	<osgi:reference id="consignDAO" interface="com.china.center.oa.sail.dao.ConsignDAO" />
+	
 	
 </beans>

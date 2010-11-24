@@ -32,6 +32,9 @@ public class Activator implements BundleActivator
         {
             DefinedCommon.addDefinedClass(each);
         }
+
+        DefinedCommon.addDefined("reprotType", new String[] {"<font color=blue>无回复</font>", "正常收货",
+            "<font color=red>异常收货</font>"});
     }
 
     /*
@@ -46,6 +49,8 @@ public class Activator implements BundleActivator
         {
             DefinedCommon.reomoveConstant(each);
         }
+
+        DefinedCommon.removeDefined("reprotType");
     }
 
 }

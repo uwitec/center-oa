@@ -6,7 +6,8 @@
 			validate="false">
 			<forward name="addOut" path="/sail/addOut.jsp" />
 			<forward name="addOut1" path="/sail/addOut1.jsp" />
-			<forward name="listOut" path="/sail/listOut.jsp" />
+			<forward name="updateOut" path="/sail/updateOut.jsp" />
+			<forward name="querySelfOut" path="/sail/querySelfOut.jsp" />
 			<forward name="listOut1" path="/sail/listOut1.jsp" />
 			<forward name="error" path="/sail/error.jsp" />
 			<forward name="detailOut" path="/sail/detailOut.jsp" />

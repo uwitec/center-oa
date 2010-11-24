@@ -8,6 +8,10 @@
  */
 package com.china.center.oa.sail.constanst;
 
+
+import com.china.center.jdbc.annotation.Defined;
+
+
 /**
  * OutConstanst
  * 
@@ -92,41 +96,49 @@ public interface OutConstant
     /**
      * 初始化
      */
+    @Defined(key = "outStatus", value = "初始化")
     int STATUS_SAVE = 0;
 
     /**
      * 业务员提交
      */
+    @Defined(key = "outStatus", value = "提交")
     int STATUS_SUBMIT = 1;
 
     /**
      * 驳回
      */
+    @Defined(key = "outStatus", value = "驳回")
     int STATUS_REJECT = 2;
 
     /**
      * 库管发货(这里的销售单库存就变动了)(一般此通过即是销售单已经OK status in (3, 4))
      */
+    @Defined(key = "outStatus", value = "库管发货")
     int STATUS_PASS = 3;
 
     /**
      * 财务应收
      */
+    @Defined(key = "outStatus", value = "财务收款")
     int STATUS_SEC_PASS = 4;
 
     /**
      * 结算中心通过
      */
+    @Defined(key = "outStatus", value = "结算中心通过")
     int STATUS_MANAGER_PASS = 6;
 
     /**
      * 物流管理员通过
      */
+    @Defined(key = "outStatus", value = "物流通过")
     int STATUS_FLOW_PASS = 7;
 
     /**
      * 分公司总经理审批
      */
+    @Defined(key = "outStatus", value = "待分公司经理审批")
     int STATUS_LOCATION_MANAGER_CHECK = 8;
 
     /**
@@ -162,11 +174,13 @@ public interface OutConstant
     /**
      * 非在途
      */
+    @Defined(key = "outWay", value = "非在途")
     int IN_WAY_NO = 0;
 
     /**
      * 在途
      */
+    @Defined(key = "outWay", value = "在途")
     int IN_WAY = 1;
 
     /**
@@ -177,16 +191,19 @@ public interface OutConstant
     /**
      * 销售出库
      */
+    @Defined(key = "outType_out", value = "销售出库")
     int OUTTYPE_OUT_COMMON = 0;
 
     /**
      * 个人领样
      */
+    @Defined(key = "outType_out", value = "个人领样")
     int OUTTYPE_OUT_SWATCH = 1;
 
     /**
      * 零售
      */
+    @Defined(key = "outType_out", value = "零售")
     int OUTTYPE_OUT_RETAIL = 2;
 
     /**

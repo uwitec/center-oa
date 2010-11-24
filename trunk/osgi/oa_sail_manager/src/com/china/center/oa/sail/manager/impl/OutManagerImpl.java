@@ -45,7 +45,6 @@ import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.DepotpartDAO;
 import com.china.center.oa.product.dao.ProductDAO;
-import com.china.center.oa.product.dao.StorageDAO;
 import com.china.center.oa.product.helper.StorageRelationHelper;
 import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
@@ -118,8 +117,6 @@ public class OutManagerImpl implements OutManager
     private BaseDAO baseDAO = null;
 
     private ConsignDAO consignDAO = null;
-
-    private StorageDAO storageDAO = null;
 
     private CustomerDAO customerDAO = null;
 
@@ -1767,23 +1764,6 @@ public class OutManagerImpl implements OutManager
 
         // add sms
         shortMessageTaskDAO.saveEntityBean(sms);
-    }
-
-    /**
-     * @return the storageDAO
-     */
-    public StorageDAO getStorageDAO()
-    {
-        return storageDAO;
-    }
-
-    /**
-     * @param storageDAO
-     *            the storageDAO to set
-     */
-    public void setStorageDAO(StorageDAO storageDAO)
-    {
-        this.storageDAO = storageDAO;
     }
 
     /**

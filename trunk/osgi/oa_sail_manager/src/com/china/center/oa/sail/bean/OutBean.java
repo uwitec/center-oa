@@ -158,7 +158,7 @@ public class OutBean implements Serializable
     /**
      * 目的仓库（入库单使用）
      */
-    @Join(tagClass = DepotBean.class, alias = "des")
+    @Join(tagClass = DepotBean.class, alias = "des", type = JoinType.LEFT)
     private String destinationId = "0";
 
     /**

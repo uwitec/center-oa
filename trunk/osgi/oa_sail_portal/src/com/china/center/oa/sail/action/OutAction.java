@@ -3,7 +3,6 @@ package com.china.center.oa.sail.action;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,7 +42,6 @@ import com.china.center.oa.customer.dao.CustomerDAO;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.bean.ProviderBean;
-import com.china.center.oa.product.bean.StorageBean;
 import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.DepotpartDAO;
@@ -148,6 +146,8 @@ public class OutAction extends DispatchAction
 
     private StorageRelationManager storageRelationManager = null;
 
+    private static String QUERYSELFOUT = "querySelfOut";
+
     /**
      * queryForAdd
      * 
@@ -172,18 +172,31 @@ public class OutAction extends DispatchAction
 
         String flag = request.getParameter("flag");
 
-        // 0:out 1:in
-        request.setAttribute("GFlag", flag);
+        innerForPrepare(request);
 
-        request.setAttribute("ff", Boolean.valueOf("1".equals(flag)));
+        // 增加入库单
+        if ("1".equals(flag))
+        {
+            return mapping.findForward("addOut1");
+        }
 
+        // 销售单
+        return mapping.findForward("addOut");
+    }
+
+    /**
+     * innerForPrepare(准备库单的维护)
+     * 
+     * @param request
+     */
+    private void innerForPrepare(HttpServletRequest request)
+    {
         // 得到部门
         List<DepartmentBean> list2 = departmentDAO.listEntityBeans();
 
         User user = Helper.getUser(request);
 
         // 仓库是自己选择的
-
         request.setAttribute("departementList", list2);
 
         request.setAttribute("current", TimeTools.now("yyyy-MM-dd"));
@@ -207,31 +220,12 @@ public class OutAction extends DispatchAction
 
         request.setAttribute("depotpartList", list);
 
-        double noPayBusiness = outDAO.sumNoPayAndAvouchBusinessByStafferId(user.getStafferId(),
-            YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
-
-        StafferBean sb2 = stafferDAO.find(user.getStafferId());
-
-        if (sb2 != null)
-        {
-            // 设置其剩余的信用额度
-            request.setAttribute("credit", ElTools.formatNum(sb2.getCredit() * sb2.getLever()
-                                                             - noPayBusiness));
-        }
+        showLastCredit(request, user);
 
         List<InvoiceBean> invoiceList = invoiceDAO.queryEntityBeansByCondition("where forward = ?",
             InvoiceConstant.INVOICE_FORWARD_OUT);
 
         request.setAttribute("invoiceList", invoiceList);
-
-        // 增加入库单
-        if ("1".equals(flag))
-        {
-            return mapping.findForward("addOut1");
-        }
-
-        // 销售单
-        return mapping.findForward("addOut");
     }
 
     private boolean hasOver(String stafferName)
@@ -774,6 +768,8 @@ public class OutAction extends DispatchAction
 
         request.getSession().setAttribute(KeyConstant.MESSAGE, "此库单的单号是:" + outBean.getFullId());
 
+        CommonTools.removeParamers(request);
+
         request.setAttribute("forward", "10");
 
         if (outBean.getType() == 0)
@@ -860,8 +856,7 @@ public class OutAction extends DispatchAction
     }
 
     /**
-     * 管理员查询入库单<br>
-     * 业务员查询出库单
+     * 业务员查询销售单
      * 
      * @param mapping
      * @param form
@@ -871,204 +866,194 @@ public class OutAction extends DispatchAction
      * @throws ServletException
      */
     public ActionForward querySelfOut(ActionMapping mapping, ActionForm form,
-                                  HttpServletRequest request, HttpServletResponse reponse)
+                                      HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
-        String fow = (String)request.getAttribute("forward");
-
         User user = (User)request.getSession().getAttribute("user");
 
-        String load = request.getParameter("load");
-
-        String firstLoad = request.getParameter("firstLoad");
-
-        String flagg = request.getParameter("flagg");
-
-        if (StringTools.isNullOrNone(flagg))
-        {
-            flagg = (String)request.getAttribute("Bflagg");
-        }
-
-        request.setAttribute("GFlag", flagg);
-
-        List<OutBean> list = null;
+        List<OutVO> list = null;
 
         CommonTools.saveParamers(request);
 
-        // 0：出库 1:入库
-        String queryType = request.getParameter("queryType");
-
-        // 是否处理调出
-        String proIn = request.getParameter("proIn");
-
-        if (StringTools.isNullOrNone(proIn))
-        {
-            proIn = "0";
-        }
-
-        ConditionParse condtion = new ConditionParse();
         try
         {
-
             if (OldPageSeparateTools.isFirstLoad(request))
             {
-                String locationId = (String)request.getSession().getAttribute("flag");
-
-                // TODO 分公司经理审核是分区域的 ， 物流和库管分仓库的
-                condtion.addIntCondition("locationId", "=", locationId);
-
-                if ( !StringTools.isNullOrNone(queryType))
-                {
-                    condtion.addIntCondition("type", "=", queryType);
-                }
-
-                if ("1".equals(load))
-                {
-                    // 增加出入库后的类型
-                    String qq = (String)request.getAttribute("Qq");
-
-                    if ( !StringTools.isNullOrNone(qq))
-                    {
-                        condtion.addIntCondition("type", "=", qq);
-                        request.setAttribute("GFlag", qq);
-                    }
-
-                    Calendar cal = Calendar.getInstance();
-
-                    cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 1);
-
-                    String now = TimeTools.getStringByFormat(new Date(), "yyyy-MM-dd");
-
-                    String now1 = TimeTools.getStringByFormat(new Date(cal.getTimeInMillis()),
-                        "yyyy-MM-dd");
-
-                    condtion.addCondition("outTime", ">=", now1);
-
-                    condtion.addCondition("outTime", "<=", now);
-
-                    request.setAttribute("outTime", now1);
-
-                    request.setAttribute("outTime1", now);
-
-                    // TODO 只能查询自己的
-                    condtion.addCondition("STAFFERID", "=", user.getStafferId());
-                }
-
-                // 增加/删除
-                if ("10".equals(fow))
-                {
-                    // 增加出入库后的类型
-                    String qq = (String)request.getAttribute("Qq");
-
-                    if ( !StringTools.isNullOrNone(qq))
-                    {
-                        // condtion.addIntCondition("type", "=", qq);
-                        request.setAttribute("GFlag", qq);
-                    }
-
-                    Calendar cal = Calendar.getInstance();
-
-                    cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 1);
-
-                    String now = TimeTools.getStringByFormat(new Date(), "yyyy-MM-dd");
-
-                    String now1 = TimeTools.getStringByFormat(new Date(cal.getTimeInMillis()),
-                        "yyyy-MM-dd");
-
-                    condtion.addCondition("outTime", ">=", now1);
-
-                    condtion.addCondition("outTime", "<=", now);
-
-                    request.setAttribute("outTime", now1);
-
-                    request.setAttribute("outTime1", now);
-
-                    // TODO 只能查询自己的
-                    condtion.addCondition("STAFFERID", "=", user.getStafferId());
-
-                    condtion.addIntCondition("type", "=", "0");
-
-                }
-
-                if ("1".equals(firstLoad) || "9".equals(fow))
-                {
-                    setCondition(request, condtion);
-
-                    // 咨询员也可以查询入库单
-                    // TODO 只能查询自己的
-                    condtion.addCondition("STAFFERID", "=", user.getStafferId());
-
-                    // TODO 增加调入到本区域的
-                    if ( ("1".equals(proIn) || "2".equals(proIn)))
-                    {
-                        condtion.addIntCondition("type", "=", OutConstant.OUT_TYPE_INBILL);
-                        condtion.addIntCondition("outType", "=", OutConstant.INBILL_OUT);
-                        condtion.addCondition("and status in (3, 4)");
-
-                        if ( ! (LocationHelper.isSystemLocation(Helper
-                            .getCurrentLocationId(request)) && "2".equals(proIn)))
-                        {
-                            condtion.addCondition("destinationId", "=", Helper
-                                .getCurrentLocationId(request));
-                        }
-                    }
-                }
-
-                condtion.addCondition("order by id desc");
+                ConditionParse condtion = getQuerySelfCondition(request, user);
 
                 int tatol = outDAO.countVOByCondition(condtion.toString());
 
                 PageSeparate page = new PageSeparate(tatol, PublicConstant.PAGE_SIZE - 5);
 
-                OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryOut");
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, QUERYSELFOUT);
 
-                list = outDAO.queryEntityBeansByCondition(condtion, page);
+                list = outDAO.queryEntityVOsByCondition(condtion, page);
             }
             else
             {
-                OldPageSeparateTools.processSeparate(request, "queryOut");
+                OldPageSeparateTools.processSeparate(request, QUERYSELFOUT);
 
-                list = outDAO
-                    .queryEntityBeansByCondition(OldPageSeparateTools.getCondition(request,
-                        "queryOut"), OldPageSeparateTools.getPageSeparate(request, "queryOut"));
+                list = outDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request,
+                    QUERYSELFOUT), OldPageSeparateTools.getPageSeparate(request, QUERYSELFOUT));
             }
         }
         catch (Exception e)
         {
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "查询库单失败");
-            _logger.error("addOut", e);
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "查询单据失败");
+
+            _logger.error(e, e);
 
             return mapping.findForward("error");
         }
 
-        request.setAttribute("listOut", list);
+        request.setAttribute("listOut1", list);
 
         // 发货单
         ConsignBean temp = null;
+
         for (OutBean outBean : list)
         {
             temp = consignDAO.findConsignById(outBean.getFullId());
+
             if (temp != null)
             {
                 outBean.setConsign(temp.getReprotType());
             }
         }
 
+        List<DepotBean> depotList = depotDAO.listEntityBeans();
+
+        request.setAttribute("depotList", depotList);
+
         request.getSession().setAttribute("listOut1", list);
 
         request.setAttribute("now", TimeTools.now("yyyy-MM-dd"));
 
-        request.setAttribute("ff", Boolean.valueOf("1".equals(request.getAttribute("GFlag"))));
-
         getDivs(request, list);
 
-        // TODO 业务员进入listOut
-        if (false)
+        return mapping.findForward("querySelfOut");
+    }
+
+    private ConditionParse getQuerySelfCondition(HttpServletRequest request, User user)
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        condtion.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_OUTBILL);
+
+        // 只能查询自己的
+        condtion.addCondition("OutBean.STAFFERID", "=", user.getStafferId());
+
+        String outTime = request.getParameter("outTime");
+
+        String outTime1 = request.getParameter("outTime1");
+
+        if ( !StringTools.isNullOrNone(outTime))
         {
-            return mapping.findForward("listOut");
+            condtion.addCondition("OutBean.outTime", ">=", outTime);
+        }
+        else
+        {
+            condtion.addCondition("OutBean.outTime", ">=", TimeTools.now_short( -7));
+
+            request.setAttribute("outTime", TimeTools.now_short( -7));
         }
 
-        return mapping.findForward("listOut1");
+        if ( !StringTools.isNullOrNone(outTime1))
+        {
+            condtion.addCondition("OutBean.outTime", "<=", outTime1);
+        }
+        else
+        {
+            condtion.addCondition("OutBean.outTime", "<=", TimeTools.now_short());
+
+            request.setAttribute("outTime1", TimeTools.now_short());
+        }
+
+        String id = request.getParameter("id");
+
+        if ( !StringTools.isNullOrNone(id))
+        {
+            condtion.addCondition("OutBean.fullid", "like", id);
+        }
+
+        String status = request.getParameter("status");
+
+        if ( !StringTools.isNullOrNone(status))
+        {
+            if (String.valueOf(OutConstant.STATUS_PASS).equals(status))
+            {
+                condtion.addCondition(" and OutBean.status in (3, 4) ");
+            }
+            else
+            {
+                condtion.addIntCondition("OutBean.status", "=", status);
+            }
+        }
+        else
+        {
+            request.setAttribute("status", null);
+        }
+
+        String customerId = request.getParameter("customerId");
+
+        if ( !StringTools.isNullOrNone(customerId))
+        {
+            condtion.addCondition("OutBean.customerId", "=", customerId);
+        }
+
+        String outType = request.getParameter("outType");
+
+        if ( !StringTools.isNullOrNone(outType))
+        {
+            condtion.addIntCondition("OutBean.outType", "=", outType);
+        }
+
+        String location = request.getParameter("location");
+
+        if ( !StringTools.isNullOrNone(location))
+        {
+            condtion.addCondition("OutBean.location", "=", location);
+        }
+
+        String redate = request.getParameter("redate");
+
+        String reCom = request.getParameter("reCom");
+
+        if ( !StringTools.isNullOrNone(redate) && !StringTools.isNullOrNone(reCom))
+        {
+            condtion.addCondition("OutBean.redate", reCom, redate);
+
+            condtion.addCondition("and OutBean.redate <> ''");
+        }
+
+        String pay = request.getParameter("pay");
+
+        if ( !StringTools.isNullOrNone(pay))
+        {
+            if ( !pay.equals(String.valueOf(OutConstant.PAY_OVER)))
+            {
+                condtion.addIntCondition("OutBean.pay", "=", pay);
+            }
+            else
+            {
+                condtion.addCondition(" and OutBean.status in (3, 4)");
+
+                condtion.addCondition(" and OutBean.redate < '" + TimeTools.now_short() + "'");
+
+                condtion.addIntCondition("OutBean.pay", "=", 0);
+            }
+        }
+
+        String tempType = request.getParameter("tempType");
+
+        if ( !StringTools.isNullOrNone(tempType))
+        {
+            condtion.addIntCondition("OutBean.tempType", "=", tempType);
+        }
+
+        return condtion;
     }
 
     /**
@@ -1733,6 +1718,16 @@ public class OutAction extends DispatchAction
         return querySelfOut(mapping, form, request, reponse);
     }
 
+    /**
+     * mark(标记单据)
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
     public ActionForward mark(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                               HttpServletResponse reponse)
         throws ServletException
@@ -1743,7 +1738,7 @@ public class OutAction extends DispatchAction
 
         outManager.mark(fullId, !bean.isMark());
 
-        request.setAttribute("forward", "9");
+        request.setAttribute("forward", "1");
 
         return querySelfOut(mapping, form, request, reponse);
     }
@@ -2020,14 +2015,15 @@ public class OutAction extends DispatchAction
         throws ServletException
     {
         String outId = request.getParameter("outId");
+
         String fow = request.getParameter("fow");
 
         CommonTools.saveParamers(request);
 
-        OutBean bean = null;
+        OutVO bean = null;
         try
         {
-            bean = outDAO.find(outId);
+            bean = outDAO.findVO(outId);
 
             if (bean == null)
             {
@@ -2038,61 +2034,39 @@ public class OutAction extends DispatchAction
 
             List<BaseBean> list = baseDAO.queryEntityBeansByFK(outId);
 
-            for (BaseBean baseBean : list)
-            {
-                if ( !StringTools.isNullOrNone(baseBean.getStorageId()))
-                {
-                    StorageBean sbs = storageDAO.find(baseBean.getStorageId());
-
-                    if (sbs != null)
-                    {
-                        baseBean.setStorageId(sbs.getName());
-                    }
-                }
-            }
-
             bean.setBaseList(list);
-
-            OutVO vo = new OutVO();
-
-            setOutVO(bean, vo);
 
             List<FlowLogBean> logs = flowLogDAO.queryEntityBeansByFK(outId);
 
             List<FlowLogVO> voList = ListTools.changeList(logs, FlowLogVO.class,
                 FlowLogHelper.class, "getOutLogVO");
 
-            request.setAttribute("out", vo);
+            request.setAttribute("bean", bean);
 
-            request.setAttribute("baseList", list);
+            request.setAttribute("fristBase", list.get(0));
+
+            if (list.size() > 1)
+            {
+                request.setAttribute("lastBaseList", list.subList(1, list.size()));
+            }
 
             request.setAttribute("logList", voList);
         }
         catch (Exception e)
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "查询库单失败");
-            _logger.error("addOut", e);
+
+            _logger.error(e, e);
 
             return mapping.findForward("error");
         }
 
         if ("1".equals(fow))
         {
-            User user = (User)request.getSession().getAttribute("user");
-
-            double noPayBusiness = outDAO.sumNoPayAndAvouchBusinessByStafferId(user.getStafferId(),
-                YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
-
-            StafferBean sb2 = stafferDAO.find(user.getStafferId());
-
-            if (sb2 != null)
-            {
-                // 设置其剩余的信用额度
-                request.setAttribute("credit", ElTools.formatNum(sb2.getCredit() - noPayBusiness));
-            }
+            innerForPrepare(request);
 
             // 处理修改
-            return processModify(mapping, request, bean);
+            return mapping.findForward("updateOut");
         }
 
         if ("2".equals(fow))
@@ -2183,93 +2157,23 @@ public class OutAction extends DispatchAction
     }
 
     /**
-     * @param mapping
-     * @param request
-     * @param bean
-     * @return
-     */
-    private ActionForward processModify(ActionMapping mapping, HttpServletRequest request,
-                                        OutBean bean)
-    {
-        if (bean.getStatus() == 0 || bean.getStatus() == 2)
-        {
-            User user = (User)request.getSession().getAttribute("user");
-
-            ConditionParse condition = new ConditionParse();
-
-            condition.addCondition("stafferName", "=", user.getStafferName());
-
-            // 得到部门
-            List<DepartmentBean> list2 = departmentDAO.listEntityBeans();
-
-            List<LocationBean> locationList = new ArrayList<LocationBean>();
-
-            request.setAttribute("locationList", locationList);
-
-            request.setAttribute("departementList", list2);
-
-            condition = new ConditionParse();
-
-            User oprUser = Helper.getUser(request);
-
-            condition.addCondition("locationId", "=", oprUser.getLocationId());
-
-            List<DepotpartBean> list1 = depotpartDAO.queryEntityBeansByCondition(condition);
-
-            request.setAttribute("depotpartList", list1);
-
-            if (bean.getType() == OutConstant.OUT_TYPE_INBILL)
-            {
-                return mapping.findForward("modifyOut1");
-            }
-
-            return mapping.findForward("modifyOut");
-        }
-        else
-        {
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "只有保存态和驳回态的出库单可以修改");
-
-            return mapping.findForward("error");
-        }
-    }
-
-    /**
-     * 设置vo
+     * showLastCredit(剩余的信用)
      * 
-     * @param bean
-     * @param vo
+     * @param request
+     * @param user
      */
-    private void setOutVO(OutBean bean, OutVO vo)
+    private void showLastCredit(HttpServletRequest request, User user)
     {
-        BeanUtil.copyProperties(vo, bean);
+        double noPayBusiness = outDAO.sumNoPayAndAvouchBusinessByStafferId(user.getStafferId(),
+            YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
 
-        LocationBean plo = locationDAO.find(vo.getLocation());
+        StafferBean sb2 = stafferDAO.find(user.getStafferId());
 
-        if (plo != null)
+        if (sb2 != null)
         {
-            vo.setLocationName(plo.getName());
-        }
-
-        // 目的区域的名称
-        if ( !StringTools.isNullOrNone(vo.getDestinationId())
-            && vo.getOutType() == OutConstant.INBILL_OUT)
-        {
-            plo = locationDAO.find(vo.getDestinationId());
-
-            if (plo != null)
-            {
-                vo.setDestinationName(plo.getName());
-            }
-        }
-
-        if ( !StringTools.isNullOrNone(bean.getDepotpartId()))
-        {
-            DepotpartBean db = depotpartDAO.find(bean.getDepotpartId());
-
-            if (db != null)
-            {
-                vo.setDepotpartName(db.getName());
-            }
+            // 设置其剩余的信用额度
+            request.setAttribute("credit", ElTools.formatNum(sb2.getCredit() * sb2.getLever()
+                                                             - noPayBusiness));
         }
     }
 
@@ -2497,14 +2401,22 @@ public class OutAction extends DispatchAction
 
     }
 
-    private void getDivs(HttpServletRequest request, List<OutBean> list)
+    /**
+     * getDivs
+     * 
+     * @param request
+     * @param list
+     */
+    private void getDivs(HttpServletRequest request, List list)
     {
         Map divMap = new HashMap();
 
         if (list != null)
         {
-            for (OutBean bean : list)
+            for (Object each : list)
             {
+                OutBean bean = (OutBean)each;
+
                 try
                 {
                     List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(bean.getFullId());
