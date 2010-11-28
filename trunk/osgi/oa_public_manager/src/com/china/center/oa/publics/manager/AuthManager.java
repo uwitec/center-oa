@@ -32,4 +32,6 @@ public interface AuthManager extends ListenerManager<AuthListener>
      * @return
      */
     List<AuthBean> listAllConfigAuth();
+
+    List<AuthBean> querySubExpandAuth(String expandId);
 }

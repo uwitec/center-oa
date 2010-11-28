@@ -32,6 +32,7 @@ import com.china.center.oa.publics.dao.RoleAuthDAO;
 import com.china.center.oa.publics.dao.RoleDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
+import com.china.center.oa.publics.manager.AuthManager;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.publics.vo.UserVO;
 import com.china.center.oa.publics.vs.RoleAuthBean;
@@ -55,6 +56,8 @@ public class UserManagerImpl implements UserManager
     private RoleDAO roleDAO = null;
 
     private AuthDAO authDAO = null;
+
+    private AuthManager authManager = null;
 
     private RoleAuthDAO roleAuthDAO = null;
 
@@ -292,7 +295,7 @@ public class UserManagerImpl implements UserManager
 
         List<RoleAuthBean> authList = roleAuthDAO.queryEntityBeansByFK(user.getRoleId());
 
-        List<AuthBean> subList = authDAO.querySubAuthByParendId(expandKey);
+        List<AuthBean> subList = authManager.querySubExpandAuth(expandKey);
 
         for (RoleAuthBean roleAuthBean : authList)
         {
@@ -521,5 +524,22 @@ public class UserManagerImpl implements UserManager
     public void setAuthDAO(AuthDAO authDAO)
     {
         this.authDAO = authDAO;
+    }
+
+    /**
+     * @return the authManager
+     */
+    public AuthManager getAuthManager()
+    {
+        return authManager;
+    }
+
+    /**
+     * @param authManager
+     *            the authManager to set
+     */
+    public void setAuthManager(AuthManager authManager)
+    {
+        this.authManager = authManager;
     }
 }

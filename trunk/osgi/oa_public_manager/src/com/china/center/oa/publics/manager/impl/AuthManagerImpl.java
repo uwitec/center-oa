@@ -61,6 +61,23 @@ public class AuthManagerImpl extends AbstractListenerManager<AuthListener> imple
         return result;
     }
 
+    public List<AuthBean> querySubExpandAuth(String expandId)
+    {
+        List<AuthBean> tempList = listAllConfigAuth();
+
+        List<AuthBean> result = new ArrayList<AuthBean>();
+
+        for (AuthBean authBean : tempList)
+        {
+            if (authBean.getParentId().equals(expandId))
+            {
+                result.add(authBean);
+            }
+        }
+
+        return result;
+    }
+
     /**
      * @return the authDAO
      */
@@ -77,5 +94,4 @@ public class AuthManagerImpl extends AbstractListenerManager<AuthListener> imple
     {
         this.authDAO = authDAO;
     }
-
 }
