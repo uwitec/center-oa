@@ -249,6 +249,12 @@ function change()
 				<option value="">--</option>
                <p:option type="stockSailType"></p:option>
             </p:pro>
+            
+             <p:pro field="dutyId" innerString="style='width: 300px'">
+                <c:forEach items="${dutyList}" var="item">
+                <option value="${item.id}">${item.name}</option>
+                </c:forEach>
+            </p:pro>
 			
             <p:pro field="invoiceType" innerString="style='width: 300px' readonly=true" >
                 <option value="">没有发票</option>

@@ -114,6 +114,10 @@ function passTO()
             <p:pro field="willDate"/>
             
             <p:pro field="nearlyPayDate" cell="2"/>
+            
+             <p:cells celspan="2" title="纳税实体">
+            ${bean.dutyName}
+            </p:cells>
 
 			<p:cells celspan="2" title="备注">
 			${bean.description}

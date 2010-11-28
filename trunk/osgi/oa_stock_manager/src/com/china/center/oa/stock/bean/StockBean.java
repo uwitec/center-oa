@@ -15,6 +15,7 @@ import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.jdbc.annotation.enums.JoinType;
+import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.bean.UserBean;
@@ -46,6 +47,10 @@ public class StockBean implements Serializable
      */
     @Join(tagClass = StafferBean.class, type = JoinType.LEFT, alias = "owe")
     private String owerId = "";
+
+    @Html(title = "纳税实体", type = Element.SELECT, must = true)
+    @Join(tagClass = DutyBean.class, type = JoinType.LEFT)
+    private String dutyId = "";
 
     @Join(tagClass = LocationBean.class)
     private String locationId = "";
@@ -504,6 +509,23 @@ public class StockBean implements Serializable
     }
 
     /**
+     * @return the dutyId
+     */
+    public String getDutyId()
+    {
+        return dutyId;
+    }
+
+    /**
+     * @param dutyId
+     *            the dutyId to set
+     */
+    public void setDutyId(String dutyId)
+    {
+        this.dutyId = dutyId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -529,6 +551,9 @@ public class StockBean implements Serializable
             .append(TAB)
             .append("owerId = ")
             .append(this.owerId)
+            .append(TAB)
+            .append("dutyId = ")
+            .append(this.dutyId)
             .append(TAB)
             .append("locationId = ")
             .append(this.locationId)

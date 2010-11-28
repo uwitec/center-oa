@@ -19,14 +19,17 @@ import com.china.center.oa.stock.constant.StockConstant;
 @Entity(inherit = true)
 public class StockVO extends StockBean
 {
-    @Relationship(relationField = "stafferId", tagField = "name")
+    @Relationship(relationField = "stafferId")
     private String userName = "";
 
-    @Relationship(relationField = "owerId", tagField = "name")
+    @Relationship(relationField = "owerId")
     private String owerName = "";
 
-    @Relationship(relationField = "locationId", tagField = "name")
+    @Relationship(relationField = "locationId")
     private String locationName = "";
+
+    @Relationship(relationField = "dutyId")
+    private String dutyName = "";
 
     /**
      * 是否被操作
@@ -143,6 +146,23 @@ public class StockVO extends StockBean
     }
 
     /**
+     * @return the dutyName
+     */
+    public String getDutyName()
+    {
+        return dutyName;
+    }
+
+    /**
+     * @param dutyName
+     *            the dutyName to set
+     */
+    public void setDutyName(String dutyName)
+    {
+        this.dutyName = dutyName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -165,6 +185,9 @@ public class StockVO extends StockBean
             .append(TAB)
             .append("locationName = ")
             .append(this.locationName)
+            .append(TAB)
+            .append("dutyName = ")
+            .append(this.dutyName)
             .append(TAB)
             .append("display = ")
             .append(this.display)

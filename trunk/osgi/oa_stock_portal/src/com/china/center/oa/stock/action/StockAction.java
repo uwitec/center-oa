@@ -41,6 +41,7 @@ import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.dao.StorageRelationDAO;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.DepartmentBean;
+import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.LocationBean;
@@ -49,6 +50,7 @@ import com.china.center.oa.publics.constant.InvoiceConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DepartmentDAO;
+import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
@@ -107,6 +109,8 @@ public class StockAction extends DispatchAction
 
     private UserDAO userDAO = null;
 
+    private DutyDAO dutyDAO = null;
+
     private CommonDAO commonDAO = null;
 
     private DepartmentDAO departmentDAO = null;
@@ -134,8 +138,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addStock(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse reponse)
+    public ActionForward addStock(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         StockBean bean = new StockBean();
@@ -202,8 +206,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward createAskBean(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse reponse)
+    public ActionForward createAskBean(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String itemId = request.getParameter("itemId");
@@ -258,8 +262,8 @@ public class StockAction extends DispatchAction
      * @param user
      * @param bean
      */
-    private void setAutoAskBean(ActionMapping mapping, HttpServletRequest request, String itemId, StockItemBean item,
-                                User user, PriceAskBean bean)
+    private void setAutoAskBean(ActionMapping mapping, HttpServletRequest request, String itemId,
+                                StockItemBean item, User user, PriceAskBean bean)
     {
         bean.setId(SequenceTools.getSequence("ASK", 5));
 
@@ -312,8 +316,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateStock(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse reponse)
+    public ActionForward updateStock(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         StockBean bean = new StockBean();
@@ -366,8 +370,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateStockStatus(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse reponse)
+    public ActionForward updateStockStatus(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -436,8 +440,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward endStock(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse reponse)
+    public ActionForward endStock(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -474,8 +478,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward stockItemAskChange(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse reponse)
+    public ActionForward stockItemAskChange(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -571,7 +575,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptInQueryPriceAskProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward rptInQueryPriceAskProvider(ActionMapping mapping, ActionForm form,
+                                                    HttpServletRequest request,
                                                     HttpServletResponse reponse)
         throws ServletException
     {
@@ -579,8 +584,8 @@ public class StockAction extends DispatchAction
 
         String productId = request.getParameter("productId");
 
-        List<PriceAskProviderBeanVO> beanList = priceAskProviderDAO.queryByCondition(TimeTools.now("yyyyMMdd"),
-            productId);
+        List<PriceAskProviderBeanVO> beanList = priceAskProviderDAO.queryByCondition(TimeTools
+            .now("yyyyMMdd"), productId);
 
         // 获取PID
         for (PriceAskProviderBeanVO vo : beanList)
@@ -615,8 +620,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findStock(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                   HttpServletResponse reponse)
+    public ActionForward findStock(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -675,6 +680,10 @@ public class StockAction extends DispatchAction
 
             request.setAttribute("departementList", departementList);
 
+            List<DutyBean> dutyList = dutyDAO.listEntityBeans();
+
+            request.setAttribute("dutyList", dutyList);
+
             return mapping.findForward("updateStock");
         }
 
@@ -701,7 +710,8 @@ public class StockAction extends DispatchAction
         {
             if (StockItemVO.getStatus() > StockConstant.STOCK_ITEM_STATUS_INIT)
             {
-                List<PriceAskProviderBeanVO> items = priceAskProviderDAO.queryEntityVOsByFK(StockItemVO.getId());
+                List<PriceAskProviderBeanVO> items = priceAskProviderDAO
+                    .queryEntityVOsByFK(StockItemVO.getId());
 
                 map1.put(StockItemVO.getId(), items);
 
@@ -739,8 +749,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddStock(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse reponse)
+    public ActionForward preForAddStock(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         List<DepartmentBean> departementList = departmentDAO.listEntityBeans();
@@ -756,6 +766,10 @@ public class StockAction extends DispatchAction
 
         request.setAttribute("invoiceList", invoiceList);
 
+        List<DutyBean> dutyList = dutyDAO.listEntityBeans();
+
+        request.setAttribute("dutyList", dutyList);
+
         return mapping.findForward("addStock");
     }
 
@@ -769,8 +783,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForSockAsk(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse reponse)
+    public ActionForward preForSockAsk(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -840,8 +854,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward stockItemAskPrice(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse reponse)
+    public ActionForward stockItemAskPrice(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -928,7 +942,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward stockItemAskPriceForNet(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward stockItemAskPriceForNet(ActionMapping mapping, ActionForm form,
+                                                 HttpServletRequest request,
                                                  HttpServletResponse reponse)
         throws ServletException
     {
@@ -980,7 +995,8 @@ public class StockAction extends DispatchAction
      * @param bean
      * @param newItemList
      */
-    private void setNewStockItemList(HttpServletRequest request, StockItemBean bean, List<StockItemBean> newItemList)
+    private void setNewStockItemList(HttpServletRequest request, StockItemBean bean,
+                                     List<StockItemBean> newItemList)
     {
         String[] providers = request.getParameterValues("check_init");
 
@@ -992,7 +1008,8 @@ public class StockAction extends DispatchAction
 
                 BeanUtil.copyProperties(newBean, bean);
 
-                newBean.setAmount(CommonTools.parseInt(request.getParameter("amount_" + providers[i])));
+                newBean.setAmount(CommonTools.parseInt(request.getParameter("amount_"
+                                                                            + providers[i])));
 
                 newBean.setPrice(Float.parseFloat(request.getParameter("price_" + providers[i])));
 
@@ -1036,7 +1053,8 @@ public class StockAction extends DispatchAction
 
                 bean.setProviderId(request.getParameter("customerId_" + providers[i]));
 
-                bean.setHasAmount(CommonTools.parseInt(request.getParameter("hasAmount_" + providers[i])));
+                bean.setHasAmount(CommonTools.parseInt(request.getParameter("hasAmount_"
+                                                                            + providers[i])));
 
                 bean.setUserId(Helper.getUser(request).getId());
 
@@ -1057,8 +1075,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryStock(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse reponse)
+    public ActionForward queryStock(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -1088,8 +1106,9 @@ public class StockAction extends DispatchAction
             {
                 OldPageSeparateTools.processSeparate(request, "queryStock");
 
-                list = stockDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request, "queryStock"),
-                    OldPageSeparateTools.getPageSeparate(request, "queryStock"));
+                list = stockDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(
+                    request, "queryStock"), OldPageSeparateTools.getPageSeparate(request,
+                    "queryStock"));
             }
 
             // 页面显示div用
@@ -1327,7 +1346,8 @@ public class StockAction extends DispatchAction
         }
         else
         {
-            condtion.addCondition("StockBean.logTime", ">=", TimeTools.getDateShortString( -5) + " 00:00:00");
+            condtion.addCondition("StockBean.logTime", ">=", TimeTools.getDateShortString( -5)
+                                                             + " 00:00:00");
 
             request.setAttribute("alogTime", TimeTools.getDateShortString( -5));
         }
@@ -1340,7 +1360,8 @@ public class StockAction extends DispatchAction
         }
         else
         {
-            condtion.addCondition("StockBean.logTime", "<=", TimeTools.getDateShortString(0) + " 23:59:59");
+            condtion.addCondition("StockBean.logTime", "<=", TimeTools.getDateShortString(0)
+                                                             + " 23:59:59");
 
             request.setAttribute("blogTime", TimeTools.getDateShortString(0));
         }
@@ -1358,8 +1379,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward delStock(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse reponse)
+    public ActionForward delStock(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1394,8 +1415,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward exportStock(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse reponse)
+    public ActionForward exportStock(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         OutputStream out = null;
@@ -1471,15 +1492,19 @@ public class StockAction extends DispatchAction
                         ws.addCell(new Label(j++ , i, item.getId()));
                         ws.addCell(new Label(j++ , i, item.getUserName()));
                         ws.addCell(new Label(j++ , i, item.getLocationName()));
-                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(item.getTotal()))));
+                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(item
+                            .getTotal()))));
 
                         ws.addCell(new Label(j++ , i, vo.getProductName()));
                         ws.addCell(new Label(j++ , i, vo.getProductCode()));
                         ws.addCell(new Label(j++ , i, String.valueOf(vo.getAmount())));
-                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(vo.getPrePrice()))));
-                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(vo.getPrice()))));
+                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(vo
+                            .getPrePrice()))));
+                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(vo
+                            .getPrice()))));
                         ws.addCell(new Label(j++ , i, vo.getProviderName()));
-                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(vo.getTotal()))));
+                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(vo
+                            .getTotal()))));
                     }
 
                 }
@@ -1757,5 +1782,22 @@ public class StockAction extends DispatchAction
     public void setInvoiceDAO(InvoiceDAO invoiceDAO)
     {
         this.invoiceDAO = invoiceDAO;
+    }
+
+    /**
+     * @return the dutyDAO
+     */
+    public DutyDAO getDutyDAO()
+    {
+        return dutyDAO;
+    }
+
+    /**
+     * @param dutyDAO
+     *            the dutyDAO to set
+     */
+    public void setDutyDAO(DutyDAO dutyDAO)
+    {
+        this.dutyDAO = dutyDAO;
     }
 }

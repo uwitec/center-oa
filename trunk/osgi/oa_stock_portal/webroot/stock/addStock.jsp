@@ -274,6 +274,12 @@ function clearValues()
                     class="button_class" onclick="clearValues()">
             </p:cell>
             
+            <p:pro field="dutyId" innerString="style='width: 300px'">
+                <c:forEach items="${dutyList}" var="item">
+                <option value="${item.id}">${item.name}</option>
+                </c:forEach>
+            </p:pro>
+            
             <p:pro field="invoiceType" innerString="style='width: 300px'">
                 <option value="">没有发票</option>
                 <c:forEach items="${invoiceList}" var="item">

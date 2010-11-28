@@ -23,6 +23,8 @@
 	
 	<osgi:reference id="parameterDAO" interface="com.china.center.oa.publics.dao.ParameterDAO" />
 	
+	<osgi:reference id="dutyDAO" interface="com.china.center.oa.publics.dao.DutyDAO" />
+	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	
 	<osgi:reference id="flowLogDAO" interface="com.china.center.oa.publics.dao.FlowLogDAO" />
