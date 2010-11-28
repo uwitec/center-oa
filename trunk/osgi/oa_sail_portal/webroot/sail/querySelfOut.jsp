@@ -377,7 +377,7 @@ function load()
 							<td align="center"><input type="radio" name="fullId" tempType="${item.tempType}"
 								statuss='${item.status}' value="${item.fullId}" ${vs.index== 0 ? "checked" : ""}/></td>
 							<td align="center"
-							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&outId=${item.fullId}">${item.mark ? "<font color=blue><B>" : ""}
+							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}">${item.mark ? "<font color=blue><B>" : ""}
 							${item.fullId} ${item.mark ? "</B></font>" : ""}</a></td>
 							<td align="center">${item.customerName}</td>
 							<td align="center">${my:get('outStatus', item.status)}</td>

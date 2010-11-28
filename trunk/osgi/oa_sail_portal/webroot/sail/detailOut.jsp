@@ -4,12 +4,13 @@
 
 <html>
 <head>
-<p:link title="修改销售单" />
+<p:link title="销售单明细" />
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/math.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/cnchina.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
+<script language="JavaScript" src="../js/key.js"></script>
 <script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../sail_js/addOut.js"></script>
 <script language="javascript">
@@ -31,7 +32,7 @@ function opens(obj)
 {
 	oo = obj;
 	
-	window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&showAbs=1&load=1&depotId='+ $$('location') + '&name=' + encodeURIComponent(obj.value));
+	window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&showAbs=1&load=1&depotId='+ $$O('location') + '&name=' + encodeURIComponent(obj.value));
 }
 
 function selectCustomer()
@@ -52,7 +53,7 @@ function getCustomer(oos)
 	$O("customerId").value = obj.value;
 	$O("customercreditlevel").value = obj.pcreditlevelid;
 	
-	if (obj.pcreditlevelid == BLACK_LEVEL || $$('outType') == 2)
+	if (obj.pcreditlevelid == BLACK_LEVEL || $$O('outType') == 2)
 	{
 	    removeAllItem($O('reserve3'));
 	    
@@ -103,6 +104,8 @@ function load()
 	loadForm();
 
 	hides(true);
+	
+	$detail($O('viewTable'), ['pr', 'ba']);
 }
 
 function hides(boo)
@@ -143,7 +146,7 @@ function check()
 		return false;
 	}
 
-	if ($$('outType') == '')
+	if ($$O('outType') == '')
 	{
 		alert('请选择库单类型');
 		return false;
@@ -155,7 +158,7 @@ function check()
 		return false;
 	}
 
-	if ($$('department') == '')
+	if ($$O('department') == '')
 	{
 		alert('请选择销售部门');
 		return false;
@@ -320,7 +323,7 @@ function checkTotal()
 	}
 
 
-	 if ($$('outType') == 1 && $$('type') == 1)
+	 if ($$O('outType') == 1 && $$O('type') == 1)
 	 {
 	 	 if (!window.confirm('您当前所操作的是调出，调出时也是正数增加库存，负数减少库存，您确认填写的调出符合实际情形?'))
 	 	 {
@@ -339,7 +342,7 @@ function checkTotal()
 	     return;
     }
 
-    ccv = $$('location');
+    ccv = $$O('location');
 
     if (ccv == '')
     {
@@ -348,7 +351,7 @@ function checkTotal()
     }
 
     //判断method
-    if ($$('method') != 'addOut')
+    if ($$O('method') != 'addOut')
     {
     	alert('提示：提交没有方法，请重新登录操作');
     	return false;
@@ -382,7 +385,7 @@ function sub()
 function managerChange()
 {
     //普通销售
-	if ($$('outType') == 0)
+	if ($$O('outType') == 0)
 	{
 		$O('customerName').value = '';
 		$O('customerId').value = '';
@@ -403,7 +406,7 @@ function managerChange()
 	}
 	
 	//个人领样
-	if ($$('outType') == 1)
+	if ($$O('outType') == 1)
 	{
 		$O('customerName').value = '个人领样';
 		$O('customerId').value = '99';
@@ -415,7 +418,7 @@ function managerChange()
 	}
 	
 	//零售 是给公共客户的
-	if ($$('outType') == 2)
+	if ($$O('outType') == 2)
     {
         $O('customerName').value = '公共客户';
         $O('customerId').value = '99';
@@ -427,6 +430,20 @@ function managerChange()
         
         setOption($O('reserve3'), '1', '款到发货(黑名单客户/零售)');   
     }
+}
+
+function pagePrint()
+{
+    $O('na').style.display = 'none';
+    $O('pr').style.display = 'none';
+    $O('ba').style.display = 'none';
+    $O('desc1').style.display = 'none';
+    window.print();
+
+    $O('pr').style.display = 'inline';
+    $O('ba').style.display = 'inline';
+    $O('na').style.display = 'block';
+    $O('desc1').style.display = 'block';
 }
 
 </script>
@@ -453,13 +470,15 @@ function managerChange()
 <input type=hidden name="showIdList" value="" />
 <input type=hidden name="showNameList" value="" />
 <input type=hidden name="customercreditlevel" value="" />
+<div id="na">
 <p:navigation
 	height="22">
-	<td width="550" class="navigation">库单管理 &gt;&gt; 修改销售单(如果需要增加开单品名,请到 公共资源-->配置管理)</td>
+	<td width="550" class="navigation">库单管理 &gt;&gt; 销售单明细</td>
 				<td width="85"></td>
 </p:navigation> <br>
+</div>
 
-<table width="95%" border="0" cellpadding="0" cellspacing="0"
+<table width="95%" border="0" cellpadding="0" cellspacing="0" id="viewTable"
 	align="center">
 	<tr>
 		<td valign="top" colspan='2'>
@@ -572,7 +591,7 @@ function managerChange()
 						<td><p:plugin name="arriveDate"  size="20" oncheck="notNone;cnow('30')" value="${bean.arriveDate}"/><font color="#FF0000">*</font></td>
 					</tr>
 					
-					<tr class="content2">
+					<tr class="content1">
                         <td align="right">付款方式：</td>
                         <td colspan="1">
                         <select name="reserve3" class="select_class" oncheck="notNone;" head="付款方式" style="width: 240px" values="${bean.reserve3}">
@@ -593,7 +612,7 @@ function managerChange()
                     
                     <tr class="content2">
                         <td align="right">发票类型：</td>
-                        <td colspan="3">
+                        <td colspan="1">
                         <select name="invoiceId" class="select_class" head="发票类型" style="width: 400px" values="${bean.invoiceId}">
                            <option value="">没有发票</option>
                             <c:forEach items="${invoiceList}" var="item">
@@ -601,6 +620,30 @@ function managerChange()
                             </c:forEach>
                         </select>
                         <font color="#FF0000">*</font></td>
+                        <td align="right">总金额：</td>
+                        <td colspan="1">
+                       ${my:formatNum(bean.total)}
+                       </td>
+                    </tr>
+                    
+                     <tr class="content1">
+                        <td align="right">状态：</td>
+                        <td colspan="1">
+                        <select name="status" class="select_class"  values="${bean.status}">
+                           <p:option type="outStatus"></p:option>
+                        </select>
+                        </td>
+                        <td align="right">申请人：</td>
+                        <td colspan="1">
+                       ${bean.stafferName}
+                       </td>
+                    </tr>
+                    
+                     <tr class="content2">
+                        <td align="right">单据分公司：</td>
+                        <td colspan="3">
+                       ${bean.locationName}
+                       </td>
                     </tr>
 
 					<tr class="content1">
@@ -608,7 +651,7 @@ function managerChange()
 						<td colspan="3"><textarea rows="3" cols="55" oncheck="notNone;"
 							name="description"><c:out value="${bean.description}"/></textarea>
 							<font color="#FF0000">*</font>
-							<b>(请填写所销售的产品,因为短信审批会发送此内容给您的主管)</b></td>
+							</td>
 					</tr>
 
 				</table>
@@ -648,8 +691,6 @@ function managerChange()
 						<td width="10%" align="center">成本</td>
 						<td width="25%" align="center">类型</td>
 						<td width="15%" align="center">开单品名</td>
-						<td width="15%" align="center"><input type="button" accesskey="A"
-							value="增加" class="button_class" onclick="addTr()"></td>
 					</tr>
 
 					<tr class="content1" id="trCopy" style="display: none;">
@@ -738,7 +779,6 @@ function managerChange()
 						</select>
 						</td>
 
-						<td align="center"><input type=button value="清空"  class="button_class" onclick="clears()"></td>
 					</tr>
 					
 					<c:forEach items="${lastBaseList}" var="fristBase" varStatus="vs">
@@ -782,7 +822,6 @@ function managerChange()
                         </select>
                         </td>
 
-                        <td align="center"><input type=button value="删除" class=button_class onclick="removeTr(this)"></td>
                     </tr>
                     </c:forEach>
 				</table>
@@ -804,14 +843,71 @@ function managerChange()
 	<tr>
 		<td height="10" colspan='2'></td>
 	</tr>
+	
+	<tr>
+        <td colspan='2' align='center'>
+        <div id="desc1" style="display: block;">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0"
+            class="border">
+            <tr>
+                <td>
+                <table width="100%" border="0" cellspacing='1' id="tables">
+                    <tr align="center" class="content0">
+                        <td width="10%" align="center">审批人</td>
+                        <td width="10%" align="center">审批动作</td>
+                        <td width="10%" align="center">前状态</td>
+                        <td width="10%" align="center">后状态</td>
+                        <td width="45%" align="center">意见</td>
+                        <td width="15%" align="center">时间</td>
+                    </tr>
+
+                    <c:forEach items="${logList}" var="item" varStatus="vs">
+                        <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
+                            <td align="center">${item.actor}</td>
+
+                            <td  align="center">${item.oprModeName}</td>
+
+                            <td  align="center">${item.preStatusName}</td>
+
+                            <td  align="center">${item.afterStatusName}</td>
+
+                            <td  align="center">${item.description}</td>
+
+                            <td  align="center">${item.logTime}</td>
+
+                        </tr>
+                    </c:forEach>
+                </table>
+                </td>
+            </tr>
+        </table>
+        </div>
+        </td>
+    </tr>
+
+    <tr>
+        <td height="10" colspan='2'></td>
+    </tr>
+
+    <tr>
+        <td background="../images/dot_line.gif" colspan='2'></td>
+    </tr>
+
+    <tr>
+        <td height="10" colspan='2'></td>
+    </tr>
 
 	<tr>
-		<td width="100%">
-		<div align="right"><input type="button" class="button_class"
-			value="&nbsp;&nbsp;保 存&nbsp;&nbsp;" onClick="save()" />&nbsp;&nbsp;</div>
-		</td>
-		<td width="0%"></td>
-	</tr>
+        <td width="100%">
+        <div align="right"><input type="button" name="pr"
+            class="button_class" onclick="pagePrint()"
+            value="&nbsp;&nbsp;打 印&nbsp;&nbsp;">&nbsp;&nbsp;<input
+            type="button" name="ba" class="button_class"
+            onclick="javascript:history.go(-1)"
+            value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>
+        </td>
+        <td width="0%"></td>
+    </tr>
 
 </table>
 </form>

@@ -52,6 +52,7 @@ import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.LocationHelper;
 import com.china.center.oa.publics.bean.DepartmentBean;
+import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.LocationBean;
@@ -62,12 +63,14 @@ import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DepartmentDAO;
+import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
+import com.china.center.oa.publics.manager.FatalNotify;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.publics.vo.FlowLogVO;
 import com.china.center.oa.sail.bean.BaseBean;
@@ -108,6 +111,8 @@ public class OutAction extends DispatchAction
 
     private UserDAO userDAO = null;
 
+    private FatalNotify fatalNotify = null;
+
     private OutManager outManager = null;
 
     private ProductDAO productDAO = null;
@@ -135,6 +140,8 @@ public class OutAction extends DispatchAction
     private FlowLogDAO flowLogDAO = null;
 
     private OutDAO outDAO = null;
+
+    private DutyDAO dutyDAO = null;
 
     private InvoiceDAO invoiceDAO = null;
 
@@ -226,6 +233,10 @@ public class OutAction extends DispatchAction
             InvoiceConstant.INVOICE_FORWARD_OUT);
 
         request.setAttribute("invoiceList", invoiceList);
+
+        List<DutyBean> dutyList = dutyDAO.listEntityBeans();
+
+        request.setAttribute("dutyList", dutyList);
     }
 
     private boolean hasOver(String stafferName)
@@ -812,8 +823,6 @@ public class OutAction extends DispatchAction
 
                 return mapping.findForward("error");
             }
-
-            BeanUtil.getBean(out, request);
         }
 
         try
@@ -824,6 +833,14 @@ public class OutAction extends DispatchAction
             if (OutConstant.FLOW_DECISION_SUBMIT.equals(saves))
             {
                 outManager.submit(id, user);
+
+                OutBean newOut = outDAO.find(id);
+
+                if (newOut.getStatus() != OutConstant.STATUS_SUBMIT)
+                {
+                    loggerError(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus()
+                                + "(预计:" + OutConstant.STATUS_SUBMIT + ")");
+                }
             }
         }
         catch (MYException e)
@@ -836,6 +853,18 @@ public class OutAction extends DispatchAction
         }
 
         return null;
+    }
+
+    /**
+     * loggerError(严重错误的日志哦)
+     * 
+     * @param msg
+     */
+    private void loggerError(String msg)
+    {
+        logger1.error(msg);
+
+        fatalNotify.notify(msg);
     }
 
     /**
@@ -1052,6 +1081,8 @@ public class OutAction extends DispatchAction
         {
             condtion.addIntCondition("OutBean.tempType", "=", tempType);
         }
+
+        condtion.addCondition("order by OutBean.fullid desc");
 
         return condtion;
     }
@@ -1532,9 +1563,6 @@ public class OutAction extends DispatchAction
         }
 
         request.setAttribute("forward", "10");
-
-        // TODO
-        request.setAttribute("Bflagg", "1");
 
         return querySelfOut(mapping, form, request, reponse);
     }
@@ -2061,10 +2089,10 @@ public class OutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
+        innerForPrepare(request);
+
         if ("1".equals(fow))
         {
-            innerForPrepare(request);
-
             // 处理修改
             return mapping.findForward("updateOut");
         }
@@ -2771,6 +2799,40 @@ public class OutAction extends DispatchAction
     public void setInvoiceDAO(InvoiceDAO invoiceDAO)
     {
         this.invoiceDAO = invoiceDAO;
+    }
+
+    /**
+     * @return the dutyDAO
+     */
+    public DutyDAO getDutyDAO()
+    {
+        return dutyDAO;
+    }
+
+    /**
+     * @param dutyDAO
+     *            the dutyDAO to set
+     */
+    public void setDutyDAO(DutyDAO dutyDAO)
+    {
+        this.dutyDAO = dutyDAO;
+    }
+
+    /**
+     * @return the fatalNotify
+     */
+    public FatalNotify getFatalNotify()
+    {
+        return fatalNotify;
+    }
+
+    /**
+     * @param fatalNotify
+     *            the fatalNotify to set
+     */
+    public void setFatalNotify(FatalNotify fatalNotify)
+    {
+        this.fatalNotify = fatalNotify;
     }
 
 }

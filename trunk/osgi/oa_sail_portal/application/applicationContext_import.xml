@@ -38,6 +38,10 @@
 	
 	<osgi:reference id="invoiceDAO" interface="com.china.center.oa.publics.dao.InvoiceDAO" />
 	
+	<osgi:reference id="dutyDAO" interface="com.china.center.oa.publics.dao.DutyDAO" />
+	
+	<osgi:reference id="fatalNotify" interface="com.china.center.oa.publics.manager.FatalNotify" />
+	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	
 	<osgi:reference id="baseDAO" interface="com.china.center.oa.sail.dao.BaseDAO" />
