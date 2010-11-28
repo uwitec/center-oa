@@ -888,6 +888,20 @@ public class OutAction extends DispatchAction
             if (SaleConstant.FLOW_DECISION_SUBMIT.equals(saves))
             {
                 outManager.submit(id, user);
+
+                OutBean newOut = outDAO.findOutById(id);
+
+                if (newOut != null)
+                {
+                    logger1.info(fullId + ":" + user.getStafferName() + "(after):"
+                                 + newOut.getStatus());
+
+                    if (newOut.getStatus() != 1)
+                    {
+                        logger1.error(fullId + ":" + user.getStafferName() + "(after):"
+                                      + newOut.getStatus());
+                    }
+                }
             }
         }
         catch (MYException e)
