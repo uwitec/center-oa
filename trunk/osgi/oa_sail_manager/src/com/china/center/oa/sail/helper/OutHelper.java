@@ -160,7 +160,7 @@ public abstract class OutHelper
 
         if (i == 8)
         {
-            return "分公司经理审核";
+            return "待分公司经理审核";
         }
 
         return "";
@@ -178,6 +178,18 @@ public abstract class OutHelper
         {
             return false;
         }
+    }
+
+    public static boolean canSubmit(OutBean outBean)
+    {
+        if (outBean.getStatus() != OutConstant.STATUS_SAVE
+            && outBean.getStatus() != OutConstant.STATUS_REJECT
+            && outBean.getStatus() != OutConstant.STATUS_LOCATION_MANAGER_CHECK)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     public static boolean canReject(OutBean outBean)

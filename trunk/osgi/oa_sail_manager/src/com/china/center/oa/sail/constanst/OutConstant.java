@@ -144,16 +144,19 @@ public interface OutConstant
     /**
      * 未付款
      */
+    @Defined(key = "outPay", value = "未付款")
     int PAY_NOT = 0;
 
     /**
      * 付款
      */
+    @Defined(key = "outPay", value = "已付款")
     int PAY_YES = 1;
 
     /**
      * 过期
      */
+    @Defined(key = "outPay", value = "过期未付款")
     int PAY_OVER = 2;
 
     /**
@@ -265,5 +268,10 @@ public interface OutConstant
      * 流程中决定提交
      */
     String FLOW_DECISION_SUBMIT = "提交";
+
+    /**
+     * 临时的状态
+     */
+    int STATUS_TEMP = 99;
 
 }

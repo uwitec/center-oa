@@ -108,6 +108,11 @@ public class OutBean implements Serializable
 
     private String stafferId = "";
 
+    /**
+     * 担保人id
+     */
+    private String managerId = "";
+
     private double total = 0.0d;
 
     private String description = "";
@@ -1279,5 +1284,22 @@ public class OutBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the managerId
+     */
+    public String getManagerId()
+    {
+        return managerId;
+    }
+
+    /**
+     * @param managerId
+     *            the managerId to set
+     */
+    public void setManagerId(String managerId)
+    {
+        this.managerId = managerId;
     }
 }

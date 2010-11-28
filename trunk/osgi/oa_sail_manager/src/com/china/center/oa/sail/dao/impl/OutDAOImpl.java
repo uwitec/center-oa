@@ -123,6 +123,13 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         return (Double)max;
     }
 
+    public double sumAllNoPayAndAvouchBusinessByStafferId(String stafferId, String beginDate,
+                                                          String endDate)
+    {
+        return sumNoPayAndAvouchBusinessByStafferId(stafferId, beginDate, endDate)
+               + sumNoPayAndAvouchBusinessByManagerId(stafferId, beginDate, endDate);
+    }
+
     public double sumNoPayAndAvouchBusinessByManagerId(String stafferId, String beginDate,
                                                        String endDate)
     {
@@ -273,6 +280,13 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         return true;
     }
 
+    public boolean updateManagerId(String fullId, String managerId)
+    {
+        jdbcOperation.updateField("managerId", managerId, fullId, this.claz);
+
+        return true;
+    }
+
     public boolean updateOutReserve2(String fullId, int reserve4, String reserve6)
     {
         jdbcOperation.updateField("reserve2", reserve4, fullId, this.claz);
@@ -289,9 +303,11 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         return true;
     }
 
-    public boolean updateManagercredit(String fullId, double managercredit)
+    public boolean updateManagercredit(String fullId, String managerId, double managercredit)
     {
         jdbcOperation.updateField("managercredit", managercredit, fullId, this.claz);
+
+        jdbcOperation.updateField("managerId", managerId, fullId, this.claz);
 
         return true;
     }

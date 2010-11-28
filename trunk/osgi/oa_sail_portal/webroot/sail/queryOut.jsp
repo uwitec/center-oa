@@ -4,12 +4,14 @@
 <html>
 <head>
 <p:link title="查询销售单" />
+<link href="../js/plugin/dialog/css/dialog.css" type="text/css" rel="stylesheet"/>
 <script src="../js/title_div.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/JCheck.js"></script>
 <script src="../js/common.js"></script>
 <script src="../js/tableSort.js"></script>
 <script src="../js/jquery/jquery.js"></script>
+<script src="../js/plugin/dialog/jquery.dialog.js"></script>
 <script src="../js/plugin/highlight/jquery.highlight.js"></script>
 <script language="javascript">
 function detail()
@@ -22,27 +24,10 @@ function pagePrint()
 	window.open('../sail/out.do?method=findOut&fow=4&outId=' + getRadioValue("fullId"));
 }
 
-function selectCustomer()
-{
-    window.common.modal("../customer/customer.do?method=rptQuerySelfCustomer&stafferId=${user.stafferId}&load=1");
-}
-
 function exports()
 {
 	if (window.confirm("确定导出当前的全部查询的库单?"))
-	document.location.href = '../sail/out.do?method=export&flags=1';
-}
-
-function mark()
-{
-	if (window.confirm("确定标记当前选择的库单?"))
-	{
-		adminForm.action = '../sail/out.do';
-		adminForm.method.value = 'mark';
-		adminForm.outId.value = getRadioValue("fullId");
-
-		adminForm.submit();
-	}
+	document.location.href = '../sail/out.do?method=export';
 }
 
 function comp()
@@ -114,67 +99,14 @@ function coo(str1, str2)
 	return Math.abs((year2 - year1) * 365 + (month2 - month1) * 30 + (day2 - day1)) <= 90;
 }
 
-function modfiy()
-{
-	if (getRadio('fullId').statuss == '0' || getRadio('fullId').statuss == '2')
-	{
-		document.location.href = '../sail/out.do?method=findOut&outId=' + getRadioValue("fullId") + "&fow=1";
-	}
-	else
-	{
-		alert('只有保存态和驳回态的库单可以修改!');
-	}
-}
-
-function del()
-{
-	if (getRadio('fullId').statuss == '0' || getRadio('fullId').statuss == '2' || getRadio('fullId').temptype == '1')
-	{
-		 if (window.confirm("确定删除销售单?"))
-		document.location.href = '../sail/out.do?method=delOut&outId=' + getRadioValue("fullId");
-	}
-	else
-	{
-		alert('只有保存态和驳回态的库单可以删除!');
-	}
-}
-
-function sub()
-{
-	if (getRadio('fullId').statuss == '0' || getRadio('fullId').statuss == '2')
-	{
-		 if (window.confirm("确定提交销售单?"))
-		 {
-		 	$O('method').value = 'modifyOutStatus';
-		 	$O('oldStatus').value = getRadio('fullId').statuss;
-		 	$O('statuss').value = '1';
-		 	$O('outId').value = getRadioValue("fullId");
-		 	
-		 	disableAllButton();
-		 	adminForm.submit();
-		 }
-	}
-	else
-	{
-		alert('此状态不能提交!');
-	}
-}
-
 function query()
 {
 	if (comp())
 	{
+	    getObj('method').value = 'queryOut';
+	    
 		adminForm.submit();
 	}
-}
-
-function getCustomer(oos)
-{
-    var obj = oos;
-    
-	$O("customerName").value = obj.pname;
-	
-	$O("customerId").value = obj.value;
 }
 
 function res()
@@ -202,30 +134,130 @@ function load()
 	highlights($("#mainTable").get(0), ['驳回'], 'red');
 }
 
+function payOut()
+{
+    if (getRadio('fullId').statuss == 1 && getRadio('fullId').pay == 1 && window.confirm("确定此销售单已经收到货款?"))
+    {
+        getObj('method').value = 'payOut';
+        
+        getObj('outId').value = getRadioValue("fullId");
+        
+        adminForm.submit();
+    }
+    else
+    {
+        alert('不能操作');
+    }
+}
+
+var nextStatusMap = {"1" : 99, "2" : 6, "3" : 7, "4" : 3, "6" : 4};
+
+var oldStatusMap = {"1" : 8, "2" : 1, "3" : 6, "4" : 7, "6" : 3};
+
+var queryType = "${queryType}";
+
+// 通过销售单
+function check()
+{
+    if (getRadio('fullId').statuss == oldStatusMap[queryType])
+    {
+        var hi = '';
+        
+        if (getRadio('fullId').hasmap == "true")
+        {
+            hi = "注意:当前业务员下有超期的销售单  ";
+        }
+
+        if (window.confirm(hi + "确定审核通过销售单?"))
+        {
+            $Dbuttons(true);
+            
+            getObj('method').value = 'modifyOutStatus';
+
+            getObj('statuss').value = nextStatusMap[queryType];
+            
+            getObj('oldStatus').value = getRadio('fullId').statuss;
+
+            getObj('outId').value = getRadioValue("fullId");
+
+            getObj('radioIndex').value = $Index('fullId');
+
+            getObj('reason').value = '同意';
+
+            adminForm.submit();
+        }
+        else
+        {
+            $Dbuttons(false);  
+        }
+    }
+    else
+    {
+        alert('不可以操作!');
+    }
+}
+
+function reject()
+{
+    if (getRadio('fullId').statuss == oldStatusMap[queryType])
+    {
+        $.messager.prompt('驳回', '请输入驳回原因', '', function(r){
+                if (r)
+                {
+                    $Dbuttons(true);
+                    getObj('method').value = 'modifyOutStatus';
+                    getObj('statuss').value = '2';
+                    getObj('oldStatus').value = getRadio('fullId').statuss;
+                    getObj('outId').value = getRadioValue("fullId");
+        
+                    getObj('radioIndex').value = $Index('fullId');
+        
+                    var sss = r;
+        
+                    getObj('reason').value = r;
+        
+                    if (!(sss == null || sss == ''))
+                    {
+                        adminForm.submit();
+                    }
+                    else
+                    {
+                        $Dbuttons(false);
+                    }
+                }
+               
+            });
+    }
+    else
+    {
+        alert('不可以操作!');
+    }
+}
+
+
 </script>
 
 </head>
 <body class="body_class" onkeypress="tooltip.bingEsc(event)" onload="load()">
 <form action="../sail/out.do" name="adminForm"><input type="hidden"
-	value="querySelfOut" name="method"> <input type="hidden" value="1"
+	value="queryOut" name="method"> <input type="hidden" value="1"
 	name="firstLoad">
 	<input type="hidden" value="${customerId}"
 	name="customerId">
 	<input type="hidden" value="${queryType}"
 	name="queryType">
-	<input type="hidden" value="${GFlag}"
-	name="flagg">
 	<input type="hidden" value=""
 	name="outId">
-	<input type="hidden" value=""
-    name="oldStatus">
-	<input type="hidden" value=""
-	name="statuss">
+<input type="hidden" value="" name="oldStatus">
+<input type="hidden" value="" name="statuss">
+<input type="hidden" value="" name="radioIndex">
+<input type="hidden" value="" name="reason">
+
 <c:set var="fg" value='销售'/>
 
 <p:navigation
     height="22">
-    <td width="550" class="navigation">库单管理 &gt;&gt; 我的销售单</td>
+    <td width="550" class="navigation">库单管理 &gt;&gt; 查询销售单${queryType}</td>
                 <td width="85"></td>
 </p:navigation> <br>
 
@@ -258,9 +290,7 @@ function load()
 
 						</td>
 						<td width="15%" align="center">客户：</td>
-						<td align="center"><input type="text" name="customerName" maxlength="14" value="${customerName}"
-							onclick="selectCustomer()" style="cursor: hand"
-							readonly="readonly"></td>
+						<td align="center"><input type="text" name="customerName" maxlength="14" value="${customerName}"></td>
 					</tr>
 
 					<tr class="content1">
@@ -333,7 +363,7 @@ function load()
 								<td width="35">&nbsp;</td>
 								<td width="6"><img src="../images/dot_r.gif" width="6"
 									height="6"></td>
-								<td class="caption"><strong>浏览${fg}单:</strong><font color=blue>[当前查询数量:${my:length(listOut1)}]</font></td>
+								<td class="caption"><strong>浏览${fg}单:</strong><font color=blue>[当前您剩余的信用:${credit}]</font></td>
 							</tr>
 						</table>
 						</td>
@@ -369,6 +399,7 @@ function load()
 						<td align="center" onclick="tableSort(this)" class="td_class">${fg}类型</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">${fg}时间</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">回款日期</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">超期(天)</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">金额</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">付款</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">${fg}人</td>
@@ -379,11 +410,17 @@ function load()
 					<c:forEach items="${listOut1}" var="item" varStatus="vs">
 						<tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'
 						>
-							<td align="center"><input type="radio" name="fullId" temptype="${item.tempType}"
-								statuss='${item.status}' value="${item.fullId}" ${vs.index== 0 ? "checked" : ""}/></td>
+							<td align="center"><input type="radio" name="fullId" 
+							   temptype="${item.tempType}"
+							   hasmap="${hasMap[item.fullId]}"
+							   index="${radioIndex}"
+							   con="${item.consign}"
+							   pay="${item.reserve3}"
+							   statuss='${item.status}' 
+							   value="${item.fullId}"/></td>
 							<td align="center"
-							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}">${item.mark ? "<font color=blue><B>" : ""}
-							${item.fullId} ${item.mark ? "</B></font>" : ""}</a></td>
+							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}">
+							${item.fullId}</a></td>
 							<td align="center">${item.customerName}</td>
 							<td align="center">${my:get('outStatus', item.status)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('outType_out', item.outType)}</td>
@@ -394,6 +431,7 @@ function load()
 							<c:if test="${item.pay == 1}">
 							<td align="center" onclick="hrefAndSelect(this)"><font color=blue>${item.redate}</font></td>
 							</c:if>
+							<td align="center" onclick="hrefAndSelect(this)">${overDayMap[item.fullId]}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.hadPay}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
@@ -403,7 +441,7 @@ function load()
 					</c:forEach>
 				</table>
 
-				<p:formTurning form="adminForm" method="querySelfOut"></p:formTurning>
+				<p:formTurning form="adminForm" method="queryOut"></p:formTurning>
 				</td>
 			</tr>
 		</table>
@@ -427,15 +465,15 @@ function load()
 	<tr>
 		<td width="100%">
 		<div align="right">
+		<c:if test="${queryType == '2'}">
 		<input type="button" class="button_class"
-			value="&nbsp;&nbsp;标 记&nbsp;&nbsp;" onClick="mark()">&nbsp;&nbsp;
-		<input
-			type="button" class="button_class"
-			value="&nbsp;&nbsp;修 改&nbsp;&nbsp;" onclick="modfiy()" />&nbsp;&nbsp;<input
-			type="button" class="button_class"
-			value="&nbsp;&nbsp;提 交&nbsp;&nbsp;" onclick="sub()" />&nbsp;&nbsp; <input
-			type="button" class="button_class"
-			value="&nbsp;&nbsp;删 除&nbsp;&nbsp;" onclick="del()" />&nbsp;&nbsp;
+                value="&nbsp;&nbsp;确认回款&nbsp;&nbsp;" onClick="payOut()">&nbsp;&nbsp;
+        </c:if>
+                <input name="bu1"
+                type="button" class="button_class" value="&nbsp;审核通过&nbsp;"
+                onclick="check()" />&nbsp;&nbsp;<input type="button" name="bu2"
+                class="button_class" value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;"
+                onclick="reject()" />&nbsp;&nbsp;
 		<input
 			type="button" class="button_class"
 			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" /></div>

@@ -641,8 +641,26 @@ function pagePrint()
                     
                      <tr class="content2">
                         <td align="right">单据分公司：</td>
-                        <td colspan="3">
+                        <td colspan="1">
                        ${bean.locationName}
+                       </td>
+                       <td align="right">付款状态：</td>
+                        <td colspan="1">
+                       ${my:get('outPay', bean.pay)}
+                       </td>
+                    </tr>
+                    
+                    <tr class="content1">
+                        <td align="right">信用描述：</td>
+                        <td colspan="3">
+                       ${bean.reserve6}
+                       </td>
+                    </tr>
+                    
+                     <tr class="content2">
+                        <td align="right">信用担保：</td>
+                        <td colspan="3">
+                       客户:${my:formatNum(bean.curcredit)}/${bean.stafferName}:${my:formatNum(bean.staffcredit)}/分公司经理:${my:formatNum(bean.managercredit)}
                        </td>
                     </tr>
 

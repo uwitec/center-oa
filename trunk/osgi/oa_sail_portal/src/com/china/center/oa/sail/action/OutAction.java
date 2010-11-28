@@ -29,8 +29,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
 import com.center.china.osgi.publics.User;
-import com.center.china.osgi.publics.file.writer.WriteFile;
-import com.center.china.osgi.publics.file.writer.WriteFileFactory;
 import com.center.china.osgi.publics.tools.ObjectTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.OldPageSeparateTools;
@@ -50,7 +48,7 @@ import com.china.center.oa.product.dao.ProviderDAO;
 import com.china.center.oa.product.dao.StorageDAO;
 import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.publics.Helper;
-import com.china.center.oa.publics.LocationHelper;
+import com.china.center.oa.publics.bean.AuthBean;
 import com.china.center.oa.publics.bean.DepartmentBean;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
@@ -91,6 +89,7 @@ import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.ParamterMap;
+import com.china.center.tools.RequestTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
@@ -154,6 +153,8 @@ public class OutAction extends DispatchAction
     private StorageRelationManager storageRelationManager = null;
 
     private static String QUERYSELFOUT = "querySelfOut";
+
+    private static String QUERYOUT = "queryOut";
 
     /**
      * queryForAdd
@@ -327,42 +328,23 @@ public class OutAction extends DispatchAction
     {
         OutputStream out = null;
 
-        String ff = request.getParameter("flags");
+        String exportKey = (String)request.getSession().getAttribute("exportKey");
 
-        String flag = (String)request.getSession().getAttribute("flag");
+        List<OutVO> outList = null;
 
-        List<OutBean> outList = null;
         String filenName = null;
 
-        if ("1".equals(ff))
+        if (OldPageSeparateTools.getPageSeparate(request, exportKey).getRowCount() > 1500)
         {
-            if (OldPageSeparateTools.getPageSeparate(request, "queryOut").getRowCount() > 1500)
-            {
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "导出的记录数不能超过1500");
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "导出的记录数不能超过1500");
 
-                return mapping.findForward("error");
-            }
-
-            outList = outDAO.queryEntityBeansByCondition(OldPageSeparateTools.getCondition(request,
-                "queryOut"));
-
-            filenName = flag + TimeTools.now("MMddHHmmss") + ".xls";
+            return mapping.findForward("error");
         }
 
-        if ("2".equals(ff))
-        {
-            if (OldPageSeparateTools.getPageSeparate(request, "queryOut2").getRowCount() > 1500)
-            {
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "导出的记录数不能超过1500");
+        outList = outDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request,
+            exportKey));
 
-                return mapping.findForward("error");
-            }
-
-            outList = outDAO.queryEntityBeansByCondition(OldPageSeparateTools.getCondition(request,
-                "queryOut2"));
-
-            filenName = flag + TimeTools.now("MMddHHmmss") + ".xls";
-        }
+        filenName = "Export_" + TimeTools.now("MMddHHmmss") + ".xls";
 
         if (outList.size() == 0)
         {
@@ -374,6 +356,7 @@ public class OutAction extends DispatchAction
         reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
 
         WritableWorkbook wwb = null;
+
         WritableSheet ws = null;
 
         try
@@ -385,19 +368,19 @@ public class OutAction extends DispatchAction
             ws = wwb.createSheet("sheel1", 0);
             int i = 0, j = 0;
 
-            OutBean element = null;
+            OutVO element = null;
 
             WritableFont font = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD, false,
                 jxl.format.UnderlineStyle.NO_UNDERLINE, jxl.format.Colour.BLUE);
 
             WritableFont font2 = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD, false,
-                jxl.format.UnderlineStyle.NO_UNDERLINE, jxl.format.Colour.BLACK);
+                jxl.format.UnderlineStyle.NO_UNDERLINE, jxl.format.Colour.RED);
 
             WritableCellFormat format = new WritableCellFormat(font);
 
             WritableCellFormat format2 = new WritableCellFormat(font2);
 
-            element = (OutBean)outList.get(0);
+            element = (OutVO)outList.get(0);
 
             String ffs = null;
             if (element.getType() == 0)
@@ -418,6 +401,7 @@ public class OutAction extends DispatchAction
             ws.addCell(new Label(j++ , i, "回款日期", format));
             ws.addCell(new Label(j++ , i, "状态", format));
             ws.addCell(new Label(j++ , i, "经办人", format));
+            ws.addCell(new Label(j++ , i, "仓库", format));
             ws.addCell(new Label(j++ , i, "描述", format));
 
             ws.addCell(new Label(j++ , i, "品名", format));
@@ -425,7 +409,7 @@ public class OutAction extends DispatchAction
             ws.addCell(new Label(j++ , i, "数量", format));
             ws.addCell(new Label(j++ , i, "单价", format));
             ws.addCell(new Label(j++ , i, "金额", format));
-            ws.addCell(new Label(j++ , i, "描述", format));
+            ws.addCell(new Label(j++ , i, "成本", format));
             ws.addCell(new Label(j++ , i, "发货单号", format));
             ws.addCell(new Label(j++ , i, "发货方式", format));
             ws.addCell(new Label(j++ , i, "总金额", format));
@@ -433,7 +417,7 @@ public class OutAction extends DispatchAction
             // 写outbean
             for (Iterator iter = outList.iterator(); iter.hasNext();)
             {
-                element = (OutBean)iter.next();
+                element = (OutVO)iter.next();
 
                 // 写baseBean
                 List<BaseBean> baseList = null;
@@ -482,8 +466,11 @@ public class OutAction extends DispatchAction
 
                     ws.addCell(new Label(j++ , i, element.getStafferName()));
 
+                    ws.addCell(new Label(j++ , i, element.getDepotName()));
+
                     ws.addCell(new Label(j++ , i, element.getDescription()));
 
+                    // 下面是base里面的数据
                     base = (BaseBean)iterator.next();
 
                     ws.addCell(new Label(j++ , i, base.getProductName()));
@@ -539,104 +526,6 @@ public class OutAction extends DispatchAction
                 {
                 }
             }
-            if (out != null)
-            {
-                try
-                {
-                    out.close();
-                }
-                catch (IOException e1)
-                {
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public ActionForward exportWord(ActionMapping mapping, ActionForm form,
-                                    HttpServletRequest request, HttpServletResponse reponse)
-        throws ServletException
-    {
-
-        OutputStream out = null;
-
-        String outId = request.getParameter("outId");
-
-        String flag = (String)request.getSession().getAttribute("flag");
-        // yyyy-MM-dd HH:mm:ss
-
-        String filenName = flag + TimeTools.now("MMddHHmmss") + ".doc";
-
-        reponse.setContentType("application/x-dbf");
-
-        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
-
-        WriteFile writer = null;
-
-        try
-        {
-            writer = WriteFileFactory.getMyWordWriter();
-
-            out = reponse.getOutputStream();
-
-            writer.openFile(out);
-
-            OutBean element = outDAO.find(outId);
-
-            if (element == null)
-            {
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不存在");
-
-                return mapping.findForward("error");
-            }
-
-            List<BaseBean> list = baseDAO.queryEntityBeansByFK(outId);
-
-            element.setBaseList(list);
-
-            String ffs = null;
-            if (element.getType() == 0)
-            {
-                ffs = "出";
-            }
-            else
-            {
-                ffs = "入";
-            }
-
-            StringBuffer buffer = new StringBuffer(256);
-
-            buffer.append(ffs + "库日期:").append(element.getOutTime()).append("   ");
-
-            if (element.getType() == 0)
-            {
-                buffer
-                    .append(ffs + "库类别：")
-                    .append(element.getOutType() == 0 ? "销售出库" : "调拨出库")
-                    .append("\r\n");
-            }
-            else
-            {
-                buffer
-                    .append(ffs + "库类别：")
-                    .append(
-                        ElTools.getValue(element.getOutType(), "采购入库", "调拨", "盘亏出库", "盘盈入库", "调拨"))
-                    .append("\r\n");
-            }
-
-            writer.writeContent(buffer.toString());
-
-            writer.close();
-
-        }
-        catch (Exception e)
-        {
-            _logger.error(e, e);
-            return null;
-        }
-        finally
-        {
             if (out != null)
             {
                 try
@@ -766,7 +655,7 @@ public class OutAction extends DispatchAction
             {
                 _logger.error(e, e);
 
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理错误:请重新操作!");
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getMessage());
 
                 return mapping.findForward("error");
             }
@@ -781,18 +670,8 @@ public class OutAction extends DispatchAction
 
         CommonTools.removeParamers(request);
 
-        request.setAttribute("forward", "10");
+        RequestTools.actionInitQuery(request);
 
-        if (outBean.getType() == 0)
-        {
-            request.setAttribute("Qq", "0");
-        }
-        else
-        {
-            request.setAttribute("Qq", "1");
-        }
-
-        // 设置去哪个查询页面
         return querySelfOut(mapping, form, request, reponse);
     }
 
@@ -834,13 +713,7 @@ public class OutAction extends DispatchAction
             {
                 outManager.submit(id, user);
 
-                OutBean newOut = outDAO.find(id);
-
-                if (newOut.getStatus() != OutConstant.STATUS_SUBMIT)
-                {
-                    loggerError(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus()
-                                + "(预计:" + OutConstant.STATUS_SUBMIT + ")");
-                }
+                checkSubmit(user, id);
             }
         }
         catch (MYException e)
@@ -853,6 +726,28 @@ public class OutAction extends DispatchAction
         }
 
         return null;
+    }
+
+    private void checkSubmit(User user, String id)
+    {
+        OutBean newOut = outDAO.find(id);
+
+        logger1.info(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus() + "(预计:"
+                     + OutConstant.STATUS_SUBMIT + ")");
+
+        if (newOut.getReserve3() != OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER
+            && newOut.getStatus() != OutConstant.STATUS_SUBMIT)
+        {
+            loggerError(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus() + "(预计:"
+                        + OutConstant.STATUS_SUBMIT + ")");
+        }
+
+        if (newOut.getReserve3() == OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER
+            && newOut.getStatus() != OutConstant.STATUS_LOCATION_MANAGER_CHECK)
+        {
+            loggerError(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus() + "(预计:"
+                        + OutConstant.STATUS_LOCATION_MANAGER_CHECK + ")");
+        }
     }
 
     /**
@@ -899,6 +794,8 @@ public class OutAction extends DispatchAction
         throws ServletException
     {
         User user = (User)request.getSession().getAttribute("user");
+
+        request.getSession().setAttribute("exportKey", QUERYSELFOUT);
 
         List<OutVO> list = null;
 
@@ -961,6 +858,202 @@ public class OutAction extends DispatchAction
         getDivs(request, list);
 
         return mapping.findForward("querySelfOut");
+    }
+
+    /**
+     * 销售单审批过程的查询
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryOut(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        User user = (User)request.getSession().getAttribute("user");
+
+        request.getSession().setAttribute("exportKey", QUERYOUT);
+
+        List<OutVO> list = null;
+
+        CommonTools.saveParamers(request);
+
+        try
+        {
+            if (OldPageSeparateTools.isFirstLoad(request))
+            {
+                ConditionParse condtion = getQueryCondition(request, user);
+
+                int tatol = outDAO.countVOByCondition(condtion.toString());
+
+                PageSeparate page = new PageSeparate(tatol, PublicConstant.PAGE_SIZE - 5);
+
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, QUERYOUT);
+
+                list = outDAO.queryEntityVOsByCondition(condtion, page);
+            }
+            else
+            {
+                OldPageSeparateTools.processSeparate(request, QUERYOUT);
+
+                list = outDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request,
+                    QUERYOUT), OldPageSeparateTools.getPageSeparate(request, QUERYOUT));
+            }
+        }
+        catch (Exception e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "查询单据失败");
+
+            _logger.error(e, e);
+
+            return mapping.findForward("error");
+        }
+
+        request.setAttribute("listOut1", list);
+
+        // 发货单
+        ConsignBean temp = null;
+
+        for (OutBean outBean : list)
+        {
+            temp = consignDAO.findConsignById(outBean.getFullId());
+
+            if (temp != null)
+            {
+                outBean.setConsign(temp.getReprotType());
+            }
+        }
+
+        List<DepotBean> depotList = handerDepot(request, user);
+
+        request.setAttribute("depotList", depotList);
+
+        int radioIndex = CommonTools.parseInt(request.getParameter("radioIndex"));
+
+        if (list.size() > 0 && radioIndex >= list.size())
+        {
+            request.setAttribute("radioIndex", list.size() - 1);
+        }
+
+        request.getSession().setAttribute("listOut1", list);
+
+        request.setAttribute("now", TimeTools.now("yyyy-MM-dd"));
+
+        handlerFlow(request, list);
+
+        showLastCredit(request, user);
+
+        getDivs(request, list);
+
+        return mapping.findForward("queryOut");
+    }
+
+    /**
+     * 处理仓库
+     * 
+     * @param request
+     * @param user
+     * @return
+     */
+    private List<DepotBean> handerDepot(HttpServletRequest request, User user)
+    {
+        // 这里是过滤
+        String queryType = RequestTools.getValueFromRequest(request, "queryType");
+
+        List<DepotBean> depotList = depotDAO.listEntityBeans();
+
+        if ("3".equals(queryType))
+        {
+            // 只能看到自己的仓库
+            List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(),
+                AuthConstant.EXPAND_AUTH_DEPOT);
+
+            for (Iterator iterator = depotList.iterator(); iterator.hasNext();)
+            {
+                DepotBean depotBean = (DepotBean)iterator.next();
+
+                boolean delete = true;
+
+                for (AuthBean authBean : depotAuthList)
+                {
+                    if (authBean.getId().equals(depotBean.getId()))
+                    {
+                        delete = false;
+
+                        break;
+                    }
+                }
+
+                if (delete)
+                {
+                    iterator.remove();
+                }
+
+            }
+        }
+        return depotList;
+    }
+
+    /**
+     * 处理部分物流的逻辑
+     * 
+     * @param request
+     * @param list
+     */
+    private void handlerFlow(HttpServletRequest request, List<OutVO> list)
+    {
+        ConsignBean temp = null;
+
+        // 物流的需要知道是否有发货单
+        double total = 0.0d;
+
+        Map<String, String> hasMap = new HashMap<String, String>();
+        Map<String, Integer> overDayMap = new HashMap<String, Integer>();
+
+        for (OutBean outBean : list)
+        {
+            temp = consignDAO.findConsignById(outBean.getFullId());
+
+            if (temp != null)
+            {
+                outBean.setConsign(temp.getCurrentStatus());
+            }
+
+            total += outBean.getTotal();
+
+            // 是否超期 超期几天
+            if ( !StringTools.isNullOrNone(outBean.getRedate())
+                && outBean.getPay() == OutConstant.PAY_NOT)
+            {
+                int overDays = TimeTools.cdate(TimeTools.now_short(), outBean.getRedate());
+
+                overDayMap.put(outBean.getFullId(), overDays);
+            }
+
+            // 款到发货
+            if (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_MONEY
+                && outBean.getPay() == OutConstant.PAY_YES)
+            {
+                overDayMap.put(outBean.getFullId(), 0);
+            }
+
+            if (hasOver(outBean.getStafferName()))
+            {
+                hasMap.put(outBean.getFullId(), "true");
+            }
+            else
+            {
+                hasMap.put(outBean.getFullId(), "false");
+            }
+        }
+
+        request.setAttribute("hasMap", hasMap);
+
+        request.setAttribute("overDayMap", overDayMap);
     }
 
     private ConditionParse getQuerySelfCondition(HttpServletRequest request, User user)
@@ -1080,6 +1173,199 @@ public class OutAction extends DispatchAction
         if ( !StringTools.isNullOrNone(tempType))
         {
             condtion.addIntCondition("OutBean.tempType", "=", tempType);
+        }
+
+        condtion.addCondition("order by OutBean.fullid desc");
+
+        return condtion;
+    }
+
+    /**
+     * 销售单审批过程的查询(条件的设置)
+     * 
+     * @param request
+     * @param user
+     * @return
+     */
+    private ConditionParse getQueryCondition(HttpServletRequest request, User user)
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        condtion.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_OUTBILL);
+
+        String outTime = request.getParameter("outTime");
+
+        String outTime1 = request.getParameter("outTime1");
+
+        if ( !StringTools.isNullOrNone(outTime))
+        {
+            condtion.addCondition("OutBean.outTime", ">=", outTime);
+        }
+        else
+        {
+            condtion.addCondition("OutBean.outTime", ">=", TimeTools.now_short( -7));
+
+            request.setAttribute("outTime", TimeTools.now_short( -7));
+        }
+
+        if ( !StringTools.isNullOrNone(outTime1))
+        {
+            condtion.addCondition("OutBean.outTime", "<=", outTime1);
+        }
+        else
+        {
+            condtion.addCondition("OutBean.outTime", "<=", TimeTools.now_short());
+
+            request.setAttribute("outTime1", TimeTools.now_short());
+        }
+
+        String id = request.getParameter("id");
+
+        if ( !StringTools.isNullOrNone(id))
+        {
+            condtion.addCondition("OutBean.fullid", "like", id);
+        }
+
+        String status = request.getParameter("status");
+
+        if ( !StringTools.isNullOrNone(status))
+        {
+            if (String.valueOf(OutConstant.STATUS_PASS).equals(status))
+            {
+                condtion.addCondition(" and OutBean.status in (3, 4) ");
+            }
+            else
+            {
+                condtion.addIntCondition("OutBean.status", "=", status);
+            }
+        }
+        else
+        {
+            request.setAttribute("status", null);
+        }
+
+        String customerId = request.getParameter("customerId");
+
+        if ( !StringTools.isNullOrNone(customerId))
+        {
+            condtion.addCondition("OutBean.customerId", "=", customerId);
+        }
+
+        String customerName = request.getParameter("customerName");
+
+        if ( !StringTools.isNullOrNone(customerId))
+        {
+            condtion.addCondition("OutBean.customerName", "like", customerName);
+        }
+
+        String outType = request.getParameter("outType");
+
+        if ( !StringTools.isNullOrNone(outType))
+        {
+            condtion.addIntCondition("OutBean.outType", "=", outType);
+        }
+
+        String location = request.getParameter("location");
+
+        if ( !StringTools.isNullOrNone(location))
+        {
+            condtion.addCondition("OutBean.location", "=", location);
+        }
+
+        String redate = request.getParameter("redate");
+
+        String reCom = request.getParameter("reCom");
+
+        if ( !StringTools.isNullOrNone(redate) && !StringTools.isNullOrNone(reCom))
+        {
+            condtion.addCondition("OutBean.redate", reCom, redate);
+
+            condtion.addCondition("and OutBean.redate <> ''");
+        }
+
+        String pay = request.getParameter("pay");
+
+        if ( !StringTools.isNullOrNone(pay))
+        {
+            if ( !pay.equals(String.valueOf(OutConstant.PAY_OVER)))
+            {
+                condtion.addIntCondition("OutBean.pay", "=", pay);
+            }
+            else
+            {
+                condtion.addCondition(" and OutBean.status in (3, 4)");
+
+                condtion.addCondition(" and OutBean.redate < '" + TimeTools.now_short() + "'");
+
+                condtion.addIntCondition("OutBean.pay", "=", 0);
+            }
+        }
+
+        String tempType = request.getParameter("tempType");
+
+        if ( !StringTools.isNullOrNone(tempType))
+        {
+            condtion.addIntCondition("OutBean.tempType", "=", tempType);
+        }
+
+        // 这里是过滤
+        String queryType = RequestTools.getValueFromRequest(request, "queryType");
+
+        // 分公司经理查询
+        if ("1".equals(queryType))
+        {
+            condtion.addIntCondition("OutBean.status", "=",
+                OutConstant.STATUS_LOCATION_MANAGER_CHECK);
+
+            condtion.addCondition("OutBean.locationId", "=", user.getLocationId());
+        }
+
+        // 结算中心查询
+        if ("2".equals(queryType))
+        {
+            condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_SUBMIT);
+        }
+
+        // TODO NOW 处理发货单 物流审批(只有中心仓库才有物流的)
+        if ("3".equals(queryType))
+        {
+            condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_MANAGER_PASS);
+
+            // 只能看到自己的仓库
+            List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(),
+                AuthConstant.EXPAND_AUTH_DEPOT);
+
+            if (ListTools.isEmptyOrNull(depotAuthList))
+            {
+                // 永远也没有结果
+                condtion.addFlaseCondition();
+            }
+            else
+            {
+                StringBuffer sb = new StringBuffer();
+
+                sb.append("and (");
+                for (Iterator iterator = depotAuthList.iterator(); iterator.hasNext();)
+                {
+                    AuthBean authBean = (AuthBean)iterator.next();
+
+                    if (iterator.hasNext())
+                    {
+                        sb.append("OutBean.location = '" + authBean.getId() + "' or ");
+                    }
+                    else
+                    {
+                        sb.append("OutBean.location = '" + authBean.getId() + "'");
+                    }
+
+                }
+
+                sb.append(") ");
+
+                condtion.addCondition(sb.toString());
+            }
         }
 
         condtion.addCondition("order by OutBean.fullid desc");
@@ -1789,6 +2075,8 @@ public class OutAction extends DispatchAction
         String checks = request.getParameter("checks");
         String pay = request.getParameter("pay");
 
+        User user = (User)request.getSession().getAttribute("user");
+
         if ( !StringTools.isNullOrNone(checks))
         {
             OutBean out = outDAO.find(fullId);
@@ -1798,8 +2086,6 @@ public class OutAction extends DispatchAction
 
                 return mapping.findForward("error");
             }
-
-            User user = (User)request.getSession().getAttribute("user");
 
             try
             {
@@ -1816,13 +2102,70 @@ public class OutAction extends DispatchAction
         // 修改付款
         if ("1".equals(pay))
         {
-            outManager.modifyPay(fullId, Integer.parseInt(pay));
+            outManager.modifyPay(user, fullId, Integer.parseInt(pay));
         }
 
         CommonTools.saveParamers(request);
         request.setAttribute("forward", "10");
 
         return queryOut3(mapping, form, request, reponse);
+    }
+
+    /**
+     * 付款(结算中心)
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward payOut(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                HttpServletResponse reponse)
+        throws ServletException
+    {
+        String fullId = request.getParameter("outId");
+
+        OutBean out = outDAO.find(fullId);
+
+        User user = (User)request.getSession().getAttribute("user");
+
+        if (out == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+
+            return mapping.findForward("error");
+        }
+
+        if (out.getReserve3() != OutConstant.OUT_SAIL_TYPE_MONEY)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "只能是款到发货的单据可以操作");
+
+            return mapping.findForward("error");
+        }
+
+        if (out.getStatus() != OutConstant.STATUS_SUBMIT)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+
+            return mapping.findForward("error");
+        }
+
+        if (out.getPay() == OutConstant.PAY_YES)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "已经付款");
+
+            return mapping.findForward("error");
+        }
+
+        outManager.modifyPay(user, fullId, OutConstant.PAY_YES);
+
+        CommonTools.saveParamers(request);
+
+        RequestTools.actionInitQuery(request);
+
+        return queryOut(mapping, form, request, reponse);
     }
 
     /**
@@ -1847,8 +2190,6 @@ public class OutAction extends DispatchAction
         int statuss = Integer.parseInt(request.getParameter("statuss"));
 
         String oldStatus = request.getParameter("oldStatus");
-
-        String authType = request.getParameter("authType");
 
         if (StringTools.isNullOrNone(oldStatus))
         {
@@ -1910,17 +2251,17 @@ public class OutAction extends DispatchAction
         }
         else
         {
-            // 提交
+            // 业务员提交
             if (statuss == OutConstant.STATUS_SUBMIT)
             {
                 try
                 {
                     outManager.submit(fullId, user);
+
+                    checkSubmit(user, fullId);
                 }
                 catch (MYException e)
                 {
-                    _logger.warn("fullId:" + fullId);
-
                     _logger.warn(e, e);
 
                     request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
@@ -1929,46 +2270,36 @@ public class OutAction extends DispatchAction
                 }
             }
 
-            // 总经理 物流管理员 库管通过
+            // 区域总经理信用审核通过
+            if (statuss == OutConstant.STATUS_TEMP)
+            {
+                try
+                {
+                    outManager.pass(fullId, user, OutConstant.STATUS_SUBMIT, reason, depotpartId);
+                }
+                catch (MYException e)
+                {
+                    _logger.warn(e, e);
+
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+                    return mapping.findForward("error");
+                }
+            }
+
+            // 结算中心通过 物流管理员 库管通过
             if (statuss == OutConstant.STATUS_MANAGER_PASS
                 || statuss == OutConstant.STATUS_FLOW_PASS || statuss == OutConstant.STATUS_PASS)
             {
                 // 这里需要计算客户的信用金额-是否报送物流中心经理审批
                 boolean outCredit = parameterDAO.getBoolean(SysConfigConstant.OUT_CREDIT);
 
-                // 客户超支了(必须是销售单且是总经理通过这个环节设卡)
-                if (outCredit && out.getReserve2() == OutConstant.OUT_CREDIT_OVER
-                    && out.getType() == OutConstant.OUT_TYPE_OUTBILL
-                    && statuss == OutConstant.STATUS_MANAGER_PASS)
-                {
-                    // 总部的管理员
-                    if ( !LocationHelper.isSystemLocation(user.getLocationId()))
-                    {
-                        request.setAttribute(KeyConstant.ERROR_MESSAGE, "只有物流的总经理可以审批此销售单");
-
-                        return mapping.findForward("error");
-                    }
-                }
-
-                // 单价存在0
-                if (outCredit && out.getReserve2() == OutConstant.OUT_CREDIT_MIN
-                    && out.getType() == OutConstant.OUT_TYPE_OUTBILL
-                    && statuss == OutConstant.STATUS_MANAGER_PASS)
-                {
-                    // 总部的管理员
-                    if ( !LocationHelper.isSystemLocation(user.getLocationId()))
-                    {
-                        request.setAttribute(KeyConstant.ERROR_MESSAGE, "只有物流的总经理(总裁)可以审批此销售单");
-
-                        return mapping.findForward("error");
-                    }
-                }
-
                 // 如果是黑名单的客户(且没有付款)
                 if (outCredit && out.getReserve3() == OutConstant.OUT_SAIL_TYPE_MONEY
-                    && out.getType() == OutConstant.OUT_TYPE_OUTBILL && out.getPay() == 0)
+                    && out.getType() == OutConstant.OUT_TYPE_OUTBILL
+                    && out.getPay() == OutConstant.PAY_NOT)
                 {
-                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "只有出纳确定已经回款后才可以审批此销售单");
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "只有结算中心确定已经回款后才可以审批此销售单");
 
                     return mapping.findForward("error");
                 }
@@ -1990,17 +2321,6 @@ public class OutAction extends DispatchAction
             // 驳回
             if (statuss == OutConstant.STATUS_REJECT)
             {
-                // 结算中心驳回
-                if ("CENTER".equals(authType))
-                {
-                    if (out.getReserve3() != OutConstant.OUT_SAIL_TYPE_MONEY)
-                    {
-                        request.setAttribute(KeyConstant.ERROR_MESSAGE, "单据不是款到发货,不能驳回");
-
-                        return mapping.findForward("error");
-                    }
-                }
-
                 try
                 {
                     outManager.reject(fullId, user, reason);
@@ -2016,16 +2336,16 @@ public class OutAction extends DispatchAction
             }
         }
 
-        request.setAttribute("forward", "10");
+        RequestTools.actionInitQuery(request);
 
         request.setAttribute(KeyConstant.MESSAGE, "单据[" + fullId + "]操作成功");
 
-        if (statuss == 1)
+        if (StringTools.isNullOrNone(request.getParameter("queryType")))
         {
             return querySelfOut(mapping, form, request, reponse);
         }
 
-        return queryOut2(mapping, form, request, reponse);
+        return queryOut(mapping, form, request, reponse);
     }
 
     /**
@@ -2192,7 +2512,7 @@ public class OutAction extends DispatchAction
      */
     private void showLastCredit(HttpServletRequest request, User user)
     {
-        double noPayBusiness = outDAO.sumNoPayAndAvouchBusinessByStafferId(user.getStafferId(),
+        double noPayBusiness = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(user.getStafferId(),
             YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
 
         StafferBean sb2 = stafferDAO.find(user.getStafferId());
@@ -2834,5 +3154,4 @@ public class OutAction extends DispatchAction
     {
         this.fatalNotify = fatalNotify;
     }
-
 }

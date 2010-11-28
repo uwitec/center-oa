@@ -42,6 +42,8 @@ public interface OutDAO extends DAO<OutBean, OutVO>
 
     boolean updateCurcredit(String fullId, double curcredit);
 
+    boolean updateManagerId(String fullId, String managerId);
+
     boolean updateStaffcredit(String fullId, double staffcredit);
 
     /**
@@ -51,7 +53,7 @@ public interface OutDAO extends DAO<OutBean, OutVO>
      * @param managercredit
      * @return
      */
-    boolean updateManagercredit(String fullId, double managercredit);
+    boolean updateManagercredit(String fullId, String managerId, double managercredit);
 
     Integer sumPreassignAmount(Map parMap);
 
@@ -72,7 +74,7 @@ public interface OutDAO extends DAO<OutBean, OutVO>
     boolean mark2(String fullId, boolean status);
 
     /**
-     * sumNoPayBusiness(客户还没有付款的单据)
+     * sumNoPayBusiness(客户还没有付款的单据,包括预占的)
      * 
      * @param cid
      * @param beginDate
@@ -82,14 +84,15 @@ public interface OutDAO extends DAO<OutBean, OutVO>
     double sumNoPayBusiness(String cid, String beginDate, String endDate);
 
     /**
-     * sumNoPayAndAvouchBusinessByStafferId(职员信用)
+     * 查询职员整个销售体系里面的信用使用(包括开单占用和自己担保他人的)
      * 
      * @param stafferId
      * @param beginDate
      * @param endDate
      * @return
      */
-    double sumNoPayAndAvouchBusinessByStafferId(String stafferId, String beginDate, String endDate);
+    double sumAllNoPayAndAvouchBusinessByStafferId(String stafferId, String beginDate,
+                                                   String endDate);
 
     /**
      * 统计一个产品在系统的销售单没有发货单据数量
@@ -121,7 +124,7 @@ public interface OutDAO extends DAO<OutBean, OutVO>
      * @return
      */
     Integer sumNotEndProductInInByStorageRelation(String productId, String depotpartId,
-                                                    String priceKey, String ower);
+                                                  String priceKey, String ower);
 
     /**
      * 统计一个产品在系统的入库单在途的数量

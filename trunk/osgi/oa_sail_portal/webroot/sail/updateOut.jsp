@@ -448,6 +448,7 @@ function managerChange()
 <input type=hidden name="type"
 	value='0' /> 
 <input type=hidden name="saves" value="" />
+<input type=hidden name="id" value="${bean.id}" />
 <input type=hidden name="desList" value="" />
 <input type=hidden name="otherList" value="" />
 <input type=hidden name="showIdList" value="" />

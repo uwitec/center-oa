@@ -45,7 +45,7 @@
     <select id="sumNoPayAndAvouchBusinessByManagerId" parameterClass="java.util.Map" resultClass="java.lang.Double">
         <![CDATA[
             select sum(t1.managercredit) from t_center_out t1
-            where t1.stafferId = #stafferId# 
+            where t1.managerId = #stafferId# 
             AND t1.type = 0 
             AND t1.outtype = 0
             AND t1.pay = 0

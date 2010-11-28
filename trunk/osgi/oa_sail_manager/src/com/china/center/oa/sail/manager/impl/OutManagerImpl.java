@@ -426,13 +426,6 @@ public class OutManagerImpl implements OutManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        int preStatus = outBean.getStatus();
-
-        if (preStatus != OutConstant.STATUS_SAVE && preStatus != OutConstant.STATUS_REJECT)
-        {
-            throw new MYException("单据已经提交或者驳回,请重新操作");
-        }
-
         final List<BaseBean> baseList = checkSubmit(fullId, outBean);
 
         final List<LogBean> logList = new ArrayList<LogBean>();
@@ -447,7 +440,7 @@ public class OutManagerImpl implements OutManager
         processOutInWay(fullId, outBean);
 
         // 增加数据库日志
-        addOutLog(fullId, user, outBean, "提交", SailConstant.OPR_OUT_PASS, OutConstant.STATUS_SUBMIT);
+        addOutLog(fullId, user, outBean, "提交", SailConstant.OPR_OUT_PASS, status);
 
         outBean.setStatus(status);
 
@@ -494,6 +487,8 @@ public class OutManagerImpl implements OutManager
     {
         int result = 0;
 
+        int nextStatus = OutConstant.STATUS_SUBMIT;
+
         if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
             importLog.info(fullId + ":" + user.getStafferName() + ":" + 1 + ":redrectFrom:"
@@ -504,15 +499,12 @@ public class OutManagerImpl implements OutManager
             {
                 if (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER)
                 {
-                    // 到分公司经理审核
-                    outDAO.modifyOutStatus2(fullId, OutConstant.STATUS_LOCATION_MANAGER_CHECK);
-                }
-                else
-                {
-                    outDAO.modifyOutStatus2(fullId, OutConstant.STATUS_SUBMIT);
+                    nextStatus = OutConstant.STATUS_LOCATION_MANAGER_CHECK;
                 }
 
-                result = 1;
+                outDAO.modifyOutStatus2(fullId, nextStatus);
+
+                result = nextStatus;
 
                 // 只有销售单才有信用(但是个人领样没有客户,就是公共客户)
                 if (outBean.getOutType() == OutConstant.OUTTYPE_OUT_COMMON)
@@ -562,15 +554,16 @@ public class OutManagerImpl implements OutManager
 
                         outDAO.updateStaffcredit(fullId, 0.0d);
 
-                        outDAO.updateManagercredit(fullId, 0.0d);
+                        outDAO.updateManagercredit(fullId, "", 0.0d);
 
                         double noPayBusinessInCur = outDAO.sumNoPayBusiness(
                             outBean.getCustomerId(), YYTools.getFinanceBeginDate(), YYTools
                                 .getFinanceEndDate());
 
-                        double noPayBusiness = outDAO.sumNoPayAndAvouchBusinessByStafferId(outBean
-                            .getStafferId(), YYTools.getFinanceBeginDate(), YYTools
-                            .getFinanceEndDate());
+                        // 自己担保的+替人担保的
+                        double noPayBusiness = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(
+                            outBean.getStafferId(), YYTools.getFinanceBeginDate(), YYTools
+                                .getFinanceEndDate());
 
                         double remainInCur = clevel.getMoney() - noPayBusinessInCur;
 
@@ -588,6 +581,17 @@ public class OutManagerImpl implements OutManager
                                 outDAO.updateCurcredit(fullId, outBean.getTotal());
 
                                 outDAO.updateStaffcredit(fullId, 0.0d);
+
+                                outBean.setReserve6("客户信用最大额度是:"
+                                                    + MathTools.formatNum(clevel.getMoney())
+                                                    + ".当前客户未付款金额(不包括此单):"
+                                                    + MathTools.formatNum(noPayBusinessInCur)
+                                                    + ".职员信用额度是:"
+                                                    + MathTools.formatNum(sb2.getCredit()
+                                                                          * sb2.getLever())
+                                                    + ".职员信用已经使用额度是:"
+                                                    + MathTools.formatNum(noPayBusiness)
+                                                    + ".信用未超支,不需要分公司经理担保");
                             }
                         }
 
@@ -614,7 +618,7 @@ public class OutManagerImpl implements OutManager
                                                     + ".当前客户未付款金额(不包括此单):"
                                                     + MathTools.formatNum(noPayBusinessInCur)
                                                     + ".职员信用额度是:"
-                                                    + MathTools.formatNum(sb2.getCredit())
+                                                    + MathTools.formatNum(staffCredit)
                                                     + ".职员信用已经使用额度是:"
                                                     + MathTools.formatNum(noPayBusiness)
                                                     + ".信用超支(包括此单):"
@@ -630,9 +634,15 @@ public class OutManagerImpl implements OutManager
 
                                 outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_OVER,
                                     outBean.getReserve6());
-                            }
 
-                            outDAO.updateStaffcredit(fullId, remainInStaff);
+                                // 把剩余的信用全部给此单据
+                                outDAO.updateStaffcredit(fullId, (staffCredit - noPayBusiness));
+                            }
+                            else
+                            {
+                                // 这里完全使用职员的信用
+                                outDAO.updateStaffcredit(fullId, remainInStaff);
+                            }
                         }
 
                         // 公共客户信用处理
@@ -646,8 +656,7 @@ public class OutManagerImpl implements OutManager
                             {
                                 double lastNeed = (noPayBusiness + remainInStaff) - staffCredit;
 
-                                outBean.setReserve6("职员信用额度是:"
-                                                    + MathTools.formatNum(sb2.getCredit())
+                                outBean.setReserve6("职员信用额度是:" + MathTools.formatNum(staffCredit)
                                                     + ".职员信用已经使用额度是:"
                                                     + MathTools.formatNum(noPayBusiness)
                                                     + ".信用超支(包括此单):"
@@ -663,17 +672,21 @@ public class OutManagerImpl implements OutManager
 
                                 outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_OVER,
                                     outBean.getReserve6());
-                            }
 
-                            outDAO.updateStaffcredit(fullId, remainInStaff);
+                                // 把剩余的信用全部给此单据
+                                outDAO.updateStaffcredit(fullId, (staffCredit - noPayBusiness));
+                            }
+                            else
+                            {
+                                // 这里完全使用职员的信用
+                                outDAO.updateStaffcredit(fullId, remainInStaff);
+                            }
                         }
                     }
 
                     // 信用没有受限检查产品价格是否为0
                     if ( !isCreditOutOf)
                     {
-                        outBean.setReserve6("");
-
                         outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_COMMON, outBean
                             .getReserve6());
                     }
@@ -790,8 +803,7 @@ public class OutManagerImpl implements OutManager
             throw new MYException(fullId + " 不存在");
         }
 
-        if (outBean.getStatus() != OutConstant.STATUS_SAVE
-            && outBean.getStatus() != OutConstant.STATUS_REJECT)
+        if ( !OutHelper.canSubmit(outBean))
         {
             throw new MYException(fullId + " 状态错误,不能提交");
         }
@@ -1080,17 +1092,20 @@ public class OutManagerImpl implements OutManager
                         // 只有信用已经超支的情况下才启用分公司经理的信用
                         if (outBean.getReserve2() == OutConstant.OUT_CREDIT_OVER)
                         {
-                            // 加入审批人的信用
+                            // 加入审批人的信用(是自己使用的信用+担保的信用)
                             double noPayBusinessByManager = outDAO
-                                .sumNoPayAndAvouchBusinessByStafferId(user.getStafferId(), YYTools
-                                    .getFinanceBeginDate(), YYTools.getFinanceEndDate());
+                                .sumAllNoPayAndAvouchBusinessByStafferId(user.getStafferId(),
+                                    YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
 
                             StafferBean staffer = stafferDAO.find(user.getStafferId());
 
                             // 这里分公司总经理的信用已经使用结束了,此时直接抛出异常
                             if (noPayBusinessByManager > staffer.getCredit())
                             {
-                                throw new RuntimeException("您的信用额度已经全部占用,不能再担保业务员的销售");
+                                throw new RuntimeException("您的信用额度已经全部占用[使用了"
+                                                           + MathTools
+                                                               .formatNum(noPayBusinessByManager)
+                                                           + "],不能再担保业务员的销售");
                             }
 
                             // 本次需要担保的信用
@@ -1113,7 +1128,8 @@ public class OutManagerImpl implements OutManager
                             }
 
                             // 这里使用分公司经理信用担保
-                            outDAO.updateManagercredit(outBean.getFullId(), lastCredit);
+                            outDAO.updateManagercredit(outBean.getFullId(), user.getStafferId(),
+                                lastCredit);
 
                             // 此时信用不超支了
                             outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_COMMON, outBean
@@ -1446,7 +1462,7 @@ public class OutManagerImpl implements OutManager
 
     @Exceptional
     @Transactional(rollbackFor = {MYException.class})
-    public boolean modifyPay(String fullId, int pay)
+    public boolean modifyPay(final User user, String fullId, int pay)
     {
         // 需要增加是否超期 flowId
         OutBean out = outDAO.find(fullId);
@@ -1472,6 +1488,8 @@ public class OutManagerImpl implements OutManager
         }
 
         outDAO.modifyReDate2(fullId, TimeTools.now_short());
+
+        addOutLog(fullId, user, out, "确认付款", SailConstant.OPR_OUT_PASS, OutConstant.STATUS_SUBMIT);
 
         return outDAO.modifyPay2(fullId, pay);
     }

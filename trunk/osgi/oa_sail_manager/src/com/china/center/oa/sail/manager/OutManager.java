@@ -84,7 +84,7 @@ public interface OutManager
     boolean updateOut(final OutBean out)
         throws MYException;
 
-    boolean modifyPay(String fullId, int pay);
+    boolean modifyPay(final User user, String fullId, int pay);
 
     boolean mark(String fullId, boolean status);
 
