@@ -117,4 +117,6 @@
 
 	<bean id="authManager" class="com.china.center.oa.publics.manager.impl.AuthManagerImpl" />
 
+	<bean id="fatalNotify" class="com.china.center.oa.publics.manager.impl.FatalNotifyImpl" />
+
 </beans>

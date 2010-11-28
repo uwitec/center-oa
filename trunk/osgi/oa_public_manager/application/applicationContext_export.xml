@@ -100,4 +100,6 @@
 
 	<osgi:service ref="authManager" interface="com.china.center.oa.publics.manager.AuthManager" />
 
+	<osgi:service ref="fatalNotify" interface="com.china.center.oa.publics.manager.FatalNotify" />
+
 </beans>

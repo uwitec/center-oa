@@ -108,4 +108,12 @@ public interface SysConfigConstant
      */
     String OUT_PERSONAL_REDAY = "OUT_PERSONAL_REDAY";
 
+    String MAIL_PWD = "MAIL_PWD";
+
+    String MAIL_FROM = "MAIL_FROM";
+
+    String MAIL_USER = "MAIL_USER";
+
+    String MAIL_RECEIVE = "MAIL_RECEIVE";
+
 }

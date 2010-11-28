@@ -240,6 +240,53 @@ function setAllReadOnly4(obj, ignoreArray)
     loadForm();
 }
 
+function $detail(obj, ignoreArray)
+{
+    $innerDetail(obj, ignoreArray);
+    
+    loadForm();
+}
+
+function $innerDetail(obj, ignoreArray)
+{
+    var elements = [];
+    
+    if (!obj)
+    {
+        obj = document;
+    }
+    
+    if (!ignoreArray)
+    {
+        ignoreArray = [];
+    }
+    
+    var tem;
+    
+    tem = obj.getElementsByTagName("input");
+    
+    concat(elements, tem);
+    
+    tem = obj.getElementsByTagName("select");
+    
+    concat(elements, tem);
+    
+    tem = obj.getElementsByTagName("textarea");
+    
+    concat(elements, tem);
+    
+    for (var i = 0; i < elements.length; i++)
+    {
+        var ele = elements[i];
+        
+        if (!containInList(ignoreArray, ele.name))
+        {
+        	ele.setAttribute('autodisplay', 1);
+        }
+    }
+}
+
+
 function setAllReadOnlyInner(obj, clickFlag, ignoreArray)
 {
 	var elements = [];
@@ -390,8 +437,6 @@ function eload(elements)
 
             var quick = ele.getAttribute('quick');
             
-            var autodisplay = ele.getAttribute('autodisplay');
-
             if (quick == "true")
             {
                 quickSelect(ele);
@@ -414,14 +459,6 @@ function eload(elements)
 	                    ele.remove(ii);
 	                }
 	            }
-            }
-            
-            // display only text
-            if (autodisplay == "1")
-            {
-            	var par = ele.parentNode;
-            	par.removeChild(ele);
-            	par.innerHTML = getOptionText(ele);
             }
         }
 
@@ -468,6 +505,21 @@ function eload(elements)
             }
 
             rIndex++;
+        }
+        
+        //处理autodisplay
+        var autodisplay = ele.getAttribute('autodisplay');
+        
+        // display only text
+        if (autodisplay == "1")
+        {
+            var par = ele.parentNode;
+            
+            if (par)
+            {
+                par.removeChild(ele);
+                par.innerHTML = getElementtValue(ele);
+            }
         }
     }
 }
@@ -526,6 +578,31 @@ function $$(name)
     if (obj[0].type == 'select-one' || obj[0].type == 'select')
     {
         return getOption(obj[0]).value;
+    }
+
+    if (obj[0].type == 'radio' || obj[0].type == 'checkbox')
+    {
+        for (var i = 0; i < obj.length; i++)
+        {
+            if (obj[i].checked)
+            {
+                return obj[i].value;
+            }
+        }
+
+        return null;
+    }
+
+    return obj[0].value;
+}
+
+function getElementtValue(oo)
+{
+    var obj = [oo];
+
+    if (obj[0].type == 'select-one' || obj[0].type == 'select')
+    {
+        return getOptionText(obj[0]);
     }
 
     if (obj[0].type == 'radio' || obj[0].type == 'checkbox')
@@ -932,9 +1009,14 @@ function hrefAndSelect(obj)
 
         for (i = 0; i < rad.length; i++)
         {
-            if (rad[i].type.toLowerCase() == 'radio' || rad[i].type.toLowerCase() == 'checkbox')
+            if (rad[i].type.toLowerCase() == 'checkbox')
             {
                 rad[i].checked = !rad[i].checked;
+            }
+            
+            if (rad[i].type.toLowerCase() == 'radio')
+            {
+                rad[i].checked = true;
             }
         }
     }
