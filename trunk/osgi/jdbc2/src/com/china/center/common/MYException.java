@@ -42,6 +42,8 @@ public class MYException extends Exception
     public MYException(Throwable cause)
     {
         super(cause);
+
+        this.errorContent = cause.getMessage();
     }
 
     /**
