@@ -748,9 +748,7 @@ function locationChange()
 	<tr>
 		<td width="97%">
 		<div align="right"><input type="button" class="button_class"
-			value="&nbsp;&nbsp;保 存&nbsp;&nbsp;" onClick="save()" />&nbsp;&nbsp;<input
-			type="button" class="button_class"
-			value="&nbsp;&nbsp;提 交&nbsp;&nbsp;" onClick="sub()" />&nbsp;&nbsp;<input type="button" class="button_class"
+			value="&nbsp;&nbsp;保 存&nbsp;&nbsp;" onClick="save()" />&nbsp;&nbsp;<input type="button" class="button_class"
 			onclick="javascript:history.go(-1)"
 			value="&nbsp;&nbsp;返 回&nbsp;&nbsp;">
 			</div>
