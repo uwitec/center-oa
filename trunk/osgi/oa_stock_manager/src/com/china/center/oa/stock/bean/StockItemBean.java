@@ -65,6 +65,11 @@ public class StockItemBean implements Serializable
 
     private String netAskId = "";
 
+    /**
+     * 税务平台的产品
+     */
+    private String showId = "";
+
     private double price = 0.0d;
 
     private double prePrice = 0.0d;
@@ -399,5 +404,99 @@ public class StockItemBean implements Serializable
     public void setSailPrice(double sailPrice)
     {
         this.sailPrice = sailPrice;
+    }
+
+    /**
+     * @return the showId
+     */
+    public String getShowId()
+    {
+        return showId;
+    }
+
+    /**
+     * @param showId
+     *            the showId to set
+     */
+    public void setShowId(String showId)
+    {
+        this.showId = showId;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("StockItemBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("stockId = ")
+            .append(this.stockId)
+            .append(TAB)
+            .append("productId = ")
+            .append(this.productId)
+            .append(TAB)
+            .append("refOutId = ")
+            .append(this.refOutId)
+            .append(TAB)
+            .append("hasRef = ")
+            .append(this.hasRef)
+            .append(TAB)
+            .append("providerId = ")
+            .append(this.providerId)
+            .append(TAB)
+            .append("amount = ")
+            .append(this.amount)
+            .append(TAB)
+            .append("productNum = ")
+            .append(this.productNum)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("netAskId = ")
+            .append(this.netAskId)
+            .append(TAB)
+            .append("showId = ")
+            .append(this.showId)
+            .append(TAB)
+            .append("price = ")
+            .append(this.price)
+            .append(TAB)
+            .append("prePrice = ")
+            .append(this.prePrice)
+            .append(TAB)
+            .append("sailPrice = ")
+            .append(this.sailPrice)
+            .append(TAB)
+            .append("total = ")
+            .append(this.total)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("priceAskProviderId = ")
+            .append(this.priceAskProviderId)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("asks = ")
+            .append(this.asks)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }

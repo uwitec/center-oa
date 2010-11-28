@@ -4,7 +4,6 @@
 <html>
 <head>
 <p:link title="采购单" />
-<script language="JavaScript" src="../js/prototype.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
@@ -13,7 +12,7 @@
 <script language="javascript">
 function load()
 {
-	//tooltip.init();
+	loadForm();
 }
 
 var jmap = {};
@@ -33,12 +32,12 @@ function out(id)
 	{
 		var sss = window.prompt('请输入运输单号：', '');
 
-		$('tranNo').value = sss;
+		$O('tranNo').value = sss;
 
 		if (!(sss == null || sss == ''))
 		{
-			$('method').value = 'stockItemChangeToOut';
-			$('id').value = id;
+			$O('method').value = 'stockItemChangeToOut';
+			$O('id').value = id;
 			formEntry.submit();
 		}
 		else
@@ -164,6 +163,7 @@ function out(id)
 				</c:if>
 				<td width="5%" align="center">是否调出</td>
 				<td width="10%" align="center">合计金额</td>
+				<td width="10%" align="center">开单名</td>
 				<c:if test="${out == 1}">
 				<td width="10%" align="center">操作</td>
 				</c:if>
@@ -192,6 +192,12 @@ function out(id)
 					<td align="center">${item.hasRef == 0 ? "<font color=red>否</font>" : "是"}</td>
 
 					<td align="center">${my:formatNum(item.total)}</td>
+					
+					<td align="center">
+					 <select name="showId_3" style="WIDTH: 150px;" values="${item.showId}" autodisplay="1">
+                                 <p:option type="123"></p:option>
+                      </select>
+					</td>
 
 					<c:if test="${out == 1}">
 						<c:if test="${item.hasRef == 0}">

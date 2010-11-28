@@ -539,6 +539,8 @@ public class StockAction extends DispatchAction
 
                 bean.setPrePrice(Float.parseFloat(request.getParameter("price_" + indexs[i])));
 
+                bean.setShowId(request.getParameter("showId_" + indexs[i]));
+
                 bean.setAmount(CommonTools.parseInt(request.getParameter("amount_" + indexs[i])));
 
                 int num = storageRelationDAO.sumAllProductByProductId(bean.getProductId());

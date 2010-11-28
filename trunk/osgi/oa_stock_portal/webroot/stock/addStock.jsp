@@ -302,8 +302,11 @@ function clearValues()
 							参考价格:<input
 							type="text" name="price_0" id="price_0" value="" size="6" oncheck="notNone;isFloat;">&nbsp;
 							数量:<input
-							type="text" name="amount_0" id="amount_0" value="" size="6" oncheck="notNone;isNumber;">
-
+							type="text" name="amount_0" id="amount_0" value="" size="6" oncheck="notNone;isNumber;">&nbsp;
+                               开单品名:
+                               <select name="showId_0" style="WIDTH: 150px;" quick=true>
+                                 <p:option type="123"></p:option>
+                               </select>
 							</td>
 					</tr>
 
@@ -316,7 +319,11 @@ function clearValues()
 							参考价格:<input
 							type="text" name="price_1" id="price_1" value="" size="6" oncheck="notNone;isFloat;">&nbsp;
 							数量:<input
-							type="text" name="amount_1" id="amount_1" value="" size="6" oncheck="notNone;isNumber;">
+							type="text" name="amount_1" id="amount_1" value="" size="6" oncheck="notNone;isNumber;">&nbsp;
+							开单品名:
+                               <select name="showId_1" style="WIDTH: 150px;" quick=true>
+                                 <p:option type="123"></p:option>
+                               </select>
 
 						</td>
 					</tr>
@@ -330,7 +337,11 @@ function clearValues()
 							参考价格:<input
 							type="text" name="price_2" id="price_2" value="" size="6" oncheck="notNone;isFloat;">&nbsp;
 							数量:<input
-							type="text" name="amount_2" id="amount_2" value="" size="6" oncheck="notNone;isNumber;">
+							type="text" name="amount_2" id="amount_2" value="" size="6" oncheck="notNone;isNumber;">&nbsp;
+							开单品名:
+                               <select name="showId_2" style="WIDTH: 150px;" quick=true>
+                                 <p:option type="123"></p:option>
+                               </select>
 							</td>
 					</tr>
 
@@ -343,7 +354,11 @@ function clearValues()
 							参考价格:<input
 							type="text" name="price_3" id="price_3" value="" size="6" oncheck="notNone;isFloat;">&nbsp;
 							数量:<input
-							type="text" name="amount_3" id="amount_3" value="" size="6" oncheck="notNone;isNumber;">
+							type="text" name="amount_3" id="amount_3" value="" size="6" oncheck="notNone;isNumber;">&nbsp;
+                            开单品名:
+                               <select name="showId_3" style="WIDTH: 150px;" quick=true>
+                                 <p:option type="123"></p:option>
+                               </select>
 							</td>
 					</tr>
 
@@ -356,7 +371,11 @@ function clearValues()
 							参考价格:<input
 							type="text" name="price_4" id="price_4" value="" size="6" oncheck="notNone;isFloat;">&nbsp;
 							数量:<input
-							type="text" name="amount_4" id="amount_4" value="" size="6" oncheck="notNone;isNumber;">
+							type="text" name="amount_4" id="amount_4" value="" size="6" oncheck="notNone;isNumber;">&nbsp;
+                            开单品名:
+                               <select name="showId_4" style="WIDTH: 150px;" quick=true>
+                                 <p:option type="123"></p:option>
+                               </select>
 							</td>
 					</tr>
 				</table>
