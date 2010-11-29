@@ -928,6 +928,7 @@ public class OutAction extends DispatchAction
             }
         }
 
+        // 处理仓库
         List<DepotBean> depotList = handerDepot(request, user);
 
         request.setAttribute("depotList", depotList);
@@ -966,7 +967,7 @@ public class OutAction extends DispatchAction
 
         List<DepotBean> depotList = depotDAO.listEntityBeans();
 
-        if ("3".equals(queryType))
+        if ("3".equals(queryType) || "4".equals(queryType))
         {
             // 只能看到自己的仓库
             List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(),
@@ -1328,49 +1329,68 @@ public class OutAction extends DispatchAction
             condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_SUBMIT);
         }
 
-        // TODO NOW 处理发货单 物流审批(只有中心仓库才有物流的)
+        // 处理发货单 物流审批(只有中心仓库才有物流的)
         if ("3".equals(queryType))
         {
             condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_MANAGER_PASS);
 
-            // 只能看到自己的仓库
-            List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(),
-                AuthConstant.EXPAND_AUTH_DEPOT);
+            setDepotCondotion(user, condtion);
+        }
 
-            if (ListTools.isEmptyOrNull(depotAuthList))
-            {
-                // 永远也没有结果
-                condtion.addFlaseCondition();
-            }
-            else
-            {
-                StringBuffer sb = new StringBuffer();
+        // 库管
+        if ("4".equals(queryType))
+        {
+            condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_FLOW_PASS);
 
-                sb.append("and (");
-                for (Iterator iterator = depotAuthList.iterator(); iterator.hasNext();)
-                {
-                    AuthBean authBean = (AuthBean)iterator.next();
-
-                    if (iterator.hasNext())
-                    {
-                        sb.append("OutBean.location = '" + authBean.getId() + "' or ");
-                    }
-                    else
-                    {
-                        sb.append("OutBean.location = '" + authBean.getId() + "'");
-                    }
-
-                }
-
-                sb.append(") ");
-
-                condtion.addCondition(sb.toString());
-            }
+            setDepotCondotion(user, condtion);
         }
 
         condtion.addCondition("order by OutBean.fullid desc");
 
         return condtion;
+    }
+
+    /**
+     * 设置仓库的过滤条件
+     * 
+     * @param user
+     * @param condtion
+     */
+    private void setDepotCondotion(User user, ConditionParse condtion)
+    {
+        // 只能看到自己的仓库
+        List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(),
+            AuthConstant.EXPAND_AUTH_DEPOT);
+
+        if (ListTools.isEmptyOrNull(depotAuthList))
+        {
+            // 永远也没有结果
+            condtion.addFlaseCondition();
+        }
+        else
+        {
+            StringBuffer sb = new StringBuffer();
+
+            sb.append("and (");
+            for (Iterator iterator = depotAuthList.iterator(); iterator.hasNext();)
+            {
+                AuthBean authBean = (AuthBean)iterator.next();
+
+                if (iterator.hasNext())
+                {
+                    sb.append("OutBean.location = '" + authBean.getId() + "' or ");
+                }
+                else
+                {
+                    sb.append("OutBean.location = '" + authBean.getId() + "'");
+                }
+
+            }
+
+            sb.append(") ");
+
+            condtion.addCondition(sb.toString());
+        }
     }
 
     /**

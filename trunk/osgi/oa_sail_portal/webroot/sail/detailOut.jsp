@@ -473,7 +473,7 @@ function pagePrint()
 <div id="na">
 <p:navigation
 	height="22">
-	<td width="550" class="navigation">库单管理 &gt;&gt; 销售单明细</td>
+	<td width="550" class="navigation">销售单明细</td>
 				<td width="85"></td>
 </p:navigation> <br>
 </div>

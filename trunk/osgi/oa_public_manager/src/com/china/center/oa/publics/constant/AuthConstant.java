@@ -528,4 +528,19 @@ public interface AuthConstant
      * 全部库单查询
      */
     String SAIL_QUERY_ALL = "1409";
+
+    /**
+     * 总部核对
+     */
+    String SAIL_CENTER_CHECK = "1410";
+
+    /**
+     * 发货管理
+     */
+    String SAIL_CONSIGN_MANAGER = "1411";
+
+    /**
+     * 运输管理
+     */
+    String SAIL_TRANSPORT_MANAGER = "1412";
 }

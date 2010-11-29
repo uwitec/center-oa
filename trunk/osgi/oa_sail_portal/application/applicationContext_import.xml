@@ -70,5 +70,7 @@
 	
 	<osgi:reference id="consignDAO" interface="com.china.center.oa.sail.dao.ConsignDAO" />
 	
+	<osgi:reference id="consignManager" interface="com.china.center.oa.sail.manager.ConsignManager" />
+	
 	
 </beans>

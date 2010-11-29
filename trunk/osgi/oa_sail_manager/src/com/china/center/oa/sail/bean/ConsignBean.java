@@ -34,6 +34,9 @@ public class ConsignBean extends OutBean
 
     private String transportNo = "";
 
+    /**
+     * 发货单初始态
+     */
     private int currentStatus = SailConstant.CONSIGN_INIT;
 
     /**

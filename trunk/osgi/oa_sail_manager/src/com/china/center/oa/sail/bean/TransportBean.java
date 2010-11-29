@@ -31,10 +31,10 @@ import com.china.center.jdbc.annotation.enums.Element;
 @Table(name = "T_CENTER_TRANSPORT")
 public class TransportBean implements Serializable
 {
-    @Id(autoIncrement = true)
+    @Id
     private String id = "";
 
-    @Html(title = "名称", must = true, maxLength = 10, oncheck = {JCheck.NOT_NONE, JCheck.ONLY_COMMONCHAR})
+    @Html(title = "名称", must = true, maxLength = 10, oncheck = JCheck.NOT_NONE)
     private String name = "";
 
     private int type = 0;
@@ -118,6 +118,38 @@ public class TransportBean implements Serializable
         {
             this.parent = parent;
         }
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("TransportBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("name = ")
+            .append(this.name)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("parent = ")
+            .append(this.parent)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 
 }

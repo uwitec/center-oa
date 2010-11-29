@@ -35,6 +35,9 @@ public class Activator implements BundleActivator
 
         DefinedCommon.addDefined("reprotType", new String[] {"<font color=blue>无回复</font>", "正常收货",
             "<font color=red>异常收货</font>"});
+
+        DefinedCommon.addDefined("consignStatus", new String[] {"", "未通过",
+            "<font color=blue><b>通过</b></font>"});
     }
 
     /*

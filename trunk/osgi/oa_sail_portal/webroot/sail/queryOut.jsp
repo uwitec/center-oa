@@ -436,7 +436,7 @@ function reject()
 							<td align="center" onclick="hrefAndSelect(this)">${item.hadPay}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.depotName}</td>
-							<td align="center" onclick="hrefAndSelect(this)">${my:get("reprotType", item.consign)}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:get("consignStatus", item.consign)}</td>
 						</tr>
 					</c:forEach>
 				</table>

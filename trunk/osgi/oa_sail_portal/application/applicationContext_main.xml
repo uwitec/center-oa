@@ -30,5 +30,12 @@
 	
 	<bean name="/sail/out"
 		class="com.china.center.oa.sail.action.OutAction"/>
+		
+	<bean name="/sail/transport"
+        class="com.china.center.oa.sail.action.ConsignAction">
+        <property name="outAction">
+            <ref bean="/sail/out" />
+        </property>
+    </bean>
 	
 </beans>

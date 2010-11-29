@@ -24,4 +24,6 @@
 
 	<bean id="consignDAO" class="com.china.center.oa.sail.dao.impl.ConsignDAOImpl" />
 
+	<bean id="consignManager" class="com.china.center.oa.sail.manager.impl.ConsignManagerImpl" />
+
 </beans>

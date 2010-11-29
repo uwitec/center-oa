@@ -23,4 +23,6 @@
 
 	<osgi:service ref="consignDAO" interface="com.china.center.oa.sail.dao.ConsignDAO" />
 
+	<osgi:service ref="consignManager" interface="com.china.center.oa.sail.manager.ConsignManager" />
+
 </beans>

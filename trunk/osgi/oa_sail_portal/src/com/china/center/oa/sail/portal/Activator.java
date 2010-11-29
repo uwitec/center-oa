@@ -17,6 +17,7 @@ public class Activator implements BundleActivator
     {
         {
             add("sail");
+            add("transport");
             add("sail_js");
         }
     };
