@@ -80,6 +80,7 @@ import com.china.centet.yongyin.manager.DepotpartManager;
 import com.china.centet.yongyin.manager.FlowManager;
 import com.china.centet.yongyin.manager.LocationManager;
 import com.china.centet.yongyin.manager.OutManager;
+import com.china.centet.yongyin.net.SendMail;
 import com.china.centet.yongyin.tools.YYTools;
 import com.china.centet.yongyin.vo.CustomerVO2;
 import com.china.centet.yongyin.vo.FlowLogBeanVO;
@@ -876,30 +877,48 @@ public class OutAction extends DispatchAction
 
                 return mapping.findForward("error");
             }
-
-            BeanUtil.getBean(out, request);
         }
 
         try
         {
             String id = outManager.addOut(outBean, map.getParameterMap(), user);
 
+            // 修改
+            OutBean nnewOut = outDAO.findOutById(id);
+
             // 提交
             if (SaleConstant.FLOW_DECISION_SUBMIT.equals(saves))
             {
+                // 防止重复的提交的核心手段
+                int outStatusInLog = outManager.findOutStatusInLog(id);
+
+                if (outStatusInLog != -1 && outStatusInLog != OutConstanst.STATUS_REJECT
+                    && outStatusInLog != nnewOut.getStatus())
+                {
+                    String msg = "严重错误,当前单据的状态应该是:" + OutBeanHelper.getStatus(outStatusInLog)
+                                 + ",而不是" + OutBeanHelper.getStatus(nnewOut.getStatus())
+                                 + ".请联系管理员确认此单的正确状态!";
+
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, msg);
+
+                    loggerError(fullId + ":" + msg);
+
+                    return mapping.findForward("error");
+                }
+
                 outManager.submit(id, user);
 
                 OutBean newOut = outDAO.findOutById(id);
 
                 if (newOut != null)
                 {
-                    logger1.info(fullId + ":" + user.getStafferName() + "(after):"
+                    logger1.info(id + ":" + user.getStafferName() + "(after):"
                                  + newOut.getStatus());
 
                     if (newOut.getStatus() != 1)
                     {
-                        logger1.error(fullId + ":" + user.getStafferName() + "(after):"
-                                      + newOut.getStatus());
+                        loggerError(id + ":" + user.getStafferName() + "(after):"
+                                    + newOut.getStatus() + "(预计:1)");
                     }
                 }
             }
@@ -914,6 +933,65 @@ public class OutAction extends DispatchAction
         }
 
         return null;
+    }
+
+    /**
+     * loggerError(严重错误的日志哦)
+     * 
+     * @param msg
+     */
+    private void loggerError(String msg)
+    {
+        logger1.error(msg);
+
+        SendMailThread thread = new SendMailThread(msg);
+
+        thread.start();
+    }
+
+    class SendMailThread extends Thread
+    {
+        private String msg = "";
+
+        /**
+         * default constructor
+         */
+        public SendMailThread(String msg)
+        {
+            setMsg(msg);
+        }
+
+        /**
+         * @return the msg
+         */
+        public String getMsg()
+        {
+            return msg;
+        }
+
+        /**
+         * @param msg
+         *            the msg to set
+         */
+        public void setMsg(String msg)
+        {
+            this.msg = msg;
+        }
+
+        public void run()
+        {
+            String pwd = parameterDAO.getString("MAIL_PWD");
+
+            SendMail mail = new SendMail("smtp.163.com", "mac-csd@163.com", "zhuzhu", "mac-csd",
+                pwd, new String[] {"zhu.000@163.com"}, "fullid error form yy", msg);
+
+            try
+            {
+                mail.send();
+            }
+            catch (Exception e)
+            {}
+        }
     }
 
     /**
@@ -2023,11 +2101,34 @@ public class OutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
+        if (ioldStatus == statuss)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "状态错误,请重新操作!");
+
+            return mapping.findForward("error");
+        }
+
         logger1.info(fullId + ":" + user.getStafferName() + "(befor):" + out.getStatus());
 
         if (out.getStatus() != ioldStatus)
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "单据已经被审批,请重新操作!");
+
+            return mapping.findForward("error");
+        }
+
+        int outStatusInLog = outManager.findOutStatusInLog(fullId);
+
+        // 防止重复的提交的核心手段
+        if (outStatusInLog != -1 && outStatusInLog != OutConstanst.STATUS_REJECT
+            && outStatusInLog != out.getStatus())
+        {
+            String msg = "严重错误,当前单据的状态应该是:" + OutBeanHelper.getStatus(outStatusInLog) + ",而不是"
+                         + OutBeanHelper.getStatus(ioldStatus) + ".请联系管理员确认此单的正确状态!";
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, msg);
+
+            loggerError(fullId + ":" + msg);
 
             return mapping.findForward("error");
         }
@@ -2166,6 +2267,13 @@ public class OutAction extends DispatchAction
         out = outDAO.findOutById(fullId);
 
         logger1.info(fullId + ":" + user.getStafferName() + "(after):" + out.getStatus());
+
+        // 发现修改后的out状态不一样
+        if (out.getType() == Constant.OUT_TYPE_OUTBILL && out.getStatus() != statuss)
+        {
+            loggerError(fullId + ":" + user.getStafferName() + "(after):" + out.getStatus()
+                        + "(预计:" + statuss + ")");
+        }
 
         request.setAttribute("forward", "10");
 

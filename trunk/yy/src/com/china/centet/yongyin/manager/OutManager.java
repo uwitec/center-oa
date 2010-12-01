@@ -471,7 +471,7 @@ public class OutManager
         processOutInWay(fullId, outBean);
 
         // 增加数据库日志
-        addOutLog(fullId, user, outBean, "提交", Constant.OPR_OUT_PASS, Constant.STATUS_SUBMIT);
+        addOutLog(fullId, user, outBean, "提交", Constant.OPR_OUT_PASS, status);
 
         outBean.setStatus(status);
 
@@ -1961,6 +1961,19 @@ public class OutManager
 
         // add sms
         shortMessageTaskDAO.saveEntityBean(sms);
+    }
+
+    public int findOutStatusInLog(String fullid)
+    {
+        // 获取日志，正排序
+        List<FlowLogBean> logList = outDAO.queryOutLogByFullId(fullid);
+
+        if (ListTools.isEmptyOrNull(logList))
+        {
+            return -1;
+        }
+
+        return logList.get(logList.size() - 1).getAfterStatus();
     }
 
     /**
