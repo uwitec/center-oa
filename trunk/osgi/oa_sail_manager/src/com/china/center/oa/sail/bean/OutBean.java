@@ -617,14 +617,6 @@ public class OutBean implements Serializable
     }
 
     /**
-     * @return the flowId
-     */
-    public String getFlowId()
-    {
-        return flowId;
-    }
-
-    /**
      * @param flowId
      *            the flowId to set
      */

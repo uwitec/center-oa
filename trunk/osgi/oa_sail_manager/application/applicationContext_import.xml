@@ -51,6 +51,8 @@
 	
 	<osgi:reference id="flowLogDAO" interface="com.china.center.oa.publics.dao.FlowLogDAO" />
 	
+	<osgi:reference id="fatalNotify" interface="com.china.center.oa.publics.manager.FatalNotify" />
+	
 	<osgi:reference id="creditCoreDAO" interface="com.china.center.oa.credit.dao.CreditCoreDAO" />
 	
 	<osgi:reference id="depotpartDAO" interface="com.china.center.oa.product.dao.DepotpartDAO" />

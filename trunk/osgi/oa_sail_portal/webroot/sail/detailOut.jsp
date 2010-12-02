@@ -653,7 +653,9 @@ function pagePrint()
                     <tr class="content1">
                         <td align="right">信用描述：</td>
                         <td colspan="3">
+                        <font color="red">
                        ${bean.reserve6}
+                       </font>
                        </td>
                     </tr>
                     

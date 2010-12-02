@@ -118,7 +118,7 @@ public abstract class OutHelper
     {
         if (i == 0)
         {
-            return "保存";
+            return "保存(开始)";
         }
 
         if (i == 1)
@@ -145,7 +145,7 @@ public abstract class OutHelper
 
         if (i == 4)
         {
-            return "财务应收(结束)";
+            return "财务核对(结束)";
         }
 
         if (i == 6)

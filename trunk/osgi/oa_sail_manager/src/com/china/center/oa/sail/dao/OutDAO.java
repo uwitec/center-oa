@@ -28,6 +28,14 @@ public interface OutDAO extends DAO<OutBean, OutVO>
 {
     boolean modifyOutStatus2(String fullId, int status);
 
+    /**
+     * 获得当前数据库内真是的out存储
+     * 
+     * @param fullId
+     * @return
+     */
+    OutBean findRealOut(String fullId);
+
     boolean modifyManagerTime(String fullId, String managerTime);
 
     /**

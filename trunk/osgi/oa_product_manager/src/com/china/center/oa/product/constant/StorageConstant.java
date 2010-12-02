@@ -35,7 +35,7 @@ public interface StorageConstant
     int OPR_STORAGE_UPDATE = 1;
 
     /**
-     * 库单通过
+     * 销售出库
      */
     @Defined(key = "storageType", value = "销售出库")
     int OPR_STORAGE_OUTBILL = 2;

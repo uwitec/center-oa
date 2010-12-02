@@ -53,6 +53,11 @@ public class ProductChangeWrap implements Serializable
     private String stafferId = "0";
 
     /**
+     * 单据ID(这里会作为联合主键哦)
+     */
+    private String refId = "";
+
+    /**
      * 正数增加库存 负数减少库存
      */
     private int change = 0;
@@ -284,5 +289,22 @@ public class ProductChangeWrap implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the refId
+     */
+    public String getRefId()
+    {
+        return refId;
+    }
+
+    /**
+     * @param refId
+     *            the refId to set
+     */
+    public void setRefId(String refId)
+    {
+        this.refId = refId;
     }
 }

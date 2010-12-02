@@ -25,7 +25,7 @@ import com.china.center.jdbc.annotation.Table;
  * @since 1.0
  */
 @Entity
-@Table(name = "T_CENTER_SHOW")
+@Table(name = "T_CENTER_OUTUNIQUE")
 public class OutUniqueBean implements Serializable
 {
     @Id

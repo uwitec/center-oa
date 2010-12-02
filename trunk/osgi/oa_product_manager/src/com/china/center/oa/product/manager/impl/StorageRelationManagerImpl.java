@@ -353,6 +353,10 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
 
         log.setDescription(bean.getDescription());
 
+        log.setRefId(bean.getRefId());
+
+        log.setOwner(relation.getStafferId());
+
         storageLogDAO.saveEntityBean(log);
 
         monitorLog.info(log);

@@ -52,7 +52,17 @@ public interface OutManager
     String coloneOutAndSubmitWithOutAffair(OutBean outBean, User user, int type)
         throws MYException;
 
-    boolean submit(final String fullId, final User user)
+    /**
+     * submit
+     * 
+     * @param fullId
+     * @param user
+     * @param storageType
+     *            库存变动类型
+     * @return 修改后的单据状态
+     * @throws MYException
+     */
+    int submit(final String fullId, final User user, int storageType)
         throws MYException;
 
     /**
@@ -63,14 +73,34 @@ public interface OutManager
      * @return
      * @throws MYException
      */
-    boolean submitWithOutAffair(final String fullId, final User user, int type)
+    int submitWithOutAffair(final String fullId, final User user, int type)
         throws MYException;
 
-    boolean reject(final String fullId, final User user, final String reason)
+    /**
+     * reject
+     * 
+     * @param fullId
+     * @param user
+     * @param reason
+     * @return 修改后的单据状态
+     * @throws MYException
+     */
+    int reject(final String fullId, final User user, final String reason)
         throws MYException;
 
-    boolean pass(final String fullId, final User user, final int nextStatus, final String reason,
-                 final String depotpartId)
+    /**
+     * pass
+     * 
+     * @param fullId
+     * @param user
+     * @param nextStatus
+     * @param reason
+     * @param depotpartId
+     * @return 修改后的单据状态
+     * @throws MYException
+     */
+    int pass(final String fullId, final User user, final int nextStatus, final String reason,
+             final String depotpartId)
         throws MYException;
 
     boolean check(final String fullId, final User user, final String checks)
@@ -91,4 +121,12 @@ public interface OutManager
     boolean modifyReDate(String fullId, String reDate);
 
     boolean modifyOutHadPay(String fullId, String hadPay);
+
+    /**
+     * 获得out在日志里面的状态
+     * 
+     * @param fullId
+     * @return
+     */
+    int findOutStatusInLog(String fullId);
 }

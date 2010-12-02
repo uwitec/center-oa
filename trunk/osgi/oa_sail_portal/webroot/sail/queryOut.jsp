@@ -363,7 +363,11 @@ function reject()
 								<td width="35">&nbsp;</td>
 								<td width="6"><img src="../images/dot_r.gif" width="6"
 									height="6"></td>
-								<td class="caption"><strong>浏览${fg}单:</strong><font color=blue>[当前您剩余的信用:${credit}]</font></td>
+								<td class="caption"><strong>浏览${fg}单:</strong>
+								<c:if test="${queryType == '1'}">
+								<font color=blue>[当前您剩余的信用:${credit}]</font>
+								</c:if>
+								</td>
 							</tr>
 						</table>
 						</td>

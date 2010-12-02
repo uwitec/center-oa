@@ -189,6 +189,7 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
             wrap.setProductId(each.getProductId());
             wrap.setType(StorageConstant.OPR_DDEPOTPART_CHANGE_ROLLBACK);
             wrap.setSerializeId(sid);
+            wrap.setRefId(sid);
 
             storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, true);
         }
@@ -208,6 +209,7 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
             eachWrap.setDescription("产品调价回滚(后增加产品):" + bean.getId());
             eachWrap.setType(StorageConstant.OPR_DDEPOTPART_CHANGE_ROLLBACK);
             eachWrap.setSerializeId(sid);
+            eachWrap.setRefId(sid);
 
             storageRelationManager.changeStorageRelationWithoutTransaction(user, eachWrap, false);
         }
@@ -279,6 +281,7 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
             wrap.setProductId(each.getProductId());
             wrap.setType(StorageConstant.OPR_DDEPOTPART_CHANGE);
             wrap.setSerializeId(sid);
+            wrap.setRefId(sid);
 
             storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, true);
 
@@ -299,11 +302,12 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
                 eachWrap.setProductId(newItemBean.getProductId());
                 eachWrap.setType(StorageConstant.OPR_DDEPOTPART_CHANGE);
                 eachWrap.setSerializeId(sid);
+                eachWrap.setRefId(sid);
 
                 total += newItemBean.getAmount();
 
-                StorageRelationBean newSrb = storageRelationManager.changeStorageRelationWithoutTransaction(user,
-                    eachWrap, false);
+                StorageRelationBean newSrb = storageRelationManager
+                    .changeStorageRelationWithoutTransaction(user, eachWrap, false);
 
                 // 把新的关系放到历史表里面,提供回滚依据
                 newItemBean.setRelationId(newSrb.getId());

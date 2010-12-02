@@ -94,9 +94,9 @@ public interface OutConstant
     int OUT_SAIL_TYPE_LOCATION_MANAGER = 3;
 
     /**
-     * 初始化
+     * 保存
      */
-    @Defined(key = "outStatus", value = "初始化")
+    @Defined(key = "outStatus", value = "保存")
     int STATUS_SAVE = 0;
 
     /**
@@ -118,9 +118,9 @@ public interface OutConstant
     int STATUS_PASS = 3;
 
     /**
-     * 财务应收
+     * 财务核对
      */
-    @Defined(key = "outStatus", value = "财务收款")
+    @Defined(key = "outStatus", value = "财务核对")
     int STATUS_SEC_PASS = 4;
 
     /**

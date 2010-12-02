@@ -102,6 +102,16 @@ public class StorageLogBean implements Serializable
 
     private String priceKey = "";
 
+    /**
+     * 库存拥有者
+     */
+    private String owner = "";
+
+    /**
+     * 关联主键
+     */
+    private String refId = "";
+
     private double price = 0.0d;
 
     /**
@@ -496,6 +506,40 @@ public class StorageLogBean implements Serializable
     }
 
     /**
+     * @return the owner
+     */
+    public String getOwner()
+    {
+        return owner;
+    }
+
+    /**
+     * @param owner
+     *            the owner to set
+     */
+    public void setOwner(String owner)
+    {
+        this.owner = owner;
+    }
+
+    /**
+     * @return the refId
+     */
+    public String getRefId()
+    {
+        return refId;
+    }
+
+    /**
+     * @param refId
+     *            the refId to set
+     */
+    public void setRefId(String refId)
+    {
+        this.refId = refId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -569,6 +613,12 @@ public class StorageLogBean implements Serializable
             .append(TAB)
             .append("priceKey = ")
             .append(this.priceKey)
+            .append(TAB)
+            .append("owner = ")
+            .append(this.owner)
+            .append(TAB)
+            .append("refId = ")
+            .append(this.refId)
             .append(TAB)
             .append("price = ")
             .append(this.price)

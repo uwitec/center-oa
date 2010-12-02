@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
-import com.china.center.jdbc.expression.Expression;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.product.bean.StorageApplyBean;
 import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.StorageApplyDAO;
@@ -106,9 +106,19 @@ public class StorageApplyManagerImpl implements StorageApplyManager
             throw new MYException("不能自己转移给自己");
         }
 
-        Expression exp = new Expression(bean, this);
+        // 删除以前的申请
+        ConditionParse condition = new ConditionParse();
 
-        exp.check("#storageRelationId &unique @storageApplyDAO", "库存申请已经存在,请重新操作");
+        condition.addWhereStr();
+
+        condition.addCondition("storageRelationId", "=", bean.getStorageRelationId());
+
+        condition.addIntCondition("status", "=", StorageConstant.STORAGEAPPLY_STATUS_SUBMIT);
+
+        storageApplyDAO.deleteEntityBeansByCondition(condition);
+
+        // Expression exp = new Expression(bean, this);
+        // exp.check("#storageRelationId && #status &unique @storageApplyDAO", "库存申请已经存在,请重新操作");
     }
 
     /*
@@ -184,7 +194,10 @@ public class StorageApplyManagerImpl implements StorageApplyManager
 
         deleteWrap.setChange( -bean.getAmount());
 
-        deleteWrap.setDescription("职员[" + bean.getApplyName() + "]转移名下产品到[" + bean.getReveiveName() + "]");
+        deleteWrap.setRefId(sequence);
+
+        deleteWrap.setDescription("职员[" + bean.getApplyName() + "]转移名下产品到[" + bean.getReveiveName()
+                                  + "]");
 
         storageRelationManager.changeStorageRelationWithoutTransaction(user, deleteWrap, true);
 
@@ -198,7 +211,10 @@ public class StorageApplyManagerImpl implements StorageApplyManager
 
         addWrap.setChange(bean.getAmount());
 
-        addWrap.setDescription("职员[" + bean.getReveiveName() + "]接受名下产品[" + bean.getApplyName() + "]");
+        addWrap.setRefId(sequence);
+
+        addWrap.setDescription("职员[" + bean.getReveiveName() + "]接受名下产品[" + bean.getApplyName()
+                               + "]");
 
         storageRelationManager.changeStorageRelationWithoutTransaction(user, addWrap, false);
     }

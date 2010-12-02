@@ -192,6 +192,7 @@ public class ComposeProductManagerImpl implements ComposeProductManager
         wrap.setProductId(bean.getProductId());
         wrap.setType(StorageConstant.OPR_STORAGE_COMPOSE);
         wrap.setSerializeId(sid);
+        wrap.setRefId(sid);
 
         storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, false);
 
@@ -211,6 +212,7 @@ public class ComposeProductManagerImpl implements ComposeProductManager
             eachWrap.setType(StorageConstant.OPR_STORAGE_COMPOSE);
             eachWrap.setRelationId(eachWrap.getRelationId());
             eachWrap.setSerializeId(sid);
+            eachWrap.setRefId(sid);
 
             storageRelationManager.changeStorageRelationWithoutTransaction(user, eachWrap, true);
         }

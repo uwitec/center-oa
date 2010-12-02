@@ -41,6 +41,7 @@ import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.product.constant.DepotConstant;
+import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.DepotpartDAO;
 import com.china.center.oa.product.dao.ProductDAO;
@@ -106,7 +107,7 @@ public class OutAction extends DispatchAction
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
-    private final Log logger1 = LogFactory.getLog("sec");
+    private final Log importLog = LogFactory.getLog("sec");
 
     private UserDAO userDAO = null;
 
@@ -642,7 +643,8 @@ public class OutAction extends DispatchAction
 
                 if ("提交".equals(saves))
                 {
-                    outManager.submit(outBean.getFullId(), user);
+                    outManager.submit(outBean.getFullId(), user,
+                        StorageConstant.OPR_STORAGE_OUTBILLIN);
                 }
             }
             catch (MYException e)
@@ -711,7 +713,7 @@ public class OutAction extends DispatchAction
             // 提交
             if (OutConstant.FLOW_DECISION_SUBMIT.equals(saves))
             {
-                outManager.submit(id, user);
+                outManager.submit(id, user, StorageConstant.OPR_STORAGE_OUTBILL);
 
                 checkSubmit(user, id);
             }
@@ -728,12 +730,18 @@ public class OutAction extends DispatchAction
         return null;
     }
 
+    /**
+     * checkSubmit
+     * 
+     * @param user
+     * @param id
+     */
     private void checkSubmit(User user, String id)
     {
-        OutBean newOut = outDAO.find(id);
+        OutBean newOut = outDAO.findRealOut(id);
 
-        logger1.info(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus() + "(预计:"
-                     + OutConstant.STATUS_SUBMIT + ")");
+        importLog.info(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus() + "(预计:"
+                       + OutConstant.STATUS_SUBMIT + ")");
 
         if (newOut.getReserve3() != OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER
             && newOut.getStatus() != OutConstant.STATUS_SUBMIT)
@@ -757,7 +765,7 @@ public class OutAction extends DispatchAction
      */
     private void loggerError(String msg)
     {
-        logger1.error(msg);
+        importLog.error(msg);
 
         fatalNotify.notify(msg);
     }
@@ -1848,7 +1856,7 @@ public class OutAction extends DispatchAction
             {
                 outManager.delOut(fullId);
 
-                logger1.info(user.getName() + "删除了库单:" + fullId);
+                importLog.info(user.getName() + "删除了库单:" + fullId);
 
                 request.setAttribute(KeyConstant.MESSAGE, "库单删除成功:" + fullId);
             }
@@ -1874,7 +1882,7 @@ public class OutAction extends DispatchAction
     }
 
     /**
-     * 处理调出的库单
+     * 处理调出的库单(入库单的处理)
      * 
      * @param mapping
      * @param form
@@ -2224,7 +2232,9 @@ public class OutAction extends DispatchAction
 
         String depotpartId = request.getParameter("depotpartId");
 
-        logger1.info(fullId + ":" + user.getStafferName() + ":" + statuss);
+        importLog.info(fullId + ":" + user.getStafferName() + ";oldStatus:" + oldStatus);
+
+        importLog.info(fullId + ":" + user.getStafferName() + ";nextStatus:" + statuss);
 
         CommonTools.saveParamers(request);
 
@@ -2253,12 +2263,15 @@ public class OutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
+        int resultStatus = -1;
+
         // 入库单的提交
         if (out.getType() == OutConstant.OUT_TYPE_INBILL && statuss == OutConstant.STATUS_SUBMIT)
         {
             try
             {
-                outManager.submit(out.getFullId(), user);
+                resultStatus = outManager.submit(out.getFullId(), user,
+                    StorageConstant.OPR_STORAGE_OUTBILLIN);
 
                 request.setAttribute(KeyConstant.MESSAGE, out.getFullId() + "库单成功提交!");
             }
@@ -2276,9 +2289,8 @@ public class OutAction extends DispatchAction
             {
                 try
                 {
-                    outManager.submit(fullId, user);
-
-                    checkSubmit(user, fullId);
+                    resultStatus = outManager.submit(fullId, user,
+                        StorageConstant.OPR_STORAGE_OUTBILL);
                 }
                 catch (MYException e)
                 {
@@ -2295,7 +2307,8 @@ public class OutAction extends DispatchAction
             {
                 try
                 {
-                    outManager.pass(fullId, user, OutConstant.STATUS_SUBMIT, reason, depotpartId);
+                    resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_SUBMIT, reason,
+                        depotpartId);
                 }
                 catch (MYException e)
                 {
@@ -2326,7 +2339,7 @@ public class OutAction extends DispatchAction
 
                 try
                 {
-                    outManager.pass(fullId, user, statuss, reason, depotpartId);
+                    resultStatus = outManager.pass(fullId, user, statuss, reason, depotpartId);
                 }
                 catch (MYException e)
                 {
@@ -2343,7 +2356,7 @@ public class OutAction extends DispatchAction
             {
                 try
                 {
-                    outManager.reject(fullId, user, reason);
+                    resultStatus = outManager.reject(fullId, user, reason);
                 }
                 catch (MYException e)
                 {
@@ -2355,6 +2368,25 @@ public class OutAction extends DispatchAction
                 }
             }
         }
+
+        // 核对状态方式发生异常
+        OutBean realOut = outDAO.findRealOut(fullId);
+
+        if (realOut != null && realOut.getStatus() != resultStatus)
+        {
+            String msg = "严重错误,当前单据的状态应该是:" + OutHelper.getStatus(resultStatus) + ",而不是"
+                         + OutHelper.getStatus(realOut.getStatus()) + ".请联系管理员确认此单的正确状态!";
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, msg);
+
+            loggerError(fullId + ":" + msg);
+
+            return mapping.findForward("error");
+
+        }
+
+        importLog.info(fullId + ":" + user.getStafferName() + ";form:" + oldStatus + ";to"
+                       + resultStatus + "(SUCCESS)");
 
         RequestTools.actionInitQuery(request);
 
@@ -2466,7 +2498,6 @@ public class OutAction extends DispatchAction
             condition.addCondition("locationId", "=", locationId);
 
             // TODO
-
             return mapping.findForward("detailOut4");
         }
 

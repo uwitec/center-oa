@@ -9,6 +9,10 @@
 package com.china.center.oa.sail.dao.impl;
 
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -322,6 +326,80 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
     {
         return this.jdbcOperation.queryForInt(
             BeanTools.getCountHead(claz) + "where customerId = ?", id);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.china.center.oa.sail.dao.OutDAO#findRealOut(java.lang.String)
+     */
+    public OutBean findRealOut(String fullId)
+    {
+        Connection connection = null;
+
+        PreparedStatement prepareStatement = null;
+
+        ResultSet rst = null;
+
+        try
+        {
+            connection = this.jdbcOperation.getDataSource().getConnection();
+
+            prepareStatement = connection
+                .prepareStatement("select fullid, status, reserve3 from t_center_out where fullid = '"
+                                  + fullId + "'");
+
+            rst = prepareStatement.executeQuery();
+
+            OutBean out = new OutBean();
+
+            out.setFullId(rst.getString("fullid"));
+
+            out.setStatus(rst.getInt("status"));
+
+            out.setReserve3(rst.getInt("Reserve3"));
+
+            return out;
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+        finally
+        {
+            if (connection != null)
+            {
+                try
+                {
+                    connection.close();
+                }
+                catch (SQLException e)
+                {
+                }
+            }
+
+            if (prepareStatement != null)
+            {
+                try
+                {
+                    prepareStatement.close();
+                }
+                catch (SQLException e)
+                {
+                }
+            }
+
+            if (rst != null)
+            {
+                try
+                {
+                    rst.close();
+                }
+                catch (SQLException e)
+                {
+                }
+            }
+        }
     }
 
     /**
