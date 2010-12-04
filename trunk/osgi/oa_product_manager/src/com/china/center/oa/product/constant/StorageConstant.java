@@ -89,6 +89,12 @@ public interface StorageConstant
     int OPR_STORAGE_REDEPLOY = 9;
 
     /**
+     * 代销退货
+     */
+    @Defined(key = "storageType", value = "代销退货")
+    int OPR_STORAGE_BALANCE = 10;
+
+    /**
      * 公共的职员
      */
     String PUBLIC_STAFFER = "0";

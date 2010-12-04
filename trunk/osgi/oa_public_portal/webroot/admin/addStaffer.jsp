@@ -33,7 +33,7 @@ var tv = new treeview("treeview","../js/tree", 1, false);
 	type="hidden" name="method" value="addStaffer"> 
 <input
     type="hidden" name="principalshipId" value=""> 
-	<p:navigation
+<p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
 		onclick="javascript:history.go(-1)">人员管理</span> &gt;&gt; 增加人员</td>

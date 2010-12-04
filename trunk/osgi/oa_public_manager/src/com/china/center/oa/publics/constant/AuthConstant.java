@@ -505,7 +505,7 @@ public interface AuthConstant
     String SAIL_ADMIN = "1404";
 
     /**
-     * 财务开票
+     * 财务收款
      */
     String SAIL_SEC = "1405";
 

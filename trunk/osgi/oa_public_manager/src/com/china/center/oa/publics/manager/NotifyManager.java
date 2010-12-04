@@ -34,6 +34,14 @@ public interface NotifyManager extends ListenerManager<NotifyListener>
     void notifyWithoutTransaction(String stafferId, NotifyBean bean);
 
     /**
+     * notifyMessage(事务由调用者提供,通知失败了也不抛出异常,不管多少通知)
+     * 
+     * @param stafferId
+     * @param msg
+     */
+    void notifyMessage(String stafferId, String msg);
+
+    /**
      * notifyWithoutTransaction(通知失败了抛出异常,且只要一个通知失败就抛出异常,后面的不执行)
      * 
      * @param stafferId

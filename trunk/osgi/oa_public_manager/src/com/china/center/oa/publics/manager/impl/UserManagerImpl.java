@@ -338,13 +338,16 @@ public class UserManagerImpl implements UserManager
      * @throws MYException
      */
     public boolean containAuth(String id, String authId)
-        throws MYException
     {
-        JudgeTools.judgeParameterIsNull(id, authId);
-
-        User user = findUser(id);
-
-        JudgeTools.judgeParameterIsNull(user);
+        User user = null;
+        try
+        {
+            user = findUser(id);
+        }
+        catch (MYException e)
+        {
+            return false;
+        }
 
         List<RoleAuthBean> authList = user.getAuth();
 

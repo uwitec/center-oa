@@ -121,7 +121,7 @@ function esc_back()
 			
 			<c:if test="${my:length(bean.href) > 0}">
 			<p:cell title="链接" width="8">
-            <a href="${bean.href}" title="点击进入流程">流程链接</a>
+            <a href="${bean.href}" title="点击进入链接内容">链接内容</a>
             </p:cell>
             </c:if>
 			

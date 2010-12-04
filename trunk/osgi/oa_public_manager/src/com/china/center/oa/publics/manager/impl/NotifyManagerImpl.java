@@ -61,6 +61,8 @@ public class NotifyManagerImpl extends AbstractListenerManager<NotifyListener> i
                 _logger.error(e, e);
             }
         }
+
+        _logger.info(bean);
     }
 
     /*
@@ -80,6 +82,8 @@ public class NotifyManagerImpl extends AbstractListenerManager<NotifyListener> i
             {
                 notifyListener.notifyWithTransaction(stafferId, bean);
             }
+
+            _logger.info(bean);
         }
         catch (Throwable e)
         {
@@ -111,6 +115,8 @@ public class NotifyManagerImpl extends AbstractListenerManager<NotifyListener> i
                 _logger.error(e, e);
             }
         }
+
+        _logger.info(bean);
     }
 
     /*
@@ -130,6 +136,8 @@ public class NotifyManagerImpl extends AbstractListenerManager<NotifyListener> i
             {
                 notifyListener.notifyWithoutTransaction(stafferId, bean);
             }
+
+            _logger.info(bean);
         }
         catch (Throwable e)
         {
@@ -137,5 +145,14 @@ public class NotifyManagerImpl extends AbstractListenerManager<NotifyListener> i
 
             throw new MYException(e);
         }
+    }
+
+    public void notifyMessage(String stafferId, String msg)
+    {
+        NotifyBean notify = new NotifyBean();
+
+        notify.setMessage(msg);
+
+        notifyWithoutTransaction(stafferId, notify);
     }
 }

@@ -42,8 +42,7 @@ public interface UserManager
 
     boolean containAuth(User user, String... authId);
 
-    boolean containAuth(String id, String authId)
-        throws MYException;
+    boolean containAuth(String id, String authId);
 
     boolean updatePassword(String id, String password);
 

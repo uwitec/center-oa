@@ -63,6 +63,9 @@ public class NotifyListenerMailImpl implements NotifyListener
         mail.setTitle(bean.getMessage());
 
         mail.setContent(bean.getMessage());
+
+        mail.setHref(bean.getUrl());
+
         return mail;
     }
 
