@@ -196,6 +196,35 @@ public class OldPageSeparateTools
     }
 
     /**
+     * 是否菜单加载
+     * 
+     * @param request
+     * @return
+     */
+    public static boolean isMenuLoad(HttpServletRequest request)
+    {
+        // 一般链接使用firstLoad 或者load
+        String menu = request.getParameter("menu");
+
+        // 从一个action到另一个action使用forward
+        Object oo = request.getAttribute("menu");
+
+        String forward = null;
+
+        if (oo != null)
+        {
+            forward = oo.toString();
+        }
+
+        if ( !StringTools.isNullOrNone(menu) || !StringTools.isNullOrNone(forward))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * 是否记忆
      * 
      * @param request
@@ -390,8 +419,8 @@ public class OldPageSeparateTools
 
             if (result != null)
             {
-                request.getSession().setAttribute(
-                    getConditionAttributeNameInSession(request, key), result);
+                request.getSession().setAttribute(getConditionAttributeNameInSession(request, key),
+                    result);
             }
         }
 

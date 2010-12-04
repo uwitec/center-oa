@@ -162,6 +162,21 @@ public class ConditionParse implements Serializable
         }
     }
 
+    /**
+     * containOrder
+     * 
+     * @return
+     */
+    public boolean containOrder()
+    {
+        if (toString().toUpperCase().indexOf("ORDER BY ") == -1)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     public void removeWhereStr()
     {
         if (toString().toUpperCase().indexOf("WHERE") != -1)

@@ -187,32 +187,33 @@ public abstract class BaseDAO<Bean extends Serializable, VO extends Bean> implem
      * 
      * @see com.china.center.jdbc.inter.DAO#queryEntryBeansBycondition(com.centerchina.common.ConditionParse)
      */
-    public List<Bean> queryEntityBeansByCondition(ConditionParse condtition, Object... args)
+    public List<Bean> queryEntityBeansByCondition(ConditionParse condition, Object... args)
     {
-        condtition.addWhereStr();
+        condition.addWhereStr();
 
-        return jdbcOperation.queryForList(condtition.toString(), claz, args);
+        return jdbcOperation.queryForList(condition.toString(), claz, args);
     }
 
-    public List<Bean> queryEntityBeansByCondition(String condtition, Object... args)
+    public List<Bean> queryEntityBeansByCondition(String condition, Object... args)
     {
-        return jdbcOperation.queryForList(condtition, claz, args);
+        return jdbcOperation.queryForList(condition, claz, args);
     }
 
-    public List<Bean> queryEntityBeansByCondition(ConditionParse condtition, PageSeparate page, Object... args)
+    public List<Bean> queryEntityBeansByCondition(ConditionParse condition, PageSeparate page,
+                                                  Object... args)
     {
-        condtition.addWhereStr();
+        condition.addWhereStr();
 
-        return jdbcOperation.queryObjectsByPageSeparate(condtition.toString(), page, claz, args);
+        return jdbcOperation.queryObjectsByPageSeparate(condition.toString(), page, claz, args);
     }
 
-    public List<Bean> queryEntityBeansByLimit(ConditionParse condtition, int limit, Object... args)
+    public List<Bean> queryEntityBeansByLimit(ConditionParse condition, int limit, Object... args)
     {
-        condtition.addWhereStr();
+        condition.addWhereStr();
 
         PageSeparate page = new PageSeparate(limit, limit);
 
-        return jdbcOperation.queryObjectsByPageSeparate(condtition.toString(), page, claz, args);
+        return jdbcOperation.queryObjectsByPageSeparate(condition.toString(), page, claz, args);
     }
 
     public List<Bean> listEntityBeans()
@@ -361,7 +362,8 @@ public abstract class BaseDAO<Bean extends Serializable, VO extends Bean> implem
         return jdbcOperation.queryForList(condtition, clazVO, args);
     }
 
-    public List<VO> queryEntityVOsByCondition(ConditionParse condtition, PageSeparate page, Object... args)
+    public List<VO> queryEntityVOsByCondition(ConditionParse condtition, PageSeparate page,
+                                              Object... args)
     {
         condtition.addWhereStr();
 

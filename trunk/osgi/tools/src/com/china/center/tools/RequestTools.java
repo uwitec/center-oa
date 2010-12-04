@@ -34,6 +34,16 @@ public abstract class RequestTools
     }
 
     /**
+     * 在action里面转到另一个方法时候的菜单进入查询标识
+     * 
+     * @param request
+     */
+    public static void menuInitQuery(HttpServletRequest request)
+    {
+        request.setAttribute("menu", "1");
+    }
+
+    /**
      * 从parameter和attribute里面获取属性(parameter优先)
      * 
      * @param request
