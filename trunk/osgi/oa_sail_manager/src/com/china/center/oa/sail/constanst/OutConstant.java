@@ -118,9 +118,9 @@ public interface OutConstant
     int STATUS_PASS = 3;
 
     /**
-     * 财务核对
+     * 财务核对(单据结束)
      */
-    @Defined(key = "outStatus", value = "财务核对")
+    @Defined(key = "outStatus", value = "财务核对(结束)")
     int STATUS_SEC_PASS = 4;
 
     /**
@@ -210,6 +210,12 @@ public interface OutConstant
     int OUTTYPE_OUT_RETAIL = 2;
 
     /**
+     * 委托代销
+     */
+    @Defined(key = "outType_out", value = "委托代销")
+    int OUTTYPE_OUT_CONSIGN = 3;
+
+    /**
      * 采购入库
      */
     int OUTTYPE_IN_COMMON = 0;
@@ -273,5 +279,53 @@ public interface OutConstant
      * 临时的状态
      */
     int STATUS_TEMP = 99;
+
+    /**
+     * 没有开票
+     */
+    @Defined(key = "invoiceStatus", value = "没有开票")
+    int INVOICESTATUS_INIT = 0;
+
+    /**
+     * 开票中
+     */
+    @Defined(key = "invoiceStatus", value = "开票中")
+    int INVOICESTATUS_PROCESS = 1;
+
+    /**
+     * 全部开票
+     */
+    @Defined(key = "invoiceStatus", value = "全部开票中")
+    int INVOICESTATUS_END = 2;
+
+    /**
+     * 提交
+     */
+    @Defined(key = "outBalanceStatus", value = "提交")
+    int OUTBALANCE_STATUS_SUBMIT = 0;
+
+    /**
+     * 结算中心通过
+     */
+    @Defined(key = "outBalanceStatus", value = "结算中心通过")
+    int OUTBALANCE_STATUS_PASS = 1;
+
+    /**
+     * 驳回
+     */
+    @Defined(key = "outBalanceStatus", value = "驳回")
+    int OUTBALANCE_STATUS_REJECT = 2;
+
+    /**
+     * 结算单
+     */
+    @Defined(key = "outBalanceType", value = "结算单")
+    int OUTBALANCE_TYPE_SAIL = 0;
+
+    /**
+     * 退货单
+     */
+    @Defined(key = "outBalanceType", value = "退货单")
+    int OUTBALANCE_TYPE_BACK = 1;
 
 }

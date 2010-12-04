@@ -22,6 +22,8 @@
 	
 	<osgi:reference id="userManager" interface="com.china.center.oa.publics.manager.UserManager" />
 	
+	<osgi:reference id="authManager" interface="com.china.center.oa.publics.manager.AuthManager" />
+	
 	<osgi:reference id="parameterDAO" interface="com.china.center.oa.publics.dao.ParameterDAO" />
 	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
@@ -71,6 +73,10 @@
 	<osgi:reference id="consignDAO" interface="com.china.center.oa.sail.dao.ConsignDAO" />
 	
 	<osgi:reference id="consignManager" interface="com.china.center.oa.sail.manager.ConsignManager" />
+	
+	<osgi:reference id="outBalanceDAO" interface="com.china.center.oa.sail.dao.OutBalanceDAO" />
+
+    <osgi:reference id="baseBalanceDAO" interface="com.china.center.oa.sail.dao.BaseBalanceDAO" />
 	
 	
 </beans>

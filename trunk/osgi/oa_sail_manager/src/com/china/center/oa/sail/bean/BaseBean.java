@@ -29,7 +29,7 @@ import com.china.center.jdbc.annotation.Table;
 @Table(name = "T_CENTER_BASE")
 public class BaseBean implements Serializable
 {
-    @Id(autoIncrement = true)
+    @Id
     private String id = "";
 
     @FK

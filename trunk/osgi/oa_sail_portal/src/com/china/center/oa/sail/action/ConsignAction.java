@@ -447,7 +447,7 @@ public class ConsignAction extends DispatchAction
 
         request.setAttribute("queryType", "3");
 
-        RequestTools.actionInitQuery(request);
+        RequestTools.menuInitQuery(request);
 
         return outAction.queryOut(mapping, form, request, reponse);
     }

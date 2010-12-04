@@ -62,20 +62,25 @@ import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.manager.FatalNotify;
 import com.china.center.oa.publics.manager.NotifyManager;
+import com.china.center.oa.sail.bean.BaseBalanceBean;
 import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.ConsignBean;
 import com.china.center.oa.sail.bean.LogBean;
+import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.bean.OutUniqueBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.constanst.SailConstant;
+import com.china.center.oa.sail.dao.BaseBalanceDAO;
 import com.china.center.oa.sail.dao.BaseDAO;
 import com.china.center.oa.sail.dao.ConsignDAO;
+import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.dao.OutUniqueDAO;
 import com.china.center.oa.sail.helper.OutHelper;
 import com.china.center.oa.sail.helper.YYTools;
 import com.china.center.oa.sail.manager.OutManager;
+import com.china.center.oa.sail.vo.BaseBalanceVO;
 import com.china.center.oa.sail.vo.OutVO;
 import com.china.center.osgi.dym.DynamicBundleTools;
 import com.china.center.tools.JudgeTools;
@@ -136,6 +141,10 @@ public class OutManagerImpl implements OutManager
     private NotifyManager notifyManager = null;
 
     private FatalNotify fatalNotify = null;
+
+    private BaseBalanceDAO baseBalanceDAO = null;
+
+    private OutBalanceDAO outBalanceDAO = null;
 
     private StorageRelationManager storageRelationManager = null;
 
@@ -243,6 +252,9 @@ public class OutManagerImpl implements OutManager
         if (StringTools.isNullOrNone(outBean.getInvoiceId()))
         {
             outBean.setHasInvoice(OutConstant.HASINVOICE_NO);
+
+            // 不要发票的时候默认已经开票
+            outBean.setInvoiceStatus(OutConstant.INVOICESTATUS_END);
         }
         else
         {
@@ -271,6 +283,8 @@ public class OutManagerImpl implements OutManager
                     for (int i = 0; i < nameList.length; i++ )
                     {
                         BaseBean base = new BaseBean();
+
+                        base.setId(commonDAO.getSquenceString());
 
                         base.setOutId(outBean.getFullId());
 
@@ -385,6 +399,8 @@ public class OutManagerImpl implements OutManager
 
         for (BaseBean baseBean : list)
         {
+            baseBean.setId(commonDAO.getSquenceString());
+
             baseBean.setOutId(fullId);
 
             // 增加单个产品到base表
@@ -519,200 +535,193 @@ public class OutManagerImpl implements OutManager
                     nextStatus = OutConstant.STATUS_LOCATION_MANAGER_CHECK;
                 }
 
-                outDAO.modifyOutStatus2(fullId, nextStatus);
+                outDAO.modifyOutStatus(fullId, nextStatus);
 
                 result = nextStatus;
 
                 // 只有销售单才有信用(但是个人领样没有客户,就是公共客户)
-                if (outBean.getOutType() == OutConstant.OUTTYPE_OUT_COMMON)
+                boolean isCreditOutOf = false;
+
+                // 这里需要计算客户的信用金额-是否报送物流中心经理审批
+                boolean outCredit = parameterDAO.getBoolean(SysConfigConstant.OUT_CREDIT);
+
+                CustomerBean cbean = customerDAO.find(outBean.getCustomerId());
+
+                if (cbean == null)
                 {
-                    boolean isCreditOutOf = false;
-
-                    // 这里需要计算客户的信用金额-是否报送物流中心经理审批
-                    boolean outCredit = parameterDAO.getBoolean(SysConfigConstant.OUT_CREDIT);
-
-                    CustomerBean cbean = customerDAO.find(outBean.getCustomerId());
-
-                    if (cbean == null)
-                    {
-                        throw new MYException("客户不存在,请确认操作");
-                    }
-
-                    // query customer credit
-                    CreditLevelBean clevel = creditLevelDAO.find(cbean.getCreditLevelId());
-
-                    if (clevel == null)
-                    {
-                        throw new MYException("客户信用等级不存在");
-                    }
-
-                    // 进行逻辑处理(必须是货到收款才能有此逻辑) 此逻辑已经废除
-                    if (outCredit && cbean != null
-                        && !StringTools.isNullOrNone(cbean.getCreditLevelId())
-                        && outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_COMMON)
-                    {
-                        throw new MYException("不支持此类型,请重新操作");
-                    }
-
-                    // 使用业务员的信用额度(或者是分公司经理的)
-                    if (outCredit
-                        && (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_CREDIT_AND_CUR || outBean
-                            .getReserve3() == OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER))
-                    {
-                        StafferBean sb2 = stafferDAO.find(outBean.getStafferId());
-
-                        if (sb2 == null)
-                        {
-                            throw new MYException("数据不完备,请重新操作");
-                        }
-
-                        // 先清空预占金额,主要是统计的时候方便
-                        outDAO.updateCurcredit(fullId, 0.0d);
-
-                        outDAO.updateStaffcredit(fullId, 0.0d);
-
-                        outDAO.updateManagercredit(fullId, "", 0.0d);
-
-                        double noPayBusinessInCur = outDAO.sumNoPayBusiness(
-                            outBean.getCustomerId(), YYTools.getFinanceBeginDate(), YYTools
-                                .getFinanceEndDate());
-
-                        // 自己担保的+替人担保的
-                        double noPayBusiness = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(
-                            outBean.getStafferId(), YYTools.getFinanceBeginDate(), YYTools
-                                .getFinanceEndDate());
-
-                        double remainInCur = clevel.getMoney() - noPayBusinessInCur;
-
-                        // 不是公共客户
-                        if ( !cbean.getId().equals(CustomerConstant.PUBLIC_CUSTOMER_ID))
-                        {
-                            if (remainInCur < 0)
-                            {
-                                remainInCur = 0.0;
-                            }
-
-                            // 先客户信用 然后职员信用(信用*杠杆) 最后分公司经理
-                            if (remainInCur >= outBean.getTotal())
-                            {
-                                outDAO.updateCurcredit(fullId, outBean.getTotal());
-
-                                outDAO.updateStaffcredit(fullId, 0.0d);
-
-                                outBean.setReserve6("客户信用最大额度是:"
-                                                    + MathTools.formatNum(clevel.getMoney())
-                                                    + ".当前客户未付款金额(不包括此单):"
-                                                    + MathTools.formatNum(noPayBusinessInCur)
-                                                    + ".职员信用额度是:"
-                                                    + MathTools.formatNum(sb2.getCredit()
-                                                                          * sb2.getLever())
-                                                    + ".职员信用已经使用额度是:"
-                                                    + MathTools.formatNum(noPayBusiness)
-                                                    + ".信用未超支,不需要分公司经理担保");
-                            }
-                        }
-
-                        // 职员杠杆后的信用
-                        double staffCredit = sb2.getCredit() * sb2.getLever();
-
-                        // 一半使用客户,一半使用职员的(且不是公共客户的)
-                        if (remainInCur < outBean.getTotal()
-                            && !cbean.getId().equals(CustomerConstant.PUBLIC_CUSTOMER_ID))
-                        {
-                            // 全部使用客户的信用等级
-                            outDAO.updateCurcredit(fullId, remainInCur);
-
-                            // 当前单据需要使用的职员信用额度
-                            double remainInStaff = outBean.getTotal() - remainInCur;
-
-                            // 防止职员信用等级超支
-                            if ( (noPayBusiness + remainInStaff) > staffCredit)
-                            {
-                                double lastNeed = (noPayBusiness + remainInStaff) - staffCredit;
-
-                                outBean.setReserve6("客户信用最大额度是:"
-                                                    + MathTools.formatNum(clevel.getMoney())
-                                                    + ".当前客户未付款金额(不包括此单):"
-                                                    + MathTools.formatNum(noPayBusinessInCur)
-                                                    + ".职员信用额度是:"
-                                                    + MathTools.formatNum(staffCredit)
-                                                    + ".职员信用已经使用额度是:"
-                                                    + MathTools.formatNum(noPayBusiness)
-                                                    + ".信用超支(包括此单):"
-                                                    + (MathTools.formatNum(lastNeed)));
-
-                                // 这里如果不使用分公司经理直接不允许提交此单据
-                                if (outBean.getReserve3() != OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER)
-                                {
-                                    throw new MYException(outBean.getReserve6());
-                                }
-
-                                isCreditOutOf = true;
-
-                                outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_OVER,
-                                    outBean.getReserve6());
-
-                                // 把剩余的信用全部给此单据
-                                outDAO.updateStaffcredit(fullId, (staffCredit - noPayBusiness));
-                            }
-                            else
-                            {
-                                // 这里完全使用职员的信用
-                                outDAO.updateStaffcredit(fullId, remainInStaff);
-                            }
-                        }
-
-                        // 公共客户信用处理
-                        if (cbean.getId().equals(CustomerConstant.PUBLIC_CUSTOMER_ID))
-                        {
-                            // 当前单据需要使用的职员信用额度
-                            double remainInStaff = outBean.getTotal();
-
-                            // 防止职员信用等级超支
-                            if ( (noPayBusiness + remainInStaff) > staffCredit)
-                            {
-                                double lastNeed = (noPayBusiness + remainInStaff) - staffCredit;
-
-                                outBean.setReserve6("职员信用额度是:" + MathTools.formatNum(staffCredit)
-                                                    + ".职员信用已经使用额度是:"
-                                                    + MathTools.formatNum(noPayBusiness)
-                                                    + ".信用超支(包括此单):"
-                                                    + (MathTools.formatNum(lastNeed)));
-
-                                // 这里如果不使用分公司经理直接不允许提交此单据
-                                if (outBean.getReserve3() != OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER)
-                                {
-                                    throw new MYException(outBean.getReserve6());
-                                }
-
-                                isCreditOutOf = true;
-
-                                outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_OVER,
-                                    outBean.getReserve6());
-
-                                // 把剩余的信用全部给此单据
-                                outDAO.updateStaffcredit(fullId, (staffCredit - noPayBusiness));
-                            }
-                            else
-                            {
-                                // 这里完全使用职员的信用
-                                outDAO.updateStaffcredit(fullId, remainInStaff);
-                            }
-                        }
-                    }
-
-                    // 信用没有受限检查产品价格是否为0
-                    if ( !isCreditOutOf)
-                    {
-                        outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_COMMON, outBean
-                            .getReserve6());
-                    }
-
-                    // 修改人工干预,重新置人工干预信用为0
-                    String pid = "90000000000000009999";
-
-                    creditCoreDAO.updateCurCreToInit(pid, outBean.getCustomerId());
+                    throw new MYException("客户不存在,请确认操作");
                 }
+
+                // query customer credit
+                CreditLevelBean clevel = creditLevelDAO.find(cbean.getCreditLevelId());
+
+                if (clevel == null)
+                {
+                    throw new MYException("客户信用等级不存在");
+                }
+
+                // 进行逻辑处理(必须是货到收款才能有此逻辑) 此逻辑已经废除
+                if (outCredit && cbean != null
+                    && !StringTools.isNullOrNone(cbean.getCreditLevelId())
+                    && outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_COMMON)
+                {
+                    throw new MYException("不支持此类型,请重新操作");
+                }
+
+                // 使用业务员的信用额度(或者是分公司经理的)
+                if (outCredit
+                    && (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_CREDIT_AND_CUR || outBean
+                        .getReserve3() == OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER))
+                {
+                    StafferBean sb2 = stafferDAO.find(outBean.getStafferId());
+
+                    if (sb2 == null)
+                    {
+                        throw new MYException("数据不完备,请重新操作");
+                    }
+
+                    // 先清空预占金额,主要是统计的时候方便
+                    outDAO.updateCurcredit(fullId, 0.0d);
+
+                    outDAO.updateStaffcredit(fullId, 0.0d);
+
+                    outDAO.updateManagercredit(fullId, "", 0.0d);
+
+                    double noPayBusinessInCur = outDAO.sumNoPayBusiness(outBean.getCustomerId(),
+                        YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
+
+                    // 自己担保的+替人担保的
+                    double noPayBusiness = outDAO
+                        .sumAllNoPayAndAvouchBusinessByStafferId(outBean.getStafferId(), YYTools
+                            .getFinanceBeginDate(), YYTools.getFinanceEndDate());
+
+                    double remainInCur = clevel.getMoney() - noPayBusinessInCur;
+
+                    // 不是公共客户
+                    if ( !cbean.getId().equals(CustomerConstant.PUBLIC_CUSTOMER_ID))
+                    {
+                        if (remainInCur < 0)
+                        {
+                            remainInCur = 0.0;
+                        }
+
+                        // 先客户信用 然后职员信用(信用*杠杆) 最后分公司经理
+                        if (remainInCur >= outBean.getTotal())
+                        {
+                            outDAO.updateCurcredit(fullId, outBean.getTotal());
+
+                            outDAO.updateStaffcredit(fullId, 0.0d);
+
+                            outBean.setReserve6("客户信用最大额度是:"
+                                                + MathTools.formatNum(clevel.getMoney())
+                                                + ".当前客户未付款金额(不包括此单):"
+                                                + MathTools.formatNum(noPayBusinessInCur)
+                                                + ".职员信用额度是:"
+                                                + MathTools.formatNum(sb2.getCredit()
+                                                                      * sb2.getLever())
+                                                + ".职员信用已经使用额度是:"
+                                                + MathTools.formatNum(noPayBusiness)
+                                                + ".信用未超支,不需要分公司经理担保");
+                        }
+                    }
+
+                    // 职员杠杆后的信用
+                    double staffCredit = sb2.getCredit() * sb2.getLever();
+
+                    // 一半使用客户,一半使用职员的(且不是公共客户的)
+                    if (remainInCur < outBean.getTotal()
+                        && !cbean.getId().equals(CustomerConstant.PUBLIC_CUSTOMER_ID))
+                    {
+                        // 全部使用客户的信用等级
+                        outDAO.updateCurcredit(fullId, remainInCur);
+
+                        // 当前单据需要使用的职员信用额度
+                        double remainInStaff = outBean.getTotal() - remainInCur;
+
+                        // 防止职员信用等级超支
+                        if ( (noPayBusiness + remainInStaff) > staffCredit)
+                        {
+                            double lastNeed = (noPayBusiness + remainInStaff) - staffCredit;
+
+                            outBean.setReserve6("客户信用最大额度是:"
+                                                + MathTools.formatNum(clevel.getMoney())
+                                                + ".当前客户未付款金额(不包括此单):"
+                                                + MathTools.formatNum(noPayBusinessInCur)
+                                                + ".职员信用额度是:" + MathTools.formatNum(staffCredit)
+                                                + ".职员信用已经使用额度是:"
+                                                + MathTools.formatNum(noPayBusiness)
+                                                + ".信用超支(包括此单):" + (MathTools.formatNum(lastNeed)));
+
+                            // 这里如果不使用分公司经理直接不允许提交此单据
+                            if (outBean.getReserve3() != OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER)
+                            {
+                                throw new MYException(outBean.getReserve6());
+                            }
+
+                            isCreditOutOf = true;
+
+                            outDAO.updateOutReserve(fullId, OutConstant.OUT_CREDIT_OVER, outBean
+                                .getReserve6());
+
+                            // 把剩余的信用全部给此单据
+                            outDAO.updateStaffcredit(fullId, (staffCredit - noPayBusiness));
+                        }
+                        else
+                        {
+                            // 这里完全使用职员的信用
+                            outDAO.updateStaffcredit(fullId, remainInStaff);
+                        }
+                    }
+
+                    // 公共客户信用处理
+                    if (cbean.getId().equals(CustomerConstant.PUBLIC_CUSTOMER_ID))
+                    {
+                        // 当前单据需要使用的职员信用额度
+                        double remainInStaff = outBean.getTotal();
+
+                        // 防止职员信用等级超支
+                        if ( (noPayBusiness + remainInStaff) > staffCredit)
+                        {
+                            double lastNeed = (noPayBusiness + remainInStaff) - staffCredit;
+
+                            outBean.setReserve6("职员信用额度是:" + MathTools.formatNum(staffCredit)
+                                                + ".职员信用已经使用额度是:"
+                                                + MathTools.formatNum(noPayBusiness)
+                                                + ".信用超支(包括此单):" + (MathTools.formatNum(lastNeed)));
+
+                            // 这里如果不使用分公司经理直接不允许提交此单据
+                            if (outBean.getReserve3() != OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER)
+                            {
+                                throw new MYException(outBean.getReserve6());
+                            }
+
+                            isCreditOutOf = true;
+
+                            outDAO.updateOutReserve(fullId, OutConstant.OUT_CREDIT_OVER, outBean
+                                .getReserve6());
+
+                            // 把剩余的信用全部给此单据
+                            outDAO.updateStaffcredit(fullId, (staffCredit - noPayBusiness));
+                        }
+                        else
+                        {
+                            // 这里完全使用职员的信用
+                            outDAO.updateStaffcredit(fullId, remainInStaff);
+                        }
+                    }
+                }
+
+                // 信用没有受限检查产品价格是否为0
+                if ( !isCreditOutOf)
+                {
+                    outDAO.updateOutReserve(fullId, OutConstant.OUT_CREDIT_COMMON, outBean
+                        .getReserve6());
+                }
+
+                // 修改人工干预,重新置人工干预信用为0
+                String pid = "90000000000000009999";
+
+                creditCoreDAO.updateCurCreToInit(pid, outBean.getCustomerId());
             }
             catch (Exception e)
             {
@@ -729,7 +738,7 @@ public class OutManagerImpl implements OutManager
 
             try
             {
-                outDAO.modifyOutStatus2(fullId, OutConstant.STATUS_PASS);
+                outDAO.modifyOutStatus(fullId, OutConstant.STATUS_PASS);
 
                 result = 3;
             }
@@ -954,7 +963,7 @@ public class OutManagerImpl implements OutManager
                         importLog.info(fullId + ":" + user.getStafferName() + ":"
                                        + OutConstant.STATUS_REJECT + ":redrectFrom:"
                                        + outBean.getStatus());
-                        outDAO.modifyOutStatus2(outBean.getFullId(), OutConstant.STATUS_REJECT);
+                        outDAO.modifyOutStatus(outBean.getFullId(), OutConstant.STATUS_REJECT);
                     }
                     else
                     {
@@ -962,14 +971,14 @@ public class OutManagerImpl implements OutManager
                                        + OutConstant.STATUS_SAVE + ":redrectFrom:"
                                        + outBean.getStatus());
 
-                        outDAO.modifyOutStatus2(outBean.getFullId(), OutConstant.STATUS_SAVE);
+                        outDAO.modifyOutStatus(outBean.getFullId(), OutConstant.STATUS_SAVE);
                     }
 
                     // 驳回修改在途方式
                     outDAO.updataInWay(fullId, OutConstant.IN_WAY_NO);
 
                     // 变成没有付款
-                    outDAO.modifyPay2(fullId, OutConstant.PAY_NOT);
+                    outDAO.modifyPay(fullId, OutConstant.PAY_NOT);
 
                     // 操作日志
                     addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_REJECT,
@@ -1065,7 +1074,7 @@ public class OutManagerImpl implements OutManager
                                    + newNextStatus + ":redrectFrom:" + oldStatus);
 
                     // 修改状态
-                    outDAO.modifyOutStatus2(outBean.getFullId(), newNextStatus);
+                    outDAO.modifyOutStatus(outBean.getFullId(), newNextStatus);
 
                     // 从分公司经理审核通过到提交
                     if (newNextStatus == OutConstant.STATUS_SUBMIT)
@@ -1113,7 +1122,7 @@ public class OutManagerImpl implements OutManager
                                 lastCredit);
 
                             // 此时信用不超支了
-                            outDAO.updateOutReserve2(fullId, OutConstant.OUT_CREDIT_COMMON, outBean
+                            outDAO.updateOutReserve(fullId, OutConstant.OUT_CREDIT_COMMON, outBean
                                 .getReserve6());
                         }
                     }
@@ -1139,8 +1148,10 @@ public class OutManagerImpl implements OutManager
                         long add = outBean.getReday() * 24 * 3600 * 1000L;
 
                         // 这里需要把出库单的回款日期修改
-                        outDAO.modifyReDate2(fullId, TimeTools.getStringByFormat(new Date(
-                            new Date().getTime() + add), "yyyy-MM-dd"));
+                        outDAO.modifyReDate(fullId, TimeTools.getStringByFormat(new Date(new Date()
+                            .getTime()
+                                                                                         + add),
+                            "yyyy-MM-dd"));
 
                         List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
 
@@ -1191,7 +1202,7 @@ public class OutManagerImpl implements OutManager
         catch (DataAccessException e)
         {
             _logger.error("通过库单错误：", e);
-            throw new MYException(e.getCause().toString());
+            throw new MYException("数据库内部错误");
         }
         catch (Exception e)
         {
@@ -1354,7 +1365,7 @@ public class OutManagerImpl implements OutManager
                 {
                     outDAO.modifyChecks(fullId, checks);
 
-                    outDAO.modifyOutStatus2(fullId, OutConstant.STATUS_SEC_PASS);
+                    outDAO.modifyOutStatus(fullId, OutConstant.STATUS_SEC_PASS);
 
                     // TODO_OSGI 核对此销售单的应收,看看是否正确结余(然后写到应收字段里面)
 
@@ -1526,7 +1537,7 @@ public class OutManagerImpl implements OutManager
 
     @Exceptional
     @Transactional(rollbackFor = {MYException.class})
-    public boolean modifyPay(final User user, String fullId, int pay)
+    public boolean modifyPay(final User user, String fullId, int pay, String reason)
     {
         // 需要增加是否超期 flowId
         OutBean out = outDAO.find(fullId);
@@ -1551,32 +1562,244 @@ public class OutManagerImpl implements OutManager
             }
         }
 
-        outDAO.modifyReDate2(fullId, TimeTools.now_short());
+        outDAO.modifyReDate(fullId, TimeTools.now_short());
 
-        addOutLog(fullId, user, out, "确认付款", SailConstant.OPR_OUT_PASS, OutConstant.STATUS_SUBMIT);
+        outDAO.modifyOutHadPay(fullId, MathTools.formatNum(out.getTotal()));
 
-        return outDAO.modifyPay2(fullId, pay);
+        addOutLog(fullId, user, out, reason, SailConstant.OPR_OUT_PASS, out.getStatus());
+
+        notifyOut(out, user, 2);
+
+        return outDAO.modifyPay(fullId, pay);
     }
 
     @Transactional(rollbackFor = {MYException.class})
     @Exceptional
     public boolean mark(String fullId, boolean status)
     {
-        return outDAO.mark2(fullId, status);
+        return outDAO.mark(fullId, status);
     }
 
     @Transactional(rollbackFor = {MYException.class})
     @Exceptional
     public boolean modifyReDate(String fullId, String reDate)
     {
-        return outDAO.modifyReDate2(fullId, reDate);
+        return outDAO.modifyReDate(fullId, reDate);
     }
 
     @Exceptional
     @Transactional(rollbackFor = {MYException.class})
     public boolean modifyOutHadPay(String fullId, String hadPay)
     {
-        return outDAO.modifyOutHadPay2(fullId, hadPay);
+        return outDAO.modifyOutHadPay(fullId, hadPay);
+    }
+
+    @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean addOutBalance(final User user, OutBalanceBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, bean, bean.getBaseBalanceList());
+
+        OutBean out = outDAO.find(bean.getOutId());
+
+        if (out == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if ( !user.getStafferId().equals(out.getStafferId()))
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (out.getType() != OutConstant.OUT_TYPE_OUTBILL
+            || out.getOutType() != OutConstant.OUTTYPE_OUT_CONSIGN)
+        {
+            throw new MYException("不是委托代销的销售单,请确认操作");
+        }
+
+        if (out.getStatus() != OutConstant.STATUS_PASS)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        bean.setId(commonDAO.getSquenceString20());
+
+        outBalanceDAO.saveEntityBean(bean);
+
+        List<BaseBalanceBean> baseBalanceList = bean.getBaseBalanceList();
+
+        for (BaseBalanceBean baseBalanceBean : baseBalanceList)
+        {
+            baseBalanceBean.setId(commonDAO.getSquenceString20());
+
+            baseBalanceBean.setParentId(bean.getId());
+
+            baseBalanceBean.setOutId(bean.getOutId());
+        }
+
+        baseBalanceDAO.saveAllEntityBeans(baseBalanceList);
+
+        return true;
+    }
+
+    @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean passOutBalance(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        OutBalanceBean bean = checkBalancePass(id);
+
+        bean.setStatus(OutConstant.OUTBALANCE_STATUS_PASS);
+
+        outBalanceDAO.updateEntityBean(bean);
+
+        List<BaseBalanceBean> baseList = baseBalanceDAO.queryEntityBeansByFK(id);
+
+        String sequence = commonDAO.getSquenceString();
+
+        // 退货单是要变动库存的
+        if (bean.getType() == OutConstant.OUTBALANCE_TYPE_BACK)
+        {
+            // 这里需要变动库存(增加库存)
+            for (BaseBalanceBean each : baseList)
+            {
+                ProductChangeWrap wrap = new ProductChangeWrap();
+
+                BaseBean element = baseDAO.find(each.getBaseId());
+
+                wrap.setDepotpartId(element.getDepotpartId());
+                wrap.setPrice(element.getCostPrice());
+                wrap.setProductId(element.getProductId());
+                wrap.setStafferId(element.getOwner());
+                // 增加的数量来自退货的数量
+                wrap.setChange(each.getAmount());
+
+                wrap.setDescription("库单[" + bean.getOutId() + "]代销退货操作");
+                wrap.setSerializeId(sequence);
+                wrap.setType(StorageConstant.OPR_STORAGE_BALANCE);
+                wrap.setRefId(id);
+
+                storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, true);
+            }
+        }
+
+        notifyManager.notifyMessage(bean.getStafferId(), bean.getOutId() + "的结算清单已经被["
+                                                         + user.getStafferName() + "]通过");
+
+        return true;
+    }
+
+    @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean deleteOutBalance(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        OutBalanceBean bean = outBalanceDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bean.getStatus() != OutConstant.OUTBALANCE_STATUS_REJECT)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        outBalanceDAO.deleteEntityBean(id);
+
+        return true;
+    }
+
+    /**
+     * checkBalancePass
+     * 
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    private OutBalanceBean checkBalancePass(String id)
+        throws MYException
+    {
+        OutBalanceBean bean = outBalanceDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bean.getStatus() != OutConstant.OUTBALANCE_STATUS_SUBMIT)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        checkBalanceOver(id);
+
+        return bean;
+    }
+
+    private void checkBalanceOver(String id)
+        throws MYException
+    {
+        // 检查是否结算溢出
+        List<BaseBalanceBean> currentBaseList = baseBalanceDAO.queryEntityBeansByFK(id);
+
+        // 看看是否溢出了
+        for (BaseBalanceBean baseBalanceBean : currentBaseList)
+        {
+            BaseBean baseBean = baseDAO.find(baseBalanceBean.getBaseId());
+
+            int total = baseBalanceBean.getAmount();
+            List<BaseBalanceVO> hasPassBaseList = baseBalanceDAO
+                .queryPassBaseBalance(baseBalanceBean.getBaseId());
+
+            for (BaseBalanceBean pss : hasPassBaseList)
+            {
+                total += pss.getAmount();
+            }
+
+            if (total > baseBean.getAmount())
+            {
+                throw new MYException(baseBean.getProductName() + "的数量溢出");
+            }
+        }
+    }
+
+    @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean rejectOutBalance(User user, String id, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        OutBalanceBean bean = outBalanceDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bean.getStatus() != OutConstant.OUTBALANCE_STATUS_SUBMIT)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        bean.setStatus(OutConstant.OUTBALANCE_STATUS_REJECT);
+
+        bean.setReason(reason);
+
+        outBalanceDAO.updateEntityBean(bean);
+
+        notifyManager.notifyMessage(bean.getStafferId(), bean.getOutId() + "的结算清单已经被["
+                                                         + user.getStafferName() + "]驳回");
+
+        return true;
     }
 
     /**
@@ -1707,10 +1930,20 @@ public class OutManagerImpl implements OutManager
         {
             notify.setMessage(out.getFullId() + "已经被[" + user.getStafferName() + "]审批通过");
         }
-        else
+        else if (type == 1)
         {
             notify.setMessage(out.getFullId() + "已经被[" + user.getStafferName() + "]驳回");
         }
+        else if (type == 2)
+        {
+            notify.setMessage(out.getFullId() + "已经被[" + user.getStafferName() + "]确认付款");
+        }
+        else
+        {
+            notify.setMessage(out.getFullId() + "已经被[" + user.getStafferName() + "]处理");
+        }
+
+        notify.setUrl("../sail/out.do?method=findOut&fow=99&outId=" + out.getFullId());
 
         notifyManager.notifyWithoutTransaction(out.getStafferId(), notify);
 
@@ -2152,5 +2385,39 @@ public class OutManagerImpl implements OutManager
     public void setFatalNotify(FatalNotify fatalNotify)
     {
         this.fatalNotify = fatalNotify;
+    }
+
+    /**
+     * @return the baseBalanceDAO
+     */
+    public BaseBalanceDAO getBaseBalanceDAO()
+    {
+        return baseBalanceDAO;
+    }
+
+    /**
+     * @param baseBalanceDAO
+     *            the baseBalanceDAO to set
+     */
+    public void setBaseBalanceDAO(BaseBalanceDAO baseBalanceDAO)
+    {
+        this.baseBalanceDAO = baseBalanceDAO;
+    }
+
+    /**
+     * @return the outBalanceDAO
+     */
+    public OutBalanceDAO getOutBalanceDAO()
+    {
+        return outBalanceDAO;
+    }
+
+    /**
+     * @param outBalanceDAO
+     *            the outBalanceDAO to set
+     */
+    public void setOutBalanceDAO(OutBalanceDAO outBalanceDAO)
+    {
+        this.outBalanceDAO = outBalanceDAO;
     }
 }

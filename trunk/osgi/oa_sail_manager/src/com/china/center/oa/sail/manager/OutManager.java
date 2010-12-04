@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
 
 
@@ -114,7 +115,50 @@ public interface OutManager
     boolean updateOut(final OutBean out)
         throws MYException;
 
-    boolean modifyPay(final User user, String fullId, int pay);
+    /**
+     * 增加代销结算
+     * 
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    boolean addOutBalance(final User user, OutBalanceBean bean)
+        throws MYException;
+
+    /**
+     * passOutBalance
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean passOutBalance(final User user, String id)
+        throws MYException;
+
+    /**
+     * deleteOutBalance
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean deleteOutBalance(final User user, String id)
+        throws MYException;
+
+    /**
+     * rejectOutBalance
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean rejectOutBalance(final User user, String id, String reason)
+        throws MYException;
+
+    boolean modifyPay(final User user, String fullId, int pay, String reason);
 
     boolean mark(String fullId, boolean status);
 

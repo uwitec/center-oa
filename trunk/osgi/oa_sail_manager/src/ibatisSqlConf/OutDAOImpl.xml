@@ -21,7 +21,6 @@
             select sum(t1.curcredit) from t_center_out t1
             where t1.customerId = #customerId# 
             AND t1.type = 0 
-            AND t1.outtype = 0
             AND t1.pay = 0
             AND t1.outTime >= #beginDate#
             AND t1.outTime <= #endDate#
@@ -34,7 +33,6 @@
             select sum(t1.staffcredit) from t_center_out t1
             where t1.stafferId = #stafferId# 
             AND t1.type = 0 
-            AND t1.outtype = 0
             AND t1.pay = 0
             AND t1.outTime >= #beginDate#
             AND t1.outTime <= #endDate#
@@ -47,7 +45,6 @@
             select sum(t1.managercredit) from t_center_out t1
             where t1.managerId = #stafferId# 
             AND t1.type = 0 
-            AND t1.outtype = 0
             AND t1.pay = 0
             AND t1.outTime >= #beginDate#
             AND t1.outTime <= #endDate#

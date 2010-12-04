@@ -13,6 +13,8 @@
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../sail_js/addOut.js"></script>
+<script language="JavaScript" src="../js/jquery/jquery.js"></script>
+<script language="JavaScript" src="../js/plugin/highlight/jquery.highlight.js"></script>
 <script language="javascript">
 
 //当前的焦点对象
@@ -106,6 +108,10 @@ function load()
 	hides(true);
 	
 	$detail($O('viewTable'), ['pr', 'ba']);
+	
+	highlights($("#mainTable").get(0), ['未付款'], 'red');
+	
+	highlights($("#mainTable").get(0), ['已付款'], 'blue');
 }
 
 function hides(boo)
@@ -531,7 +537,7 @@ function pagePrint()
 
 	<tr>
 		<td colspan='2' align='center'>
-		<table width="100%" border="0" cellpadding="0" cellspacing="0"
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" id="mainTable"
 			class="border">
 			<tr>
 				<td>
@@ -545,9 +551,7 @@ function pagePrint()
 
 							<td width="15%" align="right">销售类型：</td>
 							<td width="35%"><select name="outType" class="select_class" onchange="managerChange()" values="${bean.outType}" readonly=true>
-								<option value="0">销售出库</option>
-								<option value="1">个人领样</option>
-								<option value="2">零售</option>
+								<p:option type="outType_out"></p:option>
 							</select><font color="#FF0000">*</font></td>
 						
 					</tr>
@@ -577,7 +581,7 @@ function pagePrint()
 						<td align="right">经手人：</td>
 						<td><input type="text" name="stafferName" maxlength="14"
 							value="${user.stafferName}" readonly="readonly"></td>
-						<td align="right">单据号码：</td>
+						<td align="right">单据标识：</td>
 						<td><input type="text" name="fullId" maxlength="40"
 							value="${bean.fullId}" readonly="readonly"></td>
 					</tr>
@@ -640,7 +644,7 @@ function pagePrint()
                     </tr>
                     
                      <tr class="content2">
-                        <td align="right">单据分公司：</td>
+                        <td align="right">分公司：</td>
                         <td colspan="1">
                        ${bean.locationName}
                        </td>
@@ -673,6 +677,13 @@ function pagePrint()
 							<font color="#FF0000">*</font>
 							</td>
 					</tr>
+					
+					 <tr class="content2">
+                        <td align="right">总部核对：</td>
+                        <td colspan="3">
+                       ${bean.checks}
+                       </td>
+                    </tr>
 
 				</table>
 				</td>
@@ -697,7 +708,7 @@ function pagePrint()
 
 	<tr>
 		<td colspan='2' align='center'>
-		<table width="100%" border="0" cellpadding="0" cellspacing="0"
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" 
 			class="border">
 			<tr>
 				<td>
@@ -706,8 +717,8 @@ function pagePrint()
 						<td width="20%" align="center">品名</td>
 						<td width="5%" align="center">单位</td>
 						<td width="5%" align="center">数量</td>
-						<td width="10%" align="center">单价</td>
-						<td width="10%" align="left">金额<span id="total"></span></td>
+						<td width="10%" align="center">销售价</td>
+						<td width="10%" align="center">金额<span id="total"></span></td>
 						<td width="10%" align="center">成本</td>
 						<td width="25%" align="center">类型</td>
 						<td width="15%" align="center">开单品名</td>
@@ -760,7 +771,7 @@ function pagePrint()
 					</tr>
 
 					<tr class="content2">
-						<td><input type="text" name="productName" id="unProductName"
+						<td align="center"><input type="text" name="productName" id="unProductName"
 							onclick="opens(this)" 
 							productid="${fristBase.productId}" 
                             productcode="" 
@@ -771,7 +782,7 @@ function pagePrint()
 							style="width: 100%; cursor: pointer"
 							value="${fristBase.productName}"></td>
 
-						<td><select name="unit" style="WIDTH: 50px;" values="${fristBase.unit}">
+						<td align="center"><select name="unit" style="WIDTH: 50px;" values="${fristBase.unit}">
 							<option value="套">套</option>
 							<option value="枚">枚</option>
 							<option value="个">个</option>
@@ -803,7 +814,7 @@ function pagePrint()
 					
 					<c:forEach items="${lastBaseList}" var="fristBase" varStatus="vs">
                     <tr class="content2">
-                        <td><input type="text" name="productName"
+                        <td align="center"><input type="text" name="productName"
                             onclick="opens(this)" 
                             productid="${fristBase.productId}" 
                             productcode="" 
@@ -814,7 +825,7 @@ function pagePrint()
                             style="width: 100%; cursor: pointer"
                             value="${fristBase.productName}"></td>
 
-                        <td><select name="unit" style="WIDTH: 50px;" values="${fristBase.unit}">
+                        <td align="center"><select name="unit" style="WIDTH: 50px;" values="${fristBase.unit}">
                             <option value="套">套</option>
                             <option value="枚">枚</option>
                             <option value="个">个</option>

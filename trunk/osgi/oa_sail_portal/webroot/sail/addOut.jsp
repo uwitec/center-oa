@@ -46,6 +46,13 @@ function getCustomer(oos)
 {
 	var obj = oos;
 	
+	if ($$('outType') == 3 && obj.pcreditlevelid == BLACK_LEVEL)
+	{
+	    alert('委托代销的时候不能选择黑名单用户');
+	    
+	    return;
+	}
+	
 	$O("connector").value = obj.pconnector;
 	$O("phone").value = obj.phandphone;
 	$O("customerName").value = obj.pname;
@@ -392,8 +399,8 @@ function sub()
 
 function managerChange()
 {
-    //普通销售
-	if ($$('outType') == 0)
+    //普通销售/委托代销
+	if ($$('outType') == 0 && $$('outType') == 3)
 	{
 		$O('customerName').value = '';
 		$O('customerId').value = '';
@@ -529,9 +536,7 @@ function managerChange()
 
 							<td width="15%" align="right">销售类型：</td>
 							<td width="35%"><select name="outType" class="select_class" onchange="managerChange()">
-								<option value="0">销售出库</option>
-								<option value="1">个人领样</option>
-								<option value="2">零售</option>
+								<p:option type="outType_out"></p:option>
 							</select><font color="#FF0000">*</font></td>
 						
 					</tr>

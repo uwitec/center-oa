@@ -114,6 +114,8 @@ function res()
 	$O('customerName').value = '';
 	$O("customerId").value = '';
 	$O("id").value = '';
+	setSelectIndex($O('status'), 0);
+	setSelectIndex($O('pay'), 0);
 }
 
 var jmap = new Object();
@@ -143,6 +145,56 @@ function payOut()
         getObj('outId').value = getRadioValue("fullId");
         
         adminForm.submit();
+    }
+    else
+    {
+        alert('不能操作');
+    }
+}
+
+function payOut2()
+{
+    if (getRadio('fullId').statuss == 3 && getRadio('fullId').paytype != 1 && window.confirm("确定此销售单已经全部回款?"))
+    {
+        getObj('method').value = 'payOut2';
+        
+        getObj('outId').value = getRadioValue("fullId");
+        
+        adminForm.submit();
+    }
+    else
+    {
+        alert('不能操作');
+    }
+}
+
+function centerCheck()
+{
+    if (getRadio('fullId').statuss == 3 && getRadio('fullId').paytype == 1)
+    {
+        $.messager.prompt('总部核对', '请核对说明', '', function(r){
+                if (r)
+                {
+                    $Dbuttons(true);
+                    getObj('method').value = 'checks';
+                    getObj('outId').value = getRadioValue("fullId");
+                    getObj('radioIndex').value = $Index('fullId');
+        
+                    var sss = r;
+        
+                    getObj('reason').value = r;
+        
+                    if (!(sss == null || sss == ''))
+                    {
+                        adminForm.submit();
+                    }
+                    else
+                    {
+                        $Dbuttons(false);
+                    }
+                }
+               
+            });
     }
     else
     {
@@ -281,12 +333,10 @@ function reject()
 					<tr class="content2">
 						<td width="15%" align="center">销售单状态</td>
 						<td align="center">
-						<c:if test="${!ff}">
 						<select name="status" class="select_class" values="${status}">
 							<option value="">--</option>
 							<p:option type="outStatus"/>
 						</select>
-						</c:if>
 
 						</td>
 						<td width="15%" align="center">客户：</td>
@@ -299,9 +349,7 @@ function reject()
 						<select name="outType"
 							class="select_class" values=${outType}>
 							<option value="">--</option>
-							<option value="0">销售出库</option>
-							<option value="1">个人领样</option>
-							<option value="2">零售</option>
+							<p:option type="outType_out"></p:option>
 						</select>
 
 						</td>
@@ -420,13 +468,14 @@ function reject()
 							   index="${radioIndex}"
 							   con="${item.consign}"
 							   pay="${item.reserve3}"
+							   paytype="${item.pay}"
 							   statuss='${item.status}' 
 							   value="${item.fullId}"/></td>
 							<td align="center"
 							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}">
 							${item.fullId}</a></td>
-							<td align="center">${item.customerName}</td>
-							<td align="center">${my:get('outStatus', item.status)}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.customerName}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:get('outStatus', item.status)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('outType_out', item.outType)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.outTime}</td>
 							<c:if test="${item.pay == 0}">
@@ -440,7 +489,14 @@ function reject()
 							<td align="center" onclick="hrefAndSelect(this)">${item.hadPay}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.depotName}</td>
-							<td align="center" onclick="hrefAndSelect(this)">${my:get("consignStatus", item.consign)}</td>
+							<c:if test="${queryType == '3'}">
+							<td align="center" onclick="hrefAndSelect(this)"><a
+							href="../sail/transport.do?method=findConsign&fullId=${item.fullId}"
+							>${my:get("consignStatus", item.consign)}</a></td>
+							</c:if>
+							<c:if test="${queryType != '3'}">
+                            <td align="center" onclick="hrefAndSelect(this)">${my:get("consignStatus", item.consign)}</td>
+                            </c:if>
 						</tr>
 					</c:forEach>
 				</table>
@@ -469,18 +525,31 @@ function reject()
 	<tr>
 		<td width="100%">
 		<div align="right">
+		<c:if test="${queryType != '5' && queryType != '6'}">
 		<c:if test="${queryType == '2'}">
 		<input type="button" class="button_class"
                 value="&nbsp;&nbsp;确认回款&nbsp;&nbsp;" onClick="payOut()">&nbsp;&nbsp;
         </c:if>
-                <input name="bu1"
+        <input name="bu1"
                 type="button" class="button_class" value="&nbsp;审核通过&nbsp;"
                 onclick="check()" />&nbsp;&nbsp;<input type="button" name="bu2"
                 class="button_class" value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;"
                 onclick="reject()" />&nbsp;&nbsp;
 		<input
 			type="button" class="button_class"
-			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" /></div>
+			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;"
+		</c:if>	
+		
+		<c:if test="${queryType == '5'}">
+		<input type="button" class="button_class"
+                value="&nbsp;&nbsp;确认回款&nbsp;&nbsp;" onClick="payOut2()"/>&nbsp;&nbsp;
+		</c:if>
+		
+		<c:if test="${queryType == '6'}">
+        <input type="button" class="button_class"
+                value="&nbsp;&nbsp;总部核对&nbsp;&nbsp;" onClick="centerCheck()"/>&nbsp;&nbsp;
+        </c:if>
+		</div>
 		</td>
 		<td width="0%"></td>
 	</tr>

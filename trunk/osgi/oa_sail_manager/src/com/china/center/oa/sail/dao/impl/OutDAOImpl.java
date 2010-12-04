@@ -44,7 +44,7 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
     {
     }
 
-    public boolean mark2(String fullId, boolean status)
+    public boolean mark(String fullId, boolean status)
     {
         int i = jdbcOperation.updateField("mark", status, fullId, this.claz);
 
@@ -72,28 +72,28 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         return true;
     }
 
-    public boolean modifyOutHadPay2(String fullId, String hadPay)
+    public boolean modifyOutHadPay(String fullId, String hadPay)
     {
         jdbcOperation.updateField("hadPay", hadPay, fullId, this.claz);
 
         return true;
     }
 
-    public boolean modifyOutStatus2(String fullId, int status)
+    public boolean modifyOutStatus(String fullId, int status)
     {
         jdbcOperation.updateField("status", status, fullId, this.claz);
 
         return true;
     }
 
-    public boolean modifyPay2(String fullId, int pay)
+    public boolean modifyPay(String fullId, int pay)
     {
         jdbcOperation.updateField("pay", pay, fullId, this.claz);
 
         return true;
     }
 
-    public boolean modifyReDate2(String fullId, String reDate)
+    public boolean modifyReDate(String fullId, String reDate)
     {
         jdbcOperation.updateField("redate", reDate, fullId, this.claz);
 
@@ -291,7 +291,7 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         return true;
     }
 
-    public boolean updateOutReserve2(String fullId, int reserve4, String reserve6)
+    public boolean updateOutReserve(String fullId, int reserve4, String reserve6)
     {
         jdbcOperation.updateField("reserve2", reserve4, fullId, this.claz);
 
@@ -351,6 +351,8 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
 
             rst = prepareStatement.executeQuery();
 
+            rst.next();
+
             OutBean out = new OutBean();
 
             out.setFullId(rst.getString("fullid"));
@@ -363,6 +365,8 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         }
         catch (Exception e)
         {
+            e.printStackTrace();
+
             return null;
         }
         finally

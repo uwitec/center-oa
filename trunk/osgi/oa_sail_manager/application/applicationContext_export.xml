@@ -25,4 +25,8 @@
 
 	<osgi:service ref="consignManager" interface="com.china.center.oa.sail.manager.ConsignManager" />
 
+	<osgi:service ref="outBalanceDAO" interface="com.china.center.oa.sail.dao.OutBalanceDAO" />
+
+	<osgi:service ref="baseBalanceDAO" interface="com.china.center.oa.sail.dao.BaseBalanceDAO" />
+
 </beans>

@@ -81,6 +81,16 @@ public class OutBean implements Serializable
      */
     private int status = OutConstant.STATUS_SAVE;
 
+    /**
+     * 开发票状态(0:没有开票 1:开票中 2:全部开票)
+     */
+    private int invoiceStatus = OutConstant.INVOICESTATUS_INIT;
+
+    /**
+     * 开发票的金额
+     */
+    private double invoiceMoney = 0.0d;
+
     private String department = "";
 
     @Join(tagClass = CustomerBean.class, type = JoinType.LEFT)
@@ -117,6 +127,9 @@ public class OutBean implements Serializable
 
     private String description = "";
 
+    /**
+     * 总部核对信息
+     */
     private String checks = "";
 
     private int reday = 0;
@@ -1293,5 +1306,47 @@ public class OutBean implements Serializable
     public void setManagerId(String managerId)
     {
         this.managerId = managerId;
+    }
+
+    /**
+     * @return the flowId
+     */
+    public String getFlowId()
+    {
+        return flowId;
+    }
+
+    /**
+     * @return the invoiceStatus
+     */
+    public int getInvoiceStatus()
+    {
+        return invoiceStatus;
+    }
+
+    /**
+     * @param invoiceStatus
+     *            the invoiceStatus to set
+     */
+    public void setInvoiceStatus(int invoiceStatus)
+    {
+        this.invoiceStatus = invoiceStatus;
+    }
+
+    /**
+     * @return the invoiceMoney
+     */
+    public double getInvoiceMoney()
+    {
+        return invoiceMoney;
+    }
+
+    /**
+     * @param invoiceMoney
+     *            the invoiceMoney to set
+     */
+    public void setInvoiceMoney(double invoiceMoney)
+    {
+        this.invoiceMoney = invoiceMoney;
     }
 }

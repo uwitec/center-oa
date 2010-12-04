@@ -26,7 +26,7 @@ import com.china.center.oa.sail.vo.OutVO;
  */
 public interface OutDAO extends DAO<OutBean, OutVO>
 {
-    boolean modifyOutStatus2(String fullId, int status);
+    boolean modifyOutStatus(String fullId, int status);
 
     /**
      * 获得当前数据库内真是的out存储
@@ -46,7 +46,7 @@ public interface OutDAO extends DAO<OutBean, OutVO>
      * @param reserve6
      * @return
      */
-    boolean updateOutReserve2(String fullId, int reserve4, String reserve6);
+    boolean updateOutReserve(String fullId, int reserve4, String reserve6);
 
     boolean updateCurcredit(String fullId, double curcredit);
 
@@ -71,15 +71,15 @@ public interface OutDAO extends DAO<OutBean, OutVO>
 
     boolean updataInWay(String fullId, int inway);
 
-    boolean modifyOutHadPay2(String fullId, String hadPay);
+    boolean modifyOutHadPay(String fullId, String hadPay);
 
-    boolean modifyReDate2(String fullId, String reDate);
+    boolean modifyReDate(String fullId, String reDate);
 
-    boolean modifyPay2(String fullId, int pay);
+    boolean modifyPay(String fullId, int pay);
 
     boolean modifyTempType(String fullId, int tempType);
 
-    boolean mark2(String fullId, boolean status);
+    boolean mark(String fullId, boolean status);
 
     /**
      * sumNoPayBusiness(客户还没有付款的单据,包括预占的)

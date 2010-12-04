@@ -139,6 +139,30 @@ function del()
 	}
 }
 
+function balance()
+{
+    if (getRadio('fullId').statuss == '3' && getRadio('fullId').outtype == '3')
+    {
+        document.location.href = '../sail/out.do?method=preForAddOutBalance&type=0&outId=' + getRadioValue("fullId");
+    }
+    else
+    {
+        alert('不能操作!');
+    }
+}
+
+function balance2()
+{
+    if (getRadio('fullId').statuss == '3' && getRadio('fullId').outtype == '3')
+    {
+        document.location.href = '../sail/out.do?method=preForAddOutBalance&type=1&outId=' + getRadioValue("fullId");
+    }
+    else
+    {
+        alert('不能操作!');
+    }
+}
+
 function sub()
 {
 	if (getRadio('fullId').statuss == '0' || getRadio('fullId').statuss == '2')
@@ -269,9 +293,7 @@ function load()
 						<select name="outType"
 							class="select_class" values=${outType}>
 							<option value="">--</option>
-							<option value="0">销售出库</option>
-							<option value="1">个人领样</option>
-							<option value="2">零售</option>
+							<p:option type="outType_out"/>
 						</select>
 
 						</td>
@@ -379,8 +401,11 @@ function load()
 					<c:forEach items="${listOut1}" var="item" varStatus="vs">
 						<tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'
 						>
-							<td align="center"><input type="radio" name="fullId" temptype="${item.tempType}"
-								statuss='${item.status}' value="${item.fullId}" ${vs.index== 0 ? "checked" : ""}/></td>
+							<td align="center"><input type="radio" name="fullId" 
+							    temptype="${item.tempType}"
+							    outtype="${item.outType}"
+								statuss='${item.status}' 
+								value="${item.fullId}" ${vs.index== 0 ? "checked" : ""}/></td>
 							<td align="center"
 							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}">${item.mark ? "<font color=blue><B>" : ""}
 							${item.fullId} ${item.mark ? "</B></font>" : ""}</a></td>
@@ -433,9 +458,16 @@ function load()
 			type="button" class="button_class"
 			value="&nbsp;&nbsp;修 改&nbsp;&nbsp;" onclick="modfiy()" />&nbsp;&nbsp;<input
 			type="button" class="button_class"
-			value="&nbsp;&nbsp;提 交&nbsp;&nbsp;" onclick="sub()" />&nbsp;&nbsp; <input
+			value="&nbsp;&nbsp;提 交&nbsp;&nbsp;" onclick="sub()" />&nbsp;&nbsp; 
+			<input
 			type="button" class="button_class"
 			value="&nbsp;&nbsp;删 除&nbsp;&nbsp;" onclick="del()" />&nbsp;&nbsp;
+		<input
+            type="button" class="button_class"
+            value="&nbsp;&nbsp;委托代销结算&nbsp;&nbsp;" onclick="balance()" />&nbsp;&nbsp;
+        <input
+            type="button" class="button_class"
+            value="&nbsp;&nbsp;委托代销退货&nbsp;&nbsp;" onclick="balance2()" />&nbsp;&nbsp;
 		<input
 			type="button" class="button_class"
 			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" /></div>

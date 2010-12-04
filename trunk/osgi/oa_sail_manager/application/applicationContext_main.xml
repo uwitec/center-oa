@@ -26,4 +26,8 @@
 
 	<bean id="consignManager" class="com.china.center.oa.sail.manager.impl.ConsignManagerImpl" />
 
+	<bean id="outBalanceDAO" class="com.china.center.oa.sail.dao.impl.OutBalanceDAOImpl" />
+
+	<bean id="baseBalanceDAO" class="com.china.center.oa.sail.dao.impl.BaseBalanceDAOImpl" />
+
 </beans>
