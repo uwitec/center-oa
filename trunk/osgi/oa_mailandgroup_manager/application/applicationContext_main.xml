@@ -31,6 +31,10 @@
 
 	<bean id="mailGroupFacade" class="com.china.center.oa.mg.facade.impl.MailGroupFacadeImpl" />
 	
-	<bean id="mailCleanManager" class="com.china.center.oa.mail.manager.impl.MailCleanManagerImpl" />
+	<bean id="mailCleanManager" class="com.china.center.oa.mail.manager.impl.MailCleanManagerImpl">
+	   <property name="days">
+	       <value>-180</value>
+	   </property>
+	</bean>
 
 </beans>

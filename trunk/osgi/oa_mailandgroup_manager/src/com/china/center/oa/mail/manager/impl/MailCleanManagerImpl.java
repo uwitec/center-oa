@@ -45,6 +45,8 @@ public class MailCleanManagerImpl implements MailCleanManager
 
     private AttachmentDAO attachmentDAO = null;
 
+    private int days = -180;
+
     /**
      * default constructor
      */
@@ -61,7 +63,7 @@ public class MailCleanManagerImpl implements MailCleanManager
 
         condition.addWhereStr();
 
-        condition.addCondition("logTime", "<=", TimeTools.now( -180));
+        condition.addCondition("logTime", "<=", TimeTools.now(this.days));
 
         mailDAO.deleteEntityBeansByCondition(condition);
 
@@ -142,5 +144,22 @@ public class MailCleanManagerImpl implements MailCleanManager
     public void setAttachmentDAO(AttachmentDAO attachmentDAO)
     {
         this.attachmentDAO = attachmentDAO;
+    }
+
+    /**
+     * @return the days
+     */
+    public int getDays()
+    {
+        return days;
+    }
+
+    /**
+     * @param days
+     *            the days to set
+     */
+    public void setDays(int days)
+    {
+        this.days = days;
     }
 }
