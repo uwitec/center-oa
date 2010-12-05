@@ -198,4 +198,16 @@ public interface StockConstant
     @Defined(key = "stockStype", value = "外协加工")
     int STOCK_STYPE_NSAIL = 2;
 
+    /**
+     * 没有生成库单
+     */
+    @Defined(key = "hasRef", value = "否")
+    int STOCK_ITEM_HASREF_NO = 0;
+
+    /**
+     * 生成库单
+     */
+    @Defined(key = "hasRef", value = "是")
+    int STOCK_ITEM_HASREF_YES = 1;
+
 }

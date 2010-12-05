@@ -26,26 +26,6 @@ function showDiv(id)
 	tooltip.showTable(jmap[id]);
 }
 
-function out(id)
-{
-	if (window.confirm('确定把此采购的产品调出?'))
-	{
-		var sss = window.prompt('请输入运输单号：', '');
-
-		$O('tranNo').value = sss;
-
-		if (!(sss == null || sss == ''))
-		{
-			$O('method').value = 'stockItemChangeToOut';
-			$O('id').value = id;
-			formEntry.submit();
-		}
-		else
-		{
-			alert('请输入运输单号');
-		}
-	}
-}
 </script>
 
 </head>
@@ -158,15 +138,11 @@ function out(id)
 				<td width="10%" align="center">参考价格</td>
 				<td width="10%" align="center">实际价格</td>
 				
-				<c:if test="${user.role != 'COMMON' && user.role != 'MANAGER'}">
 				<td width="15%" align="center">供应商</td>
-				</c:if>
-				<td width="5%" align="center">是否调出</td>
+				<td width="5%" align="center">是否入库</td>
 				<td width="10%" align="center">合计金额</td>
 				<td width="10%" align="center">开单名</td>
-				<c:if test="${out == 1}">
-				<td width="10%" align="center">操作</td>
-				</c:if>
+				
 			</tr>
 
 			<c:forEach items="${bean.itemVO}" var="item" varStatus="vs">
@@ -185,11 +161,19 @@ function out(id)
 
 					<td align="center">${my:formatNum(item.price)}</td>
 
-					<c:if test="${user.role != 'COMMON' && user.role != 'MANAGER'}">
 					<td align="center">${item.providerName}</td>
-					</c:if>
 
-					<td align="center">${item.hasRef == 0 ? "<font color=red>否</font>" : "是"}</td>
+                    <c:if test="${item.hasRef == 0}">
+                    <td align="center">
+                    <font color=red>否</font>
+                    </td>
+                    </c:if>
+                    
+                     <c:if test="${item.hasRef == 1}">
+                     <td align="center">
+                     <a href=../sail/out.do?method=findOut&fow=99&outId=${item.refOutId}>是</a>
+                     </td>
+                    </c:if>
 
 					<td align="center">${my:formatNum(item.total)}</td>
 					
@@ -198,16 +182,7 @@ function out(id)
                                  <p:option type="123"></p:option>
                       </select>
 					</td>
-
-					<c:if test="${out == 1}">
-						<c:if test="${item.hasRef == 0}">
-							<td align="center">
-							<a title="采购调出" href="javascript:out('${item.id}')"> <img
-										src="../images/change.gif" border="0" height="15" width="15">
-							</a>
-							</td>
-						</c:if>
-					</c:if>
+					
 				</tr>
 			</c:forEach>
 		</table>

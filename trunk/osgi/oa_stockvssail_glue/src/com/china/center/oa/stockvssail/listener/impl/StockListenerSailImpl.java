@@ -24,6 +24,7 @@ import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.stock.bean.StockBean;
+import com.china.center.oa.stock.constant.StockConstant;
 import com.china.center.oa.stock.dao.StockItemDAO;
 import com.china.center.oa.stock.listener.StockListener;
 import com.china.center.oa.stock.vo.StockItemVO;
@@ -58,13 +59,7 @@ public class StockListenerSailImpl implements StockListener
     public void onEndStock(User user, StockBean bean)
         throws MYException
     {
-        List<OutBean> beanList = autoToOut(user, bean);
-
-        for (OutBean outBean : beanList)
-        {
-            outManager.coloneOutAndSubmitWithOutAffair(outBean, user,
-                StorageConstant.OPR_STORAGE_OUTBILLIN);
-        }
+        autoToOut(user, bean);
     }
 
     /**
@@ -74,11 +69,11 @@ public class StockListenerSailImpl implements StockListener
      * @param id
      * @param bean
      * @param out
+     * @throws MYException
      */
-    private List<OutBean> autoToOut(final User user, StockBean bean)
+    private void autoToOut(final User user, StockBean bean)
+        throws MYException
     {
-        List<OutBean> beanList = new ArrayList<OutBean>();
-
         List<StockItemVO> items = stockItemDAO.queryEntityVOsByFK(bean.getId());
 
         for (StockItemVO item : items)
@@ -111,6 +106,8 @@ public class StockListenerSailImpl implements StockListener
 
             out.setTotal(item.getTotal());
 
+            out.setInway(OutConstant.IN_WAY_NO);
+
             out.setDescription("采购单自动转换成入库单,采购单单号:" + bean.getId());
 
             BaseBean baseBean = new BaseBean();
@@ -138,10 +135,17 @@ public class StockListenerSailImpl implements StockListener
 
             out.setBaseList(baseList);
 
-            beanList.add(out);
-        }
+            // CORE 采购单生成入库单
+            String fullId = outManager.coloneOutAndSubmitWithOutAffair(out, user,
+                StorageConstant.OPR_STORAGE_OUTBILLIN);
 
-        return beanList;
+            item.setHasRef(StockConstant.STOCK_ITEM_HASREF_YES);
+
+            item.setRefOutId(fullId);
+
+            // 修改采购项的属性
+            stockItemDAO.updateEntityBean(item);
+        }
     }
 
     public String getListenerType()

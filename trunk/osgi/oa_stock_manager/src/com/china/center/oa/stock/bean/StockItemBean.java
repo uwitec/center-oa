@@ -32,18 +32,18 @@ public class StockItemBean implements Serializable
     @FK
     private String stockId = "";
 
-    @Join(tagClass = ProductBean.class, type = JoinType.EQUAL)
+    @Join(tagClass = ProductBean.class)
     private String productId = "";
 
     /**
-     * ref的调拨单号
+     * REF的入库单
      */
     private String refOutId = "";
 
     /**
-     * 是否被ref
+     * 是否入库
      */
-    private int hasRef = 0;
+    private int hasRef = StockConstant.STOCK_ITEM_HASREF_NO;
 
     /**
      * 供应商

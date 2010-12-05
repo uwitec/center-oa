@@ -11,10 +11,12 @@ package com.china.center.oa.stock.manager;
 
 import java.util.List;
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.stock.bean.StockBean;
 import com.china.center.oa.stock.bean.StockItemBean;
+import com.china.center.oa.stock.listener.StockListener;
 import com.china.center.oa.stock.vo.StockVO;
 
 
@@ -26,7 +28,7 @@ import com.china.center.oa.stock.vo.StockVO;
  * @see StockManager
  * @since 1.0
  */
-public interface StockManager
+public interface StockManager extends ListenerManager<StockListener>
 {
     boolean addStockBean(final User user, final StockBean bean)
         throws MYException;

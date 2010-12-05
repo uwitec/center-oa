@@ -402,7 +402,9 @@ function exports()
 					<td align="center" onclick="hrefAndSelect(this)">${item.logTime}</td>
 					
 					<td align="center" onclick="hrefAndSelect(this)">
+					
 					<c:if test="${item.display == 0}">
+					
 						<c:if test="${ltype == '0'}">
 							<a title="提交采购单" href="javascript:sub('${item.id}')"> <img
 								src="../images/opr/realse.gif" border="0" height="15" width="15"></a>
@@ -414,7 +416,7 @@ function exports()
 								src="../images/opr/del.gif" border="0" height="15" width="15"></a>
 						</c:if>
 
-						<c:if test="${ltype == '1'  || ltype == '4' || ltype == '5'}">
+						<c:if test="${ltype == '1'  || ltype == '4' || ltype == '5' || ltype == '6'}">
 							<a title="审批通过采购单" href="javascript:passTo('${item.id}', '${ltype}', '${item.stype}')"> <img id="img_${vs.index}"
 								src="../images/opr/realse.gif" border="0" height="15" width="15"></a>
 
@@ -454,20 +456,16 @@ function exports()
 									src="../images/opr/end.gif" border="0" height="15" width="15"></a>
 							</c:if>
 						</c:if>
+						
 					</c:if> 
 					
 					
-					<c:if test="${ltype == '4'}">
-						<c:if test="${item.status == 7}">
+					<c:if test="${ltype == '7'}">
+						<c:if test="${item.status == 6}">
 							<a title="采购结束" href="javascript:end('${item.id}')"> <img id="end_img_${vs.index}"
 								src="../images/opr/end.gif" border="0" height="15" width="15"></a>
 						</c:if>
 					
-					</c:if> 
-					
-					<c:if test="${item.status == 8}">
-						<a title="采购生成调出" href="javascript:out('${item.id}')"> <img
-							src="../images/opr/change.gif" border="0" height="15" width="15"></a>
 					</c:if> 
 					
 					</td>

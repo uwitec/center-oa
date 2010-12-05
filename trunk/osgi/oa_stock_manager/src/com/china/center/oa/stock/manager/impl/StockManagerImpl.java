@@ -9,12 +9,14 @@
 package com.china.center.oa.stock.manager.impl;
 
 
+import java.util.Collection;
 import java.util.List;
 
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.note.bean.ShortMessageTaskBean;
@@ -40,6 +42,7 @@ import com.china.center.oa.stock.constant.StockConstant;
 import com.china.center.oa.stock.dao.PriceAskProviderDAO;
 import com.china.center.oa.stock.dao.StockDAO;
 import com.china.center.oa.stock.dao.StockItemDAO;
+import com.china.center.oa.stock.listener.StockListener;
 import com.china.center.oa.stock.manager.StockManager;
 import com.china.center.oa.stock.vo.PriceAskProviderBeanVO;
 import com.china.center.oa.stock.vo.StockItemVO;
@@ -60,7 +63,7 @@ import com.china.center.tools.TimeTools;
  * @since 1.0
  */
 @Exceptional
-public class StockManagerImpl implements StockManager
+public class StockManagerImpl extends AbstractListenerManager<StockListener> implements StockManager
 {
     private StockDAO stockDAO = null;
 
@@ -178,11 +181,6 @@ public class StockManagerImpl implements StockManager
     {
         JudgeTools.judgeParameterIsNull(user, id);
 
-        if ( !user.getLocationId().equals(this.stockLocation))
-        {
-            throw new MYException("只有采购部的人员才能结束采购单");
-        }
-
         String fullId = "";
 
         StockBean bean = stockDAO.find(id);
@@ -192,14 +190,21 @@ public class StockManagerImpl implements StockManager
             throw new MYException("采购单不存在");
         }
 
-        if (bean.getStatus() != StockConstant.STOCK_STATUS_END)
+        // 结束和和经理通过都是可以结束采购单的
+        if (bean.getStatus() != StockConstant.STOCK_STATUS_END
+            && bean.getStatus() != StockConstant.STOCK_STATUS_STOCKMANAGERPASS)
         {
             throw new MYException("采购单不存在采购中,不能结束采购");
         }
 
-        // TODO_OSGI 采购入库
+        // 采购入库
+        Collection<StockListener> listenerMapValues = this.listenerMapValues();
 
-        // TODO 采购到货后生成管理凭证
+        // TODO_OSGI 采购到货后生成管理凭证
+        for (StockListener stockListener : listenerMapValues)
+        {
+            stockListener.onEndStock(user, bean);
+        }
 
         // 更新状态并且记录日志
         updateStockStatus(user, id, StockConstant.STOCK_STATUS_LASTEND,

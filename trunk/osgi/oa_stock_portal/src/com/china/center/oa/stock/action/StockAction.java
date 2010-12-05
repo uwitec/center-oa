@@ -450,9 +450,9 @@ public class StockAction extends DispatchAction
         {
             User user = Helper.getUser(request);
 
-            String fullId = stockManager.endStock(user, id);
+            stockManager.endStock(user, id);
 
-            request.setAttribute(KeyConstant.MESSAGE, "成功结束采购单,并自动生成了入库单:" + fullId);
+            request.setAttribute(KeyConstant.MESSAGE, "成功结束采购单,并自动生成了入库单");
         }
         catch (MYException e)
         {
@@ -1198,6 +1198,12 @@ public class StockAction extends DispatchAction
 
         map.put(StockConstant.STOCK_STATUS_STOCKPASS, 5);
 
+        map.put(StockConstant.STOCK_STATUS_STOCKPASS, 6);
+
+        map.put(StockConstant.STOCK_STATUS_STOCKMANAGERPASS, 7);
+
+        map.put(StockConstant.STOCK_STATUS_END, 8);
+
         if (map.get(stockBeanVO.getStatus()) != null && map.get(stockBeanVO.getStatus()) == type)
         {
             stockBeanVO.setDisplay(StockConstant.DISPLAY_YES);
@@ -1234,6 +1240,16 @@ public class StockAction extends DispatchAction
             condtion.addCondition("StockBean.stafferId", "=", user.getStafferId());
         }
 
+        // manager
+        if (type == 1)
+        {
+            // 总部的manager可以看到所有的
+            if ( !AuthHelper.containAuth(user, AuthConstant.STOCK_NOTICE_CEO))
+            {
+                condtion.addCondition("StockBean.locationId", "=", user.getLocationId());
+            }
+        }
+
         // NETSTOCK
         if (type == 2)
         {
@@ -1245,14 +1261,18 @@ public class StockAction extends DispatchAction
             condtion.addIntCondition("StockBean.type", "=", PriceConstant.PRICE_ASK_TYPE_INNER);
         }
 
-        // manager
-        if (type == 1)
+        // 董事长(只能审核价格不是最小的)
+        if (type == 5)
         {
-            // 总部的manager可以看到所有的
-            if ( !AuthHelper.containAuth(user, AuthConstant.STOCK_NOTICE_CEO))
-            {
-                condtion.addCondition("StockBean.locationId", "=", user.getLocationId());
-            }
+            condtion.addIntCondition("StockBean.exceptStatus", "=",
+                StockConstant.EXCEPTSTATUS_EXCEPTION_MIN);
+        }
+
+        // 董事长(只能审核钱过多的)
+        if (type == 6)
+        {
+            condtion.addIntCondition("StockBean.exceptStatus", "=",
+                StockConstant.EXCEPTSTATUS_EXCEPTION_MONEY);
         }
 
         String status = request.getParameter("status");
@@ -1274,8 +1294,18 @@ public class StockAction extends DispatchAction
             map.put(3, StockConstant.STOCK_STATUS_MANAGERPASS);
             // STOCK
             map.put(4, StockConstant.STOCK_STATUS_PRICEPASS);
+
             // STOCKMANAGER
             map.put(5, StockConstant.STOCK_STATUS_STOCKPASS);
+
+            // 董事长
+            map.put(6, StockConstant.STOCK_STATUS_STOCKPASS);
+
+            // STOCK(结束采购)
+            map.put(7, StockConstant.STOCK_STATUS_STOCKMANAGERPASS);
+
+            // STOCK(生成入库)
+            map.put(8, StockConstant.STOCK_STATUS_END);
 
             for (Map.Entry<Integer, Integer> entry : map.entrySet())
             {
