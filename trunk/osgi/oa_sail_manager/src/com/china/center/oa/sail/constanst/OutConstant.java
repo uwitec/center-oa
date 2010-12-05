@@ -39,26 +39,6 @@ public interface OutConstant
     int OUT_TYPE_INBILL = 1;
 
     /**
-     * 合成单
-     */
-    int OUT_TYPE_COMPOSE = 2;
-
-    /**
-     * 产品合分
-     */
-    int OUTTYPES_COMPOSE = 7;
-
-    /**
-     * 仓区移动
-     */
-    int OUT_TYPE_MOVE = 8;
-
-    /**
-     * 自动修正
-     */
-    int OUT_TYPE_MODIFY = 9;
-
-    /**
      * 信用正常
      */
     int OUT_CREDIT_COMMON = 0;
@@ -142,6 +122,18 @@ public interface OutConstant
     int STATUS_LOCATION_MANAGER_CHECK = 8;
 
     /**
+     * 待总裁审批
+     */
+    @Defined(key = "outStatus", value = "待总裁审批")
+    int STATUS_CEO_CHECK = 9;
+
+    /**
+     * 待总裁审批(入库单专用)
+     */
+    @Defined(key = "outStatus", value = "待董事长审批")
+    int STATUS_CHAIRMA_CHECK = 10;
+
+    /**
      * 未付款
      */
     @Defined(key = "outPay", value = "未付款")
@@ -177,18 +169,19 @@ public interface OutConstant
     /**
      * 非在途
      */
-    @Defined(key = "outWay", value = "非在途")
+    @Defined(key = "inway", value = "非在途")
     int IN_WAY_NO = 0;
 
     /**
      * 在途
      */
-    @Defined(key = "outWay", value = "在途")
+    @Defined(key = "inway", value = "在途")
     int IN_WAY = 1;
 
     /**
      * 在途结束
      */
+    @Defined(key = "inway", value = "在途结束")
     int IN_WAY_OVER = 2;
 
     /**
@@ -216,44 +209,39 @@ public interface OutConstant
     int OUTTYPE_OUT_CONSIGN = 3;
 
     /**
+     * 赠送
+     */
+    @Defined(key = "outType_out", value = "赠送")
+    int OUTTYPE_OUT_PRESENT = 4;
+
+    /**
      * 采购入库
      */
+    @Defined(key = "outType_in", value = "采购入库")
     int OUTTYPE_IN_COMMON = 0;
 
     /**
      * 调出
      */
+    @Defined(key = "outType_in", value = "调拨")
     int OUTTYPE_IN_MOVEOUT = 1;
-
-    /**
-     * 盘亏出库
-     */
-    int OUTTYPE_IN_PANGKUI = 2;
-
-    /**
-     * 盘盈入库
-     */
-    int OUTTYPE_IN_PANGYING = 3;
-
-    /**
-     * 退换货入库
-     */
-    int OUTTYPE_IN_EXCHANGE = 5;
 
     /**
      * 报废出库
      */
-    int OUTTYPE_IN_DROP = 6;
+    @Defined(key = "outType_in", value = "报废出库")
+    int OUTTYPE_IN_DROP = 2;
+
+    /**
+     * 系统纠正
+     */
+    @Defined(key = "outType_in", value = "系统纠正")
+    int OUTTYPE_IN_ERRORP = 3;
 
     /**
      * 采购退货
      */
     int OUTTYPE_IN_RECEDE = 7;
-
-    /**
-     * 调入
-     */
-    int OUTTYPE_IN_MOVEIN = 8;
 
     /**
      * 不需要发票

@@ -159,7 +159,7 @@ public class OutBean implements Serializable
     /**
      * 0：非在途 1：在途（入库单使用 调出）
      */
-    private int inway = 0;
+    private int inway = OutConstant.IN_WAY_NO;
 
     /**
      * 超期天数 如果未超期就是0
@@ -180,7 +180,7 @@ public class OutBean implements Serializable
     private String destinationId = "0";
 
     /**
-     * 调出的相关OUT
+     * 调出的相关OUT(或者是采购的原始单据)
      */
     private String refOutFullId = "";
 

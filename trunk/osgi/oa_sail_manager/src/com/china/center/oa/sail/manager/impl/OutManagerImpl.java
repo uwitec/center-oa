@@ -211,7 +211,6 @@ public class OutManagerImpl implements OutManager
 
         outBean.setTotal(MathTools.parseDouble(totalss));
 
-        // TODO 发现状态改变需要记录日志的(主要是日志的完备性) 保存库单
         outBean.setStatus(OutConstant.STATUS_SAVE);
 
         outBean.setInway(OutConstant.IN_WAY_NO);
@@ -261,6 +260,13 @@ public class OutManagerImpl implements OutManager
             outBean.setHasInvoice(OutConstant.HASINVOICE_YES);
         }
 
+        // 赠送的价格为0
+        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL
+            && outBean.getOutType() == OutConstant.OUTTYPE_OUT_PRESENT)
+        {
+            outBean.setTotal(0.0d);
+        }
+
         // 增加管理员操作在数据库事务中完成
         TransactionTemplate tran = new TransactionTemplate(transactionManager);
         try
@@ -305,7 +311,17 @@ public class OutManagerImpl implements OutManager
 
                         base.setProductName(nameList[i]);
                         base.setUnit(unitList[i]);
-                        base.setPrice(MathTools.parseDouble(priceList[i]));
+
+                        // 赠送的价格为0
+                        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL
+                            && outBean.getOutType() == OutConstant.OUTTYPE_OUT_PRESENT)
+                        {
+                            base.setPrice(0.0d);
+                        }
+                        else
+                        {
+                            base.setPrice(MathTools.parseDouble(priceList[i]));
+                        }
                         base.setAmount(MathTools.parseInt(amontList[i]));
                         base.setValue(MathTools.parseDouble(totalList[i]));
                         base.setShowId(showIdList[i]);
@@ -530,9 +546,16 @@ public class OutManagerImpl implements OutManager
             // 销售单处理
             try
             {
+                // 分公司经理担保
                 if (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER)
                 {
                     nextStatus = OutConstant.STATUS_LOCATION_MANAGER_CHECK;
+                }
+
+                // 赠送流程
+                if (outBean.getOutType() == OutConstant.OUTTYPE_OUT_PRESENT)
+                {
+                    nextStatus = OutConstant.STATUS_CEO_CHECK;
                 }
 
                 outDAO.modifyOutStatus(fullId, nextStatus);
@@ -740,7 +763,7 @@ public class OutManagerImpl implements OutManager
             {
                 outDAO.modifyOutStatus(fullId, OutConstant.STATUS_PASS);
 
-                result = 3;
+                result = OutConstant.STATUS_PASS;
             }
             catch (Exception e)
             {
@@ -1127,7 +1150,7 @@ public class OutManagerImpl implements OutManager
                         }
                     }
 
-                    // 结算中心通过 修改manager的入库时间
+                    // 结算中心通过/总裁通过 修改manager的入库时间
                     if (newNextStatus == OutConstant.STATUS_MANAGER_PASS)
                     {
                         outDAO.modifyManagerTime(outBean.getFullId(), TimeTools.now());
@@ -1169,7 +1192,7 @@ public class OutManagerImpl implements OutManager
                         // TODO 销售单是发货后产生管理凭证
                     }
 
-                    // 结算中心审核通过后，中心仓库的销售单转到物流管理员，同时自动生成发货单
+                    // 结算中心审核通过后/总裁通过，中心仓库的销售单转到物流管理员，同时自动生成发货单
                     if (newNextStatus == OutConstant.STATUS_MANAGER_PASS
                         && depot.getType() == DepotConstant.DEPOT_TYPE_CENTER)
                     {
@@ -1371,6 +1394,8 @@ public class OutManagerImpl implements OutManager
 
                     addOutLog(fullId, user, outBean, "核对", SailConstant.OPR_OUT_PASS,
                         OutConstant.STATUS_SEC_PASS);
+
+                    notifyOut(outBean, user, 3);
 
                     return Boolean.TRUE;
                 }
@@ -1937,6 +1962,10 @@ public class OutManagerImpl implements OutManager
         else if (type == 2)
         {
             notify.setMessage(out.getFullId() + "已经被[" + user.getStafferName() + "]确认付款");
+        }
+        else if (type == 3)
+        {
+            notify.setMessage(out.getFullId() + "已经被[" + user.getStafferName() + "]总部核对,单据流程结束");
         }
         else
         {

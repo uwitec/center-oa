@@ -129,21 +129,6 @@ public class LogBean implements Serializable
             return "入库单";
         }
 
-        if (this.type == OutConstant.OUT_TYPE_COMPOSE)
-        {
-            return "产品合成/分拆";
-        }
-
-        if (this.type == OutConstant.OUT_TYPE_MOVE)
-        {
-            return "仓区移动";
-        }
-
-        if (this.type == OutConstant.OUT_TYPE_MODIFY)
-        {
-            return "自动修正";
-        }
-
         return "未知类型";
     }
 
@@ -192,21 +177,6 @@ public class LogBean implements Serializable
         if (this.outType == 6)
         {
             return "报废出库";
-        }
-
-        if (this.outType == OutConstant.OUTTYPES_COMPOSE)
-        {
-            return "产品合分";
-        }
-
-        if (this.outType == OutConstant.OUT_TYPE_MOVE)
-        {
-            return "仓区移动";
-        }
-
-        if (this.outType == OutConstant.OUT_TYPE_MODIFY)
-        {
-            return "自动修正";
         }
 
         return "未知类型";

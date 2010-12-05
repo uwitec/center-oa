@@ -163,6 +163,11 @@ public abstract class OutHelper
             return "待分公司经理审核";
         }
 
+        if (i == 9)
+        {
+            return "待总裁审批";
+        }
+
         return "";
     }
 

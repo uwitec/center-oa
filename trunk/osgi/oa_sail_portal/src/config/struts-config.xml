@@ -15,17 +15,9 @@
 			<forward name="addOutBalance" path="/sail/addOutBalance.jsp" />
 			<forward name="queryOutBalance" path="/sail/queryOutBalance.jsp" />
 			<forward name="detailOutBalance" path="/sail/detailOutBalance.jsp" />
-			<forward name="processOut" path="/sail/processOut.jsp" />
-			<forward name="modifyOut" path="/sail/modifyOut.jsp" />
-			<forward name="modifyOut1" path="/sail/modifyOut1.jsp" />
-			<forward name="listOut2" path="/sail/listOutInAdmin.jsp" />
-			<forward name="listOut3" path="/sail/listOutInSec.jsp" />
-			<forward name="rptProvider" path="/sail/rptProvider.jsp" />
-			<forward name="rptAllCustomer" path="/sail/rptAllCustomer.jsp" />
-			<forward name="rptCustomerList"
-				path="/sail/rptCustomer.jsp" />
-			<forward name="warnOutList"
-				path="/sail/flagOutInCommon.jsp" redirect="false" />
+			<forward name="addBuy" path="/sail/addBuy.jsp" />
+			<forward name="querySelfBuy" path="/sail/querySelfBuy.jsp" />
+			<forward name="detailBuy" path="/sail/detailBuy.jsp" />
 		</action>
 		
 		<action path="/sail/transport" parameter="method"
