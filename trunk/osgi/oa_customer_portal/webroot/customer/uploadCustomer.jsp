@@ -34,7 +34,7 @@ function checkValue()
 function exportCur()
 {
     document.location.target = '_blank';
-    document.location.href = '../customer/customer.do?method=exportNotPay';
+    document.location.href = '../sail/out.do?method=exportNotPay';
 }
 
 </script>

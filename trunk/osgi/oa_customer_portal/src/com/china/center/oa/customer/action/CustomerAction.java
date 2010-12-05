@@ -72,7 +72,6 @@ import com.china.center.oa.customer.manager.CustomerManager;
 import com.china.center.oa.customer.vo.CustomerApplyVO;
 import com.china.center.oa.customer.vo.CustomerHisVO;
 import com.china.center.oa.customer.vo.CustomerVO;
-import com.china.center.oa.customer.wrap.NotPayWrap;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.CityBean;
 import com.china.center.oa.publics.bean.LocationBean;
@@ -2178,123 +2177,6 @@ public class CustomerAction extends DispatchAction
         request.setAttribute("query", query);
 
         return mapping.findForward("commonQuery");
-    }
-
-    /**
-     * export
-     * 
-     * @param mapping
-     * @param form
-     * @param request
-     * @param reponse
-     * @return
-     * @throws ServletException
-     */
-    public ActionForward exportNotPay(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse reponse)
-        throws ServletException
-    {
-        // TODO 应收客户导出在OutQueryDAOImpl里面实现了,转移到sail里面导出
-        List<NotPayWrap> beanList = null;// outStatDAO.listNotPayWrap();
-
-        OutputStream out = null;
-
-        String filenName = null;
-
-        filenName = "NotPay_" + TimeTools.now("MMddHHmmss") + ".xls";
-
-        if (beanList.size() == 0)
-        {
-            return null;
-        }
-
-        reponse.setContentType("application/x-dbf");
-
-        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
-
-        WritableWorkbook wwb = null;
-
-        WritableSheet ws = null;
-
-        try
-        {
-            out = reponse.getOutputStream();
-
-            // create a excel
-            wwb = Workbook.createWorkbook(out);
-
-            ws = wwb.createSheet("NOTPAY", 0);
-
-            int i = 0, j = 0;
-
-            NotPayWrap element = null;
-
-            WritableFont font = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD, false,
-                jxl.format.UnderlineStyle.NO_UNDERLINE, jxl.format.Colour.BLUE);
-
-            WritableFont font2 = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD, false,
-                jxl.format.UnderlineStyle.NO_UNDERLINE, jxl.format.Colour.BLACK);
-
-            WritableCellFormat format = new WritableCellFormat(font);
-
-            WritableCellFormat format2 = new WritableCellFormat(font2);
-
-            ws.addCell(new Label(j++ , i, "客户名称", format));
-            ws.addCell(new Label(j++ , i, "客户编码", format));
-            ws.addCell(new Label(j++ , i, "信用等级", format));
-            ws.addCell(new Label(j++ , i, "信用分数", format));
-            ws.addCell(new Label(j++ , i, "应收账款", format));
-
-            for (Iterator iter = beanList.iterator(); iter.hasNext();)
-            {
-                element = (NotPayWrap)iter.next();
-
-                j = 0;
-                i++ ;
-
-                ws.addCell(new Label(j++ , i, element.getCname()));
-                ws.addCell(new Label(j++ , i, element.getCcode()));
-
-                ws.addCell(new Label(j++ , i, element.getCreditName()));
-
-                ws.addCell(new jxl.write.Number(j++ , i, element.getCreditVal()));
-
-                ws.addCell(new jxl.write.Number(j++ , i, element.getNotPay(), format2));
-
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-
-            return null;
-        }
-        finally
-        {
-            if (wwb != null)
-            {
-                try
-                {
-                    wwb.write();
-                    wwb.close();
-                }
-                catch (Exception e1)
-                {
-                }
-            }
-            if (out != null)
-            {
-                try
-                {
-                    out.close();
-                }
-                catch (IOException e1)
-                {
-                }
-            }
-        }
-
-        return null;
     }
 
     /**

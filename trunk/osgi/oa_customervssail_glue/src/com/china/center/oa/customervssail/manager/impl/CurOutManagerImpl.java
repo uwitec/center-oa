@@ -97,6 +97,9 @@ public class CurOutManagerImpl implements CurOutManager
     {
     }
 
+    /**
+     * 定期清理客户信用日志,防止日志过多
+     */
     public void deleteHis()
     {
         final ConditionParse condition = new ConditionParse();
@@ -126,7 +129,7 @@ public class CurOutManagerImpl implements CurOutManager
     }
 
     /**
-     * TODO 定期清理客户信用日志,防止日志过多 客户统计
+     * 客户统计
      */
     public void statOut()
     {
