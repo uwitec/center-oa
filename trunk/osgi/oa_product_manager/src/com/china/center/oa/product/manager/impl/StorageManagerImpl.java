@@ -16,6 +16,7 @@ import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.expression.Expression;
 import com.china.center.oa.product.bean.StorageBean;
+import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.dao.StorageDAO;
 import com.china.center.oa.product.dao.StorageRelationDAO;
 import com.china.center.oa.product.manager.StorageManager;
@@ -87,6 +88,11 @@ public class StorageManagerImpl implements StorageManager
         if (old == null)
         {
             throw new MYException("数据错误,请确认操作");
+        }
+
+        if (old.getId().equals(DepotConstant.CENTER_STORAGE_ID))
+        {
+            throw new MYException("初始化数据不能删除,请确认操作");
         }
 
         // 储位里面有产品是不能删除的(这里是统计的产品的合计数量)

@@ -64,7 +64,7 @@ public class DepotManagerImpl extends AbstractListenerManager<DepotListener> imp
      *      com.china.center.oa.product.bean.DepotBean)
      */
     @Transactional(rollbackFor = MYException.class)
-    public boolean addDepotBean(User user, DepotBean bean)
+    public boolean addDepot(User user, DepotBean bean)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, bean);
@@ -117,7 +117,7 @@ public class DepotManagerImpl extends AbstractListenerManager<DepotListener> imp
      *      java.lang.String)
      */
     @Transactional(rollbackFor = MYException.class)
-    public boolean deleteDepotBean(User user, String id)
+    public boolean deleteDepot(User user, String id)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, id);
@@ -127,6 +127,11 @@ public class DepotManagerImpl extends AbstractListenerManager<DepotListener> imp
         if (old == null)
         {
             throw new MYException("数据错误,请确认操作");
+        }
+
+        if (old.getId().equals(DepotConstant.CENTER_DEPOT_ID))
+        {
+            throw new MYException("初始化数据不能删除,请确认操作");
         }
 
         // 是否存在仓区
@@ -155,7 +160,7 @@ public class DepotManagerImpl extends AbstractListenerManager<DepotListener> imp
      *      com.china.center.oa.product.bean.DepotBean)
      */
     @Transactional(rollbackFor = MYException.class)
-    public boolean updateDepotBean(User user, DepotBean bean)
+    public boolean updateDepot(User user, DepotBean bean)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, bean);

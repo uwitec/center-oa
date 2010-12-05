@@ -26,13 +26,13 @@ import com.china.center.oa.product.listener.DepotListener;
  */
 public interface DepotManager extends ListenerManager<DepotListener>
 {
-    boolean addDepotBean(User user, DepotBean bean)
+    boolean addDepot(User user, DepotBean bean)
         throws MYException;
 
-    boolean updateDepotBean(User user, DepotBean bean)
+    boolean updateDepot(User user, DepotBean bean)
         throws MYException;
 
-    boolean deleteDepotBean(User user, String id)
+    boolean deleteDepot(User user, String id)
         throws MYException;
 
 }

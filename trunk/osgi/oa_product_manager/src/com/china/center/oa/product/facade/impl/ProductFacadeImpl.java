@@ -402,7 +402,7 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
 
         if (containAuth(user, AuthConstant.DEPOT_OPR))
         {
-            return depotManager.addDepotBean(user, bean);
+            return depotManager.addDepot(user, bean);
         }
         else
         {
@@ -421,7 +421,7 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
 
         if (containAuth(user, AuthConstant.DEPOT_OPR))
         {
-            return depotManager.deleteDepotBean(user, id);
+            return depotManager.deleteDepot(user, id);
         }
         else
         {
@@ -440,7 +440,7 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
 
         if (containAuth(user, AuthConstant.DEPOT_OPR))
         {
-            return depotManager.updateDepotBean(user, bean);
+            return depotManager.updateDepot(user, bean);
         }
         else
         {

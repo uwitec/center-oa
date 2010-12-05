@@ -15,6 +15,7 @@ import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.expression.Expression;
 import com.china.center.oa.product.bean.DepotpartBean;
+import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.dao.DepotpartDAO;
 import com.china.center.oa.product.dao.StorageDAO;
 import com.china.center.oa.product.manager.DepotpartManager;
@@ -119,6 +120,11 @@ public class DepotpartManagerImpl implements DepotpartManager
         if (old == null)
         {
             throw new MYException("数据错误,请确认操作");
+        }
+
+        if (old.getId().equals(DepotConstant.CENTER_DEPOTPART_ID))
+        {
+            throw new MYException("初始化数据不能删除,请确认操作");
         }
 
         if (storageDAO.countByFK(id) > 0)

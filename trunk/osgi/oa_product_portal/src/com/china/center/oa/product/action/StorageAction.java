@@ -275,13 +275,19 @@ public class StorageAction extends DispatchAction
         return mapping.findForward("listStorageLog1");
     }
 
+    /**
+     * setCondition
+     * 
+     * @param request
+     * @param condition
+     */
     private void setCondition(HttpServletRequest request, ConditionParse condition)
     {
         String productId = request.getParameter("productId");
 
         String depotpartId = request.getParameter("depotpartId");
 
-        String depotId = request.getParameter("depotId");
+        String locationId = request.getParameter("locationId");
 
         String priceKey = request.getParameter("priceKey");
 
@@ -292,9 +298,9 @@ public class StorageAction extends DispatchAction
             condition.addCondition("StorageLogBean.depotpartId", "=", depotpartId);
         }
 
-        if ( !StringTools.isNullOrNone(depotId))
+        if ( !StringTools.isNullOrNone(locationId))
         {
-            condition.addCondition("StorageLogBean.depotId", "=", depotId);
+            condition.addCondition("StorageLogBean.locationId", "=", locationId);
         }
 
         if ( !StringTools.isNullOrNone(priceKey))
@@ -1034,13 +1040,13 @@ public class StorageAction extends DispatchAction
 
         String depotpartId = request.getParameter("depotpartId");
 
-        String depotId = request.getParameter("depotId");
+        String locationId = request.getParameter("locationId");
 
         ConditionParse condtion = new ConditionParse();
 
         condtion.addWhereStr();
 
-        condtion.addCondition("StorageRelationBean.locationId", "=", depotId);
+        condtion.addCondition("StorageRelationBean.locationId", "=", locationId);
 
         if ( !StringTools.isNullOrNone(name))
         {

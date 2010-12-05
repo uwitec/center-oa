@@ -485,6 +485,11 @@ public interface AuthConstant
     String STOCK_NOTICE_CEO = "1308";
 
     /**
+     * 结束采购(采购主管)
+     */
+    String STOCK_PRICE_END = "1309";
+
+    /**
      * 提交库单(业务员)
      */
     String SAIL_SUBMIT = "1401";
@@ -543,4 +548,24 @@ public interface AuthConstant
      * 运输管理
      */
     String SAIL_TRANSPORT_MANAGER = "1412";
+
+    /**
+     * 提交入库单
+     */
+    String BUY_SUBMIT = "1501";
+
+    /**
+     * 入库单-分公司经理审批
+     */
+    String BUY_LOCATION_MANAGER = "1502";
+
+    /**
+     * 入库单-总裁审核
+     */
+    String BUY_CEO = "1503";
+
+    /**
+     * 入库单-董事长审核
+     */
+    String BUY_CHAIRMA = "1504";
 }

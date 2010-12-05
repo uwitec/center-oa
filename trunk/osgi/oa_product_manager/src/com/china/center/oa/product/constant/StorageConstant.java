@@ -41,7 +41,7 @@ public interface StorageConstant
     int OPR_STORAGE_OUTBILL = 2;
 
     /**
-     * 入库单
+     * 采购入库
      */
     @Defined(key = "storageType", value = "采购入库")
     int OPR_STORAGE_OUTBILLIN = 3;
