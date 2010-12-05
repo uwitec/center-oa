@@ -30,5 +30,7 @@
 	<bean id="mailMangaer" class="com.china.center.oa.mail.manager.impl.MailMangaerImpl" />
 
 	<bean id="mailGroupFacade" class="com.china.center.oa.mg.facade.impl.MailGroupFacadeImpl" />
+	
+	<bean id="mailCleanManager" class="com.china.center.oa.mail.manager.impl.MailCleanManagerImpl" />
 
 </beans>
