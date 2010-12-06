@@ -114,6 +114,7 @@
 			<classpath refid="@dot.classpath" />
 			<src path="src/" />
 			<compilerarg value="-Xlint:unchecked" />
+			<compilerarg value="-Xlint:deprecation" />
 		</javac>
 		<antcall target="delete_lib" />
 		<!-- Copy necessary resources -->
