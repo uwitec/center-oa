@@ -95,6 +95,12 @@ public interface StorageConstant
     int OPR_STORAGE_BALANCE = 10;
 
     /**
+     * 调拨/报废/纠错
+     */
+    @Defined(key = "storageType", value = "调拨/报废/纠错")
+    int OPR_STORAGE_INOTHER = 11;
+
+    /**
      * 公共的职员
      */
     String PUBLIC_STAFFER = "0";

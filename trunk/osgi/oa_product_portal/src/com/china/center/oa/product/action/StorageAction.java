@@ -1040,13 +1040,13 @@ public class StorageAction extends DispatchAction
 
         String depotpartId = request.getParameter("depotpartId");
 
-        String locationId = request.getParameter("locationId");
+        String depotId = request.getParameter("depotId");
 
         ConditionParse condtion = new ConditionParse();
 
         condtion.addWhereStr();
 
-        condtion.addCondition("StorageRelationBean.locationId", "=", locationId);
+        condtion.addCondition("StorageRelationBean.locationId", "=", depotId);
 
         if ( !StringTools.isNullOrNone(name))
         {
