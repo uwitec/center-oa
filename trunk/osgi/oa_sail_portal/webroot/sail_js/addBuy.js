@@ -189,6 +189,7 @@ function clears()
 {
 	document.getElementById('unAmount').value = '';
 	document.getElementById('unAmount').title = '';
+	document.getElementById('unAmount').oncheck = '';
 	document.getElementById('unPrice').value = '';
 	document.getElementById('unProductName').value = '';
 	document.getElementById('unProductName').productid = '';
@@ -214,7 +215,7 @@ function clearArray(array, flag)
 		array[i].value = '';
 		
 		if (flag)
-        array[i].oncheck = '';
+		array[i].oncheck = '';
 		
 		if (array[i].productid)
 		{
@@ -250,7 +251,8 @@ function getProductRelation(ox)
         
         var os = oo.parentNode.parentNode;
         os.cells[2].childNodes[0].title = '当前产品的最大数量:' + ox[0].pamount;
-        os.cells[2].childNodes[0].oncheck = 'range(0, ' + ox[0].pamount + ')';
+        os.cells[2].childNodes[0].oncheck = 'range(-' + ox[0].pamount + ')';
+        os.cells[3].childNodes[0].value = ox[0].pprice;
         os.cells[5].childNodes[0].value = ox[0].pprice;
         os.cells[6].childNodes[0].value =  ox[0].pdepotpartname + '-->' + ox[0].pstaffername;
     }
@@ -269,7 +271,8 @@ function getProductRelation(ox)
         setObj(inps[0], ox[i]);
         
         inps[1].title = '当前产品的最大数量:' + ox[i].pamount;
-        inps[1].oncheck = 'range(0, ' + ox[i].pamount + ')';
+        inps[1].oncheck = 'range(-' + ox[i].pamount + ')';
+        inps[2].value = ox[i].pprice;
         inps[4].value = ox[i].pprice;
         inps[5].value = ox[i].pdepotpartname + '-->' + ox[i].pstaffername;
     }

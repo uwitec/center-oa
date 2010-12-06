@@ -190,9 +190,9 @@ public class OutBean implements Serializable
     private String tranNo = "";
 
     /**
-     * 销售单是否处理
+     * 入库单的时候是调出还是调入
      */
-    private int reserve1 = 0;
+    private int reserve1 = OutConstant.MOVEOUT_OUT;
 
     /**
      * 客户是否超支(0:没有 1:超支)

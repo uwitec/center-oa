@@ -244,7 +244,8 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
             return 0;
         }
 
-        return (Integer)count;
+        // 负数
+        return -(Integer)count;
     }
 
     public Integer sumNotEndProductInOutByStorageRelation(String productId, String depotpartId,

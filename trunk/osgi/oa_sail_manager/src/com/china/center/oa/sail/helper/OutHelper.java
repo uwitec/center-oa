@@ -219,7 +219,7 @@ public abstract class OutHelper
             // 调动分为两个单据 一个是源头的调出入库单 一个是目的的调入入库单
             // 源头调出后状态处于提交态,此时可以驳回的
             if (outBean.getStatus() == OutConstant.STATUS_SUBMIT
-                && outBean.getType() != OutConstant.INBILL_OUT)
+                && outBean.getType() != OutConstant.OUTTYPE_IN_MOVEOUT)
             {
                 return true;
             }
@@ -227,6 +227,42 @@ public abstract class OutHelper
             {
                 return false;
             }
+        }
+
+        return false;
+    }
+
+    /**
+     * 是否调入
+     * 
+     * @param outBean
+     * @return
+     */
+    public static boolean isMoveIn(OutBean outBean)
+    {
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT
+            && outBean.getReserve1() == OutConstant.MOVEOUT_IN)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 是否调出
+     * 
+     * @param outBean
+     * @return
+     */
+    public static boolean isMoveOut(OutBean outBean)
+    {
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT
+            && outBean.getReserve1() == OutConstant.MOVEOUT_OUT)
+        {
+            return true;
         }
 
         return false;

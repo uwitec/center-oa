@@ -70,7 +70,7 @@ function opens(obj)
 									height="6"></td>
 								<td class="caption"><strong>填写入库单信息:</strong>
 								<font color="blue">源仓库：</font>
-								<select name="location" class="select_class" values="${currentLocationId}" onchange="clearsAll()">
+								<select name="location" class="select_class" values="${bean.location}" onchange="clearsAll()">
 									<c:forEach items='${locationList}' var="item">
 										<option value="${item.id}">${item.name}</option>
 									</c:forEach>
@@ -110,11 +110,11 @@ function opens(obj)
 						<td width="15%" align="right">入库日期：</td>
 
 						<td width="35%"><input type="text" name="outTime"
-							value="${current}" maxlength="20" size="20"
+							value="${bean.outTime}" maxlength="20" size="20"
 							readonly="readonly"><font color="#FF0000">*</font></td>
 
 							<td width="15%" align="right">入库类型：</td>
-							<td width="35%"><select name="outType" class="select_class" onchange="managerChange()">
+							<td width="35%"><select name="outType" class="select_class" onchange="managerChange()" readonly=true values="${bean.outType}">
 								<p:option type="outType_in"></p:option>
 							</select><font color="#FF0000">*</font></td>
 						
@@ -123,7 +123,7 @@ function opens(obj)
 					<tr class="content1" id="dir_tr">
 						<td align="right" id="outd">目的仓库：</td>
 						<td colspan="3">
-						<select name="destinationId" class="select_class" values="${destinationId}" oncheck="notNone;">
+						<select name="destinationId" class="select_class" values="${bean.destinationId}" oncheck="notNone;">
                                     <c:forEach items='${dirLocationList}' var="item">
                                         <option value="${item.id}">${item.name}</option>
                                     </c:forEach>
@@ -134,7 +134,7 @@ function opens(obj)
 					<tr class="content2" id="duty_tr">
 					    <td align="right">纳税实体：</td>
                         <td colspan="3">
-                        <select name="dutyId" class="select_class" style="width: 240px">
+                        <select name="dutyId" class="select_class" style="width: 240px" values="${bean.dutyId}">
                             <c:forEach items="${dutyList}" var="item">
                             <option value="${item.id}">${item.name}</option>
                             </c:forEach>
@@ -146,7 +146,7 @@ function opens(obj)
                     <tr class="content1" id="invoice_tr">
                         <td align="right">发票类型：</td>
                         <td colspan="3">
-                        <select name="invoiceId" class="select_class" head="发票类型" style="width: 400px">
+                        <select name="invoiceId" class="select_class" head="发票类型" style="width: 400px" values="${bean.invoiceId}">
                            <option value="">没有发票</option>
                             <c:forEach items="${invoiceList}" var="item">
                             <option value="${item.id}">${item.fullName}</option>
@@ -159,7 +159,7 @@ function opens(obj)
 					<tr class="content2">
 						<td align="right">入库单备注：</td>
 						<td colspan="3"><textarea rows="3" cols="55" oncheck="notNone;"
-							name="description"></textarea>
+							name="description"><c:out value="${bean.description}"/></textarea>
 							<font color="#FF0000">*</font>
 							</td>
 					</tr>
@@ -245,41 +245,81 @@ function opens(obj)
 					</tr>
 
 					<tr class="content2">
-						<td><input type="text" name="productName" id="unProductName"
-							onclick="opens(this)" 
-							productid="" 
+                        <td><input type="text" name="productName" id="unProductName"
+                            onclick="opens(this)" 
+                            productid="${fristBase.productId}" 
                             productcode="" 
-                            price=""
-                            stafferid=""
-                            depotpartid=""
-							readonly="readonly"
-							style="width: 100%; cursor: pointer"></td>
+                            price="${my:formatNum(fristBase.costPrice)}"
+                            stafferid="${fristBase.owner}"
+                            depotpartid="${fristBase.depotpartId}"
+                            readonly="readonly"
+                            style="width: 100%; cursor: pointer"
+                            value="${fristBase.productName}"></td>
 
-						<td><select name="unit" style="WIDTH: 50px;">
-							<option value="套">套</option>
-							<option value="枚">枚</option>
-							<option value="个">个</option>
-							<option value="本">本</option>
-						</select></td>
+                        <td><select name="unit" style="WIDTH: 50px;" values="${fristBase.unit}">
+                            <option value="套">套</option>
+                            <option value="枚">枚</option>
+                            <option value="个">个</option>
+                            <option value="本">本</option>
+                        </select></td>
 
-						<td align="center"><input type="text" style="width: 100%" id="unAmount"
-							maxlength="6" onkeyup="cc(this)" name="amount"></td>
+                        <td align="center"><input type="text" style="width: 100%" id="unAmount" value="${fristBase.amount}"
+                            maxlength="6" onkeyup="cc(this)" name="amount"></td>
 
-						<td align="center"><input type="text" style="width: 100%" id="unPrice" readonly="readonly"
-							maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
+                        <td align="center"><input type="text" style="width: 100%" id="unPrice" readonly="readonly" value="${fristBase.price}" 
+                            maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
 
-						<td align="center"><input type="text"
-							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
+                        <td align="center"><input type="text" value="${fristBase.value}"
+                            value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
-						<td align="center"><input type="text" id="unDesciprt" readonly="readonly"
-							style="width: 100%" name="desciprt"></td>
-							
-						<td align="center"><input type="text" id="unRstafferName" readonly="readonly"
-							style="width: 100%" name="rstafferName"></td>
-							
+                        <td align="center"><input type="text" id="unDesciprt" readonly="readonly" value="${fristBase.description}"
+                            style="width: 100%" name="desciprt"></td>
+                            
+                        <td align="center"><input type="text" id="unRstafferName" readonly="readonly" value="${fristBase.depotpartName}-->${fristBase.ownerName}"
+                            style="width: 100%" name="rstafferName"></td>
+                            
+                        <td align="center"><input type=button value="清空"  class="button_class" onclick="clears()"></td>
+                    </tr>
+                    
+                    <c:forEach items="${lastBaseList}" var="fristBase" varStatus="vs">
+                    <tr class="content2">
+                        <td><input type="text" name="productName"
+                            onclick="opens(this)" 
+                            productid="${fristBase.productId}" 
+                            productcode="" 
+                            price="${my:formatNum(fristBase.costPrice)}"
+                            stafferid="${fristBase.owner}"
+                            depotpartid="${fristBase.depotpartId}"
+                            readonly="readonly"
+                            style="width: 100%; cursor: pointer"
+                            value="${fristBase.productName}"></td>
 
-						<td align="left"><input type=button value="清空"  class="button_class" onclick="clears()"></td>
-					</tr>
+                        <td><select name="unit" style="WIDTH: 50px;" values="${fristBase.unit}">
+                            <option value="套">套</option>
+                            <option value="枚">枚</option>
+                            <option value="个">个</option>
+                            <option value="本">本</option>
+                        </select></td>
+
+                        <td align="center"><input type="text" style="width: 100%"  value="${fristBase.amount}"
+                            maxlength="6" onkeyup="cc(this)" name="amount"></td>
+
+                        <td align="center"><input type="text" style="width: 100%"  readonly="readonly" value="${fristBase.price}"
+                            maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
+
+                        <td align="center"><input type="text" value="${fristBase.value}"
+                            value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
+
+                        <td align="center"><input type="text"  readonly="readonly" value="${fristBase.description}"
+                            style="width: 100%" name="desciprt"></td>
+                            
+                        <td align="center"><input type="text" readonly="readonly" value="${fristBase.depotpartName}-->${fristBase.ownerName}"
+                            style="width: 100%" name="rstafferName"></td>
+
+                        <td align="center"><input type=button value="删除" class=button_class onclick="removeTr(this)"></td>
+                    </tr>
+                    </c:forEach>
+                    
 				</table>
 				</td>
 			</tr>
@@ -303,9 +343,7 @@ function opens(obj)
 	<tr>
 		<td width="100%">
 		<div align="right"><input type="button" class="button_class"
-			value="&nbsp;&nbsp;保 存&nbsp;&nbsp;" onClick="save()" />&nbsp;&nbsp;<input
-			type="button" class="button_class" id="sub_b"
-			value="&nbsp;&nbsp;提 交&nbsp;&nbsp;" onClick="sub()" /></div>
+			value="&nbsp;&nbsp;保 存&nbsp;&nbsp;" onClick="save()" /></div>
 		</td>
 		<td width="0%"></td>
 	</tr>

@@ -22,12 +22,6 @@ import com.china.center.jdbc.annotation.Defined;
  */
 public interface OutConstant
 {
-
-    /**
-     * 自主调入(从其他区域调出，但是单据属于其他区域)
-     */
-    int INBILL_SELF_IN = 8;
-
     /**
      * 销售单
      */
@@ -152,30 +146,15 @@ public interface OutConstant
     int PAY_OVER = 2;
 
     /**
-     * 入库单--采购入库
-     */
-    int INBILL_COMMON = 0;
-
-    /**
-     * 调出
-     */
-    int INBILL_OUT = 1;
-
-    /**
-     * 调入
-     */
-    int INBILL_IN = 4;
-
-    /**
      * 非在途
      */
     @Defined(key = "inway", value = "非在途")
     int IN_WAY_NO = 0;
 
     /**
-     * 在途
+     * 在途中
      */
-    @Defined(key = "inway", value = "在途")
+    @Defined(key = "inway", value = "在途中")
     int IN_WAY = 1;
 
     /**
@@ -221,7 +200,7 @@ public interface OutConstant
     int OUTTYPE_IN_COMMON = 0;
 
     /**
-     * 调出
+     * 调拨
      */
     @Defined(key = "outType_in", value = "调拨")
     int OUTTYPE_IN_MOVEOUT = 1;
@@ -315,5 +294,17 @@ public interface OutConstant
      */
     @Defined(key = "outBalanceType", value = "退货单")
     int OUTBALANCE_TYPE_BACK = 1;
+
+    /**
+     * 调出
+     */
+    @Defined(key = "moveOut", value = "调出")
+    int MOVEOUT_OUT = 0;
+
+    /**
+     * 调入
+     */
+    @Defined(key = "moveOut", value = "调入")
+    int MOVEOUT_IN = 1;
 
 }

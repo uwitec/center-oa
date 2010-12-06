@@ -9,7 +9,6 @@
 package com.china.center.oa.sail.manager.impl;
 
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +64,6 @@ import com.china.center.oa.publics.manager.NotifyManager;
 import com.china.center.oa.sail.bean.BaseBalanceBean;
 import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.ConsignBean;
-import com.china.center.oa.sail.bean.LogBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.bean.OutUniqueBean;
@@ -324,8 +322,13 @@ public class OutManagerImpl implements OutManager
                         }
                         base.setAmount(MathTools.parseInt(amontList[i]));
                         base.setValue(MathTools.parseDouble(totalList[i]));
-                        base.setShowId(showIdList[i]);
-                        base.setShowName(showNameList[i]);
+
+                        // 入库单是没有showId的
+                        if (showNameList != null && showNameList.length > (i + 1))
+                        {
+                            base.setShowId(showIdList[i]);
+                            base.setShowName(showNameList[i]);
+                        }
 
                         // 寻找具体的产品价格位置
                         base.setCostPrice(MathTools.parseDouble(coreList[1]));
@@ -477,16 +480,20 @@ public class OutManagerImpl implements OutManager
 
         final List<BaseBean> baseList = checkSubmit(fullId, outBean);
 
-        final List<LogBean> logList = new ArrayList<LogBean>();
-
         // 这里是入库单的直接库存变动
-        processBaseList(user, outBean, baseList, logList, type);
+        processBaseList(user, outBean, baseList, type);
 
         // CORE 修改库单的状态(信用额度处理)
         int status = processOutStutus(fullId, user, outBean);
 
         // 处理在途
-        processOutInWay(fullId, outBean);
+        int result = processOutInWay(user, fullId, outBean);
+
+        // 在途改变状态
+        if (result != -1)
+        {
+            status = result;
+        }
 
         // 增加数据库日志
         addOutLog(fullId, user, outBean, "提交", SailConstant.OPR_OUT_PASS, status);
@@ -501,28 +508,111 @@ public class OutManagerImpl implements OutManager
     /**
      * @param fullId
      * @param outBean
+     * @throws MYException
      */
-    private void processOutInWay(final String fullId, final OutBean outBean)
+    private int processOutInWay(final User user, final String fullId, final OutBean outBean)
+        throws MYException
     {
-        // 如果是入库的调入，需要把在途的入库单取消掉
-        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
-            && outBean.getOutType() == OutConstant.INBILL_IN)
+        int result = -1;
+
+        // 如果是调入提交
+        if (OutHelper.isMoveIn(outBean))
         {
-            String ofullid = outBean.getRefOutFullId();
+            // 调入的库存(正式增加,负数减少)
+            List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(fullId);
 
-            outDAO.updataInWay(ofullid, OutConstant.IN_WAY_OVER);
+            String sequence = commonDAO.getSquenceString();
 
-            importLog.info(ofullid + "的在途状态改变成在途结束");
+            // CORE 调入直接变动库存
+            for (BaseBean element : baseList)
+            {
+                ProductChangeWrap wrap = new ProductChangeWrap();
+
+                wrap.setDepotpartId(element.getDepotpartId());
+                wrap.setPrice(element.getCostPrice());
+                wrap.setProductId(element.getProductId());
+                wrap.setStafferId(element.getOwner());
+                wrap.setChange(element.getAmount());
+                wrap.setDescription("库单[" + outBean.getFullId() + "]调入操作");
+                wrap.setSerializeId(sequence);
+                wrap.setType(StorageConstant.OPR_STORAGE_REDEPLOY);
+                wrap.setRefId(outBean.getFullId());
+
+                storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, true);
+            }
+
+            // 调入的存入唯一
+            saveUnique(user, outBean);
+
+            // 在途结束
+            outDAO.updataInWay(fullId, OutConstant.IN_WAY_OVER);
+
+            outDAO.modifyOutStatus(fullId, OutConstant.STATUS_PASS);
+
+            result = OutConstant.STATUS_PASS;
+
+            // -----------------------------------------------------------------//
+
+            // 处理调出变动库存
+            String moveOutFullId = outBean.getRefOutFullId();
+
+            OutBean moveOut = outDAO.find(moveOutFullId);
+
+            baseList = baseDAO.queryEntityBeansByFK(moveOutFullId);
+
+            // CORE 调出直接变动库存
+            for (BaseBean element : baseList)
+            {
+                ProductChangeWrap wrap = new ProductChangeWrap();
+
+                wrap.setDepotpartId(element.getDepotpartId());
+                wrap.setPrice(element.getCostPrice());
+                wrap.setProductId(element.getProductId());
+                wrap.setStafferId(element.getOwner());
+                wrap.setChange(element.getAmount());
+                wrap.setDescription("库单[" + moveOut.getFullId() + "]调出操作");
+                wrap.setSerializeId(sequence);
+                wrap.setType(StorageConstant.OPR_STORAGE_REDEPLOY);
+                wrap.setRefId(moveOut.getFullId());
+
+                storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, true);
+            }
+
+            // 调入的存入唯一
+            saveUnique(user, moveOut);
+
+            // 结束调出的单据
+            changeMoveOutToEnd(user, moveOut);
         }
 
-        // 如果是入库的调出
-        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
-            && outBean.getOutType() == OutConstant.INBILL_OUT)
+        // 如果是调入
+        if (OutHelper.isMoveOut(outBean))
         {
             outDAO.updataInWay(fullId, OutConstant.IN_WAY);
 
             importLog.info(fullId + "的在途状态改变成在途");
         }
+
+        return result;
+    }
+
+    /**
+     * 结束调出的单据
+     * 
+     * @param user
+     * @param moveOut
+     */
+    private void changeMoveOutToEnd(final User user, OutBean moveOut)
+    {
+        outDAO.updataInWay(moveOut.getFullId(), OutConstant.IN_WAY_OVER);
+
+        outDAO.modifyOutStatus(moveOut.getFullId(), OutConstant.STATUS_PASS);
+
+        // 操作日志
+        addOutLog(moveOut.getFullId(), user, moveOut, "对方调入后,自动提交", SailConstant.OPR_OUT_PASS,
+            OutConstant.STATUS_PASS);
+
+        importLog.info(moveOut.getFullId() + "的在途状态改变成在途结束");
     }
 
     /**
@@ -755,22 +845,38 @@ public class OutManagerImpl implements OutManager
         }
         else
         {
-            // 入库直接通过
-            importLog.info(fullId + ":" + user.getStafferName() + ":" + 3 + ":redrectFrom:"
-                           + outBean.getStatus());
+            nextStatus = OutConstant.STATUS_PASS;
+
+            // 采购入库直接就是库管通过结束
+            if (outBean.getOutType() == OutConstant.OUTTYPE_IN_COMMON)
+            {
+                nextStatus = OutConstant.STATUS_PASS;
+            }
+            // 调拨直接是submit
+            else if (outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT)
+            {
+                nextStatus = OutConstant.STATUS_SUBMIT;
+            }
+            // 其他直接是待分公司经理审核
+            else
+            {
+                nextStatus = OutConstant.STATUS_LOCATION_MANAGER_CHECK;
+            }
 
             try
             {
-                outDAO.modifyOutStatus(fullId, OutConstant.STATUS_PASS);
+                outDAO.modifyOutStatus(fullId, nextStatus);
 
-                result = OutConstant.STATUS_PASS;
+                result = nextStatus;
             }
             catch (Exception e)
             {
                 throw new MYException(e.toString());
             }
 
-            outDAO.modifyData(fullId, TimeTools.now("yyyy-MM-dd"));
+            // 入库直接通过
+            importLog.info(fullId + ":" + user.getStafferName() + ":" + nextStatus
+                           + ":redrectFrom:" + outBean.getStatus());
         }
 
         return result;
@@ -782,12 +888,10 @@ public class OutManagerImpl implements OutManager
      * @param user
      * @param outBean
      * @param baseList
-     * @param logList
      * @throws MYException
      */
     private void processBaseList(final User user, final OutBean outBean,
-                                 final List<BaseBean> baseList, final List<LogBean> logList,
-                                 int type)
+                                 final List<BaseBean> baseList, int type)
         throws MYException
     {
         // 入库单提交后就直接移动库存了,销售需要在库管通过后生成发货单前才会变动库存
@@ -796,26 +900,30 @@ public class OutManagerImpl implements OutManager
             return;
         }
 
-        String sequence = commonDAO.getSquenceString();
-
-        for (BaseBean element : baseList)
+        // 处理采购入库
+        if (outBean.getOutType() == OutConstant.OUTTYPE_IN_COMMON)
         {
-            ProductChangeWrap wrap = new ProductChangeWrap();
+            String sequence = commonDAO.getSquenceString();
 
-            wrap.setDepotpartId(element.getDepotpartId());
-            wrap.setPrice(element.getCostPrice());
-            wrap.setProductId(element.getProductId());
-            wrap.setStafferId(element.getOwner());
-            wrap.setChange(element.getAmount());
-            wrap.setDescription("库单[" + outBean.getFullId() + "]操作");
-            wrap.setSerializeId(sequence);
-            wrap.setType(type);
-            wrap.setRefId(outBean.getFullId());
+            for (BaseBean element : baseList)
+            {
+                ProductChangeWrap wrap = new ProductChangeWrap();
 
-            storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, true);
+                wrap.setDepotpartId(element.getDepotpartId());
+                wrap.setPrice(element.getCostPrice());
+                wrap.setProductId(element.getProductId());
+                wrap.setStafferId(element.getOwner());
+                wrap.setChange(element.getAmount());
+                wrap.setDescription("库单[" + outBean.getFullId() + "]操作");
+                wrap.setSerializeId(sequence);
+                wrap.setType(type);
+                wrap.setRefId(outBean.getFullId());
+
+                storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, true);
+            }
+
+            saveUnique(user, outBean);
         }
-
-        saveUnique(user, outBean);
     }
 
     /**
@@ -887,9 +995,28 @@ public class OutManagerImpl implements OutManager
             }
         }
 
-        // 如果是入库的调入，需要有REF的单据
+        // 如果是入库的调入，验证是否在途
         if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
-            && outBean.getOutType() == OutConstant.INBILL_IN)
+            && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT
+            && outBean.getReserve1() == OutConstant.MOVEOUT_OUT)
+        {
+            OutBean out = outDAO.find(fullId);
+
+            if (out == null)
+            {
+                throw new MYException("选择调出的库单不存在，请重新操作选择调出的库单");
+            }
+
+            if (out.getInway() != OutConstant.IN_WAY)
+            {
+                throw new MYException("选择调出的库单不是在途中，请确认");
+            }
+        }
+
+        // 如果是入库的调入，验证是否在途
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT
+            && outBean.getReserve1() == OutConstant.MOVEOUT_IN)
         {
             String ofullid = outBean.getRefOutFullId();
 
@@ -898,14 +1025,14 @@ public class OutManagerImpl implements OutManager
                 throw new MYException("由于是调入的库单需要调出的库单对应，请重新操作选择调出的库单");
             }
 
-            OutBean temp = outDAO.find(ofullid);
+            OutBean moveOut = outDAO.find(ofullid);
 
-            if (temp == null)
+            if (moveOut == null)
             {
                 throw new MYException("选择调出的库单不存在，请重新操作选择调出的库单");
             }
 
-            if (temp.getInway() != OutConstant.IN_WAY)
+            if (moveOut.getInway() != OutConstant.IN_WAY)
             {
                 throw new MYException("选择调出的库单不是在途中，请确认");
             }
@@ -1166,8 +1293,6 @@ public class OutManagerImpl implements OutManager
                     // CORE 需要把回款日志敲定且变动销售库存
                     if (newNextStatus == OutConstant.STATUS_PASS)
                     {
-                        outDAO.modifyData(fullId, TimeTools.now("yyyy-MM-dd"));
-
                         long add = outBean.getReday() * 24 * 3600 * 1000L;
 
                         // 这里需要把出库单的回款日期修改

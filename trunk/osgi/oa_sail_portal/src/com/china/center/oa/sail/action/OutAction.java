@@ -313,6 +313,8 @@ public class OutAction extends DispatchAction
      */
     private void innerForPrepare(HttpServletRequest request)
     {
+        String flag = RequestTools.getValueFromRequest(request, "flag");
+
         // 得到部门
         List<DepartmentBean> list2 = departmentDAO.listEntityBeans();
 
@@ -327,6 +329,33 @@ public class OutAction extends DispatchAction
 
         request.setAttribute("locationList", locationList);
 
+        // 只能看到自己的仓库
+        if ("1".equals(flag))
+        {
+            List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(),
+                AuthConstant.EXPAND_AUTH_DEPOT);
+
+            for (Iterator iterator = locationList.iterator(); iterator.hasNext();)
+            {
+                DepotBean depotBean = (DepotBean)iterator.next();
+
+                for (AuthBean authBean : depotAuthList)
+                {
+                    if (authBean.getId().equals(depotBean.getId()))
+                    {
+                        iterator.remove();
+
+                        break;
+                    }
+                }
+
+            }
+
+            List<DepotBean> dirLocationList = depotDAO.listEntityBeans();
+
+            request.setAttribute("dirLocationList", dirLocationList);
+        }
+
         int goDays = parameterDAO.getInt(SysConfigConstant.OUT_PERSONAL_REDAY);
 
         request.setAttribute("goDays", goDays);
@@ -336,11 +365,6 @@ public class OutAction extends DispatchAction
         User oprUser = Helper.getUser(request);
 
         condition.addCondition("locationId", "=", oprUser.getLocationId());
-
-        // 仓区,但是这里的仓区没有意义了
-        List<DepotpartBean> list = depotpartDAO.queryEntityBeansByCondition(condition);
-
-        request.setAttribute("depotpartList", list);
 
         showLastCredit(request, user);
 
@@ -874,7 +898,7 @@ public class OutAction extends DispatchAction
     }
 
     /**
-     * 增加(保存修改)修改库单
+     * 增加(保存修改)修改库单(包括销售单和入库单)
      * 
      * @param mapping
      * @param form
@@ -925,23 +949,16 @@ public class OutAction extends DispatchAction
         BeanUtil.getBean(outBean, request);
 
         if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
-            && outBean.getOutType() == OutConstant.INBILL_SELF_IN)
+            && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT)
         {
-            // 设置成调出
-            outBean.setOutType(OutConstant.INBILL_OUT);
-
-            String productLocationId = request.getParameter("sdestinationId");
-
-            if (StringTools.isNullOrNone(productLocationId))
+            if (StringTools.isNullOrNone(outBean.getDestinationId()))
             {
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据不合法,请重新操作");
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "调拨没有目的仓库属性,请重新操作");
 
                 return mapping.findForward("error");
             }
 
-            outBean.setLocationId(productLocationId);
-
-            outBean.setLocation(productLocationId);
+            outBean.setReserve1(OutConstant.MOVEOUT_OUT);
         }
 
         if (StringTools.isNullOrNone(outBean.getLocation()))
@@ -967,6 +984,14 @@ public class OutAction extends DispatchAction
         }
         else
         {
+            // 默认很多属性
+            outBean.setStafferId(user.getStafferId());
+            outBean.setStafferName(user.getStafferName());
+            outBean.setCustomerId(CustomerConstant.PUBLIC_CUSTOMER_ID);
+            outBean.setCustomerName(CustomerConstant.PUBLIC_CUSTOMER_NAME);
+            outBean.setDepartment("公共部门");
+            outBean.setArriveDate(TimeTools.now_short(10));
+
             // 入库单的处理
             try
             {
@@ -975,7 +1000,7 @@ public class OutAction extends DispatchAction
                 if ("提交".equals(saves))
                 {
                     outManager.submit(outBean.getFullId(), user,
-                        StorageConstant.OPR_STORAGE_OUTBILLIN);
+                        StorageConstant.OPR_STORAGE_INOTHER);
                 }
             }
             catch (MYException e)
@@ -1005,7 +1030,14 @@ public class OutAction extends DispatchAction
 
         RequestTools.actionInitQuery(request);
 
-        return querySelfOut(mapping, form, request, reponse);
+        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+        {
+            return querySelfOut(mapping, form, request, reponse);
+        }
+        else
+        {
+            return querySelfBuy(mapping, form, request, reponse);
+        }
     }
 
     /**
@@ -2320,9 +2352,18 @@ public class OutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        request.setAttribute("forward", "10");
+        CommonTools.removeParamers(request);
 
-        return querySelfOut(mapping, form, request, reponse);
+        RequestTools.actionInitQuery(request);
+
+        if (bean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+        {
+            return querySelfOut(mapping, form, request, reponse);
+        }
+        else
+        {
+            return querySelfBuy(mapping, form, request, reponse);
+        }
     }
 
     /**
@@ -2362,7 +2403,7 @@ public class OutAction extends DispatchAction
 
         // 管理员通过和会计通过的都可以处理
         if ( ! ( (bean.getStatus() == OutConstant.STATUS_PASS || bean.getStatus() == OutConstant.STATUS_SEC_PASS) && bean
-            .getOutType() == OutConstant.INBILL_OUT))
+            .getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT))
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不能转调，请核实");
 
@@ -2386,7 +2427,7 @@ public class OutAction extends DispatchAction
             newOut.setLocationId(Helper.getCurrentLocationId(request));
             newOut.setLocation(Helper.getCurrentLocationId(request));
 
-            newOut.setOutType(OutConstant.INBILL_IN);
+            newOut.setOutType(OutConstant.OUTTYPE_IN_MOVEOUT);
 
             newOut.setFullId("");
 
@@ -3057,12 +3098,25 @@ public class OutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
+        if (bean.getType() == OutConstant.OUT_TYPE_INBILL)
+        {
+            request.setAttribute("flag", "1");
+        }
+
         innerForPrepare(request);
 
         if ("1".equals(fow))
         {
-            // 处理修改
-            return mapping.findForward("updateOut");
+            if (bean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+            {
+                // 处理修改
+                return mapping.findForward("updateOut");
+            }
+            else
+            {
+                // 处理修改
+                return mapping.findForward("updateBuy");
+            }
         }
 
         if ("4".equals(fow))

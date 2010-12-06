@@ -561,23 +561,13 @@ function pagePrint()
 						<td><input type="text" name="customerName" maxlength="14" value="${bean.customerName}" onclick="selectCustomer()"
 							 style="cursor: pointer;"
 							readonly="readonly"><font color="#FF0000">*</font></td>
-						<td align="right">入库部门：</td>
-						<td><select name="department" class="select_class" values="${bean.department}">
-							<option value=''>--</option>
-							<c:forEach items='${departementList}' var="item">
-								<option value="${item.name}">${item.name}</option>
-							</c:forEach>
+						<td align="right">调拨方向：</td>
+						<td><select name="department" class="select_class" values="${bean.reserve1}">
+							<p:option type="moveOut"></p:option>
 						</select><font color="#FF0000">*</font></td>
 					</tr>
 					
 					<tr class="content2">
-						<td align="right">联系人：</td>
-						<td><input type="text" name="connector" maxlength="14" value="${bean.connector}"
-							readonly="readonly"></td>
-						<td align="right">联系电话：</td>
-						<td><input type="text" name="phone" maxlength="20" readonly="readonly" value="${bean.phone}"></td>
-					</tr>
-					<tr class="content1">
 						<td align="right">经手人：</td>
 						<td><input type="text" name="stafferName" maxlength="14"
 							value="${user.stafferName}" readonly="readonly"></td>
@@ -586,26 +576,10 @@ function pagePrint()
 							value="${bean.fullId}" readonly="readonly"></td>
 					</tr>
 
-					<tr class="content2">
-						<td align="right">回款天数：</td>
-						<td colspan="1"><input type="text" name="reday" maxlength="4" oncheck="notNone;isInt;range(1, 180)"
-							value="${bean.reday}" title="请填入1到180之内的数字"><font color="#FF0000">*</font></td>
-
-						<td align="right">到货日期：</td>
-						<td><p:plugin name="arriveDate"  size="20" oncheck="notNone;cnow('30')" value="${bean.arriveDate}"/><font color="#FF0000">*</font></td>
-					</tr>
 					
 					<tr class="content1">
-                        <td align="right">付款方式：</td>
-                        <td colspan="1">
-                        <select name="reserve3" class="select_class" oncheck="notNone;" head="付款方式" style="width: 240px" values="${bean.reserve3}">
-                            <option value='2'>客户信用和业务员信用额度担保</option>
-                            <option value='1'>款到发货(黑名单客户/零售)</option>
-                            <option value='3'>分公司经理担保</option>
-                        </select>
-                        <font color="#FF0000">*</font></td>
                         <td align="right">纳税实体：</td>
-                        <td colspan="1">
+                        <td colspan="3">
                         <select name="dutyId" class="select_class" style="width: 240px" values="${bean.dutyId}">
                             <c:forEach items="${dutyList}" var="item">
                             <option value="${item.id}">${item.name}</option>
@@ -651,22 +625,6 @@ function pagePrint()
                        <td align="right">付款状态：</td>
                         <td colspan="1">
                        ${my:get('outPay', bean.pay)}
-                       </td>
-                    </tr>
-                    
-                    <tr class="content1">
-                        <td align="right">信用描述：</td>
-                        <td colspan="3">
-                        <font color="red">
-                       ${bean.reserve6}
-                       </font>
-                       </td>
-                    </tr>
-                    
-                     <tr class="content2">
-                        <td align="right">信用担保：</td>
-                        <td colspan="3">
-                       客户:${my:formatNum(bean.curcredit)}/${bean.stafferName}:${my:formatNum(bean.staffcredit)}/分公司经理:${my:formatNum(bean.managercredit)}
                        </td>
                     </tr>
 

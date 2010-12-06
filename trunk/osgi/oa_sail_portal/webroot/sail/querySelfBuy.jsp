@@ -197,7 +197,7 @@ function load()
 	loadForm();
 	tooltip.init();
 	
-	highlights($("#mainTable").get(0), ['驳回'], 'red');
+	highlights($("#mainTable").get(0), ['驳回', '在途中'], 'red');
 }
 
 </script>
