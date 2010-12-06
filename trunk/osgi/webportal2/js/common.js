@@ -910,6 +910,15 @@ function removeAllItem(fromSelect)
     fromSelect.blur;
 }
 
+function removeOption(fromSelect, value)
+{
+    for (i=fromSelect.options.length-1; i>=0; i--)
+    {
+    	if (fromSelect.options[i].value == value)
+        fromSelect.remove(i);
+    }
+}
+
 function $Dbuttons(f)
 {
     var bus = document.getElementsByTagName('input');

@@ -8,7 +8,9 @@
  */
 package com.china.center.tools;
 
+
 import java.text.DecimalFormat;
+
 
 /**
  * @author ZHUZHU
@@ -20,6 +22,7 @@ public abstract class MathTools
 {
     /**
      * 解析数字
+     * 
      * @param s
      * @return
      */
@@ -30,7 +33,7 @@ public abstract class MathTools
             return 0;
         }
 
-        if (RegularExpress.isGuid(s))
+        if (RegularExpress.isNumber(s))
         {
             return Integer.parseInt(s);
         }

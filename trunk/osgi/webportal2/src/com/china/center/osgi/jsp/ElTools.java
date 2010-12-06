@@ -172,7 +172,7 @@ public final class ElTools
             return 0;
         }
 
-        if ( !RegularExpress.isGuid(src))
+        if ( !RegularExpress.isNumber(src))
         {
             return 0;
         }

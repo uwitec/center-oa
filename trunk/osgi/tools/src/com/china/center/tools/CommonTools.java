@@ -177,7 +177,7 @@ public class CommonTools
             return 0;
         }
 
-        if (RegularExpress.isGuid(s.trim()))
+        if (RegularExpress.isNumber(s.trim()))
         {
             return Integer.parseInt(s);
         }

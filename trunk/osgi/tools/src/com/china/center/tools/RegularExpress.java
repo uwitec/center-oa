@@ -49,7 +49,8 @@ public class RegularExpress
             return false;
         }
 
-        Pattern p = Pattern.compile("^[0-9]{4}-[01][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]$");
+        Pattern p = Pattern
+            .compile("^[0-9]{4}-[01][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]$");
         Matcher m = p.matcher(date);
 
         return m.find();
@@ -96,7 +97,7 @@ public class RegularExpress
     }
 
     /**
-     * Description: 是否是数字 <br>
+     * Description: 是否是数字(包括负数) <br>
      * 
      * @param id
      * @return boolean
@@ -108,12 +109,13 @@ public class RegularExpress
             return false;
         }
 
-        Pattern p = Pattern.compile("^[0-9]+$");
+        // ^-?[1-9]\d*$
+        Pattern p = Pattern.compile("^-?[0-9]+$");
         Matcher m = p.matcher(id);
 
         return m.find();
     }
-    
+
     public static boolean isDouble(String id)
     {
         if (id == null || "".equals(id))
@@ -122,7 +124,7 @@ public class RegularExpress
         }
 
         Pattern p = Pattern.compile("^(-?\\d+)(\\.\\d+)?$");
-        
+
         Matcher m = p.matcher(id);
 
         return m.find();
@@ -166,5 +168,10 @@ public class RegularExpress
         Matcher m = p.matcher(str);
 
         return m.find();
+    }
+
+    public static void main(String[] args)
+    {
+        System.out.println(isNumber("1"));
     }
 }
