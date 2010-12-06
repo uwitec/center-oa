@@ -17,7 +17,7 @@
 	<property name="logExtension" value=".log" />
 	<property name="compilerArg" value="" />
 	<property name="javacSource" value="1.5" />
-	<property name="javacTarget" value="1.5" />
+	<property name="javacTarget" value="1.6" />
 	<property name="fork" value="false" />
 	<property name="memorymaximumsize" value="1024M" />
 
@@ -91,6 +91,9 @@
 			</fileset>
 			<!-- include depend jar in self lib -->
 			<fileset dir="${plugin.destination}/lib">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${plugin.destination}/WEB-INF/lib">
 				<include name="**/*.jar" />
 			</fileset>
 			<!-- include service bundles which depended by this module -->
