@@ -3,7 +3,7 @@
 
 	<property file="META-INF/MANIFEST.MF" />
 	<property name="bundleName" value="${Bundle-SymbolicName}_${Bundle-Version}" />
-	<property name="dependlib" value="../dependlib" />
+	<property name="dependlib" value="../jar_depend" />
 	<property name="basews" value="${ws}" />
 	<property name="baseos" value="${os}" />
 	<property name="basearch" value="${arch}" />
@@ -101,6 +101,9 @@
 			<fileset dir="${dependlib}/lib">
 				<include name="**/*.jar" />
 			</fileset>
+			<fileset dir="${dependlib}/lib_self">
+				<include name="**/*.jar" />
+			</fileset>
 			<!-- include systen bundles -->
 			<fileset dir="${dependlib}/bundles">
 				<include name="**/*.jar" />
@@ -193,7 +196,6 @@
 	<target name="clean" depends="init" description="Clean the plug-in: ${bundleName} of all the zips, jars and logs created.">
 		<delete dir="${build.result.folder}/@dot" />
 		<delete file="${build.result.folder}/src.zip" />
-		<delete file="${plugin.destination}/${bundleName}.jar" />
 		<delete file="${plugin.destination}/${bundleName}.zip" />
 		<delete file="${jar_dir}/${bundleName}.jar" />
 		<delete dir="${temp.folder}" />
