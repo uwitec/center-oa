@@ -1006,11 +1006,6 @@ public class OutManagerImpl implements OutManager
             {
                 throw new MYException("选择调出的库单不存在，请重新操作选择调出的库单");
             }
-
-            if (out.getInway() != OutConstant.IN_WAY)
-            {
-                throw new MYException("选择调出的库单不是在途中，请确认");
-            }
         }
 
         // 如果是入库的调入，验证是否在途
@@ -1107,22 +1102,11 @@ public class OutManagerImpl implements OutManager
                         }
                     }
 
-                    // 修改状态
-                    if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
-                    {
-                        importLog.info(fullId + ":" + user.getStafferName() + ":"
-                                       + OutConstant.STATUS_REJECT + ":redrectFrom:"
-                                       + outBean.getStatus());
-                        outDAO.modifyOutStatus(outBean.getFullId(), OutConstant.STATUS_REJECT);
-                    }
-                    else
-                    {
-                        importLog.info(fullId + ":" + user.getStafferName() + ":"
-                                       + OutConstant.STATUS_SAVE + ":redrectFrom:"
-                                       + outBean.getStatus());
+                    importLog.info(fullId + ":" + user.getStafferName() + ":"
+                                   + OutConstant.STATUS_REJECT + ":redrectFrom:"
+                                   + outBean.getStatus());
 
-                        outDAO.modifyOutStatus(outBean.getFullId(), OutConstant.STATUS_SAVE);
-                    }
+                    outDAO.modifyOutStatus(outBean.getFullId(), OutConstant.STATUS_REJECT);
 
                     // 驳回修改在途方式
                     outDAO.updataInWay(fullId, OutConstant.IN_WAY_NO);
@@ -1213,11 +1197,14 @@ public class OutManagerImpl implements OutManager
                 {
                     int newNextStatus = nextStatus;
 
-                    // 直接把物流通过到库管通过
-                    if (newNextStatus == OutConstant.STATUS_FLOW_PASS
-                        && depot.getType() == DepotConstant.DEPOT_TYPE_LOCATION)
+                    if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                     {
-                        newNextStatus = OutConstant.STATUS_PASS;
+                        // 直接把物流通过到库管通过
+                        if (newNextStatus == OutConstant.STATUS_FLOW_PASS
+                            && depot.getType() == DepotConstant.DEPOT_TYPE_LOCATION)
+                        {
+                            newNextStatus = OutConstant.STATUS_PASS;
+                        }
                     }
 
                     importLog.info(outBean.getFullId() + ":" + user.getStafferName() + ":"
@@ -1226,108 +1213,13 @@ public class OutManagerImpl implements OutManager
                     // 修改状态
                     outDAO.modifyOutStatus(outBean.getFullId(), newNextStatus);
 
-                    // 从分公司经理审核通过到提交
-                    if (newNextStatus == OutConstant.STATUS_SUBMIT)
+                    if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                     {
-                        // 只有信用已经超支的情况下才启用分公司经理的信用
-                        if (outBean.getReserve2() == OutConstant.OUT_CREDIT_OVER)
-                        {
-                            // 加入审批人的信用(是自己使用的信用+担保的信用)
-                            double noPayBusinessByManager = outDAO
-                                .sumAllNoPayAndAvouchBusinessByStafferId(user.getStafferId(),
-                                    YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
-
-                            StafferBean staffer = stafferDAO.find(user.getStafferId());
-
-                            // 这里分公司总经理的信用已经使用结束了,此时直接抛出异常
-                            if (noPayBusinessByManager > staffer.getCredit())
-                            {
-                                throw new RuntimeException("您的信用额度已经全部占用[使用了"
-                                                           + MathTools
-                                                               .formatNum(noPayBusinessByManager)
-                                                           + "],不能再担保业务员的销售");
-                            }
-
-                            // 本次需要担保的信用
-                            double lastCredit = outBean.getTotal() - outBean.getStaffcredit()
-                                                - outBean.getCurcredit();
-
-                            // 职员杠杆后的信用
-                            double staffCredit = staffer.getCredit() * staffer.getLever();
-
-                            if ( (lastCredit + noPayBusinessByManager) > staffCredit)
-                            {
-                                throw new RuntimeException("您杠杆后的信用额度是["
-                                                           + MathTools.formatNum(staffCredit)
-                                                           + "],已经使用了["
-                                                           + MathTools
-                                                               .formatNum(noPayBusinessByManager)
-                                                           + "],本单需要您担保的额度是["
-                                                           + MathTools.formatNum(lastCredit)
-                                                           + "],加上本单已经超出您的最大额度,不能再担保业务员的销售");
-                            }
-
-                            // 这里使用分公司经理信用担保
-                            outDAO.updateManagercredit(outBean.getFullId(), user.getStafferId(),
-                                lastCredit);
-
-                            // 此时信用不超支了
-                            outDAO.updateOutReserve(fullId, OutConstant.OUT_CREDIT_COMMON, outBean
-                                .getReserve6());
-                        }
+                        handerPassOut(fullId, user, outBean, depot, newNextStatus);
                     }
-
-                    // 结算中心通过/总裁通过 修改manager的入库时间
-                    if (newNextStatus == OutConstant.STATUS_MANAGER_PASS)
+                    else
                     {
-                        outDAO.modifyManagerTime(outBean.getFullId(), TimeTools.now());
-
-                        // 验证是否是款到发货
-                        if (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_MONEY
-                            && outBean.getPay() != OutConstant.PAY_YES)
-                        {
-                            throw new RuntimeException("此单据是款到发货,当前此单未付款,不能通过");
-                        }
-                    }
-
-                    // CORE 需要把回款日志敲定且变动销售库存
-                    if (newNextStatus == OutConstant.STATUS_PASS)
-                    {
-                        long add = outBean.getReday() * 24 * 3600 * 1000L;
-
-                        // 这里需要把出库单的回款日期修改
-                        outDAO.modifyReDate(fullId, TimeTools.getStringByFormat(new Date(new Date()
-                            .getTime()
-                                                                                         + add),
-                            "yyyy-MM-dd"));
-
-                        List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
-
-                        try
-                        {
-                            // 变动库存
-                            processPass(user, outBean, baseList,
-                                StorageConstant.OPR_STORAGE_OUTBILL);
-                        }
-                        catch (MYException e)
-                        {
-                            throw new RuntimeException(e.getErrorContent());
-                        }
-
-                        // TODO 销售单是发货后产生管理凭证
-                    }
-
-                    // 结算中心审核通过后/总裁通过，中心仓库的销售单转到物流管理员，同时自动生成发货单
-                    if (newNextStatus == OutConstant.STATUS_MANAGER_PASS
-                        && depot.getType() == DepotConstant.DEPOT_TYPE_CENTER)
-                    {
-                        ConsignBean bean = new ConsignBean();
-
-                        bean.setCurrentStatus(SailConstant.CONSIGN_INIT);
-
-                        bean.setFullId(outBean.getFullId());
-
-                        consignDAO.addConsign(bean);
+                        handerPassBuy(fullId, user, outBean, newNextStatus);
                     }
 
                     addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_PASS,
@@ -1417,12 +1309,6 @@ public class OutManagerImpl implements OutManager
         }
 
         // 检查pass的条件
-        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL)
-        {
-            throw new MYException("入库单没有此操作!");
-        }
-
-        // 检查pass的条件
         if (outBean.getStatus() == OutConstant.STATUS_SAVE
             || outBean.getStatus() == OutConstant.STATUS_REJECT)
         {
@@ -1468,10 +1354,23 @@ public class OutManagerImpl implements OutManager
             wrap.setStafferId(element.getOwner());
             wrap.setRefId(outBean.getFullId());
 
-            // 这里是销售单,所以是负数
-            wrap.setChange( -element.getAmount());
-            wrap.setDescription("库单[" + outBean.getFullId() + "]库管通过操作");
+            if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+            {
+                // 这里是销售单,所以是负数
+                wrap.setChange( -element.getAmount());
+
+                wrap.setDescription("销售单[" + outBean.getFullId() + "]库管通过操作");
+            }
+            else
+            {
+                // 这里是入库单
+                wrap.setChange(element.getAmount());
+
+                wrap.setDescription("入库单[" + outBean.getFullId() + "]库管通过操作");
+            }
+
             wrap.setSerializeId(sequence);
+
             wrap.setType(type);
 
             storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, true);
@@ -2573,5 +2472,164 @@ public class OutManagerImpl implements OutManager
     public void setOutBalanceDAO(OutBalanceDAO outBalanceDAO)
     {
         this.outBalanceDAO = outBalanceDAO;
+    }
+
+    /**
+     * 处理销售单的通过
+     * 
+     * @param fullId
+     * @param user
+     * @param outBean
+     * @param depot
+     * @param newNextStatus
+     */
+    private void handerPassOut(final String fullId, final User user, final OutBean outBean,
+                               final DepotBean depot, int newNextStatus)
+    {
+        // 从分公司经理审核通过到提交
+        if (newNextStatus == OutConstant.STATUS_SUBMIT)
+        {
+            // 只有信用已经超支的情况下才启用分公司经理的信用
+            if (outBean.getReserve2() == OutConstant.OUT_CREDIT_OVER)
+            {
+                // 加入审批人的信用(是自己使用的信用+担保的信用)
+                double noPayBusinessByManager = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(user
+                    .getStafferId(), YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
+
+                StafferBean staffer = stafferDAO.find(user.getStafferId());
+
+                // 这里分公司总经理的信用已经使用结束了,此时直接抛出异常
+                if (noPayBusinessByManager > staffer.getCredit())
+                {
+                    throw new RuntimeException("您的信用额度已经全部占用[使用了"
+                                               + MathTools.formatNum(noPayBusinessByManager)
+                                               + "],不能再担保业务员的销售");
+                }
+
+                // 本次需要担保的信用
+                double lastCredit = outBean.getTotal() - outBean.getStaffcredit()
+                                    - outBean.getCurcredit();
+
+                // 职员杠杆后的信用
+                double staffCredit = staffer.getCredit() * staffer.getLever();
+
+                if ( (lastCredit + noPayBusinessByManager) > staffCredit)
+                {
+                    throw new RuntimeException("您杠杆后的信用额度是[" + MathTools.formatNum(staffCredit)
+                                               + "],已经使用了["
+                                               + MathTools.formatNum(noPayBusinessByManager)
+                                               + "],本单需要您担保的额度是[" + MathTools.formatNum(lastCredit)
+                                               + "],加上本单已经超出您的最大额度,不能再担保业务员的销售");
+                }
+
+                // 这里使用分公司经理信用担保
+                outDAO.updateManagercredit(outBean.getFullId(), user.getStafferId(), lastCredit);
+
+                // 此时信用不超支了
+                outDAO.updateOutReserve(fullId, OutConstant.OUT_CREDIT_COMMON, outBean
+                    .getReserve6());
+            }
+        }
+
+        // 结算中心通过/总裁通过 修改manager的入库时间
+        if (newNextStatus == OutConstant.STATUS_MANAGER_PASS)
+        {
+            outDAO.modifyManagerTime(outBean.getFullId(), TimeTools.now());
+
+            // 验证是否是款到发货
+            if (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_MONEY
+                && outBean.getPay() != OutConstant.PAY_YES)
+            {
+                throw new RuntimeException("此单据是款到发货,当前此单未付款,不能通过");
+            }
+        }
+
+        // CORE 需要把回款日志敲定且变动销售库存
+        if (newNextStatus == OutConstant.STATUS_PASS)
+        {
+            long add = outBean.getReday() * 24 * 3600 * 1000L;
+
+            // 这里需要把出库单的回款日期修改
+            outDAO.modifyReDate(fullId, TimeTools.getStringByFormat(new Date(new Date().getTime()
+                                                                             + add), "yyyy-MM-dd"));
+
+            List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
+
+            try
+            {
+                // 变动库存
+                processPass(user, outBean, baseList, StorageConstant.OPR_STORAGE_OUTBILL);
+            }
+            catch (MYException e)
+            {
+                throw new RuntimeException(e.getErrorContent());
+            }
+
+            // TODO 销售单是发货后产生管理凭证
+        }
+
+        // 结算中心审核通过后/总裁通过，中心仓库的销售单转到物流管理员，同时自动生成发货单
+        if (newNextStatus == OutConstant.STATUS_MANAGER_PASS
+            && depot.getType() == DepotConstant.DEPOT_TYPE_CENTER)
+        {
+            ConsignBean bean = new ConsignBean();
+
+            bean.setCurrentStatus(SailConstant.CONSIGN_INIT);
+
+            bean.setFullId(outBean.getFullId());
+
+            consignDAO.addConsign(bean);
+        }
+    }
+
+    /**
+     * 处理入库单的流程
+     * 
+     * @param fullId
+     * @param user
+     * @param outBean
+     * @param newNextStatus
+     */
+    private void handerPassBuy(final String fullId, final User user, final OutBean outBean,
+                               int newNextStatus)
+    {
+        // 分公司总经理审批-->待总裁审批
+        if (newNextStatus == OutConstant.STATUS_CEO_CHECK)
+        {
+            // 暂时没有任何操作
+        }
+
+        // 待总裁审批-->待董事长审批
+        if (newNextStatus == OutConstant.STATUS_CHAIRMA_CHECK)
+        {
+            // 暂时没有任何操作
+        }
+
+        // CORE 待董事长审批-->发货
+        if (newNextStatus == OutConstant.STATUS_PASS)
+        {
+            long add = outBean.getReday() * 24 * 3600 * 1000L;
+
+            // 这里需要把出库单的回款日期修改
+            outDAO.modifyReDate(fullId, TimeTools.getStringByFormat(new Date(new Date().getTime()
+                                                                             + add), "yyyy-MM-dd"));
+
+            List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
+
+            try
+            {
+                // 变动库存
+                processPass(user, outBean, baseList, StorageConstant.OPR_STORAGE_INOTHER);
+            }
+            catch (MYException e)
+            {
+                throw new RuntimeException(e.getErrorContent());
+            }
+
+            if (outBean.getOutType() == OutConstant.OUTTYPE_IN_DROP)
+            {
+                // TODO 入库且是报废后是发货后产生管理凭证
+            }
+        }
     }
 }

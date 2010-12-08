@@ -122,7 +122,7 @@ public interface OutConstant
     int STATUS_CEO_CHECK = 9;
 
     /**
-     * 待总裁审批(入库单专用)
+     * 待董事长审批(入库单专用)
      */
     @Defined(key = "outStatus", value = "待董事长审批")
     int STATUS_CHAIRMA_CHECK = 10;
@@ -208,7 +208,7 @@ public interface OutConstant
     /**
      * 报废出库
      */
-    @Defined(key = "outType_in", value = "报废出库")
+    @Defined(key = "outType_in", value = "报废")
     int OUTTYPE_IN_DROP = 2;
 
     /**

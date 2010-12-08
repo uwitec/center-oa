@@ -34,7 +34,7 @@ function opens(obj)
 {
 	oo = obj;
 	
-	window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&showAbs=1&load=1&depotId='+ $$O('location') + '&name=' + encodeURIComponent(obj.value));
+	window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&showAbs=1&load=1&depotId='+ $$('location') + '&name=' + encodeURIComponent(obj.value));
 }
 
 function selectCustomer()
@@ -55,7 +55,7 @@ function getCustomer(oos)
 	$O("customerId").value = obj.value;
 	$O("customercreditlevel").value = obj.pcreditlevelid;
 	
-	if (obj.pcreditlevelid == BLACK_LEVEL || $$O('outType') == 2)
+	if (obj.pcreditlevelid == BLACK_LEVEL || $$('outType') == 2)
 	{
 	    removeAllItem($O('reserve3'));
 	    
@@ -107,7 +107,7 @@ function load()
 
 	hides(true);
 	
-	$detail($O('viewTable'), ['pr', 'ba']);
+	$detail($O('viewTable'), ['are', 'oi', 're', 'ba', 'otherLocation']);
 	
 	highlights($("#mainTable").get(0), ['未付款'], 'red');
 	
@@ -152,7 +152,7 @@ function check()
 		return false;
 	}
 
-	if ($$O('outType') == '')
+	if ($$('outType') == '')
 	{
 		alert('请选择库单类型');
 		return false;
@@ -164,7 +164,7 @@ function check()
 		return false;
 	}
 
-	if ($$O('department') == '')
+	if ($$('department') == '')
 	{
 		alert('请选择入库部门');
 		return false;
@@ -329,7 +329,7 @@ function checkTotal()
 	}
 
 
-	 if ($$O('outType') == 1 && $$O('type') == 1)
+	 if ($$('outType') == 1 && $$('type') == 1)
 	 {
 	 	 if (!window.confirm('您当前所操作的是调出，调出时也是正数增加库存，负数减少库存，您确认填写的调出符合实际情形?'))
 	 	 {
@@ -348,7 +348,7 @@ function checkTotal()
 	     return;
     }
 
-    ccv = $$O('location');
+    ccv = $$('location');
 
     if (ccv == '')
     {
@@ -357,7 +357,7 @@ function checkTotal()
     }
 
     //判断method
-    if ($$O('method') != 'addOut')
+    if ($$('method') != 'addOut')
     {
     	alert('提示：提交没有方法，请重新登录操作');
     	return false;
@@ -391,7 +391,7 @@ function sub()
 function managerChange()
 {
     //普通入库
-	if ($$O('outType') == 0)
+	if ($$('outType') == 0)
 	{
 		$O('customerName').value = '';
 		$O('customerId').value = '';
@@ -412,7 +412,7 @@ function managerChange()
 	}
 	
 	//个人领样
-	if ($$O('outType') == 1)
+	if ($$('outType') == 1)
 	{
 		$O('customerName').value = '个人领样';
 		$O('customerId').value = '99';
@@ -424,7 +424,7 @@ function managerChange()
 	}
 	
 	//零售 是给公共客户的
-	if ($$O('outType') == 2)
+	if ($$('outType') == 2)
     {
         $O('customerName').value = '公共客户';
         $O('customerId').value = '99';
@@ -452,6 +452,39 @@ function pagePrint()
     $O('desc1').style.display = 'block';
 }
 
+function invokeOther()
+{
+    if ($$('otherLocation') == '${bean.location}')
+    {
+        alert('转调区域不能是产品调出区域');
+        return false;
+    }
+    
+    if ($$('otherLocation') == '${bean.destinationId}')
+    {
+        alert('调入仓库就是本仓库');
+        return false;
+    }
+    
+    if (window.confirm('确定把此调出库单转调至--' + getOptionText('otherLocation')))
+    {
+        document.location.href = '../sail/out.do?method=processInvoke&outId=${bean.fullId}&flag=2&changeLocationId=' + $$('otherLocation');
+    }
+}
+
+function recives()
+{
+    if (window.confirm('确定全部接受此调出的库单?'))
+    document.location.href = '../sail/out.do?method=processInvoke&outId=${bean.fullId}&flag=1';
+}
+
+function rejects()
+{
+    if (window.confirm('确定驳回此调出的库单?'))
+    {
+        document.location.href = '../sail/out.do?method=processInvoke&outId=${bean.fullId}&flag=3';
+    }
+}
 </script>
 </head>
 <body class="body_class" onload="load()">
@@ -479,7 +512,7 @@ function pagePrint()
 <div id="na">
 <p:navigation
 	height="22">
-	<td width="550" class="navigation">入库单明细</td>
+	<td width="550" class="navigation">处理调拨</td>
 				<td width="85"></td>
 </p:navigation> <br>
 </div>
@@ -504,7 +537,7 @@ function pagePrint()
 								<td width="35">&nbsp;</td>
 								<td width="6"><img src="../images/dot_r.gif" width="6"
 									height="6"></td>
-								<td class="caption"><strong>填写入库单信息:<font color=red>${hasOver}</font> 您的信用额度还剩下:${credit}</strong>
+								<td class="caption"><strong>填写入库单信息:</strong>
 								<font color="blue">产品仓库：</font>
 								<select name="location" class="select_class"  onchange="clearsAll()" values="${bean.location}" readonly=true>
 									<c:forEach items='${locationList}' var="item">
@@ -877,6 +910,22 @@ function pagePrint()
     <tr>
         <td height="10" colspan='2'></td>
     </tr>
+    
+    <tr id="locations">
+        <td height="10" colspan='2' align="center">
+              转调其他仓库
+            <select name="otherLocation" class="select_class">
+                <option value="">--</option>
+            <c:forEach items='${dirLocationList}' var="item">
+                <option value="${item.id}">${item.name}</option>
+            </c:forEach>
+        </select>
+        </td>
+    </tr>
+    
+    <tr>
+        <td height="10" colspan='2'></td>
+    </tr>
 
     <tr>
         <td background="../images/dot_line.gif" colspan='2'></td>
@@ -888,9 +937,15 @@ function pagePrint()
 
 	<tr>
         <td width="100%">
-        <div align="right"><input type="button" name="pr"
-            class="button_class" onclick="pagePrint()"
-            value="&nbsp;&nbsp;打 印&nbsp;&nbsp;">&nbsp;&nbsp;<input
+        <div align="right"><input type="button" name="are"
+            class="button_class" onclick="recives()"
+            value="&nbsp;&nbsp;全部接受&nbsp;&nbsp;">&nbsp;&nbsp;
+            <input type="button" name="oi"
+            class="button_class" onclick="invokeOther()"
+            value="&nbsp;转调其他区域&nbsp;">&nbsp;&nbsp;
+            <input type="button"  name="re"
+            class="button_class" onclick="rejects()"
+            value="&nbsp;&nbsp;全部驳回&nbsp;&nbsp;">&nbsp;&nbsp;<input
             type="button" name="ba" class="button_class"
             onclick="javascript:history.go(-1)"
             value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>

@@ -12,8 +12,9 @@
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../sail_js/addBuy.js"></script>
-<script language="JavaScript" src="../sail_js/buy.jsp"></script>
 <script language="javascript">
+<%@include file="../sail_js/buy.jsp"%>
+
 /**
  * 查询库存
  */

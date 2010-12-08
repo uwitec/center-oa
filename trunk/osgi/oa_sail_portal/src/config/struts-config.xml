@@ -19,6 +19,8 @@
 			<forward name="querySelfBuy" path="/sail/querySelfBuy.jsp" />
 			<forward name="updateBuy" path="/sail/updateBuy.jsp" />
 			<forward name="detailBuy" path="/sail/detailBuy.jsp" />
+			<forward name="queryBuy" path="/sail/queryBuy.jsp" />
+			<forward name="handerInvokeBuy" path="/sail/handerInvokeBuy.jsp" />
 		</action>
 		
 		<action path="/sail/transport" parameter="method"

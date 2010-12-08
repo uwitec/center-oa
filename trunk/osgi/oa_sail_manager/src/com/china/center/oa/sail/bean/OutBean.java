@@ -253,6 +253,68 @@ public class OutBean implements Serializable
     private List<BaseBean> baseList = null;
 
     /**
+     * Copy Constructor(不拷贝baseList)
+     * 
+     * @param outBean
+     *            a <code>OutBean</code> object
+     */
+    public OutBean(OutBean outBean)
+    {
+        this.fullId = outBean.fullId;
+        this.id = outBean.id;
+        this.flowId = outBean.flowId;
+        this.outTime = outBean.outTime;
+        this.managerTime = outBean.managerTime;
+        this.outType = outBean.outType;
+        this.type = outBean.type;
+        this.hasInvoice = outBean.hasInvoice;
+        this.invoiceId = outBean.invoiceId;
+        this.dutyId = outBean.dutyId;
+        this.status = outBean.status;
+        this.invoiceStatus = outBean.invoiceStatus;
+        this.invoiceMoney = outBean.invoiceMoney;
+        this.department = outBean.department;
+        this.customerId = outBean.customerId;
+        this.customerName = outBean.customerName;
+        this.locationId = outBean.locationId;
+        this.location = outBean.location;
+        this.connector = outBean.connector;
+        this.phone = outBean.phone;
+        this.stafferName = outBean.stafferName;
+        this.stafferId = outBean.stafferId;
+        this.managerId = outBean.managerId;
+        this.total = outBean.total;
+        this.description = outBean.description;
+        this.checks = outBean.checks;
+        this.reday = outBean.reday;
+        this.redate = outBean.redate;
+        this.depotpartId = outBean.depotpartId;
+        this.marks = outBean.marks;
+        this.mark = outBean.mark;
+        this.consign = outBean.consign;
+        this.pay = outBean.pay;
+        this.inway = outBean.inway;
+        this.tempType = outBean.tempType;
+        this.hadPay = outBean.hadPay;
+        this.arriveDate = outBean.arriveDate;
+        this.destinationId = outBean.destinationId;
+        this.refOutFullId = outBean.refOutFullId;
+        this.tranNo = outBean.tranNo;
+        this.reserve1 = outBean.reserve1;
+        this.reserve2 = outBean.reserve2;
+        this.reserve3 = outBean.reserve3;
+        this.reserve4 = outBean.reserve4;
+        this.reserve5 = outBean.reserve5;
+        this.reserve6 = outBean.reserve6;
+        this.reserve7 = outBean.reserve7;
+        this.reserve8 = outBean.reserve8;
+        this.reserve9 = outBean.reserve9;
+        this.curcredit = outBean.curcredit;
+        this.staffcredit = outBean.staffcredit;
+        this.managercredit = outBean.managercredit;
+    }
+
+    /**
      * default constructor
      */
     public OutBean()

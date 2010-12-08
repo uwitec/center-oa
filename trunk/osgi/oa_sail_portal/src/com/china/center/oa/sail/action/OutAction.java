@@ -29,7 +29,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
 import com.center.china.osgi.publics.User;
-import com.center.china.osgi.publics.tools.ObjectTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.OldPageSeparateTools;
 import com.china.center.common.MYException;
@@ -41,7 +40,6 @@ import com.china.center.oa.customer.wrap.NotPayWrap;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.bean.ProviderBean;
-import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.DepotpartDAO;
@@ -55,7 +53,6 @@ import com.china.center.oa.publics.bean.DepartmentBean;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
-import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.InvoiceConstant;
@@ -177,6 +174,8 @@ public class OutAction extends DispatchAction
     private static String QUERYOUT = "queryOut";
 
     private static String QUERYSELFBUY = "querySelfBuy";
+
+    private static String QUERYBUY = "queryBuy";
 
     /**
      * queryForAdd
@@ -339,14 +338,21 @@ public class OutAction extends DispatchAction
             {
                 DepotBean depotBean = (DepotBean)iterator.next();
 
+                boolean had = false;
+
                 for (AuthBean authBean : depotAuthList)
                 {
                     if (authBean.getId().equals(depotBean.getId()))
                     {
-                        iterator.remove();
+                        had = true;
 
                         break;
                     }
+                }
+
+                if ( !had)
+                {
+                    iterator.remove();
                 }
 
             }
@@ -1429,6 +1435,44 @@ public class OutAction extends DispatchAction
     }
 
     /**
+     * checkQueryBuyAuth
+     * 
+     * @param request
+     * @throws MYException
+     */
+    private void checkQueryBuyAuth(HttpServletRequest request)
+        throws MYException
+    {
+        // 权限校验
+        String queryType = RequestTools.getValueFromRequest(request, "queryType");
+
+        User user = (User)request.getSession().getAttribute("user");
+
+        if ("1".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.BUY_LOCATION_MANAGER))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+
+        if ("2".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.BUY_CEO))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+
+        if ("3".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.BUY_CHAIRMA))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+
+        if ("4".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.BUY_SUBMIT))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+    }
+
+    /**
      * checkQueryOutAuth
      * 
      * @param request
@@ -1553,6 +1597,94 @@ public class OutAction extends DispatchAction
         getDivs(request, list);
 
         return mapping.findForward("queryOut");
+    }
+
+    /**
+     * 入库单审批过程的查询
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryBuy(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        User user = (User)request.getSession().getAttribute("user");
+
+        try
+        {
+            checkQueryBuyAuth(request);
+        }
+        catch (MYException e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+            _logger.error(e, e);
+
+            return mapping.findForward("error");
+        }
+
+        request.getSession().setAttribute("exportKey", QUERYBUY);
+
+        List<OutVO> list = null;
+
+        CommonTools.saveParamers(request);
+
+        try
+        {
+            if (OldPageSeparateTools.isFirstLoad(request))
+            {
+                ConditionParse condtion = getQueryBuyCondition(request, user);
+
+                int tatol = outDAO.countVOByCondition(condtion.toString());
+
+                PageSeparate page = new PageSeparate(tatol, PublicConstant.PAGE_SIZE - 5);
+
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, QUERYBUY);
+
+                list = outDAO.queryEntityVOsByCondition(condtion, page);
+            }
+            else
+            {
+                OldPageSeparateTools.processSeparate(request, QUERYBUY);
+
+                list = outDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request,
+                    QUERYBUY), OldPageSeparateTools.getPageSeparate(request, QUERYBUY));
+            }
+        }
+        catch (Exception e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "查询单据失败");
+
+            _logger.error(e, e);
+
+            return mapping.findForward("error");
+        }
+
+        request.setAttribute("listOut1", list);
+
+        List<DepotBean> depotList = depotDAO.listEntityBeans();
+
+        request.setAttribute("depotList", depotList);
+
+        int radioIndex = CommonTools.parseInt(request.getParameter("radioIndex"));
+
+        if (list.size() > 0 && radioIndex >= list.size())
+        {
+            request.setAttribute("radioIndex", list.size() - 1);
+        }
+
+        request.getSession().setAttribute("listOut1", list);
+
+        request.setAttribute("now", TimeTools.now("yyyy-MM-dd"));
+
+        getDivs(request, list);
+
+        return mapping.findForward("queryBuy");
     }
 
     /**
@@ -2189,6 +2321,162 @@ public class OutAction extends DispatchAction
     }
 
     /**
+     * 入库单审批过程的查询(条件的设置)
+     * 
+     * @param request
+     * @param user
+     * @return
+     */
+    private ConditionParse getQueryBuyCondition(HttpServletRequest request, User user)
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        condtion.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
+
+        String outTime = request.getParameter("outTime");
+
+        String outTime1 = request.getParameter("outTime1");
+
+        if ( !StringTools.isNullOrNone(outTime))
+        {
+            condtion.addCondition("OutBean.outTime", ">=", outTime);
+        }
+        else
+        {
+            condtion.addCondition("OutBean.outTime", ">=", TimeTools.now_short( -7));
+
+            request.setAttribute("outTime", TimeTools.now_short( -7));
+        }
+
+        if ( !StringTools.isNullOrNone(outTime1))
+        {
+            condtion.addCondition("OutBean.outTime", "<=", outTime1);
+        }
+        else
+        {
+            condtion.addCondition("OutBean.outTime", "<=", TimeTools.now_short());
+
+            request.setAttribute("outTime1", TimeTools.now_short());
+        }
+
+        String id = request.getParameter("id");
+
+        if ( !StringTools.isNullOrNone(id))
+        {
+            condtion.addCondition("OutBean.fullid", "like", id);
+        }
+
+        String status = request.getParameter("status");
+
+        if ( !StringTools.isNullOrNone(status))
+        {
+            condtion.addIntCondition("OutBean.status", "=", status);
+        }
+
+        String customerId = request.getParameter("customerId");
+
+        if ( !StringTools.isNullOrNone(customerId))
+        {
+            condtion.addCondition("OutBean.customerId", "=", customerId);
+        }
+
+        String customerName = request.getParameter("customerName");
+
+        if ( !StringTools.isNullOrNone(customerId))
+        {
+            condtion.addCondition("OutBean.customerName", "like", customerName);
+        }
+
+        String outType = request.getParameter("outType");
+
+        if ( !StringTools.isNullOrNone(outType))
+        {
+            condtion.addIntCondition("OutBean.outType", "=", outType);
+        }
+
+        String location = request.getParameter("location");
+
+        if ( !StringTools.isNullOrNone(location))
+        {
+            condtion.addCondition("OutBean.location", "=", location);
+        }
+
+        String inway = request.getParameter("inway");
+
+        if ( !StringTools.isNullOrNone(inway))
+        {
+            condtion.addIntCondition("OutBean.inway", "=", inway);
+        }
+
+        // 这里是过滤
+        String queryType = RequestTools.getValueFromRequest(request, "queryType");
+
+        // 分公司经理查询
+        if ("1".equals(queryType))
+        {
+            if (OldPageSeparateTools.isMenuLoad(request))
+            {
+                condtion.addIntCondition("OutBean.status", "=",
+                    OutConstant.STATUS_LOCATION_MANAGER_CHECK);
+
+                request.setAttribute("status", OutConstant.STATUS_LOCATION_MANAGER_CHECK);
+            }
+
+            condtion.addCondition("OutBean.locationId", "=", user.getLocationId());
+        }
+        // 总裁审核
+        else if ("2".equals(queryType))
+        {
+            if (OldPageSeparateTools.isMenuLoad(request))
+            {
+                condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_CEO_CHECK);
+
+                request.setAttribute("status", OutConstant.STATUS_CEO_CHECK);
+            }
+        }
+        // 董事长审核
+        else if ("3".equals(queryType))
+        {
+            if (OldPageSeparateTools.isMenuLoad(request))
+            {
+                condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_CHAIRMA_CHECK);
+
+                request.setAttribute("status", OutConstant.STATUS_CHAIRMA_CHECK);
+            }
+        }
+        // 库管调拨
+        else if ("4".equals(queryType))
+        {
+            if (OldPageSeparateTools.isMenuLoad(request))
+            {
+                condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_SUBMIT);
+
+                request.setAttribute("status", OutConstant.STATUS_SUBMIT);
+
+                condtion.addIntCondition("OutBean.inway", "=", OutConstant.IN_WAY);
+
+                request.setAttribute("inway", OutConstant.IN_WAY);
+            }
+
+            setDepotCondotion(user, condtion);
+        }
+        // 未知的则什么都没有
+        else
+        {
+            condtion.addFlaseCondition();
+        }
+
+        if ( !condtion.containOrder())
+        {
+            condtion.addCondition("order by OutBean.fullid desc");
+        }
+
+        return condtion;
+    }
+
+    /**
      * 设置仓库的过滤条件
      * 
      * @param user
@@ -2214,13 +2502,14 @@ public class OutAction extends DispatchAction
             {
                 AuthBean authBean = (AuthBean)iterator.next();
 
+                // 接受仓库是自己管辖的
                 if (iterator.hasNext())
                 {
-                    sb.append("OutBean.location = '" + authBean.getId() + "' or ");
+                    sb.append("OutBean.destinationId = '" + authBean.getId() + "' or ");
                 }
                 else
                 {
-                    sb.append("OutBean.location = '" + authBean.getId() + "'");
+                    sb.append("OutBean.destinationId = '" + authBean.getId() + "'");
                 }
 
             }
@@ -2381,6 +2670,7 @@ public class OutAction extends DispatchAction
         throws ServletException
     {
         String fullId = request.getParameter("outId");
+
         String flag = request.getParameter("flag");
 
         User user = (User)request.getSession().getAttribute("user");
@@ -2401,9 +2691,7 @@ public class OutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        // 管理员通过和会计通过的都可以处理
-        if ( ! ( (bean.getStatus() == OutConstant.STATUS_PASS || bean.getStatus() == OutConstant.STATUS_SEC_PASS) && bean
-            .getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT))
+        if ( ! (bean.getType() == OutConstant.OUT_TYPE_INBILL && bean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT))
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不能转调，请核实");
 
@@ -2420,12 +2708,14 @@ public class OutAction extends DispatchAction
         // 直接接受自动生成一个调入的库单
         if ("1".equals(flag))
         {
-            OutBean newOut = (OutBean)ObjectTools.deepCopy(bean);
+            OutBean newOut = new OutBean(bean);
 
             newOut.setStatus(0);
 
-            newOut.setLocationId(Helper.getCurrentLocationId(request));
-            newOut.setLocation(Helper.getCurrentLocationId(request));
+            newOut.setLocationId(user.getLocationId());
+
+            // 仓库就是调出的目的仓区
+            newOut.setLocation(bean.getDestinationId());
 
             newOut.setOutType(OutConstant.OUTTYPE_IN_MOVEOUT);
 
@@ -2435,33 +2725,37 @@ public class OutAction extends DispatchAction
 
             newOut.setDestinationId("");
 
-            newOut.setDescription("自动接收:" + fullId + ".生成的调入单据");
+            newOut.setDescription("自动接收调拨单:" + fullId + ".生成的调入单据");
 
-            newOut.setInway(0);
+            newOut.setInway(OutConstant.IN_WAY_NO);
 
             newOut.setChecks("");
+
+            // 调入的单据
+            newOut.setReserve1(OutConstant.MOVEOUT_IN);
 
             newOut.setPay(OutConstant.PAY_NOT);
 
             newOut.setTotal( -newOut.getTotal());
 
-            String depotpartId = request.getParameter("depotpartId");
-
-            // TODO 选择接受的仓区
-            // newOut.setLocation(OutConstant.SYSTEM_LOCATION);
-
-            if ( !StringTools.isNullOrNone(depotpartId))
-            {
-                // 设置仓区
-                newOut.setDepotpartId(depotpartId);
-            }
-
             List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(fullId);
+
+            DepotpartBean defaultOKDepotpart = depotpartDAO.findDefaultOKDepotpart(bean
+                .getDestinationId());
+
+            if (defaultOKDepotpart == null)
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "仓库下没有良品仓，请核实");
+
+                return mapping.findForward("error");
+            }
 
             for (BaseBean baseBean : baseList)
             {
+                // 获得仓库默认的仓区
+                baseBean.setDepotpartId(defaultOKDepotpart.getId());
                 baseBean.setValue( -baseBean.getValue());
-                baseBean.setLocationId(Helper.getCurrentLocationId(request));
+                baseBean.setLocationId(bean.getDestinationId());
                 baseBean.setAmount( -baseBean.getAmount());
             }
 
@@ -2495,14 +2789,6 @@ public class OutAction extends DispatchAction
                 return mapping.findForward("error");
             }
 
-            LocationBean lb = locationDAO.find(changeLocationId);
-
-            if (lb == null)
-            {
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "转调区域不存在，库单不能转调，请核实");
-
-                return mapping.findForward("error");
-            }
             bean.setDestinationId(changeLocationId);
 
             try
@@ -2517,7 +2803,7 @@ public class OutAction extends DispatchAction
                 return mapping.findForward("error");
             }
 
-            request.setAttribute(KeyConstant.MESSAGE, fullId + "成功转调至:" + lb.getName());
+            request.setAttribute(KeyConstant.MESSAGE, fullId + "成功转调");
         }
 
         // 直接驳回
@@ -2539,10 +2825,9 @@ public class OutAction extends DispatchAction
 
         request.setAttribute("forward", "10");
 
-        // TODO
-        request.setAttribute("Bflagg", "1");
+        request.setAttribute("queryType", "4");
 
-        return querySelfOut(mapping, form, request, reponse);
+        return queryBuy(mapping, form, request, reponse);
     }
 
     /**
@@ -2902,7 +3187,7 @@ public class OutAction extends DispatchAction
 
         int resultStatus = -1;
 
-        // 入库单的提交
+        // 入库单的提交(调拨)
         if (out.getType() == OutConstant.OUT_TYPE_INBILL && statuss == OutConstant.STATUS_SUBMIT)
         {
             try
@@ -2919,9 +3204,92 @@ public class OutAction extends DispatchAction
                 return mapping.findForward("error");
             }
         }
+        // 进入库单 库管--分经理--总裁--董事长
+        else if (out.getType() == OutConstant.OUT_TYPE_INBILL
+                 && statuss != OutConstant.STATUS_SUBMIT)
+        {
+            if (out.getOutType() == OutConstant.OUTTYPE_IN_COMMON
+                || out.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT)
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "采购入库和调拨没有此操作");
+
+                return mapping.findForward("error");
+            }
+
+            // 进入待总裁审批
+            if (statuss == OutConstant.STATUS_CEO_CHECK)
+            {
+                try
+                {
+                    resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_CEO_CHECK,
+                        reason, depotpartId);
+                }
+                catch (MYException e)
+                {
+                    _logger.warn(e, e);
+
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+                    return mapping.findForward("error");
+                }
+            }
+
+            // 进入待董事长审批
+            if (statuss == OutConstant.STATUS_CHAIRMA_CHECK)
+            {
+                try
+                {
+                    resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_CHAIRMA_CHECK,
+                        reason, depotpartId);
+                }
+                catch (MYException e)
+                {
+                    _logger.warn(e, e);
+
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+                    return mapping.findForward("error");
+                }
+            }
+
+            // 进入库管发货(结束了)
+            if (statuss == OutConstant.STATUS_PASS)
+            {
+                try
+                {
+                    resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_PASS, reason,
+                        depotpartId);
+                }
+                catch (MYException e)
+                {
+                    _logger.warn(e, e);
+
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+                    return mapping.findForward("error");
+                }
+            }
+
+            // 驳回
+            if (statuss == OutConstant.STATUS_REJECT)
+            {
+                try
+                {
+                    resultStatus = outManager.reject(fullId, user, reason);
+                }
+                catch (MYException e)
+                {
+                    _logger.warn(e, e);
+
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+                    return mapping.findForward("error");
+                }
+            }
+        }
         else
         {
-            // 业务员提交
+            // 业务员提交销售单
             if (statuss == OutConstant.STATUS_SUBMIT)
             {
                 try
@@ -3029,12 +3397,24 @@ public class OutAction extends DispatchAction
 
         request.setAttribute(KeyConstant.MESSAGE, "单据[" + fullId + "]操作成功");
 
-        if (StringTools.isNullOrNone(request.getParameter("queryType")))
+        if (realOut.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
-            return querySelfOut(mapping, form, request, reponse);
-        }
+            if (StringTools.isNullOrNone(request.getParameter("queryType")))
+            {
+                return querySelfOut(mapping, form, request, reponse);
+            }
 
-        return queryOut(mapping, form, request, reponse);
+            return queryOut(mapping, form, request, reponse);
+        }
+        else
+        {
+            if (StringTools.isNullOrNone(request.getParameter("queryType")))
+            {
+                return querySelfBuy(mapping, form, request, reponse);
+            }
+
+            return queryBuy(mapping, form, request, reponse);
+        }
     }
 
     /**
@@ -3137,37 +3517,7 @@ public class OutAction extends DispatchAction
                 return mapping.findForward("error");
             }
 
-            if (bean.getLocationId().equals(Helper.getCurrentLocationId(request)))
-            {
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "不能操作自身区域的调拨");
-
-                return mapping.findForward("error");
-            }
-
-            if ( !bean.getDestinationId().equals(Helper.getCurrentLocationId(request)))
-            {
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "调出已经转到其他区域,没有权限处理");
-
-                return mapping.findForward("error");
-            }
-
-            List<LocationBean> locationList = locationDAO.listEntityBeans();
-
-            request.setAttribute("locationList", locationList);
-
-            ConditionParse condition = new ConditionParse();
-
-            condition.addWhereStr();
-
-            condition.addIntCondition("type", "=", DepotConstant.DEPOTPART_TYPE_OK);
-
-            List<DepotpartBean> depotpartList = depotpartDAO.queryEntityBeansByCondition(condition);
-
-            request.setAttribute("depotpartList", depotpartList);
-
-            // TODO
-
-            return mapping.findForward("processOut");
+            return mapping.findForward("handerInvokeBuy");
         }
 
         if (bean.getType() == OutConstant.OUT_TYPE_OUTBILL)

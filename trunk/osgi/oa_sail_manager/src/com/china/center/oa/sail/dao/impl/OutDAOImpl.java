@@ -347,7 +347,7 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
             connection = this.jdbcOperation.getDataSource().getConnection();
 
             prepareStatement = connection
-                .prepareStatement("select fullid, status, reserve3 from t_center_out where fullid = '"
+                .prepareStatement("select fullid, status, reserve3, type from t_center_out where fullid = '"
                                   + fullId + "'");
 
             rst = prepareStatement.executeQuery();
@@ -361,6 +361,8 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
             out.setStatus(rst.getInt("status"));
 
             out.setReserve3(rst.getInt("Reserve3"));
+
+            out.setType(rst.getInt("type"));
 
             return out;
         }

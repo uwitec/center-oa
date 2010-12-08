@@ -2,7 +2,6 @@
 
 //当前的焦点对象
 var oo;
-
 var ids = '';
 var amous = '';
 var tsts;

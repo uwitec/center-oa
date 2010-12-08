@@ -168,6 +168,11 @@ public abstract class OutHelper
             return "待总裁审批";
         }
 
+        if (i == 10)
+        {
+            return "待董事长审批";
+        }
+
         return "";
     }
 
@@ -216,10 +221,25 @@ public abstract class OutHelper
 
         if (outBean.getType() == OutConstant.OUT_TYPE_INBILL)
         {
+            if (outBean.getStatus() == OutConstant.STATUS_LOCATION_MANAGER_CHECK)
+            {
+                return true;
+            }
+
+            if (outBean.getStatus() == OutConstant.STATUS_CEO_CHECK)
+            {
+                return true;
+            }
+
+            if (outBean.getStatus() == OutConstant.STATUS_CHAIRMA_CHECK)
+            {
+                return true;
+            }
+
             // 调动分为两个单据 一个是源头的调出入库单 一个是目的的调入入库单
             // 源头调出后状态处于提交态,此时可以驳回的
             if (outBean.getStatus() == OutConstant.STATUS_SUBMIT
-                && outBean.getType() != OutConstant.OUTTYPE_IN_MOVEOUT)
+                && outBean.getType() == OutConstant.OUTTYPE_IN_MOVEOUT)
             {
                 return true;
             }

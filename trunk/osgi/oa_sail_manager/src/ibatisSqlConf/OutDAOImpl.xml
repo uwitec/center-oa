@@ -79,7 +79,7 @@
             and t2.productId = #productId# 
             and t1.outtime >= #beginDate# 
             AND t1.outtime <= #endDate# 
-            AND t1.status = 1
+            AND t1.status in (1, 6, 7, 8, 9)
         ]]>
 	</select>
 	
@@ -113,7 +113,7 @@
             and t2.owner = #owner# 
             and t1.outtime >= #beginDate# 
             AND t1.outtime <= #endDate# 
-            AND t1.status = 1
+            AND t1.status in (1, 6, 7, 8, 9)
         ]]>
     </select>
 
