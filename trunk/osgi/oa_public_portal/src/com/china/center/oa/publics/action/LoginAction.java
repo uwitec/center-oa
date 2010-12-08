@@ -56,6 +56,7 @@ import com.china.center.oa.publics.dao.RoleAuthDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.helper.LoginHelper;
+import com.china.center.oa.publics.manager.MenuManager;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.publics.vo.UserVO;
 import com.china.center.oa.publics.vs.RoleAuthBean;
@@ -89,6 +90,8 @@ public class LoginAction extends DispatchAction
     private MenuItemDAO menuItemDAO = null;
 
     private RoleAuthDAO roleAuthDAO = null;
+
+    private MenuManager menuManager = null;
 
     private ParameterDAO parameterDAO = null;
 
@@ -231,7 +234,8 @@ public class LoginAction extends DispatchAction
         request.getSession().setAttribute("gkey", key);
 
         // 默认是20
-        request.getSession().setAttribute("g_page", parameterDAO.getInt(SysConfigConstant.GLOBAL_PAGE_SIZE));
+        request.getSession().setAttribute("g_page",
+            parameterDAO.getInt(SysConfigConstant.GLOBAL_PAGE_SIZE));
 
         request.getSession().setAttribute("hasEncLock", hasEncLock);
 
@@ -242,7 +246,8 @@ public class LoginAction extends DispatchAction
         request.getSession().setAttribute("g_modifyPassword", "../admin/modifyPassword.jsp");
 
         // OA系统/SKY软件【V2.14.20100509】
-        request.getSession().setAttribute("SN", "OA系统/SKY软件【" + ConfigLoader.getProperty("version") + "】");
+        request.getSession().setAttribute("SN",
+            "OA系统/SKY软件【" + ConfigLoader.getProperty("version") + "】");
 
         ActionForward forward = mapping.findForward("success");
 
@@ -325,7 +330,8 @@ public class LoginAction extends DispatchAction
     private boolean handleEncLock(String key, String randKey, String randVal, boolean hasEncLock,
                                   StafferBean stafferBean)
     {
-        return !hasEncLock || LoginHelper.encRadomStr(stafferBean.getPwkey(), key, randVal).equals(randKey);
+        return !hasEncLock
+               || LoginHelper.encRadomStr(stafferBean.getPwkey(), key, randVal).equals(randKey);
     }
 
     /**
@@ -440,7 +446,8 @@ public class LoginAction extends DispatchAction
      * @param rand
      * @param real
      */
-    private ActionForward checkCommon(ActionMapping mapping, HttpServletRequest request, String rand, boolean real)
+    private ActionForward checkCommon(ActionMapping mapping, HttpServletRequest request,
+                                      String rand, boolean real)
     {
         if (real && rand == null)
         {
@@ -476,7 +483,9 @@ public class LoginAction extends DispatchAction
     {
         RequestContext context = net.buffalo.request.RequestContext.getContext();
 
-        StandardSessionFacade session = (StandardSessionFacade)context.getHttpRequest().getSession();
+        StandardSessionFacade session = (StandardSessionFacade)context
+            .getHttpRequest()
+            .getSession();
 
         // 获取上次访问的时间
         long lastAccessedTime = session.getLastAccessedTime();
@@ -526,7 +535,8 @@ public class LoginAction extends DispatchAction
 
     private String logLogin(HttpServletRequest request, User user, boolean success)
     {
-        return request.getRemoteAddr() + ',' + user.getName() + ',' + user.getStafferId() + ',' + success;
+        return request.getRemoteAddr() + ',' + user.getName() + ',' + user.getStafferId() + ','
+               + success;
     }
 
     /**
@@ -583,9 +593,22 @@ public class LoginAction extends DispatchAction
                 menuItemMap.put(menuItemBean.getParentId(), new ArrayList<MenuItemBean>());
             }
 
+            // 把二级子菜单放入list
             menuItemMap.get(menuItemBean.getParentId()).add(menuItemBean);
+        }
 
-            Collections.sort(menuItemMap.get(menuItemBean.getParentId()), new Comparator<MenuItemBean>()
+        // 二级子菜单排序
+        for (Map.Entry<String, List<MenuItemBean>> each : menuItemMap.entrySet())
+        {
+            // 放入扩展菜单
+            List<MenuItemBean> expandMenuList = menuManager.onFindExpandMenu(user, each.getKey());
+
+            if ( !ListTools.isEmptyOrNull(expandMenuList))
+            {
+                each.getValue().addAll(expandMenuList);
+            }
+
+            Collections.sort(each.getValue(), new Comparator<MenuItemBean>()
             {
                 public int compare(MenuItemBean o1, MenuItemBean o2)
                 {
@@ -594,6 +617,7 @@ public class LoginAction extends DispatchAction
             });
         }
 
+        // 一级菜单排序
         Collections.sort(rootMenus, new Comparator<MenuItemBean>()
         {
             public int compare(MenuItemBean o1, MenuItemBean o2)
@@ -641,8 +665,8 @@ public class LoginAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward modifyPassword(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse reponse)
+    public ActionForward modifyPassword(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String oldPassword = request.getParameter("oldPassword");
@@ -856,5 +880,22 @@ public class LoginAction extends DispatchAction
     public void setParameterDAO(ParameterDAO parameterDAO)
     {
         this.parameterDAO = parameterDAO;
+    }
+
+    /**
+     * @return the menuManager
+     */
+    public MenuManager getMenuManager()
+    {
+        return menuManager;
+    }
+
+    /**
+     * @param menuManager
+     *            the menuManager to set
+     */
+    public void setMenuManager(MenuManager menuManager)
+    {
+        this.menuManager = menuManager;
     }
 }

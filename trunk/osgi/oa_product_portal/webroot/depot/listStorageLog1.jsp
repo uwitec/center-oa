@@ -61,8 +61,13 @@
 					<td align="center" onclick="hrefAndSelect(this)">${item.preAmount22}</td>
 					</c:if>
 					
+					<c:if test="${item.changeAmount >= 0}">
+					<td align="center" onclick="hrefAndSelect(this)"><font color="blue"><b>${item.changeAmount}</b></font></td>
+					</c:if>
 					
-					<td align="center" onclick="hrefAndSelect(this)">${item.changeAmount}</td>
+					<c:if test="${item.changeAmount < 0}">
+                    <td align="center" onclick="hrefAndSelect(this)"><font color="red">${item.changeAmount}</font></td>
+                    </c:if>
 					
 					
 					<c:if test="${priceKey == 0}">

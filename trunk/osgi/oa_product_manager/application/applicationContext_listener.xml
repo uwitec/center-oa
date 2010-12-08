@@ -10,43 +10,69 @@
 	  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 	  http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
 	  http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"
-	default-autowire="byName" default-init-method="init" default-destroy-method="destroy">
-	
-	<bean id="locationListenerProductImpl" class="com.china.center.oa.product.listener.impl.LocationListenerProductImpl" />
-    
-    <bean id="queryListenerDepotImpl" class="com.china.center.oa.product.listener.impl.QueryListenerDepotImpl" />
-    
-    <bean id="defaultLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
-        <property name="listenerManager">
-            <ref bean="locationManager"/>
-        </property>
-        <property name="listenerList">
-            <list>
-                <ref bean="locationListenerProductImpl" />
-            </list>
-        </property>
-    </bean>
-    
-    <bean id="defaultLoadQueryListener" class="com.china.center.oa.publics.listener.DefaultLoadQueryListener">
-        <property name="listenerList">
-            <list>
-                <ref bean="queryListenerDepotImpl" />
-            </list>
-        </property>
-    </bean>
-    
-    <bean id="authListenerProductImpl" class="com.china.center.oa.product.listener.impl.AuthListenerProductImpl" />
-    
-    <bean id="authListenerLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
-        <property name="listenerManager">
-            <ref bean="authManager"/>
-        </property>
-        <property name="listenerList">
-            <list>
-                <ref bean="authListenerProductImpl" />
-            </list>
-        </property>
-    </bean>
+	default-autowire="byName" default-init-method="init"
+	default-destroy-method="destroy">
 
-	
+	<bean id="locationListenerProductImpl"
+		class="com.china.center.oa.product.listener.impl.LocationListenerProductImpl" />
+
+	<bean id="queryListenerDepotImpl"
+		class="com.china.center.oa.product.listener.impl.QueryListenerDepotImpl" />
+
+	<bean id="defaultLoadListener"
+		class="com.center.china.osgi.publics.DefaultLoadListener">
+		<property name="listenerManager">
+			<ref bean="locationManager" />
+		</property>
+		<property name="listenerList">
+			<list>
+				<ref bean="locationListenerProductImpl" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="defaultLoadQueryListener"
+		class="com.china.center.oa.publics.listener.DefaultLoadQueryListener">
+		<property name="listenerList">
+			<list>
+				<ref bean="queryListenerDepotImpl" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="authListenerProductImpl"
+		class="com.china.center.oa.product.listener.impl.AuthListenerProductImpl" />
+
+	<bean id="authListenerLoadListener"
+		class="com.center.china.osgi.publics.DefaultLoadListener">
+		<property name="listenerManager">
+			<ref bean="authManager" />
+		</property>
+		<property name="listenerList">
+			<list>
+				<ref bean="authListenerProductImpl" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="menuListenerProductImpl"
+		class="com.china.center.oa.product.listener.impl.MenuListenerProductImpl">
+		<property name="url">
+			<value>../depot/queryDepotStorageRelation.jsp?depotId=</value>
+		</property>
+	</bean>
+
+	<bean id="menuListenerLoadListener"
+		class="com.center.china.osgi.publics.DefaultLoadListener">
+		<property name="listenerManager">
+			<ref bean="menuManager" />
+		</property>
+		<property name="listenerList">
+			<list>
+				<ref bean="menuListenerProductImpl" />
+			</list>
+		</property>
+	</bean>
+
+
 </beans>

@@ -119,4 +119,6 @@
 
 	<bean id="fatalNotify" class="com.china.center.oa.publics.manager.impl.FatalNotifyImpl" />
 
+	<bean id="menuManager" class="com.china.center.oa.publics.manager.impl.MenuManagerImpl" />
+
 </beans>

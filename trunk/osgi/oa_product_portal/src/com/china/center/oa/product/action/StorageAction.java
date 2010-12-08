@@ -95,6 +95,8 @@ public class StorageAction extends DispatchAction
 
     private static final String QUERYSTORAGERELATION = "queryStorageRelation";
 
+    private static final String QUERYDEPOTSTORAGERELATION = "queryDepotStorageRelation";
+
     private static final String QUERYSELFSTORAGERELATION = "querySelfStorageRelation";
 
     private static final String RPTQUERYPRODUCTINDEPOTPART = "rptQueryProductInDepotpart";
@@ -148,6 +150,46 @@ public class StorageAction extends DispatchAction
         ActionTools.processJSONQueryCondition(QUERYSTORAGERELATION, request, condtion);
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSTORAGERELATION, request,
+            condtion, this.storageRelationDAO, new HandleResult<StorageRelationVO>()
+            {
+                public void handle(StorageRelationVO vo)
+                {
+                    if (StringTools.isNullOrNone(vo.getStafferName()))
+                    {
+                        vo.setStafferName("公共");
+                    }
+
+                }
+            });
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * 查询仓库下的产品库存
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryDepotStorageRelation(ActionMapping mapping, ActionForm form,
+                                                   HttpServletRequest request,
+                                                   HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        condtion.addCondition("StorageRelationBean.locationId", "=", request
+            .getParameter("depotId"));
+
+        ActionTools.processJSONQueryCondition(QUERYDEPOTSTORAGERELATION, request, condtion);
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYDEPOTSTORAGERELATION, request,
             condtion, this.storageRelationDAO, new HandleResult<StorageRelationVO>()
             {
                 public void handle(StorageRelationVO vo)

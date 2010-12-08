@@ -11,7 +11,7 @@
 <script type="text/javascript">
 
 var gurl = '../depot/storage.do?method=';
-var ukey = 'StorageRelation';
+var ukey = 'DepotStorageRelation';
 
 var allDef = window.top.topFrame.allDef;
 var guidMap;
@@ -22,7 +22,7 @@ function load()
      
      guidMap = {
          title: '库存列表',
-         url: gurl + 'query' + ukey,
+         url: gurl + 'query' + ukey + '&depotId=${param.depotId}',
          colModel : [
              {display: '选择', name : 'check', content : 
              '<input type=radio name=checkb value={id} lamount={amount} ldepotpartId={depotpartId} lproductId={productId} llocationId={locationId} lpriceKey={priceKey}>', 

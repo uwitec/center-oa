@@ -17,6 +17,7 @@ import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.dao.DepotpartDAO;
 import com.china.center.oa.product.vo.DepotpartVO;
+import com.china.center.tools.ListTools;
 
 
 /**
@@ -40,5 +41,23 @@ public class DepotpartDAOImpl extends BaseDAO<DepotpartBean, DepotpartVO> implem
         condition.addIntCondition("DepotpartBean.type", "=", DepotConstant.DEPOTPART_TYPE_OK);
 
         return this.queryEntityBeansByCondition(condition);
+    }
+
+    public DepotpartBean findDefaultOKDepotpart(String depotId)
+    {
+        ConditionParse con = new ConditionParse();
+
+        con.addCondition("DepotpartBean.locationId", "=", depotId);
+
+        con.addCondition("order by DepotpartBean.id");
+
+        List<DepotpartBean> list = this.queryEntityBeansByCondition(con);
+
+        if (ListTools.isEmptyOrNull(list))
+        {
+            return null;
+        }
+
+        return list.get(0);
     }
 }

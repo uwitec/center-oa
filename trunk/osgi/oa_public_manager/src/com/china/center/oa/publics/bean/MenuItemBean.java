@@ -15,6 +15,7 @@ import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.clone.DataClone;
+import com.china.center.oa.publics.constant.MenuConstant;
 
 
 /**
@@ -34,7 +35,7 @@ public class MenuItemBean implements DataClone<MenuItemBean>, Serializable
 
     private String parentId = "";
 
-    private int bottomFlag = 0;
+    private int bottomFlag = MenuConstant.BOTTOMFLAG_ROOT;
 
     private String menuItemName = "";
 

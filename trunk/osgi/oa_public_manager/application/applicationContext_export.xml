@@ -102,4 +102,6 @@
 
 	<osgi:service ref="fatalNotify" interface="com.china.center.oa.publics.manager.FatalNotify" />
 
+	<osgi:service ref="menuManager" interface="com.china.center.oa.publics.manager.MenuManager" />
+
 </beans>

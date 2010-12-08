@@ -40,5 +40,7 @@
 	<osgi:reference id="queryManager" interface="com.china.center.oa.publics.manager.QueryManager" />
 	
 	<osgi:reference id="authManager" interface="com.china.center.oa.publics.manager.AuthManager" />
+	
+    <osgi:reference id="menuManager" interface="com.china.center.oa.publics.manager.MenuManager" />
 
 </beans>
