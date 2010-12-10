@@ -12,8 +12,6 @@ package com.china.center.oa.stockvssail.listener.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.product.constant.DepotConstant;
@@ -55,7 +53,6 @@ public class StockListenerSailImpl implements StockListener
     /**
      * 生成入库单
      */
-    @Transactional(rollbackFor = MYException.class)
     public void onEndStock(User user, StockBean bean)
         throws MYException
     {
