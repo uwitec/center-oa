@@ -28,7 +28,7 @@ import com.china.center.tools.StringTools;
  */
 public abstract class StockHelper
 {
-    public static String createTable(List<StockItemVO> list)
+    public static String createTable(List<StockItemVO> list, int type)
     {
         StringBuffer buffer = new StringBuffer();
 
@@ -61,8 +61,18 @@ public abstract class StockHelper
             buffer.append("<td  align='center'>" + bean.getProductName() + "</td>");
             buffer.append("<td  align='center'>" + bean.getAmount() + "</td>");
             buffer.append("<td  align='center'>" + MathTools.formatNum(bean.getPrice()) + "</td>");
-            buffer.append("<td  align='center'>" + MathTools.formatNum(bean.getPrePrice()) + "</td>");
-            buffer.append("<td  align='center'>" + StringTools.print(bean.getProviderName()) + "</td>");
+            buffer.append("<td  align='center'>" + MathTools.formatNum(bean.getPrePrice())
+                          + "</td>");
+
+            if (type == 0 || type == 1)
+            {
+                buffer.append("<td  align='center'></td>");
+            }
+            else
+            {
+                buffer.append("<td  align='center'>" + StringTools.print(bean.getProviderName())
+                              + "</td>");
+            }
             buffer.append("<td  align='center'>" + MathTools.formatNum(bean.getTotal()) + "</td>");
 
             buffer.append("</tr>");

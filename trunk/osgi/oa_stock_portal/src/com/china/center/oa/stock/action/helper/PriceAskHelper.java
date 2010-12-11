@@ -26,11 +26,18 @@ import com.china.center.oa.stock.vo.PriceAskProviderBeanVO;
  */
 public abstract class PriceAskHelper
 {
+    /**
+     * createTable
+     * 
+     * @param list
+     * @param user
+     * @return
+     */
     public static String createTable(List<PriceAskProviderBeanVO> list, User user)
     {
         int type = 0;
 
-        if (AuthHelper.containAuth(user, AuthConstant.PRICE_ASK_PROCESS))
+        if (AuthHelper.containAuth(user, AuthConstant.STOCK_PRICE_PASS))
         {
             type = 0;
         }
@@ -42,6 +49,15 @@ public abstract class PriceAskHelper
         return createTable(list, user, type);
     }
 
+    /**
+     * createTable
+     * 
+     * @param list
+     * @param user
+     * @param type
+     *            0:报价员 1:供应商
+     * @return
+     */
     public static String createTable(List<PriceAskProviderBeanVO> list, User user, int type)
     {
         StringBuffer buffer = new StringBuffer();

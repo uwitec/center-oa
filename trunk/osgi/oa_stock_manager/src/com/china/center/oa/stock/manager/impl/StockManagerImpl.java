@@ -22,6 +22,8 @@ import com.china.center.common.MYException;
 import com.china.center.oa.note.bean.ShortMessageTaskBean;
 import com.china.center.oa.note.constant.ShortMessageConstant;
 import com.china.center.oa.note.dao.ShortMessageTaskDAO;
+import com.china.center.oa.product.bean.ProductBean;
+import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.StafferBean;
@@ -81,6 +83,8 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
     private ParameterDAO parameterDAO = null;
 
     private StafferDAO stafferDAO = null;
+
+    private ProductDAO productDAO = null;
 
     private ShortMessageTaskDAO shortMessageTaskDAO = null;
 
@@ -353,6 +357,15 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
                 // 这里直接处理无需询价的逻辑
                 for (StockItemBean stockItemBean : itemList)
                 {
+                    ProductBean product = productDAO.find(stockItemBean.getProductId());
+
+                    if (StringTools.isNullOrNone(product.getMainProvider()))
+                    {
+                        throw new MYException("产品[%s]没有主供应商,不能通过", product.getName());
+                    }
+
+                    stockItemBean.setProviderId(product.getMainProvider());
+
                     stockItemBean.setStatus(StockConstant.STOCK_ITEM_STATUS_ASK);
 
                     stockItemBean.setPrice(stockItemBean.getPrePrice());
@@ -1079,5 +1092,22 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
     public void setPriceAskProviderDAO(PriceAskProviderDAO priceAskProviderDAO)
     {
         this.priceAskProviderDAO = priceAskProviderDAO;
+    }
+
+    /**
+     * @return the productDAO
+     */
+    public ProductDAO getProductDAO()
+    {
+        return productDAO;
+    }
+
+    /**
+     * @param productDAO
+     *            the productDAO to set
+     */
+    public void setProductDAO(ProductDAO productDAO)
+    {
+        this.productDAO = productDAO;
     }
 }

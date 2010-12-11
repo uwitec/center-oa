@@ -279,7 +279,7 @@ function change()
 							type="text" name="price_0" value="${bean.itemVO[0].prePrice}" size="6" oncheck="notNone;isFloat;">&nbsp;
 							数量:<input
 							type="text" name="amount_0" value="${bean.itemVO[0].amount}" size="6" oncheck="notNone;isNumber;">&nbsp;
-                               开单品名:
+                               开发票品名:
                                <select name="showId_0" style="WIDTH: 150px;" quick=true values="${bean.itemVO[0].showId}">
                                  <p:option type="123"></p:option>
                                </select>
@@ -297,7 +297,7 @@ function change()
 							type="text" name="price_1" value="${bean.itemVO[1].prePrice}" size="6" oncheck="notNone;isFloat;">&nbsp;
 							数量:<input
 							type="text" name="amount_1" value="${bean.itemVO[1].amount}" size="6" oncheck="notNone;isNumber;">&nbsp;
-                               开单品名:
+                               开发票品名:
                                <select name="showId_2" style="WIDTH: 150px;" quick=true values="${bean.itemVO[1].showId}">
                                  <p:option type="123"></p:option>
                                </select>
@@ -315,7 +315,7 @@ function change()
 							type="text" name="price_2" value="${bean.itemVO[2].prePrice}" size="6" oncheck="notNone;isFloat;">&nbsp;
 							数量:<input
 							type="text" name="amount_2" value="${bean.itemVO[2].amount}" size="6" oncheck="notNone;isNumber;">&nbsp;
-                               开单品名:
+                               开发票品名:
                                <select name="showId_2" style="WIDTH: 150px;" quick=true values="${bean.itemVO[2].showId}">
                                  <p:option type="123"></p:option>
                                </select>
@@ -333,7 +333,7 @@ function change()
 							数量:<input
 							type="text" name="amount_3" value="${bean.itemVO[3].amount}" size="6" oncheck="notNone;isNumber;">
 							&nbsp;
-                               开单品名:
+                               开发票品名:
                                <select name="showId_3" style="WIDTH: 150px;" quick=true values="${bean.itemVO[3].showId}">
                                  <p:option type="123"></p:option>
                                </select>
@@ -351,7 +351,7 @@ function change()
 							数量:<input
 							type="text" name="amount_4" value="${bean.itemVO[4].amount}" size="6" oncheck="notNone;isNumber;">
 							&nbsp;
-                               开单品名:
+                               开发票品名:
                                <select name="showId_4" style="WIDTH: 150px;" quick=true values="${bean.itemVO[4].showId}">
                                  <p:option type="123"></p:option>
                                </select>

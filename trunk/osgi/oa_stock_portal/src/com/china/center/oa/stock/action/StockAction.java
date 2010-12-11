@@ -56,6 +56,7 @@ import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.helper.AuthHelper;
+import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.publics.vo.FlowLogVO;
 import com.china.center.oa.stock.action.helper.PriceAskHelper;
 import com.china.center.oa.stock.action.helper.StockHelper;
@@ -100,6 +101,8 @@ public class StockAction extends DispatchAction
     private StockDAO stockDAO = null;
 
     private ProductDAO productDAO = null;
+
+    private UserManager userManager = null;
 
     private LocationDAO locationDAO = null;
 
@@ -160,9 +163,18 @@ public class StockAction extends DispatchAction
 
             bean.setLogTime(TimeTools.now());
 
-            // 提交人
-            bean.setOwerId(user.getStafferId());
+            if (bean.getStockType() == StockConstant.STOCK_SAILTYPE_PUBLIC)
+            {
+                // 公共
+                bean.setOwerId("0");
+            }
+            else
+            {
+                // 否则就是选择的人
+                bean.setOwerId(user.getStafferId());
+            }
 
+            // 如果页面没有指定人则是自己(否则就是页面选的人)
             if (StringTools.isNullOrNone(bean.getStafferId()))
             {
                 // 自己的
@@ -628,7 +640,9 @@ public class StockAction extends DispatchAction
     {
         String id = request.getParameter("id");
 
-        String ltype = request.getParameter("ltype");
+        String ltype = getLType(request);
+
+        int queryType = CommonTools.parseInt(ltype);
 
         request.setAttribute("ltype", ltype);
 
@@ -720,6 +734,12 @@ public class StockAction extends DispatchAction
                 User user = Helper.getUser(request);
 
                 map.put(StockItemVO.getId(), PriceAskHelper.createTable(items, user));
+
+                // 业务员和区域经理不能看到供应商
+                if (queryType == 0 || queryType == 1)
+                {
+                    StockItemVO.setProviderName("");
+                }
             }
         }
 
@@ -1068,6 +1088,70 @@ public class StockAction extends DispatchAction
     }
 
     /**
+     * checkQueryOutAuth
+     * 
+     * @param request
+     * @throws MYException
+     */
+    private void checkQueryAuth(User user, String queryType)
+        throws MYException
+    {
+        if ("0".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.STOCK_ADD))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+
+        if ("1".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.STOCK_MANAGER_PASS))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+
+        if ("2".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.STOCK_NET_STOCK_PASS))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+
+        if ("3".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.STOCK_PRICE_PASS))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+
+        if ("4".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.STOCK_INNER_STOCK_PASS))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+
+        if ("5".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.STOCK_STOCK_MANAGER_PASS))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+
+        if ("6".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.STOCK_NOTICE_CHAIRMA))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+
+        if ("7".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.STOCK_NOTICE_CEO))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+
+        int type = CommonTools.parseInt(queryType);
+
+        if (type < 0 || type > 7)
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+    }
+
+    /**
      * 查询采购单(自己的)
      * 
      * @param mapping
@@ -1088,6 +1172,20 @@ public class StockAction extends DispatchAction
         User user = Helper.getUser(request);
 
         String ltype = getLType(request);
+
+        // 鉴权
+        try
+        {
+            checkQueryAuth(user, ltype);
+        }
+        catch (MYException e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+            _logger.error(e, e);
+
+            return mapping.findForward("error");
+        }
 
         List<StockVO> list = null;
         try
@@ -1127,7 +1225,8 @@ public class StockAction extends DispatchAction
 
                 List<StockItemVO> itemVO = stockItemDAO.queryEntityVOsByFK(StockVO.getId());
 
-                div.put(StockVO.getId(), StockHelper.createTable(itemVO));
+                div.put(StockVO.getId(), StockHelper.createTable(itemVO, CommonTools
+                    .parseInt(ltype)));
             }
 
             List<LocationBean> locations = locationDAO.listEntityBeans();
@@ -1150,6 +1249,12 @@ public class StockAction extends DispatchAction
         return mapping.findForward("queryStock");
     }
 
+    /**
+     * 获取查询类型
+     * 
+     * @param request
+     * @return
+     */
     private String getLType(HttpServletRequest request)
     {
         String ltype = request.getParameter("ltype");
@@ -1255,7 +1360,9 @@ public class StockAction extends DispatchAction
         {
             condtion.addIntCondition("StockBean.type", "=", PriceConstant.PRICE_ASK_TYPE_NET);
         }
-        else
+
+        // STOCK
+        if (type == 3)
         {
             // 采购里面只有内外询价或者外网询价，其他的没有
             condtion.addIntCondition("StockBean.type", "=", PriceConstant.PRICE_ASK_TYPE_INNER);
@@ -1292,6 +1399,7 @@ public class StockAction extends DispatchAction
 
             // PRICE
             map.put(3, StockConstant.STOCK_STATUS_MANAGERPASS);
+
             // STOCK
             map.put(4, StockConstant.STOCK_STATUS_PRICEPASS);
 
@@ -1831,5 +1939,22 @@ public class StockAction extends DispatchAction
     public void setDutyDAO(DutyDAO dutyDAO)
     {
         this.dutyDAO = dutyDAO;
+    }
+
+    /**
+     * @return the userManager
+     */
+    public UserManager getUserManager()
+    {
+        return userManager;
+    }
+
+    /**
+     * @param userManager
+     *            the userManager to set
+     */
+    public void setUserManager(UserManager userManager)
+    {
+        this.userManager = userManager;
     }
 }

@@ -13,16 +13,10 @@ function Logout()
 	framespacing="0" onUnload="Logout()">
 	<frame src="top.jsp" name="topFrame" scrolling="NO" id="topFrame">
 	<frameset cols="191,*" framespacing="0" frameborder="no" border="0">
-
+	
 		<frame src="shousuo.jsp" name="fun" noresize scrolling="auto">
 
-		<c:if test='${my:dym("com.china.center.oa.flow.portal")}'>
-	    <frame src="../pers/persional.do?method=queryPersionalDeskTop" name="main">
-	    </c:if>
-	    
-	    <c:if test="${!my:dym('com.china.center.oa.flow.portal')}">
-		<frame src="test.htm" name="main">
-		</c:if>
+		<frame src="welcome.jsp" name="main">
 	</frameset>
 </frameset>
 <noframes>
