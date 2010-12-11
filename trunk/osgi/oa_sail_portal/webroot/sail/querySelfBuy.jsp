@@ -180,6 +180,9 @@ function res()
 	$O('customerName').value = '';
 	$O("customerId").value = '';
 	$O("id").value = '';
+	setSelectIndex($O('outType'), 0);
+	setSelectIndex($O('inway'), 0);
+	setSelectIndex($O('location'), 0);
 }
 
 var jmap = new Object();

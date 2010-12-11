@@ -8,6 +8,10 @@
  */
 package com.china.center.oa.sail.constanst;
 
+
+import com.china.center.jdbc.annotation.Defined;
+
+
 /**
  * SailConstanst
  * 
@@ -213,30 +217,32 @@ public interface SailConstant
     /**
      * 发货单初始态
      */
+    @Defined(key = "consignStatus", value = "初始")
     int CONSIGN_INIT = 1;
 
     /**
      * 发货单的通过态
      */
+    @Defined(key = "consignStatus", value = "通过")
     int CONSIGN_PASS = 2;
 
     /**
-     * 发货单的回复 初始
+     * 发货单的回复 无回复
      */
+    @Defined(key = "consignReprotType", value = "无回复")
     int CONSIGN_REPORT_INIT = 0;
 
     /**
      * 发货单的回复 正常收货
      */
+    @Defined(key = "consignReprotType", value = "正常收货")
     int CONSIGN_REPORT_COMMON = 1;
 
     /**
      * 发货单的回复 异常收货
      */
+    @Defined(key = "consignReprotType", value = "异常收货")
     int CONSIGN_REPORT_EXCEPTION = 2;
-
-    // <option value="1">调出</option>
-    // <option value="4">调入</option>
 
     /**
      * 货物异常单的初始态

@@ -78,5 +78,7 @@
 	<osgi:reference id="customerManager" interface="com.china.center.oa.customer.manager.CustomerManager" />
 	
 	<osgi:reference id="storageRelationManager" interface="com.china.center.oa.product.manager.StorageRelationManager" />
+	
+	<osgi:reference id="priceChangeManager" interface="com.china.center.oa.product.manager.PriceChangeManager" />
 
 </beans>

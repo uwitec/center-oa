@@ -138,13 +138,16 @@ function load()
 
 function payOut()
 {
-    if (getRadio('fullId').statuss == 1 && getRadio('fullId').pay == 1 && window.confirm("确定此销售单已经收到货款?"))
+    if (getRadio('fullId').statuss == 1 && getRadio('fullId').pay == 1)
     {
-        getObj('method').value = 'payOut';
-        
-        getObj('outId').value = getRadioValue("fullId");
-        
-        adminForm.submit();
+        if (window.confirm("确定此销售单已经收到货款?"))
+        {
+	        getObj('method').value = 'payOut';
+	        
+	        getObj('outId').value = getRadioValue("fullId");
+	        
+	        adminForm.submit();
+        }
     }
     else
     {
@@ -154,13 +157,16 @@ function payOut()
 
 function payOut2()
 {
-    if (getRadio('fullId').statuss == 3 && getRadio('fullId').paytype != 1 && window.confirm("确定此销售单已经全部回款?"))
+    if (getRadio('fullId').statuss == 3 && getRadio('fullId').paytype != 1)
     {
-        getObj('method').value = 'payOut2';
-        
-        getObj('outId').value = getRadioValue("fullId");
-        
-        adminForm.submit();
+        if (window.confirm("确定此销售单已经全部回款?"))
+        {
+	        getObj('method').value = 'payOut2';
+	        
+	        getObj('outId').value = getRadioValue("fullId");
+	        
+	        adminForm.submit();
+        }
     }
     else
     {

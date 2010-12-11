@@ -9,6 +9,7 @@ import org.osgi.framework.BundleContext;
 
 import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.oa.sail.constanst.OutConstant;
+import com.china.center.oa.sail.constanst.SailConstant;
 
 
 public class Activator implements BundleActivator
@@ -17,6 +18,7 @@ public class Activator implements BundleActivator
     {
         {
             add(OutConstant.class);
+            add(SailConstant.class);
         }
     };
 

@@ -409,8 +409,8 @@ function load()
 							<td align="center"
 							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}">${item.mark ? "<font color=blue><B>" : ""}
 							${item.fullId} ${item.mark ? "</B></font>" : ""}</a></td>
-							<td align="center">${item.customerName}</td>
-							<td align="center">${my:get('outStatus', item.status)}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.customerName}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:get('outStatus', item.status)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('outType_out', item.outType)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.outTime}</td>
 							<c:if test="${item.pay == 0}">

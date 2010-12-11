@@ -51,7 +51,7 @@ function opens(obj)
 <input type=hidden name="customercreditlevel" value="" />
 <p:navigation
 	height="22">
-	<td width="550" class="navigation">库单管理 &gt;&gt; 修改销售单(如果需要增加开单品名,请到 公共资源-->配置管理)</td>
+	<td width="550" class="navigation">库单管理 &gt;&gt; 修改销售单(如果需要增加开发票品名,请到 公共资源-->配置管理)</td>
 				<td width="85"></td>
 </p:navigation> <br>
 
@@ -241,7 +241,7 @@ function opens(obj)
 						<td width="10%" align="left">金额<span id="total"></span></td>
 						<td width="10%" align="center">成本</td>
 						<td width="25%" align="center">类型</td>
-						<td width="15%" align="center">开单品名</td>
+						<td width="15%" align="center">开发票品名</td>
 						<td width="15%" align="center"><input type="button" accesskey="A"
 							value="增加" class="button_class" onclick="addTr()"></td>
 					</tr>

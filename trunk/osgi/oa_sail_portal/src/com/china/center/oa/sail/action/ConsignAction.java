@@ -184,6 +184,35 @@ public class ConsignAction extends DispatchAction
     }
 
     /**
+     * 查询今天到货(到客户那)发货单
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryTodayConsign(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        ConditionParse condition = new ConditionParse();
+
+        condition.addIntCondition("currentStatus", "=", SailConstant.CONSIGN_PASS);
+
+        condition.addIntCondition("reprotType", "=", SailConstant.CONSIGN_REPORT_INIT);
+
+        condition.addCondition("t1.arriveDate", ">=", TimeTools.now_short());
+
+        List<ConsignBean> list = consignDAO.queryConsignByCondition(condition);
+
+        request.setAttribute("consignList", list);
+
+        return mapping.findForward("queryTodayConsign");
+    }
+
+    /**
      * setCondition
      * 
      * @param request

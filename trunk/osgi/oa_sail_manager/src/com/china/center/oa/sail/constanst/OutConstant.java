@@ -140,9 +140,9 @@ public interface OutConstant
     int PAY_YES = 1;
 
     /**
-     * 过期
+     * 过期(这里的过期不再pay里面,真实的pay只有0，1)
      */
-    @Defined(key = "outPay", value = "过期未付款")
+    @Defined(key = "outPay", value = "过期付款")
     int PAY_OVER = 2;
 
     /**

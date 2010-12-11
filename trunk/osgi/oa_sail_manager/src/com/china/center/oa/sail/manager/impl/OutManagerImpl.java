@@ -518,7 +518,7 @@ public class OutManagerImpl implements OutManager
         // 如果是调入提交
         if (OutHelper.isMoveIn(outBean))
         {
-            // 调入的库存(正式增加,负数减少)
+            // 调入的库存(正数增加,负数减少)
             List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(fullId);
 
             String sequence = commonDAO.getSquenceString();
@@ -609,7 +609,7 @@ public class OutManagerImpl implements OutManager
         outDAO.modifyOutStatus(moveOut.getFullId(), OutConstant.STATUS_PASS);
 
         // 操作日志
-        addOutLog(moveOut.getFullId(), user, moveOut, "对方调入后,自动提交", SailConstant.OPR_OUT_PASS,
+        addOutLog(moveOut.getFullId(), user, moveOut, "对方调入后,自动发货结束", SailConstant.OPR_OUT_PASS,
             OutConstant.STATUS_PASS);
 
         importLog.info(moveOut.getFullId() + "的在途状态改变成在途结束");
@@ -1199,11 +1199,11 @@ public class OutManagerImpl implements OutManager
 
                     if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                     {
-                        // 直接把物流通过到库管通过
-                        if (newNextStatus == OutConstant.STATUS_FLOW_PASS
+                        // 直接把结算中心通过的设置成物流管理员通过(跳过物流)
+                        if (newNextStatus == OutConstant.STATUS_MANAGER_PASS
                             && depot.getType() == DepotConstant.DEPOT_TYPE_LOCATION)
                         {
-                            newNextStatus = OutConstant.STATUS_PASS;
+                            newNextStatus = OutConstant.STATUS_FLOW_PASS;
                         }
                     }
 
@@ -1584,9 +1584,15 @@ public class OutManagerImpl implements OutManager
         return true;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.china.center.oa.sail.manager.OutManager#modifyPay(com.center.china.osgi.publics.User, java.lang.String,
+     *      int, java.lang.String)
+     */
     @Exceptional
     @Transactional(rollbackFor = {MYException.class})
-    public boolean modifyPay(final User user, String fullId, int pay, String reason)
+    public boolean payOut(final User user, String fullId, String reason)
     {
         // 需要增加是否超期 flowId
         OutBean out = outDAO.find(fullId);
@@ -1611,15 +1617,18 @@ public class OutManagerImpl implements OutManager
             }
         }
 
+        // 回款日期
         outDAO.modifyReDate(fullId, TimeTools.now_short());
 
+        // 付款的金额
         outDAO.modifyOutHadPay(fullId, MathTools.formatNum(out.getTotal()));
 
         addOutLog(fullId, user, out, reason, SailConstant.OPR_OUT_PASS, out.getStatus());
 
         notifyOut(out, user, 2);
 
-        return outDAO.modifyPay(fullId, pay);
+        // 修改付款标识
+        return outDAO.modifyPay(fullId, OutConstant.PAY_YES);
     }
 
     @Transactional(rollbackFor = {MYException.class})
@@ -2577,6 +2586,8 @@ public class OutManagerImpl implements OutManager
             bean.setCurrentStatus(SailConstant.CONSIGN_INIT);
 
             bean.setFullId(outBean.getFullId());
+
+            bean.setArriveDate(outBean.getArriveDate());
 
             consignDAO.addConsign(bean);
         }

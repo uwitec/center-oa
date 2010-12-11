@@ -1011,6 +1011,8 @@ public class OutAction extends DispatchAction
             }
             catch (MYException e)
             {
+                _logger.warn(e, e);
+
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理错误:" + e.getErrorContent());
 
                 return mapping.findForward("error");
@@ -1590,7 +1592,7 @@ public class OutAction extends DispatchAction
 
         request.setAttribute("now", TimeTools.now("yyyy-MM-dd"));
 
-        handlerFlow(request, list);
+        handlerFlow(request, list, true);
 
         showLastCredit(request, user);
 
@@ -1738,8 +1740,10 @@ public class OutAction extends DispatchAction
      * 
      * @param request
      * @param list
+     * @param alert
+     *            TODO
      */
-    private void handlerFlow(HttpServletRequest request, List<OutVO> list)
+    private void handlerFlow(HttpServletRequest request, List<OutVO> list, boolean alert)
     {
         ConsignBean temp = null;
 
@@ -1747,7 +1751,7 @@ public class OutAction extends DispatchAction
         double total = 0.0d;
 
         Map<String, String> hasMap = new HashMap<String, String>();
-        Map<String, Integer> overDayMap = new HashMap<String, Integer>();
+        Map<String, String> overDayMap = new HashMap<String, String>();
 
         for (OutBean outBean : list)
         {
@@ -1766,23 +1770,34 @@ public class OutAction extends DispatchAction
             {
                 int overDays = TimeTools.cdate(TimeTools.now_short(), outBean.getRedate());
 
-                overDayMap.put(outBean.getFullId(), overDays);
+                if (overDays < 0)
+                {
+                    overDayMap.put(outBean.getFullId(), String.valueOf(overDays));
+                }
+                else
+                {
+                    overDayMap.put(outBean.getFullId(), "<font color=red><b>" + overDays
+                                                        + "</b></font>");
+                }
             }
 
             // 款到发货
             if (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_MONEY
                 && outBean.getPay() == OutConstant.PAY_YES)
             {
-                overDayMap.put(outBean.getFullId(), 0);
+                overDayMap.put(outBean.getFullId(), String.valueOf(0));
             }
 
-            if (hasOver(outBean.getStafferName()))
+            if (alert)
             {
-                hasMap.put(outBean.getFullId(), "true");
-            }
-            else
-            {
-                hasMap.put(outBean.getFullId(), "false");
+                if (hasOver(outBean.getStafferName()))
+                {
+                    hasMap.put(outBean.getFullId(), "true");
+                }
+                else
+                {
+                    hasMap.put(outBean.getFullId(), "false");
+                }
             }
         }
 
@@ -2247,7 +2262,7 @@ public class OutAction extends DispatchAction
                 request.setAttribute("status", OutConstant.STATUS_MANAGER_PASS);
             }
 
-            setDepotCondotion(user, condtion);
+            setDepotCondotionInOut(user, condtion);
 
             condtion.addCondition("order by managerTime desc");
         }
@@ -2261,7 +2276,7 @@ public class OutAction extends DispatchAction
                 request.setAttribute("status", OutConstant.STATUS_FLOW_PASS);
             }
 
-            setDepotCondotion(user, condtion);
+            setDepotCondotionInOut(user, condtion);
 
             condtion.addCondition("order by managerTime desc");
         }
@@ -2460,7 +2475,7 @@ public class OutAction extends DispatchAction
                 request.setAttribute("inway", OutConstant.IN_WAY);
             }
 
-            setDepotCondotion(user, condtion);
+            setDepotCondotionInBuy(user, condtion);
         }
         // 未知的则什么都没有
         else
@@ -2482,7 +2497,7 @@ public class OutAction extends DispatchAction
      * @param user
      * @param condtion
      */
-    private void setDepotCondotion(User user, ConditionParse condtion)
+    private void setDepotCondotionInBuy(User user, ConditionParse condtion)
     {
         // 只能看到自己的仓库
         List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(),
@@ -2521,6 +2536,50 @@ public class OutAction extends DispatchAction
     }
 
     /**
+     * 设置仓库的过滤条件
+     * 
+     * @param user
+     * @param condtion
+     */
+    private void setDepotCondotionInOut(User user, ConditionParse condtion)
+    {
+        // 只能看到自己的仓库
+        List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(),
+            AuthConstant.EXPAND_AUTH_DEPOT);
+
+        if (ListTools.isEmptyOrNull(depotAuthList))
+        {
+            // 永远也没有结果
+            condtion.addFlaseCondition();
+        }
+        else
+        {
+            StringBuffer sb = new StringBuffer();
+
+            sb.append("and (");
+            for (Iterator iterator = depotAuthList.iterator(); iterator.hasNext();)
+            {
+                AuthBean authBean = (AuthBean)iterator.next();
+
+                // 接受仓库是自己管辖的
+                if (iterator.hasNext())
+                {
+                    sb.append("OutBean.location = '" + authBean.getId() + "' or ");
+                }
+                else
+                {
+                    sb.append("OutBean.location = '" + authBean.getId() + "'");
+                }
+
+            }
+
+            sb.append(") ");
+
+            condtion.addCondition(sb.toString());
+        }
+    }
+
+    /**
      * 业务员预警
      * 
      * @param mapping
@@ -2541,43 +2600,53 @@ public class OutAction extends DispatchAction
         // 获得条件
         getCondition(condtion, user.getStafferName());
 
-        List<OutBean> list = outDAO.queryEntityBeansByCondition(condtion);
+        List<OutVO> list = outDAO.queryEntityVOsByCondition(condtion);
 
         long current = new Date().getTime();
-        for (OutBean outBean : list)
+
+        for (Iterator iterator = list.iterator(); iterator.hasNext();)
         {
+            OutVO outBean = (OutVO)iterator.next();
+
             Date temp = TimeTools.getDateByFormat(outBean.getRedate(), "yyyy-MM-dd");
 
             if (temp != null)
             {
-                if (temp.getTime() < current)
+                if (temp.getTime() > current)
                 {
-                    // 超期的
-                    outBean.setPay(2);
+                    iterator.remove();
                 }
             }
         }
 
+        handlerFlow(request, list, false);
+
         // 提示页面
         getDivs(request, list);
 
-        request.setAttribute("flagOut", list);
+        request.setAttribute("listOut1", list);
 
-        return mapping.findForward("warnOutList");
+        return mapping.findForward("queryWarnOut");
     }
 
+    /**
+     * getCondition
+     * 
+     * @param condtion
+     * @param stafferName
+     */
     private void getCondition(ConditionParse condtion, String stafferName)
     {
-        // 只查询出库单
-        condtion.addIntCondition("type", "=", OutConstant.OUT_TYPE_OUTBILL);
+        // 只查询销售单
+        condtion.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_OUTBILL);
 
-        condtion.addIntCondition("status", "=", OutConstant.STATUS_PASS);
+        condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_PASS);
 
-        condtion.addCondition("STAFFERNAME", "=", stafferName);
+        condtion.addCondition("OutBean.STAFFERNAME", "=", stafferName);
 
-        condtion.addIntCondition("pay", "=", OutConstant.PAY_NOT);
+        condtion.addIntCondition("OutBean.pay", "=", OutConstant.PAY_NOT);
 
-        condtion.addCondition("reday", "<>", "0");
+        condtion.addCondition("OutBean.reday", "<>", "0");
     }
 
     /**
@@ -2769,6 +2838,8 @@ public class OutAction extends DispatchAction
             }
             catch (MYException e)
             {
+                _logger.warn(e, e);
+
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不能自动接收，请核实:"
                                                                 + e.getErrorContent());
 
@@ -2797,6 +2868,8 @@ public class OutAction extends DispatchAction
             }
             catch (MYException e)
             {
+                _logger.warn(e, e);
+
                 request
                     .setAttribute(KeyConstant.ERROR_MESSAGE, "库单不能转调，请核实:" + e.getErrorContent());
 
@@ -2817,6 +2890,8 @@ public class OutAction extends DispatchAction
             }
             catch (MYException e)
             {
+                _logger.warn(e, e);
+
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
 
                 return mapping.findForward("error");
@@ -2993,6 +3068,8 @@ public class OutAction extends DispatchAction
         }
         catch (MYException e)
         {
+            _logger.warn(e, e);
+
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理错误:" + e.getErrorContent());
 
             return mapping.findForward("error");
@@ -3055,7 +3132,7 @@ public class OutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        outManager.modifyPay(user, fullId, OutConstant.PAY_YES, "结算中心确认收款");
+        outManager.payOut(user, fullId, "结算中心确认收款");
 
         CommonTools.saveParamers(request);
 
@@ -3107,7 +3184,7 @@ public class OutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        outManager.modifyPay(user, fullId, OutConstant.PAY_YES, "财务确认收款");
+        outManager.payOut(user, fullId, "财务确认收款");
 
         request.setAttribute(KeyConstant.MESSAGE, "成功核对单据:" + fullId);
 
@@ -3199,6 +3276,8 @@ public class OutAction extends DispatchAction
             }
             catch (MYException e)
             {
+                _logger.warn(e, e);
+
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理异常：" + e.getErrorContent());
 
                 return mapping.findForward("error");

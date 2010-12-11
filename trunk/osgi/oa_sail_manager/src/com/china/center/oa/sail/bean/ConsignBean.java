@@ -18,7 +18,7 @@ import com.china.center.oa.sail.constanst.SailConstant;
 /**
  * 发货单
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2008-1-14
  * @see
  * @since
@@ -45,6 +45,8 @@ public class ConsignBean extends OutBean
     private int reprotType = SailConstant.CONSIGN_REPORT_INIT;
 
     private String applys = "";
+
+    private String arriveDate = "";
 
     /**
      * default constructor
@@ -153,6 +155,23 @@ public class ConsignBean extends OutBean
     public void setTransportNo(String transportNo)
     {
         this.transportNo = transportNo;
+    }
+
+    /**
+     * @return the arriveDate
+     */
+    public String getArriveDate()
+    {
+        return arriveDate;
+    }
+
+    /**
+     * @param arriveDate
+     *            the arriveDate to set
+     */
+    public void setArriveDate(String arriveDate)
+    {
+        this.arriveDate = arriveDate;
     }
 
 }

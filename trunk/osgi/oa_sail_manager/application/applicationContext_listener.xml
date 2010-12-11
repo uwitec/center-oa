@@ -16,7 +16,7 @@
 	
 	<bean id="defaultLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
 		<property name="listenerManager">
-			<ref bean="productManager"/>
+			<ref bean="priceChangeManager"/>
 		</property>
 		<property name="listenerList">
 			<list>

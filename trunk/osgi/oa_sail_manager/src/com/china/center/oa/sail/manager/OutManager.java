@@ -158,7 +158,15 @@ public interface OutManager
     boolean rejectOutBalance(final User user, String id, String reason)
         throws MYException;
 
-    boolean modifyPay(final User user, String fullId, int pay, String reason);
+    /**
+     * 销售单付款
+     * 
+     * @param user
+     * @param fullId
+     * @param reason
+     * @return
+     */
+    boolean payOut(final User user, String fullId, String reason);
 
     boolean mark(String fullId, boolean status);
 

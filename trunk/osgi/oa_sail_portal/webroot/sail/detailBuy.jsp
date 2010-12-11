@@ -679,7 +679,7 @@ function pagePrint()
 						<td width="10%" align="center">金额<span id="total"></span></td>
 						<td width="10%" align="center">成本</td>
 						<td width="25%" align="center">类型</td>
-						<td width="15%" align="center">开单品名</td>
+						<td width="15%" align="center">开发票品名</td>
 					</tr>
 
 					<tr class="content1" id="trCopy" style="display: none;">

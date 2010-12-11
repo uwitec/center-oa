@@ -21,6 +21,7 @@
 			<forward name="detailBuy" path="/sail/detailBuy.jsp" />
 			<forward name="queryBuy" path="/sail/queryBuy.jsp" />
 			<forward name="handerInvokeBuy" path="/sail/handerInvokeBuy.jsp" />
+			<forward name="queryWarnOut" path="/sail/queryWarnOut.jsp" />
 		</action>
 		
 		<action path="/sail/transport" parameter="method"
@@ -33,7 +34,7 @@
             <forward name="print1" path="/transport/print1.jsp" />
             <forward name="detailOut5" path="/transport/handleConsign.jsp" />
             <forward name="queryOut" path="/sail/queryOut.jsp" />
-            <forward name="listOut2" path="/transport/listOutInAdmin.jsp" />
+            <forward name="queryTodayConsign" path="/transport/queryTodayConsign.jsp" />
         </action>
 		
 	</action-mappings>

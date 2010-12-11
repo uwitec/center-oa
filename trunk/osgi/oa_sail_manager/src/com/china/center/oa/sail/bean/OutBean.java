@@ -134,6 +134,9 @@ public class OutBean implements Serializable
 
     private int reday = 0;
 
+    /**
+     * 回款日期
+     */
     private String redate = "";
 
     /**
@@ -171,6 +174,9 @@ public class OutBean implements Serializable
      */
     private String hadPay = "0.0";
 
+    /**
+     * 到货日期
+     */
     private String arriveDate = "";
 
     /**

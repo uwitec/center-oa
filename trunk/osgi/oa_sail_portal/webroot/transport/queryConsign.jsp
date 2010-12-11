@@ -128,30 +128,22 @@ function pagePrint()
 			</tr>
 			
 			<c:forEach items="${consignList}" var="item"
-				varStatus="vs">
-				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
-					<td align="center"><input type="radio" name="consigns"
-						statuss="${item.currentStatus}" value="${item.fullId}"
-						${vs.index== 0 ? "checked" : ""}/></td>
-					<td align="center" onclick="hrefAndSelect(this)">${item.outTime}</td>
-					<td align="center" onclick="hrefAndSelect(this)"><a
-						href="../sail/transport.do?method=findConsign&fullId=${item.fullId}"
-						>${item.fullId}</a></td>
-					<%
-					    String[] sss = new String[] {"", "初始", "通过"};
-					    request.setAttribute("sss", sss);
-					%>
-					<td align="center" onclick="hrefAndSelect(this)">${my:getValue(item.currentStatus,
-					sss)}</td>
-					<%
-					    String[] sss1 = new String[] {"无回复", "正常收货", "异常收货"};
-					    request.setAttribute("sss1", sss1);
-					%>
-					<td align="center" onclick="hrefAndSelect(this)">${my:getValue(item.reprotType,
-					sss1)}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${item.arriveDate}</td>
-				</tr>
-			</c:forEach>
+                varStatus="vs">
+                <tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
+                    <td align="center"><input type="radio" name="consigns"
+                        statuss="${item.currentStatus}" value="${item.fullId}"
+                        ${vs.index== 0 ? "checked" : ""}/></td>
+                    <td align="center" onclick="hrefAndSelect(this)">${item.outTime}</td>
+                    <td align="center" onclick="hrefAndSelect(this)"><a
+                        href="../sail/transport.do?method=findConsign&fullId=${item.fullId}"
+                        >${item.fullId}</a></td>
+                    <td align="center" onclick="hrefAndSelect(this)">${my:get('consignStatus', item.currentStatus)}</td>
+                    
+                    <td align="center" onclick="hrefAndSelect(this)">${my:get('consignReprotType', item.reprotType)}</td>
+                    <td align="center" onclick="hrefAndSelect(this)">${item.arriveDate}</td>
+                </tr>
+            </c:forEach>
+            
 		</table>
 
 	</p:subBody>
@@ -169,7 +161,7 @@ function pagePrint()
 		</div>
 	</p:button>
 
-	<p:message />
+	<p:message2 />
 
 </p:body></form>
 </body>
