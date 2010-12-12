@@ -10,7 +10,7 @@
   http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
   http://www.springframework.org/schema/osgi
   http://www.springframework.org/schema/osgi/spring-osgi.xsd"
-	default-autowire="byName" default-init-method="init">
+	default-autowire="byName" default-init-method="init" default-destroy-method="destroy">
 
 	<osgi:reference id="actionConfigManager" interface="com.china.center.struts.wrap.ActionConfigManager" />
 	

@@ -568,4 +568,9 @@ public interface AuthConstant
      * 入库单-董事长审核
      */
     String BUY_CHAIRMA = "1504";
+
+    /**
+     * 银行操作
+     */
+    String BANK_OPR = "1601";
 }
