@@ -25,7 +25,7 @@ import java.util.Set;
 
 public abstract class InnerReflect
 {
-    public static Object get(Object oo, String name, Object[] args)
+    public static Object get(Object oo, String name, Object... args)
         throws ReflectException
     {
         if (oo == null)
@@ -140,7 +140,7 @@ public abstract class InnerReflect
         if (oo.getClass().isArray())
         {
             Object[] tt = (Object[])oo;
-            
+
             if (i >= tt.length)
             {
                 throw new ReflectException("index out of Bounds[index:" + i + ";size:" + tt.length
