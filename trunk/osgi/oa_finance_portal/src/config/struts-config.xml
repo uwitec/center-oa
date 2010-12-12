@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<struts-config>
+	<action-mappings>
+		<action path="/finance/bank" parameter="method"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+            <forward name="addBank" path="/bank/addBank.jsp" />
+            <forward name="updateBank" path="/bank/updateBank.jsp" />
+            <forward name="queryBank" path="/bank/queryBank.jsp" />
+        </action>
+		
+	</action-mappings>
+</struts-config>
