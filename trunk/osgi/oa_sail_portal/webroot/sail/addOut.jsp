@@ -43,7 +43,7 @@ function opens(obj)
 <input type=hidden name="id" value="" />
 <p:navigation
 	height="22">
-	<td width="550" class="navigation">库单管理 &gt;&gt; 填写销售单(如果需要增加开发票品名,请到 公共资源-->配置管理)</td>
+	<td width="550" class="navigation">库单管理 &gt;&gt; 填写销售单</td>
 				<td width="85"></td>
 </p:navigation> <br>
 
@@ -64,16 +64,22 @@ function opens(obj)
 						<td>
 						<table width="100%" border="0" cellpadding="0" cellspacing="10">
 							<tr>
-								<td width="35">&nbsp;</td>
+								<td width="5">&nbsp;</td>
 								<td width="6"><img src="../images/dot_r.gif" width="6"
 									height="6"></td>
-								<td class="caption"><strong>填写销售单信息:<font color=red>${hasOver}</font> 您的信用额度还剩下:${credit}</strong>
+								<td class="caption"><strong>销售单:<font color=red>${hasOver}</font> 您信用还剩:${credit}</strong>
 								<font color="blue">产品仓库：</font>
 								<select name="location" class="select_class" values="${currentLocationId}" onchange="clearsAll()">
 									<c:forEach items='${locationList}' var="item">
 										<option value="${item.id}">${item.name}</option>
 									</c:forEach>
 								</select>
+								分公司经理信用：
+								<select style="width: 240px">
+                                    <c:forEach items='${mList}' var="item">
+                                        <option>${item}</option>
+                                    </c:forEach>
+                                </select>
 								</td>
 							</tr>
 						</table>

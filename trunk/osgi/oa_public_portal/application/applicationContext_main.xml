@@ -93,5 +93,8 @@
 		
 	<bean name="/admin/invoice"
 		class="com.china.center.oa.publics.action.InvoiceAction" />
+		
+	<bean name="/admin/show"
+        class="com.china.center.oa.publics.action.ShowAction" />
 
 </beans>

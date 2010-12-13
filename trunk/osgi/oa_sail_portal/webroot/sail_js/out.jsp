@@ -8,6 +8,7 @@ var tsts;
 var messk = '';
 var locationId = '${currentLocationId}';
 var currentLocationId = '${currentLocationId}';
+var obj;
 
 function selectCustomer()
 {
@@ -19,7 +20,7 @@ var BLACK_LEVEL = '90000000000000000000';
 
 function getCustomer(oos)
 {
-    var obj = oos;
+    obj = oos;
     
     if ($$('outType') == 3 && obj.pcreditlevelid == BLACK_LEVEL)
     {
@@ -358,7 +359,7 @@ function sub()
 function managerChange()
 {
     //普通销售/委托代销
-    if ($$('outType') == 0 && $$('outType') == 3)
+    if ($$('outType') == 0)
     {
         $O('customerName').value = '';
         $O('customerId').value = '';
@@ -366,7 +367,18 @@ function managerChange()
         $O('reday').value = '';
         $O('reday').readOnly = false;
         
-        if (obj.pcreditlevelid == BLACK_LEVEL)
+        resetReserve3();
+    }
+    
+    if ($$('outType') == 3)
+    {
+        $O('customerName').value = '';
+        $O('customerId').value = '';
+        $O('customerName').disabled  = false;
+        $O('reday').value = '';
+        $O('reday').readOnly = false;
+        
+        if (obj && obj.pcreditlevelid == BLACK_LEVEL)
         {
             removeAllItem($O('reserve3'));
             

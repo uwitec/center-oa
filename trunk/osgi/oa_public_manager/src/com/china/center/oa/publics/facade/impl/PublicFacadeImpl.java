@@ -21,6 +21,7 @@ import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.PostBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.RoleBean;
+import com.china.center.oa.publics.bean.ShowBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.bean.UserBean;
 import com.china.center.oa.publics.constant.AuthConstant;
@@ -35,6 +36,7 @@ import com.china.center.oa.publics.manager.LocationManager;
 import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.publics.manager.PostManager;
 import com.china.center.oa.publics.manager.RoleManager;
+import com.china.center.oa.publics.manager.ShowManager;
 import com.china.center.oa.publics.manager.StafferManager;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.publics.vs.LocationVSCityBean;
@@ -56,6 +58,8 @@ public class PublicFacadeImpl extends AbstarctFacade implements PublicFacade
     private StafferManager stafferManager = null;
 
     private RoleManager roleManager = null;
+
+    private ShowManager showManager = null;
 
     private UserManager userManager = null;
 
@@ -989,6 +993,63 @@ public class PublicFacadeImpl extends AbstarctFacade implements PublicFacade
         }
     }
 
+    public boolean addShowBean(String userId, ShowBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.SHOW_OPR))
+        {
+            return showManager.addBean(user, bean);
+        }
+        else
+        {
+            throw new MYException("没有权限");
+        }
+    }
+
+    public boolean deleteShowBean(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.SHOW_OPR))
+        {
+            return showManager.deleteBean(user, id);
+        }
+        else
+        {
+            throw new MYException("没有权限");
+        }
+    }
+
+    public boolean updateShowBean(String userId, ShowBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.SHOW_OPR))
+        {
+            return showManager.updateBean(user, bean);
+        }
+        else
+        {
+            throw new MYException("没有权限");
+        }
+    }
+
     /**
      * @return the enumManager
      */
@@ -1021,5 +1082,22 @@ public class PublicFacadeImpl extends AbstarctFacade implements PublicFacade
     public void setInvoiceManager(InvoiceManager invoiceManager)
     {
         this.invoiceManager = invoiceManager;
+    }
+
+    /**
+     * @return the showManager
+     */
+    public ShowManager getShowManager()
+    {
+        return showManager;
+    }
+
+    /**
+     * @param showManager
+     *            the showManager to set
+     */
+    public void setShowManager(ShowManager showManager)
+    {
+        this.showManager = showManager;
     }
 }

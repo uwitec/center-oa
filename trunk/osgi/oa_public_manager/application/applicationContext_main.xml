@@ -121,4 +121,8 @@
 
 	<bean id="menuManager" class="com.china.center.oa.publics.manager.impl.MenuManagerImpl" />
 
+	<bean id="showDAO" class="com.china.center.oa.publics.dao.impl.ShowDAOImpl" />
+
+	<bean id="showManager" class="com.china.center.oa.publics.manager.impl.ShowManagerImpl" />
+
 </beans>

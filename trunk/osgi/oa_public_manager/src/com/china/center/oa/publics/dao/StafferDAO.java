@@ -55,4 +55,6 @@ public interface StafferDAO extends DAO<StafferBean, StafferVO>
      * @return
      */
     List<StafferBean> queryStafferByAuthId(String authId);
+
+    List<StafferBean> queryStafferByAuthIdAndLocationId(String authId, String locationId);
 }

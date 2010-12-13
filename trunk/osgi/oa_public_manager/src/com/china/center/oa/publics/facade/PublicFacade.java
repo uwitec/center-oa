@@ -21,6 +21,7 @@ import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.PostBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.RoleBean;
+import com.china.center.oa.publics.bean.ShowBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.bean.UserBean;
 import com.china.center.oa.publics.vs.LocationVSCityBean;
@@ -133,6 +134,15 @@ public interface PublicFacade
         throws MYException;
 
     boolean updateInvoiceBean(String userId, InvoiceBean bean)
+        throws MYException;
+
+    boolean addShowBean(String userId, ShowBean bean)
+        throws MYException;
+
+    boolean updateShowBean(String userId, ShowBean bean)
+        throws MYException;
+
+    boolean deleteShowBean(String userId, String id)
         throws MYException;
 
 }

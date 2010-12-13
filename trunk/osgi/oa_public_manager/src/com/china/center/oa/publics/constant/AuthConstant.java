@@ -379,6 +379,11 @@ public interface AuthConstant
     String INVOICE_OPR = "0110";
 
     /**
+     * 品名管理
+     */
+    String SHOW_OPR = "0111";
+
+    /**
      * 查询仓库
      */
     String DEPOT_QUERY = "1101";

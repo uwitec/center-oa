@@ -13,5 +13,18 @@
 		    )
 		)
 	</select>
+	
+	<select id="queryStafferByAuthIdAndLocationId"
+        parameterClass="java.util.Map" resultClass="com.china.center.oa.publics.bean.StafferBean">
+        select x.* from t_center_oastaffer x where x.status = 0 and x.id in
+        (
+            select DISTINCT(tt.STAFFERID) from t_center_oauser tt where 
+            tt.locationId = #locationId# and 
+            tt.ROLEID in 
+            (
+                select DISTINCT(ROLEID) from t_center_roleauth t where AUTHID = #authId#
+            )
+        )
+    </select>
 
 </sqlMap>

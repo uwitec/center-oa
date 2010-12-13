@@ -104,4 +104,8 @@
 
 	<osgi:service ref="menuManager" interface="com.china.center.oa.publics.manager.MenuManager" />
 
+	<osgi:service ref="showDAO" interface="com.china.center.oa.publics.dao.ShowDAO" />
+
+	<osgi:service ref="showManager" interface="com.china.center.oa.publics.manager.ShowManager" />
+
 </beans>

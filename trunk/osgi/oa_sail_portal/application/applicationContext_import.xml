@@ -44,6 +44,8 @@
 	
 	<osgi:reference id="fatalNotify" interface="com.china.center.oa.publics.manager.FatalNotify" />
 	
+	<osgi:reference id="stafferManager" interface="com.china.center.oa.publics.manager.StafferManager" />
+	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	
 	<osgi:reference id="baseDAO" interface="com.china.center.oa.sail.dao.BaseDAO" />

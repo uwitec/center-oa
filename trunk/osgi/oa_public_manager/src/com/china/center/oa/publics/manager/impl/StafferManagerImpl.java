@@ -260,6 +260,21 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
         return set;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.china.center.oa.publics.manager.StafferManager#queryStafferByAuthId(java.lang.String)
+     */
+    public List<StafferBean> queryStafferByAuthId(String authId)
+    {
+        return stafferDAO.queryStafferByAuthId(authId);
+    }
+
+    public List<StafferBean> queryStafferByAuthIdAndLocationId(String authId, String locationId)
+    {
+        return stafferDAO.queryStafferByAuthIdAndLocationId(authId, locationId);
+    }
+
     /**
      * @param bean
      * @throws MYException

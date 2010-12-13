@@ -69,6 +69,7 @@ import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.manager.AuthManager;
 import com.china.center.oa.publics.manager.FatalNotify;
+import com.china.center.oa.publics.manager.StafferManager;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.publics.vo.FlowLogVO;
 import com.china.center.oa.sail.bean.BaseBalanceBean;
@@ -144,6 +145,8 @@ public class OutAction extends DispatchAction
     private DepotDAO depotDAO = null;
 
     private UserManager userManager = null;
+
+    private StafferManager stafferManager = null;
 
     private FlowLogDAO flowLogDAO = null;
 
@@ -372,7 +375,7 @@ public class OutAction extends DispatchAction
 
         condition.addCondition("locationId", "=", oprUser.getLocationId());
 
-        showLastCredit(request, user);
+        showLastCredit(request, user, flag);
 
         List<InvoiceBean> invoiceList = invoiceDAO.queryEntityBeansByCondition("where forward = ?",
             InvoiceConstant.INVOICE_FORWARD_OUT);
@@ -1594,7 +1597,7 @@ public class OutAction extends DispatchAction
 
         handlerFlow(request, list, true);
 
-        showLastCredit(request, user);
+        showLastCredit(request, user, "0");
 
         getDivs(request, list);
 
@@ -3613,10 +3616,10 @@ public class OutAction extends DispatchAction
      * @param request
      * @param user
      */
-    private void showLastCredit(HttpServletRequest request, User user)
+    private void showLastCredit(HttpServletRequest request, User user, String flag)
     {
         double noPayBusiness = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(user.getStafferId(),
-            YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
+            YYTools.getStatBeginDate(), YYTools.getStatEndDate());
 
         StafferBean sb2 = stafferDAO.find(user.getStafferId());
 
@@ -3625,6 +3628,30 @@ public class OutAction extends DispatchAction
             // 设置其剩余的信用额度
             request.setAttribute("credit", ElTools.formatNum(sb2.getCredit() * sb2.getLever()
                                                              - noPayBusiness));
+        }
+
+        if ( !"1".equals(flag))
+        {
+            // 分公司经理的额度
+            List<StafferBean> managerList = stafferManager.queryStafferByAuthIdAndLocationId(
+                AuthConstant.SAIL_LOCATION_MANAGER, user.getLocationId());
+
+            List<String> mList = new ArrayList<String>();
+
+            for (StafferBean stafferBean : managerList)
+            {
+                double noPayBusinessInM = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(
+                    stafferBean.getId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
+
+                StafferBean manager = stafferDAO.find(user.getStafferId());
+
+                mList.add(stafferBean.getName()
+                          + "的信用额度剩余:"
+                          + ElTools.formatNum(manager.getCredit() * manager.getLever()
+                                              - noPayBusinessInM));
+
+                request.setAttribute("mList", mList);
+            }
         }
     }
 
@@ -4100,5 +4127,22 @@ public class OutAction extends DispatchAction
     public void setOutQueryDAO(OutQueryDAO outQueryDAO)
     {
         this.outQueryDAO = outQueryDAO;
+    }
+
+    /**
+     * @return the stafferManager
+     */
+    public StafferManager getStafferManager()
+    {
+        return stafferManager;
+    }
+
+    /**
+     * @param stafferManager
+     *            the stafferManager to set
+     */
+    public void setStafferManager(StafferManager stafferManager)
+    {
+        this.stafferManager = stafferManager;
     }
 }

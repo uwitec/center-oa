@@ -129,5 +129,12 @@
 			<option>$enumDefine</option>
 		</condtion>
 	</item>
+	
+	<item name="queryShow" deaultpfix="ShowBean">
+        <condtion name="name" caption="名称">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+    </item>
 
 </query>

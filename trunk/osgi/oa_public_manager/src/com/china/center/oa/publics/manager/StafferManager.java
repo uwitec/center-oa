@@ -10,6 +10,7 @@ package com.china.center.oa.publics.manager;
 
 
 import java.util.Collection;
+import java.util.List;
 
 import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
@@ -51,4 +52,8 @@ public interface StafferManager extends ListenerManager<StafferListener>
      * @return
      */
     Collection<StafferVO> querySuperiorStaffer(String stafferId);
+
+    List<StafferBean> queryStafferByAuthId(String authId);
+
+    List<StafferBean> queryStafferByAuthIdAndLocationId(String authId, String locationId);
 }

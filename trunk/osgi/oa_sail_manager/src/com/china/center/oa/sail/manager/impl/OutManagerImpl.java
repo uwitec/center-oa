@@ -704,9 +704,8 @@ public class OutManagerImpl implements OutManager
                         YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
 
                     // 自己担保的+替人担保的
-                    double noPayBusiness = outDAO
-                        .sumAllNoPayAndAvouchBusinessByStafferId(outBean.getStafferId(), YYTools
-                            .getFinanceBeginDate(), YYTools.getFinanceEndDate());
+                    double noPayBusiness = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(outBean
+                        .getStafferId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
 
                     double remainInCur = clevel.getMoney() - noPayBusinessInCur;
 
@@ -2503,7 +2502,7 @@ public class OutManagerImpl implements OutManager
             {
                 // 加入审批人的信用(是自己使用的信用+担保的信用)
                 double noPayBusinessByManager = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(user
-                    .getStafferId(), YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
+                    .getStafferId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
 
                 StafferBean staffer = stafferDAO.find(user.getStafferId());
 

@@ -88,6 +88,5 @@
 	<classpathentry kind="lib" path="/jar_depend/lib_self/jxl.jar"/>
 	<classpathentry kind="lib" path="/jar_depend/lib_self/poi-2.5.1.jar"/>
 	<classpathentry kind="lib" path="/jar_depend/lib_self/readWord.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/oa_finance_manager"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

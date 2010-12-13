@@ -75,4 +75,24 @@ public abstract class YYTools
 
         return realYear + "-02-" + daysOfMonth;
     }
+
+    /**
+     * 获得单据信用、付款统计的时间
+     * 
+     * @return
+     */
+    public static String getStatBeginDate()
+    {
+        return TimeTools.now_short( -15 * 30);
+    }
+
+    /**
+     * 获得单据信用、付款统计的时间
+     * 
+     * @return
+     */
+    public static String getStatEndDate()
+    {
+        return TimeTools.now_short(1);
+    }
 }
