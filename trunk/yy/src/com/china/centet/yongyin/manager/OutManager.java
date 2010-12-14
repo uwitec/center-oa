@@ -1628,7 +1628,11 @@ public class OutManager
             }
         }
 
-        outDAO.modifyReDate2(fullId, TimeTools.now_short());
+        String cur = TimeTools.now_short();
+
+        outDAO.modifyReDate2(fullId, cur);
+
+        _logger.info(fullId + "has payed:" + cur);
 
         return outDAO.modifyPay2(fullId, pay);
     }
