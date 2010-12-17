@@ -74,6 +74,7 @@ import com.china.centet.yongyin.dao.StorageDAO;
 import com.china.centet.yongyin.dao.UserDAO;
 import com.china.centet.yongyin.ext.dao.CreditLevelDAO;
 import com.china.centet.yongyin.ext.dao.CustomerBaseDAO;
+import com.china.centet.yongyin.net.SendMail;
 import com.china.centet.yongyin.tools.YYTools;
 
 
@@ -1601,40 +1602,130 @@ public class OutManager
         return true;
     }
 
-    @Exceptional
-    @Transactional(rollbackFor = {MYException.class})
-    public boolean modifyPay(String fullId, int pay)
+    public boolean modifyPay(final String fullId, final int pay)
     {
         // 需要增加是否超期 flowId
-        OutBean out = outDAO.findOutById(fullId);
+        final OutBean out = outDAO.findOutById(fullId);
 
         if (out == null)
         {
             return false;
         }
 
-        // 如果getRedate为空说明已经超前回款了
-        if ( !StringTools.isNullOrNone(out.getRedate()))
+        // 入库操作在数据库事务中完成
+        TransactionTemplate tran = new TransactionTemplate(transactionManager);
+        try
         {
-            int delay = TimeTools.cdate(TimeTools.now(), out.getRedate());
+            tran.execute(new TransactionCallback()
+            {
+                public Object doInTransaction(TransactionStatus arg0)
+                {
+                    // 如果getRedate为空说明已经超前回款了
+                    if ( !StringTools.isNullOrNone(out.getRedate()))
+                    {
+                        int delay = TimeTools.cdate(TimeTools.now(), out.getRedate());
 
-            if (delay > 0)
-            {
-                outDAO.modifyTempType(fullId, delay);
-            }
-            else
-            {
-                outDAO.modifyTempType(fullId, 0);
-            }
+                        if (delay > 0)
+                        {
+                            outDAO.modifyTempType(fullId, delay);
+                        }
+                        else
+                        {
+                            outDAO.modifyTempType(fullId, 0);
+                        }
+                    }
+
+                    String cur = TimeTools.now_short();
+
+                    outDAO.modifyReDate2(fullId, cur);
+
+                    _logger.info(fullId + " has payed:" + cur);
+
+                    return outDAO.modifyPay2(fullId, pay);
+                }
+            });
+        }
+        catch (TransactionException e)
+        {
+            _logger.error(e, e);
+        }
+        catch (DataAccessException e)
+        {
+            _logger.error(e, e);
+        }
+        catch (Exception e)
+        {
+            _logger.error(e, e);
         }
 
-        String cur = TimeTools.now_short();
+        OutBean newOut = outDAO.findOutById(fullId);
 
-        outDAO.modifyReDate2(fullId, cur);
+        // 说明没有更新成功
+        if ( !newOut.getRedate().equals(TimeTools.now_short()))
+        {
+            loggerError(fullId + " has not modfiy redate");
+        }
 
-        _logger.info(fullId + "has payed:" + cur);
+        return true;
+    }
 
-        return outDAO.modifyPay2(fullId, pay);
+    /**
+     * loggerError(严重错误的日志哦)
+     * 
+     * @param msg
+     */
+    private void loggerError(String msg)
+    {
+        _logger.error(msg);
+
+        SendMailThread thread = new SendMailThread(msg);
+
+        thread.start();
+    }
+
+    public class SendMailThread extends Thread
+    {
+        private String msg = "";
+
+        /**
+         * default constructor
+         */
+        public SendMailThread(String msg)
+        {
+            setMsg(msg);
+        }
+
+        /**
+         * @return the msg
+         */
+        public String getMsg()
+        {
+            return msg;
+        }
+
+        /**
+         * @param msg
+         *            the msg to set
+         */
+        public void setMsg(String msg)
+        {
+            this.msg = msg;
+        }
+
+        public void run()
+        {
+            String pwd = parameterDAO.getString("MAIL_PWD");
+
+            SendMail mail = new SendMail("smtp.163.com", "mac-csd@163.com", "zhuzhu", "mac-csd",
+                pwd, new String[] {"zhu.000@163.com"}, "fullid error form yy", msg);
+
+            try
+            {
+                mail.send();
+            }
+            catch (Exception e)
+            {}
+        }
     }
 
     @Transactional(rollbackFor = {MYException.class})

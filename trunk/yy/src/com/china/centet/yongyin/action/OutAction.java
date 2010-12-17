@@ -949,7 +949,7 @@ public class OutAction extends DispatchAction
         thread.start();
     }
 
-    class SendMailThread extends Thread
+    public class SendMailThread extends Thread
     {
         private String msg = "";
 
