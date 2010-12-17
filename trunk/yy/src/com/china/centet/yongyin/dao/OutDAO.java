@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import com.china.center.common.ConditionParse;
 import com.china.center.jdbc.inter.JdbcOperation;
 import com.china.center.jdbc.util.PageSeparate;
+import com.china.center.tools.TimeTools;
 import com.china.centet.yongyin.bean.BaseBean;
 import com.china.centet.yongyin.bean.FlowLogBean;
 import com.china.centet.yongyin.bean.OutBean;
@@ -284,7 +285,9 @@ public class OutDAO
 
     public boolean modifyPay2(String fullId, int pay)
     {
-        int i = jdbcOperation2.updateField("pay", pay, fullId, OutBean.class);
+        String sql = "update t_center_out set pay = ?, redate = ? where fullid = ?";
+
+        int i = jdbcOperation2.update(sql, pay, TimeTools.now_short(), fullId);
 
         return i != 0;
     }
