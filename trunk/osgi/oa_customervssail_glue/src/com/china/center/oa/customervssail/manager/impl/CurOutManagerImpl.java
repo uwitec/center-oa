@@ -104,7 +104,7 @@ public class CurOutManagerImpl implements CurOutManager
     {
         final ConditionParse condition = new ConditionParse();
 
-        condition.addCondition("CreditlogBean.logTime", "<=", TimeTools.getDateFullString( -90));
+        condition.addCondition("CreditlogBean.logTime", "<=", TimeTools.getDateFullString( -7));
 
         // 操作在数据库事务中完成
         TransactionTemplate tranTemplate = new TransactionTemplate(transactionManager);
