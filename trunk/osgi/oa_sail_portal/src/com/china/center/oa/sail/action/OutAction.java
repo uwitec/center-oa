@@ -31,6 +31,7 @@ import org.apache.struts.actions.DispatchAction;
 import com.center.china.osgi.publics.User;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.OldPageSeparateTools;
+import com.china.center.actionhelper.jsonimpl.JSONArray;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
@@ -53,6 +54,7 @@ import com.china.center.oa.publics.bean.DepartmentBean;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
+import com.china.center.oa.publics.bean.ShowBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.InvoiceConstant;
@@ -65,6 +67,7 @@ import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
+import com.china.center.oa.publics.dao.ShowDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.manager.AuthManager;
@@ -143,6 +146,8 @@ public class OutAction extends DispatchAction
     private StorageDAO storageDAO = null;
 
     private DepotDAO depotDAO = null;
+
+    private ShowDAO showDAO = null;
 
     private UserManager userManager = null;
 
@@ -234,6 +239,8 @@ public class OutAction extends DispatchAction
 
         String outId = request.getParameter("outId");
 
+        OutBean out = outDAO.find(outId);
+
         List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outId);
 
         int totalLast = 0;
@@ -263,6 +270,13 @@ public class OutAction extends DispatchAction
 
         request.setAttribute("outId", outId);
 
+        // 选择仓库
+        List<DepotBean> depotList = depotDAO.listEntityBeans();
+
+        request.setAttribute("depotList", depotList);
+
+        request.setAttribute("out", out);
+
         // 销售单
         return mapping.findForward("addOutBalance");
     }
@@ -283,7 +297,7 @@ public class OutAction extends DispatchAction
     {
         String id = request.getParameter("id");
 
-        OutBalanceBean bean = outBalanceDAO.find(id);
+        OutBalanceBean bean = outBalanceDAO.findVO(id);
 
         List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(bean.getOutId());
 
@@ -385,6 +399,17 @@ public class OutAction extends DispatchAction
         List<DutyBean> dutyList = dutyDAO.listEntityBeans();
 
         request.setAttribute("dutyList", dutyList);
+
+        // 查询开单品名
+        List<ShowBean> showList = showDAO.listEntityBeans();
+
+        JSONArray shows = new JSONArray(showList, true);
+
+        request.setAttribute("showJSON", shows.toString());
+
+        StafferBean staffer = stafferDAO.find(user.getStafferId());
+
+        request.setAttribute("staffer", staffer);
     }
 
     private boolean hasOver(String stafferName)
@@ -864,6 +889,8 @@ public class OutAction extends DispatchAction
 
         String outId = request.getParameter("outId");
 
+        String dirDepot = request.getParameter("dirDepot");
+
         bean.setDescription(description);
 
         bean.setLogTime(TimeTools.now());
@@ -871,6 +898,8 @@ public class OutAction extends DispatchAction
         bean.setStafferId(user.getStafferId());
 
         bean.setOutId(outId);
+
+        bean.setDirDepot(dirDepot);
 
         bean.setStatus(OutConstant.OUTBALANCE_STATUS_SUBMIT);
 
@@ -4144,5 +4173,22 @@ public class OutAction extends DispatchAction
     public void setStafferManager(StafferManager stafferManager)
     {
         this.stafferManager = stafferManager;
+    }
+
+    /**
+     * @return the showDAO
+     */
+    public ShowDAO getShowDAO()
+    {
+        return showDAO;
+    }
+
+    /**
+     * @param showDAO
+     *            the showDAO to set
+     */
+    public void setShowDAO(ShowDAO showDAO)
+    {
+        this.showDAO = showDAO;
     }
 }

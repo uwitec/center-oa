@@ -101,7 +101,11 @@ var tv = new treeview("treeview","../js/tree", 1, false);
             
             <p:pro field="subphone"/>
             
-            <p:pro field="credit" cell="0"/>
+            <p:pro field="credit" cell="1"/>
+            
+            <p:pro field="black" cell="1">
+                <p:option type="stafferBlack"></p:option>
+            </p:pro>
             
             <p:pro field="address" cell="0" innerString="size=80"/>
 

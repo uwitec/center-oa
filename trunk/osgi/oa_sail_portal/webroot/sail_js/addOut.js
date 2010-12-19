@@ -207,6 +207,32 @@ function clearsAll()
 	clearArray(document.getElementsByName('rstafferName'));
 }
 
+function loadShow()
+{
+	var json = showJSON;
+	
+	var pid = $$('dutyId');
+	
+	var showArr = document.getElementsByName('outProductName');
+	
+	for (var i = 0; i < showArr.length; i++)
+	{
+		var each = showArr[i];
+		
+		removeAllItem(each);
+		
+		for (var j = 0; j < json.length; j++)
+		{
+			var item = json[j];
+			
+			if (item.dutyId == pid)
+			{
+				setOption(each, item.id, item.name);
+			}
+		}
+	}
+}
+
 function clearArray(array, flag)
 {
 	for (var i = 0; i < array.length; i++)

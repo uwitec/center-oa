@@ -11,6 +11,8 @@
 <script language="JavaScript" src="../js/cnchina.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/compatible.js"></script>
+<script language="JavaScript" src="../js/jquery/jquery.js"></script>
+<script language="JavaScript" src="../js/json.js"></script>
 <script language="JavaScript" src="../sail_js/addOut.js"></script>
 <script language="javascript">
 <%@include file="../sail_js/out.jsp"%>
@@ -22,6 +24,20 @@ function opens(obj)
     oo = obj;
     
     window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&showAbs=1&load=1&depotId='+ $$('location') + '&code=' + obj.productcode);
+}
+
+function load()
+{
+    titleChange();
+    
+    loadForm();
+    
+     //load show
+    loadShow();
+    
+    loadForm();
+    
+    managerChange();
 }
 
 </script>
@@ -175,7 +191,7 @@ function opens(obj)
                         <font color="#FF0000">*</font></td>
                         <td align="right">纳税实体：</td>
                         <td colspan="1">
-                        <select name="dutyId" class="select_class" style="width: 240px">
+                        <select name="dutyId" class="select_class" style="width: 240px" onchange="loadShow()">
                             <c:forEach items="${dutyList}" var="item">
                             <option value="${item.id}">${item.name}</option>
                             </c:forEach>
@@ -283,7 +299,6 @@ function opens(obj)
 							
 						<td  align="center">
 						<select name="outProductName" style="WIDTH: 150px;" quick=true>
-							<p:option type="123"></p:option>
 						</select>
 						</td>
 
@@ -325,7 +340,6 @@ function opens(obj)
 							
 						<td align="center">
 						<select name="outProductName" style="WIDTH: 150px;" quick=true>
-							<p:option type="123"></p:option>
 						</select>
 						</td>
 

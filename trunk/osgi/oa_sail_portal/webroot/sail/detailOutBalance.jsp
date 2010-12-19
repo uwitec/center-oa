@@ -9,6 +9,7 @@
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
+<script language="JavaScript" src="../js/json.js"></script>
 <script language="javascript">
 function load()
 {
@@ -81,7 +82,19 @@ function addBean()
 			
 			<tr class="content1">
                 <td colspan="2" align="left">
+                 退货仓库：${bean.dirDepotName}
+                </td>
+            </tr>
+			
+			<tr class="content2">
+                <td colspan="2" align="left">
                  备注：${bean.description}
+                </td>
+            </tr>
+            
+            <tr class="content1">
+                <td colspan="2" align="left">
+                 审批意见：${bean.reason}
                 </td>
             </tr>
 		</table>

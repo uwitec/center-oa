@@ -8,7 +8,37 @@
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/cnchina.js"></script>
+<script language="JavaScript" src="../js/jquery/jquery.js"></script>
+<script language="JavaScript" src="../js/json.js"></script>
 <script language="javascript">
+
+var showJSON = JSON.parse('${showJSON}');
+
+function loadShow()
+{
+    var json = showJSON;
+    
+    var pid = $$('dutyId');
+    
+    var showArr = $("select[name^='showId']") ;
+    
+    for (var i = 0; i < showArr.length; i++)
+    {
+        var each = showArr[i];
+        
+        removeAllItem(each);
+        
+        for (var j = 0; j < json.length; j++)
+        {
+            var item = json[j];
+            
+            if (item.dutyId == pid)
+            {
+                setOption(each, item.id, item.name);
+            }
+        }
+    }
+}
 
 var cindex = -1;
 function addBean()
@@ -74,6 +104,10 @@ function load()
 	init();
 	
 	change();
+	
+    loadShow();
+    
+    loadForm();
 }
 
 function isel()
@@ -250,7 +284,7 @@ function change()
                <p:option type="stockSailType"></p:option>
             </p:pro>
             
-             <p:pro field="dutyId" innerString="style='width: 300px'">
+             <p:pro field="dutyId" innerString="style='width: 300px' onchange=loadShow()">
                 <c:forEach items="${dutyList}" var="item">
                 <option value="${item.id}">${item.name}</option>
                 </c:forEach>
@@ -298,7 +332,7 @@ function change()
 							数量:<input
 							type="text" name="amount_1" value="${bean.itemVO[1].amount}" size="6" oncheck="notNone;isNumber;">&nbsp;
                                开发票品名:
-                               <select name="showId_2" style="WIDTH: 150px;" quick=true values="${bean.itemVO[1].showId}">
+                               <select name="showId_1" style="WIDTH: 150px;" quick=true values="${bean.itemVO[1].showId}">
                                  <p:option type="123"></p:option>
                                </select>
 

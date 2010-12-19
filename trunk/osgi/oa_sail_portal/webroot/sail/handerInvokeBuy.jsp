@@ -12,6 +12,7 @@
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="JavaScript" src="../js/compatible.js"></script>
+<script language="JavaScript" src="../js/json.js"></script>
 <script language="JavaScript" src="../sail_js/addOut.js"></script>
 <script language="JavaScript" src="../js/jquery/jquery.js"></script>
 <script language="JavaScript" src="../js/plugin/highlight/jquery.highlight.js"></script>

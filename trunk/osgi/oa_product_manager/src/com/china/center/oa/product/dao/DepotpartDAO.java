@@ -26,6 +26,12 @@ import com.china.center.oa.product.vo.DepotpartVO;
  */
 public interface DepotpartDAO extends DAO<DepotpartBean, DepotpartVO>
 {
+    /**
+     * queryOkDepotpartInDepot
+     * 
+     * @param depotId
+     * @return
+     */
     List<DepotpartBean> queryOkDepotpartInDepot(String depotId);
 
     /**

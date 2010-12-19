@@ -28,6 +28,9 @@ public class OutBalanceVO extends OutBalanceBean
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
 
+    @Relationship(relationField = "dirDepot")
+    private String dirDepotName = "";
+
     /**
      * default constructor
      */
@@ -53,6 +56,23 @@ public class OutBalanceVO extends OutBalanceBean
     }
 
     /**
+     * @return the dirDepotName
+     */
+    public String getDirDepotName()
+    {
+        return dirDepotName;
+    }
+
+    /**
+     * @param dirDepotName
+     *            the dirDepotName to set
+     */
+    public void setDirDepotName(String dirDepotName)
+    {
+        this.dirDepotName = dirDepotName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -63,8 +83,17 @@ public class OutBalanceVO extends OutBalanceBean
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue.append("OutBalanceVO ( ").append(super.toString()).append(TAB).append(
-            "stafferName = ").append(this.stafferName).append(TAB).append(" )");
+        retValue
+            .append("OutBalanceVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("stafferName = ")
+            .append(this.stafferName)
+            .append(TAB)
+            .append("dirDepotName = ")
+            .append(this.dirDepotName)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

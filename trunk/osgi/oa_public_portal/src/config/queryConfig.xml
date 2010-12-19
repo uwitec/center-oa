@@ -27,6 +27,12 @@
 			<type>select</type>
 			<option>$examType</option>
 		</condtion>
+		<condtion name="black" caption="信用属性">
+            <opr>=</opr>
+            <type>select</type>
+            <datatype>1</datatype>
+            <option>$stafferBlack</option>
+        </condtion>
 		<condtion name="departmentId" caption="部门">
 			<opr>=</opr>
 			<type>select</type>

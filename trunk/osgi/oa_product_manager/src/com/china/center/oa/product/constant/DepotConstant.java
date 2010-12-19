@@ -53,17 +53,17 @@ public interface DepotConstant
     int DEPOTPART_TYPE_SUPERSESSION = 2;
 
     /**
-     * 物流中心仓库
+     * 采购中心库
      */
-    String CENTER_DEPOT_ID = "99000000000000000001";
+    String STOCK_DEPOT_ID = "99000000000000000001";
 
     /**
      * 采购仓区
      */
-    String CENTER_DEPOTPART_ID = "10000000000000000002";
+    String STOCK_DEPOTPART_ID = "10000000000000000002";
 
     /**
      * 采购储位
      */
-    String CENTER_STORAGE_ID = "11000000000000000003";
+    String STOCK_STORAGE_ID = "11000000000000000003";
 }

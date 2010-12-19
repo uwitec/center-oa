@@ -142,6 +142,10 @@ function inits()
 			<p:pro field="credit"/>
 			
 			<p:pro field="lever"/>
+			
+			<p:pro field="black" cell="0">
+                <p:option type="stafferBlack"></p:option>
+            </p:pro>
 
 			<p:pro field="address" cell="0" innerString="size=80"
 				value="${bean.address}" />

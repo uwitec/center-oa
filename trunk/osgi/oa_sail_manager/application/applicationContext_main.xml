@@ -16,8 +16,6 @@
 
 	<bean id="outDAO" class="com.china.center.oa.sail.dao.impl.OutDAOImpl" />
 
-	<bean id="showDAO" class="com.china.center.oa.sail.dao.impl.ShowDAOImpl" />
-
 	<bean id="outUniqueDAO" class="com.china.center.oa.sail.dao.impl.OutUniqueDAOImpl" />
 
 	<bean id="outManager" class="com.china.center.oa.sail.manager.impl.OutManagerImpl" />

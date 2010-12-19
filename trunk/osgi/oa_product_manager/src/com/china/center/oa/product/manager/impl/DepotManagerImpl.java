@@ -129,7 +129,7 @@ public class DepotManagerImpl extends AbstractListenerManager<DepotListener> imp
             throw new MYException("数据错误,请确认操作");
         }
 
-        if (old.getId().equals(DepotConstant.CENTER_DEPOT_ID))
+        if (old.getId().equals(DepotConstant.STOCK_DEPOT_ID))
         {
             throw new MYException("初始化数据不能删除,请确认操作");
         }

@@ -12,6 +12,7 @@
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="JavaScript" src="../js/compatible.js"></script>
+<script language="JavaScript" src="../js/json.js"></script>
 <script language="JavaScript" src="../sail_js/addOut.js"></script>
 <script language="JavaScript" src="../js/jquery/jquery.js"></script>
 <script language="JavaScript" src="../js/plugin/highlight/jquery.highlight.js"></script>
@@ -114,7 +115,23 @@ function addBean()
 				</td>
 			</tr>
 			
-			<tr>
+			<c:if test="${type == '1'}">
+			<tr class="content1">
+                <td colspan="1" align="right">
+                 退货仓库：
+                </td>
+                <td>
+                <select name="dirDepot" class="select_class" oncheck="notNone;" values="${out.location}">
+                    <option value="">--</option>
+                    <c:forEach items='${depotList}' var="item">
+                        <option value="${item.id}">${item.name}</option>
+                    </c:forEach>
+                </select><font color="#FF0000">*</font>
+                </td>
+            </tr>
+			</c:if>
+			
+			<tr class="content2">
                 <td colspan="1" align="right">
                  备注：
                 </td>

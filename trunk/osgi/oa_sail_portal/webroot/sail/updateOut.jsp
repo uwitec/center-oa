@@ -11,6 +11,8 @@
 <script language="JavaScript" src="../js/cnchina.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/compatible.js"></script>
+<script language="JavaScript" src="../js/json.js"></script>
+<script language="JavaScript" src="../js/jquery/jquery.js"></script>
 <script language="JavaScript" src="../sail_js/addOut.js"></script>
 <script language="javascript">
 <%@include file="../sail_js/out.jsp"%>
@@ -22,6 +24,62 @@ function opens(obj)
 	oo = obj;
 	
 	window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&showAbs=1&load=1&depotId='+ $$('location') + '&name=' + encodeURIComponent(obj.value));
+}
+
+function load()
+{
+    titleChange();
+    
+    loadForm();
+    
+     //load show
+    loadShow();
+    
+    loadForm();
+    
+     //个人领样
+    if ($$('outType') == 1)
+    {
+        $O('customerName').value = '个人领样';
+        $O('customerId').value = '99';
+        $O('customerName').disabled  = true;
+        $O('reday').value = '${goDays}';
+        $O('reday').readOnly = true;
+    }
+    
+      //零售 是给公共客户的
+    if ($$('outType') == 2)
+    {
+        $O('customerName').value = '公共客户';
+        $O('customerId').value = '99';
+        $O('customerName').disabled  = true;
+        $O('reday').readOnly = false;
+        
+        //联系人和电话必填
+        $O('connector').readOnly = false;
+        $O('phone').readOnly = false;
+        
+        $O('connector').oncheck = 'notNone';
+        $O('phone').oncheck = 'notNone';
+        
+        removeAllItem($O('reserve3'));
+        
+        setOption($O('reserve3'), '1', '款到发货(黑名单客户/零售)');   
+    }
+    
+     //赠送
+    if ($$('outType') == 4)
+    {
+        //价格为0
+        var showArr = $("input[name='price']") ;
+        
+        for (var i = 0; i < showArr.length; i++)
+        {
+            var each = showArr[i];
+            each.readOnly = true;
+            each.value = 0.0;
+        }
+    }
 }
 
 </script>
@@ -177,7 +235,7 @@ function opens(obj)
                         <font color="#FF0000">*</font></td>
                         <td align="right">纳税实体：</td>
                         <td colspan="1">
-                        <select name="dutyId" class="select_class" style="width: 240px" values="${bean.dutyId}">
+                        <select name="dutyId" class="select_class" style="width: 240px" values="${bean.dutyId}" onchange="loadShow()">
                             <c:forEach items="${dutyList}" var="item">
                             <option value="${item.id}">${item.name}</option>
                             </c:forEach>
@@ -328,7 +386,6 @@ function opens(obj)
 							
 						<td align="center">
 						<select name="outProductName" style="WIDTH: 150px;" quick=true values="${fristBase.showId}">
-							<p:option type="123"></p:option>
 						</select>
 						</td>
 
@@ -372,7 +429,6 @@ function opens(obj)
                             
                         <td align="center">
                         <select name="outProductName" style="WIDTH: 150px;" quick=true values="${fristBase.showId}">
-                            <p:option type="123"></p:option>
                         </select>
                         </td>
 

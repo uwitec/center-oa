@@ -64,6 +64,12 @@ public class StafferBean implements Serializable
     @Html(title = "信用杠杆倍数")
     private int lever = StafferConstant.LEVER_DEFAULT;
 
+    /**
+     * 信用属性
+     */
+    @Html(title = "信用属性", must = true, type = Element.SELECT)
+    private int black = StafferConstant.BLACK_NO;
+
     @Html(title = "分公司", must = true, type = Element.SELECT)
     @Join(tagClass = LocationBean.class)
     private String locationId = "";
@@ -794,5 +800,22 @@ public class StafferBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the black
+     */
+    public int getBlack()
+    {
+        return black;
+    }
+
+    /**
+     * @param black
+     *            the black to set
+     */
+    public void setBlack(int black)
+    {
+        this.black = black;
     }
 }

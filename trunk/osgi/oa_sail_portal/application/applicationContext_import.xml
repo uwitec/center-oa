@@ -46,13 +46,13 @@
 	
 	<osgi:reference id="stafferManager" interface="com.china.center.oa.publics.manager.StafferManager" />
 	
+	<osgi:reference id="showDAO" interface="com.china.center.oa.publics.dao.ShowDAO" />
+	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	
 	<osgi:reference id="baseDAO" interface="com.china.center.oa.sail.dao.BaseDAO" />
 
 	<osgi:reference id="outDAO" interface="com.china.center.oa.sail.dao.OutDAO" />
-
-	<osgi:reference id="showDAO" interface="com.china.center.oa.sail.dao.ShowDAO" />
 
 	<osgi:reference id="outUniqueDAO" interface="com.china.center.oa.sail.dao.OutUniqueDAO" />
 

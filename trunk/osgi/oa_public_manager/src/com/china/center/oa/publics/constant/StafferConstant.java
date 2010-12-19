@@ -42,5 +42,11 @@ public interface StafferConstant
     @Defined(key = "stafferStatus", value = "废弃")
     int STATUS_DROP = 99;
 
+    @Defined(key = "stafferBlack", value = "正常")
+    int BLACK_NO = 0;
+
+    @Defined(key = "stafferBlack", value = "黑名单")
+    int BLACK_YES = 1;
+
     int LEVER_DEFAULT = 1;
 }

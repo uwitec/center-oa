@@ -33,6 +33,7 @@ import com.center.china.osgi.publics.User;
 import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.OldPageSeparateTools;
+import com.china.center.actionhelper.jsonimpl.JSONArray;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
@@ -45,6 +46,7 @@ import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.LocationBean;
+import com.china.center.oa.publics.bean.ShowBean;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.InvoiceConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
@@ -54,6 +56,7 @@ import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
+import com.china.center.oa.publics.dao.ShowDAO;
 import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.helper.AuthHelper;
 import com.china.center.oa.publics.manager.UserManager;
@@ -113,6 +116,8 @@ public class StockAction extends DispatchAction
     private UserDAO userDAO = null;
 
     private DutyDAO dutyDAO = null;
+
+    private ShowDAO showDAO = null;
 
     private CommonDAO commonDAO = null;
 
@@ -675,10 +680,7 @@ public class StockAction extends DispatchAction
 
         request.setAttribute("bean", vo);
 
-        // 获得所有的发票类型
-        List<InvoiceBean> invoiceList = invoiceDAO.listEntityBeans();
-
-        request.setAttribute("invoiceList", invoiceList);
+        prepare(request);
 
         if ( !StringTools.isNullOrNone(update))
         {
@@ -691,14 +693,6 @@ public class StockAction extends DispatchAction
             }
 
             request.setAttribute("maxItem", 5 - last);
-
-            List<DepartmentBean> departementList = departmentDAO.listEntityBeans();
-
-            request.setAttribute("departementList", departementList);
-
-            List<DutyBean> dutyList = dutyDAO.listEntityBeans();
-
-            request.setAttribute("dutyList", dutyList);
 
             return mapping.findForward("updateStock");
         }
@@ -775,6 +769,13 @@ public class StockAction extends DispatchAction
                                         HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
+        prepare(request);
+
+        return mapping.findForward("addStock");
+    }
+
+    private void prepare(HttpServletRequest request)
+    {
         List<DepartmentBean> departementList = departmentDAO.listEntityBeans();
 
         request.setAttribute("departementList", departementList);
@@ -792,7 +793,14 @@ public class StockAction extends DispatchAction
 
         request.setAttribute("dutyList", dutyList);
 
-        return mapping.findForward("addStock");
+        // 查询开单品名
+        List<ShowBean> showList = showDAO.listEntityBeans();
+
+        JSONArray shows = new JSONArray(showList, true);
+
+        request.setAttribute("showList", showList);
+
+        request.setAttribute("showJSON", shows.toString());
     }
 
     /**
@@ -1956,5 +1964,22 @@ public class StockAction extends DispatchAction
     public void setUserManager(UserManager userManager)
     {
         this.userManager = userManager;
+    }
+
+    /**
+     * @return the showDAO
+     */
+    public ShowDAO getShowDAO()
+    {
+        return showDAO;
+    }
+
+    /**
+     * @param showDAO
+     *            the showDAO to set
+     */
+    public void setShowDAO(ShowDAO showDAO)
+    {
+        this.showDAO = showDAO;
     }
 }

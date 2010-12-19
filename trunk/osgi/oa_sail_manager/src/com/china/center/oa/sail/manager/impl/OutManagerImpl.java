@@ -324,7 +324,7 @@ public class OutManagerImpl implements OutManager
                         base.setValue(MathTools.parseDouble(totalList[i]));
 
                         // 入库单是没有showId的
-                        if (showNameList != null && showNameList.length > (i + 1))
+                        if (showNameList != null && showNameList.length >= (i + 1))
                         {
                             base.setShowId(showIdList[i]);
                             base.setShowName(showNameList[i]);
@@ -1616,9 +1616,6 @@ public class OutManagerImpl implements OutManager
             }
         }
 
-        // 回款日期
-        outDAO.modifyReDate(fullId, TimeTools.now_short());
-
         // 付款的金额
         outDAO.modifyOutHadPay(fullId, MathTools.formatNum(out.getTotal()));
 
@@ -1714,6 +1711,30 @@ public class OutManagerImpl implements OutManager
 
         outBalanceDAO.updateEntityBean(bean);
 
+        OutBean out = outDAO.find(bean.getOutId());
+
+        if (out == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        boolean useDefaultDepotpart = true;
+
+        DepotpartBean defaultOKDepotpart = null;
+
+        if (bean.getType() == OutConstant.OUTBALANCE_TYPE_BACK
+            && !out.getLocation().equals(bean.getDirDepot()))
+        {
+            useDefaultDepotpart = false;
+
+            defaultOKDepotpart = depotpartDAO.findDefaultOKDepotpart(bean.getDirDepot());
+
+            if (defaultOKDepotpart == null)
+            {
+                throw new MYException("默认仓区不存在,请确认操作");
+            }
+        }
+
         List<BaseBalanceBean> baseList = baseBalanceDAO.queryEntityBeansByFK(id);
 
         String sequence = commonDAO.getSquenceString();
@@ -1728,10 +1749,20 @@ public class OutManagerImpl implements OutManager
 
                 BaseBean element = baseDAO.find(each.getBaseId());
 
-                wrap.setDepotpartId(element.getDepotpartId());
+                if (useDefaultDepotpart)
+                {
+                    // 使用默认仓区
+                    wrap.setDepotpartId(element.getDepotpartId());
+                }
+                else
+                {
+                    // 使用用户选择的仓库
+                    wrap.setDepotpartId(defaultOKDepotpart.getId());
+                }
                 wrap.setPrice(element.getCostPrice());
                 wrap.setProductId(element.getProductId());
                 wrap.setStafferId(element.getOwner());
+
                 // 增加的数量来自退货的数量
                 wrap.setChange(each.getAmount());
 

@@ -17,6 +17,8 @@ import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.annotation.enums.JoinType;
+import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 
@@ -52,6 +54,12 @@ public class OutBalanceBean implements Serializable
     private String description = "";
 
     private String reason = "";
+
+    /**
+     * 退货库
+     */
+    @Join(tagClass = DepotBean.class, type = JoinType.LEFT)
+    private String dirDepot = "";
 
     @Ignore
     private List<BaseBalanceBean> baseBalanceList = null;
@@ -234,6 +242,23 @@ public class OutBalanceBean implements Serializable
     }
 
     /**
+     * @return the dirDepot
+     */
+    public String getDirDepot()
+    {
+        return dirDepot;
+    }
+
+    /**
+     * @param dirDepot
+     *            the dirDepot to set
+     */
+    public void setDirDepot(String dirDepot)
+    {
+        this.dirDepot = dirDepot;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -274,6 +299,9 @@ public class OutBalanceBean implements Serializable
             .append(TAB)
             .append("reason = ")
             .append(this.reason)
+            .append(TAB)
+            .append("dirDepot = ")
+            .append(this.dirDepot)
             .append(TAB)
             .append("baseBalanceList = ")
             .append(this.baseBalanceList)

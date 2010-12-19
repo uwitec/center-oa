@@ -11,6 +11,7 @@
 <script language="JavaScript" src="../js/cnchina.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/compatible.js"></script>
+<script language="JavaScript" src="../js/json.js"></script>
 <script language="JavaScript" src="../sail_js/addBuy.js"></script>
 <script language="javascript">
 <%@include file="../sail_js/buy.jsp"%>

@@ -87,7 +87,7 @@ function inits()
 	<p:line flag="0" />
 
 	<p:subBody width="100%">
-		<p:class value="com.china.center.oa.publics.bean.StafferBean" />
+		<p:class value="com.china.center.oa.publics.bean.StafferBean" opr="1"/>
 
 		<p:table cells="2">
 			<p:pro field="name" value="${bean.name}" innerString="readonly=true" />
@@ -142,7 +142,11 @@ function inits()
 
 			<p:pro field="subphone" value="${bean.subphone}" />
 			
-			<p:pro field="credit" value="${bean.credit}" cell="0"/>
+			<p:pro field="credit" cell="1"/>
+            
+            <p:pro field="black" cell="1">
+                <p:option type="stafferBlack"></p:option>
+            </p:pro>
 
 			<p:pro field="address" cell="0" innerString="size=80"
 				value="${bean.address}" />

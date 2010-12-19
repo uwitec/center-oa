@@ -8,6 +8,8 @@
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="JavaScript" src="../js/title_div.js"></script>
+<script language="JavaScript" src="../js/jquery/jquery.js"></script>
+<script language="JavaScript" src="../js/json.js"></script>
 
 <script language="javascript">
 function load()
@@ -179,7 +181,7 @@ function showDiv(id)
 					
 					<td align="center">
 					 <select name="showId_3" style="WIDTH: 150px;" values="${item.showId}" autodisplay="1">
-                                 <p:option type="123"></p:option>
+                                 <p:option type="showList"></p:option>
                       </select>
 					</td>
 					

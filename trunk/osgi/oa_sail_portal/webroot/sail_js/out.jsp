@@ -10,6 +10,8 @@ var locationId = '${currentLocationId}';
 var currentLocationId = '${currentLocationId}';
 var obj;
 
+var showJSON = JSON.parse('${showJSON}');
+
 function selectCustomer()
 {
     window.common.modal("../customer/customer.do?method=rptQuerySelfCustomer&stafferId=${user.stafferId}&load=1");
@@ -42,13 +44,16 @@ function getCustomer(oos)
     $O("customerId").value = obj.value;
     $O("customercreditlevel").value = obj.pcreditlevelid;
     
-    if (obj.pcreditlevelid == BLACK_LEVEL || $$('outType') == 2)
+    if (obj.pcreditlevelid == BLACK_LEVEL || $$('outType') == 2 || ${staffer.black} == 1)
     {
         removeAllItem($O('reserve3'));
         
-        setOption($O('reserve3'), '1', '款到发货(黑名单客户)');   
+        setOption($O('reserve3'), '1', '款到发货(黑名单客户)'); 
+        
+        return;
     }
-    else if ($$('outType') == 4)
+    
+    if ($$('outType') == 4)
     {
         resetReserve3_ZS(); 
     }
@@ -97,12 +102,6 @@ function titleChange()
     
 }
 
-function load()
-{
-    titleChange();
-    
-    loadForm();
-}
 
 function check()
 {
@@ -358,6 +357,21 @@ function sub()
 
 function managerChange()
 {
+     $O('connector').readOnly = true;
+     $O('phone').readOnly = true;
+     
+     $O('connector').oncheck = '';
+     $O('phone').oncheck = '';
+     
+     //价格为0
+     var showArr = $("input[name='price']") ;
+     
+     for (var i = 0; i < showArr.length; i++)
+     {
+         var each = showArr[i];
+         each.readOnly = false;
+     }
+        
     //普通销售/委托代销
     if ($$('outType') == 0)
     {
@@ -368,38 +382,6 @@ function managerChange()
         $O('reday').readOnly = false;
         
         resetReserve3();
-    }
-    
-    if ($$('outType') == 3)
-    {
-        $O('customerName').value = '';
-        $O('customerId').value = '';
-        $O('customerName').disabled  = false;
-        $O('reday').value = '';
-        $O('reday').readOnly = false;
-        
-        if (obj && obj.pcreditlevelid == BLACK_LEVEL)
-        {
-            removeAllItem($O('reserve3'));
-            
-            setOption($O('reserve3'), '1', '款到发货(黑名单客户)');   
-        }
-        else
-        {
-            resetReserve3();
-        }
-    }
-    
-     //赠送
-    if ($$('outType') == 4)
-    {
-        $O('customerName').value = '';
-        $O('customerId').value = '';
-        $O('customerName').disabled  = false;
-        $O('reday').value = '1';
-        $O('reday').readOnly = true;
-        
-        resetReserve3_ZS();
     }
     
     //个人领样
@@ -423,6 +405,43 @@ function managerChange()
         $O('reday').value = '';
         $O('reday').readOnly = false;
         
+        //联系人和电话必填
+        $O('connector').readOnly = false;
+        $O('phone').readOnly = false;
+        
+        $O('connector').oncheck = 'notNone';
+        $O('phone').oncheck = 'notNone';
+        
+        removeAllItem($O('reserve3'));
+        
+        setOption($O('reserve3'), '1', '款到发货(黑名单客户/零售)');   
+    }
+    
+     //赠送
+    if ($$('outType') == 4)
+    {
+        $O('customerName').value = '';
+        $O('customerId').value = '';
+        $O('customerName').disabled  = false;
+        $O('reday').value = '1';
+        $O('reday').readOnly = true;
+        
+        resetReserve3_ZS();
+        
+        //价格为0
+        var showArr = $("input[name='price']") ;
+        
+        for (var i = 0; i < showArr.length; i++)
+	    {
+	        var each = showArr[i];
+	        each.readOnly = true;
+	        each.value = 0.0;
+	    }
+    }
+    
+    //处理个人黑名单
+    if ($$('outType') != 4 && ${staffer.black} == 1)
+    {
         removeAllItem($O('reserve3'));
         
         setOption($O('reserve3'), '1', '款到发货(黑名单客户/零售)');   

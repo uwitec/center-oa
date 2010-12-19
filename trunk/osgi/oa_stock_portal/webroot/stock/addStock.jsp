@@ -8,7 +8,37 @@
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/cnchina.js"></script>
+<script language="JavaScript" src="../js/jquery/jquery.js"></script>
+<script language="JavaScript" src="../js/json.js"></script>
 <script language="javascript">
+
+var showJSON = JSON.parse('${showJSON}');
+
+function loadShow()
+{
+    var json = showJSON;
+    
+    var pid = $$('dutyId');
+    
+    var showArr = $("select[name^='showId']") ;
+    
+    for (var i = 0; i < showArr.length; i++)
+    {
+        var each = showArr[i];
+        
+        removeAllItem(each);
+        
+        for (var j = 0; j < json.length; j++)
+        {
+            var item = json[j];
+            
+            if (item.dutyId == pid)
+            {
+                setOption(each, item.id, item.name);
+            }
+        }
+    }
+}
 
 var cindex = -1;
 function addBean(opr)
@@ -71,6 +101,10 @@ function load()
 	init();
 	
 	change();
+	
+	loadForm();
+	
+	loadShow();
 }
 
 function init()
@@ -274,7 +308,7 @@ function clearValues()
                     class="button_class" onclick="clearValues()">
             </p:cell>
             
-            <p:pro field="dutyId" innerString="style='width: 300px'">
+            <p:pro field="dutyId" innerString="style='width: 300px' onchange=loadShow()">
                 <c:forEach items="${dutyList}" var="item">
                 <option value="${item.id}">${item.name}</option>
                 </c:forEach>

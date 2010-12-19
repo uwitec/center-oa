@@ -99,7 +99,7 @@ public class StockListenerSailImpl implements StockListener
             out.setLocationId(user.getLocationId());
 
             // 目的仓库
-            out.setLocation(DepotConstant.CENTER_DEPOT_ID);
+            out.setLocation(DepotConstant.STOCK_DEPOT_ID);
 
             out.setTotal(item.getTotal());
 
@@ -123,7 +123,7 @@ public class StockListenerSailImpl implements StockListener
             baseBean.setProductId(item.getProductId());
             baseBean.setCostPriceKey(StorageRelationHelper.getPriceKey(item.getPrice()));
             baseBean.setOwner(bean.getOwerId());
-            baseBean.setDepotpartId(DepotConstant.CENTER_DEPOTPART_ID);
+            baseBean.setDepotpartId(DepotConstant.STOCK_DEPOTPART_ID);
 
             baseBean.setDepotpartName("采购仓区");
             // 成本
