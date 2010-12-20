@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
@@ -114,66 +115,16 @@ public abstract class OutHelper
         return getStatus(i, true);
     }
 
+    /**
+     * getStatus
+     * 
+     * @param i
+     * @param color
+     * @return
+     */
     public static String getStatus(int i, boolean color)
     {
-        if (i == 0)
-        {
-            return "保存(开始)";
-        }
-
-        if (i == 1)
-        {
-            return "提交结算中心";
-        }
-
-        if (i == 2)
-        {
-            if (color)
-            {
-                return "<font color=red>驳回</font>";
-            }
-            else
-            {
-                return "驳回";
-            }
-        }
-
-        if (i == 3)
-        {
-            return "库管发货";
-        }
-
-        if (i == 4)
-        {
-            return "财务核对(结束)";
-        }
-
-        if (i == 6)
-        {
-            return "结算中心通过";
-        }
-
-        if (i == 7)
-        {
-            return "物流通过";
-        }
-
-        if (i == 8)
-        {
-            return "待分公司经理审核";
-        }
-
-        if (i == 9)
-        {
-            return "待总裁审批";
-        }
-
-        if (i == 10)
-        {
-            return "待董事长审批";
-        }
-
-        return "";
+        return DefinedCommon.getValue("outStatus", i);
     }
 
     public static boolean canDelete(OutBean outBean)

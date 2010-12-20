@@ -25,6 +25,7 @@ function addBean()
 <input type="hidden" name="assistantProvider1" value="${bean.assistantProvider1}">
 <input type="hidden" name="assistantProvider2" value="${bean.assistantProvider2}">
 <input type="hidden" name="assistantProvider3" value="${bean.assistantProvider3}">
+<input type="hidden" name="assistantProvider4" value="${bean.assistantProvider4}">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
@@ -116,10 +117,12 @@ function addBean()
 			<p:pro field="consumeInDay"/>
 			<p:pro field="orderAmount"/>
 			
-			<p:pro field="mainProvider" innerString="readonly=true" value="${bean.mainProviderName}">
+			<p:pro field="mainProvider" innerString="readonly=true" value="${bean.mainProviderName}" cell="0">
 				<input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
                     class="button_class" onclick="selectProvider(this, 0)">&nbsp;&nbsp;
 			</p:pro>
+			
+			
 			<p:pro field="assistantProvider1" innerString="readonly=true" value="${bean.assistantProviderName1}">
 				<input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
                     class="button_class" onclick="selectProvider(this, 1)">&nbsp;&nbsp;
@@ -132,6 +135,10 @@ function addBean()
 				<input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
                     class="button_class" onclick="selectProvider(this, 3)">&nbsp;&nbsp;
 			</p:pro>
+			<p:pro field="assistantProvider4" innerString="readonly=true" value="${bean.assistantProviderName4}">
+                <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectProvider(this, 4)">&nbsp;&nbsp;
+            </p:pro>
 			
 			<p:pro field="sailType">
 				<p:option type="productSailType"/>

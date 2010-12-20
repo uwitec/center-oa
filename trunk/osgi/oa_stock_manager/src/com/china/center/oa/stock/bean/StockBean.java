@@ -104,6 +104,12 @@ public class StockBean implements Serializable
     @Html(title = "发票类型", type = Element.SELECT)
     private String invoiceType = "";
 
+    /**
+     * 指定供应商的片区
+     */
+    @Html(title = "供应商片区", type = Element.SELECT)
+    private String areaId = "";
+
     @Html(title = "备注", type = Element.TEXTAREA, maxLength = 100)
     private String description = "";
 
@@ -526,6 +532,23 @@ public class StockBean implements Serializable
     }
 
     /**
+     * @return the areaId
+     */
+    public String getAreaId()
+    {
+        return areaId;
+    }
+
+    /**
+     * @param areaId
+     *            the areaId to set
+     */
+    public void setAreaId(String areaId)
+    {
+        this.areaId = areaId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -599,6 +622,9 @@ public class StockBean implements Serializable
             .append(TAB)
             .append("invoiceType = ")
             .append(this.invoiceType)
+            .append(TAB)
+            .append("areaId = ")
+            .append(this.areaId)
             .append(TAB)
             .append("description = ")
             .append(this.description)

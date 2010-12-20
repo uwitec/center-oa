@@ -44,6 +44,11 @@ function addBean()
 			
 			<p:pro field="code" cell="2" innerString="size=60 readonly=true"/>
 			
+			<p:pro field="location" innerString="quick=true" cell="0">
+                <option value="">--</option>
+                <p:option type="123"></p:option>
+            </p:pro>
+			
 			<p:pro field="type" innerString="quick=true">
                 <p:option type="109"></p:option>
             </p:pro>

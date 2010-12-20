@@ -24,6 +24,7 @@ function addBean()
 <input type="hidden" name="assistantProvider1" value="">
 <input type="hidden" name="assistantProvider2" value="">
 <input type="hidden" name="assistantProvider3" value="">
+<input type="hidden" name="assistantProvider4" value="">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
@@ -112,10 +113,12 @@ function addBean()
 			<p:pro field="assembleFlag"/>
 			<p:pro field="consumeInDay"/>
 			<p:pro field="orderAmount"/>
-			<p:pro field="mainProvider" innerString="readonly=true">
+			
+			<p:pro field="mainProvider" innerString="readonly=true" cell="0">
 				<input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
                     class="button_class" onclick="selectProvider(this, 0)">&nbsp;&nbsp;
 			</p:pro>
+			
 			<p:pro field="assistantProvider1" innerString="readonly=true">
 				<input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
                     class="button_class" onclick="selectProvider(this, 1)">&nbsp;&nbsp;
@@ -128,6 +131,10 @@ function addBean()
 				<input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
                     class="button_class" onclick="selectProvider(this, 3)">&nbsp;&nbsp;
 			</p:pro>
+			<p:pro field="assistantProvider4" innerString="readonly=true">
+                <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectProvider(this, 4)">&nbsp;&nbsp;
+            </p:pro>
 			
 			<p:pro field="sailType">
 				<p:option type="productSailType"/>

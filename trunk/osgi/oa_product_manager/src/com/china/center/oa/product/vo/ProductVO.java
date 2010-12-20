@@ -44,6 +44,9 @@ public class ProductVO extends ProductBean
     private String assistantProviderName3 = "";
 
     @Ignore
+    private String assistantProviderName4 = "";
+
+    @Ignore
     private List<ProductCombinationVO> vsVOList = null;
 
     /**
@@ -68,23 +71,6 @@ public class ProductVO extends ProductBean
     public void setCreaterName(String createrName)
     {
         this.createrName = createrName;
-    }
-
-    /**
-     * Constructs a <code>String</code> with all attributes in name = value format.
-     * 
-     * @return a <code>String</code> representation of this object.
-     */
-    public String toString()
-    {
-        final String TAB = ",";
-
-        StringBuilder retValue = new StringBuilder();
-
-        retValue.append("ProductVO ( ").append(super.toString()).append(TAB).append("createrName = ").append(
-            this.createrName).append(TAB).append(" )");
-
-        return retValue.toString();
     }
 
     /**
@@ -170,6 +156,64 @@ public class ProductVO extends ProductBean
     public void setAssistantProviderName3(String assistantProviderName3)
     {
         this.assistantProviderName3 = assistantProviderName3;
+    }
+
+    /**
+     * @return the assistantProviderName4
+     */
+    public String getAssistantProviderName4()
+    {
+        return assistantProviderName4;
+    }
+
+    /**
+     * @param assistantProviderName4
+     *            the assistantProviderName4 to set
+     */
+    public void setAssistantProviderName4(String assistantProviderName4)
+    {
+        this.assistantProviderName4 = assistantProviderName4;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("ProductVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("createrName = ")
+            .append(this.createrName)
+            .append(TAB)
+            .append("mainProviderName = ")
+            .append(this.mainProviderName)
+            .append(TAB)
+            .append("assistantProviderName1 = ")
+            .append(this.assistantProviderName1)
+            .append(TAB)
+            .append("assistantProviderName2 = ")
+            .append(this.assistantProviderName2)
+            .append(TAB)
+            .append("assistantProviderName3 = ")
+            .append(this.assistantProviderName3)
+            .append(TAB)
+            .append("assistantProviderName4 = ")
+            .append(this.assistantProviderName4)
+            .append(TAB)
+            .append("vsVOList = ")
+            .append(this.vsVOList)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 
 }

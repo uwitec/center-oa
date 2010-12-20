@@ -73,6 +73,11 @@
 			<type>select</type>
 			<option>$109</option>
 		</condtion>
+		<condtion name="location" caption="所属片区">
+            <opr>=</opr>
+            <type>select</type>
+            <option>$123</option>
+        </condtion>
 	</item>
 	
 	<item name="queryCheckHisProvider" deaultpfix="ProviderHisBean">

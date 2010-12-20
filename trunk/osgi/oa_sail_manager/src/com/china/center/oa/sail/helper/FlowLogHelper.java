@@ -16,9 +16,9 @@ import com.china.center.tools.BeanUtil;
 
 
 /**
- * <描述>
+ * FlowLogHelper
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2008-1-13
  * @see
  * @since

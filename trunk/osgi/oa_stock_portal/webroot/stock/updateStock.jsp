@@ -296,6 +296,11 @@ function change()
 				<option value="${item.id}">${item.fullName}</option>
 				</c:forEach>
             </p:pro>
+            
+            <p:pro field="areaId" innerString="style='width: 300px'">
+                <option value="">--</option>
+               <p:option type="123"></p:option>
+            </p:pro>
 
 			<p:pro field="description"  innerString="cols=80 rows=3" value="${bean.description}" />
 

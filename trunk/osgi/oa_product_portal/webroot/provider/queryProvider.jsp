@@ -30,6 +30,7 @@ function load()
 		     {display: '类型', name : 'type', width : '10%', sortable : false, align: 'left', cc: 109},
 		     {display: '询价用户', name : 'loginName', width : '8%'},
 		     {display: '分类', name : 'typeName', width : '20%'},
+		     {display: '所属片区', name : 'location', width : '8%', sortable : false, align: 'left', cc: 123},
 		     {display: '时间', name : 'logTime', width : 'auto', sortable : true, align: 'left'}
 		     ],
 		 extAtt: {

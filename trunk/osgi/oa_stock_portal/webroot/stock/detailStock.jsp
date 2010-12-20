@@ -89,6 +89,11 @@ function showDiv(id)
 				<option value="${item.id}">${item.fullName}</option>
 				</c:forEach>
             </p:pro>
+            
+            <p:pro field="areaId" innerString="style='width: 300px'" cell="0">
+                <option value="">--</option>
+               <p:option type="123"></p:option>
+            </p:pro>
 
 			<p:cell title="录入时间">
 			${bean.logTime}

@@ -120,6 +120,11 @@ public final class ElTools
         return DefinedCommon.getValue(key, index);
     }
 
+    public static String get2(String key, String index)
+    {
+        return DefinedCommon.getValue(key, index);
+    }
+
     public static boolean auth(User user, String authId)
     {
         if (authId.equals("0000"))

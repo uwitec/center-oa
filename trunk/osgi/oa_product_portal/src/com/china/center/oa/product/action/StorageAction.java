@@ -9,6 +9,7 @@
 package com.china.center.oa.product.action;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -44,6 +45,7 @@ import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.DepotpartDAO;
 import com.china.center.oa.product.dao.ProductDAO;
+import com.china.center.oa.product.dao.ProductVSLocationDAO;
 import com.china.center.oa.product.dao.StorageApplyDAO;
 import com.china.center.oa.product.dao.StorageDAO;
 import com.china.center.oa.product.dao.StorageLogDAO;
@@ -84,6 +86,8 @@ public class StorageAction extends DispatchAction
     private DepotDAO depotDAO = null;
 
     private StorageLogDAO storageLogDAO = null;
+
+    private ProductVSLocationDAO productVSLocationDAO = null;
 
     private StorageRelationManager storageRelationManager = null;
 
@@ -950,7 +954,7 @@ public class StorageAction extends DispatchAction
     }
 
     /**
-     * 在仓库里面查询可销售的库存
+     * CORE 在仓库里面查询可销售的库存(这里可能根据销售区域进行过滤产品)不实现翻页
      * 
      * @param mapping
      * @param form
@@ -968,28 +972,30 @@ public class StorageAction extends DispatchAction
 
         String depotId = request.getParameter("depotId");
 
-        List<StorageRelationVO> list = null;
+        List<StorageRelationVO> list = new ArrayList<StorageRelationVO>();
 
-        if (PageSeparateTools.isFirstLoad(request))
+        ConditionParse condtion = setRptQueryProductCondition2(request);
+
+        // CORE 控制出售区域(某些产品只能在一定的区域下销售)
+        String sailLocation = request.getParameter("sailLocation");
+
+        int total = storageRelationDAO.countVOByCondition(condtion.toString());
+
+        PageSeparate page = new PageSeparate(total, 50);
+
+        PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYSTORAGERELATIONINDEPOT);
+
+        List<StorageRelationVO> queryList = storageRelationDAO.queryEntityVOsByCondition(condtion,
+            page);
+
+        // 没有过滤直接查询前50个
+        if (StringTools.isNullOrNone(sailLocation))
         {
-            ConditionParse condtion = setRptQueryProductCondition2(request);
-
-            int total = storageRelationDAO.countVOByCondition(condtion.toString());
-
-            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
-
-            PageSeparateTools.initPageSeparate(condtion, page, request,
-                RPTQUERYSTORAGERELATIONINDEPOT);
-
-            list = storageRelationDAO.queryEntityVOsByCondition(condtion, page);
+            list.addAll(queryList);
         }
         else
         {
-            PageSeparateTools.processSeparate(request, RPTQUERYSTORAGERELATIONINDEPOT);
-
-            list = storageRelationDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(
-                request, RPTQUERYSTORAGERELATIONINDEPOT), PageSeparateTools.getPageSeparate(
-                request, RPTQUERYSTORAGERELATIONINDEPOT));
+            createList(list, condtion, sailLocation, page, queryList);
         }
 
         for (StorageRelationVO vo : list)
@@ -1016,6 +1022,67 @@ public class StorageAction extends DispatchAction
         request.setAttribute("depotparList", depotparList);
 
         return mapping.findForward("rptQueryStorageRelationInDepot");
+    }
+
+    /**
+     * createList
+     * 
+     * @param list
+     * @param condtion
+     * @param sailLocation
+     * @param page
+     * @param queryList
+     */
+    private void createList(List<StorageRelationVO> list, ConditionParse condtion,
+                            String sailLocation, PageSeparate page,
+                            List<StorageRelationVO> queryList)
+    {
+        for (StorageRelationVO each : queryList)
+        {
+            if (hasInSailLocation(each.getProductId(), sailLocation))
+            {
+                list.add(each);
+
+                if (list.size() >= 50)
+                {
+                    break;
+                }
+            }
+        }
+
+        int index = 0;
+
+        while (page.hasNextPage())
+        {
+            page.nextPage();
+
+            index++ ;
+
+            if (index > 30)
+            {
+                break;
+            }
+
+            queryList = storageRelationDAO.queryEntityVOsByCondition(condtion, page);
+
+            for (StorageRelationVO each : queryList)
+            {
+                if (hasInSailLocation(each.getProductId(), sailLocation))
+                {
+                    list.add(each);
+
+                    if (list.size() >= 50)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean hasInSailLocation(String productId, String sailLocation)
+    {
+        return productVSLocationDAO.countByProductIdAndLocationId(productId, sailLocation) > 0;
     }
 
     private ConditionParse setRptQueryProductCondition(HttpServletRequest request)
@@ -1270,5 +1337,22 @@ public class StorageAction extends DispatchAction
     public void setStorageRelationManager(StorageRelationManager storageRelationManager)
     {
         this.storageRelationManager = storageRelationManager;
+    }
+
+    /**
+     * @return the productVSLocationDAO
+     */
+    public ProductVSLocationDAO getProductVSLocationDAO()
+    {
+        return productVSLocationDAO;
+    }
+
+    /**
+     * @param productVSLocationDAO
+     *            the productVSLocationDAO to set
+     */
+    public void setProductVSLocationDAO(ProductVSLocationDAO productVSLocationDAO)
+    {
+        this.productVSLocationDAO = productVSLocationDAO;
     }
 }

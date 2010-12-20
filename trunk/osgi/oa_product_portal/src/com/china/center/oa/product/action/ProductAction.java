@@ -1499,6 +1499,16 @@ public class ProductAction extends DispatchAction
                 bean.setAssistantProviderName3(pro.getName());
             }
         }
+
+        if ( !StringTools.isNullOrNone(bean.getAssistantProvider4()))
+        {
+            ProviderBean pro = providerDAO.find(bean.getAssistantProvider4());
+
+            if (pro != null)
+            {
+                bean.setAssistantProviderName4(pro.getName());
+            }
+        }
     }
 
     /**

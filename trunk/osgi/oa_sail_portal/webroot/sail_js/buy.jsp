@@ -10,6 +10,8 @@ var messk = '';
 var locationId = '${currentLocationId}';
 var currentLocationId = '${currentLocationId}';
 
+var showJSON = JSON.parse('${showJSON}');
+
 function total()
 {
     var obj = document.getElementsByName("value");
@@ -49,7 +51,7 @@ function check()
         return false;
     }
     
-    if ($$('destinationId') == $$('location'))
+    if ($$('outType') == 1 && $$('destinationId') == $$('location'))
     {
         alert('源仓库和目的仓库不能相同');
         return false;

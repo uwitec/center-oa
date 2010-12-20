@@ -7,6 +7,7 @@
 <base target="_self">
 <script src="../js/public.js"></script>
 <script src="../js/common.js"></script>
+<script src="../js/tableSort.js"></script>
 <script language="javascript">
 
 function add()
@@ -38,6 +39,7 @@ function query()
 	value="rptQueryProvider" name="method"> 
 <input type="hidden" value="${productType}" name="productType">
 <input type="hidden" value="${productId}" name="productId">
+<input type="hidden" value="${areaId}" name="areaId">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">供应商列表</td>
@@ -130,6 +132,7 @@ function query()
 						<td align="center" onclick="tableSort(this)" class="td_class">供应商编码</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">联系人</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">电话</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">所属片区</td>
 					</tr>
 
 					<c:forEach items="${providerList}" var="item" varStatus="vs">
@@ -141,6 +144,7 @@ function query()
 							<td align="center" onclick="hrefAndSelect(this)">${item.code}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.connector}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.phone}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:get2("123", item.location)}</td>
 						</tr>
 					</c:forEach>
 				</table>

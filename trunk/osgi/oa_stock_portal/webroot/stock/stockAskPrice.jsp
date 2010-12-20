@@ -110,7 +110,7 @@ function selectCustomer(index)
 {
 	cindex = index;
 	
-	window.common.modal("../provider/provider.do?method=rptQueryProvider&load=1&productTypeId=${product.type}&productId=${product.id}");
+	window.common.modal("../provider/provider.do?method=rptQueryProvider&load=1&productType=${product.type}&productId=${product.id}&areaId=${stock.areaId}");
 }
 
 function getProvider(id, name)

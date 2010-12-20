@@ -61,6 +61,9 @@ public abstract class AbstractProviderBean implements Serializable
     @Html(title = "帐号", maxLength = 40)
     private String accounts = "";
 
+    @Html(title = "所属片区", type = Element.SELECT)
+    private String location = "";
+
     /**
      * 109付款方式
      */
@@ -365,5 +368,22 @@ public abstract class AbstractProviderBean implements Serializable
     public void setDescription(String description)
     {
         this.description = description;
+    }
+
+    /**
+     * @return the location
+     */
+    public String getLocation()
+    {
+        return location;
+    }
+
+    /**
+     * @param location
+     *            the location to set
+     */
+    public void setLocation(String location)
+    {
+        this.location = location;
     }
 }

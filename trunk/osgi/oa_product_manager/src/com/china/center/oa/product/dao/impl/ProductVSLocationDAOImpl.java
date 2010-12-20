@@ -25,4 +25,9 @@ import com.china.center.oa.product.vs.ProductVSLocationBean;
  */
 public class ProductVSLocationDAOImpl extends BaseDAO<ProductVSLocationBean, ProductVSLocationVO> implements ProductVSLocationDAO
 {
+    public int countByProductIdAndLocationId(String productId, String locationId)
+    {
+        return this.countByCondition("where productId = ? and locationId = ?", productId,
+            locationId);
+    }
 }

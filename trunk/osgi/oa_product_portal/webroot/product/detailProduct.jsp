@@ -127,14 +127,14 @@ function load()
 				<p:pro field="consumeInDay"/>
 				<p:pro field="orderAmount"/>
 				
-				<p:pro field="mainProvider" value="${bean.mainProviderName}" innerString="readonly=true">
+				<p:pro field="mainProvider" value="${bean.mainProviderName}" innerString="readonly=true" cell="0">
 				</p:pro>
 				<p:pro field="assistantProvider1" value="${bean.assistantProviderName1}" innerString="readonly=true">
 				</p:pro>
 				<p:pro field="assistantProvider2" value="${bean.assistantProviderName2}" innerString="readonly=true">
 				</p:pro>
-				<p:pro field="assistantProvider3" value="${bean.assistantProviderName3}" innerString="readonly=true">
-				</p:pro>
+				<p:pro field="assistantProvider3" value="${bean.assistantProviderName3}" innerString="readonly=true"/>
+				<p:pro field="assistantProvider4" value="${bean.assistantProviderName4}" innerString="readonly=true"/>
 				
 				<p:pro field="sailType">
 					<p:option type="productSailType"/>

@@ -23,6 +23,12 @@ function getProvider(value, customername, customerconnector, customerphone)
 		$O('assistantProviderName3').value = customername;
 		$O('assistantProvider3').value = value;
 	}
+	
+	if (gindex == 4)
+    {
+        $O('assistantProviderName4').value = customername;
+        $O('assistantProvider4').value = value;
+    }
 }
 
 var gindex = 0;

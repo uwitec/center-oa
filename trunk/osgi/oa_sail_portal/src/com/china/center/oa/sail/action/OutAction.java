@@ -1064,7 +1064,14 @@ public class OutAction extends DispatchAction
             return action;
         }
 
-        request.getSession().setAttribute(KeyConstant.MESSAGE, "此库单的单号是:" + outBean.getFullId());
+        OutBean checkOut = outDAO.find(outBean.getFullId());
+
+        request
+            .getSession()
+            .setAttribute(
+                KeyConstant.MESSAGE,
+                "此库单的单号是:" + outBean.getFullId() + ".下一步是:"
+                    + OutHelper.getStatus(checkOut.getStatus()));
 
         CommonTools.removeParamers(request);
 
@@ -3506,7 +3513,8 @@ public class OutAction extends DispatchAction
 
         RequestTools.actionInitQuery(request);
 
-        request.setAttribute(KeyConstant.MESSAGE, "单据[" + fullId + "]操作成功");
+        request.setAttribute(KeyConstant.MESSAGE, "单据[" + fullId + "]操作成功,下一步是:"
+                                                  + OutHelper.getStatus(realOut.getStatus()));
 
         if (realOut.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {

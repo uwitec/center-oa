@@ -104,8 +104,8 @@ public class ProviderAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward queryProvider(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -114,8 +114,8 @@ public class ProviderAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYPROVIDER, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPROVIDER, request, condtion, this.providerDAO,
-            new HandleResult()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPROVIDER, request, condtion,
+            this.providerDAO, new HandleResult()
             {
                 public void handle(Object obj)
                 {
@@ -129,14 +129,15 @@ public class ProviderAction extends DispatchAction
                     }
 
                     // 获取分类
-                    List<ProductTypeVSCustomerVO> typeList = productTypeVSCustomerDAO.queryEntityVOsByFK(vo.getId(),
-                        AnoConstant.FK_FIRST);
+                    List<ProductTypeVSCustomerVO> typeList = productTypeVSCustomerDAO
+                        .queryEntityVOsByFK(vo.getId(), AnoConstant.FK_FIRST);
 
                     StringBuilder sb = new StringBuilder();
 
                     for (ProductTypeVSCustomerVO pvo : typeList)
                     {
-                        sb.append(DefinedCommon.getValue("productType", pvo.getProductTypeId()) + "/");
+                        sb.append(DefinedCommon.getValue("productType", pvo.getProductTypeId())
+                                  + "/");
                     }
 
                     vo.setTypeName(sb.toString());
@@ -156,8 +157,8 @@ public class ProviderAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForBing(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse reponse)
+    public ActionForward preForBing(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String pid = request.getParameter("id");
@@ -200,7 +201,8 @@ public class ProviderAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward bingProductTypeToProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward bingProductTypeToProvider(ActionMapping mapping, ActionForm form,
+                                                   HttpServletRequest request,
                                                    HttpServletResponse reponse)
         throws ServletException
     {
@@ -239,8 +241,8 @@ public class ProviderAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward addProvider(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ProviderBean bean = new ProviderBean();
@@ -277,7 +279,8 @@ public class ProviderAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addOrUpdateUserBean(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward addOrUpdateUserBean(ActionMapping mapping, ActionForm form,
+                                             HttpServletRequest request,
                                              HttpServletResponse response)
         throws ServletException
     {
@@ -335,8 +338,8 @@ public class ProviderAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward updateProvider(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ProviderBean bean = new ProviderBean();
@@ -373,8 +376,8 @@ public class ProviderAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward delProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward delProvider(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -409,8 +412,8 @@ public class ProviderAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateUserPassword(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward updateUserPassword(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -454,8 +457,8 @@ public class ProviderAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward findProvider(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -494,8 +497,8 @@ public class ProviderAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findProviderUser(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward findProviderUser(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -533,8 +536,8 @@ public class ProviderAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findHisProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward findHisProvider(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -564,7 +567,8 @@ public class ProviderAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryCheckHisProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward queryCheckHisProvider(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
                                                HttpServletResponse response)
         throws ServletException
     {
@@ -576,8 +580,8 @@ public class ProviderAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYCHECKHISPROVIDER, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKHISPROVIDER, request, condtion,
-            this.providerHisDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKHISPROVIDER, request,
+            condtion, this.providerHisDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -592,8 +596,8 @@ public class ProviderAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward checkHisProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward checkHisProvider(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -636,8 +640,8 @@ public class ProviderAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse reponse)
+    public ActionForward rptQueryProvider(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         List<ProviderBean> list = null;
@@ -649,6 +653,8 @@ public class ProviderAction extends DispatchAction
         String name = request.getParameter("name");
 
         String productId = request.getParameter("productId");
+
+        String areaId = request.getParameter("areaId");
 
         if ( !StringTools.isNullOrNone(productId))
         {
@@ -677,9 +683,16 @@ public class ProviderAction extends DispatchAction
             request.setAttribute("productType", productType);
         }
 
+        if ( !StringTools.isNullOrNone(areaId))
+        {
+            condition.addCondition("t1.location", "=", areaId);
+
+            request.setAttribute("areaId", areaId);
+        }
+
         list = providerDAO.queryByLimit(condition, 100);
 
-        setDefined(list, productId);
+        setDefined(list, productId, areaId);
 
         request.setAttribute("providerList", list);
 
@@ -692,7 +705,7 @@ public class ProviderAction extends DispatchAction
      * @param list
      * @param productId
      */
-    private void setDefined(List<ProviderBean> list, String productId)
+    private void setDefined(List<ProviderBean> list, String productId, String areaId)
     {
         // 增加产品自身的几个供应商
         if ( !StringTools.isNullOrNone(productId))
@@ -707,7 +720,7 @@ public class ProviderAction extends DispatchAction
                     // 获取供应商
                     ProviderBean main = providerDAO.find(product.getMainProvider());
 
-                    if (main != null)
+                    if (main != null && fiter(main, areaId))
                     {
                         list.add(index++ , main);
                     }
@@ -718,7 +731,7 @@ public class ProviderAction extends DispatchAction
                     // 获取供应商
                     ProviderBean assistant1 = providerDAO.find(product.getAssistantProvider1());
 
-                    if (assistant1 != null)
+                    if (assistant1 != null && fiter(assistant1, areaId))
                     {
                         list.add(index++ , assistant1);
                     }
@@ -729,7 +742,7 @@ public class ProviderAction extends DispatchAction
                     // 获取供应商
                     ProviderBean assistant2 = providerDAO.find(product.getAssistantProvider2());
 
-                    if (assistant2 != null)
+                    if (assistant2 != null && fiter(assistant2, areaId))
                     {
                         list.add(index++ , assistant2);
                     }
@@ -740,13 +753,34 @@ public class ProviderAction extends DispatchAction
                     // 获取供应商
                     ProviderBean assistant3 = providerDAO.find(product.getAssistantProvider3());
 
-                    if (assistant3 != null)
+                    if (assistant3 != null && fiter(assistant3, areaId))
                     {
                         list.add(index++ , assistant3);
                     }
                 }
+
+                if ( !StringTools.isNullOrNone(product.getAssistantProvider4()))
+                {
+                    // 获取供应商
+                    ProviderBean assistant4 = providerDAO.find(product.getAssistantProvider4());
+
+                    if (assistant4 != null && fiter(assistant4, areaId))
+                    {
+                        list.add(index++ , assistant4);
+                    }
+                }
             }
         }
+    }
+
+    private boolean fiter(ProviderBean bean, String areaId)
+    {
+        if (StringTools.isNullOrNone(areaId))
+        {
+            return true;
+        }
+
+        return areaId.equals(bean.getLocation());
     }
 
     /**

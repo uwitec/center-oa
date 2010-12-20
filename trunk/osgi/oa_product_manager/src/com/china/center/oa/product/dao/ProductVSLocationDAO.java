@@ -24,5 +24,5 @@ import com.china.center.oa.product.vs.ProductVSLocationBean;
  */
 public interface ProductVSLocationDAO extends DAO<ProductVSLocationBean, ProductVSLocationVO>
 {
-
+    int countByProductIdAndLocationId(String productId, String locationId);
 }

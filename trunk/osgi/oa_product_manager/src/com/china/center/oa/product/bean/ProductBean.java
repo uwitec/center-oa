@@ -251,6 +251,12 @@ public class ProductBean implements Serializable
     private String assistantProvider3 = "";
 
     /**
+     * 次供应商4
+     */
+    @Html(name = "assistantProviderName4", title = "次供应商4", readonly = true)
+    private String assistantProvider4 = "";
+
+    /**
      * 销售类型【0:自卖、1:代销】
      */
     @Html(title = "销售类型", type = Element.SELECT, must = true)
@@ -1389,6 +1395,23 @@ public class ProductBean implements Serializable
     }
 
     /**
+     * @return the assistantProvider4
+     */
+    public String getAssistantProvider4()
+    {
+        return assistantProvider4;
+    }
+
+    /**
+     * @param assistantProvider4
+     *            the assistantProvider4 to set
+     */
+    public void setAssistantProvider4(String assistantProvider4)
+    {
+        this.assistantProvider4 = assistantProvider4;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -1510,6 +1533,9 @@ public class ProductBean implements Serializable
             .append(TAB)
             .append("assistantProvider3 = ")
             .append(this.assistantProvider3)
+            .append(TAB)
+            .append("assistantProvider4 = ")
+            .append(this.assistantProvider4)
             .append(TAB)
             .append("sailType = ")
             .append(this.sailType)

@@ -76,7 +76,7 @@ public interface OutConstant
     /**
      * 业务员提交
      */
-    @Defined(key = "outStatus", value = "提交")
+    @Defined(key = "outStatus", value = "待结算中心审批")
     int STATUS_SUBMIT = 1;
 
     /**
@@ -88,25 +88,25 @@ public interface OutConstant
     /**
      * 库管发货(这里的销售单库存就变动了)(一般此通过即是销售单已经OK status in (3, 4))
      */
-    @Defined(key = "outStatus", value = "库管发货")
+    @Defined(key = "outStatus", value = "待回款")
     int STATUS_PASS = 3;
 
     /**
      * 财务核对(单据结束)
      */
-    @Defined(key = "outStatus", value = "财务核对(结束)")
+    @Defined(key = "outStatus", value = "结束")
     int STATUS_SEC_PASS = 4;
 
     /**
      * 结算中心通过
      */
-    @Defined(key = "outStatus", value = "结算中心通过")
+    @Defined(key = "outStatus", value = "待物流审批")
     int STATUS_MANAGER_PASS = 6;
 
     /**
      * 物流管理员通过
      */
-    @Defined(key = "outStatus", value = "物流通过")
+    @Defined(key = "outStatus", value = "待库管审批")
     int STATUS_FLOW_PASS = 7;
 
     /**
