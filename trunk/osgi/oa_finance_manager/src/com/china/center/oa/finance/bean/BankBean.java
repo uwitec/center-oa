@@ -36,7 +36,7 @@ public class BankBean implements Serializable
     @Id
     private String id = "";
 
-    @Html(title = "银行名称", must = true, maxLength = 40)
+    @Html(title = "帐户", must = true, maxLength = 40)
     private String name = "";
 
     @Html(title = "类型", type = Element.SELECT)
@@ -46,7 +46,7 @@ public class BankBean implements Serializable
     @Html(title = "纳税实体", type = Element.SELECT)
     private String dutyId = "";
 
-    @Html(title = "描述", maxLength = 100, type = Element.TEXTAREA)
+    @Html(title = "备注", maxLength = 100, type = Element.TEXTAREA)
     private String description = "";
 
     /**

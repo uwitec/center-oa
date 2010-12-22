@@ -21,4 +21,8 @@
 
 	<bean id="financeFacade" class="com.china.center.oa.finance.facade.impl.FinanceFacadeImpl" />
 
+	<bean id="paymentDAO" class="com.china.center.oa.finance.dao.impl.PaymentDAOImpl" />
+
+	<bean id="paymentManager" class="com.china.center.oa.finance.manager.impl.PaymentManagerImpl" />
+
 </beans>

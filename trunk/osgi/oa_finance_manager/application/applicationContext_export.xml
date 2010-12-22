@@ -20,4 +20,8 @@
 
 	<osgi:service ref="financeFacade" interface="com.china.center.oa.finance.facade.FinanceFacade" />
 
+	<osgi:service ref="paymentDAO" interface="com.china.center.oa.finance.dao.PaymentDAO" />
+
+	<osgi:service ref="paymentManager" interface="com.china.center.oa.finance.manager.PaymentManager" />
+
 </beans>

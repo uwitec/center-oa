@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="银行管理" link="true" guid="true" cal="true" dialog="true" />
+<p:link title="帐户管理" link="true" guid="true" cal="true" dialog="true" />
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
@@ -22,14 +22,14 @@ function load()
      preload();
      
      guidMap = {
-         title: '银行列表',
+         title: '帐户列表',
          url: gurl + 'query' + ukey,
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
              {display: '名称', name : 'name', width : '25%'},
              {display: '类型', name : 'type', cc: 'bankType', width : '10%'},
              {display: '纳税实体', name : 'dutyName', width : '25%'},
-             {display: '其他', name : 'description', width : 'auto'}
+             {display: '备注', name : 'description', width : 'auto'}
              ],
          extAtt: {
              //name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}

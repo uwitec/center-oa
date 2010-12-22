@@ -7,6 +7,8 @@
             <forward name="addBank" path="/bank/addBank.jsp" />
             <forward name="updateBank" path="/bank/updateBank.jsp" />
             <forward name="queryBank" path="/bank/queryBank.jsp" />
+            <forward name="rptQueryBank" path="/bank/rptQueryBank.jsp" />
+            <forward name="uploadPayment" path="/bank/uploadPayment.jsp" />
         </action>
 		
 	</action-mappings>

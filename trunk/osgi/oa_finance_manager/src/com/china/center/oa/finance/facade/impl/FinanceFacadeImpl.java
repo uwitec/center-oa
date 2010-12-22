@@ -12,8 +12,10 @@ package com.china.center.oa.finance.facade.impl;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.BankBean;
+import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.facade.FinanceFacade;
 import com.china.center.oa.finance.manager.BankManager;
+import com.china.center.oa.finance.manager.PaymentManager;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.facade.AbstarctFacade;
 import com.china.center.oa.publics.manager.UserManager;
@@ -32,7 +34,14 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
 {
     private BankManager bankManager = null;
 
+    private PaymentManager paymentManager = null;
+
     private UserManager userManager = null;
+
+    /**
+     * 回款操作锁
+     */
+    private static Object PAYMENT_LOCK = new Object();
 
     /**
      * default constructor
@@ -62,7 +71,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
         else
         {
-            throw new MYException("没有权限");
+            throw noAuth();
         }
     }
 
@@ -86,7 +95,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
         else
         {
-            throw new MYException("没有权限");
+            throw noAuth();
         }
     }
 
@@ -111,7 +120,86 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
         else
         {
-            throw new MYException("没有权限");
+            throw noAuth();
+        }
+    }
+
+    public boolean addPaymentBean(String userId, PaymentBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.PAYMENT_OPR))
+        {
+            return paymentManager.addBean(user, bean);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    public boolean deletePaymentBean(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.PAYMENT_OPR))
+        {
+            return paymentManager.deleteBean(user, id);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    public boolean drawBean(String stafferId, String id)
+        throws MYException
+    {
+        synchronized (PAYMENT_LOCK)
+        {
+            paymentManager.drawBean(stafferId, id);
+        }
+
+        return true;
+    }
+
+    public boolean dropBean(String stafferId, String id)
+        throws MYException
+    {
+        synchronized (PAYMENT_LOCK)
+        {
+            paymentManager.dropBean(stafferId, id);
+        }
+
+        return true;
+    }
+
+    public boolean updatePaymentBean(String userId, PaymentBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.PAYMENT_OPR))
+        {
+            return paymentManager.updateBean(user, bean);
+        }
+        else
+        {
+            throw noAuth();
         }
     }
 
@@ -149,4 +237,20 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         this.userManager = userManager;
     }
 
+    /**
+     * @return the paymentManager
+     */
+    public PaymentManager getPaymentManager()
+    {
+        return paymentManager;
+    }
+
+    /**
+     * @param paymentManager
+     *            the paymentManager to set
+     */
+    public void setPaymentManager(PaymentManager paymentManager)
+    {
+        this.paymentManager = paymentManager;
+    }
 }

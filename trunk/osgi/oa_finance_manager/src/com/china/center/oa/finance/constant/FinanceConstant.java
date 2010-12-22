@@ -33,4 +33,16 @@ public interface FinanceConstant
      */
     @Defined(key = "bankType", value = "进入税务帐套")
     int BANK_TYPE_INDUTY = 1;
+
+    /**
+     * 回款单状态--未认领
+     */
+    @Defined(key = "paymentStatus", value = "未认领")
+    int PAYMENT_STATUS_INIT = 0;
+
+    /**
+     * 回款单状态--已认领
+     */
+    @Defined(key = "paymentStatus", value = "已认领")
+    int PAYMENT_STATUS_END = 1;
 }

@@ -23,20 +23,33 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
 import com.center.china.osgi.publics.User;
+import com.center.china.osgi.publics.file.read.ReadeFileFactory;
+import com.center.china.osgi.publics.file.read.ReaderFile;
 import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
+import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.finance.bean.BankBean;
+import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.dao.BankDAO;
+import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.facade.FinanceFacade;
+import com.china.center.oa.finance.vo.BankVO;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.DutyBean;
+import com.china.center.oa.publics.constant.AuthConstant;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.DutyDAO;
+import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
+import com.china.center.tools.MathTools;
+import com.china.center.tools.RequestDataStream;
+import com.china.center.tools.StringTools;
 
 
 /**
@@ -57,7 +70,13 @@ public class BankAction extends DispatchAction
 
     private DutyDAO dutyDAO = null;
 
+    private UserManager userManager = null;
+
+    private PaymentDAO paymentDAO = null;
+
     private static final String QUERYBANK = "queryBank";
+
+    private static final String RPTQUERYBANK = "rptQueryBank";
 
     /**
      * default constructor
@@ -104,6 +123,80 @@ public class BankAction extends DispatchAction
     }
 
     /**
+     * 查询客户
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryBank(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        List<BankVO> list = null;
+
+        if (PageSeparateTools.isFirstLoad(request))
+        {
+            ConditionParse condtion = new ConditionParse();
+
+            condtion.addWhereStr();
+
+            setInnerCondition(request, condtion);
+
+            int total = bankDAO.countByCondition(condtion.toString());
+
+            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+
+            PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYBANK);
+
+            list = bankDAO.queryEntityVOsByCondition(condtion, page);
+        }
+        else
+        {
+            PageSeparateTools.processSeparate(request, RPTQUERYBANK);
+
+            list = bankDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                RPTQUERYBANK), PageSeparateTools.getPageSeparate(request, RPTQUERYBANK));
+        }
+
+        List<DutyBean> dutyList = dutyDAO.listEntityBeans();
+
+        request.setAttribute("dutyList", dutyList);
+
+        request.setAttribute("list", list);
+
+        return mapping.findForward("rptQueryBank");
+    }
+
+    /**
+     * @param request
+     * @param condtion
+     */
+    private void setInnerCondition(HttpServletRequest request, ConditionParse condtion)
+    {
+        String name = request.getParameter("name");
+
+        String dutyId = request.getParameter("dutyId");
+
+        if ( !StringTools.isNullOrNone(name))
+        {
+            condtion.addCondition("BankBean.name", "like", name);
+        }
+
+        if ( !StringTools.isNullOrNone(dutyId))
+        {
+            condtion.addCondition("BankBean.dutyId", "=", dutyId);
+        }
+
+        condtion.addCondition("order by BankBean.id desc");
+    }
+
+    /**
      * addBank
      * 
      * @param mapping
@@ -127,7 +220,7 @@ public class BankAction extends DispatchAction
 
             financeFacade.addBankBean(user.getId(), bean);
 
-            request.setAttribute(KeyConstant.MESSAGE, "成功增加银行:" + bean.getName());
+            request.setAttribute(KeyConstant.MESSAGE, "成功增加帐户:" + bean.getName());
         }
         catch (MYException e)
         {
@@ -165,7 +258,7 @@ public class BankAction extends DispatchAction
 
             financeFacade.updateBankBean(user.getId(), bean);
 
-            request.setAttribute(KeyConstant.MESSAGE, "成功操作银行:" + bean.getName());
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作帐户:" + bean.getName());
         }
         catch (MYException e)
         {
@@ -203,7 +296,7 @@ public class BankAction extends DispatchAction
 
             financeFacade.deleteBankBean(user.getId(), id);
 
-            ajax.setSuccess("成功删除银行");
+            ajax.setSuccess("成功删除帐户");
         }
         catch (MYException e)
         {
@@ -257,6 +350,156 @@ public class BankAction extends DispatchAction
     }
 
     /**
+     * 导入
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward uploadPayment(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        User user = Helper.getUser(request);
+
+        if ( !userManager.containAuth(user, AuthConstant.PAYMENT_OPR))
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "没有权限");
+
+            return mapping.findForward("uploadPayment");
+        }
+
+        RequestDataStream rds = new RequestDataStream(request);
+
+        try
+        {
+            rds.parser();
+        }
+        catch (Exception e1)
+        {
+            _logger.error(e1, e1);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "解析失败");
+
+            return mapping.findForward("uploadPayment");
+        }
+
+        int success = 0;
+
+        int fault = 0;
+
+        StringBuilder builder = new StringBuilder();
+
+        String bankId = rds.getParameter("bankId");
+
+        if (rds.haveStream())
+        {
+            try
+            {
+                ReaderFile reader = ReadeFileFactory.getXLSReader();
+
+                reader.readFile(rds.getUniqueInputStream());
+
+                while (reader.hasNext())
+                {
+                    String[] obj = (String[])reader.next();
+
+                    // 第一行忽略
+                    if (reader.getCurrentLineNumber() == 1)
+                    {
+                        continue;
+                    }
+
+                    // 序号 回款来源 回款金额 回款日期 备注
+                    int currentNumber = reader.getCurrentLineNumber();
+
+                    boolean addSucess = false;
+
+                    if (obj.length >= 4)
+                    {
+                        try
+                        {
+                            addSucess = createPayment(user, bankId, obj);
+                        }
+                        catch (MYException e)
+                        {
+                            builder.append("第[" + currentNumber + "]错误:").append(
+                                e.getErrorContent()).append("<br>");
+                        }
+                    }
+                    else
+                    {
+                        builder
+                            .append("第[" + currentNumber + "]错误:")
+                            .append("数据长度不足4格,备注可以为空")
+                            .append("<br>");
+                    }
+
+                    if (addSucess)
+                    {
+                        success++ ;
+                    }
+                    else
+                    {
+                        fault++ ;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.error(e, e);
+
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "导入失败");
+
+                return mapping.findForward("uploadPayment");
+            }
+        }
+
+        rds.close();
+
+        StringBuilder result = new StringBuilder();
+
+        result.append("导入成功:").append(success).append("条,失败:").append(fault).append("条<br>");
+
+        result.append(builder.toString());
+
+        request.setAttribute(KeyConstant.MESSAGE, result.toString());
+
+        return mapping.findForward("uploadPayment");
+    }
+
+    private boolean createPayment(User user, String bankId, String[] obj)
+        throws MYException
+    {
+        PaymentBean bean = new PaymentBean();
+
+        if (StringTools.isNullOrNone(obj[1]))
+        {
+            throw new MYException("缺少回款来源");
+        }
+
+        if (StringTools.isNullOrNone(obj[2]))
+        {
+            throw new MYException("缺少回款金额");
+        }
+
+        bean.setBankId(bankId);
+        bean.setFromer(obj[1]);
+        bean.setMoney(MathTools.parseDouble(obj[2]));
+        bean.setReceiveTime(obj[3]);
+
+        if (obj.length == 5)
+        {
+            bean.setDescription(obj[4]);
+        }
+
+        return financeFacade.addPaymentBean(user.getId(), bean);
+    }
+
+    /**
      * @return the financeFacade
      */
     public FinanceFacade getFinanceFacade()
@@ -305,6 +548,40 @@ public class BankAction extends DispatchAction
     public void setDutyDAO(DutyDAO dutyDAO)
     {
         this.dutyDAO = dutyDAO;
+    }
+
+    /**
+     * @return the paymentDAO
+     */
+    public PaymentDAO getPaymentDAO()
+    {
+        return paymentDAO;
+    }
+
+    /**
+     * @param paymentDAO
+     *            the paymentDAO to set
+     */
+    public void setPaymentDAO(PaymentDAO paymentDAO)
+    {
+        this.paymentDAO = paymentDAO;
+    }
+
+    /**
+     * @return the userManager
+     */
+    public UserManager getUserManager()
+    {
+        return userManager;
+    }
+
+    /**
+     * @param userManager
+     *            the userManager to set
+     */
+    public void setUserManager(UserManager userManager)
+    {
+        this.userManager = userManager;
     }
 
 }

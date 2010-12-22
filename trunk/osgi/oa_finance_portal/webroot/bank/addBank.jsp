@@ -3,14 +3,14 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="增加银行" />
+<p:link title="增加帐户" />
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="javascript">
 function addBean()
 {
-	submit('确定增加银行?');
+	submit('确定增加帐户?');
 }
 </script>
 
@@ -21,14 +21,14 @@ function addBean()
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javascript:history.go(-1)">银行管理</span> &gt;&gt; 增加银行</td>
+		onclick="javascript:history.go(-1)">帐户管理</span> &gt;&gt; 增加帐户</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
 <p:body width="98%">
 
 	<p:title>
-		<td class="caption"><strong>银行基本信息：</strong></td>
+		<td class="caption"><strong>帐户基本信息：</strong></td>
 	</p:title>
 
 	<p:line flag="0" />

@@ -575,7 +575,12 @@ public interface AuthConstant
     String BUY_CHAIRMA = "1504";
 
     /**
-     * 银行操作
+     * 帐户操作
      */
     String BANK_OPR = "1601";
+
+    /**
+     * 回款操作
+     */
+    String PAYMENT_OPR = "1602";
 }

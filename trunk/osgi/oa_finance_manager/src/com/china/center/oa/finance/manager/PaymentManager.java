@@ -1,45 +1,36 @@
 /**
- * File Name: FinanceFacade.java<br>
+ * File Name: PaymentManager.java<br>
  * CopyRight: Copyright by www.center.china<br>
  * Description:<br>
  * CREATER: ZHUACHEN<br>
- * CreateTime: 2010-12-12<br>
+ * CreateTime: 2010-12-22<br>
  * Grant: open source to everybody
  */
-package com.china.center.oa.finance.facade;
+package com.china.center.oa.finance.manager;
 
 
+import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
-import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 
 
 /**
- * FinanceFacade
+ * PaymentManager
  * 
  * @author ZHUZHU
- * @version 2010-12-12
- * @see FinanceFacade
+ * @version 2010-12-22
+ * @see PaymentManager
  * @since 3.0
  */
-public interface FinanceFacade
+public interface PaymentManager
 {
-    boolean addBankBean(String userId, BankBean bean)
+    boolean addBean(User user, PaymentBean bean)
         throws MYException;
 
-    boolean updateBankBean(String userId, BankBean bean)
+    boolean updateBean(User user, PaymentBean bean)
         throws MYException;
 
-    boolean deleteBankBean(String userId, String id)
-        throws MYException;
-
-    boolean addPaymentBean(String userId, PaymentBean bean)
-        throws MYException;
-
-    boolean updatePaymentBean(String userId, PaymentBean bean)
-        throws MYException;
-
-    boolean deletePaymentBean(String userId, String id)
+    boolean deleteBean(User user, String id)
         throws MYException;
 
     /**
