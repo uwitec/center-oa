@@ -1178,7 +1178,15 @@ function callBackFun(data)
     reloadTip(data.msg, data.ret == 0);
 
     if (data.ret == 0 && commonQuery)
-    commonQuery();
+    {
+    	if (gobal_guid && gobal_guid.p && gobal_guid.p.queryMode == 1 && window.resetsModal)
+    	{
+    		// clear pop-query
+    		resetsModal();
+    	}
+    	
+        commonQuery();
+    }
 }
 
 function $c()
