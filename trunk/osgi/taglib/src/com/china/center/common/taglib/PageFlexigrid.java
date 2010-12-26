@@ -1,6 +1,7 @@
 package com.china.center.common.taglib;
 
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
 
@@ -15,7 +16,10 @@ import javax.servlet.jsp.JspException;
 
 public class PageFlexigrid extends BodyTagCenterSupport
 {
-    private String queryMode = "1";
+    /**
+     * 0:memory 1:common
+     */
+    private String queryMode = "";
 
     private String auth = "$auth()";
 
@@ -59,6 +63,24 @@ public class PageFlexigrid extends BodyTagCenterSupport
     private void writePageLine(StringBuffer buffer)
     {
         String line = "\r\n";
+
+        HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
+
+        if (isNullOrNone(this.queryMode))
+        {
+            // 从session里面获取
+            Object attribute = request.getSession().getAttribute("g_queryMode");
+
+            if (attribute != null)
+            {
+                this.queryMode = attribute.toString();
+            }
+            else
+            {
+                // 默认是记忆查询
+                this.queryMode = "0";
+            }
+        }
 
         buffer.append("usepager: true,").append(line);
         buffer.append("useRp: true,").append(line);

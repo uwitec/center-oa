@@ -33,8 +33,8 @@ public abstract class PageSeparateTools extends AbstractPage
      * @param page
      * @param request
      */
-    public static void initPageSeparate(ConditionParse condition, PageSeparate page, HttpServletRequest request,
-                                        String key)
+    public static void initPageSeparate(ConditionParse condition, PageSeparate page,
+                                        HttpServletRequest request, String key)
     {
         initPageSeparate(condition, page, request, key, isFirstLoad(request, key));
     }
@@ -46,8 +46,8 @@ public abstract class PageSeparateTools extends AbstractPage
      * @param page
      * @param request
      */
-    public static void initPageSeparate(ConditionParse condition, PageSeparate page, HttpServletRequest request,
-                                        String key, boolean isFirst)
+    public static void initPageSeparate(ConditionParse condition, PageSeparate page,
+                                        HttpServletRequest request, String key, boolean isFirst)
     {
         if (isFirst)
         {
@@ -57,7 +57,8 @@ public abstract class PageSeparateTools extends AbstractPage
 
             initParameterMap(request, key);
 
-            request.getSession().setAttribute(getConditionAttributeNameInSession(request, key), condition);
+            request.getSession().setAttribute(getConditionAttributeNameInSession(request, key),
+                condition);
 
             request.getSession().setAttribute(CONDITION_ATTRIBUTE_NAME, condition);
 
@@ -173,6 +174,11 @@ public abstract class PageSeparateTools extends AbstractPage
     {
         String memory = request.getParameter(MEMORY);
 
+        if ( !StringTools.isNullOrNone(memory))
+        {
+            return true;
+        }
+
         Object o1 = request.getAttribute(MEMORY);
 
         if (o1 != null)
@@ -180,14 +186,27 @@ public abstract class PageSeparateTools extends AbstractPage
             return true;
         }
 
-        o1 = request.getAttribute(MEMORY);
+        return false;
+    }
 
-        if (o1 != null)
+    /**
+     * 是否从菜单加载
+     * 
+     * @param request
+     * @return
+     */
+    public static boolean isMenuLoad(HttpServletRequest request)
+    {
+        String menu = request.getParameter(MENU);
+
+        if ( !StringTools.isNullOrNone(menu))
         {
             return true;
         }
 
-        if ( !StringTools.isNullOrNone(memory))
+        Object o1 = request.getAttribute(MENU);
+
+        if (o1 != null)
         {
             return true;
         }

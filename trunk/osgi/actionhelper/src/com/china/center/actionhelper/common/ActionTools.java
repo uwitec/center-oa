@@ -52,6 +52,8 @@ public abstract class ActionTools
 
     public static String HIDDEN_QUERY = "hidden_query_";
 
+    public static String HIDDEN_CHANGE_MAP = "HIDDEN_CHANGE_MAP";
+
     /**
      * 设置记忆分页
      * 
@@ -85,14 +87,30 @@ public abstract class ActionTools
      * @param request
      * @param condtion
      */
-    public static void processJSONQueryCondition(String skey, HttpServletRequest request, ConditionParse condtion)
+    public static void processJSONQueryCondition(String skey, HttpServletRequest request,
+                                                 ConditionParse condtion,
+                                                 Map<String, String> initMap)
     {
+        if (initMap != null && initMap.size() > 0)
+        {
+            // 设置到Attribute
+            for (Map.Entry<String, String> entry : initMap.entrySet())
+            {
+                request.setAttribute(PageConstant.PAREXT + entry.getKey(), entry.getValue());
+            }
+        }
+
         if ( !JSONPageSeparateTools.isLoad(request))
         {
             return;
         }
 
         Map<String, String> map = CommonTools.saveParamersToMap(request);
+
+        if (initMap != null && initMap.size() > 0)
+        {
+            map.putAll(initMap);
+        }
 
         Map<String, QueryConditionBean> conmap = new HashMap<String, QueryConditionBean>();
 
@@ -155,6 +173,18 @@ public abstract class ActionTools
     }
 
     /**
+     * 处理查询
+     * 
+     * @param request
+     * @param condtion
+     */
+    public static void processJSONQueryCondition(String skey, HttpServletRequest request,
+                                                 ConditionParse condtion)
+    {
+        processJSONQueryCondition(skey, request, condtion, null);
+    }
+
+    /**
      * 设置页面参数
      * 
      * @param request
@@ -180,8 +210,8 @@ public abstract class ActionTools
      * @param pagesize
      *            获取的数量
      */
-    public static void commonQueryVO(String key, HttpServletRequest request, List list, ConditionParse condtion,
-                                     DAO dao, int... pagesize)
+    public static void commonQueryVO(String key, HttpServletRequest request, List list,
+                                     ConditionParse condtion, DAO dao, int... pagesize)
     {
         int size = 10;
 
@@ -211,8 +241,8 @@ public abstract class ActionTools
      * @param pagesize
      *            获取的数量
      */
-    private static List<?> commonQueryVOInner(String key, HttpServletRequest request, ConditionParse condtion, DAO dao,
-                                              int pagesize)
+    private static List<?> commonQueryVOInner(String key, HttpServletRequest request,
+                                              ConditionParse condtion, DAO dao, int pagesize)
     {
         int size = pagesize;
 
@@ -226,7 +256,9 @@ public abstract class ActionTools
         }
         else if (PageSeparateTools.isMemory(request))
         {
-            int total = dao.countVOByCondition(PageSeparateTools.getCondition(request, key).toString());
+            int total = dao.countVOByCondition(PageSeparateTools
+                .getCondition(request, key)
+                .toString());
 
             PageSeparateTools.processMemory(total, request, key);
         }
@@ -235,12 +267,12 @@ public abstract class ActionTools
             PageSeparateTools.processSeparate(request, key);
         }
 
-        return dao.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, key), PageSeparateTools
-            .getPageSeparate(request, key));
+        return dao.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, key),
+            PageSeparateTools.getPageSeparate(request, key));
     }
 
-    public static void commonQueryBean(String key, HttpServletRequest request, List list, ConditionParse condtion,
-                                       DAO dao, int... pagesize)
+    public static void commonQueryBean(String key, HttpServletRequest request, List list,
+                                       ConditionParse condtion, DAO dao, int... pagesize)
     {
         int size = 10;
 
@@ -265,8 +297,8 @@ public abstract class ActionTools
      * @param condtion
      * @param dao
      */
-    public static void queryBeanByJSON(String key, HttpServletRequest request, List list, ConditionParse condtion,
-                                       DAO dao)
+    public static void queryBeanByJSON(String key, HttpServletRequest request, List list,
+                                       ConditionParse condtion, DAO dao)
     {
         list.addAll(commonQueryBeanInnerByJSON(key, request, condtion, dao, true));
     }
@@ -280,7 +312,8 @@ public abstract class ActionTools
      * @param condtion
      * @param dao
      */
-    public static void queryVOByJSON(String key, HttpServletRequest request, List list, ConditionParse condtion, DAO dao)
+    public static void queryVOByJSON(String key, HttpServletRequest request, List list,
+                                     ConditionParse condtion, DAO dao)
     {
         list.addAll(commonQueryBeanInnerByJSON(key, request, condtion, dao, false));
     }
@@ -296,7 +329,8 @@ public abstract class ActionTools
      * @param dao
      * @param handle
      */
-    public static <T extends Serializable, V extends Serializable> void queryVOByJSON(String key,
+    public static <T extends Serializable, V extends Serializable> void queryVOByJSON(
+                                                                                      String key,
                                                                                       HttpServletRequest request,
                                                                                       List<V> list,
                                                                                       ConditionParse condtion,
@@ -321,8 +355,8 @@ public abstract class ActionTools
      * @param dao
      * @return
      */
-    public static String queryBeanByJSONAndToString(String key, HttpServletRequest request, List list,
-                                                    ConditionParse condtion, DAO dao)
+    public static String queryBeanByJSONAndToString(String key, HttpServletRequest request,
+                                                    List list, ConditionParse condtion, DAO dao)
     {
         list.addAll(commonQueryBeanInnerByJSON(key, request, condtion, dao, true));
 
@@ -339,8 +373,8 @@ public abstract class ActionTools
      * @param dao
      * @return
      */
-    public static String queryVOByJSONAndToString(String key, HttpServletRequest request, List list,
-                                                  ConditionParse condtion, DAO dao)
+    public static String queryVOByJSONAndToString(String key, HttpServletRequest request,
+                                                  List list, ConditionParse condtion, DAO dao)
     {
         list.addAll(commonQueryBeanInnerByJSON(key, request, condtion, dao, false));
 
@@ -356,8 +390,8 @@ public abstract class ActionTools
      * @param dao
      * @return
      */
-    public static String queryBeanByJSONAndToString(String key, HttpServletRequest request, ConditionParse condtion,
-                                                    DAO dao)
+    public static String queryBeanByJSONAndToString(String key, HttpServletRequest request,
+                                                    ConditionParse condtion, DAO dao)
     {
         List list = new ArrayList();
 
@@ -375,8 +409,8 @@ public abstract class ActionTools
      * @param dao
      * @return
      */
-    public static String queryVOByJSONAndToString(String key, HttpServletRequest request, ConditionParse condtion,
-                                                  DAO dao)
+    public static String queryVOByJSONAndToString(String key, HttpServletRequest request,
+                                                  ConditionParse condtion, DAO dao)
     {
         List list = new ArrayList();
 
@@ -446,13 +480,15 @@ public abstract class ActionTools
      *            是否是bean
      * @return
      */
-    public static List<?> commonQueryBeanInnerByJSON(final String key, final HttpServletRequest request,
-                                                     final ConditionParse queryCondition, final DAO dao,
-                                                     final boolean isBean)
+    public static List<?> commonQueryBeanInnerByJSON(final String key,
+                                                     final HttpServletRequest request,
+                                                     final ConditionParse queryCondition,
+                                                     final DAO dao, final boolean isBean)
     {
         return selfCommonQueryBeanInnerByJSON(key, request, queryCondition, new CommonQuery()
         {
-            public int getCount(String key, HttpServletRequest request, ConditionParse queryCondition)
+            public int getCount(String key, HttpServletRequest request,
+                                ConditionParse queryCondition)
             {
                 return countEntry(dao, queryCondition, isBean);
             }
@@ -467,17 +503,18 @@ public abstract class ActionTools
                 return processOrderColumn(request, queryCondition, dao.getBeanClass());
             }
 
-            public List queryResult(String key, HttpServletRequest request, ConditionParse queryCondition)
+            public List queryResult(String key, HttpServletRequest request,
+                                    ConditionParse queryCondition)
             {
                 if (isBean)
                 {
-                    return dao.queryEntityBeansByCondition(PageSeparateTools.getCondition(request, key),
-                        PageSeparateTools.getPageSeparate(request, key));
+                    return dao.queryEntityBeansByCondition(PageSeparateTools.getCondition(request,
+                        key), PageSeparateTools.getPageSeparate(request, key));
                 }
                 else
                 {
-                    return dao.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, key),
-                        PageSeparateTools.getPageSeparate(request, key));
+                    return dao.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                        key), PageSeparateTools.getPageSeparate(request, key));
                 }
             }
         });
@@ -510,7 +547,8 @@ public abstract class ActionTools
      * @param condtion
      * @param beanClass
      */
-    private static String processOrderColumn(HttpServletRequest request, ConditionParse condtion, Class beanClass)
+    private static String processOrderColumn(HttpServletRequest request, ConditionParse condtion,
+                                             Class beanClass)
     {
         String sortname = request.getParameter(SORTNAME);
 
@@ -531,7 +569,8 @@ public abstract class ActionTools
 
     }
 
-    private static void processOrder2(HttpServletRequest request, ConditionParse condtion, String column, String pfix)
+    private static void processOrder2(HttpServletRequest request, ConditionParse condtion,
+                                      String column, String pfix)
     {
         String sortorder = request.getParameter(SORTORDER);
 
@@ -579,8 +618,8 @@ public abstract class ActionTools
      * @param pagesize
      * @return
      */
-    private static List<?> commonQueryBeanInner(String key, HttpServletRequest request, ConditionParse condtion,
-                                                DAO dao, int pagesize)
+    private static List<?> commonQueryBeanInner(String key, HttpServletRequest request,
+                                                ConditionParse condtion, DAO dao, int pagesize)
     {
         int size = pagesize;
 
@@ -594,7 +633,9 @@ public abstract class ActionTools
         }
         else if (PageSeparateTools.isMemory(request))
         {
-            int total = dao.countByCondition(PageSeparateTools.getCondition(request, key).toString());
+            int total = dao.countByCondition(PageSeparateTools
+                .getCondition(request, key)
+                .toString());
 
             PageSeparateTools.processMemory(total, request, key);
         }
@@ -603,8 +644,8 @@ public abstract class ActionTools
             PageSeparateTools.processSeparate(request, key);
         }
 
-        return dao.queryEntityBeansByCondition(PageSeparateTools.getCondition(request, key), PageSeparateTools
-            .getPageSeparate(request, key));
+        return dao.queryEntityBeansByCondition(PageSeparateTools.getCondition(request, key),
+            PageSeparateTools.getPageSeparate(request, key));
     }
 
     /**
@@ -618,7 +659,8 @@ public abstract class ActionTools
      * @return
      */
     public static List<?> selfCommonQueryBeanInnerByJSON(String key, HttpServletRequest request,
-                                                         ConditionParse queryCondition, CommonQuery query)
+                                                         ConditionParse queryCondition,
+                                                         CommonQuery query)
     {
         int size = 10;
 
@@ -631,6 +673,12 @@ public abstract class ActionTools
 
         if (JSONPageSeparateTools.isMemeryMode(request))
         {
+            // 如果是从菜单第一次加载,清除缓存的条件
+            if (JSONPageSeparateTools.isPageFirstInit(request, key))
+            {
+                JSONPageSeparateTools.removeParameterMap(request, key);
+            }
+
             // 初始化
             if (JSONPageSeparateTools.isMemeryInit(request, key))
             {
@@ -722,7 +770,8 @@ public abstract class ActionTools
 
                 PageSeparate page = new PageSeparate(total, size);
 
-                processOrder2(request, condtion, query.getSortname(request), query.getOrderPfix(key, request));
+                processOrder2(request, condtion, query.getSortname(request), query.getOrderPfix(
+                    key, request));
 
                 JSONPageSeparateTools.initPageSeparate(condtion, page, request, key);
             }
@@ -807,7 +856,8 @@ public abstract class ActionTools
 
                 PageSeparate page = new PageSeparate(total, size);
 
-                processOrder2(request, condtion, query.getSortname(request), query.getOrderPfix(key, request));
+                processOrder2(request, condtion, query.getSortname(request), query.getOrderPfix(
+                    key, request));
 
                 JSONPageSeparateTools.initPageSeparate(condtion, page, request, key);
             }
@@ -856,7 +906,8 @@ public abstract class ActionTools
      * @param request
      * @return
      */
-    public static ActionForward toError(String message, ActionMapping mapping, HttpServletRequest request)
+    public static ActionForward toError(String message, ActionMapping mapping,
+                                        HttpServletRequest request)
     {
         request.setAttribute(KeyConstant.ERROR_MESSAGE, message);
 
@@ -903,7 +954,8 @@ public abstract class ActionTools
      * @param key
      * @return
      */
-    public static boolean isNullQuery(HttpServletRequest request, QueryConfig queryConfig, String key)
+    public static boolean isNullQuery(HttpServletRequest request, QueryConfig queryConfig,
+                                      String key)
     {
         QueryItemBean findQueryCondition = queryConfig.findQueryCondition(key);
 

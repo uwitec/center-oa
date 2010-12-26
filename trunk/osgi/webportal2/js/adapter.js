@@ -75,7 +75,7 @@ var inti_query_modal = 0;
 
 function $modalQuery(url)
 {
-	if (inti_query_modal == 0)
+	if (true || inti_query_modal == 0)
 	{
 		$ajax(url, loadHTML);
 	}

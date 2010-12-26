@@ -42,6 +42,8 @@ public interface PageConstant
 
     String PAGE = "page";
 
+    String MENU = "f_menu";
+
     String PARAMETER_MAP = "pmap";
 
     String TURN = "turn";

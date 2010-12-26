@@ -1179,11 +1179,11 @@ function callBackFun(data)
 
     if (data.ret == 0 && commonQuery)
     {
-    	if (gobal_guid && gobal_guid.p && gobal_guid.p.queryMode == 1 && window.resetsModal)
-    	{
+    	//if (gobal_guid && gobal_guid.p && gobal_guid.p.queryMode == 1 && window.resetsModal)
+    	//{
     		// clear pop-query
-    		resetsModal();
-    	}
+    		//resetsModal();
+    	//}
     	
         commonQuery();
     }

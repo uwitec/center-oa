@@ -46,6 +46,12 @@ public abstract class JSONPageSeparateTools extends AbstractPage
             initParameterMap(request, key);
         }
 
+        // 内存分页
+        if (isMemeryMode(request) && isMemeryInit(request, key))
+        {
+            initParameterMap(request, key);
+        }
+
         request.getSession().setAttribute(getPageAttributeNameInSession(request, key), page);
 
         request.getSession().setAttribute(PAGE_ATTRIBUTE_NAME, page);
@@ -123,6 +129,38 @@ public abstract class JSONPageSeparateTools extends AbstractPage
         String oprAction = request.getParameter(JSON_OPRACTION);
 
         return "0".equals(oprAction);
+    }
+
+    /**
+     * 是否页面第一次加载(load=null and oprAction=0 menu=1)
+     * 
+     * @param request
+     * @param key
+     * @return
+     */
+    public static boolean isPageFirstInit(HttpServletRequest request, String key)
+    {
+        // load 最优先
+        String load = request.getParameter(LOAD);
+
+        Object menu = request.getSession().getAttribute(MENU);
+
+        if ( !StringTools.isNullOrNone(load))
+        {
+            return false;
+        }
+
+        if (menu == null)
+        {
+            return false;
+        }
+
+        // 使用一次就删除
+        request.getSession().removeAttribute(MENU);
+
+        String oprAction = request.getParameter(JSON_OPRACTION);
+
+        return "1".equals(menu.toString()) && "0".equals(oprAction);
     }
 
     /**

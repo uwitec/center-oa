@@ -81,6 +81,7 @@ public abstract class AbstractPage implements PageConstant
 
         Enumeration enums = request.getAttributeNames();
 
+        // 使用Attribute里面的替换parameter
         while (enums.hasMoreElements())
         {
             String name = (String)enums.nextElement();
@@ -107,6 +108,19 @@ public abstract class AbstractPage implements PageConstant
         }
 
         request.getSession().setAttribute(PARAMETER_MAP, parameterMap);
+    }
+
+    public static void removeParameterMap(HttpServletRequest request, String key)
+    {
+        request.getSession().removeAttribute(key + "_" + PARAMETER_MAP);
+
+        request.getSession().removeAttribute(PARAMETER_MAP);
+
+        request.getSession().removeAttribute(getConditionAttributeNameInSession(request, key));
+        request.getSession().removeAttribute(getPageAttributeNameInSession(request, key));
+
+        request.getSession().removeAttribute(PAGE_ATTRIBUTE_NAME);
+        request.getSession().removeAttribute(CONDITION_ATTRIBUTE_NAME);
     }
 
     public static Map getParameterMap(HttpServletRequest request, String key)
