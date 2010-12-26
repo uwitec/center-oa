@@ -33,7 +33,7 @@ function load()
          buttons : [
              {id: 'update', bclass: 'update', caption: '修改额度', onpress : updateBean, auth: '0902'}
              ],
-         <p:conf queryMode="1"/>
+         <p:conf/>
      };
      
      $("#mainTable").flexigrid(guidMap, thisObj);

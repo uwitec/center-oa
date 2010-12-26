@@ -35,6 +35,10 @@
 	
 	<osgi:reference id="stafferDAO" interface="com.china.center.oa.publics.dao.StafferDAO" />
 	
+	<osgi:reference id="queryManager" interface="com.china.center.oa.publics.manager.QueryManager" />
+    
+    <osgi:reference id="notifyManager" interface="com.china.center.oa.publics.manager.NotifyManager" />
+	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	
 	

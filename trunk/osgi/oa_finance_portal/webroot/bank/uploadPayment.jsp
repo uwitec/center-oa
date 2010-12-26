@@ -93,7 +93,7 @@ function getBank(obj)
             </p:cell>
             
 			<p:cell title="导入文件">
-				<input type="file" name="myFile" class="button_class" size="60"/>
+				<input type="file" name="myFile" size="60"/>
 			</p:cell>
 		</p:table>
 	</p:subBody>

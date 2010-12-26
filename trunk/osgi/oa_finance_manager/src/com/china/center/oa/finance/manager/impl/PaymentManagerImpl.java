@@ -59,6 +59,18 @@ public class PaymentManagerImpl implements PaymentManager
     public boolean deleteBean(User user, String id)
         throws MYException
     {
+        PaymentBean pay = paymentDAO.find(id);
+
+        if (pay == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (pay.getStatus() != FinanceConstant.PAYMENT_STATUS_INIT)
+        {
+            throw new MYException("回款已经被人认领,不能删除");
+        }
+
         return paymentDAO.deleteEntityBean(id);
     }
 

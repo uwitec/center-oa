@@ -162,7 +162,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
-    public boolean drawBean(String stafferId, String id)
+    public boolean drawPaymentBean(String stafferId, String id)
         throws MYException
     {
         synchronized (PAYMENT_LOCK)
@@ -173,7 +173,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         return true;
     }
 
-    public boolean dropBean(String stafferId, String id)
+    public boolean dropPaymentBean(String stafferId, String id)
         throws MYException
     {
         synchronized (PAYMENT_LOCK)

@@ -24,4 +24,10 @@
 
 	<osgi:service ref="paymentManager" interface="com.china.center.oa.finance.manager.PaymentManager" />
 
+	<osgi:service ref="inBillDAO" interface="com.china.center.oa.finance.dao.InBillDAO" />
+
+	<osgi:service ref="paymentVSOutDAO" interface="com.china.center.oa.finance.dao.PaymentVSOutDAO" />
+
+	<osgi:service ref="billManager" interface="com.china.center.oa.finance.manager.BillManager" />
+
 </beans>

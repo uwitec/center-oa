@@ -35,17 +35,7 @@ function load()
 		     {id: 'add', bclass: 'add', caption: '创建流程实例',  onpress : addBean},
 		     {id: 'search', bclass: 'search',  onpress : doSearch}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 queryMode: 1,
-		 auth: window.top.topFrame.gAuth,
-		 cache: 0,
-		 height: 'page',
-		 rp: ${g_page},
-		 queryCondition: null,
-		 showTableToggleBtn: true,
-		 def: allDef,
-		 callBack: loadForm
+		 <p:conf/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);

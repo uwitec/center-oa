@@ -29,17 +29,7 @@ function load()
 		buttons : [
              {id: 'update', bclass: 'update',  onpress : updateBean, auth: 'true'}
              ],
-		 usepager: true,
-		 useRp: true,
-		 queryMode: 1,
-		 auth: window.top.topFrame.gAuth,
-		 cache: 0,
-		 height: 'page',
-		 rp: ${g_page},
-		 queryCondition: null,
-		 showTableToggleBtn: true,
-		 def: allDef,
-		 callBack: loadForm
+		 <p:conf callBack="loadForm"/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);

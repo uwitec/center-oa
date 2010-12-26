@@ -49,7 +49,16 @@ public class PaymentBean implements Serializable
     @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
     private String stafferId = "";
 
+    private int type = FinanceConstant.PAYMENT_PAY_PUBLIC;
+
     private int status = FinanceConstant.PAYMENT_STATUS_INIT;
+
+    private int useall = FinanceConstant.PAYMENT_USEALL_INIT;
+
+    /**
+     * 已经被使用金额
+     */
+    private double useMoney = 0.0d;
 
     private double money = 0.0d;
 
@@ -243,6 +252,57 @@ public class PaymentBean implements Serializable
     }
 
     /**
+     * @return the type
+     */
+    public int getType()
+    {
+        return type;
+    }
+
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(int type)
+    {
+        this.type = type;
+    }
+
+    /**
+     * @return the useall
+     */
+    public int getUseall()
+    {
+        return useall;
+    }
+
+    /**
+     * @param useall
+     *            the useall to set
+     */
+    public void setUseall(int useall)
+    {
+        this.useall = useall;
+    }
+
+    /**
+     * @return the useMoney
+     */
+    public double getUseMoney()
+    {
+        return useMoney;
+    }
+
+    /**
+     * @param useMoney
+     *            the useMoney to set
+     */
+    public void setUseMoney(double useMoney)
+    {
+        this.useMoney = useMoney;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -272,8 +332,17 @@ public class PaymentBean implements Serializable
             .append("stafferId = ")
             .append(this.stafferId)
             .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
             .append("status = ")
             .append(this.status)
+            .append(TAB)
+            .append("useall = ")
+            .append(this.useall)
+            .append(TAB)
+            .append("useMoney = ")
+            .append(this.useMoney)
             .append(TAB)
             .append("money = ")
             .append(this.money)

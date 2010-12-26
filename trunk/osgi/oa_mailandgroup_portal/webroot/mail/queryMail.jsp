@@ -40,17 +40,7 @@ function load()
 		     {id: 'del', bclass: 'del',  onpress : delBean},
 		     {id: 'search', bclass: 'search',  onpress : doSearch}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 queryMode: 1,
-		 auth: window.top.topFrame.gAuth,
-		 cache: 0,
-		 height: 'page',
-		 queryCondition: null,
-		 showTableToggleBtn: true,
-		 def: joinMap2(allDef),
-		 rp: ${g_page},
-		 callBack: loadForm
+		 <p:conf callBack="loadForm" def="joinMap2(allDef)"/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);

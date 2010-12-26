@@ -62,17 +62,7 @@ function load()
 		     title : {begin : '<a href=../flow/instance.do?method=findFlowInstance&id={instanceId} title=查看流程实例>', end : '</a>'}
 		 },
 		 buttons : buttonsMap['${param.operation}'],
-		 usepager: true,
-		 useRp: true,
-		 queryMode: 1,
-		 auth: window.top.topFrame.gAuth,
-		 cache: 0,
-		 height: 'page',
-		 rp: ${g_page},
-		 queryCondition: null,
-		 showTableToggleBtn: true,
-		 def: allDef,
-		 callBack: $callBack
+		 <p:conf/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);

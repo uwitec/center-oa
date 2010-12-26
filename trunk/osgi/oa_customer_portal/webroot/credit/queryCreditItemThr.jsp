@@ -36,7 +36,7 @@ function load()
             {id: 'del', bclass: 'del', onpress : delBean, auth: 'true'},
             {id: 'search', bclass: 'search', onpress : doSearch, auth: 'true'}
              ],
-         <p:conf queryMode="1"/>
+         <p:conf />
      };
      
      $("#mainTable").flexigrid(guidMap, thisObj);

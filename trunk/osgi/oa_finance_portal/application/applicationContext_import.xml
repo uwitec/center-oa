@@ -38,5 +38,7 @@
     <osgi:reference id="bankManager" interface="com.china.center.oa.finance.manager.BankManager" />
 
     <osgi:reference id="financeFacade" interface="com.china.center.oa.finance.facade.FinanceFacade" />
+    
+    <osgi:reference id="paymentDAO" interface="com.china.center.oa.finance.dao.PaymentDAO" />
 	
 </beans>

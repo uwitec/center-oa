@@ -9,7 +9,9 @@
 package com.china.center.oa.finance.portal.action;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +37,7 @@ import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.bean.PaymentBean;
+import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.dao.BankDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.facade.FinanceFacade;
@@ -50,6 +53,7 @@ import com.china.center.tools.CommonTools;
 import com.china.center.tools.MathTools;
 import com.china.center.tools.RequestDataStream;
 import com.china.center.tools.StringTools;
+import com.china.center.tools.TimeTools;
 
 
 /**
@@ -77,6 +81,10 @@ public class BankAction extends DispatchAction
     private static final String QUERYBANK = "queryBank";
 
     private static final String RPTQUERYBANK = "rptQueryBank";
+
+    private static final String QUERYPAYMENT = "queryPayment";
+
+    private static final String QUERYSELFPAYMENT = "querySelfPayment";
 
     /**
      * default constructor
@@ -120,6 +128,86 @@ public class BankAction extends DispatchAction
             this.bankDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryPayment
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryPayment(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        Map<String, String> changeMap = initLogTime(request, condtion);
+
+        ActionTools.processJSONQueryCondition(QUERYPAYMENT, request, condtion, changeMap);
+
+        condtion.addCondition("order by PaymentBean.logTime desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPAYMENT, request, condtion,
+            this.paymentDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    public ActionForward querySelfPayment(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        // TEMPLATE 在action里面默认查询条件
+        Map<String, String> initMap = initLogTime(request, condtion);
+
+        ActionTools.processJSONQueryCondition(QUERYSELFPAYMENT, request, condtion, initMap);
+
+        condtion.addCondition("order by PaymentBean.logTime desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFPAYMENT, request, condtion,
+            this.paymentDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * initLogTime
+     * 
+     * @param request
+     * @param condtion
+     * @return
+     */
+    private Map<String, String> initLogTime(HttpServletRequest request, ConditionParse condtion)
+    {
+        Map<String, String> changeMap = new HashMap<String, String>();
+
+        String alogTime = request.getParameter("alogTime");
+
+        String blogTime = request.getParameter("blogTime");
+
+        if (StringTools.isNullOrNone(alogTime) && StringTools.isNullOrNone(blogTime))
+        {
+            changeMap.put("alogTime", TimeTools.now_short( -30));
+
+            changeMap.put("blogTime", TimeTools.now_short(1));
+
+            condtion.addCondition("PaymentBean.logTime", ">=", TimeTools.now_short( -30));
+
+            condtion.addCondition("PaymentBean.logTime", "<=", TimeTools.now_short(1));
+        }
+
+        return changeMap;
     }
 
     /**
@@ -309,6 +397,114 @@ public class BankAction extends DispatchAction
     }
 
     /**
+     * deletePayment
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward deletePayment(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            User user = Helper.getUser(request);
+
+            financeFacade.deletePaymentBean(user.getId(), id);
+
+            ajax.setSuccess("成功删除");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("删除失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * 领取回款
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward drawPayment(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            User user = Helper.getUser(request);
+
+            financeFacade.drawPaymentBean(user.getStafferId(), id);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * 退领回款
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward dropPayment(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            User user = Helper.getUser(request);
+
+            financeFacade.dropPaymentBean(user.getStafferId(), id);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
      * findBank
      * 
      * @param mapping
@@ -418,7 +614,7 @@ public class BankAction extends DispatchAction
 
                     boolean addSucess = false;
 
-                    if (obj.length >= 4)
+                    if (obj.length >= 5)
                     {
                         try
                         {
@@ -478,22 +674,31 @@ public class BankAction extends DispatchAction
 
         if (StringTools.isNullOrNone(obj[1]))
         {
-            throw new MYException("缺少回款来源");
+            throw new MYException("缺少类型");
         }
 
-        if (StringTools.isNullOrNone(obj[2]))
+        if (StringTools.isNullOrNone(obj[3]))
         {
             throw new MYException("缺少回款金额");
         }
 
-        bean.setBankId(bankId);
-        bean.setFromer(obj[1]);
-        bean.setMoney(MathTools.parseDouble(obj[2]));
-        bean.setReceiveTime(obj[3]);
-
-        if (obj.length == 5)
+        if ("对私".equals(obj[1]))
         {
-            bean.setDescription(obj[4]);
+            bean.setType(FinanceConstant.PAYMENT_PAY_SELF);
+        }
+        else
+        {
+            bean.setType(FinanceConstant.PAYMENT_PAY_PUBLIC);
+        }
+
+        bean.setBankId(bankId);
+        bean.setFromer(obj[2]);
+        bean.setMoney(MathTools.parseDouble(obj[3]));
+        bean.setReceiveTime(obj[4]);
+
+        if (obj.length == 6)
+        {
+            bean.setDescription(obj[5]);
         }
 
         return financeFacade.addPaymentBean(user.getId(), bean);

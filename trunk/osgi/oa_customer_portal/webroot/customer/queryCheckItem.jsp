@@ -45,7 +45,7 @@ function load()
 		     {id: 'reject', bclass: 'reject', caption: '信息有误', onpress : rejectBean, auth: '021601'},
 		     {id: 'search', bclass: 'search', onpress : doSearch}
 		     ],
-		<p:conf queryMode="0"/>
+		<p:conf/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);
