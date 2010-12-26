@@ -31,16 +31,7 @@ function load()
 		     {id: 'update', bclass: 'update', onpress : updateBean, auth: '0106'},
 		     {id: 'del', bclass: 'delete', onpress : delBean, auth: '0106'}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 queryMode: 1,
-		 cache: 0,
-		 auth: window.top.topFrame.gAuth,
-		 showTableToggleBtn: true,
-		 height: 'page',
-		 rp: ${g_page},
-		 def: allDef,
-		 callBack: loadForm //for firefox load ext att
+		 <p:conf callBack="loadForm"/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);

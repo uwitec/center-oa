@@ -492,7 +492,7 @@ function reject()
 							</c:if>
 							<td align="center" onclick="hrefAndSelect(this)">${overDayMap[item.fullId]}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
-							<td align="center" onclick="hrefAndSelect(this)">${item.hadPay}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.hadPay)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.depotName}</td>
 							<c:if test="${queryType == '3'}">

@@ -39,17 +39,7 @@ function load()
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1102'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
-         usepager: true,
-         useRp: true,
-         queryMode: 1,
-         cache: 0,
-         height: 'page',
-		 rp: ${g_page},
-         queryCondition: null,
-         showTableToggleBtn: true,
-         auth: $auth(),
-         def: allDef,
-         callBack: $callBack //for firefox load ext att
+         <p:conf/>
      };
      
      $("#mainTable").flexigrid(guidMap, thisObj);

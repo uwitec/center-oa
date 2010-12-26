@@ -35,15 +35,7 @@ function load()
 		     {id: 'back', caption: '核对', bclass: 'pass', onpress : checkHis},
 		     {id: 'search', bclass: 'search', onpress : doSearch}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 queryMode: 1,
-		 cache: 0,
-		 showTableToggleBtn: true,
-		 rp: ${g_page},
-		 height: 'page',
-		 def: allDef,
-		 callBack: loadForm
+		 <p:conf callBack="loadForm"/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);

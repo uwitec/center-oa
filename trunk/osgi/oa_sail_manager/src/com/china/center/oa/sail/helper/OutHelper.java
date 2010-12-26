@@ -9,8 +9,6 @@
 package com.china.center.oa.sail.helper;
 
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import com.china.center.common.taglib.DefinedCommon;
@@ -19,7 +17,6 @@ import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.tools.MathTools;
 import com.china.center.tools.StringTools;
-import com.china.center.tools.TimeTools;
 
 
 /**
@@ -74,40 +71,6 @@ public abstract class OutHelper
         buffer.append("</table>");
 
         return buffer.toString();
-    }
-
-    public static void getBean(ResultSet rst, OutBean outBean)
-        throws SQLException
-    {
-        outBean.setId(rst.getString("id"));
-        outBean.setFullId(rst.getString("fullId"));
-        outBean.setStafferName(rst.getString("stafferName"));
-        outBean.setCustomerName(rst.getString("customerName"));
-        outBean.setStatus(rst.getInt("status"));
-        outBean.setOutType(rst.getInt("outType"));
-
-        outBean.setOutTime(TimeTools.getStringBySqlDate(rst.getDate("outTime")));
-
-        outBean.setDepartment(rst.getString("department"));
-        outBean.setDescription(rst.getString("description"));
-        outBean.setTotal(rst.getDouble("total"));
-        outBean.setPhone(rst.getString("phone"));
-        outBean.setConnector(rst.getString("connector"));
-        outBean.setCustomerId(rst.getString("customerId"));
-        outBean.setType(rst.getInt("type"));
-        outBean.setMarks(rst.getInt("mark"));
-        outBean.setPay(rst.getInt("pay"));
-        outBean.setChecks(rst.getString("checks"));
-
-        String kk = rst.getString("reday");
-
-        outBean.setReday(MathTools.parseInt(kk));
-
-        outBean.setRedate(rst.getString("redate"));
-
-        outBean.setTempType(rst.getInt("tempType"));
-
-        outBean.setHadPay(rst.getString("hadPay"));
     }
 
     public static String getStatus(int i)

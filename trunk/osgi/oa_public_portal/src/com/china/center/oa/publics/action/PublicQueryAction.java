@@ -111,8 +111,8 @@ public class PublicQueryAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward popCommonQuery(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward popCommonQuery(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         // 在xml里面定义的
@@ -166,8 +166,8 @@ public class PublicQueryAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward popCommonQuery2(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward popCommonQuery2(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         // 在XML里面定义的
@@ -233,15 +233,15 @@ public class PublicQueryAction extends DispatchAction
     private void buildQueryHtml(HttpServletRequest request, String name, QueryItemBean query,
                                 Map<String, List> selectMap, StringBuilder sb)
     {
-        sb.append("<input type=hidden name=load value=1/>");
+        sb.append("<input type=hidden name=load value=1>");
 
         // write JAVA object to string
         List<QueryConditionBean> hidenConditions = query.getConditions();
 
         for (QueryConditionBean eachItem : hidenConditions)
         {
-            sb.append(StringTools.format("<input type=hidden name='hidden_query_%s' value='%s'/>", eachItem.getName(),
-                eachItem.getAssistant()));
+            sb.append(StringTools.format("<input type=hidden name='hidden_query_%s' value='%s'/>",
+                eachItem.getName(), eachItem.getAssistant()));
         }
 
         String pkey = name + "_pmap";
@@ -264,7 +264,8 @@ public class PublicQueryAction extends DispatchAction
 
             sb.append("<tr class='content1'>");
 
-            sb.append(StringTools.format("<td width='20%%' align='left'>%s：</td>", eachItem.getCaption()));
+            sb.append(StringTools.format("<td width='20%%' align='left'>%s：</td>", eachItem
+                .getCaption()));
             sb.append("<td width=80% >");
 
             if ("text".equals(eachItem.getType()))
@@ -273,14 +274,17 @@ public class PublicQueryAction extends DispatchAction
                     .append(StringTools
                         .format(
                             "<input type=text name='%s' id='%s' size=35 onkeypress='enterKeyPress(querySure)' frister=%s %s value='%s'/>",
-                            eachItem.getName(), eachItem.getName(), (i == 0 ? "1" : "0"), eachItem.getInner(), value));
+                            eachItem.getName(), eachItem.getName(), (i == 0 ? "1" : "0"), eachItem
+                                .getInner(), value));
             }
             else if ("select".equals(eachItem.getType()))
             {
-                sb.append(StringTools.format(
-                    "<select name='%s' id='%s' quick=true %s class='select_class' values='%s' style='width:250px'>",
-                    eachItem.getName(), eachItem.getName(), eachItem.getInner(), StringTools.print((String)ppmap
-                        .get(eachItem.getName()))));
+                sb
+                    .append(StringTools
+                        .format(
+                            "<select name='%s' id='%s' quick=true %s class='select_class' values='%s' style='width:250px'>",
+                            eachItem.getName(), eachItem.getName(), eachItem.getInner(),
+                            StringTools.print((String)ppmap.get(eachItem.getName()))));
 
                 sb.append("<option value=''>--</option>");
 
@@ -288,8 +292,8 @@ public class PublicQueryAction extends DispatchAction
 
                 for (Object optionItem : optionList)
                 {
-                    sb.append(StringTools.format("<option value='%s'>%s</option>", BeanUtil.getProperty(optionItem,
-                        "id"), BeanUtil.getProperty(optionItem, "name")));
+                    sb.append(StringTools.format("<option value='%s'>%s</option>", BeanUtil
+                        .getProperty(optionItem, "id"), BeanUtil.getProperty(optionItem, "name")));
                 }
                 sb.append("</select>");
             }
@@ -300,8 +304,8 @@ public class PublicQueryAction extends DispatchAction
                         .format(
                             "<input type=text name = '%s' id='%s'  value = '%s' %s readonly=readonly >"
                                 + "<img src='%s/images/calendar.gif' style='cursor: pointer' title='请选择时间' align='top' onclick='return calDate(\"%s\");' height='20px' width='20px'/>",
-                            eachItem.getName(), eachItem.getName(), value, eachItem.getInner(), request
-                                .getContextPath(), eachItem.getName()));
+                            eachItem.getName(), eachItem.getName(), value, eachItem.getInner(),
+                            request.getContextPath(), eachItem.getName()));
             }
             else if ("datetime".equals(eachItem.getType()))
             {
@@ -310,8 +314,8 @@ public class PublicQueryAction extends DispatchAction
                         .format(
                             "<input type=text name = '%s' id='%s'  value = '%s' %s readonly=readonly >"
                                 + "<img src='%s/images/calendar.gif' style='cursor: pointer' title='请选择时间' align='top' onclick='return calDateTime(\"%s\");' height='20px' width='20px'/>",
-                            eachItem.getName(), eachItem.getName(), value, eachItem.getInner(), request
-                                .getContextPath(), eachItem.getName()));
+                            eachItem.getName(), eachItem.getName(), value, eachItem.getInner(),
+                            request.getContextPath(), eachItem.getName()));
             }
 
             sb.append("</td>");

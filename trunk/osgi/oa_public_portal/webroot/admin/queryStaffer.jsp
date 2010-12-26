@@ -33,7 +33,7 @@ function load()
 		     {display: '状态', name : 'status', width : '5%', sortable : false, align: 'left', cc : 'stafferStatus'},
 		     {display: '加密', name : 'enc', width : '8%'},
 		     {display: '额度', name : 'credit', width : '8%',  toFixed: 2},
-		     {display: '电话', name : 'black', width : 'auto', sortable : false, cc : 'stafferBlack'}
+		     {display: '信用属性', name : 'black', width : 'auto', sortable : false, cc : 'stafferBlack'}
 		     ],
 		 extAtt: {
 		     name : {begin : '<a href=../admin/staffer.do?method=findStaffer&id={id} title=查看明细>', end : '</a>'}
@@ -46,16 +46,7 @@ function load()
 		     {id: 'search', bclass: 'search', onpress : doSearch},
 		     {separator: true}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 queryMode: 0,
-		 cache: 0,
-		 def: allDef,
-		 queryCondition: null,
-		 showTableToggleBtn: true,
-		 height: 'page',
-		 rp: ${g_page},
-		 callBack: $callBack //for firefox load ext att
+		 <p:conf/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);

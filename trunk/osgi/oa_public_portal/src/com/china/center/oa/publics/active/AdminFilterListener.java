@@ -31,10 +31,19 @@ import com.china.center.webportal.filter.FilterListener;
  */
 public class AdminFilterListener implements FilterListener
 {
-    public boolean onDoFilterAfterCheckUser(ServletRequest req, ServletResponse resp, FilterChain chain)
+    public boolean onDoFilterAfterCheckUser(ServletRequest req, ServletResponse resp,
+                                            FilterChain chain)
         throws ServletException, IOException
     {
         HttpServletRequest request = (HttpServletRequest)req;
+
+        // 处理menu的逻辑
+        String menu = request.getParameter("menu");
+
+        if ("1".equals(menu))
+        {
+            request.getSession().setAttribute("f_menu", menu);
+        }
 
         Object lock = request.getSession().getAttribute("SLOCK");
 

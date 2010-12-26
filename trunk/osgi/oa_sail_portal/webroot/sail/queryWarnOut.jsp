@@ -86,7 +86,7 @@ function load()
 							<td align="center" onclick="hrefAndSelect(this)"><font color=blue>${item.redate}</font></td>
 							</c:if>
 							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
-							<td align="center" onclick="hrefAndSelect(this)">${item.hadPay}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.hadPay)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.depotName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${overDayMap[item.fullId]}</td>

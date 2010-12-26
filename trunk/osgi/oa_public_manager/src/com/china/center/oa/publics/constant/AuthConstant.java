@@ -583,4 +583,9 @@ public interface AuthConstant
      * 回款操作
      */
     String PAYMENT_OPR = "1602";
+
+    /**
+     * 收付款操作
+     */
+    String BILL_OPR = "1603";
 }

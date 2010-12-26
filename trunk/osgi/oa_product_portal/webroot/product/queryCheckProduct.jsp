@@ -41,17 +41,7 @@ function load()
              {id: 'reject', bclass: 'reject',  caption: '驳回', onpress : rejectBean, auth: '1004'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
-         usepager: true,
-         useRp: true,
-         queryMode: 1,
-         auth: window.top.topFrame.gAuth,
-         cache: 0,
-         height: 'page',
-		 rp: ${g_page},
-         queryCondition: null,
-         showTableToggleBtn: true,
-         def: allDef,
-         callBack: $callBack
+         <p:conf/>
      };
      
      $("#mainTable").flexigrid(guidMap, thisObj);

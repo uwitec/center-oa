@@ -30,12 +30,7 @@ function load()
 		     {id: 'del', caption: '删除', bclass: 'delete', onpress : delBean},
 		     {separator: true}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 cache: 0,
-		 queryMode: 1,
-		 showTableToggleBtn: true,
-		 callBack: loadForm
+		 <p:conf callBack="loadForm"/>
 	 }
 	 );
  }

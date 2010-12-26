@@ -42,17 +42,8 @@ function load()
 		     {id: 'init', caption: '初始化密码', bclass: 'update', onpress : initPassword, auth: '010401'},
 		     {id: 'search', bclass: 'search', onpress : doSearch}
 		     ],
-		 usepager: true,
-		 useRp: true,
-		 queryMode: 1,
-		 cache: 0,
-		 auth: window.top.topFrame.gAuth,
-		 showTableToggleBtn: true,
-		 height: 'page',
-		 
-		 rp: ${g_page},
-		 def: allDef,
-		 callBack: $callBack //for firefox load ext att
+		 // 保留为1的普通查询
+		 <p:conf queryMode="1"/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);

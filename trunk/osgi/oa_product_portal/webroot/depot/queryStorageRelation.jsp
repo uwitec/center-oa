@@ -47,17 +47,7 @@ function load()
              {id: 'search2', bclass: 'search', caption: '仓库下异动(价格)', onpress : depotLog2},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1106'}
              ],
-         usepager: true,
-         useRp: true,
-         queryMode: 1,
-         cache: 0,
-         height: 'page',
-		 rp: ${g_page},
-         queryCondition: null,
-         showTableToggleBtn: true,
-         auth: $auth(),
-         def: allDef,
-         callBack: $callBack //for firefox load ext att
+         <p:conf/>
      };
      
      $("#mainTable").flexigrid(guidMap, thisObj);

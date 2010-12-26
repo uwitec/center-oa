@@ -420,7 +420,7 @@ function load()
 							<td align="center" onclick="hrefAndSelect(this)"><font color=blue>${item.redate}</font></td>
 							</c:if>
 							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
-							<td align="center" onclick="hrefAndSelect(this)">${item.hadPay}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.hadPay)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.depotName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get("reprotType", item.consign)}</td>
@@ -464,10 +464,13 @@ function load()
 			value="&nbsp;&nbsp;删 除&nbsp;&nbsp;" onclick="del()" />&nbsp;&nbsp;
 		<input
             type="button" class="button_class"
-            value="&nbsp;&nbsp;委托代销结算&nbsp;&nbsp;" onclick="balance()" />&nbsp;&nbsp;
+            value="&nbsp;&nbsp;勾 款&nbsp;&nbsp;" onclick="balance()" />&nbsp;&nbsp;
+		<input
+            type="button" class="button_class"
+            value="&nbsp;委托代销结算&nbsp;" onclick="balance()" />&nbsp;&nbsp;
         <input
             type="button" class="button_class"
-            value="&nbsp;&nbsp;委托代销退货&nbsp;&nbsp;" onclick="balance2()" />&nbsp;&nbsp;
+            value="&nbsp;委托代销退货&nbsp;" onclick="balance2()" />&nbsp;&nbsp;
 		<input
 			type="button" class="button_class"
 			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" /></div>

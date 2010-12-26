@@ -559,7 +559,8 @@ public class LoginAction extends DispatchAction
         {
             MenuItemBean item = list.get(i);
 
-            if (item.getBottomFlag() != PublicConstant.BOTTOMFLAG_YES)
+            // 根节点
+            if (item.getBottomFlag() == PublicConstant.BOTTOMFLAG_NO)
             {
                 menuRootMap.put(item.getId(), item);
 
@@ -615,6 +616,31 @@ public class LoginAction extends DispatchAction
                     return o1.getIndexPos() - o2.getIndexPos();
                 }
             });
+
+            // 统一加menu
+            List<MenuItemBean> twoList = each.getValue();
+
+            for (MenuItemBean menuItemBean : twoList)
+            {
+                if (StringTools.isNullOrNone(menuItemBean.getUrl()))
+                {
+                    continue;
+                }
+
+                if (menuItemBean.getUrl().indexOf("menu=1") != -1)
+                {
+                    continue;
+                }
+
+                if (menuItemBean.getUrl().indexOf("?") != -1)
+                {
+                    menuItemBean.setUrl(menuItemBean.getUrl() + "&menu=1");
+                }
+                else
+                {
+                    menuItemBean.setUrl(menuItemBean.getUrl() + "?menu=1");
+                }
+            }
         }
 
         // 一级菜单排序
