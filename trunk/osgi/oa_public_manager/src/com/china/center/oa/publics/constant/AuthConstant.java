@@ -588,4 +588,9 @@ public interface AuthConstant
      * 收付款操作
      */
     String BILL_OPR = "1603";
+
+    /**
+     * 开发票操作
+     */
+    String INVOICEINS_OPR = "1604";
 }

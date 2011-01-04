@@ -36,14 +36,18 @@ import com.china.center.common.taglib.PageSelectOption;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.LocationHelper;
 import com.china.center.oa.publics.bean.DepartmentBean;
+import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.EnumDefineBean;
+import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.PostBean;
 import com.china.center.oa.publics.bean.ProvinceBean;
 import com.china.center.oa.publics.bean.RoleBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.dao.DepartmentDAO;
+import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.EnumDefineDAO;
+import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.PostDAO;
 import com.china.center.oa.publics.dao.PrincipalshipDAO;
@@ -87,6 +91,10 @@ public class PublicQueryAction extends DispatchAction
     private QueryManager queryManager = null;
 
     private PostDAO postDAO = null;
+
+    private DutyDAO dutyDAO = null;
+
+    private InvoiceDAO invoiceDAO = null;
 
     private RoleDAO roleDAO = null;
 
@@ -494,6 +502,26 @@ public class PublicQueryAction extends DispatchAction
             return;
         }
 
+        // $dutyList 纳税实体管理
+        if ("$dutyList".equals(key))
+        {
+            List<DutyBean> dutyList = dutyDAO.listEntityBeans();
+
+            selectMap.put(key, dutyList);
+
+            return;
+        }
+
+        // $invoiceList
+        if ("$invoiceList".equals(key))
+        {
+            List<InvoiceBean> invoiceList = invoiceDAO.listEntityBeans();
+
+            selectMap.put(key, invoiceList);
+
+            return;
+        }
+
         // 从注入的publicQueryManager里面获取
         List<?> dataList = publicQueryManager.getSelectList(key);
 
@@ -717,5 +745,39 @@ public class PublicQueryAction extends DispatchAction
     public void setQueryManager(QueryManager queryManager)
     {
         this.queryManager = queryManager;
+    }
+
+    /**
+     * @return the dutyDAO
+     */
+    public DutyDAO getDutyDAO()
+    {
+        return dutyDAO;
+    }
+
+    /**
+     * @param dutyDAO
+     *            the dutyDAO to set
+     */
+    public void setDutyDAO(DutyDAO dutyDAO)
+    {
+        this.dutyDAO = dutyDAO;
+    }
+
+    /**
+     * @return the invoiceDAO
+     */
+    public InvoiceDAO getInvoiceDAO()
+    {
+        return invoiceDAO;
+    }
+
+    /**
+     * @param invoiceDAO
+     *            the invoiceDAO to set
+     */
+    public void setInvoiceDAO(InvoiceDAO invoiceDAO)
+    {
+        this.invoiceDAO = invoiceDAO;
     }
 }
