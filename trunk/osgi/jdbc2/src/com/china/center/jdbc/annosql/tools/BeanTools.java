@@ -124,17 +124,17 @@ public abstract class BeanTools
      */
     public static String getUpdateHead(Class<?> claz)
     {
-        return "update " + getTableName(claz) + " ";
+        return "update " + getTableName(claz) + " " + getClassName(claz) + " ";
     }
 
     public static String getDeleteHead(Class<?> claz)
     {
-        return "delete from " + getTableName(claz) + " ";
+        return "delete from " + getTableName(claz) + " " + getClassName(claz) + " ";
     }
 
     public static String getCountHead(Class<?> claz)
     {
-        return "select count(1) from " + getTableName(claz) + " ";
+        return "select count(1) from " + getTableName(claz) + " " + getClassName(claz) + " ";
     }
 
     public static String getSumHead(Class<?> claz, String sumField)
