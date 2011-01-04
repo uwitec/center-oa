@@ -38,6 +38,8 @@
 	<osgi:reference id="queryManager" interface="com.china.center.oa.publics.manager.QueryManager" />
     
     <osgi:reference id="notifyManager" interface="com.china.center.oa.publics.manager.NotifyManager" />
+    
+    <osgi:reference id="showManager" interface="com.china.center.oa.publics.manager.ShowManager" />
 	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	

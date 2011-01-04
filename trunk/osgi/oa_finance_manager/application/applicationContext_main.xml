@@ -31,4 +31,12 @@
 
 	<bean id="billManager" class="com.china.center.oa.finance.manager.impl.BillManagerImpl" />
 
+	<bean id="invoiceinsDAO" class="com.china.center.oa.finance.dao.impl.InvoiceinsDAOImpl" />
+
+	<bean id="invoiceinsItemDAO" class="com.china.center.oa.finance.dao.impl.InvoiceinsItemDAOImpl" />
+
+	<bean id="insVSOutDAO" class="com.china.center.oa.finance.dao.impl.InsVSOutDAOImpl" />
+
+	<bean id="invoiceinsManager" class="com.china.center.oa.finance.manager.impl.InvoiceinsManagerImpl" />
+
 </beans>

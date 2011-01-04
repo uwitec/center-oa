@@ -21,4 +21,18 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="showListenerFinanceImpl" class="com.china.center.oa.finance.listener.impl.ShowListenerFinanceImpl" />
+    
+    <bean id="defaultLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="showManager"/>
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="showListenerFinanceImpl" />
+            </list>
+        </property>
+    </bean>
+    
 </beans>

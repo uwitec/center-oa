@@ -30,4 +30,12 @@
 
 	<osgi:service ref="billManager" interface="com.china.center.oa.finance.manager.BillManager" />
 
+	<osgi:service ref="invoiceinsDAO" interface="com.china.center.oa.finance.dao.InvoiceinsDAO" />
+
+	<osgi:service ref="invoiceinsItemDAO" interface="com.china.center.oa.finance.dao.InvoiceinsItemDAO" />
+
+	<osgi:service ref="insVSOutDAO" interface="com.china.center.oa.finance.dao.InsVSOutDAO" />
+
+	<osgi:service ref="invoiceinsManager" interface="com.china.center.oa.finance.manager.InvoiceinsManager" />
+
 </beans>

@@ -12,9 +12,11 @@ package com.china.center.oa.finance.facade.impl;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.BankBean;
+import com.china.center.oa.finance.bean.InvoiceinsBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.facade.FinanceFacade;
 import com.china.center.oa.finance.manager.BankManager;
+import com.china.center.oa.finance.manager.InvoiceinsManager;
 import com.china.center.oa.finance.manager.PaymentManager;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.facade.AbstarctFacade;
@@ -37,6 +39,8 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
     private PaymentManager paymentManager = null;
 
     private UserManager userManager = null;
+
+    private InvoiceinsManager invoiceinsManager = null;
 
     /**
      * 回款操作锁
@@ -203,6 +207,44 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
+    public boolean addInvoiceinsBean(String userId, InvoiceinsBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.INVOICEINS_OPR))
+        {
+            return invoiceinsManager.addInvoiceinsBean(user, bean);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    public boolean deleteInvoiceinsBean(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.INVOICEINS_OPR))
+        {
+            return invoiceinsManager.deleteInvoiceinsBean(user, id);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
     /**
      * @return the bankManager
      */
@@ -252,5 +294,22 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
     public void setPaymentManager(PaymentManager paymentManager)
     {
         this.paymentManager = paymentManager;
+    }
+
+    /**
+     * @return the invoiceinsManager
+     */
+    public InvoiceinsManager getInvoiceinsManager()
+    {
+        return invoiceinsManager;
+    }
+
+    /**
+     * @param invoiceinsManager
+     *            the invoiceinsManager to set
+     */
+    public void setInvoiceinsManager(InvoiceinsManager invoiceinsManager)
+    {
+        this.invoiceinsManager = invoiceinsManager;
     }
 }

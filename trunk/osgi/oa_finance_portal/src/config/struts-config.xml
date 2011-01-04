@@ -10,6 +10,13 @@
             <forward name="rptQueryBank" path="/bank/rptQueryBank.jsp" />
             <forward name="uploadPayment" path="/bank/uploadPayment.jsp" />
         </action>
+        
+        <action path="/finance/invoiceins" parameter="method"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+            <forward name="addInvoiceins" path="/invoiceins/addInvoiceins.jsp" />
+            <forward name="queryInvoiceins" path="/invoiceins/queryInvoiceins.jsp" />
+        </action>
 		
 	</action-mappings>
 </struts-config>

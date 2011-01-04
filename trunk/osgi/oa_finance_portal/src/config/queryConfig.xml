@@ -55,4 +55,37 @@
     
     <item name="querySelfPayment" alias="queryPayment"/>
     
+    <item name="queryInvoiceins" deaultpfix="InvoiceinsBean">
+        <condtion name="alogTime" filed="logTime" caption="开始时间">
+            <opr>&gt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="blogTime" filed="logTime" caption="结束时间">
+            <opr>&lt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="dutyId" caption="纳税实体">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$dutyList</option>
+        </condtion>
+        <condtion name="invoiceId" caption="发票类型">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$invoiceList</option>
+        </condtion>
+        <condtion name="unit" caption="开票单位">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="stafferName" filed="name" caption="开票人" pfix="StafferBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+    </item>
+    
 </query>

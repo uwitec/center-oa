@@ -30,6 +30,8 @@
     <osgi:reference id="authManager" interface="com.china.center.oa.publics.manager.AuthManager" />
     
     <osgi:reference id="parameterDAO" interface="com.china.center.oa.publics.dao.ParameterDAO" />
+    
+    <osgi:reference id="showDAO" interface="com.china.center.oa.publics.dao.ShowDAO" />
 	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	
@@ -40,5 +42,23 @@
     <osgi:reference id="financeFacade" interface="com.china.center.oa.finance.facade.FinanceFacade" />
     
     <osgi:reference id="paymentDAO" interface="com.china.center.oa.finance.dao.PaymentDAO" />
-	
+    
+    <osgi:reference id="paymentManager" interface="com.china.center.oa.finance.manager.PaymentManager" />
+
+    <osgi:reference id="inBillDAO" interface="com.china.center.oa.finance.dao.InBillDAO" />
+
+    <osgi:reference id="paymentVSOutDAO" interface="com.china.center.oa.finance.dao.PaymentVSOutDAO" />
+
+    <osgi:reference id="billManager" interface="com.china.center.oa.finance.manager.BillManager" />
+
+    <osgi:reference id="invoiceinsDAO" interface="com.china.center.oa.finance.dao.InvoiceinsDAO" />
+
+    <osgi:reference id="invoiceinsItemDAO" interface="com.china.center.oa.finance.dao.InvoiceinsItemDAO" />
+
+    <osgi:reference id="insVSOutDAO" interface="com.china.center.oa.finance.dao.InsVSOutDAO" />
+
+    <osgi:reference id="invoiceinsManager" interface="com.china.center.oa.finance.manager.InvoiceinsManager" />
+    
+    <osgi:reference id="invoiceDAO" interface="com.china.center.oa.publics.dao.InvoiceDAO" />
+    
 </beans>

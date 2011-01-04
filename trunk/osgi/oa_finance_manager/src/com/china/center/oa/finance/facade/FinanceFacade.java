@@ -11,6 +11,7 @@ package com.china.center.oa.finance.facade;
 
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.BankBean;
+import com.china.center.oa.finance.bean.InvoiceinsBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 
 
@@ -62,5 +63,11 @@ public interface FinanceFacade
      * @throws MYException
      */
     boolean dropPaymentBean(String stafferId, String id)
+        throws MYException;
+
+    boolean addInvoiceinsBean(String userId, InvoiceinsBean bean)
+        throws MYException;
+
+    boolean deleteInvoiceinsBean(String userId, String id)
         throws MYException;
 }

@@ -36,4 +36,6 @@
     
     <bean name="/finance/bank" class="com.china.center.oa.finance.portal.action.BankAction" />
     
+    <bean name="/finance/invoiceins" class="com.china.center.oa.finance.portal.action.InvoiceinsAction" />
+    
 </beans>

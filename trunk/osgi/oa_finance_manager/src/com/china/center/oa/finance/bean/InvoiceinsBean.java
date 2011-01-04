@@ -10,14 +10,24 @@ package com.china.center.oa.finance.bean;
 
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.Html;
 import com.china.center.jdbc.annotation.Id;
+import com.china.center.jdbc.annotation.Ignore;
+import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.annotation.enums.Element;
+import com.china.center.jdbc.annotation.enums.JoinType;
+import com.china.center.oa.finance.vs.InsVSOutBean;
+import com.china.center.oa.publics.bean.DutyBean;
+import com.china.center.oa.publics.bean.InvoiceBean;
+import com.china.center.oa.publics.bean.StafferBean;
 
 
 /**
- * 开票
+ * 发票实例
  * 
  * @author ZHUZHU
  * @version 2010-12-26
@@ -31,26 +41,55 @@ public class InvoiceinsBean implements Serializable
     @Id
     private String id = "";
 
+    /**
+     * 发票类型
+     */
+    @Html(title = "发票类型", type = Element.SELECT)
+    @Join(tagClass = InvoiceBean.class)
     private String invoiceId = "";
 
+    /**
+     * 纳税实例
+     */
+    @Html(title = "纳税实体", type = Element.SELECT)
+    @Join(tagClass = DutyBean.class)
     private String dutyId = "";
 
+    /**
+     * 开票单位
+     */
+    @Html(title = "开票单位", must = true, maxLength = 100)
     private String unit = "";
 
+    /**
+     * 暂时不使用
+     */
     private String reveive = "";
+
+    private String locationId = "";
 
     /**
      * 总金额
      */
+    @Html(title = "开票金额", must = true, type = Element.NUMBER)
     private double moneys = 0.0d;
 
+    @Html(title = "开票日期", must = true, type = Element.DATE)
     private String invoiceDate = "";
 
+    @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
     private String stafferId = "";
 
     private String logTime = "";
 
+    @Html(title = "备注", maxLength = 200, type = Element.TEXTAREA)
     private String description = "";
+
+    @Ignore
+    private List<InvoiceinsItemBean> itemList = null;
+
+    @Ignore
+    private List<InsVSOutBean> vsList = null;
 
     /**
      * default constructor
@@ -230,6 +269,57 @@ public class InvoiceinsBean implements Serializable
     }
 
     /**
+     * @return the itemList
+     */
+    public List<InvoiceinsItemBean> getItemList()
+    {
+        return itemList;
+    }
+
+    /**
+     * @param itemList
+     *            the itemList to set
+     */
+    public void setItemList(List<InvoiceinsItemBean> itemList)
+    {
+        this.itemList = itemList;
+    }
+
+    /**
+     * @return the vsList
+     */
+    public List<InsVSOutBean> getVsList()
+    {
+        return vsList;
+    }
+
+    /**
+     * @param vsList
+     *            the vsList to set
+     */
+    public void setVsList(List<InsVSOutBean> vsList)
+    {
+        this.vsList = vsList;
+    }
+
+    /**
+     * @return the locationId
+     */
+    public String getLocationId()
+    {
+        return locationId;
+    }
+
+    /**
+     * @param locationId
+     *            the locationId to set
+     */
+    public void setLocationId(String locationId)
+    {
+        this.locationId = locationId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -259,6 +349,9 @@ public class InvoiceinsBean implements Serializable
             .append("reveive = ")
             .append(this.reveive)
             .append(TAB)
+            .append("locationId = ")
+            .append(this.locationId)
+            .append(TAB)
             .append("moneys = ")
             .append(this.moneys)
             .append(TAB)
@@ -273,6 +366,12 @@ public class InvoiceinsBean implements Serializable
             .append(TAB)
             .append("description = ")
             .append(this.description)
+            .append(TAB)
+            .append("itemList = ")
+            .append(this.itemList)
+            .append(TAB)
+            .append("vsList = ")
+            .append(this.vsList)
             .append(TAB)
             .append(" )");
 
