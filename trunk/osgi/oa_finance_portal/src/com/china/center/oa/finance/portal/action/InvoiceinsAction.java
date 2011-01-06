@@ -27,6 +27,7 @@ import com.center.china.osgi.publics.User;
 import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
+import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.actionhelper.jsonimpl.JSONArray;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
@@ -37,11 +38,13 @@ import com.china.center.oa.finance.dao.InvoiceinsDAO;
 import com.china.center.oa.finance.dao.InvoiceinsItemDAO;
 import com.china.center.oa.finance.facade.FinanceFacade;
 import com.china.center.oa.finance.manager.InvoiceinsManager;
+import com.china.center.oa.finance.vo.InvoiceinsVO;
 import com.china.center.oa.finance.vs.InsVSOutBean;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.ShowBean;
+import com.china.center.oa.publics.constant.InvoiceConstant;
 import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.ShowDAO;
@@ -104,13 +107,7 @@ public class InvoiceinsAction extends DispatchAction
                                              HttpServletResponse response)
         throws ServletException
     {
-        List<DutyBean> dutyList = dutyDAO.listEntityBeans();
-
-        request.setAttribute("dutyList", dutyList);
-
-        List<InvoiceBean> invoiceList = invoiceDAO.listEntityBeans();
-
-        request.setAttribute("invoiceList", invoiceList);
+        prepare(request);
 
         // 查询开单品名
         List<ShowBean> showList = showDAO.listEntityBeans();
@@ -120,6 +117,55 @@ public class InvoiceinsAction extends DispatchAction
         request.setAttribute("showJSON", shows.toString());
 
         return mapping.findForward("addInvoiceins");
+    }
+
+    private void prepare(HttpServletRequest request)
+    {
+        List<DutyBean> dutyList = dutyDAO.listEntityBeans();
+
+        request.setAttribute("dutyList", dutyList);
+
+        ConditionParse condition = new ConditionParse();
+
+        condition.addWhereStr();
+
+        condition.addIntCondition("InvoiceBean.forward", "=", InvoiceConstant.INVOICE_FORWARD_OUT);
+
+        List<InvoiceBean> invoiceList = invoiceDAO.queryEntityBeansByCondition(condition);
+
+        request.setAttribute("invoiceList", invoiceList);
+    }
+
+    /**
+     * findInvoiceins
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward findInvoiceins(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        InvoiceinsVO bean = invoiceinsManager.findVO(id);
+
+        if (bean == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据异常,请重新操作");
+
+            return mapping.findForward("queryBank");
+        }
+
+        prepare(request);
+
+        request.setAttribute("bean", bean);
+
+        return mapping.findForward("detailInvoiceins");
     }
 
     /**
@@ -145,6 +191,8 @@ public class InvoiceinsAction extends DispatchAction
         User user = Helper.getUser(request);
 
         condtion.addCommonCondition("InvoiceinsBean.locationId", "=", user.getLocationId());
+
+        condtion.addCondition("order by InvoiceinsBean.logTime desc");
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYINVOICEINS, request, condtion,
             this.invoiceinsDAO);
@@ -255,17 +303,56 @@ public class InvoiceinsAction extends DispatchAction
 
             for (int i = 0; i < split.length; i++ )
             {
-                InsVSOutBean vs = new InsVSOutBean();
+                if ( !StringTools.isNullOrNone(split[i]))
+                {
+                    InsVSOutBean vs = new InsVSOutBean();
 
-                vs.setOutId(split[i]);
+                    vs.setOutId(split[i]);
 
-                vsList.add(vs);
+                    vsList.add(vs);
+                }
             }
 
             bean.setVsList(vsList);
         }
 
         return bean;
+    }
+
+    /**
+     * deleteInvoiceins
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward deleteInvoiceins(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            User user = Helper.getUser(request);
+
+            financeFacade.deleteInvoiceinsBean(user.getId(), id);
+
+            ajax.setSuccess("成功删除");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("删除失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
     }
 
     /**

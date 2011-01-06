@@ -22,6 +22,7 @@
 			<forward name="queryBuy" path="/sail/queryBuy.jsp" />
 			<forward name="handerInvokeBuy" path="/sail/handerInvokeBuy.jsp" />
 			<forward name="queryWarnOut" path="/sail/queryWarnOut.jsp" />
+			<forward name="rptQueryOut" path="/sail/rptQueryOut.jsp" />
 		</action>
 		
 		<action path="/sail/transport" parameter="method"

@@ -34,6 +34,9 @@ public class InvoiceinsVO extends InvoiceinsBean
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
 
+    @Relationship(relationField = "customerId")
+    private String customerName = "";
+
     /**
      * default constructor
      */
@@ -93,6 +96,23 @@ public class InvoiceinsVO extends InvoiceinsBean
     }
 
     /**
+     * @return the customerName
+     */
+    public String getCustomerName()
+    {
+        return customerName;
+    }
+
+    /**
+     * @param customerName
+     *            the customerName to set
+     */
+    public void setCustomerName(String customerName)
+    {
+        this.customerName = customerName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -115,6 +135,9 @@ public class InvoiceinsVO extends InvoiceinsBean
             .append(TAB)
             .append("stafferName = ")
             .append(this.stafferName)
+            .append(TAB)
+            .append("customerName = ")
+            .append(this.customerName)
             .append(TAB)
             .append(" )");
 

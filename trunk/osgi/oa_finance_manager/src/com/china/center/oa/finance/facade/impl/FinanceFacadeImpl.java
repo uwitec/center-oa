@@ -235,7 +235,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
 
         checkUser(user);
 
-        if (containAuth(user, AuthConstant.INVOICEINS_OPR))
+        if (containAuth(user, AuthConstant.INVOICEINS_DEL))
         {
             return invoiceinsManager.deleteInvoiceinsBean(user, id);
         }

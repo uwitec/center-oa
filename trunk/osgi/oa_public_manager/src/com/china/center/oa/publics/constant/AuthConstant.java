@@ -593,4 +593,9 @@ public interface AuthConstant
      * 开发票操作
      */
     String INVOICEINS_OPR = "1604";
+
+    /**
+     * 删除开票
+     */
+    String INVOICEINS_DEL = "1605";
 }

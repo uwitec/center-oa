@@ -16,6 +16,7 @@
             validate="false">
             <forward name="addInvoiceins" path="/invoiceins/addInvoiceins.jsp" />
             <forward name="queryInvoiceins" path="/invoiceins/queryInvoiceins.jsp" />
+            <forward name="detailInvoiceins" path="/invoiceins/detailInvoiceins.jsp" />
         </action>
 		
 	</action-mappings>

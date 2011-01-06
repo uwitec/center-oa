@@ -98,16 +98,56 @@ function loadShow()
     }
 }
 
+function opens()
+{
+    if ($O('customerId').value == '')
+    {
+        alert('请选择客户');
+        return false;
+    }
+    window.common.modal('../sail/out.do?method=rptQueryOut&load=1&invoiceId=' + $$('invoiceId') + '&dutyId=' + $$('dutyId') + '&customerId=' + $$('customerId'));
+}
 
+function getOut(oos)
+{
+    var outId = $$('outId');
+    
+    for (var i = 0 ; i < oos.length; i++)
+    {
+        var oo = oos[i];
+        
+        if (outId.indexOf(oo.value) == -1)
+        {
+            outId += oo.value + ";";
+        }
+    }
+    
+    $O('outId').value = outId;
+}
 
+function clears()
+{
+    $O('outId').value = '';
+}
 
+function selectCus()
+{
+    window.common.modal('../customer/customer.do?method=rptQueryAllCustomer&load=1');
+}
 
+function getCustomer(obj)
+{
+    $O('customerId').value = obj.value;
+    $O('cname').value = obj.pname;
+}
 </script>
 
 </head>
 <body class="body_class" onload="loadShow()">
-<form name="formEntry" action="../finance/invoiceins.do" method="post"><input
-	type="hidden" name="method" value="addInvoiceins"> <p:navigation
+<form name="formEntry" action="../finance/invoiceins.do" method="post">
+<input type="hidden" name="method" value="addInvoiceins"> 
+<input type="hidden" name="customerId" value=""> 
+<p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
 		onclick="javascript:history.go(-1)">发票管理</span> &gt;&gt; 开发票</td>
@@ -132,20 +172,29 @@ function loadShow()
 			
 			<p:pro field="unit" innerString="size=60" />
 
-			<p:pro field="invoiceId" innerString="style='WIDTH: 240px;'">
-				<p:option type="invoiceList" />
+			<p:pro field="invoiceId" innerString="style='WIDTH: 340px;'">
+			    <c:forEach items="${invoiceList}" var="item">
+			    <option value="${item.id}">${item.fullName}</option>
+			    </c:forEach>
 			</p:pro>
 
 			<p:pro field="dutyId" innerString="onchange=loadShow()">
 				<p:option type="dutyList" />
 			</p:pro>
 			
+			<p:cell title="开票客户" end="true">
+                <input type="text" size="60" readonly="readonly" name="cname" oncheck="notNone;"> 
+                <font color="red">*</font>
+                <input type="button" value="&nbsp;选 择&nbsp;" name="qout1" id="qout1"
+                    class="button_class" onclick="selectCus()">
+            </p:cell>
+			
 			<p:cell title="关联单据" end="true">
 			    <input type="text" size="60" readonly="readonly" name="outId"> 
                 <input type="button" value="&nbsp;选 择&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectProvider(this, 0)">&nbsp;
+                    class="button_class" onclick="opens()">&nbsp;
                 <input type="button" value="&nbsp;清 空&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectProvider(this, 0)">&nbsp;&nbsp;
+                    class="button_class" onclick="clears()">&nbsp;&nbsp;
             </p:cell>
 
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />

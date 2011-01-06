@@ -27,19 +27,20 @@ function load()
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
              {display: '开票单位', name : 'unit', width : '20%'},
-             {display: '发票类型', name : 'invoiceName', cc: 'bankType', width : '10%'},
+             {display: '发票类型', name : 'invoiceName', cc: 'bankType', width : '15%'},
              {display: '纳税实体', name : 'dutyName', width : '10%'},
+             {display: '客户', name : 'customerName', width : '10%'},
              {display: '金额', name : 'moneys', width : '10%', toFixed: 2},
              {display: '开票人', name : 'stafferName', width : '10%'},
              {display: '时间', name : 'logTime', width : 'auto', sortable : true}
              ],
          extAtt: {
-             name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
+             unit : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1604'},
              //{id: 'update', bclass: 'update', onpress : updateBean, auth: '1601'},
-             {id: 'del', bclass: 'del',  onpress : delBean, auth: '1604'},
+             {id: 'del', bclass: 'del',  onpress : delBean, auth: '1605'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>

@@ -31,6 +31,7 @@ import org.apache.struts.actions.DispatchAction;
 import com.center.china.osgi.publics.User;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.OldPageSeparateTools;
+import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.actionhelper.jsonimpl.JSONArray;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
@@ -184,6 +185,8 @@ public class OutAction extends DispatchAction
     private static String QUERYSELFBUY = "querySelfBuy";
 
     private static String QUERYBUY = "queryBuy";
+
+    private static String RPTQUERYOUT = "rptQueryOut";
 
     /**
      * queryForAdd
@@ -3645,6 +3648,116 @@ public class OutAction extends DispatchAction
         }
 
         return mapping.findForward("detailBuy");
+    }
+
+    /**
+     * rptQueryOut
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryOut(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        List<OutBean> list = null;
+
+        if (PageSeparateTools.isFirstLoad(request))
+        {
+            ConditionParse condtion = new ConditionParse();
+
+            condtion.addWhereStr();
+
+            setInnerCondition2(request, condtion);
+
+            int total = outDAO.countByCondition(condtion.toString());
+
+            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+
+            PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYOUT);
+
+            list = outDAO.queryEntityBeansByCondition(condtion, page);
+        }
+        else
+        {
+            PageSeparateTools.processSeparate(request, RPTQUERYOUT);
+
+            list = outDAO.queryEntityBeansByCondition(PageSeparateTools.getCondition(request,
+                RPTQUERYOUT), PageSeparateTools.getPageSeparate(request, RPTQUERYOUT));
+        }
+
+        request.setAttribute("list", list);
+
+        return mapping.findForward("rptQueryOut");
+    }
+
+    /**
+     * @param request
+     * @param condtion
+     */
+    private void setInnerCondition2(HttpServletRequest request, ConditionParse condtion)
+    {
+        String fullId = request.getParameter("fullId");
+
+        String invoiceId = request.getParameter("invoiceId");
+
+        String dutyId = request.getParameter("dutyId");
+
+        String customerName = request.getParameter("customerName");
+
+        String customerId = request.getParameter("customerId");
+
+        String outTime = request.getParameter("outTime");
+
+        String outTime1 = request.getParameter("outTime1");
+
+        if ( !StringTools.isNullOrNone(outTime))
+        {
+            condtion.addCondition("OutBean.outTime", ">=", outTime);
+        }
+        else
+        {
+            condtion.addCondition("OutBean.outTime", ">=", TimeTools.now_short( -180));
+
+            request.setAttribute("outTime", TimeTools.now_short( -180));
+        }
+
+        if ( !StringTools.isNullOrNone(outTime1))
+        {
+            condtion.addCondition("OutBean.outTime", "<=", outTime1);
+        }
+        else
+        {
+            condtion.addCondition("OutBean.outTime", "<=", TimeTools.now_short());
+
+            request.setAttribute("outTime1", TimeTools.now_short());
+        }
+
+        if ( !StringTools.isNullOrNone(fullId))
+        {
+            condtion.addCondition("OutBean.fullId", "like", fullId);
+        }
+
+        if ( !StringTools.isNullOrNone(customerName))
+        {
+            condtion.addCondition("OutBean.customerName", "like", customerName);
+        }
+
+        condtion.addCondition("OutBean.invoiceId", "=", invoiceId);
+
+        condtion.addCondition("OutBean.dutyId", "=", dutyId);
+
+        condtion.addCondition("OutBean.customerId", "=", customerId);
+
+        condtion.addCondition("and OutBean.status in (3, 4)");
+
+        condtion.addCondition("order by OutBean.fullId desc");
     }
 
     /**

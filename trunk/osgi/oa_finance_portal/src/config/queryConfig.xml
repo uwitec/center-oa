@@ -86,6 +86,10 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
+        <condtion name="customerName" filed="name" caption="客户" pfix="CustomerBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
     </item>
     
 </query>

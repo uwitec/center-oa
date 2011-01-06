@@ -20,6 +20,7 @@ import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.jdbc.annotation.enums.JoinType;
+import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.finance.vs.InsVSOutBean;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
@@ -67,6 +68,9 @@ public class InvoiceinsBean implements Serializable
     private String reveive = "";
 
     private String locationId = "";
+
+    @Join(tagClass = CustomerBean.class, type = JoinType.LEFT)
+    private String customerId = "";
 
     /**
      * 总金额
@@ -320,6 +324,23 @@ public class InvoiceinsBean implements Serializable
     }
 
     /**
+     * @return the customerId
+     */
+    public String getCustomerId()
+    {
+        return customerId;
+    }
+
+    /**
+     * @param customerId
+     *            the customerId to set
+     */
+    public void setCustomerId(String customerId)
+    {
+        this.customerId = customerId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -351,6 +372,9 @@ public class InvoiceinsBean implements Serializable
             .append(TAB)
             .append("locationId = ")
             .append(this.locationId)
+            .append(TAB)
+            .append("customerId = ")
+            .append(this.customerId)
             .append(TAB)
             .append("moneys = ")
             .append(this.moneys)
