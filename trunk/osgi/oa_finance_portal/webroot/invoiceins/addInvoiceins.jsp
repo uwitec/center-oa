@@ -105,7 +105,7 @@ function opens()
         alert('请选择客户');
         return false;
     }
-    window.common.modal('../sail/out.do?method=rptQueryOut&load=1&invoiceId=' + $$('invoiceId') + '&dutyId=' + $$('dutyId') + '&customerId=' + $$('customerId'));
+    window.common.modal('../sail/out.do?method=rptQueryOut&mode=1&selectMode=1&load=1&invoiceId=' + $$('invoiceId') + '&dutyId=' + $$('dutyId') + '&customerId=' + $$('customerId'));
 }
 
 function getOut(oos)

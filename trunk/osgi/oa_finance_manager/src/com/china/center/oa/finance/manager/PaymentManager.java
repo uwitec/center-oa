@@ -41,7 +41,7 @@ public interface PaymentManager
      * @return
      * @throws MYException
      */
-    boolean drawBean(String stafferId, String id)
+    boolean drawBean(String stafferId, String id, String customerId)
         throws MYException;
 
     /**

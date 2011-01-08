@@ -9,6 +9,8 @@
             <forward name="queryBank" path="/bank/queryBank.jsp" />
             <forward name="rptQueryBank" path="/bank/rptQueryBank.jsp" />
             <forward name="uploadPayment" path="/bank/uploadPayment.jsp" />
+            <forward name="drawPayment" path="/bank/drawPayment.jsp" />
+            <forward name="querySelfPayment" path="/bank/querySelfPayment.jsp" />
         </action>
         
         <action path="/finance/invoiceins" parameter="method"

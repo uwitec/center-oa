@@ -82,7 +82,7 @@ public class PaymentManagerImpl implements PaymentManager
     }
 
     @Transactional(rollbackFor = MYException.class)
-    public boolean drawBean(String stafferId, String id)
+    public boolean drawBean(String stafferId, String id, String customerId)
         throws MYException
     {
         PaymentBean pay = paymentDAO.find(id);
@@ -98,6 +98,8 @@ public class PaymentManagerImpl implements PaymentManager
         }
 
         pay.setStafferId(stafferId);
+
+        pay.setCustomerId(customerId);
 
         pay.setStatus(FinanceConstant.PAYMENT_STATUS_END);
 
@@ -121,6 +123,8 @@ public class PaymentManagerImpl implements PaymentManager
         }
 
         pay.setStafferId("");
+
+        pay.setCustomerId("");
 
         pay.setStatus(FinanceConstant.PAYMENT_STATUS_INIT);
 

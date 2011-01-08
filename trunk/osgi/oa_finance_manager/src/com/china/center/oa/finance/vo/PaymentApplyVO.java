@@ -1,9 +1,9 @@
 /**
- * File Name: PaymentVO.java<br>
+ * File Name: PayApplyVO.java<br>
  * CopyRight: Copyright by www.center.china<br>
  * Description:<br>
  * CREATER: ZHUACHEN<br>
- * CreateTime: 2010-12-22<br>
+ * CreateTime: 2011-1-8<br>
  * Grant: open source to everybody
  */
 package com.china.center.oa.finance.vo;
@@ -11,23 +11,20 @@ package com.china.center.oa.finance.vo;
 
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Relationship;
-import com.china.center.oa.finance.bean.PaymentBean;
+import com.china.center.oa.finance.bean.PaymentApplyBean;
 
 
 /**
- * PaymentVO
+ * PayApplyVO
  * 
  * @author ZHUZHU
- * @version 2010-12-22
- * @see PaymentVO
+ * @version 2011-1-8
+ * @see PaymentApplyVO
  * @since 3.0
  */
 @Entity(inherit = true)
-public class PaymentVO extends PaymentBean
+public class PaymentApplyVO extends PaymentApplyBean
 {
-    @Relationship(relationField = "bankId")
-    private String bankName = "";
-
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
 
@@ -37,25 +34,8 @@ public class PaymentVO extends PaymentBean
     /**
      * default constructor
      */
-    public PaymentVO()
+    public PaymentApplyVO()
     {
-    }
-
-    /**
-     * @return the bankName
-     */
-    public String getBankName()
-    {
-        return bankName;
-    }
-
-    /**
-     * @param bankName
-     *            the bankName to set
-     */
-    public void setBankName(String bankName)
-    {
-        this.bankName = bankName;
     }
 
     /**
@@ -104,11 +84,8 @@ public class PaymentVO extends PaymentBean
         StringBuilder retValue = new StringBuilder();
 
         retValue
-            .append("PaymentVO ( ")
+            .append("PayApplyVO ( ")
             .append(super.toString())
-            .append(TAB)
-            .append("bankName = ")
-            .append(this.bankName)
             .append(TAB)
             .append("stafferName = ")
             .append(this.stafferName)
@@ -120,4 +97,5 @@ public class PaymentVO extends PaymentBean
 
         return retValue.toString();
     }
+
 }

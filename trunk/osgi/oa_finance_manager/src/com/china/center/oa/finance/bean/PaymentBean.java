@@ -18,6 +18,7 @@ import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.JoinType;
+import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.publics.bean.StafferBean;
 
@@ -48,6 +49,9 @@ public class PaymentBean implements Serializable
     @FK(index = AnoConstant.FK_FIRST)
     @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
     private String stafferId = "";
+
+    @Join(tagClass = CustomerBean.class, type = JoinType.LEFT)
+    private String customerId = "";
 
     private int type = FinanceConstant.PAYMENT_PAY_PUBLIC;
 
@@ -303,6 +307,23 @@ public class PaymentBean implements Serializable
     }
 
     /**
+     * @return the customerId
+     */
+    public String getCustomerId()
+    {
+        return customerId;
+    }
+
+    /**
+     * @param customerId
+     *            the customerId to set
+     */
+    public void setCustomerId(String customerId)
+    {
+        this.customerId = customerId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -331,6 +352,9 @@ public class PaymentBean implements Serializable
             .append(TAB)
             .append("stafferId = ")
             .append(this.stafferId)
+            .append(TAB)
+            .append("customerId = ")
+            .append(this.customerId)
             .append(TAB)
             .append("type = ")
             .append(this.type)

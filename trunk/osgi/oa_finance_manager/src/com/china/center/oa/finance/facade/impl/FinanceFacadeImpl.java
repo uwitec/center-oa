@@ -166,12 +166,12 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
-    public boolean drawPaymentBean(String stafferId, String id)
+    public boolean drawPaymentBean(String stafferId, String id, String customerId)
         throws MYException
     {
         synchronized (PAYMENT_LOCK)
         {
-            paymentManager.drawBean(stafferId, id);
+            paymentManager.drawBean(stafferId, id, customerId);
         }
 
         return true;

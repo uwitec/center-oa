@@ -104,5 +104,5 @@ public interface FinanceConstant
      * 驳回
      */
     @Defined(key = "payApplyStatus", value = "驳回")
-    int PAYAPPLY_STATUS_PASS = 2;
+    int PAYAPPLY_STATUS_PASS = 1;
 }

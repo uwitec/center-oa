@@ -15,6 +15,7 @@ import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.publics.bean.StafferBean;
 
@@ -24,19 +25,20 @@ import com.china.center.oa.publics.bean.StafferBean;
  * 
  * @author ZHUZHU
  * @version 2010-12-26
- * @see PayApplyBean
+ * @see PaymentApplyBean
  * @since 3.0
  */
 @Entity
 @Table(name = "T_CENTER_PAYAPPLY")
-public class PayApplyBean implements Serializable
+public class PaymentApplyBean implements Serializable
 {
     @Id
     private String id = "";
 
-    private String outId = "";
+    private String paymentId = "";
 
-    private String billId = "";
+    @Join(tagClass = CustomerBean.class)
+    private String customerId = "";
 
     /**
      * 总金额
@@ -48,16 +50,21 @@ public class PayApplyBean implements Serializable
     @Join(tagClass = StafferBean.class)
     private String stafferId = "";
 
+    /**
+     * 申请是分公司内处理的哦
+     */
     private String locationId = "";
 
     private String logTime = "";
+
+    private String approve = "";
 
     private String description = "";
 
     /**
      * default constructor
      */
-    public PayApplyBean()
+    public PaymentApplyBean()
     {
     }
 
@@ -79,37 +86,37 @@ public class PayApplyBean implements Serializable
     }
 
     /**
-     * @return the outId
+     * @return the paymentId
      */
-    public String getOutId()
+    public String getPaymentId()
     {
-        return outId;
+        return paymentId;
     }
 
     /**
-     * @param outId
-     *            the outId to set
+     * @param paymentId
+     *            the paymentId to set
      */
-    public void setOutId(String outId)
+    public void setPaymentId(String paymentId)
     {
-        this.outId = outId;
+        this.paymentId = paymentId;
     }
 
     /**
-     * @return the billId
+     * @return the customerId
      */
-    public String getBillId()
+    public String getCustomerId()
     {
-        return billId;
+        return customerId;
     }
 
     /**
-     * @param billId
-     *            the billId to set
+     * @param customerId
+     *            the customerId to set
      */
-    public void setBillId(String billId)
+    public void setCustomerId(String customerId)
     {
-        this.billId = billId;
+        this.customerId = customerId;
     }
 
     /**
@@ -164,6 +171,23 @@ public class PayApplyBean implements Serializable
     }
 
     /**
+     * @return the locationId
+     */
+    public String getLocationId()
+    {
+        return locationId;
+    }
+
+    /**
+     * @param locationId
+     *            the locationId to set
+     */
+    public void setLocationId(String locationId)
+    {
+        this.locationId = locationId;
+    }
+
+    /**
      * @return the logTime
      */
     public String getLogTime()
@@ -180,38 +204,21 @@ public class PayApplyBean implements Serializable
         this.logTime = logTime;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#hashCode()
+    /**
+     * @return the approve
      */
-    @Override
-    public int hashCode()
+    public String getApprove()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ( (id == null) ? 0 : id.hashCode());
-        return result;
+        return approve;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
+    /**
+     * @param approve
+     *            the approve to set
      */
-    @Override
-    public boolean equals(Object obj)
+    public void setApprove(String approve)
     {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if ( ! (obj instanceof PayApplyBean)) return false;
-        final PayApplyBean other = (PayApplyBean)obj;
-        if (id == null)
-        {
-            if (other.id != null) return false;
-        }
-        else if ( !id.equals(other.id)) return false;
-        return true;
+        this.approve = approve;
     }
 
     /**
@@ -232,23 +239,6 @@ public class PayApplyBean implements Serializable
     }
 
     /**
-     * @return the locationId
-     */
-    public String getLocationId()
-    {
-        return locationId;
-    }
-
-    /**
-     * @param locationId
-     *            the locationId to set
-     */
-    public void setLocationId(String locationId)
-    {
-        this.locationId = locationId;
-    }
-
-    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -266,11 +256,11 @@ public class PayApplyBean implements Serializable
             .append("id = ")
             .append(this.id)
             .append(TAB)
-            .append("outId = ")
-            .append(this.outId)
+            .append("paymentId = ")
+            .append(this.paymentId)
             .append(TAB)
-            .append("billId = ")
-            .append(this.billId)
+            .append("customerId = ")
+            .append(this.customerId)
             .append(TAB)
             .append("moneys = ")
             .append(this.moneys)
@@ -286,6 +276,9 @@ public class PayApplyBean implements Serializable
             .append(TAB)
             .append("logTime = ")
             .append(this.logTime)
+            .append(TAB)
+            .append("approve = ")
+            .append(this.approve)
             .append(TAB)
             .append("description = ")
             .append(this.description)

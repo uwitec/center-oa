@@ -42,6 +42,7 @@ import com.china.center.oa.finance.dao.BankDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.facade.FinanceFacade;
 import com.china.center.oa.finance.vo.BankVO;
+import com.china.center.oa.finance.vo.PaymentVO;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.constant.AuthConstant;
@@ -446,26 +447,26 @@ public class BankAction extends DispatchAction
                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
-        AjaxResult ajax = new AjaxResult();
-
         try
         {
             String id = request.getParameter("id");
 
+            String customerId = request.getParameter("customerId");
+
             User user = Helper.getUser(request);
 
-            financeFacade.drawPaymentBean(user.getStafferId(), id);
+            financeFacade.drawPaymentBean(user.getStafferId(), id, customerId);
 
-            ajax.setSuccess("成功操作");
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
         }
         catch (MYException e)
         {
             _logger.warn(e, e);
 
-            ajax.setError("操作失败:" + e.getMessage());
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作操作：" + e.getErrorContent());
         }
 
-        return JSONTools.writeResponse(response, ajax);
+        return mapping.findForward("querySelfPayment");
     }
 
     /**
@@ -702,6 +703,36 @@ public class BankAction extends DispatchAction
         }
 
         return financeFacade.addPaymentBean(user.getId(), bean);
+    }
+
+    /**
+     * findPayment
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward findPayment(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        PaymentVO bean = paymentDAO.findVO(id);
+
+        if (bean == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据异常,请重新操作");
+
+            return mapping.findForward("querySelfPayment");
+        }
+
+        request.setAttribute("bean", bean);
+
+        return mapping.findForward("drawPayment");
     }
 
     /**

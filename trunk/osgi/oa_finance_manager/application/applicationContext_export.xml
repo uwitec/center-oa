@@ -38,4 +38,6 @@
 
 	<osgi:service ref="invoiceinsManager" interface="com.china.center.oa.finance.manager.InvoiceinsManager" />
 
+	<osgi:service ref="payApplyDAO" interface="com.china.center.oa.finance.dao.PayApplyDAO" />
+
 </beans>

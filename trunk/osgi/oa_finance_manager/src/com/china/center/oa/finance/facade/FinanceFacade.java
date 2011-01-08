@@ -51,7 +51,7 @@ public interface FinanceFacade
      * @return
      * @throws MYException
      */
-    boolean drawPaymentBean(String stafferId, String id)
+    boolean drawPaymentBean(String stafferId, String id, String customerId)
         throws MYException;
 
     /**

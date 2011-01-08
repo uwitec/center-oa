@@ -39,7 +39,7 @@ public class PaymentVSOutBean implements Serializable
 
     private String outId = "";
 
-    private String payId = "";
+    private String paymentId = "";
 
     private String billId = "";
 
@@ -114,20 +114,20 @@ public class PaymentVSOutBean implements Serializable
     }
 
     /**
-     * @return the payId
+     * @return the paymentId
      */
-    public String getPayId()
+    public String getPaymentId()
     {
-        return payId;
+        return paymentId;
     }
 
     /**
-     * @param payId
-     *            the payId to set
+     * @param paymentId
+     *            the paymentId to set
      */
-    public void setPayId(String payId)
+    public void setPaymentId(String paymentId)
     {
-        this.payId = payId;
+        this.paymentId = paymentId;
     }
 
     /**
@@ -239,8 +239,8 @@ public class PaymentVSOutBean implements Serializable
             .append("outId = ")
             .append(this.outId)
             .append(TAB)
-            .append("payId = ")
-            .append(this.payId)
+            .append("paymentId = ")
+            .append(this.paymentId)
             .append(TAB)
             .append("billId = ")
             .append(this.billId)
