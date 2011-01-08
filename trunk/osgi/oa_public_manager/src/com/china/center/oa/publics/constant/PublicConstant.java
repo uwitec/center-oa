@@ -180,11 +180,19 @@ public interface PublicConstant
     /**
      * 通过操作
      */
+    @Defined(key = "oprMode", value = "通过")
     int OPRMODE_PASS = 0;
 
     /**
      * 驳回
      */
+    @Defined(key = "oprMode", value = "驳回")
     int OPRMODE_REJECT = 1;
+
+    /**
+     * 提交
+     */
+    @Defined(key = "oprMode", value = "提交")
+    int OPRMODE_SUBMIT = 2;
 
 }

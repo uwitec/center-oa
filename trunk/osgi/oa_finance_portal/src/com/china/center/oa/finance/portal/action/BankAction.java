@@ -455,7 +455,7 @@ public class BankAction extends DispatchAction
 
             User user = Helper.getUser(request);
 
-            financeFacade.drawPaymentBean(user.getStafferId(), id, customerId);
+            financeFacade.drawPaymentBean(user.getId(), id, customerId);
 
             request.setAttribute(KeyConstant.MESSAGE, "成功操作");
         }
@@ -491,7 +491,7 @@ public class BankAction extends DispatchAction
 
             User user = Helper.getUser(request);
 
-            financeFacade.dropPaymentBean(user.getStafferId(), id);
+            financeFacade.dropPaymentBean(user.getId(), id);
 
             ajax.setSuccess("成功操作");
         }

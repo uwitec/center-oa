@@ -98,11 +98,11 @@ public interface FinanceConstant
      * 通过
      */
     @Defined(key = "payApplyStatus", value = "通过")
-    int PAYAPPLY_STATUS_REJECT = 2;
+    int PAYAPPLY_STATUS_PASS = 1;
 
     /**
      * 驳回
      */
     @Defined(key = "payApplyStatus", value = "驳回")
-    int PAYAPPLY_STATUS_PASS = 1;
+    int PAYAPPLY_STATUS_REJECT = 2;
 }

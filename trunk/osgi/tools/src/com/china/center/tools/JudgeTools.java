@@ -1,6 +1,9 @@
 package com.china.center.tools;
 
 
+import java.util.Collection;
+import java.util.Map;
+
 import com.china.center.common.MYException;
 
 
@@ -20,7 +23,8 @@ public class JudgeTools
     public final static int JUDGE_NUMBER_OR_LETTER = 2;
 
     private JudgeTools()
-    {}
+    {
+    }
 
     /**
      * Description: 判断入参是否为空(为空抛出异常,否则返回true)<br>
@@ -109,6 +113,26 @@ public class JudgeTools
                     {
                         throw new MYException("", "不是全数字");
                     }
+                }
+            }
+
+            if (oo[i] instanceof Collection)
+            {
+                Collection coll = (Collection)oo[i];
+
+                if (coll.size() == 0)
+                {
+                    throw new MYException("", "参数为空");
+                }
+            }
+
+            if (oo[i] instanceof Map)
+            {
+                Map coll = (Map)oo[i];
+
+                if (coll.size() == 0)
+                {
+                    throw new MYException("", "参数为空");
                 }
             }
         }

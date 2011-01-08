@@ -10,6 +10,7 @@ package com.china.center.oa.finance.bean;
 
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Id;
@@ -17,6 +18,7 @@ import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
+import com.china.center.oa.finance.vs.PaymentVSOutBean;
 import com.china.center.oa.publics.bean.StafferBean;
 
 
@@ -60,6 +62,8 @@ public class PaymentApplyBean implements Serializable
     private String approve = "";
 
     private String description = "";
+
+    private List<PaymentVSOutBean> vsList = null;
 
     /**
      * default constructor
@@ -286,6 +290,23 @@ public class PaymentApplyBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the vsList
+     */
+    public List<PaymentVSOutBean> getVsList()
+    {
+        return vsList;
+    }
+
+    /**
+     * @param vsList
+     *            the vsList to set
+     */
+    public void setVsList(List<PaymentVSOutBean> vsList)
+    {
+        this.vsList = vsList;
     }
 
 }

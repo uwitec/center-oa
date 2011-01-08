@@ -166,23 +166,35 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
-    public boolean drawPaymentBean(String stafferId, String id, String customerId)
+    public boolean drawPaymentBean(String userId, String id, String customerId)
         throws MYException
     {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
         synchronized (PAYMENT_LOCK)
         {
-            paymentManager.drawBean(stafferId, id, customerId);
+            paymentManager.drawBean(user, id, customerId);
         }
 
         return true;
     }
 
-    public boolean dropPaymentBean(String stafferId, String id)
+    public boolean dropPaymentBean(String userId, String id)
         throws MYException
     {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
         synchronized (PAYMENT_LOCK)
         {
-            paymentManager.dropBean(stafferId, id);
+            paymentManager.dropBean(user, id);
         }
 
         return true;

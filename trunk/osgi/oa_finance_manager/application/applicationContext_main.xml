@@ -39,6 +39,6 @@
 
 	<bean id="invoiceinsManager" class="com.china.center.oa.finance.manager.impl.InvoiceinsManagerImpl" />
 
-	<bean id="payApplyDAO" class="com.china.center.oa.finance.dao.impl.PayApplyDAOImpl" />
+	<bean id="paymentApplyDAO" class="com.china.center.oa.finance.dao.impl.PaymentApplyDAOImpl" />
 
 </beans>

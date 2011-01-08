@@ -82,7 +82,7 @@ public class PaymentManagerImpl implements PaymentManager
     }
 
     @Transactional(rollbackFor = MYException.class)
-    public boolean drawBean(String stafferId, String id, String customerId)
+    public boolean drawBean(User user, String id, String customerId)
         throws MYException
     {
         PaymentBean pay = paymentDAO.find(id);
@@ -97,7 +97,7 @@ public class PaymentManagerImpl implements PaymentManager
             throw new MYException("回款已经被人认领,请确认操作");
         }
 
-        pay.setStafferId(stafferId);
+        pay.setStafferId(user.getStafferId());
 
         pay.setCustomerId(customerId);
 
@@ -107,7 +107,7 @@ public class PaymentManagerImpl implements PaymentManager
     }
 
     @Transactional(rollbackFor = MYException.class)
-    public boolean dropBean(String stafferId, String id)
+    public boolean dropBean(User user, String id)
         throws MYException
     {
         PaymentBean pay = paymentDAO.find(id);
@@ -117,7 +117,7 @@ public class PaymentManagerImpl implements PaymentManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        if ( !stafferId.equals(pay.getStafferId()))
+        if ( !user.getStafferId().equals(pay.getStafferId()))
         {
             throw new MYException("只能释放自己的回款单,请确认操作");
         }

@@ -15,6 +15,7 @@ import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.oa.publics.constant.PublicConstant;
 
 
 /**
@@ -35,10 +36,16 @@ public class FlowLogBean implements Serializable
     @FK
     private String fullId = "";
 
+    /**
+     * 操作者
+     */
     private String actor = "";
 
-    private int oprMode = 0;
+    private int oprMode = PublicConstant.OPRMODE_PASS;
 
+    /**
+     * 涉及数量
+     */
     private int oprAmount = 0;
 
     private int preStatus = 0;

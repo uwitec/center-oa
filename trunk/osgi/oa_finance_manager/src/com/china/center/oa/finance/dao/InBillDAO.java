@@ -24,5 +24,5 @@ import com.china.center.oa.finance.vo.InBillVO;
  */
 public interface InBillDAO extends DAO<InBillBean, InBillVO>
 {
-
+    double sumByPaymentId(String paymentId);
 }

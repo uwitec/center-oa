@@ -3703,19 +3703,14 @@ public class OutAction extends DispatchAction
      */
     private void setInnerCondition2(HttpServletRequest request, ConditionParse condtion)
     {
-        String fullId = request.getParameter("fullId");
-
-        String invoiceId = request.getParameter("invoiceId");
-
-        String dutyId = request.getParameter("dutyId");
-
-        String customerName = request.getParameter("customerName");
-
-        String customerId = request.getParameter("customerId");
-
+        // 条件查询
         String outTime = request.getParameter("outTime");
 
         String outTime1 = request.getParameter("outTime1");
+
+        String customerName = request.getParameter("customerName");
+
+        String fullId = request.getParameter("fullId");
 
         if ( !StringTools.isNullOrNone(outTime))
         {
@@ -3749,13 +3744,46 @@ public class OutAction extends DispatchAction
             condtion.addCondition("OutBean.customerName", "like", customerName);
         }
 
-        condtion.addCondition("OutBean.invoiceId", "=", invoiceId);
+        // 固定查询
+        String stafferId = request.getParameter("stafferId");
 
-        condtion.addCondition("OutBean.dutyId", "=", dutyId);
+        String mode = request.getParameter("mode");
 
-        condtion.addCondition("OutBean.customerId", "=", customerId);
+        String invoiceId = request.getParameter("invoiceId");
 
-        condtion.addCondition("and OutBean.status in (3, 4)");
+        String dutyId = request.getParameter("dutyId");
+
+        String customerId = request.getParameter("customerId");
+
+        if ( !StringTools.isNullOrNone(invoiceId))
+        {
+            condtion.addCondition("OutBean.invoiceId", "=", invoiceId);
+        }
+
+        if ( !StringTools.isNullOrNone(dutyId))
+        {
+            condtion.addCondition("OutBean.dutyId", "=", dutyId);
+        }
+
+        if ( !StringTools.isNullOrNone(customerId))
+        {
+            condtion.addCondition("OutBean.customerId", "=", customerId);
+        }
+
+        if ( !StringTools.isNullOrNone(stafferId))
+        {
+            condtion.addCondition("OutBean.stafferId", "=", stafferId);
+        }
+
+        if ("0".equals(mode))
+        {
+            condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_PASS);
+        }
+
+        if ("1".equals(mode))
+        {
+            condtion.addCondition("and OutBean.status in (3, 4)");
+        }
 
         condtion.addCondition("order by OutBean.fullId desc");
     }

@@ -9,6 +9,7 @@
 package com.china.center.oa.finance.dao.impl;
 
 
+import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.dao.InBillDAO;
@@ -25,4 +26,9 @@ import com.china.center.oa.finance.vo.InBillVO;
  */
 public class InBillDAOImpl extends BaseDAO<InBillBean, InBillVO> implements InBillDAO
 {
+    public double sumByPaymentId(String paymentId)
+    {
+        return this.jdbcOperation.queryForDouble(BeanTools.getSumHead(claz, "moneys")
+                                                 + "where InBillBean.paymentId = ?", paymentId);
+    }
 }

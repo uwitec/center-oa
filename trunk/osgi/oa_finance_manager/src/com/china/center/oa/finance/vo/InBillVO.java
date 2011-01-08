@@ -34,6 +34,9 @@ public class InBillVO extends InBillBean
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
 
+    @Relationship(relationField = "ownerId")
+    private String ownerName = "";
+
     /**
      * default constructor
      */
@@ -93,6 +96,23 @@ public class InBillVO extends InBillBean
     }
 
     /**
+     * @return the ownerName
+     */
+    public String getOwnerName()
+    {
+        return ownerName;
+    }
+
+    /**
+     * @param ownerName
+     *            the ownerName to set
+     */
+    public void setOwnerName(String ownerName)
+    {
+        this.ownerName = ownerName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -115,6 +135,9 @@ public class InBillVO extends InBillBean
             .append(TAB)
             .append("stafferName = ")
             .append(this.stafferName)
+            .append(TAB)
+            .append("ownerName = ")
+            .append(this.ownerName)
             .append(TAB)
             .append(" )");
 

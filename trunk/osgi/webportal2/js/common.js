@@ -165,7 +165,7 @@ function setSelectIndex(selectObj, index)
 
     if (!isNoneInCommon(index))
     {
-        index = parseInt(index);
+        index = parseInt(index, 10);
 
         var os = selectObj.options;
 
@@ -496,7 +496,7 @@ function eload(elements)
 
             if (!isNoneInCommon(index))
             {
-                var index = parseInt(index);
+                var index = parseInt(index, 10);
 
                 if (index == rIndex)
                 {

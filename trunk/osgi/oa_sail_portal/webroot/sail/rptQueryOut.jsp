@@ -58,6 +58,8 @@ function press()
 <input type="hidden" value="${dutyId}" name="dutyId"> 
 <input type="hidden" value="${invoiceId}" name="invoiceId"> 
 <input type="hidden" value="${customerId}" name="customerId"> 
+<input type="hidden" value="${mode}" name="mode"> 
+<input type="hidden" value="${selectMode}" name="selectMode"> 
 
 <p:navigation
 	height="22">
@@ -114,7 +116,7 @@ function press()
 
 			<c:forEach items="${list}" var="item" varStatus="vs">
 				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
-					<td align="center"><input type="checkbox" name="beans" value="${item.fullId}" /></td>
+					<td align="center"><input type=${selectMode == 1 ? 'checkbox' : 'radio'} name="beans" value="${item.fullId}" ptotal="${my:formatNum(item.total)}"></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.fullId}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.customerName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>

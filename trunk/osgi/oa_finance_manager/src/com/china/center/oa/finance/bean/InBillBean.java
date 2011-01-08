@@ -48,14 +48,25 @@ public class InBillBean implements Serializable
     @Join(tagClass = CustomerBean.class)
     private String customerId = "";
 
-    @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
+    /**
+     * 单据生成人
+     */
+    @Join(tagClass = StafferBean.class, type = JoinType.LEFT, alias = "SB1")
     private String stafferId = "";
+
+    /**
+     * 属于哪个职员的
+     */
+    @Join(tagClass = StafferBean.class, type = JoinType.LEFT, alias = "SB2")
+    private String ownerId = "";
 
     private String locationId = "";
 
     private String destBankId = "";
 
     private String refBillId = "";
+
+    private String paymentId = "";
 
     private String logTime = "";
 
@@ -273,6 +284,40 @@ public class InBillBean implements Serializable
     }
 
     /**
+     * @return the paymentId
+     */
+    public String getPaymentId()
+    {
+        return paymentId;
+    }
+
+    /**
+     * @param paymentId
+     *            the paymentId to set
+     */
+    public void setPaymentId(String paymentId)
+    {
+        this.paymentId = paymentId;
+    }
+
+    /**
+     * @return the ownerId
+     */
+    public String getOwnerId()
+    {
+        return ownerId;
+    }
+
+    /**
+     * @param ownerId
+     *            the ownerId to set
+     */
+    public void setOwnerId(String ownerId)
+    {
+        this.ownerId = ownerId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -284,7 +329,7 @@ public class InBillBean implements Serializable
         StringBuilder retValue = new StringBuilder();
 
         retValue
-            .append("BillBean ( ")
+            .append("InBillBean ( ")
             .append(super.toString())
             .append(TAB)
             .append("id = ")
@@ -308,6 +353,9 @@ public class InBillBean implements Serializable
             .append("stafferId = ")
             .append(this.stafferId)
             .append(TAB)
+            .append("ownerId = ")
+            .append(this.ownerId)
+            .append(TAB)
             .append("locationId = ")
             .append(this.locationId)
             .append(TAB)
@@ -316,6 +364,9 @@ public class InBillBean implements Serializable
             .append(TAB)
             .append("refBillId = ")
             .append(this.refBillId)
+            .append(TAB)
+            .append("paymentId = ")
+            .append(this.paymentId)
             .append(TAB)
             .append("logTime = ")
             .append(this.logTime)
