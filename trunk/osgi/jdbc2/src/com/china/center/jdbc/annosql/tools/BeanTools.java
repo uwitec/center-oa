@@ -139,7 +139,8 @@ public abstract class BeanTools
 
     public static String getSumHead(Class<?> claz, String sumField)
     {
-        return "select sum(" + sumField + ") from " + getTableName(claz) + " ";
+        return "select sum(" + sumField + ") from " + getTableName(claz) + " " + getClassName(claz)
+               + " ";
     }
 
     /**
