@@ -13,6 +13,7 @@ Export-Package:
  com.china.center.oa.finance.vs;version="1.0.0",
  com.china.center.oa.finance.vo;version="1.0.0"
 Require-Bundle: 
+ com.china.center.oa.sail.manager;bundle-version="1.0.0",
  com.china.center.oa.customer.manager;bundle-version="1.0.0",
  com.china.center.oa.publics.manager;bundle-version="1.0.0",
  com.china.center.osgi.jdbc;bundle-version="1.0.0",

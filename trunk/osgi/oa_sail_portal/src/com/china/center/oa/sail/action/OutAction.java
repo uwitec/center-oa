@@ -3174,7 +3174,18 @@ public class OutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        outManager.payOut(user, fullId, "结算中心确认收款");
+        try
+        {
+            outManager.payOut(user, fullId, "结算中心确认收款");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理错误:" + e.getErrorContent());
+
+            return mapping.findForward("error");
+        }
 
         CommonTools.saveParamers(request);
 
@@ -3226,7 +3237,18 @@ public class OutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        outManager.payOut(user, fullId, "财务确认收款");
+        try
+        {
+            outManager.payOut(user, fullId, "财务确认收款");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理错误:" + e.getErrorContent());
+
+            return mapping.findForward("error");
+        }
 
         request.setAttribute(KeyConstant.MESSAGE, "成功核对单据:" + fullId);
 
@@ -3775,9 +3797,10 @@ public class OutAction extends DispatchAction
             condtion.addCondition("OutBean.stafferId", "=", stafferId);
         }
 
+        // 查询需要勾款的销售单
         if ("0".equals(mode))
         {
-            condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_PASS);
+            condtion.addCondition("and OutBean.status in (1, 3, 6, 7, 8, 9)");
         }
 
         if ("1".equals(mode))

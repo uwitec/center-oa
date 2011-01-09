@@ -89,7 +89,7 @@ public interface FinanceFacade
      * @return
      * @throws MYException
      */
-    boolean passPaymentApply(String userId, String id)
+    boolean passPaymentApply(String userId, String id, String reason)
         throws MYException;
 
     /**
@@ -101,5 +101,17 @@ public interface FinanceFacade
      * @throws MYException
      */
     boolean rejectPaymentApply(String userId, String id, String reason)
+        throws MYException;
+
+    /**
+     * 分拆
+     * 
+     * @param user
+     * @param id
+     * @param newMoney
+     * @return
+     * @throws MYException
+     */
+    boolean splitInBillBean(String userId, String id, double newMoney)
         throws MYException;
 }

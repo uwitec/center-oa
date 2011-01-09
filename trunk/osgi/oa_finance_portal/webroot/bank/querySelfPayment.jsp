@@ -37,7 +37,7 @@ function load()
          title: '回款列表',
          url: gurl + 'querySelfPayment',
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} lstafferId={stafferId}>', width : 40, align: 'center'},
+             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} lstafferId={stafferId} luseall={useall}>', width : 40, align: 'center'},
              {display: '帐户', name : 'bankName', width : '18%'},
              {display: '类型', name : 'type', cc: 'paymentType', width : '5%'},
              {display: '状态', name : 'status', cc: 'paymentStatus', width : '5%'},
@@ -47,14 +47,15 @@ function load()
              {display: '回款来源', name : 'fromer', width : '12%'},
              {display: '回款金额', name : 'money', width : '8%', toFixed: 2},
              {display: '回款日期', name : 'receiveTime', width : '8%', sortable : true,},
-             {display: '导入日期', name : 'logTime', sortable : true, width : 'auto'}
+             {display: '标识', name : 'id', sortable : true, width : 'auto'}
              ],
          extAtt: {
              //name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
              {id: 'get', bclass: 'draw', caption: '认领', onpress : drawBean},
-             {id: 'oget', bclass: 'odraw', caption: '退领', onpress : odrawBean},
+             {id: 'oget1', bclass: 'odraw', caption: '退领', onpress : odrawBean},
+             {id: 'oget2', bclass: 'update', caption: '关联销售', onpress : refBean},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -68,6 +69,8 @@ function $callBack()
     loadForm();
     
     highlights($("#mainTable").get(0), ['对私', '未认领'], 'red');
+    
+    highlights($("#mainTable").get(0), ['全部使用'], 'blue');
 }
 
 var currId = '${user.stafferId}';
@@ -77,6 +80,18 @@ function drawBean(opr, grid)
     if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 0)
     {    
         $l(gurl + 'find' + ukey + '&id=' + getRadioValue('checkb'));
+    }
+    else
+    $error('不能操作');
+}
+
+function refBean(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb') 
+        && getRadio('checkb').lstatus == 1 
+        && getRadio('checkb').luseall == 0)
+    {    
+        $l(gurl + 'find' + ukey + '&mode=1&id=' + getRadioValue('checkb'));
     }
     else
     $error('不能操作');

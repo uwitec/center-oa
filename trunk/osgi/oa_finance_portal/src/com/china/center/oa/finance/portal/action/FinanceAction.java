@@ -9,6 +9,7 @@
 package com.china.center.oa.finance.portal.action;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,18 +37,26 @@ import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.finance.bean.BankBean;
+import com.china.center.oa.finance.bean.PaymentApplyBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.dao.BankDAO;
+import com.china.center.oa.finance.dao.InBillDAO;
+import com.china.center.oa.finance.dao.PaymentApplyDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
+import com.china.center.oa.finance.dao.PaymentVSOutDAO;
 import com.china.center.oa.finance.facade.FinanceFacade;
 import com.china.center.oa.finance.vo.BankVO;
+import com.china.center.oa.finance.vo.PaymentApplyVO;
 import com.china.center.oa.finance.vo.PaymentVO;
+import com.china.center.oa.finance.vs.PaymentVSOutBean;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.DutyBean;
+import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.DutyDAO;
+import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -75,9 +84,17 @@ public class FinanceAction extends DispatchAction
 
     private DutyDAO dutyDAO = null;
 
+    private InBillDAO inBillDAO = null;
+
     private UserManager userManager = null;
 
     private PaymentDAO paymentDAO = null;
+
+    private FlowLogDAO flowLogDAO = null;
+
+    private PaymentVSOutDAO paymentVSOutDAO = null;
+
+    private PaymentApplyDAO paymentApplyDAO = null;
 
     private static final String QUERYBANK = "queryBank";
 
@@ -86,6 +103,10 @@ public class FinanceAction extends DispatchAction
     private static final String QUERYPAYMENT = "queryPayment";
 
     private static final String QUERYSELFPAYMENT = "querySelfPayment";
+
+    private static final String QUERYPAYMENTAPPLY = "queryPaymentApply";
+
+    private static final String QUERYSELFPAYMENTAPPLY = "querySelfPaymentApply";
 
     /**
      * default constructor
@@ -132,6 +153,74 @@ public class FinanceAction extends DispatchAction
     }
 
     /**
+     * queryPaymentApply
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryPaymentApply(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        User user = Helper.getUser(request);
+
+        ActionTools.processJSONQueryCondition(QUERYPAYMENTAPPLY, request, condtion);
+
+        condtion.addCondition("PaymentApplyBean.locationId", "=", user.getLocationId());
+
+        condtion.addIntCondition("PaymentApplyBean.status", "=",
+            FinanceConstant.PAYAPPLY_STATUS_INIT);
+
+        condtion.addCondition("order by PaymentApplyBean.logTime desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPAYMENTAPPLY, request, condtion,
+            this.paymentApplyDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * querySelfPaymentApply
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward querySelfPaymentApply(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
+                                               HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        User user = Helper.getUser(request);
+
+        ActionTools.processJSONQueryCondition(QUERYSELFPAYMENTAPPLY, request, condtion);
+
+        condtion.addCondition("PaymentApplyBean.stafferId", "=", user.getStafferId());
+
+        condtion.addCondition("order by PaymentApplyBean.logTime desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFPAYMENTAPPLY, request,
+            condtion, this.paymentApplyDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
      * queryPayment
      * 
      * @param mapping
@@ -153,7 +242,7 @@ public class FinanceAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYPAYMENT, request, condtion, changeMap);
 
-        condtion.addCondition("order by PaymentBean.logTime desc");
+        condtion.addCondition("order by PaymentBean.id desc");
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPAYMENT, request, condtion,
             this.paymentDAO);
@@ -174,7 +263,7 @@ public class FinanceAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYSELFPAYMENT, request, condtion, initMap);
 
-        condtion.addCondition("order by PaymentBean.logTime desc");
+        condtion.addCondition("order by PaymentBean.id desc");
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFPAYMENT, request, condtion,
             this.paymentDAO);
@@ -434,6 +523,42 @@ public class FinanceAction extends DispatchAction
     }
 
     /**
+     * deletePaymentApply
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward deletePaymentApply(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            User user = Helper.getUser(request);
+
+            financeFacade.deletePaymentApply(user.getId(), id);
+
+            ajax.setSuccess("成功删除");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("删除失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
      * 领取回款
      * 
      * @param mapping
@@ -457,6 +582,9 @@ public class FinanceAction extends DispatchAction
 
             financeFacade.drawPaymentBean(user.getId(), id, customerId);
 
+            // 付款申请
+            addApply(request, id, customerId, user);
+
             request.setAttribute(KeyConstant.MESSAGE, "成功操作");
         }
         catch (MYException e)
@@ -467,6 +595,117 @@ public class FinanceAction extends DispatchAction
         }
 
         return mapping.findForward("querySelfPayment");
+    }
+
+    /**
+     * drawPayment2
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward drawPayment2(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        try
+        {
+            String id = request.getParameter("id");
+
+            String customerId = request.getParameter("customerId");
+
+            User user = Helper.getUser(request);
+
+            // 付款申请
+            addApply(request, id, customerId, user);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作操作：" + e.getErrorContent());
+        }
+
+        return mapping.findForward("querySelfPayment");
+    }
+
+    /**
+     * 付款申请
+     * 
+     * @param request
+     * @param id
+     * @param customerId
+     * @param user
+     * @throws MYException
+     */
+    private void addApply(HttpServletRequest request, String id, String customerId, User user)
+        throws MYException
+    {
+        PaymentApplyBean apply = new PaymentApplyBean();
+
+        apply.setCustomerId(customerId);
+        apply.setDescription(request.getParameter("description"));
+        apply.setLocationId(user.getLocationId());
+        apply.setLogTime(TimeTools.now());
+        apply.setPaymentId(id);
+        apply.setStafferId(user.getStafferId());
+
+        List<PaymentVSOutBean> vsList = new ArrayList<PaymentVSOutBean>();
+
+        double total = 0.0d;
+
+        // 生成付款单申请
+        for (int i = 1; i <= 5; i++ )
+        {
+            String outId = request.getParameter("outId" + i);
+
+            String outMoney = request.getParameter("outMoney" + i);
+
+            if (StringTools.isNullOrNone(outMoney)
+                || MathTools.parseDouble(outMoney.trim()) == 0.0d)
+            {
+                continue;
+            }
+
+            PaymentVSOutBean vs = new PaymentVSOutBean();
+
+            vs.setLocationId(user.getLocationId());
+
+            vs.setMoneys(MathTools.parseDouble(outMoney.trim()));
+
+            if ("客户预收".equals(outId))
+            {
+                vs.setOutId("");
+            }
+            else
+            {
+                vs.setOutId(outId);
+            }
+
+            vs.setPaymentId(id);
+            vs.setStafferId(user.getStafferId());
+
+            vsList.add(vs);
+
+            total += vs.getMoneys();
+        }
+
+        apply.setVsList(vsList);
+
+        // 没有申请付款
+        if (vsList.size() == 0)
+        {
+            return;
+        }
+
+        apply.setMoneys(total);
+
+        financeFacade.addPaymentApply(user.getId(), apply);
     }
 
     /**
@@ -720,6 +959,7 @@ public class FinanceAction extends DispatchAction
         throws ServletException
     {
         String id = request.getParameter("id");
+        String mode = request.getParameter("mode");
 
         PaymentVO bean = paymentDAO.findVO(id);
 
@@ -730,9 +970,159 @@ public class FinanceAction extends DispatchAction
             return mapping.findForward("querySelfPayment");
         }
 
+        List<PaymentApplyBean> queryEntityBeansByFK = paymentApplyDAO.queryEntityBeansByFK(id);
+
+        for (PaymentApplyBean paymentApplyBean : queryEntityBeansByFK)
+        {
+            if (paymentApplyBean.getStatus() == FinanceConstant.PAYAPPLY_STATUS_INIT)
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "有付款申请没有处理结束,请重新操作");
+
+                return mapping.findForward("querySelfPayment");
+            }
+        }
+
+        double hasUsed = inBillDAO.sumByPaymentId(id);
+
         request.setAttribute("bean", bean);
 
+        request.setAttribute("hasUsed", hasUsed);
+
+        if ("1".equals(mode))
+        {
+            return mapping.findForward("drawPayment2");
+        }
+
         return mapping.findForward("drawPayment");
+    }
+
+    /**
+     * findPaymentApply
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward findPaymentApply(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        String update = request.getParameter("update");
+
+        PaymentApplyVO bean = paymentApplyDAO.findVO(id);
+
+        if (bean == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据异常,请重新操作");
+
+            return mapping.findForward("error");
+        }
+
+        request.setAttribute("bean", bean);
+
+        List<FlowLogBean> loglist = flowLogDAO.queryEntityBeansByFK(id);
+
+        request.setAttribute("loglist", loglist);
+
+        List<PaymentVSOutBean> vsList = paymentVSOutDAO.queryEntityBeansByFK(id);
+
+        for (PaymentVSOutBean paymentVSOutBean : vsList)
+        {
+            if (StringTools.isNullOrNone(paymentVSOutBean.getOutId()))
+            {
+                paymentVSOutBean.setOutId("客户预收");
+            }
+        }
+
+        request.setAttribute("vsList", vsList);
+
+        if ("1".equals(update))
+        {
+            return mapping.findForward("handlePaymentApply");
+        }
+
+        return mapping.findForward("detailPaymentApply");
+    }
+
+    /**
+     * passPaymentApply
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward passPaymentApply(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        String reason = request.getParameter("reason");
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            financeFacade.passPaymentApply(user.getId(), id, reason);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        return mapping.findForward("queryPaymentApply");
+    }
+
+    /**
+     * rejectPaymentApply
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rejectPaymentApply(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        String reason = request.getParameter("reason");
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            financeFacade.rejectPaymentApply(user.getId(), id, reason);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        return mapping.findForward("queryPaymentApply");
     }
 
     /**
@@ -818,6 +1208,74 @@ public class FinanceAction extends DispatchAction
     public void setUserManager(UserManager userManager)
     {
         this.userManager = userManager;
+    }
+
+    /**
+     * @return the paymentApplyDAO
+     */
+    public PaymentApplyDAO getPaymentApplyDAO()
+    {
+        return paymentApplyDAO;
+    }
+
+    /**
+     * @param paymentApplyDAO
+     *            the paymentApplyDAO to set
+     */
+    public void setPaymentApplyDAO(PaymentApplyDAO paymentApplyDAO)
+    {
+        this.paymentApplyDAO = paymentApplyDAO;
+    }
+
+    /**
+     * @return the flowLogDAO
+     */
+    public FlowLogDAO getFlowLogDAO()
+    {
+        return flowLogDAO;
+    }
+
+    /**
+     * @param flowLogDAO
+     *            the flowLogDAO to set
+     */
+    public void setFlowLogDAO(FlowLogDAO flowLogDAO)
+    {
+        this.flowLogDAO = flowLogDAO;
+    }
+
+    /**
+     * @return the paymentVSOutDAO
+     */
+    public PaymentVSOutDAO getPaymentVSOutDAO()
+    {
+        return paymentVSOutDAO;
+    }
+
+    /**
+     * @param paymentVSOutDAO
+     *            the paymentVSOutDAO to set
+     */
+    public void setPaymentVSOutDAO(PaymentVSOutDAO paymentVSOutDAO)
+    {
+        this.paymentVSOutDAO = paymentVSOutDAO;
+    }
+
+    /**
+     * @return the inBillDAO
+     */
+    public InBillDAO getInBillDAO()
+    {
+        return inBillDAO;
+    }
+
+    /**
+     * @param inBillDAO
+     *            the inBillDAO to set
+     */
+    public void setInBillDAO(InBillDAO inBillDAO)
+    {
+        this.inBillDAO = inBillDAO;
     }
 
 }

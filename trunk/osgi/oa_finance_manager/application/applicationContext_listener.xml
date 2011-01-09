@@ -35,4 +35,17 @@
         </property>
     </bean>
     
+    <bean id="outListenerFinanceImpl" class="com.china.center.oa.finance.listener.impl.OutListenerFinanceImpl" />
+    
+    <bean id="outLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="outManager"/>
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="outListenerFinanceImpl" />
+            </list>
+        </property>
+    </bean>
+    
 </beans>

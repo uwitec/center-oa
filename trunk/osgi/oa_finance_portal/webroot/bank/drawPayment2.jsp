@@ -11,13 +11,13 @@
 
 function addBean()
 {
-	submit('确定认领回款?', null, check);
+	submit('确定关联销售或者预收?', null, check);
 }
 
 function check()
 {
     //计算是否回款溢出
-    var total = ${my:formatNum(bean.money)};
+    var total = ${my:formatNum(bean.money - hasUsed)};
     
     var pu = 0.0;
     
@@ -44,27 +44,10 @@ function check()
     return false;
 }
 
-function selectCus()
-{
-    window.common.modal('../customer/customer.do?method=rptQuerySelfCustomer&stafferId=${user.stafferId}&load=1');
-}
-
-function getCustomer(obj)
-{
-    $O('customerId').value = obj.value;
-    $O('cname').value = obj.pname;
-}
-
 var g_index = 1;
 
 function opens(index)
 {
-    if ($O('customerId').value == '')
-    {
-        alert('请选择客户');
-        return false;
-    }
-    
     g_index = index;
     
     window.common.modal('../sail/out.do?method=rptQueryOut&selectMode=0&mode=0&load=1&stafferId=${user.stafferId}&customerId=' + $$('customerId'));
@@ -86,13 +69,13 @@ function clears()
 </head>
 <body class="body_class">
 <form name="formEntry" action="../finance/bank.do" method="post">
-<input type="hidden" name="method" value="drawPayment"> 
-<input type="hidden" name="customerId" value=""> 
+<input type="hidden" name="method" value="drawPayment2"> 
+<input type="hidden" name="customerId" value="${bean.customerId}"> 
 <input type="hidden" name="id" value="${bean.id}"> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javascript:history.go(-1)">回款管理</span> &gt;&gt; 认领回款</td>
+		onclick="javascript:history.go(-1)">回款管理</span> &gt;&gt; 销售关联</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -118,8 +101,12 @@ function clears()
                ${my:get('paymentType', bean.type)}
             </p:cell>
             
-            <p:cell title="金额">
+            <p:cell title="总金额">
                ${my:formatNum(bean.money)}
+            </p:cell>
+            
+            <p:cell title="剩余金额(可使用)">
+               ${my:formatNum(bean.money - hasUsed)}
             </p:cell>
             
             <p:cell title="回款来源">
@@ -130,13 +117,6 @@ function clears()
                ${bean.receiveTime}
             </p:cell>
 			
-			<p:cell title="绑定客户" end="true">
-                <input type="text" size="60" readonly="readonly" name="cname" oncheck="notNone;"> 
-                <font color="red">*</font>
-                <input type="button" value="&nbsp;选 择&nbsp;" name="qout1" id="qout1"
-                    class="button_class" onclick="selectCus()">
-            </p:cell>
-            
             <c:forEach begin="1" end="5" var="item">
 	            <p:cell title="关联单据${item}" end="true">
 	                <input type="text" size="40" value="客户预收" readonly="readonly" name="outId${item}"> 

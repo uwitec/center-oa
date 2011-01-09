@@ -15,12 +15,12 @@
     </item>
     
     <item name="queryPayment" deaultpfix="PaymentBean">
-        <condtion name="alogTime" filed="logTime" caption="开始时间">
+        <condtion name="alogTime" filed="logTime" caption="导入时间从">
             <opr>&gt;=</opr>
             <type>date</type>
             <inner></inner>
         </condtion>
-        <condtion name="blogTime" filed="logTime" caption="结束时间">
+        <condtion name="blogTime" filed="logTime" caption="到">
             <opr>&lt;=</opr>
             <type>date</type>
             <inner></inner>
@@ -48,6 +48,10 @@
             <option>$paymentStatus</option>
         </condtion>
         <condtion name="stafferName" filed="name" caption="认领人" pfix="StafferBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="id" caption="标识">
             <opr>like</opr>
             <type>text</type>
         </condtion>
@@ -91,5 +95,87 @@
             <type>text</type>
         </condtion>
     </item>
+    
+    <item name="queryPaymentApply" deaultpfix="PaymentApplyBean">
+        <condtion name="alogTime" filed="logTime" caption="开始时间">
+            <opr>&gt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="blogTime" filed="logTime" caption="结束时间">
+            <opr>&lt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="stafferName" filed="name" caption="申请人" pfix="StafferBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="customerName" filed="name" caption="客户" pfix="CustomerBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+         <condtion name="paymentId" caption="回款标识">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="status" caption="状态">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$payApplyStatus</option>
+        </condtion>
+    </item>
+    
+    <item name="querySelfPaymentApply" alias="queryPaymentApply"/>
+    
+    <item name="queryInBill" deaultpfix="InBillBean">
+        <condtion name="alogTime" filed="logTime" caption="开始时间">
+            <opr>&gt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="blogTime" filed="logTime" caption="结束时间">
+            <opr>&lt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="stafferName" filed="name" caption="所属职员" pfix="SB2">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="customerName" filed="name" caption="客户" pfix="CustomerBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="paymentId" caption="回款标识(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="outId" caption="销售单号(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="bankId" caption="帐户">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$bankList</option>
+        </condtion>
+        <condtion name="type" caption="类型">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$inbillType</option>
+        </condtion>
+        <condtion name="status" caption="状态">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$inbillStatus</option>
+        </condtion>
+    </item>
+    
+    <item name="querySelfInBill" alias="queryInBill"/>
     
 </query>

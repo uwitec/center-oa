@@ -10,7 +10,11 @@
             <forward name="rptQueryBank" path="/bank/rptQueryBank.jsp" />
             <forward name="uploadPayment" path="/bank/uploadPayment.jsp" />
             <forward name="drawPayment" path="/bank/drawPayment.jsp" />
+            <forward name="drawPayment2" path="/bank/drawPayment2.jsp" />
             <forward name="querySelfPayment" path="/bank/querySelfPayment.jsp" />
+            <forward name="detailPaymentApply" path="/bank/detailPaymentApply.jsp" />
+            <forward name="handlePaymentApply" path="/bank/handlePaymentApply.jsp" />
+            <forward name="queryPaymentApply" path="/bank/queryPaymentApply.jsp" />
         </action>
         
         <action path="/finance/invoiceins" parameter="method"
@@ -19,6 +23,13 @@
             <forward name="addInvoiceins" path="/invoiceins/addInvoiceins.jsp" />
             <forward name="queryInvoiceins" path="/invoiceins/queryInvoiceins.jsp" />
             <forward name="detailInvoiceins" path="/invoiceins/detailInvoiceins.jsp" />
+        </action>
+        
+        <action path="/finance/bill" parameter="method"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+            <forward name="queryInBill" path="/bill/queryInBill.jsp" />
+            <forward name="detailInBill" path="/bill/detailInBill.jsp" />
         </action>
 		
 	</action-mappings>

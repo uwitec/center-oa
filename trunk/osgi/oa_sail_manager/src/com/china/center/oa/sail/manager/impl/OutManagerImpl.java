@@ -9,6 +9,7 @@
 package com.china.center.oa.sail.manager.impl;
 
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
@@ -77,6 +79,7 @@ import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.dao.OutUniqueDAO;
 import com.china.center.oa.sail.helper.OutHelper;
 import com.china.center.oa.sail.helper.YYTools;
+import com.china.center.oa.sail.listener.OutListener;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.sail.vo.BaseBalanceVO;
 import com.china.center.oa.sail.vo.OutVO;
@@ -98,7 +101,7 @@ import com.china.center.tools.TimeTools;
  * @see OutManagerImpl
  * @since 1.0
  */
-public class OutManagerImpl implements OutManager
+public class OutManagerImpl extends AbstractListenerManager<OutListener> implements OutManager
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
@@ -1090,6 +1093,21 @@ public class OutManagerImpl implements OutManager
             {
                 public Object doInTransaction(TransactionStatus arg0)
                 {
+                    // OSGI 驳回监听实现
+                    Collection<OutListener> listenerMapValues = listenerMapValues();
+
+                    for (OutListener listener : listenerMapValues)
+                    {
+                        try
+                        {
+                            listener.onReject(user, outBean);
+                        }
+                        catch (MYException e)
+                        {
+                            throw new RuntimeException(e.getErrorContent());
+                        }
+                    }
+
                     // 如果销售单，需要删除发货单(当库管驳回的时候才触发)
                     if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                     {
@@ -1227,6 +1245,21 @@ public class OutManagerImpl implements OutManager
                     // 把状态放到最新的out里面
                     outBean.setStatus(newNextStatus);
 
+                    // OSGI 驳回监听实现
+                    Collection<OutListener> listenerMapValues = listenerMapValues();
+
+                    for (OutListener listener : listenerMapValues)
+                    {
+                        try
+                        {
+                            listener.onPass(user, outBean);
+                        }
+                        catch (MYException e)
+                        {
+                            throw new RuntimeException(e.getErrorContent());
+                        }
+                    }
+
                     notifyOut(outBean, user, 0);
 
                     return Boolean.TRUE;
@@ -1235,17 +1268,17 @@ public class OutManagerImpl implements OutManager
         }
         catch (TransactionException e)
         {
-            _logger.error("通过库单错误：", e);
+            _logger.error(e, e);
             throw new MYException("数据库内部错误");
         }
         catch (DataAccessException e)
         {
-            _logger.error("通过库单错误：", e);
+            _logger.error(e, e);
             throw new MYException("数据库内部错误");
         }
         catch (Exception e)
         {
-            _logger.error("通过库单错误：", e);
+            _logger.error(e, e);
             throw new MYException("处理异常:" + e.getMessage());
         }
 
@@ -1592,6 +1625,7 @@ public class OutManagerImpl implements OutManager
     @Exceptional
     @Transactional(rollbackFor = {MYException.class})
     public boolean payOut(final User user, String fullId, String reason)
+        throws MYException
     {
         // 需要增加是否超期 flowId
         OutBean out = outDAO.find(fullId);
@@ -1616,8 +1650,16 @@ public class OutManagerImpl implements OutManager
             }
         }
 
+        Collection<OutListener> listenerMapValues = this.listenerMapValues();
+
+        // 从监听获得是否回款
+        for (OutListener outListener : listenerMapValues)
+        {
+            outListener.onHadPay(user, out);
+        }
+
         // 付款的金额
-        outDAO.modifyOutHadPay(fullId, MathTools.formatNum(out.getTotal()));
+        outDAO.modifyOutHadPay(fullId, out.getTotal());
 
         addOutLog(fullId, user, out, reason, SailConstant.OPR_OUT_PASS, out.getStatus());
 
@@ -1639,13 +1681,6 @@ public class OutManagerImpl implements OutManager
     public boolean modifyReDate(String fullId, String reDate)
     {
         return outDAO.modifyReDate(fullId, reDate);
-    }
-
-    @Exceptional
-    @Transactional(rollbackFor = {MYException.class})
-    public boolean modifyOutHadPay(String fullId, String hadPay)
-    {
-        return outDAO.modifyOutHadPay(fullId, hadPay);
     }
 
     @Exceptional

@@ -143,7 +143,7 @@ function balance()
 {
     if (getRadio('fullId').statuss == '3' && getRadio('fullId').outtype == '3')
     {
-        document.location.href = '../sail/out.do?method=preForAddOutBalance&type=0&outId=' + getRadioValue("fullId");
+        //document.location.href = '../sail/out.do?method=preForAddOutBalance&type=0&outId=' + getRadioValue("fullId");
     }
     else
     {
@@ -224,6 +224,8 @@ function load()
 	tooltip.init();
 	
 	highlights($("#mainTable").get(0), ['驳回'], 'red');
+	
+	highlights($("#mainTable").get(0), ['结束'], 'blue');
 }
 
 </script>
@@ -395,7 +397,6 @@ function load()
 						<td align="center" onclick="tableSort(this)" class="td_class">付款</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">${fg}人</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">仓库</td>
-						<td align="center" onclick="tableSort(this)" class="td_class">发货单</td>
 					</tr>
 
 					<c:forEach items="${listOut1}" var="item" varStatus="vs">
@@ -423,7 +424,6 @@ function load()
 							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.hadPay)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.depotName}</td>
-							<td align="center" onclick="hrefAndSelect(this)">${my:get("reprotType", item.consign)}</td>
 						</tr>
 					</c:forEach>
 				</table>

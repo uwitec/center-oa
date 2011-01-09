@@ -40,4 +40,6 @@
 
 	<osgi:service ref="paymentApplyDAO" interface="com.china.center.oa.finance.dao.PaymentApplyDAO" />
 
+	<osgi:service ref="paymentApplyManager" interface="com.china.center.oa.finance.manager.PaymentApplyManager" />
+
 </beans>

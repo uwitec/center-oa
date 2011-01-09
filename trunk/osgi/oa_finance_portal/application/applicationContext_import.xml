@@ -32,6 +32,8 @@
     <osgi:reference id="parameterDAO" interface="com.china.center.oa.publics.dao.ParameterDAO" />
     
     <osgi:reference id="showDAO" interface="com.china.center.oa.publics.dao.ShowDAO" />
+    
+    <osgi:reference id="flowLogDAO" interface="com.china.center.oa.publics.dao.FlowLogDAO" />
 	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	
@@ -60,5 +62,7 @@
     <osgi:reference id="invoiceinsManager" interface="com.china.center.oa.finance.manager.InvoiceinsManager" />
     
     <osgi:reference id="invoiceDAO" interface="com.china.center.oa.publics.dao.InvoiceDAO" />
+    
+    <osgi:reference id="paymentApplyDAO" interface="com.china.center.oa.finance.dao.PaymentApplyDAO" />
     
 </beans>

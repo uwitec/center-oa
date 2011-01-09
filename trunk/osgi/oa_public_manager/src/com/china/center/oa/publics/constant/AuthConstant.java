@@ -585,9 +585,9 @@ public interface AuthConstant
     String PAYMENT_OPR = "1602";
 
     /**
-     * 收付款操作
+     * 收款操作
      */
-    String BILL_OPR = "1603";
+    String INBILL_OPR = "1603";
 
     /**
      * 开发票操作
@@ -598,4 +598,9 @@ public interface AuthConstant
      * 删除开票
      */
     String INVOICEINS_DEL = "1605";
+
+    /**
+     * 收款申请审核
+     */
+    String INBILL_APPROVE = "1606";
 }

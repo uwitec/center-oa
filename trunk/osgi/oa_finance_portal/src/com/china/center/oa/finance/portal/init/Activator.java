@@ -18,6 +18,7 @@ public class Activator implements BundleActivator
         {
             add("bank");
             add("invoiceins");
+            add("bill");
         }
     };
 

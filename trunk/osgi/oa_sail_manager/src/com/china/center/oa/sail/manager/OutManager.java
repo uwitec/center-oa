@@ -11,10 +11,12 @@ package com.china.center.oa.sail.manager;
 
 import java.util.Map;
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
+import com.china.center.oa.sail.listener.OutListener;
 
 
 /**
@@ -25,7 +27,7 @@ import com.china.center.oa.sail.bean.OutBean;
  * @see OutManager
  * @since 1.0
  */
-public interface OutManager
+public interface OutManager extends ListenerManager<OutListener>
 {
     String addOut(final OutBean outBean, final Map dataMap, final User user)
         throws MYException;
@@ -166,13 +168,12 @@ public interface OutManager
      * @param reason
      * @return
      */
-    boolean payOut(final User user, String fullId, String reason);
+    boolean payOut(final User user, String fullId, String reason)
+        throws MYException;
 
     boolean mark(String fullId, boolean status);
 
     boolean modifyReDate(String fullId, String reDate);
-
-    boolean modifyOutHadPay(String fullId, String hadPay);
 
     /**
      * 获得out在日志里面的状态

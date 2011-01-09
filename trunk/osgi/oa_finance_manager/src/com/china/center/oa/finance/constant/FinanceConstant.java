@@ -107,20 +107,32 @@ public interface FinanceConstant
     int PAYAPPLY_STATUS_REJECT = 2;
 
     /**
+     * 回款转收款
+     */
+    @Defined(key = "payApplyType", value = "回款转收款")
+    int PAYAPPLY_TYPE_PAYMENT = 0;
+
+    /**
+     * 回款转收款
+     */
+    @Defined(key = "payApplyType", value = "销售单绑定")
+    int PAYAPPLY_TYPE_BING = 1;
+
+    /**
      * 已收
      */
     @Defined(key = "inbillStatus", value = "已收")
     int INBILL_STATUS_PAYMENTS = 0;
 
     /**
-     * 预收
+     * 关联申请
      */
-    @Defined(key = "inbillStatus", value = "预收")
+    @Defined(key = "inbillStatus", value = "关联申请")
     int INBILL_STATUS_PREPAYMENTS = 1;
 
     /**
-     * 未关联
+     * 预收
      */
-    @Defined(key = "inbillStatus", value = "未关联")
+    @Defined(key = "inbillStatus", value = "预收")
     int INBILL_STATUS_NOREF = 2;
 }

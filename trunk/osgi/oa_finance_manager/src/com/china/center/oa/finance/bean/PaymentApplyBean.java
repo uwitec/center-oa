@@ -13,7 +13,9 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
+import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.oa.customer.bean.CustomerBean;
@@ -37,6 +39,10 @@ public class PaymentApplyBean implements Serializable
     @Id
     private String id = "";
 
+    /**
+     * 不是必填哦
+     */
+    @FK
     private String paymentId = "";
 
     @Join(tagClass = CustomerBean.class)
@@ -46,6 +52,11 @@ public class PaymentApplyBean implements Serializable
      * 总金额
      */
     private double moneys = 0.0d;
+
+    /**
+     * 申请类型
+     */
+    private int type = FinanceConstant.PAYAPPLY_TYPE_PAYMENT;
 
     private int status = FinanceConstant.PAYAPPLY_STATUS_INIT;
 
@@ -63,6 +74,7 @@ public class PaymentApplyBean implements Serializable
 
     private String description = "";
 
+    @Ignore
     private List<PaymentVSOutBean> vsList = null;
 
     /**
@@ -243,6 +255,40 @@ public class PaymentApplyBean implements Serializable
     }
 
     /**
+     * @return the vsList
+     */
+    public List<PaymentVSOutBean> getVsList()
+    {
+        return vsList;
+    }
+
+    /**
+     * @param vsList
+     *            the vsList to set
+     */
+    public void setVsList(List<PaymentVSOutBean> vsList)
+    {
+        this.vsList = vsList;
+    }
+
+    /**
+     * @return the type
+     */
+    public int getType()
+    {
+        return type;
+    }
+
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(int type)
+    {
+        this.type = type;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -254,7 +300,7 @@ public class PaymentApplyBean implements Serializable
         StringBuilder retValue = new StringBuilder();
 
         retValue
-            .append("PayApplyBean ( ")
+            .append("PaymentApplyBean ( ")
             .append(super.toString())
             .append(TAB)
             .append("id = ")
@@ -268,6 +314,9 @@ public class PaymentApplyBean implements Serializable
             .append(TAB)
             .append("moneys = ")
             .append(this.moneys)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
             .append(TAB)
             .append("status = ")
             .append(this.status)
@@ -287,26 +336,12 @@ public class PaymentApplyBean implements Serializable
             .append("description = ")
             .append(this.description)
             .append(TAB)
+            .append("vsList = ")
+            .append(this.vsList)
+            .append(TAB)
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the vsList
-     */
-    public List<PaymentVSOutBean> getVsList()
-    {
-        return vsList;
-    }
-
-    /**
-     * @param vsList
-     *            the vsList to set
-     */
-    public void setVsList(List<PaymentVSOutBean> vsList)
-    {
-        this.vsList = vsList;
     }
 
 }

@@ -41,4 +41,6 @@
 
 	<bean id="paymentApplyDAO" class="com.china.center.oa.finance.dao.impl.PaymentApplyDAOImpl" />
 
+	<bean id="paymentApplyManager" class="com.china.center.oa.finance.manager.impl.PaymentApplyManagerImpl" />
+
 </beans>

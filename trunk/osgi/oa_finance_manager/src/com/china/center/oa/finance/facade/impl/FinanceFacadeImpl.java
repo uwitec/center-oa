@@ -17,6 +17,7 @@ import com.china.center.oa.finance.bean.PaymentApplyBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.facade.FinanceFacade;
 import com.china.center.oa.finance.manager.BankManager;
+import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.InvoiceinsManager;
 import com.china.center.oa.finance.manager.PaymentApplyManager;
 import com.china.center.oa.finance.manager.PaymentManager;
@@ -41,6 +42,8 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
     private PaymentManager paymentManager = null;
 
     private UserManager userManager = null;
+
+    private BillManager billManager = null;
 
     private InvoiceinsManager invoiceinsManager = null;
 
@@ -293,7 +296,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
-    public boolean passPaymentApply(String userId, String id)
+    public boolean passPaymentApply(String userId, String id, String reason)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(userId, id);
@@ -306,7 +309,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         {
             if (containAuth(user, AuthConstant.INBILL_APPROVE))
             {
-                return paymentApplyManager.passPaymentApply(user, id);
+                return paymentApplyManager.passPaymentApply(user, id, reason);
             }
             else
             {
@@ -350,6 +353,18 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         {
             return paymentApplyManager.updatePaymentApply(user, bean);
         }
+    }
+
+    public boolean splitInBillBean(String userId, String id, double newMoney)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        return billManager.splitInBillBean(user, id, newMoney);
     }
 
     /**
@@ -435,5 +450,22 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
     public void setPaymentApplyManager(PaymentApplyManager paymentApplyManager)
     {
         this.paymentApplyManager = paymentApplyManager;
+    }
+
+    /**
+     * @return the billManager
+     */
+    public BillManager getBillManager()
+    {
+        return billManager;
+    }
+
+    /**
+     * @param billManager
+     *            the billManager to set
+     */
+    public void setBillManager(BillManager billManager)
+    {
+        this.billManager = billManager;
     }
 }

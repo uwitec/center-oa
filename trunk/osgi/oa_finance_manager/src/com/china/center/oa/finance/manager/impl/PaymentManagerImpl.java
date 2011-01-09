@@ -9,16 +9,23 @@
 package com.china.center.oa.finance.manager.impl;
 
 
+import java.util.List;
+
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.finance.bean.PaymentApplyBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
+import com.china.center.oa.finance.dao.InBillDAO;
+import com.china.center.oa.finance.dao.PaymentApplyDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
+import com.china.center.oa.finance.dao.PaymentVSOutDAO;
 import com.china.center.oa.finance.manager.PaymentManager;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.tools.TimeTools;
 
 
@@ -35,7 +42,15 @@ public class PaymentManagerImpl implements PaymentManager
 {
     private PaymentDAO paymentDAO = null;
 
+    private InBillDAO inBillDAO = null;
+
+    private PaymentApplyDAO paymentApplyDAO = null;
+
     private CommonDAO commonDAO = null;
+
+    private PaymentVSOutDAO paymentVSOutDAO = null;
+
+    private FlowLogDAO flowLogDAO = null;
 
     /**
      * default constructor
@@ -122,6 +137,38 @@ public class PaymentManagerImpl implements PaymentManager
             throw new MYException("只能释放自己的回款单,请确认操作");
         }
 
+        double hasUsed = inBillDAO.sumByPaymentId(id);
+
+        if (hasUsed > 0.0)
+        {
+            throw new MYException("回款已经生成收款单,不能退领");
+        }
+
+        List<PaymentApplyBean> queryEntityBeansByFK = paymentApplyDAO.queryEntityBeansByFK(id);
+
+        for (PaymentApplyBean paymentApplyBean : queryEntityBeansByFK)
+        {
+            if (paymentApplyBean.getStatus() == FinanceConstant.PAYAPPLY_STATUS_INIT)
+            {
+                throw new MYException("有付款申请没有结束,请重新操作");
+            }
+
+            if (paymentApplyBean.getStatus() == FinanceConstant.PAYAPPLY_STATUS_PASS)
+            {
+                throw new MYException("回款已经生成收款单,请重新操作");
+            }
+        }
+
+        // 清除驳回的申请
+        for (PaymentApplyBean paymentApplyBean : queryEntityBeansByFK)
+        {
+            paymentApplyDAO.deleteEntityBean(paymentApplyBean.getId());
+
+            paymentVSOutDAO.deleteEntityBeansByFK(paymentApplyBean.getId());
+
+            flowLogDAO.deleteEntityBeansByFK(paymentApplyBean.getId());
+        }
+
         pay.setStafferId("");
 
         pay.setCustomerId("");
@@ -163,5 +210,73 @@ public class PaymentManagerImpl implements PaymentManager
     public void setCommonDAO(CommonDAO commonDAO)
     {
         this.commonDAO = commonDAO;
+    }
+
+    /**
+     * @return the inBillDAO
+     */
+    public InBillDAO getInBillDAO()
+    {
+        return inBillDAO;
+    }
+
+    /**
+     * @param inBillDAO
+     *            the inBillDAO to set
+     */
+    public void setInBillDAO(InBillDAO inBillDAO)
+    {
+        this.inBillDAO = inBillDAO;
+    }
+
+    /**
+     * @return the paymentApplyDAO
+     */
+    public PaymentApplyDAO getPaymentApplyDAO()
+    {
+        return paymentApplyDAO;
+    }
+
+    /**
+     * @param paymentApplyDAO
+     *            the paymentApplyDAO to set
+     */
+    public void setPaymentApplyDAO(PaymentApplyDAO paymentApplyDAO)
+    {
+        this.paymentApplyDAO = paymentApplyDAO;
+    }
+
+    /**
+     * @return the paymentVSOutDAO
+     */
+    public PaymentVSOutDAO getPaymentVSOutDAO()
+    {
+        return paymentVSOutDAO;
+    }
+
+    /**
+     * @param paymentVSOutDAO
+     *            the paymentVSOutDAO to set
+     */
+    public void setPaymentVSOutDAO(PaymentVSOutDAO paymentVSOutDAO)
+    {
+        this.paymentVSOutDAO = paymentVSOutDAO;
+    }
+
+    /**
+     * @return the flowLogDAO
+     */
+    public FlowLogDAO getFlowLogDAO()
+    {
+        return flowLogDAO;
+    }
+
+    /**
+     * @param flowLogDAO
+     *            the flowLogDAO to set
+     */
+    public void setFlowLogDAO(FlowLogDAO flowLogDAO)
+    {
+        this.flowLogDAO = flowLogDAO;
     }
 }

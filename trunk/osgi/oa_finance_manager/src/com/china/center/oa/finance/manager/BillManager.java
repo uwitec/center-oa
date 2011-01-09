@@ -27,9 +27,24 @@ public interface BillManager
     boolean addInBillBean(User user, InBillBean bean)
         throws MYException;
 
+    boolean addInBillBeanWithoutTransaction(User user, InBillBean bean)
+        throws MYException;
+
     boolean updateInBillBean(User user, InBillBean bean)
         throws MYException;
 
     boolean deleteInBillBean(User user, String id)
+        throws MYException;
+
+    /**
+     * 分拆
+     * 
+     * @param user
+     * @param id
+     * @param newMoney
+     * @return
+     * @throws MYException
+     */
+    boolean splitInBillBean(User user, String id, double newMoney)
         throws MYException;
 }

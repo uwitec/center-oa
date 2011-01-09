@@ -12,9 +12,12 @@ package com.china.center.oa.finance.bean;
 import java.io.Serializable;
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.FK;
+import com.china.center.jdbc.annotation.Html;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
@@ -36,16 +39,19 @@ public class InBillBean implements Serializable
     @Id
     private String id = "";
 
+    @Html(title = "类型", type = Element.SELECT)
     private int type = FinanceConstant.INBILL_TYPE_SAILOUT;
 
     /**
      * 已经收取 预收(关联的销售单还没有正式生效) 未关联(还没有和销售单关联)(这个只有在销售收入下才有意义哦)
      */
+    @Html(title = "状态", type = Element.SELECT)
     private int status = FinanceConstant.INBILL_STATUS_PAYMENTS;
 
     @Join(tagClass = BankBean.class)
     private String bankId = "";
 
+    @FK
     private String outId = "";
 
     private double moneys = 0.0d;
@@ -75,6 +81,7 @@ public class InBillBean implements Serializable
 
     private String logTime = "";
 
+    @Html(title = "备注", maxLength = 200, type = Element.TEXTAREA)
     private String description = "";
 
     /**

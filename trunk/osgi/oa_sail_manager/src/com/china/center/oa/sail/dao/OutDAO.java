@@ -50,6 +50,15 @@ public interface OutDAO extends DAO<OutBean, OutVO>
 
     boolean updateCurcredit(String fullId, double curcredit);
 
+    /**
+     * 更新已经付款金额
+     * 
+     * @param fullId
+     * @param hadPay
+     * @return
+     */
+    boolean updateHadPay(String fullId, double hadPay);
+
     boolean updateManagerId(String fullId, String managerId);
 
     boolean updateStaffcredit(String fullId, double staffcredit);
@@ -71,7 +80,7 @@ public interface OutDAO extends DAO<OutBean, OutVO>
 
     boolean updataInWay(String fullId, int inway);
 
-    boolean modifyOutHadPay(String fullId, String hadPay);
+    boolean modifyOutHadPay(String fullId, double hadPay);
 
     boolean modifyReDate(String fullId, String reDate);
 

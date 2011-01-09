@@ -41,7 +41,7 @@ public interface PaymentApplyManager
      * @return
      * @throws MYException
      */
-    boolean passPaymentApply(User user, String id)
+    boolean passPaymentApply(User user, String id, String reason)
         throws MYException;
 
     /**

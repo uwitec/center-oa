@@ -461,7 +461,7 @@ public class CustomerAction extends DispatchAction
             condtion.addCondition("CustomerBean.code", "like", code);
         }
 
-        condtion.addCondition("order by CustomerBean.creditVal desc");
+        condtion.addCondition("order by CustomerBean.id desc");
     }
 
     /**
