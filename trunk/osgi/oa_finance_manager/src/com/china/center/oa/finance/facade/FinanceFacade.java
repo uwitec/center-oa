@@ -12,6 +12,7 @@ package com.china.center.oa.finance.facade;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.bean.InvoiceinsBean;
+import com.china.center.oa.finance.bean.PaymentApplyBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 
 
@@ -69,5 +70,36 @@ public interface FinanceFacade
         throws MYException;
 
     boolean deleteInvoiceinsBean(String userId, String id)
+        throws MYException;
+
+    boolean addPaymentApply(String userId, PaymentApplyBean bean)
+        throws MYException;
+
+    boolean updatePaymentApply(String userId, PaymentApplyBean bean)
+        throws MYException;
+
+    boolean deletePaymentApply(String userId, String id)
+        throws MYException;
+
+    /**
+     * 通过(需要同步)
+     * 
+     * @param stafferId
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean passPaymentApply(String userId, String id)
+        throws MYException;
+
+    /**
+     * 驳回(需要同步)
+     * 
+     * @param stafferId
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean rejectPaymentApply(String userId, String id, String reason)
         throws MYException;
 }

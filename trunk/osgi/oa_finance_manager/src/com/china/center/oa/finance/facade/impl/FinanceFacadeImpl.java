@@ -13,10 +13,12 @@ import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.bean.InvoiceinsBean;
+import com.china.center.oa.finance.bean.PaymentApplyBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.facade.FinanceFacade;
 import com.china.center.oa.finance.manager.BankManager;
 import com.china.center.oa.finance.manager.InvoiceinsManager;
+import com.china.center.oa.finance.manager.PaymentApplyManager;
 import com.china.center.oa.finance.manager.PaymentManager;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.facade.AbstarctFacade;
@@ -42,10 +44,14 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
 
     private InvoiceinsManager invoiceinsManager = null;
 
+    private PaymentApplyManager paymentApplyManager = null;
+
     /**
      * 回款操作锁
      */
     private static Object PAYMENT_LOCK = new Object();
+
+    private static Object PAYMENT_APPLY_LOCK = new Object();
 
     /**
      * default constructor
@@ -257,6 +263,95 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
+    public boolean addPaymentApply(String userId, PaymentApplyBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (PAYMENT_APPLY_LOCK)
+        {
+            return paymentApplyManager.addPaymentApply(user, bean);
+        }
+    }
+
+    public boolean deletePaymentApply(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (PAYMENT_APPLY_LOCK)
+        {
+            return paymentApplyManager.deletePaymentApply(user, id);
+        }
+    }
+
+    public boolean passPaymentApply(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (PAYMENT_APPLY_LOCK)
+        {
+            if (containAuth(user, AuthConstant.INBILL_APPROVE))
+            {
+                return paymentApplyManager.passPaymentApply(user, id);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean rejectPaymentApply(String userId, String id, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (PAYMENT_APPLY_LOCK)
+        {
+            if (containAuth(user, AuthConstant.INBILL_APPROVE))
+            {
+                return paymentApplyManager.rejectPaymentApply(user, id, reason);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean updatePaymentApply(String userId, PaymentApplyBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (PAYMENT_APPLY_LOCK)
+        {
+            return paymentApplyManager.updatePaymentApply(user, bean);
+        }
+    }
+
     /**
      * @return the bankManager
      */
@@ -323,5 +418,22 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
     public void setInvoiceinsManager(InvoiceinsManager invoiceinsManager)
     {
         this.invoiceinsManager = invoiceinsManager;
+    }
+
+    /**
+     * @return the paymentApplyManager
+     */
+    public PaymentApplyManager getPaymentApplyManager()
+    {
+        return paymentApplyManager;
+    }
+
+    /**
+     * @param paymentApplyManager
+     *            the paymentApplyManager to set
+     */
+    public void setPaymentApplyManager(PaymentApplyManager paymentApplyManager)
+    {
+        this.paymentApplyManager = paymentApplyManager;
     }
 }

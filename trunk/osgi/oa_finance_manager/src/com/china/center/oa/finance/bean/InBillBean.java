@@ -38,6 +38,11 @@ public class InBillBean implements Serializable
 
     private int type = FinanceConstant.INBILL_TYPE_SAILOUT;
 
+    /**
+     * 已经收取 预收(关联的销售单还没有正式生效) 未关联(还没有和销售单关联)(这个只有在销售收入下才有意义哦)
+     */
+    private int status = FinanceConstant.INBILL_STATUS_PAYMENTS;
+
     @Join(tagClass = BankBean.class)
     private String bankId = "";
 
@@ -318,6 +323,23 @@ public class InBillBean implements Serializable
     }
 
     /**
+     * @return the status
+     */
+    public int getStatus()
+    {
+        return status;
+    }
+
+    /**
+     * @param status
+     *            the status to set
+     */
+    public void setStatus(int status)
+    {
+        this.status = status;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -337,6 +359,9 @@ public class InBillBean implements Serializable
             .append(TAB)
             .append("type = ")
             .append(this.type)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
             .append(TAB)
             .append("bankId = ")
             .append(this.bankId)

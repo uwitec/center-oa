@@ -86,7 +86,7 @@ public interface FinanceConstant
      * 全部使用
      */
     @Defined(key = "paymentUseall", value = "全部使用")
-    int PAYMENT_USEALL_END = 2;
+    int PAYMENT_USEALL_END = 1;
 
     /**
      * 提交
@@ -105,4 +105,22 @@ public interface FinanceConstant
      */
     @Defined(key = "payApplyStatus", value = "驳回")
     int PAYAPPLY_STATUS_REJECT = 2;
+
+    /**
+     * 已收
+     */
+    @Defined(key = "inbillStatus", value = "已收")
+    int INBILL_STATUS_PAYMENTS = 0;
+
+    /**
+     * 预收
+     */
+    @Defined(key = "inbillStatus", value = "预收")
+    int INBILL_STATUS_PREPAYMENTS = 1;
+
+    /**
+     * 未关联
+     */
+    @Defined(key = "inbillStatus", value = "未关联")
+    int INBILL_STATUS_NOREF = 2;
 }

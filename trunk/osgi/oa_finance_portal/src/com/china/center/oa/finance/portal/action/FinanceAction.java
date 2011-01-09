@@ -62,10 +62,10 @@ import com.china.center.tools.TimeTools;
  * 
  * @author ZHUZHU
  * @version 2010-6-27
- * @see BankAction
+ * @see FinanceAction
  * @since 1.0
  */
-public class BankAction extends DispatchAction
+public class FinanceAction extends DispatchAction
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
@@ -90,7 +90,7 @@ public class BankAction extends DispatchAction
     /**
      * default constructor
      */
-    public BankAction()
+    public FinanceAction()
     {
     }
 

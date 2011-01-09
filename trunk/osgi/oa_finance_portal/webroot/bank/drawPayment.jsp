@@ -73,7 +73,7 @@ function getOut(oos)
 
 function clears()
 {
-    $O('outId' + g_index).value = '';
+    $O('outId' + g_index).value = '客户预收';
     $O('outMoney' + g_index).value = '';
 }
 </script>
@@ -94,7 +94,7 @@ function clears()
 <p:body width="98%">
 
 	<p:title>
-		<td class="caption"><strong>回款基本信息：</strong></td>
+		<td class="caption"><strong>回款基本信息：(如果金额过多回款可以分为多个预收的收款单)</strong></td>
 	</p:title>
 
 	<p:line flag="0" />
@@ -134,7 +134,7 @@ function clears()
             
             <c:forEach begin="1" end="5" var="item">
 	            <p:cell title="关联单据${item}" end="true">
-	                <input type="text" size="40" readonly="readonly" name="outId${item}"> 
+	                <input type="text" size="40" value="客户预收" readonly="readonly" name="outId${item}"> 
 	                &nbsp;回款金额:<input type="text" name="outMoney${item}" oncheck="isFloat2">
 	                <input type="button" value="&nbsp;选 择&nbsp;" name="qout" id="qout"
 	                    class="button_class" onclick="opens(${item})">&nbsp;
@@ -155,7 +155,7 @@ function clears()
 			onclick="addBean()"></div>
 	</p:button>
 
-	<p:message />
+	<p:message2 />
 </p:body></form>
 </body>
 </html>

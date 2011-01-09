@@ -31,6 +31,7 @@ import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -70,7 +71,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
     {
         JudgeTools.judgeParameterIsNull(user, bean, bean.getVsList());
 
-        checkAdd(bean);
+        checkAdd(user, bean);
 
         bean.setId(commonDAO.getSquenceString20());
 
@@ -119,7 +120,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         flowLogDAO.saveEntityBean(log);
     }
 
-    private void checkAdd(PaymentApplyBean bean)
+    private void checkAdd(User user, PaymentApplyBean bean)
         throws MYException
     {
         PaymentBean payment = paymentDAO.find(bean.getPaymentId());
@@ -127,6 +128,16 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         if (payment == null)
         {
             throw new MYException("数据错误,请确认操作");
+        }
+
+        if ( !payment.getStafferId().equals(user.getStafferId()))
+        {
+            throw new MYException("只能操作自己的回款单,请确认操作");
+        }
+
+        if (payment.getUseall() == FinanceConstant.PAYMENT_USEALL_END)
+        {
+            throw new MYException("回款单已经使用结束,请确认操作");
         }
 
         List<PaymentVSOutBean> vsList = bean.getVsList();
@@ -157,6 +168,16 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         if (payment == null)
         {
             throw new MYException("数据错误,请确认操作");
+        }
+
+        if ( !payment.getStafferId().equals(bean.getStafferId()))
+        {
+            throw new MYException("只能操作自己的回款单,请确认操作");
+        }
+
+        if (payment.getUseall() == FinanceConstant.PAYMENT_USEALL_END)
+        {
+            throw new MYException("回款单已经使用结束,请确认操作");
         }
 
         if (bean.getStatus() != FinanceConstant.PAYAPPLY_STATUS_REJECT)
@@ -246,13 +267,25 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
 
             inBean.setCustomerId(apply.getCustomerId());
 
-            inBean.setDescription("自动生成收款单,从回款单:" + payment.getId() + ",关联的销售单:" + item.getOutId());
-
             inBean.setLocationId(user.getLocationId());
 
             inBean.setLogTime(TimeTools.now());
 
             inBean.setMoneys(item.getMoneys());
+
+            if (StringTools.isNullOrNone(item.getOutId()))
+            {
+                inBean.setStatus(FinanceConstant.INBILL_STATUS_NOREF);
+
+                inBean.setDescription("自动生成预收收款单,从回款单:" + payment.getId() + ",未关联销售单:");
+            }
+            else
+            {
+                inBean.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
+
+                inBean.setDescription("自动生成收款单,从回款单:" + payment.getId() + ",关联的销售单:"
+                                      + item.getOutId());
+            }
 
             inBean.setOutId(item.getOutId());
 
@@ -265,7 +298,12 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
             inBean.setType(FinanceConstant.INBILL_TYPE_SAILOUT);
 
             inBillDAO.saveEntityBean(inBean);
+
+            item.setBillId(inBean.getId());
         }
+
+        // 更新收款单ID到申请里面
+        paymentVSOutDAO.updateAllEntityBeans(vsList);
     }
 
     private void updatePayment(PaymentApplyBean apply)
