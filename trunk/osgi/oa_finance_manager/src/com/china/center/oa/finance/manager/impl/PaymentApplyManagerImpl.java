@@ -98,6 +98,24 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
 
         paymentVSOutDAO.saveAllEntityBeans(vsList);
 
+        if (bean.getType() == FinanceConstant.PAYAPPLY_TYPE_BING)
+        {
+            for (PaymentVSOutBean vsItem : vsList)
+            {
+                // 更新预付金额
+                InBillBean bill = inBillDAO.find(vsItem.getBillId());
+
+                if (bill.getStatus() != FinanceConstant.INBILL_STATUS_NOREF)
+                {
+                    throw new MYException("关联的收款单必须是预收,请确认操作");
+                }
+
+                bill.setStatus(FinanceConstant.INBILL_STATUS_PREPAYMENTS);
+
+                inBillDAO.updateEntityBean(bill);
+            }
+        }
+
         saveFlowlog(user, bean);
 
         return true;
@@ -127,6 +145,11 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
     private void checkAdd(User user, PaymentApplyBean bean)
         throws MYException
     {
+        if (bean.getType() == FinanceConstant.PAYAPPLY_TYPE_BING)
+        {
+            return;
+        }
+
         PaymentBean payment = paymentDAO.find(bean.getPaymentId());
 
         if (payment == null)
@@ -325,7 +348,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
                     throw new MYException("数据错误,请确认操作");
                 }
 
-                if (bill.getStatus() != FinanceConstant.INBILL_STATUS_NOREF)
+                if (bill.getStatus() == FinanceConstant.INBILL_STATUS_PAYMENTS)
                 {
                     throw new MYException("收款单状态错误,请确认操作");
                 }
@@ -358,13 +381,46 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
                     .getTotal(), hasPay, out.getBadDebts());
             }
 
-            // 更新已经支付的金额 TODO 已经做到apply通过的时候检查销售单和收款单的关联处理
+            // 更新已经支付的金额
             outDAO.updateHadPay(outId, hasPay);
+        }
+
+        if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_PAYMENT)
+        {
+            for (PaymentVSOutBean item : vsList)
+            {
+                if (StringTools.isNullOrNone(item.getOutId()))
+                {
+                    continue;
+                }
+
+                String outId = item.getOutId();
+
+                OutBean out = outDAO.find(outId);
+
+                // 看看销售单是否溢出
+                double hasPay = inBillDAO.sumByOutId(outId);
+
+                // 发现支付的金额过多
+                if (hasPay + out.getBadDebts() > out.getTotal())
+                {
+                    throw new MYException("销售单[%s]的总金额[%f],当前已付金额[%f],坏账金额[%f],付款金额超出销售金额", outId,
+                        out.getTotal(), hasPay, out.getBadDebts());
+                }
+
+                // 更新已经支付的金额
+                outDAO.updateHadPay(outId, hasPay);
+            }
         }
     }
 
     private void updatePayment(PaymentApplyBean apply)
     {
+        if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_BING)
+        {
+            return;
+        }
+
         PaymentBean payment = paymentDAO.find(apply.getPaymentId());
 
         double hasUsed = inBillDAO.sumByPaymentId(apply.getPaymentId());
@@ -389,14 +445,6 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        // 检查是否溢出
-        PaymentBean payment = paymentDAO.find(apply.getPaymentId());
-
-        if (payment == null)
-        {
-            throw new MYException("数据错误,请确认操作");
-        }
-
         List<PaymentVSOutBean> vsList = paymentVSOutDAO.queryEntityBeansByFK(id);
 
         double total = 0.0d;
@@ -409,6 +457,19 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         apply.setVsList(vsList);
 
         apply.setMoneys(total);
+
+        if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_BING)
+        {
+            return apply;
+        }
+
+        // 检查是否溢出
+        PaymentBean payment = paymentDAO.find(apply.getPaymentId());
+
+        if (payment == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
 
         double hasUsed = inBillDAO.sumByPaymentId(apply.getPaymentId());
 
@@ -469,7 +530,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         for (PaymentVSOutBean item : vsList)
         {
             // 如果是关联收款单则取消
-            if ( !StringTools.isNullOrNone(item.getBillId()))
+            if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_BING)
             {
                 InBillBean bill = inBillDAO.find(item.getBillId());
 

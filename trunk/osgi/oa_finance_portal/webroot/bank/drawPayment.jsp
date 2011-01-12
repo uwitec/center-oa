@@ -73,13 +73,19 @@ function opens(index)
 function getOut(oos)
 {
     $O('outId' + g_index).value = oos[0].value;
-    $O('outMoney' + g_index).value = oos[0].ptotal;
+    $O('outMoney' + g_index).value = oos[0].plast;
 }
 
 function clears()
 {
     $O('outId' + g_index).value = '客户预收';
     $O('outMoney' + g_index).value = '';
+}
+
+function selectPublic()
+{
+    $O('customerId').value = '99';
+    $O('cname').value = '公共客户';
 }
 </script>
 
@@ -134,7 +140,9 @@ function clears()
                 <input type="text" size="60" readonly="readonly" name="cname" oncheck="notNone;"> 
                 <font color="red">*</font>
                 <input type="button" value="&nbsp;选 择&nbsp;" name="qout1" id="qout1"
-                    class="button_class" onclick="selectCus()">
+                    class="button_class" onclick="selectCus()">&nbsp;
+                <input type="button" value="&nbsp;公共客户&nbsp;" name="qout2" id="qout2"
+                    class="button_class" onclick="selectPublic()">
             </p:cell>
             
             <c:forEach begin="1" end="5" var="item">

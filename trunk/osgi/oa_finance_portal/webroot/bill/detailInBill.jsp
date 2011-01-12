@@ -57,11 +57,11 @@
             </p:cell>
 			
 			<p:cell title="关联单据">
-			    ${item.outId}
+			    ${bean.outId}
             </p:cell>
             
             <p:cell title="关联回款">
-                ${item.paymentId}
+                ${bean.paymentId}
             </p:cell>
             
             <p:cell title="开单人">

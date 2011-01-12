@@ -237,7 +237,18 @@ function pagePrint()
                        </td>
                     </tr>
                     
-                     <tr class="content1">
+                    <tr class="content1">
+                        <td align="right">已支付：</td>
+                        <td colspan="1">
+                        ${my:formatNum(bean.hadPay)}
+                        </td>
+                        <td align="right">坏账金额：</td>
+                        <td colspan="1">
+                        ${my:formatNum(bean.badDebts)}
+                        </td>
+                    </tr>
+                    
+                     <tr class="content2">
                         <td align="right">状态：</td>
                         <td colspan="1">
                         <select name="status" class="select_class"  values="${bean.status}">
@@ -250,7 +261,7 @@ function pagePrint()
                        </td>
                     </tr>
                     
-                     <tr class="content2">
+                     <tr class="content1">
                         <td align="right">分公司：</td>
                         <td colspan="1">
                        ${bean.locationName}
@@ -261,7 +272,7 @@ function pagePrint()
                        </td>
                     </tr>
                     
-                    <tr class="content1">
+                    <tr class="content2">
                         <td align="right">信用描述：</td>
                         <td colspan="3">
                         <font color="red">
@@ -270,14 +281,14 @@ function pagePrint()
                        </td>
                     </tr>
                     
-                     <tr class="content2">
+                     <tr class="content1">
                         <td align="right">信用担保：</td>
                         <td colspan="3">
                        客户:${my:formatNum(bean.curcredit)}/${bean.stafferName}:${my:formatNum(bean.staffcredit)}/分公司经理:${my:formatNum(bean.managercredit)}
                        </td>
                     </tr>
 
-					<tr class="content1">
+					<tr class="content2">
 						<td align="right">销售单备注：</td>
 						<td colspan="3"><textarea rows="3" cols="55" oncheck="notNone;"
 							name="description"><c:out value="${bean.description}"/></textarea>
@@ -285,7 +296,7 @@ function pagePrint()
 							</td>
 					</tr>
 					
-					 <tr class="content2">
+					 <tr class="content1">
                         <td align="right">总部核对：</td>
                         <td colspan="3">
                        ${bean.checks}
@@ -476,10 +487,49 @@ function pagePrint()
 	<tr>
 		<td background="../images/dot_line.gif" colspan='2'></td>
 	</tr>
+	
+	<tr>
+        <td colspan='2' align='center'>
+        <div id="desc1" style="display: block;">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0"
+            class="border">
+            <tr>
+                <td>
+                <table width="100%" border="0" cellspacing='1' id="tables">
+                    <tr align="center" class="content0">
+                        <td width="10%" align="center">收款单</td>
+                        <td width="10%" align="center">帐户</td>
+                        <td width="10%" align="center">金额</td>
+                        <td width="15%" align="center">时间</td>
+                    </tr>
+
+                    <c:forEach items="${billList}" var="item" varStatus="vs">
+                        <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
+                            <td align="center"><a href="../finance/bill.do?method=findInBill&id=${item.id}">${item.id}</a></td>
+
+                            <td  align="center">${item.bankName}</td>
+
+                            <td  align="center">${my:formatNum(item.moneys)}</td>
+
+                            <td  align="center">${item.logTime}</td>
+
+                        </tr>
+                    </c:forEach>
+                </table>
+                </td>
+            </tr>
+        </table>
+        </div>
+        </td>
+    </tr>
 
 	<tr>
 		<td height="10" colspan='2'></td>
 	</tr>
+	
+	<tr>
+        <td background="../images/dot_line.gif" colspan='2'></td>
+    </tr>
 	
 	<tr>
         <td colspan='2' align='center'>

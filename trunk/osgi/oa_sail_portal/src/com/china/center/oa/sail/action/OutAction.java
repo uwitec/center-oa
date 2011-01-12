@@ -39,6 +39,8 @@ import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.customer.constant.CustomerConstant;
 import com.china.center.oa.customer.dao.CustomerDAO;
 import com.china.center.oa.customer.wrap.NotPayWrap;
+import com.china.center.oa.finance.dao.InBillDAO;
+import com.china.center.oa.finance.vo.InBillVO;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.bean.ProviderBean;
@@ -147,6 +149,8 @@ public class OutAction extends DispatchAction
     private StorageDAO storageDAO = null;
 
     private DepotDAO depotDAO = null;
+
+    private InBillDAO inBillDAO = null;
 
     private ShowDAO showDAO = null;
 
@@ -3666,6 +3670,10 @@ public class OutAction extends DispatchAction
 
         if (bean.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
+            List<InBillVO> billList = inBillDAO.queryEntityVOsByFK(outId);
+
+            request.setAttribute("billList", billList);
+
             return mapping.findForward("detailOut");
         }
 
@@ -3807,6 +3815,8 @@ public class OutAction extends DispatchAction
         {
             condtion.addCondition("and OutBean.status in (3, 4)");
         }
+
+        condtion.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_OUTBILL);
 
         condtion.addCondition("order by OutBean.fullId desc");
     }
@@ -4362,5 +4372,22 @@ public class OutAction extends DispatchAction
     public void setShowDAO(ShowDAO showDAO)
     {
         this.showDAO = showDAO;
+    }
+
+    /**
+     * @return the inBillDAO
+     */
+    public InBillDAO getInBillDAO()
+    {
+        return inBillDAO;
+    }
+
+    /**
+     * @param inBillDAO
+     *            the inBillDAO to set
+     */
+    public void setInBillDAO(InBillDAO inBillDAO)
+    {
+        this.inBillDAO = inBillDAO;
     }
 }

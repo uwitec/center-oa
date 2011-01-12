@@ -65,4 +65,6 @@
     
     <osgi:reference id="paymentApplyDAO" interface="com.china.center.oa.finance.dao.PaymentApplyDAO" />
     
+    <osgi:reference id="outDAO" interface="com.china.center.oa.sail.dao.OutDAO" />
+    
 </beans>

@@ -27,6 +27,7 @@ function load()
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} lstafferId={stafferId}>', width : 40, align: 'center'},
              {display: '申请人', name : 'stafferName', width : '10%'},
+             {display: '类型', name : 'type', cc: 'payApplyType', width : '8%'},
              {display: '状态', name : 'status', cc: 'payApplyStatus', width : '8%'},
              {display: '客户', name : 'customerName', width : '15%'},
              {display: '总金额', name : 'moneys', width : '8%', toFixed: 2},

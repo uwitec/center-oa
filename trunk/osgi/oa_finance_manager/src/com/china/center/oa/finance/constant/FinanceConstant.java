@@ -113,7 +113,7 @@ public interface FinanceConstant
     int PAYAPPLY_TYPE_PAYMENT = 0;
 
     /**
-     * 回款转收款
+     * 销售单绑定
      */
     @Defined(key = "payApplyType", value = "销售单绑定")
     int PAYAPPLY_TYPE_BING = 1;

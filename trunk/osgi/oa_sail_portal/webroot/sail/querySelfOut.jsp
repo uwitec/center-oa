@@ -143,7 +143,19 @@ function balance()
 {
     if (getRadio('fullId').statuss == '3' && getRadio('fullId').outtype == '3')
     {
-        //document.location.href = '../sail/out.do?method=preForAddOutBalance&type=0&outId=' + getRadioValue("fullId");
+        document.location.href = '../sail/out.do?method=preForAddOutBalance&type=0&outId=' + getRadioValue("fullId");
+    }
+    else
+    {
+        alert('不能操作!');
+    }
+}
+
+function refBill()
+{
+    if (getRadio('fullId').statuss != '4')
+    {
+        document.location.href = '../finance/bank.do?method=preForRefBill&outId=' + getRadioValue("fullId") + '&customerId=' + getRadio('fullId').pcustomerid;
     }
     else
     {
@@ -405,6 +417,7 @@ function load()
 							<td align="center"><input type="radio" name="fullId" 
 							    temptype="${item.tempType}"
 							    outtype="${item.outType}"
+								pcustomerid='${item.customerId}' 
 								statuss='${item.status}' 
 								value="${item.fullId}" ${vs.index== 0 ? "checked" : ""}/></td>
 							<td align="center"
@@ -464,7 +477,7 @@ function load()
 			value="&nbsp;&nbsp;删 除&nbsp;&nbsp;" onclick="del()" />&nbsp;&nbsp;
 		<input
             type="button" class="button_class"
-            value="&nbsp;&nbsp;勾 款&nbsp;&nbsp;" onclick="balance()" />&nbsp;&nbsp;
+            value="&nbsp;&nbsp;勾 款&nbsp;&nbsp;" onclick="refBill()" />&nbsp;&nbsp;
 		<input
             type="button" class="button_class"
             value="&nbsp;委托代销结算&nbsp;" onclick="balance()" />&nbsp;&nbsp;

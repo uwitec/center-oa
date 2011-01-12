@@ -64,6 +64,7 @@ function clears()
     $O('outId' + g_index).value = '客户预收';
     $O('outMoney' + g_index).value = '';
 }
+
 </script>
 
 </head>

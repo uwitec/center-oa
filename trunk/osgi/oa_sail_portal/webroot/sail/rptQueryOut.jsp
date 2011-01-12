@@ -110,16 +110,23 @@ function press()
 				<td align="center" width="15%"><strong>单号</strong></td>
 				<td align="center" width="15%"><strong>客户</strong></td>
 				<td align="center" width="10%"><strong>总金额</strong></td>
+				<td align="center" width="10%"><strong>已支付</strong></td>
+				<td align="center" width="10%"><strong>坏账</strong></td>
 				<td align="center" width="10%"><strong>状态</strong></td>
 				<td align="center" width="10%"><strong>时间</strong></td>
 			</tr>
 
 			<c:forEach items="${list}" var="item" varStatus="vs">
 				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
-					<td align="center"><input type=${selectMode == 1 ? 'checkbox' : 'radio'} name="beans" value="${item.fullId}" ptotal="${my:formatNum(item.total)}"></td>
+					<td align="center"><input type=${selectMode == 1 ? 'checkbox' : 'radio'} name="beans" value="${item.fullId}" 
+					ptotal="${my:formatNum(item.total)}"
+					plast="${my:formatNum(item.total -item.hadPay - item.badDebts)}"
+					></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.fullId}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.customerName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.hadPay)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.badDebts)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('outStatus', item.status)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.outTime}</td>
 				</tr>

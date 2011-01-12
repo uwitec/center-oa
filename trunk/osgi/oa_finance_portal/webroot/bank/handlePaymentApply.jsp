@@ -85,13 +85,14 @@ function rejectBean()
             <tr align="center" class="content0">
                 <td width="10%" align="center">关联单据</td>
                 <td width="10%" align="center">金额</td>
+                <td width="10%" align="center">收款单</td>
             </tr>
 
             <c:forEach items="${vsList}" var="item" varStatus="vs">
                 <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
                     <td align="center">${item.outId}</td>
-
                     <td align="center">${my:formatNum(item.moneys)}</td>
+                    <td align="center">${item.billId}</td>
 
                 </tr>
             </c:forEach>

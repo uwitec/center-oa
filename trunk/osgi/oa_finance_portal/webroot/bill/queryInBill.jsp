@@ -25,7 +25,7 @@ function load()
          title: '收款单列表',
          url: gurl + 'query' + ukey,
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
+             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},
              {display: '帐号', name : 'bankName', width : '10%'},
              {display: '类型', name : 'type', cc: 'inbillType', width : '8%'},
@@ -40,6 +40,7 @@ function load()
          },
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1603'},
+             {id: 'update', bclass: 'update', caption: '分拆预收', auth: '1603', onpress : splitInBill},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -79,6 +80,24 @@ function updateBean()
 	}
 	else
 	$error('不能操作');
+}
+
+function splitInBill(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 2)
+    {    
+        $.messager.prompt('分拆预收', '请输入分拆金额(只能是数字)', 0.0,
+            function(value, isOk)
+            {
+                if (isOk)
+                if (isFloat(value))
+                $ajax('../finance/bill.do?method=splitInBill&id=' + $$('checkb') + '&newMoney=' + value, callBackFun);
+                else
+                $error('只能输入数字');           
+            });
+    }
+    else
+    $error('不能操作');
 }
 
 function doSearch()

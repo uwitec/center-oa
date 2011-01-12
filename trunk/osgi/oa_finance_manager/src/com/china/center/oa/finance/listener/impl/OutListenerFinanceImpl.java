@@ -85,7 +85,8 @@ public class OutListenerFinanceImpl implements OutListener
 
         if (bean.getTotal() != (hasPay + bean.getBadDebts()))
         {
-            throw new MYException("销售单总金额[%f],当前已经付款金额[%f],坏账金额[%f],没有完全付款");
+            throw new MYException("销售单总金额[%f],当前已经付款金额[%f],坏账金额[%f],没有完全付款", bean.getTotal(),
+                hasPay, bean.getBadDebts());
         }
     }
 
