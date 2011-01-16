@@ -380,10 +380,10 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
     @Exceptional
     @Transactional(rollbackFor = {MYException.class})
-    public String coloneOutAndSubmitAffair(final OutBean outBean, final User user)
+    public String coloneOutAndSubmitAffair(final OutBean outBean, final User user, int type)
         throws MYException
     {
-        return coloneOutAndSubmitWithOutAffair(outBean, user, StorageConstant.OPR_STORAGE_REDEPLOY);
+        return coloneOutAndSubmitWithOutAffair(outBean, user, type);
     }
 
     public String coloneOutAndSubmitWithOutAffair(OutBean outBean, User user, int type)
@@ -854,6 +854,11 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             {
                 nextStatus = OutConstant.STATUS_PASS;
             }
+            // 领样直接通过
+            else if (outBean.getOutType() == OutConstant.OUTTYPE_IN_SWATCH)
+            {
+                nextStatus = OutConstant.STATUS_PASS;
+            }
             // 调拨直接是submit
             else if (outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT)
             {
@@ -902,8 +907,9 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             return;
         }
 
-        // 处理采购入库
-        if (outBean.getOutType() == OutConstant.OUTTYPE_IN_COMMON)
+        // 处理入库单的库存变动 采购入库/领样退货
+        if (outBean.getOutType() == OutConstant.OUTTYPE_IN_COMMON
+            || outBean.getOutType() == OutConstant.OUTTYPE_IN_SWATCH)
         {
             String sequence = commonDAO.getSquenceString();
 
@@ -1650,16 +1656,57 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
         }
 
-        Collection<OutListener> listenerMapValues = this.listenerMapValues();
-
-        // 从监听获得是否回款
-        for (OutListener outListener : listenerMapValues)
+        if (out.getType() == OutConstant.OUT_TYPE_OUTBILL
+            && out.getOutType() == OutConstant.OUTTYPE_OUT_SWATCH)
         {
-            outListener.onHadPay(user, out);
+            List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(fullId);
+
+            List<OutBean> refBuyList = queryRefOut(fullId);
+
+            // 计算出已经退货的数量
+            for (BaseBean baseBean : baseList)
+            {
+                int hasBack = 0;
+
+                for (OutBean ref : refBuyList)
+                {
+                    List<BaseBean> refBaseList = ref.getBaseList();
+
+                    for (BaseBean refBase : refBaseList)
+                    {
+                        if (refBase.equals(baseBean))
+                        {
+                            hasBack += refBase.getAmount();
+
+                            break;
+                        }
+                    }
+                }
+
+                baseBean.setInway(hasBack);
+            }
+
+            for (BaseBean baseBean : baseList)
+            {
+                if (baseBean.getInway() != baseBean.getAmount())
+                {
+                    throw new MYException(baseBean.getProductName() + "没有全部退库");
+                }
+            }
+        }
+        else
+        {
+            Collection<OutListener> listenerMapValues = this.listenerMapValues();
+
+            // 从监听获得是否回款
+            for (OutListener outListener : listenerMapValues)
+            {
+                outListener.onHadPay(user, out);
+            }
         }
 
         // 付款的金额
-        outDAO.modifyOutHadPay(fullId, out.getTotal());
+        // outDAO.modifyOutHadPay(fullId, out.getTotal() - out.getBadDebts());
 
         addOutLog(fullId, user, out, reason, SailConstant.OPR_OUT_PASS, out.getStatus());
 
@@ -1667,6 +1714,99 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         // 修改付款标识
         return outDAO.modifyPay(fullId, OutConstant.PAY_YES);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.china.center.oa.sail.manager.OutManager#payBaddebts(com.center.china.osgi.publics.User,
+     *      java.lang.String, double)
+     */
+    @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean payBaddebts(final User user, String fullId, double bad)
+        throws MYException
+    {
+        // 需要增加是否超期 flowId
+        OutBean out = outDAO.find(fullId);
+
+        if (out == null)
+        {
+            return false;
+        }
+
+        if (out.getStatus() != OutConstant.STATUS_PASS)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (out.getHadPay() + bad > out.getTotal())
+        {
+            throw new MYException("坏账金额过多,请确认操作");
+        }
+
+        // 付款的金额
+        outDAO.modifyBadDebts(fullId, bad);
+
+        return true;
+    }
+
+    @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean initPayOut(final User user, String fullId)
+        throws MYException
+    {
+        // 需要增加是否超期 flowId
+        OutBean out = outDAO.find(fullId);
+
+        if (out == null)
+        {
+            return false;
+        }
+
+        if (out.getStatus() != OutConstant.STATUS_SEC_PASS)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (out.getPay() != OutConstant.PAY_YES)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        outDAO.modifyOutStatus(fullId, OutConstant.STATUS_PASS);
+
+        addOutLog(fullId, user, out, "坏账消除", SailConstant.OPR_OUT_REJECT, OutConstant.STATUS_PASS);
+
+        outDAO.modifyBadDebts(fullId, 0.0d);
+
+        // 修改付款标识
+        return outDAO.modifyPay(fullId, OutConstant.PAY_NOT);
+    }
+
+    private List<OutBean> queryRefOut(String outId)
+    {
+        // 查询当前已经有多少个人领样
+        ConditionParse con = new ConditionParse();
+
+        con.addWhereStr();
+
+        con.addCondition("OutBean.refOutFullId", "=", outId);
+
+        con.addCondition(" and OutBean.status in (3, 4)");
+
+        con.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
+
+        List<OutBean> refBuyList = outDAO.queryEntityBeansByCondition(con);
+
+        for (OutBean outBean : refBuyList)
+        {
+            List<BaseBean> list = baseDAO.queryEntityBeansByFK(outBean.getFullId());
+
+            outBean.setBaseList(list);
+        }
+
+        return refBuyList;
     }
 
     @Transactional(rollbackFor = {MYException.class})

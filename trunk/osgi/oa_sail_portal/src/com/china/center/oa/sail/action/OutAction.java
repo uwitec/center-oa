@@ -50,6 +50,7 @@ import com.china.center.oa.product.dao.DepotpartDAO;
 import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.dao.ProviderDAO;
 import com.china.center.oa.product.dao.StorageDAO;
+import com.china.center.oa.product.helper.StorageRelationHelper;
 import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.AuthBean;
@@ -880,6 +881,185 @@ public class OutAction extends DispatchAction
     }
 
     /**
+     * 个人领样退库
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward outBack(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        User user = Helper.getUser(request);
+
+        String outId = request.getParameter("outId");
+        String[] baseItems = request.getParameterValues("baseItem");
+
+        String[] backUnms = request.getParameterValues("backUnm");
+
+        OutBean oldOut = outDAO.find(outId);
+
+        if (oldOut == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+
+            return mapping.findForward("error");
+        }
+
+        if (oldOut.getType() != OutConstant.OUT_TYPE_OUTBILL
+            && oldOut.getOutType() != OutConstant.OUTTYPE_OUT_SWATCH)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+
+            return mapping.findForward("error");
+        }
+
+        OutBean out = new OutBean();
+
+        out.setStatus(OutConstant.STATUS_SAVE);
+
+        out.setStafferName(user.getStafferName());
+
+        out.setStafferId(user.getStafferId());
+
+        out.setType(OutConstant.OUT_TYPE_INBILL);
+
+        out.setOutTime(TimeTools.now_short());
+
+        out.setDepartment("采购部");
+
+        out.setCustomerId("99");
+
+        out.setCustomerName("系统内置供应商");
+
+        // 所在区域
+        out.setLocationId(user.getLocationId());
+
+        // 目的仓库
+        out.setLocation(oldOut.getLocation());
+
+        out.setInway(OutConstant.IN_WAY_NO);
+
+        out.setOutType(OutConstant.OUTTYPE_IN_SWATCH);
+
+        out.setRefOutFullId(outId);
+
+        out.setDescription("个人领样退库,单号:" + outId);
+
+        List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outId);
+
+        List<OutBean> refBuyList = queryRefOut(request, outId);
+
+        // 计算出已经退货的数量
+        for (BaseBean baseBean : baseList)
+        {
+            int hasBack = 0;
+
+            for (OutBean ref : refBuyList)
+            {
+                List<BaseBean> refBaseList = ref.getBaseList();
+
+                for (BaseBean refBase : refBaseList)
+                {
+                    if (refBase.equals(baseBean))
+                    {
+                        hasBack += refBase.getAmount();
+
+                        break;
+                    }
+                }
+            }
+
+            baseBean.setInway(hasBack);
+        }
+
+        double total = 0.0d;
+
+        List<BaseBean> newBaseList = new ArrayList<BaseBean>();
+
+        for (int i = 0; i < baseItems.length; i++ )
+        {
+            for (BaseBean each : baseList)
+            {
+                if (each.getId().equals(baseItems[i]))
+                {
+                    int back = CommonTools.parseInt(backUnms[i]);
+
+                    if (each.getInway() + back > each.getAmount())
+                    {
+                        request.setAttribute(KeyConstant.ERROR_MESSAGE, each.getProductName()
+                                                                        + "的退货数量超过:"
+                                                                        + each.getAmount());
+
+                        return mapping.findForward("error");
+
+                    }
+
+                    if (back > 0)
+                    {
+                        // 增加base
+                        BaseBean baseBean = new BaseBean();
+
+                        baseBean.setValue(each.getCostPrice() * back);
+                        baseBean.setLocationId(out.getLocation());
+                        baseBean.setAmount(back);
+                        baseBean.setProductName(each.getProductName());
+                        baseBean.setUnit("套");
+                        baseBean.setPrice(each.getCostPrice());
+                        baseBean.setShowId(each.getShowId());
+                        baseBean.setCostPrice(each.getCostPrice());
+                        baseBean.setProductId(each.getProductId());
+                        baseBean.setCostPriceKey(StorageRelationHelper.getPriceKey(each
+                            .getCostPrice()));
+                        baseBean.setOwner(each.getOwner());
+                        baseBean.setDepotpartId(each.getDepotpartId());
+
+                        baseBean.setDepotpartName(each.getDepotpartName());
+                        // 成本
+                        baseBean.setDescription(String.valueOf(each.getPrice()));
+
+                        newBaseList.add(baseBean);
+
+                        total += baseBean.getValue();
+                    }
+                }
+            }
+        }
+
+        out.setTotal(total);
+
+        out.setBaseList(newBaseList);
+
+        try
+        {
+            if (newBaseList.size() > 0)
+            {
+                // CORE 个人领样退库
+                String fullId = outManager.coloneOutAndSubmitAffair(out, user,
+                    StorageConstant.OPR_STORAGE_SWATH);
+
+                request.setAttribute(KeyConstant.MESSAGE, "成功退库:" + fullId);
+            }
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, e);
+        }
+
+        CommonTools.removeParamers(request);
+
+        request.setAttribute("forward", "1");
+
+        return querySelfBuy(mapping, form, request, reponse);
+    }
+
+    /**
      * 收集数据
      * 
      * @param pbean
@@ -1345,6 +1525,15 @@ public class OutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
+        for (OutVO outVO : list)
+        {
+            if (outVO.getStatus() == OutConstant.STATUS_PASS)
+            {
+                // 标识为结束
+                outVO.setStatus(OutConstant.STATUS_SEC_PASS);
+            }
+        }
+
         request.setAttribute("listOut1", list);
 
         List<DepotBean> depotList = depotDAO.listEntityBeans();
@@ -1477,6 +1666,12 @@ public class OutAction extends DispatchAction
         }
 
         if ("7".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.SAIL_CEO))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+
+        if ("8".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.BUY_SUBMIT))
         {
             throw new MYException("用户没有此操作的权限");
         }
@@ -1711,6 +1906,15 @@ public class OutAction extends DispatchAction
             _logger.error(e, e);
 
             return mapping.findForward("error");
+        }
+
+        for (OutVO outVO : list)
+        {
+            if (outVO.getStatus() == OutConstant.STATUS_PASS)
+            {
+                // 标识为结束
+                outVO.setStatus(OutConstant.STATUS_SEC_PASS);
+            }
         }
 
         request.setAttribute("listOut1", list);
@@ -2367,6 +2571,19 @@ public class OutAction extends DispatchAction
                 request.setAttribute("status", OutConstant.STATUS_CEO_CHECK);
             }
         }
+        // 查询没有结束的个人领样
+        else if ("8".equals(queryType))
+        {
+            condtion.addIntCondition("OutBean.outType", "=", OutConstant.OUTTYPE_OUT_SWATCH);
+
+            condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_PASS);
+
+            request.setAttribute("outType", OutConstant.OUTTYPE_OUT_SWATCH);
+
+            request.setAttribute("status", OutConstant.STATUS_PASS);
+
+            setDepotCondotionInOut(user, condtion);
+        }
         // 未知的则什么都没有
         else
         {
@@ -2838,7 +3055,7 @@ public class OutAction extends DispatchAction
 
             newOut.setRefOutFullId(fullId);
 
-            newOut.setDestinationId("");
+            newOut.setDestinationId(bean.getLocation());
 
             newOut.setDescription("自动接收调拨单:" + fullId + ".生成的调入单据");
 
@@ -2878,7 +3095,8 @@ public class OutAction extends DispatchAction
 
             try
             {
-                String ful = outManager.coloneOutAndSubmitAffair(newOut, user);
+                String ful = outManager.coloneOutAndSubmitAffair(newOut, user,
+                    StorageConstant.OPR_STORAGE_REDEPLOY);
 
                 request.setAttribute(KeyConstant.MESSAGE, fullId + "成功自动接收:" + ful);
             }
@@ -3255,6 +3473,134 @@ public class OutAction extends DispatchAction
         }
 
         request.setAttribute(KeyConstant.MESSAGE, "成功核对单据:" + fullId);
+
+        CommonTools.saveParamers(request);
+
+        RequestTools.actionInitQuery(request);
+
+        return queryOut(mapping, form, request, reponse);
+    }
+
+    /**
+     * 产生坏账
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward payOut3(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        String fullId = request.getParameter("outId");
+
+        String baddebts = request.getParameter("baddebts");
+
+        OutBean out = outDAO.find(fullId);
+
+        User user = (User)request.getSession().getAttribute("user");
+
+        if (out == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+
+            return mapping.findForward("error");
+        }
+
+        if (out.getStatus() != OutConstant.STATUS_PASS)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+
+            return mapping.findForward("error");
+        }
+
+        if (out.getPay() == OutConstant.PAY_YES)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "已经付款");
+
+            return mapping.findForward("error");
+        }
+
+        try
+        {
+            outManager.payBaddebts(user, fullId, MathTools.parseDouble(baddebts));
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理错误:" + e.getErrorContent());
+
+            return mapping.findForward("error");
+        }
+
+        request.setAttribute(KeyConstant.MESSAGE, "成功记录坏账单据:" + fullId);
+
+        CommonTools.saveParamers(request);
+
+        RequestTools.actionInitQuery(request);
+
+        return queryOut(mapping, form, request, reponse);
+    }
+
+    /**
+     * 坏账取消
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward payOut4(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        String fullId = request.getParameter("outId");
+
+        OutBean out = outDAO.find(fullId);
+
+        User user = (User)request.getSession().getAttribute("user");
+
+        if (out == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+
+            return mapping.findForward("error");
+        }
+
+        if (out.getStatus() != OutConstant.STATUS_SEC_PASS)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+
+            return mapping.findForward("error");
+        }
+
+        if (out.getPay() != OutConstant.PAY_YES)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "还没确认付款");
+
+            return mapping.findForward("error");
+        }
+
+        try
+        {
+            outManager.initPayOut(user, fullId);
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理错误:" + e.getErrorContent());
+
+            return mapping.findForward("error");
+        }
+
+        request.setAttribute(KeyConstant.MESSAGE, "成功取消坏账单据:" + fullId);
 
         CommonTools.saveParamers(request);
 
@@ -3668,16 +4014,112 @@ public class OutAction extends DispatchAction
             return mapping.findForward("handerInvokeBuy");
         }
 
+        // 处理个人领样退库
+        if ("91".equals(fow))
+        {
+            List<OutBean> refBuyList = queryRefOut(request, outId);
+
+            List<BaseBean> baseList = bean.getBaseList();
+
+            // 计算出已经退货的数量
+            for (BaseBean baseBean : baseList)
+            {
+                int hasBack = 0;
+
+                for (OutBean ref : refBuyList)
+                {
+                    List<BaseBean> refBaseList = ref.getBaseList();
+
+                    for (BaseBean refBase : refBaseList)
+                    {
+                        if (refBase.equals(baseBean))
+                        {
+                            hasBack += refBase.getAmount();
+
+                            break;
+                        }
+                    }
+                }
+
+                baseBean.setInway(hasBack);
+            }
+
+            return mapping.findForward("handerOutBack");
+        }
+
         if (bean.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
             List<InBillVO> billList = inBillDAO.queryEntityVOsByFK(outId);
 
             request.setAttribute("billList", billList);
 
+            if (bean.getOutType() == OutConstant.OUTTYPE_OUT_CONSIGN)
+            {
+                // 委托代销的结算单
+                List<OutBalanceBean> balanceList = outBalanceDAO.queryEntityBeansByFK(outId);
+
+                for (Iterator iterator = balanceList.iterator(); iterator.hasNext();)
+                {
+                    OutBalanceBean outBalanceBean = (OutBalanceBean)iterator.next();
+
+                    if (outBalanceBean.getStatus() != OutConstant.OUTBALANCE_STATUS_PASS)
+                    {
+                        iterator.remove();
+                    }
+                }
+
+                request.setAttribute("balanceList", balanceList);
+            }
+
+            if (bean.getOutType() == OutConstant.OUTTYPE_OUT_SWATCH)
+            {
+                queryRefOut(request, outId);
+            }
+
             return mapping.findForward("detailOut");
         }
 
+        if (bean.getStatus() == OutConstant.STATUS_PASS)
+        {
+            // 标识为结束
+            bean.setStatus(OutConstant.STATUS_SEC_PASS);
+        }
+
         return mapping.findForward("detailBuy");
+    }
+
+    /**
+     * 查询REF
+     * 
+     * @param request
+     * @param outId
+     * @return
+     */
+    private List<OutBean> queryRefOut(HttpServletRequest request, String outId)
+    {
+        // 查询当前已经有多少个人领样
+        ConditionParse con = new ConditionParse();
+
+        con.addWhereStr();
+
+        con.addCondition("OutBean.refOutFullId", "=", outId);
+
+        con.addCondition(" and OutBean.status in (3, 4)");
+
+        con.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
+
+        List<OutBean> refBuyList = outDAO.queryEntityBeansByCondition(con);
+
+        for (OutBean outBean : refBuyList)
+        {
+            List<BaseBean> list = baseDAO.queryEntityBeansByFK(outBean.getFullId());
+
+            outBean.setBaseList(list);
+        }
+
+        request.setAttribute("refBuyList", refBuyList);
+
+        return refBuyList;
     }
 
     /**

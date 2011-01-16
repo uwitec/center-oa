@@ -279,7 +279,7 @@ function $innerDetail(obj, ignoreArray)
     {
         var ele = elements[i];
         
-        if (!containInList(ignoreArray, ele.name))
+        if (!containInList(ignoreArray, ele.name) && ele.type.toLowerCase() != 'hidden')
         {
         	ele.setAttribute('autodisplay', 1);
         }

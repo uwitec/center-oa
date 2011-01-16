@@ -218,6 +218,12 @@ public interface OutConstant
     int OUTTYPE_IN_ERRORP = 3;
 
     /**
+     * 领样退货
+     */
+    @Defined(key = "outType_in", value = "领样退库")
+    int OUTTYPE_IN_SWATCH = 4;
+
+    /**
      * 采购退货
      */
     int OUTTYPE_IN_RECEDE = 7;

@@ -33,14 +33,14 @@ public interface OutManager extends ListenerManager<OutListener>
         throws MYException;
 
     /**
-     * coloneOutAndSubmitAffair(自动生成调入的库单)
+     * coloneOutAndSubmitAffair(自动生成入库单)
      * 
      * @param outBean
      * @param user
      * @return
      * @throws MYException
      */
-    String coloneOutAndSubmitAffair(final OutBean outBean, final User user)
+    String coloneOutAndSubmitAffair(final OutBean outBean, final User user, int type)
         throws MYException;
 
     /**
@@ -169,6 +169,28 @@ public interface OutManager extends ListenerManager<OutListener>
      * @return
      */
     boolean payOut(final User user, String fullId, String reason)
+        throws MYException;
+
+    /**
+     * payBaddebts
+     * 
+     * @param user
+     * @param fullId
+     * @return
+     * @throws MYException
+     */
+    boolean payBaddebts(final User user, String fullId, double bad)
+        throws MYException;
+
+    /**
+     * initPayOut(返回付款状态且坏账为0)
+     * 
+     * @param user
+     * @param fullId
+     * @return
+     * @throws MYException
+     */
+    boolean initPayOut(final User user, String fullId)
         throws MYException;
 
     boolean mark(String fullId, boolean status);

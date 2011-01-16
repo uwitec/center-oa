@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Join;
@@ -38,6 +39,7 @@ public class OutBalanceBean implements Serializable
     @Id
     private String id = "";
 
+    @FK
     private String outId = "";
 
     private double total = 0.0d;

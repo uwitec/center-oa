@@ -174,6 +174,60 @@ function payOut2()
     }
 }
 
+function payOut3()
+{
+    if (getRadio('fullId').statuss == 3 && getRadio('fullId').paytype != 1)
+    {
+        $.messager.prompt('销售单坏账', '请输入销售单坏账金额', getRadio('fullId').baddebts, function(value, isOk){
+                if (isOk)
+                {
+                    if (isFloat(value))
+                    {
+                        getObj('method').value = 'payOut3';
+            
+			            getObj('baddebts').value = value;
+			            
+			            getObj('outId').value = getRadioValue("fullId");
+			            
+			            adminForm.submit();
+                    }
+                    else
+                    {
+                        alert('只能输入金额');
+                        $Dbuttons(false);
+                    }
+                }
+                else
+                {
+                    $Dbuttons(false);
+                }
+            });
+    }
+    else
+    {
+        alert('不能操作');
+    }
+}
+
+function payOut4()
+{
+    if (getRadio('fullId').statuss == 4 && getRadio('fullId').paytype == 1 && parseFloat(getRadio('fullId').baddebts) > 0.0)
+    {
+        if (window.confirm("确定取消坏账?"))
+        {
+            getObj('method').value = 'payOut4';
+            
+            getObj('outId').value = getRadioValue("fullId");
+            
+            adminForm.submit();
+        }
+    }
+    else
+    {
+        alert('不能操作');
+    }
+}
+
 function centerCheck()
 {
     if (getRadio('fullId').statuss == 3 && getRadio('fullId').paytype == 1)
@@ -292,6 +346,18 @@ function reject()
     }
 }
 
+function outBack()
+{
+    //个人领样
+    if (getRadio('fullId').statuss == 3 && getRadio('fullId').outtype == 1)
+    {
+        $l('../sail/out.do?method=findOut&fow=91&outId=' + getRadioValue("fullId"));
+    }
+    else
+    {
+        alert('不能操作');
+    }
+}
 
 </script>
 
@@ -310,6 +376,7 @@ function reject()
 <input type="hidden" value="" name="statuss">
 <input type="hidden" value="" name="radioIndex">
 <input type="hidden" value="" name="reason">
+<input type="hidden" value="" name="baddebts">
 
 <c:set var="fg" value='销售'/>
 
@@ -475,7 +542,9 @@ function reject()
 							   con="${item.consign}"
 							   pay="${item.reserve3}"
 							   paytype="${item.pay}"
+							   outtype="${item.outType}"
 							   statuss='${item.status}' 
+							   baddebts='${my:formatNum(item.total - item.hadPay)}' 
 							   value="${item.fullId}"/></td>
 							<td align="center"
 							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}">
@@ -531,7 +600,8 @@ function reject()
 	<tr>
 		<td width="100%">
 		<div align="right">
-		<c:if test="${queryType != '5' && queryType != '6'}">
+		<c:if test="${queryType != '5' && queryType != '6' && queryType != '8'}">
+		
 		<c:if test="${queryType == '2'}">
 		<input type="button" class="button_class"
                 value="&nbsp;&nbsp;确认回款&nbsp;&nbsp;" onClick="payOut()">&nbsp;&nbsp;
@@ -546,14 +616,26 @@ function reject()
 			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;"
 		</c:if>	
 		
+		
+		
+		
 		<c:if test="${queryType == '5'}">
 		<input type="button" class="button_class"
                 value="&nbsp;&nbsp;确认回款&nbsp;&nbsp;" onClick="payOut2()"/>&nbsp;&nbsp;
+        <input type="button" class="button_class"
+                value="&nbsp;&nbsp;确认坏账&nbsp;&nbsp;" onClick="payOut3()"/>&nbsp;&nbsp;
+        <input type="button" class="button_class"
+                value="&nbsp;&nbsp;坏账取消&nbsp;&nbsp;" onClick="payOut4()"/>&nbsp;&nbsp;
 		</c:if>
 		
 		<c:if test="${queryType == '6'}">
         <input type="button" class="button_class"
                 value="&nbsp;&nbsp;总部核对&nbsp;&nbsp;" onClick="centerCheck()"/>&nbsp;&nbsp;
+        </c:if>
+        
+        <c:if test="${queryType == '8'}">
+        <input type="button" class="button_class"
+                value="&nbsp;&nbsp;领样退库&nbsp;&nbsp;" onClick="outBack()"/>&nbsp;&nbsp;
         </c:if>
 		</div>
 		</td>

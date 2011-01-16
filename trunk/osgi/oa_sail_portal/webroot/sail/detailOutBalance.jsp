@@ -27,8 +27,7 @@ function addBean()
 <form name="formBean" method=post action="../sail/out.do">
 <p:navigation
     height="22">
-    <td width="550" class="navigation"><span style="cursor: pointer;"
-        onclick="javascript:history.go(-1)">销售管理</span> &gt;&gt; 委托代销</td>
+    <td width="550" class="navigation">结算清单详细</td>
     <td width="85"></td>
 </p:navigation> <br>
 

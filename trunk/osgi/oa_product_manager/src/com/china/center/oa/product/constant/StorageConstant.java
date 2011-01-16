@@ -71,6 +71,12 @@ public interface StorageConstant
     int OPR_DDEPOTPART_CHANGE = 7;
 
     /**
+     * 领样退库
+     */
+    @Defined(key = "storageType", value = "领样退库")
+    int OPR_STORAGE_SWATCH = 8;
+
+    /**
      * 调价回滚
      */
     @Defined(key = "storageType", value = "调价回滚")
@@ -99,6 +105,12 @@ public interface StorageConstant
      */
     @Defined(key = "storageType", value = "调拨/报废/纠错")
     int OPR_STORAGE_INOTHER = 11;
+
+    /**
+     * 领样退库
+     */
+    @Defined(key = "storageType", value = "领样退库")
+    int OPR_STORAGE_SWATH = 12;
 
     /**
      * 公共的职员

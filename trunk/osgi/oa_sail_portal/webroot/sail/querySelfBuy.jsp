@@ -141,7 +141,8 @@ function del()
 
 function sub()
 {
-	if (getRadio('fullId').statuss == '0' || getRadio('fullId').statuss == '2')
+    //个人领样的退货不能再次提交
+	if ((getRadio('fullId').statuss == '0' || getRadio('fullId').statuss == '2') && getRadio('fullId').outtype != '4')
 	{
 		 if (window.confirm("确定提交入库单?"))
 		 {

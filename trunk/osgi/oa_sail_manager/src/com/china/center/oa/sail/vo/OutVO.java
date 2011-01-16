@@ -31,6 +31,9 @@ public class OutVO extends OutBean
     @Relationship(relationField = "locationId")
     private String locationName = "";
 
+    /**
+     * 源仓库
+     */
     @Relationship(relationField = "location")
     private String depotName = "";
 

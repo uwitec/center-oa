@@ -32,7 +32,11 @@ function total()
 
 function titleChange()
 {
-    removeOption($O('outType'), 0);
+    if ($O('outType'))
+    {
+        removeOption($O('outType'), 0);
+        removeOption($O('outType'), 4);
+    }
 }
 
 function load()

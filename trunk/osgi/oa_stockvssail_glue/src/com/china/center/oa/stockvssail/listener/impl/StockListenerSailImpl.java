@@ -87,6 +87,8 @@ public class StockListenerSailImpl implements StockListener
 
             out.setType(OutConstant.OUT_TYPE_INBILL);
 
+            out.setOutType(OutConstant.OUTTYPE_IN_COMMON);
+
             out.setOutTime(TimeTools.now_short());
 
             out.setDepartment("采购部");

@@ -514,4 +514,56 @@ public class BaseBean implements Serializable
     {
         this.depotpartName = depotpartName;
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( (costPriceKey == null) ? 0 : costPriceKey.hashCode());
+        result = prime * result + ( (depotpartId == null) ? 0 : depotpartId.hashCode());
+        result = prime * result + ( (owner == null) ? 0 : owner.hashCode());
+        result = prime * result + ( (productId == null) ? 0 : productId.hashCode());
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if ( ! (obj instanceof BaseBean)) return false;
+        final BaseBean other = (BaseBean)obj;
+        if (costPriceKey == null)
+        {
+            if (other.costPriceKey != null) return false;
+        }
+        else if ( !costPriceKey.equals(other.costPriceKey)) return false;
+        if (depotpartId == null)
+        {
+            if (other.depotpartId != null) return false;
+        }
+        else if ( !depotpartId.equals(other.depotpartId)) return false;
+        if (owner == null)
+        {
+            if (other.owner != null) return false;
+        }
+        else if ( !owner.equals(other.owner)) return false;
+        if (productId == null)
+        {
+            if (other.productId != null) return false;
+        }
+        else if ( !productId.equals(other.productId)) return false;
+        return true;
+    }
 }
