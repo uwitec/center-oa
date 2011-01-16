@@ -115,7 +115,7 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
-         <condtion name="paymentId" caption="回款标识">
+        <condtion name="paymentId" caption="回款标识">
             <opr>like</opr>
             <type>text</type>
         </condtion>
@@ -154,6 +154,10 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
+        <condtion name="id" caption="标识">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
         <condtion name="paymentId" caption="回款标识(A)">
             <opr>=</opr>
             <type>text</type>
@@ -180,8 +184,67 @@
             <type>select</type>
             <option>$inbillStatus</option>
         </condtion>
+        <condtion name="lock" caption="锁定" filed="ulock">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$billLock</option>
+        </condtion>
     </item>
     
     <item name="querySelfInBill" alias="queryInBill"/>
+    
+    <item name="queryOutBill" deaultpfix="OutBillBean">
+        <condtion name="alogTime" filed="logTime" caption="开始时间">
+            <opr>&gt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="blogTime" filed="logTime" caption="结束时间">
+            <opr>&lt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="stafferName" filed="name" caption="所属职员" pfix="SB2">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="provideName" filed="name" caption="供应商" pfix="ProviderBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="id" caption="标识">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="stockId" caption="采购单号(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="bankId" caption="帐户">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$bankList</option>
+        </condtion>
+        <condtion name="type" caption="类型">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$outbillType</option>
+        </condtion>
+        <condtion name="payType" caption="付款方式">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$outbillPayType</option>
+        </condtion>
+        <condtion name="lock" caption="锁定" filed="ulock">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$billLock</option>
+        </condtion>
+    </item>
     
 </query>

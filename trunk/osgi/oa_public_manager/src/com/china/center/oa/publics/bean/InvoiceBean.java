@@ -21,7 +21,7 @@ import com.china.center.oa.publics.constant.InvoiceConstant;
 
 
 /**
- * InvoiceBean
+ * 发票
  * 
  * @author ZHUZHU
  * @version 2010-9-19
@@ -84,7 +84,8 @@ public class InvoiceBean implements Serializable
             counteractName = "可抵扣";
         }
 
-        return forwardName + "-->" + this.name + "[" + counteractName + "]" + "(" + formatNum(this.val) + "%)";
+        return forwardName + "-->" + this.name + "[" + counteractName + "]" + "("
+               + formatNum(this.val) + "%)";
     }
 
     /**

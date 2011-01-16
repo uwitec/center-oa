@@ -31,7 +31,11 @@
             type="org.springframework.web.struts.DelegatingActionProxy"
             validate="false">
             <forward name="queryInBill" path="/bill/queryInBill.jsp" />
+            <forward name="addInBill" path="/bill/addInBill.jsp" />
             <forward name="detailInBill" path="/bill/detailInBill.jsp" />
+            <forward name="queryOutBill" path="/bill/queryOutBill.jsp" />
+            <forward name="addOutBill" path="/bill/addOutBill.jsp" />
+            <forward name="detailOutBill" path="/bill/detailOutBill.jsp" />
         </action>
 		
 	</action-mappings>

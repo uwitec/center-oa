@@ -15,8 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.InBillBean;
+import com.china.center.oa.finance.bean.OutBillBean;
+import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.dao.InBillDAO;
+import com.china.center.oa.finance.dao.OutBillDAO;
+import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.sail.bean.OutBean;
@@ -39,9 +43,13 @@ public class BillManagerImpl implements BillManager
 {
     private InBillDAO inBillDAO = null;
 
+    private OutBillDAO outBillDAO = null;
+
     private OutDAO outDAO = null;
 
     private CommonDAO commonDAO = null;
+
+    private PaymentDAO paymentDAO = null;
 
     private static Object LOCK = new Object();
 
@@ -56,6 +64,8 @@ public class BillManagerImpl implements BillManager
     public boolean addInBillBean(User user, InBillBean bean)
         throws MYException
     {
+        JudgeTools.judgeParameterIsNull(user, bean);
+
         return addInBillBeanWithoutTransaction(user, bean);
     }
 
@@ -65,6 +75,8 @@ public class BillManagerImpl implements BillManager
         synchronized (LOCK)
         {
             bean.setId(commonDAO.getSquenceString20());
+
+            bean.setLogTime(TimeTools.now());
 
             // 验证销售单绑定策略
             if ( !StringTools.isNullOrNone(bean.getOutId()))
@@ -83,13 +95,9 @@ public class BillManagerImpl implements BillManager
 
                 // 更新已经支付的金额
                 outDAO.updateHadPay(bean.getOutId(), hasPay + bean.getMoneys());
-
-                // 增加
-                inBillDAO.saveEntityBean(bean);
-
             }
 
-            return true;
+            return inBillDAO.saveEntityBean(bean);
         }
     }
 
@@ -97,7 +105,50 @@ public class BillManagerImpl implements BillManager
     public boolean deleteInBillBean(User user, String id)
         throws MYException
     {
-        return inBillDAO.deleteEntityBean(id);
+        // 如果被OUTID绑定不能删除
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        InBillBean bill = inBillDAO.find(id);
+
+        if (bill == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if ( !StringTools.isNullOrNone(bill.getOutId()))
+        {
+            throw new MYException("单据已经被销售单[%s]绑定,请确认操作", bill.getOutId());
+        }
+
+        if (bill.getLock() == FinanceConstant.BILL_LOCK_YES)
+        {
+            throw new MYException("单据已经被统计固化,请确认操作");
+        }
+
+        inBillDAO.deleteEntityBean(id);
+
+        // 更新回款单的状态
+        if ( !StringTools.isNullOrNone(bill.getPaymentId()))
+        {
+            PaymentBean payment = paymentDAO.find(bill.getPaymentId());
+
+            double hasUsed = inBillDAO.sumByPaymentId(bill.getPaymentId());
+
+            payment.setUseMoney(hasUsed);
+
+            if (hasUsed >= payment.getMoney())
+            {
+                payment.setUseall(FinanceConstant.PAYMENT_USEALL_END);
+            }
+            else
+            {
+                payment.setUseall(FinanceConstant.PAYMENT_USEALL_INIT);
+            }
+
+            paymentDAO.updateEntityBean(payment);
+        }
+
+        return true;
     }
 
     @Transactional(rollbackFor = MYException.class)
@@ -105,6 +156,42 @@ public class BillManagerImpl implements BillManager
         throws MYException
     {
         return inBillDAO.updateEntityBean(bean);
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean addOutBillBean(User user, OutBillBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, bean);
+
+        bean.setId(commonDAO.getSquenceString20());
+
+        bean.setLogTime(TimeTools.now());
+
+        return outBillDAO.saveEntityBean(bean);
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean deleteOutBillBean(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        OutBillBean bill = outBillDAO.find(id);
+
+        if (bill == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bill.getLock() == FinanceConstant.BILL_LOCK_YES)
+        {
+            throw new MYException("单据已经被统计固化,请确认操作");
+        }
+
+        outBillDAO.deleteEntityBean(id);
+
+        return true;
     }
 
     @Transactional(rollbackFor = MYException.class)
@@ -144,11 +231,10 @@ public class BillManagerImpl implements BillManager
 
         inBillDAO.updateEntityBean(bill);
 
+        // 分拆后时间不能变(锁定状态不能变)
         bill.setId(commonDAO.getSquenceString20());
 
         bill.setMoneys(newMoney);
-
-        bill.setLogTime(TimeTools.now());
 
         bill.setDescription("分拆" + id + "后自动生成新的收款单");
 
@@ -206,5 +292,39 @@ public class BillManagerImpl implements BillManager
     public void setOutDAO(OutDAO outDAO)
     {
         this.outDAO = outDAO;
+    }
+
+    /**
+     * @return the paymentDAO
+     */
+    public PaymentDAO getPaymentDAO()
+    {
+        return paymentDAO;
+    }
+
+    /**
+     * @param paymentDAO
+     *            the paymentDAO to set
+     */
+    public void setPaymentDAO(PaymentDAO paymentDAO)
+    {
+        this.paymentDAO = paymentDAO;
+    }
+
+    /**
+     * @return the outBillDAO
+     */
+    public OutBillDAO getOutBillDAO()
+    {
+        return outBillDAO;
+    }
+
+    /**
+     * @param outBillDAO
+     *            the outBillDAO to set
+     */
+    public void setOutBillDAO(OutBillDAO outBillDAO)
+    {
+        this.outBillDAO = outBillDAO;
     }
 }

@@ -431,6 +431,10 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         {
             payment.setUseall(FinanceConstant.PAYMENT_USEALL_END);
         }
+        else
+        {
+            payment.setUseall(FinanceConstant.PAYMENT_USEALL_INIT);
+        }
 
         paymentDAO.updateEntityBean(payment);
     }

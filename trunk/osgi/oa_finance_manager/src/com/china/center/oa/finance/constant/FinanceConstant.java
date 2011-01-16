@@ -65,7 +65,7 @@ public interface FinanceConstant
     int INBILL_TYPE_SAILOUT = 0;
 
     /**
-     * 银行贷款
+     * 银行贷款(The loan is interest free)
      */
     @Defined(key = "inbillType", value = "银行贷款")
     int INBILL_TYPE_LOAN = 1;
@@ -75,6 +75,12 @@ public interface FinanceConstant
      */
     @Defined(key = "inbillType", value = "卖出公司资产")
     int INBILL_TYPE_ASSETS = 2;
+
+    /**
+     * 利息
+     */
+    @Defined(key = "inbillType", value = "利息")
+    int INBILL_TYPE_INTEREST = 3;
 
     /**
      * 可使用
@@ -131,8 +137,93 @@ public interface FinanceConstant
     int INBILL_STATUS_PREPAYMENTS = 1;
 
     /**
+     * 未锁定
+     */
+    @Defined(key = "billLock", value = "未锁定")
+    int BILL_LOCK_NO = 0;
+
+    /**
+     * 锁定
+     */
+    @Defined(key = "billLock", value = "锁定")
+    int BILL_LOCK_YES = 1;
+
+    /**
      * 预收
      */
     @Defined(key = "inbillStatus", value = "预收")
     int INBILL_STATUS_NOREF = 2;
+
+    /**
+     * 现金
+     */
+    @Defined(key = "outbillPayType", value = "现金")
+    int OUTBILL_PAYTYPE_MONEY = 0;
+
+    /**
+     * 银行
+     */
+    @Defined(key = "outbillPayType", value = "银行")
+    int OUTBILL_PAYTYPE_BANK = 1;
+
+    /**
+     * 采购付款
+     */
+    @Defined(key = "outbillType", value = "采购付款")
+    int OUTBILL_TYPE_STOCK = 0;
+
+    /**
+     * 买固定资产
+     */
+    @Defined(key = "outbillType", value = "买固定资产")
+    int OUTBILL_TYPE_BUY_ASSET = 1;
+
+    /**
+     * 买低值用品(买办公品)
+     */
+    @Defined(key = "outbillType", value = "买办公低值品")
+    int OUTBILL_TYPE_BUY_COMMON = 2;
+
+    /**
+     * 买无形资产
+     */
+    @Defined(key = "outbillType", value = "买无形资产")
+    int OUTBILL_TYPE_BUY_ABS = 3;
+
+    /**
+     * 支付代摊费用
+     */
+    @Defined(key = "outbillType", value = "支付代摊费用")
+    int OUTBILL_TYPE_PAY_APPORTION = 4;
+
+    /**
+     * 长期股权投资
+     */
+    @Defined(key = "outbillType", value = "长期股权投资")
+    int OUTBILL_TYPE_BUY_STOCK = 5;
+
+    /**
+     * 个人借款
+     */
+    @Defined(key = "outbillType", value = "个人借款")
+    int OUTBILL_TYPE_BORROW = 6;
+
+    /**
+     * 押金和定金
+     */
+    @Defined(key = "outbillType", value = "押金和定金")
+    int OUTBILL_TYPE_CASH = 7;
+
+    /**
+     * 费用报销
+     */
+    @Defined(key = "outbillType", value = "费用报销")
+    int OUTBILL_TYPE_WIPEOUT = 8;
+
+    /**
+     * 税金
+     */
+    @Defined(key = "outbillType", value = "税金")
+    int OUTBILL_TYPE_DUTY = 9;
+
 }

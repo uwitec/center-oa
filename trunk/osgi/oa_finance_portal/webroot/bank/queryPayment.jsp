@@ -27,12 +27,13 @@ function load()
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} lstafferId={stafferId}>', width : 40, align: 'center'},
              {display: '帐户', name : 'bankName', width : '18%'},
-             {display: '类型', name : 'type', cc: 'paymentType', width : '8%'},
-             {display: '状态', name : 'status', cc: 'paymentStatus', width : '8%'},
-             {display: '金额使用', name : 'useall', cc: 'paymentUseall', width : '8%'},
+             {display: '类型', name : 'type', cc: 'paymentType', width : '5%'},
+             {display: '状态', name : 'status', cc: 'paymentStatus', width : '5%'},
+             {display: '使用状态', name : 'useall', cc: 'paymentUseall', width : '8%'},
              {display: '认领人', name : 'stafferName', cc: 'paymentStatus', width : '8%'},
              {display: '回款来源', name : 'fromer', width : '12%'},
              {display: '回款金额', name : 'money', width : '8%', toFixed: 2},
+             {display: '使用金额', name : 'useMoney', width : '8%', toFixed: 2},
              {display: '回款日期', name : 'receiveTime', width : '10%', sortable : true,},
              {display: '标识', name : 'id', sortable : true, width : 'auto'}
              ],

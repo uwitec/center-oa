@@ -20,31 +20,35 @@ import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.jdbc.annotation.enums.JoinType;
-import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
+import com.china.center.oa.product.bean.ProviderBean;
+import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.StafferBean;
 
 
 /**
- * BillBean
+ * OutBillBean
  * 
  * @author ZHUZHU
  * @version 2010-12-25
- * @see InBillBean
+ * @see OutBillBean
  * @since 3.0
  */
-@Entity(name = "收款单")
-@Table(name = "T_CENTER_INBILL")
-public class InBillBean implements Serializable
+@Entity(name = "付款单")
+@Table(name = "T_CENTER_OUTBILL")
+public class OutBillBean implements Serializable
 {
     @Id
     private String id = "";
 
     @Html(title = "类型", type = Element.SELECT)
-    private int type = FinanceConstant.INBILL_TYPE_SAILOUT;
+    private int type = FinanceConstant.OUTBILL_TYPE_STOCK;
+
+    @Html(title = "付款方式", type = Element.SELECT)
+    private int payType = FinanceConstant.OUTBILL_PAYTYPE_MONEY;
 
     /**
-     * 已经收取 预收(关联的销售单还没有正式生效) 未关联(还没有和销售单关联)(这个只有在销售收入下才有意义哦)
+     * 付款单没有太多意义
      */
     @Html(title = "状态", type = Element.SELECT)
     private int status = FinanceConstant.INBILL_STATUS_PAYMENTS;
@@ -61,20 +65,24 @@ public class InBillBean implements Serializable
     private String bankId = "";
 
     @FK
-    private String outId = "";
+    private String stockId = "";
 
     @Html(title = "金额", type = Element.DOUBLE, must = true)
     private double moneys = 0.0d;
 
-    @Html(title = "客户", name = "customerName", readonly = true, must = true)
-    @Join(tagClass = CustomerBean.class)
-    private String customerId = "";
+    @Html(title = "供应商", name = "provideName", readonly = true, must = true)
+    @Join(tagClass = ProviderBean.class)
+    private String provideId = "";
 
     /**
      * 单据生成人
      */
     @Join(tagClass = StafferBean.class, type = JoinType.LEFT, alias = "SB1")
     private String stafferId = "";
+
+    @Html(title = "发票类型", type = Element.SELECT)
+    @Join(tagClass = InvoiceBean.class, type = JoinType.LEFT)
+    private String invoiceId = "";
 
     /**
      * 属于哪个职员的
@@ -89,8 +97,6 @@ public class InBillBean implements Serializable
 
     private String refBillId = "";
 
-    private String paymentId = "";
-
     private String logTime = "";
 
     @Html(title = "备注", maxLength = 200, type = Element.TEXTAREA)
@@ -99,7 +105,7 @@ public class InBillBean implements Serializable
     /**
      * default constructor
      */
-    public InBillBean()
+    public OutBillBean()
     {
     }
 
@@ -155,23 +161,6 @@ public class InBillBean implements Serializable
     }
 
     /**
-     * @return the outId
-     */
-    public String getOutId()
-    {
-        return outId;
-    }
-
-    /**
-     * @param outId
-     *            the outId to set
-     */
-    public void setOutId(String outId)
-    {
-        this.outId = outId;
-    }
-
-    /**
      * @return the moneys
      */
     public double getMoneys()
@@ -186,23 +175,6 @@ public class InBillBean implements Serializable
     public void setMoneys(double moneys)
     {
         this.moneys = moneys;
-    }
-
-    /**
-     * @return the customerId
-     */
-    public String getCustomerId()
-    {
-        return customerId;
-    }
-
-    /**
-     * @param customerId
-     *            the customerId to set
-     */
-    public void setCustomerId(String customerId)
-    {
-        this.customerId = customerId;
     }
 
     /**
@@ -308,23 +280,6 @@ public class InBillBean implements Serializable
     }
 
     /**
-     * @return the paymentId
-     */
-    public String getPaymentId()
-    {
-        return paymentId;
-    }
-
-    /**
-     * @param paymentId
-     *            the paymentId to set
-     */
-    public void setPaymentId(String paymentId)
-    {
-        this.paymentId = paymentId;
-    }
-
-    /**
      * @return the ownerId
      */
     public String getOwnerId()
@@ -376,6 +331,57 @@ public class InBillBean implements Serializable
     }
 
     /**
+     * @return the provideId
+     */
+    public String getProvideId()
+    {
+        return provideId;
+    }
+
+    /**
+     * @param provideId
+     *            the provideId to set
+     */
+    public void setProvideId(String provideId)
+    {
+        this.provideId = provideId;
+    }
+
+    /**
+     * @return the payType
+     */
+    public int getPayType()
+    {
+        return payType;
+    }
+
+    /**
+     * @param payType
+     *            the payType to set
+     */
+    public void setPayType(int payType)
+    {
+        this.payType = payType;
+    }
+
+    /**
+     * @return the stockId
+     */
+    public String getStockId()
+    {
+        return stockId;
+    }
+
+    /**
+     * @param stockId
+     *            the stockId to set
+     */
+    public void setStockId(String stockId)
+    {
+        this.stockId = stockId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -387,7 +393,7 @@ public class InBillBean implements Serializable
         StringBuilder retValue = new StringBuilder();
 
         retValue
-            .append("InBillBean ( ")
+            .append("OutBillBean ( ")
             .append(super.toString())
             .append(TAB)
             .append("id = ")
@@ -395,6 +401,9 @@ public class InBillBean implements Serializable
             .append(TAB)
             .append("type = ")
             .append(this.type)
+            .append(TAB)
+            .append("payType = ")
+            .append(this.payType)
             .append(TAB)
             .append("status = ")
             .append(this.status)
@@ -405,14 +414,14 @@ public class InBillBean implements Serializable
             .append("bankId = ")
             .append(this.bankId)
             .append(TAB)
-            .append("outId = ")
-            .append(this.outId)
+            .append("stockId = ")
+            .append(this.stockId)
             .append(TAB)
             .append("moneys = ")
             .append(this.moneys)
             .append(TAB)
-            .append("customerId = ")
-            .append(this.customerId)
+            .append("provideId = ")
+            .append(this.provideId)
             .append(TAB)
             .append("stafferId = ")
             .append(this.stafferId)
@@ -429,9 +438,6 @@ public class InBillBean implements Serializable
             .append("refBillId = ")
             .append(this.refBillId)
             .append(TAB)
-            .append("paymentId = ")
-            .append(this.paymentId)
-            .append(TAB)
             .append("logTime = ")
             .append(this.logTime)
             .append(TAB)
@@ -441,6 +447,23 @@ public class InBillBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the invoiceId
+     */
+    public String getInvoiceId()
+    {
+        return invoiceId;
+    }
+
+    /**
+     * @param invoiceId
+     *            the invoiceId to set
+     */
+    public void setInvoiceId(String invoiceId)
+    {
+        this.invoiceId = invoiceId;
     }
 
 }

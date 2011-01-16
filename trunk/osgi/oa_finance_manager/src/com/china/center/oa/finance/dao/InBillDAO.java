@@ -10,6 +10,7 @@ package com.china.center.oa.finance.dao;
 
 
 import com.china.center.jdbc.inter.DAO;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.vo.InBillVO;
 
@@ -33,4 +34,8 @@ public interface InBillDAO extends DAO<InBillBean, InBillVO>
      * @return
      */
     double sumByOutId(String outId);
+
+    double sumByCondition(ConditionParse condition);
+
+    int lockByCondition(ConditionParse condition);
 }

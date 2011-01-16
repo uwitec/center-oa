@@ -9,8 +9,12 @@
 package com.china.center.oa.publics.dao.impl;
 
 
+import java.util.List;
+
 import com.china.center.jdbc.inter.impl.BaseDAO;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.publics.bean.InvoiceBean;
+import com.china.center.oa.publics.constant.InvoiceConstant;
 import com.china.center.oa.publics.dao.InvoiceDAO;
 
 
@@ -24,4 +28,21 @@ import com.china.center.oa.publics.dao.InvoiceDAO;
  */
 public class InvoiceDAOImpl extends BaseDAO<InvoiceBean, InvoiceBean> implements InvoiceDAO
 {
+    public List<InvoiceBean> listForwardIn()
+    {
+        ConditionParse condition = new ConditionParse();
+
+        condition.addIntCondition("forward", "=", InvoiceConstant.INVOICE_FORWARD_IN);
+
+        return this.queryEntityBeansByCondition(condition);
+    }
+
+    public List<InvoiceBean> listForwardOut()
+    {
+        ConditionParse condition = new ConditionParse();
+
+        condition.addIntCondition("forward", "=", InvoiceConstant.INVOICE_FORWARD_OUT);
+
+        return this.queryEntityBeansByCondition(condition);
+    }
 }

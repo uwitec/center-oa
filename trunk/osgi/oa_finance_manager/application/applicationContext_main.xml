@@ -43,4 +43,10 @@
 
 	<bean id="paymentApplyManager" class="com.china.center.oa.finance.manager.impl.PaymentApplyManagerImpl" />
 
+	<bean id="outBillDAO" class="com.china.center.oa.finance.dao.impl.OutBillDAOImpl" />
+
+	<bean id="statBankDAO" class="com.china.center.oa.finance.dao.impl.StatBankDAOImpl" />
+
+	<bean id="statBankManager" class="com.china.center.oa.finance.manager.impl.StatBankManagerImpl" />
+
 </beans>

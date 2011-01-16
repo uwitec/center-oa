@@ -11,7 +11,9 @@ package com.china.center.oa.finance.facade;
 
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.BankBean;
+import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.InvoiceinsBean;
+import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.bean.PaymentApplyBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 
@@ -113,5 +115,33 @@ public interface FinanceFacade
      * @throws MYException
      */
     boolean splitInBillBean(String userId, String id, double newMoney)
+        throws MYException;
+
+    boolean addInBillBean(String userId, InBillBean bean)
+        throws MYException;
+
+    boolean deleteInBillBean(String userId, String id)
+        throws MYException;
+
+    /**
+     * addOutBillBean
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    boolean addOutBillBean(String userId, OutBillBean bean)
+        throws MYException;
+
+    /**
+     * deleteOutBillBean
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean deleteOutBillBean(String userId, String id)
         throws MYException;
 }

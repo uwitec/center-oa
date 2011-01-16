@@ -32,22 +32,22 @@
 
 	<p:subBody width="100%">
 
-		<p:class value="com.china.center.oa.finance.bean.InBillBean" opr="2"/>
+		<p:class value="com.china.center.oa.finance.bean.OutBillBean" opr="2"/>
 
 		<p:table cells="2">
 		
 		    <p:cell title="标识">
                ${bean.id}
             </p:cell>
+            
+            <p:pro field="payType">
+                <p:option type="outbillPayType"/>
+            </p:pro>
 
 			<p:pro field="type" innerString="style='WIDTH: 340px;'">
-			   <p:option type="inbillType" />
+			   <p:option type="outbillType" />
 			</p:pro>
 
-			<p:pro field="status" innerString="style='WIDTH: 340px;'">
-               <p:option type="inbillStatus" />
-            </p:pro>
-            
             <p:pro field="lock" innerString="style='WIDTH: 340px;'">
                <p:option type="billLock" />
             </p:pro>
@@ -55,17 +55,17 @@
             <p:cell title="帐号">
                ${bean.bankName}
             </p:cell>
+            
+            <p:cell title="发票类型">
+               ${bean.invoiceName}
+            </p:cell>
 			
-			<p:cell title="客户">
-               ${bean.customerName}
+			<p:cell title="供应商">
+               ${bean.provideName}
             </p:cell>
 			
 			<p:cell title="关联单据">
-			    ${bean.outId}
-            </p:cell>
-            
-            <p:cell title="关联回款">
-                ${bean.paymentId}
+			    ${bean.stockId}
             </p:cell>
             
             <p:cell title="开单人">

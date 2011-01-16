@@ -603,4 +603,9 @@ public interface AuthConstant
      * 收款申请审核
      */
     String INBILL_APPROVE = "1606";
+
+    /**
+     * 付款操作
+     */
+    String OUTBILL_OPR = "1607";
 }

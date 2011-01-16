@@ -12,7 +12,9 @@ package com.china.center.oa.finance.facade.impl;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.BankBean;
+import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.InvoiceinsBean;
+import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.bean.PaymentApplyBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.facade.FinanceFacade;
@@ -55,6 +57,10 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
     private static Object PAYMENT_LOCK = new Object();
 
     private static Object PAYMENT_APPLY_LOCK = new Object();
+
+    private static Object INBILL_LOCK = new Object();
+
+    private static Object OUTBILL_LOCK = new Object();
 
     /**
      * default constructor
@@ -365,6 +371,94 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         checkUser(user);
 
         return billManager.splitInBillBean(user, id, newMoney);
+    }
+
+    public boolean addInBillBean(String userId, InBillBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (INBILL_LOCK)
+        {
+            if (containAuth(user, AuthConstant.INBILL_OPR))
+            {
+                return billManager.addInBillBean(user, bean);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean deleteInBillBean(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (INBILL_LOCK)
+        {
+            if (containAuth(user, AuthConstant.INBILL_OPR))
+            {
+                return billManager.deleteInBillBean(user, id);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean addOutBillBean(String userId, OutBillBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (OUTBILL_LOCK)
+        {
+            if (containAuth(user, AuthConstant.OUTBILL_OPR))
+            {
+                return billManager.addOutBillBean(user, bean);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean deleteOutBillBean(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (OUTBILL_LOCK)
+        {
+            if (containAuth(user, AuthConstant.OUTBILL_OPR))
+            {
+                return billManager.deleteOutBillBean(user, id);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
     }
 
     /**

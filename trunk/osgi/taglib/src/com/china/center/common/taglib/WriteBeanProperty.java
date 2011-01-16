@@ -37,9 +37,9 @@ public abstract class WriteBeanProperty
      * @param algin
      * @return
      */
-    public static String[] writeProperty(Class claz, String property, String value, int cell, String innerString,
-                                         String outString, String width1, String width2, String algin, String rootUrl,
-                                         int opr)
+    public static String[] writeProperty(Class claz, String property, String value, int cell,
+                                         String innerString, String outString, String width1,
+                                         String width2, String algin, String rootUrl, int opr)
     {
         Field field = BeanTools.getFieldIgnoreCase(property, claz);
 
@@ -104,8 +104,9 @@ public abstract class WriteBeanProperty
         // 处理double的显示问题
         if ( !isNullOrNone(value))
         {
-            if (field.getType() == double.class || field.getType() == Double.class || field.getType() == Float.class
-                || field.getType() == float.class || field.getType() == BigDecimal.class)
+            if (field.getType() == double.class || field.getType() == Double.class
+                || field.getType() == Float.class || field.getType() == float.class
+                || field.getType() == BigDecimal.class)
             {
                 DecimalFormat df = new DecimalFormat("#0.00");
 
@@ -133,14 +134,11 @@ public abstract class WriteBeanProperty
                     values = " values='" + value + "' ";
                 }
 
-                String new_name = " name='" + name + "' head='" + html.title() + "' " + " id ='" + name + "' ";
+                String new_name = " name='" + name + "' head='" + html.title() + "' " + " id ='"
+                                  + name + "' ";
 
-                bbb
-                    .append("<select ")
-                    .append(new_name)
-                    .append(values)
-                    .append(" class=\"select_class\" autodisplay=1 ")
-                    .append('>');
+                bbb.append("<select ").append(new_name).append(values).append(
+                    " class=\"select_class\" autodisplay=1 ").append('>');
 
                 end.append("</select>");
 
@@ -174,7 +172,8 @@ public abstract class WriteBeanProperty
      * @param html
      * @return
      */
-    private static String[] getElement(Html html, String property, String value, String innerString, String rootUrl)
+    private static String[] getElement(Html html, String property, String value,
+                                       String innerString, String rootUrl)
     {
         StringBuffer buffer = new StringBuffer();
         StringBuffer end = new StringBuffer();
@@ -207,7 +206,8 @@ public abstract class WriteBeanProperty
             inner = " " + innerString + " ";
         }
 
-        String name = " name='" + oldname + "' head='" + html.title() + "' " + " id ='" + oldname + "' ";
+        String name = " name='" + oldname + "' head='" + html.title() + "' " + " id ='" + oldname
+                      + "' ";
 
         if (html.readonly())
         {
@@ -279,6 +279,18 @@ public abstract class WriteBeanProperty
         if (html.type() == null || html.type() == Element.INPUT || html.type() == Element.NUMBER
             || html.type() == Element.DOUBLE)
         {
+            int defaultMaxlength = 100;
+
+            if (html.type() == Element.NUMBER)
+            {
+                defaultMaxlength = 10;
+            }
+
+            if (html.type() == Element.DOUBLE)
+            {
+                defaultMaxlength = 12;
+            }
+
             // 这里的input特殊处理没有限制就是100
             if (html.maxLength() > 0)
             {
@@ -286,13 +298,14 @@ public abstract class WriteBeanProperty
             }
             else
             {
-                maxLength = " maxlength=\"" + 100 + "\" ";
+                maxLength = " maxlength=\"" + defaultMaxlength + "\" ";
             }
 
             // 单独处理NUMBER和DOUBLE
             if (html.type() == Element.NUMBER)
             {
-                oncheck = " oncheck=\"" + str_oncheck + JCheck.NOT_NONE + JCheck.ONLY_NUMBER + "\" ";
+                oncheck = " oncheck=\"" + str_oncheck + JCheck.NOT_NONE + JCheck.ONLY_NUMBER
+                          + "\" ";
 
                 if ( !isNullOrNone(value))
                 {
@@ -321,14 +334,8 @@ public abstract class WriteBeanProperty
             // <input type="text" name="connector" maxlength="14"
             // oncheck="notNone"
             // readonly="readonly">
-            buffer
-                .append("<input type=text")
-                .append(name)
-                .append(tip)
-                .append(inner)
-                .append(readonly)
-                .append(values)
-                .append(style);
+            buffer.append("<input type=text").append(name).append(tip).append(inner).append(
+                readonly).append(values).append(style);
             buffer.append(oncheck).append(maxLength).append(">");
 
             buffer.append(must);
@@ -350,8 +357,13 @@ public abstract class WriteBeanProperty
                 maxLength = " maxlength=\"" + 40 + "\" ";
             }
 
-            buffer.append("<input type=password").append(name).append(inner).append(readonly).append(values).append(
-                style);
+            buffer
+                .append("<input type=password")
+                .append(name)
+                .append(inner)
+                .append(readonly)
+                .append(values)
+                .append(style);
             buffer.append(oncheck).append(maxLength).append(">");
 
             buffer.append(must);
@@ -377,7 +389,9 @@ public abstract class WriteBeanProperty
             // title="请选择时间" align="top" onclick="return
             // calDate('date');" height="20px" width="20px"/>
             buffer
-                .append("<img src='" + rootUrl + TagLibConstant.DEST_FOLDER_NAME
+                .append("<img src='"
+                        + rootUrl
+                        + TagLibConstant.DEST_FOLDER_NAME
                         + "calendar.gif' style='cursor: pointer' title='请选择时间' align='top' onclick='return calDate(\""
                         + oldname + "\");' height='20px' width='20px'/>");
 
@@ -420,8 +434,15 @@ public abstract class WriteBeanProperty
                 values = " values='" + value + "' ";
             }
 
-            buffer.append("<select ").append(name).append(inner).append(style).append(values).append(
-                " class=\"select_class\" ").append(oncheck).append('>');
+            buffer
+                .append("<select ")
+                .append(name)
+                .append(inner)
+                .append(style)
+                .append(values)
+                .append(" class=\"select_class\" ")
+                .append(oncheck)
+                .append('>');
 
             end.append("</select>").append(must);
         }
@@ -439,7 +460,8 @@ public abstract class WriteBeanProperty
                 {
                     if (oncheck.trim().endsWith("\""))
                     {
-                        oncheck = oncheck.trim().substring(0, oncheck.trim().length() - 1) + maxLength + "\"";
+                        oncheck = oncheck.trim().substring(0, oncheck.trim().length() - 1)
+                                  + maxLength + "\"";
                     }
                     else
                     {
@@ -450,9 +472,16 @@ public abstract class WriteBeanProperty
 
             // <textarea rows="3" cols="55"
             // name="description">${description}</textarea>
-            buffer.append("<textarea ").append(name).append(tip).append(inner).append(style).append(oncheck).append(
-                readonly).append(">")
-            // TEXTAREA需要注意
+            buffer
+                .append("<textarea ")
+                .append(name)
+                .append(tip)
+                .append(inner)
+                .append(style)
+                .append(oncheck)
+                .append(readonly)
+                .append(">")
+                // TEXTAREA需要注意
                 .append(value.trim());
 
             end.append("</textarea>").append(must);
@@ -462,8 +491,8 @@ public abstract class WriteBeanProperty
         {
             // <textarea rows="3" cols="55"
             // name="description">${description}</textarea>
-            buffer.append("<input type=checkbox").append(name).append(inner).append(values).append(style).append(
-                oncheck);
+            buffer.append("<input type=checkbox").append(name).append(inner).append(values).append(
+                style).append(oncheck);
 
             buffer.append("/>");
         }
@@ -472,7 +501,8 @@ public abstract class WriteBeanProperty
         {
             // <textarea rows="3" cols="55"
             // name="description">${description}</textarea>
-            buffer.append("<input type=radio").append(name).append(inner).append(values).append(style).append(oncheck);
+            buffer.append("<input type=radio").append(name).append(inner).append(values).append(
+                style).append(oncheck);
 
             buffer.append("/>");
         }
@@ -481,7 +511,8 @@ public abstract class WriteBeanProperty
         {
             // <textarea rows="3" cols="55"
             // name="description">${description}</textarea>
-            buffer.append("<input type=file").append(name).append(inner).append(style).append(oncheck);
+            buffer.append("<input type=file").append(name).append(inner).append(style).append(
+                oncheck);
 
             buffer.append("/>");
         }

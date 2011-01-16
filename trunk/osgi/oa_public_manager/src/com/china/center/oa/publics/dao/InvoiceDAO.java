@@ -9,6 +9,8 @@
 package com.china.center.oa.publics.dao;
 
 
+import java.util.List;
+
 import com.china.center.jdbc.inter.DAO;
 import com.china.center.oa.publics.bean.InvoiceBean;
 
@@ -23,5 +25,7 @@ import com.china.center.oa.publics.bean.InvoiceBean;
  */
 public interface InvoiceDAO extends DAO<InvoiceBean, InvoiceBean>
 {
+    List<InvoiceBean> listForwardIn();
 
+    List<InvoiceBean> listForwardOut();
 }

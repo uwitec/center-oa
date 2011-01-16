@@ -12,6 +12,7 @@ package com.china.center.oa.finance.manager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.InBillBean;
+import com.china.center.oa.finance.bean.OutBillBean;
 
 
 /**
@@ -24,9 +25,25 @@ import com.china.center.oa.finance.bean.InBillBean;
  */
 public interface BillManager
 {
+    /**
+     * addInBillBean
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
     boolean addInBillBean(User user, InBillBean bean)
         throws MYException;
 
+    /**
+     * addInBillBeanWithoutTransaction
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
     boolean addInBillBeanWithoutTransaction(User user, InBillBean bean)
         throws MYException;
 
@@ -46,5 +63,27 @@ public interface BillManager
      * @throws MYException
      */
     boolean splitInBillBean(User user, String id, double newMoney)
+        throws MYException;
+
+    /**
+     * addOutBillBean
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    boolean addOutBillBean(User user, OutBillBean bean)
+        throws MYException;
+
+    /**
+     * deleteOutBillBean
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean deleteOutBillBean(User user, String id)
         throws MYException;
 }
