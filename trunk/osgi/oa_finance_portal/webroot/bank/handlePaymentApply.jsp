@@ -14,7 +14,7 @@ function passBean()
 {
     $O('method').value = 'passPaymentApply';
     
-	submit('确定通过收款申请?系统将自动转化成收款单', null, null);
+	submit('确定通过收款申请?系统自动绑定收款.', null, null);
 }
 
 function rejectBean()
@@ -58,6 +58,10 @@ function rejectBean()
 			<p:cell title="金额">
                ${my:formatNum(bean.moneys)}
             </p:cell>
+            
+            <p:cell title="类型">
+               ${my:get('payApplyType', bean.type)}
+            </p:cell>
 
 			<p:cell title="客户">
                ${bean.customerName}
@@ -90,9 +94,9 @@ function rejectBean()
 
             <c:forEach items="${vsList}" var="item" varStatus="vs">
                 <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
-                    <td align="center">${item.outId}</td>
+                    <td align="center"><a href="../sail/out.do?method=findOut&fow=99&outId=${item.outId}">${item.outId}</a></td>
                     <td align="center">${my:formatNum(item.moneys)}</td>
-                    <td align="center">${item.billId}</td>
+                    <td align="center"><a href="../finance/bill.do?method=findInBill&id=${item.billId}">${item.billId}</a></td>
 
                 </tr>
             </c:forEach>

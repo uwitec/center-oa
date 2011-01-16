@@ -77,8 +77,8 @@ public class BillManagerImpl implements BillManager
                 // 发现支付的金额过多
                 if (hasPay + bean.getMoneys() > out.getTotal())
                 {
-                    throw new MYException("销售单[%s]的总金额[%f],当前已付金额[%f],本次申请付款[%f],付款金额超出销售金额", bean
-                        .getOutId(), out.getTotal(), hasPay, bean.getMoneys());
+                    throw new MYException("销售单[%s]的总金额[%.2f],当前已付金额[%.2f],本次申请付款[%.2f],付款金额超出销售金额",
+                        bean.getOutId(), out.getTotal(), hasPay, bean.getMoneys());
                 }
 
                 // 更新已经支付的金额

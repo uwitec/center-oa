@@ -36,9 +36,13 @@ function check()
         return true;
     }
     
-    alert('付款单累计金额不是:'+total+',请核对');
+    if (pu > total)
+    {
+        alert('付款单累计金额不能大于:'+total+',请核对');
+        return false;
+    }
     
-    return false;
+    return true;
 }
 
 

@@ -13,11 +13,14 @@ import java.util.List;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.dao.InBillDAO;
+import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
+import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.listener.OutListener;
 
@@ -35,6 +38,8 @@ public class OutListenerFinanceImpl implements OutListener
     private InBillDAO inBillDAO = null;
 
     private OutDAO outDAO = null;
+
+    private OutBalanceDAO outBalanceDAO = null;
 
     /**
      * default constructor
@@ -80,13 +85,49 @@ public class OutListenerFinanceImpl implements OutListener
     public void onHadPay(User user, OutBean bean)
         throws MYException
     {
+        // 如果是库管通过，而且是先款后货的话,直接是付款结束
+        if (bean.getType() != OutConstant.OUT_TYPE_OUTBILL)
+        {
+            return;
+        }
+
         // 已经支付的
         double hasPay = inBillDAO.sumByOutId(bean.getFullId());
 
-        if (bean.getTotal() != (hasPay + bean.getBadDebts()))
+        double balancePay = 0.0d;
+        if (bean.getOutType() == OutConstant.OUTTYPE_OUT_CONSIGN)
         {
-            throw new MYException("销售单总金额[%f],当前已经付款金额[%f],坏账金额[%f],没有完全付款", bean.getTotal(),
-                hasPay, bean.getBadDebts());
+            ConditionParse condition = new ConditionParse();
+
+            condition.addWhereStr();
+
+            condition.addCondition("OutBalanceBean.outId", "=", bean.getFullId());
+
+            condition.addIntCondition("OutBalanceBean.type", "=", OutConstant.OUTBALANCE_TYPE_BACK);
+            condition.addIntCondition("OutBalanceBean.status", "=",
+                OutConstant.OUTBALANCE_STATUS_PASS);
+
+            List<OutBalanceBean> balanceList = outBalanceDAO.queryEntityBeansByCondition(condition);
+
+            for (OutBalanceBean outBalanceBean : balanceList)
+            {
+                balancePay += outBalanceBean.getTotal();
+            }
+        }
+
+        if (bean.getTotal() != (hasPay + bean.getBadDebts() + balancePay))
+        {
+            if (bean.getOutType() == OutConstant.OUTTYPE_OUT_CONSIGN)
+            {
+
+                throw new MYException("销售单总金额[%.2f],当前已经付款金额[%.2f],委托退货金额[%.2f],坏账金额[%.2f],没有完全付款",
+                    bean.getTotal(), hasPay, balancePay, bean.getBadDebts());
+            }
+            else
+            {
+                throw new MYException("销售单总金额[%.2f],当前已经付款金额[%.2f],坏账金额[%.2f],没有完全付款", bean
+                    .getTotal(), hasPay, bean.getBadDebts());
+            }
         }
     }
 
@@ -153,5 +194,22 @@ public class OutListenerFinanceImpl implements OutListener
     public void setOutDAO(OutDAO outDAO)
     {
         this.outDAO = outDAO;
+    }
+
+    /**
+     * @return the outBalanceDAO
+     */
+    public OutBalanceDAO getOutBalanceDAO()
+    {
+        return outBalanceDAO;
+    }
+
+    /**
+     * @param outBalanceDAO
+     *            the outBalanceDAO to set
+     */
+    public void setOutBalanceDAO(OutBalanceDAO outBalanceDAO)
+    {
+        this.outBalanceDAO = outBalanceDAO;
     }
 }

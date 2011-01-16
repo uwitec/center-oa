@@ -48,5 +48,7 @@
     <osgi:reference id="outManager" interface="com.china.center.oa.sail.manager.OutManager" />
     
     <osgi:reference id="outDAO" interface="com.china.center.oa.sail.dao.OutDAO" />
+    
+    <osgi:reference id="outBalanceDAO" interface="com.china.center.oa.sail.dao.OutBalanceDAO" />
 	
 </beans>
