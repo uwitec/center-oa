@@ -19,6 +19,7 @@ import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.JoinType;
+import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.sail.constanst.OutConstant;
@@ -49,6 +50,9 @@ public class OutBalanceBean implements Serializable
     private int type = OutConstant.OUTBALANCE_TYPE_SAIL;
 
     private String logTime = "";
+
+    @Join(tagClass = CustomerBean.class)
+    private String customerId = "";
 
     @Join(tagClass = StafferBean.class)
     private String stafferId = "";
@@ -261,6 +265,23 @@ public class OutBalanceBean implements Serializable
     }
 
     /**
+     * @return the customerId
+     */
+    public String getCustomerId()
+    {
+        return customerId;
+    }
+
+    /**
+     * @param customerId
+     *            the customerId to set
+     */
+    public void setCustomerId(String customerId)
+    {
+        this.customerId = customerId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -292,6 +313,9 @@ public class OutBalanceBean implements Serializable
             .append(TAB)
             .append("logTime = ")
             .append(this.logTime)
+            .append(TAB)
+            .append("customerId = ")
+            .append(this.customerId)
             .append(TAB)
             .append("stafferId = ")
             .append(this.stafferId)

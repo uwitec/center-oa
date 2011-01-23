@@ -854,14 +854,14 @@ public class OutAction extends DispatchAction
     {
         OutBalanceBean bean = new OutBalanceBean();
 
-        setOutBalanceBean(bean, request);
-
-        User user = (User)request.getSession().getAttribute("user");
-
-        RequestTools.actionInitQuery(request);
-
         try
         {
+            setOutBalanceBean(bean, request);
+
+            User user = (User)request.getSession().getAttribute("user");
+
+            RequestTools.actionInitQuery(request);
+
             outManager.addOutBalance(user, bean);
 
             request.setAttribute(KeyConstant.MESSAGE, "成功增加结算清单");
@@ -1065,8 +1065,10 @@ public class OutAction extends DispatchAction
      * @param pbean
      * @param item
      * @param request
+     * @throws MYException
      */
     private void setOutBalanceBean(OutBalanceBean bean, HttpServletRequest request)
+        throws MYException
     {
         User user = (User)request.getSession().getAttribute("user");
 
@@ -1075,6 +1077,15 @@ public class OutAction extends DispatchAction
         String type = request.getParameter("type");
 
         String outId = request.getParameter("outId");
+
+        OutBean out = outDAO.find(outId);
+
+        if (out == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        bean.setCustomerId(out.getCustomerId());
 
         String dirDepot = request.getParameter("dirDepot");
 
@@ -1459,6 +1470,11 @@ public class OutAction extends DispatchAction
             }
         }
 
+        List<InvoiceBean> invoiceList = invoiceDAO.queryEntityBeansByCondition("where forward = ?",
+            InvoiceConstant.INVOICE_FORWARD_OUT);
+
+        request.setAttribute("invoiceList", invoiceList);
+
         List<DepotBean> depotList = depotDAO.listEntityBeans();
 
         request.setAttribute("depotList", depotList);
@@ -1828,6 +1844,11 @@ public class OutAction extends DispatchAction
         {
             request.setAttribute("radioIndex", list.size() - 1);
         }
+
+        List<InvoiceBean> invoiceList = invoiceDAO.queryEntityBeansByCondition("where forward = ?",
+            InvoiceConstant.INVOICE_FORWARD_OUT);
+
+        request.setAttribute("invoiceList", invoiceList);
 
         request.getSession().setAttribute("listOut1", list);
 
@@ -3547,6 +3568,64 @@ public class OutAction extends DispatchAction
     }
 
     /**
+     * updateInvoice
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward updateInvoice(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        String fullId = request.getParameter("outId");
+
+        String invoices = request.getParameter("invoices");
+
+        OutBean out = outDAO.find(fullId);
+
+        User user = (User)request.getSession().getAttribute("user");
+
+        if (out == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+
+            return mapping.findForward("error");
+        }
+
+        if (out.getInvoiceMoney() > 0)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+
+            return mapping.findForward("error");
+        }
+
+        try
+        {
+            outManager.updateInvoice(user, fullId, invoices);
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理错误:" + e.getErrorContent());
+
+            return mapping.findForward("error");
+        }
+
+        request.setAttribute(KeyConstant.MESSAGE, "成功更新发票类型:" + fullId);
+
+        CommonTools.saveParamers(request);
+
+        RequestTools.actionInitQuery(request);
+
+        return querySelfOut(mapping, form, request, reponse);
+    }
+
+    /**
      * 坏账取消
      * 
      * @param mapping
@@ -4014,6 +4093,17 @@ public class OutAction extends DispatchAction
             return mapping.findForward("handerInvokeBuy");
         }
 
+        // 修改发票类型
+        if ("6".equals(fow))
+        {
+            List<InvoiceBean> invoiceList = invoiceDAO.queryEntityBeansByCondition(
+                "where forward = ?", InvoiceConstant.INVOICE_FORWARD_OUT);
+
+            request.setAttribute("invoiceList", invoiceList);
+
+            return mapping.findForward("handerInvokeBuy");
+        }
+
         // 处理个人领样退库
         if ("91".equals(fow))
         {
@@ -4216,7 +4306,7 @@ public class OutAction extends DispatchAction
             condtion.addCondition("OutBean.customerName", "like", customerName);
         }
 
-        // 固定查询
+        // (url)固定查询
         String stafferId = request.getParameter("stafferId");
 
         String mode = request.getParameter("mode");
@@ -4226,6 +4316,8 @@ public class OutAction extends DispatchAction
         String dutyId = request.getParameter("dutyId");
 
         String customerId = request.getParameter("customerId");
+
+        String invoiceStatus = request.getParameter("invoiceStatus");
 
         if ( !StringTools.isNullOrNone(invoiceId))
         {
@@ -4245,6 +4337,11 @@ public class OutAction extends DispatchAction
         if ( !StringTools.isNullOrNone(stafferId))
         {
             condtion.addCondition("OutBean.stafferId", "=", stafferId);
+        }
+
+        if ( !StringTools.isNullOrNone(invoiceStatus))
+        {
+            condtion.addIntCondition("OutBean.invoiceStatus", "=", invoiceStatus);
         }
 
         // 查询需要勾款的销售单

@@ -28,6 +28,9 @@ public class OutBalanceVO extends OutBalanceBean
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
 
+    @Relationship(relationField = "customerId")
+    private String customerName = "";
+
     @Relationship(relationField = "dirDepot")
     private String dirDepotName = "";
 
@@ -73,6 +76,23 @@ public class OutBalanceVO extends OutBalanceBean
     }
 
     /**
+     * @return the customerName
+     */
+    public String getCustomerName()
+    {
+        return customerName;
+    }
+
+    /**
+     * @param customerName
+     *            the customerName to set
+     */
+    public void setCustomerName(String customerName)
+    {
+        this.customerName = customerName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -89,6 +109,9 @@ public class OutBalanceVO extends OutBalanceBean
             .append(TAB)
             .append("stafferName = ")
             .append(this.stafferName)
+            .append(TAB)
+            .append("customerName = ")
+            .append(this.customerName)
             .append(TAB)
             .append("dirDepotName = ")
             .append(this.dirDepotName)

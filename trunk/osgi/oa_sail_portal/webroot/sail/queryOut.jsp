@@ -603,7 +603,7 @@ function outBack()
 		<c:if test="${queryType != '5' && queryType != '6' && queryType != '8'}">
 		
 		<c:if test="${queryType == '2'}">
-		<input type="button" class="button_class"
+		<input type="button" class="button_class" style="display: none;"
                 value="&nbsp;&nbsp;确认回款&nbsp;&nbsp;" onClick="payOut()">&nbsp;&nbsp;
         </c:if>
         <input name="bu1"

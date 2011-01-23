@@ -1753,6 +1753,28 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
     @Exceptional
     @Transactional(rollbackFor = {MYException.class})
+    public boolean updateInvoice(User user, String fullId, String invoiceId)
+        throws MYException
+    {
+        OutBean out = outDAO.find(fullId);
+
+        if (out == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (out.getInvoiceMoney() > 0)
+        {
+            throw new MYException("单据已经开票,不能修改发票类型");
+        }
+
+        outDAO.updateInvoice(fullId, invoiceId);
+
+        return true;
+    }
+
+    @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
     public boolean initPayOut(final User user, String fullId)
         throws MYException
     {

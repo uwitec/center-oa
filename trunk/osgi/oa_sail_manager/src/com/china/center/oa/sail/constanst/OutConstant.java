@@ -256,20 +256,14 @@ public interface OutConstant
     /**
      * 没有开票
      */
-    @Defined(key = "invoiceStatus", value = "没有开票")
+    @Defined(key = "invoiceStatus", value = "可开票")
     int INVOICESTATUS_INIT = 0;
-
-    /**
-     * 开票中
-     */
-    @Defined(key = "invoiceStatus", value = "开票中")
-    int INVOICESTATUS_PROCESS = 1;
 
     /**
      * 全部开票
      */
-    @Defined(key = "invoiceStatus", value = "全部开票中")
-    int INVOICESTATUS_END = 2;
+    @Defined(key = "invoiceStatus", value = "全部开票")
+    int INVOICESTATUS_END = 1;
 
     /**
      * 提交

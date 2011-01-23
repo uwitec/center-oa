@@ -3,14 +3,16 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="查询销售单" />
+<p:link title="查询销售单" link="true" guid="true" cal="true" dialog="true" />
 <script src="../js/title_div.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/JCheck.js"></script>
 <script src="../js/common.js"></script>
 <script src="../js/tableSort.js"></script>
 <script src="../js/jquery/jquery.js"></script>
+<script src="../js/plugin/dialog/jquery.dialog.js"></script>
 <script src="../js/plugin/highlight/jquery.highlight.js"></script>
+<script src='../js/adapter.js'></script>
 <script language="javascript">
 function detail()
 {
@@ -126,6 +128,32 @@ function modfiy()
 	}
 }
 
+function updateInvoice()
+{
+    if ($$('invoices') != '')
+    {
+        document.location.href = '../sail/out.do?method=updateInvoice&outId=' + getRadioValue("fullId") + "&invoices=" + $$('invoices');
+    }
+    else
+    {
+        alert('请选择发票类型');
+    }
+}
+
+function preUpdateInvoice()
+{
+    if (parseFloat(getRadio('fullId').pinvoicemoney) == 0)
+    {
+        setRadioValue('invoices', getRadio('fullId').pinvoiceid);
+        
+        $('#dlg').dialog({closed:false});
+    }
+    else
+    {
+        alert('已经开票,不能修改!');
+    }
+}
+
 function del()
 {
 	if (getRadio('fullId').statuss == '0' || getRadio('fullId').statuss == '2' || getRadio('fullId').temptype == '1')
@@ -238,6 +266,22 @@ function load()
 	highlights($("#mainTable").get(0), ['驳回'], 'red');
 	
 	highlights($("#mainTable").get(0), ['结束'], 'blue');
+	
+	$('#dlg').dialog({
+                //iconCls: 'icon-save',
+                modal:true,
+                closed:true,
+                buttons:{
+                    '确 定':function(){
+                        updateInvoice();
+                    },
+                    '取 消':function(){
+                        $('#dlg').dialog({closed:true});
+                    }
+                }
+     });
+     
+     $ESC('dlg');
 }
 
 </script>
@@ -419,6 +463,8 @@ function load()
 							    outtype="${item.outType}"
 								pcustomerid='${item.customerId}' 
 								statuss='${item.status}' 
+								pinvoicemoney='${item.invoiceMoney}' 
+								pinvoiceid='${item.invoiceId}' 
 								value="${item.fullId}" ${vs.index== 0 ? "checked" : ""}/></td>
 							<td align="center"
 							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}">${item.mark ? "<font color=blue><B>" : ""}
@@ -467,6 +513,8 @@ function load()
 		<div align="right">
 		<input type="button" class="button_class"
 			value="&nbsp;&nbsp;标 记&nbsp;&nbsp;" onClick="mark()">&nbsp;&nbsp;
+		<input type="button" class="button_class"
+            value="&nbsp;修改发票&nbsp;" onClick="preUpdateInvoice()">&nbsp;&nbsp;
 		<input
 			type="button" class="button_class"
 			value="&nbsp;&nbsp;修 改&nbsp;&nbsp;" onclick="modfiy()" />&nbsp;&nbsp;<input
@@ -501,5 +549,14 @@ function load()
 </table>
 
 </form>
+
+<div id="dlg" title="选择发票类型" style="width:400px;">
+    <div style="padding:20px;height:200px;" id="dia_inner" title="">
+    <c:forEach items="${invoiceList}" var="item">
+    <input type="radio" name="invoices" value="${item.id}">${item.fullName}<br>
+    </c:forEach>
+    </div>
+</div>
+
 </body>
 </html>

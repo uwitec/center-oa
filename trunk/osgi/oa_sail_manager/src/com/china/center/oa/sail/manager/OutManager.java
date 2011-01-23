@@ -183,6 +183,17 @@ public interface OutManager extends ListenerManager<OutListener>
         throws MYException;
 
     /**
+     * updateInvoice
+     * 
+     * @param user
+     * @param fullId
+     * @return
+     * @throws MYException
+     */
+    boolean updateInvoice(final User user, String fullId, String invoiceId)
+        throws MYException;
+
+    /**
      * initPayOut(返回付款状态且坏账为0)
      * 
      * @param user

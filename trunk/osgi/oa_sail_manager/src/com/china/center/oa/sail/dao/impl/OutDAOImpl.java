@@ -301,6 +301,30 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         return true;
     }
 
+    public boolean updateHadPay(String fullId, double hadPay)
+    {
+        jdbcOperation.updateField("hadPay", hadPay, fullId, this.claz);
+
+        return true;
+    }
+
+    public boolean updateInvoice(String fullId, String invoiceId)
+    {
+        jdbcOperation.updateField("invoiceId", invoiceId, fullId, this.claz);
+
+        return true;
+    }
+
+    public boolean updateInvoiceStatus(String fullId, double invoiceMoney, int invoiceStatus)
+    {
+        String sql = BeanTools.getUpdateHead(claz)
+                     + "set invoiceMoney = ?, invoiceStatus = ? where fullid = ?";
+
+        jdbcOperation.update(sql, invoiceMoney, invoiceStatus, fullId);
+
+        return true;
+    }
+
     public boolean updateOutReserve(String fullId, int reserve4, String reserve6)
     {
         jdbcOperation.updateField("reserve2", reserve4, fullId, this.claz);
@@ -435,10 +459,4 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         this.ibatisDaoSupport = ibatisDaoSupport;
     }
 
-    public boolean updateHadPay(String fullId, double hadPay)
-    {
-        jdbcOperation.updateField("hadPay", hadPay, fullId, this.claz);
-
-        return true;
-    }
 }

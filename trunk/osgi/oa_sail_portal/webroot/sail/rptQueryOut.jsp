@@ -60,6 +60,7 @@ function press()
 <input type="hidden" value="${customerId}" name="customerId"> 
 <input type="hidden" value="${mode}" name="mode"> 
 <input type="hidden" value="${selectMode}" name="selectMode"> 
+<input type="hidden" value="${invoiceStatus}" name="invoiceStatus"> 
 
 <p:navigation
 	height="22">
@@ -68,7 +69,7 @@ function press()
 </p:navigation> <br>
 
 <p:body width="100%">
-	<p:subBody width="90%">
+	<p:subBody width="98%">
 		<table width="100%" align="center" cellspacing='1' class="table0"
 			id="result">
 			<tr class="content1">
@@ -102,17 +103,19 @@ function press()
 
 	<p:line flag="0" />
 
-	<p:subBody width="90%">
+	<p:subBody width="98%">
 		<table width="100%" align="center" cellspacing='1' class="table0"
 			id="result">
 			<tr align=center class="content0">
 				<td align="center" width="5%">选择</td>
 				<td align="center" width="15%"><strong>单号</strong></td>
-				<td align="center" width="15%"><strong>客户</strong></td>
+				<td align="center" width="10%"><strong>客户</strong></td>
 				<td align="center" width="10%"><strong>总金额</strong></td>
 				<td align="center" width="10%"><strong>已支付</strong></td>
 				<td align="center" width="10%"><strong>坏账</strong></td>
 				<td align="center" width="10%"><strong>状态</strong></td>
+				<td align="center" width="10%"><strong>发票</strong></td>
+				<td align="center" width="10%"><strong>已开票</strong></td>
 				<td align="center" width="10%"><strong>时间</strong></td>
 			</tr>
 
@@ -120,6 +123,7 @@ function press()
 				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
 					<td align="center"><input type=${selectMode == 1 ? 'checkbox' : 'radio'} name="beans" value="${item.fullId}" 
 					ptotal="${my:formatNum(item.total)}"
+					pinvoicemoney="${my:formatNum(item.total - item.invoiceMoney)}"
 					plast="${my:formatNum(item.total -item.hadPay - item.badDebts)}"
 					></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.fullId}</td>
@@ -128,6 +132,8 @@ function press()
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.hadPay)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.badDebts)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('outStatus', item.status)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:get('invoiceStatus', item.invoiceStatus)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.invoiceMoney)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.outTime}</td>
 				</tr>
 			</c:forEach>

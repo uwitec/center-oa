@@ -248,7 +248,18 @@ function pagePrint()
                         </td>
                     </tr>
                     
-                     <tr class="content2">
+                    <tr class="content2">
+                        <td align="right">开票金额：</td>
+                        <td colspan="1">
+                        ${my:formatNum(bean.invoiceMoney)}
+                        </td>
+                        <td align="right">开票状态：</td>
+                        <td colspan="1">
+                        ${my:get('invoiceStatus', bean.invoiceStatus)}
+                        </td>
+                    </tr>
+                    
+                     <tr class="content1">
                         <td align="right">状态：</td>
                         <td colspan="1">
                         <select name="status" class="select_class"  values="${bean.status}">
@@ -261,7 +272,7 @@ function pagePrint()
                        </td>
                     </tr>
                     
-                     <tr class="content1">
+                     <tr class="content2">
                         <td align="right">分公司：</td>
                         <td colspan="1">
                        ${bean.locationName}
@@ -272,7 +283,7 @@ function pagePrint()
                        </td>
                     </tr>
                     
-                    <tr class="content2">
+                    <tr class="content1">
                         <td align="right">信用描述：</td>
                         <td colspan="3">
                         <font color="red">
@@ -281,14 +292,14 @@ function pagePrint()
                        </td>
                     </tr>
                     
-                     <tr class="content1">
+                     <tr class="content2">
                         <td align="right">信用担保：</td>
                         <td colspan="3">
                        客户:${my:formatNum(bean.curcredit)}/${bean.stafferName}:${my:formatNum(bean.staffcredit)}/分公司经理:${my:formatNum(bean.managercredit)}
                        </td>
                     </tr>
 
-					<tr class="content2">
+					<tr class="content1">
 						<td align="right">销售单备注：</td>
 						<td colspan="3"><textarea rows="3" cols="55" oncheck="notNone;"
 							name="description"><c:out value="${bean.description}"/></textarea>
@@ -296,7 +307,7 @@ function pagePrint()
 							</td>
 					</tr>
 					
-					 <tr class="content1">
+					 <tr class="content2">
                         <td align="right">总部核对：</td>
                         <td colspan="3">
                        ${bean.checks}

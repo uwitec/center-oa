@@ -131,6 +131,19 @@ function resetRadio(name)
     return null;
 }
 
+function setRadioValue(name, value)
+{
+    var obj = document.getElementsByName(name);
+    
+    for (var i = 0; i < obj.length; i++)
+    {
+        if (obj[i].value == value)
+        {
+            obj[i].checked = true;
+        }
+    }
+}
+
 
 /**
  * 设置select的选择

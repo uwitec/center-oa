@@ -81,12 +81,12 @@ public class OutBean implements Serializable
     private int status = OutConstant.STATUS_SAVE;
 
     /**
-     * 开发票状态(0:没有开票 1:开票中 2:全部开票)
+     * 开发票状态(0:没有开票 1:全部开票)
      */
     private int invoiceStatus = OutConstant.INVOICESTATUS_INIT;
 
     /**
-     * 开发票的金额
+     * 开发票的金额(已经开票的金额)
      */
     private double invoiceMoney = 0.0d;
 
