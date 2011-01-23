@@ -42,5 +42,8 @@
 		
 	<bean name="/depot/storage"
 		class="com.china.center.oa.product.action.StorageAction" />
+		
+	<bean name="/product/reports"
+        class="com.china.center.oa.product.action.ReportsAction"/>
 	
 </beans>

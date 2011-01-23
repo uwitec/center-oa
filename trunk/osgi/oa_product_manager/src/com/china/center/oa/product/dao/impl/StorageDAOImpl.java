@@ -45,6 +45,5 @@ public class StorageDAOImpl extends BaseDAO<StorageBean, StorageVO> implements S
         }
 
         return list.get(0);
-
     }
 }

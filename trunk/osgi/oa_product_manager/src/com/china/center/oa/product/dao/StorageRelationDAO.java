@@ -9,7 +9,10 @@
 package com.china.center.oa.product.dao;
 
 
+import java.util.List;
+
 import com.china.center.jdbc.inter.DAO;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.product.vo.StorageRelationVO;
 import com.china.center.oa.product.vs.StorageRelationBean;
 
@@ -38,6 +41,9 @@ public interface StorageRelationDAO extends DAO<StorageRelationBean, StorageRela
 
     int sumAllProductByProductId(String productId);
 
+    List<StorageRelationVO> queryStorageRelationByCondition(ConditionParse condition,
+                                                            boolean isLimit);
+
     /**
      * findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(查询)
      * 
@@ -47,6 +53,8 @@ public interface StorageRelationDAO extends DAO<StorageRelationBean, StorageRela
      * @param stafferId
      * @return
      */
-    StorageRelationBean findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(String depotpartId, String productId,
-                                                                             String priceKey, String stafferId);
+    StorageRelationBean findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(String depotpartId,
+                                                                             String productId,
+                                                                             String priceKey,
+                                                                             String stafferId);
 }

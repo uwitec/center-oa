@@ -9,7 +9,10 @@
 package com.china.center.oa.product.dao;
 
 
+import java.util.List;
+
 import com.china.center.jdbc.inter.DAO;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.product.bean.StorageLogBean;
 import com.china.center.oa.product.vo.StorageLogVO;
 
@@ -24,5 +27,5 @@ import com.china.center.oa.product.vo.StorageLogVO;
  */
 public interface StorageLogDAO extends DAO<StorageLogBean, StorageLogVO>
 {
-
+    List<StorageLogBean> queryStorageLogByCondition(ConditionParse condition);
 }

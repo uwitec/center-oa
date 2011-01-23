@@ -55,6 +55,14 @@
             <forward name="rptQueryProductInDepotpart" path="/depot/rptQueryProductInDepotpart.jsp" />
             <forward name="rptQueryStorageRelationInDepot" path="/depot/rptQueryStorageRelationInDepot.jsp" />
         </action>
+        
+        <action path="/product/reports" parameter="method"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+            <forward name="queryReports" path="/report/queryReports.jsp" />
+            <forward name="listStorageLog"
+                path="/report/listStorageLog.jsp" />
+        </action>
 		
 	</action-mappings>
 </struts-config>
