@@ -85,7 +85,7 @@ function addBean()
                         
                         <td align="center"><input type="text"  style="width: 100%" name="amount" oncheck="notNone;isInt;range(0, ${fristBase.unit})"></td>
                         
-                        <td align="center"><input type="text"  style="width: 100%" name="price" oncheck="notNone;isFloat"></td>
+                        <td align="center"><input type="text"  style="width: 100%" name="price" oncheck="notNone;isFloat" value="${my:formatNum(fristBase.price)}" readonly="readonly"></td>
                     </tr>
                     </c:forEach>
                     </c:if>

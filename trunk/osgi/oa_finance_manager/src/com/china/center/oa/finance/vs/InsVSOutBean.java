@@ -40,6 +40,16 @@ public class InsVSOutBean implements Serializable
     private String outId = "";
 
     /**
+     * 结算单ID
+     */
+    private String outBalanceId = "";
+
+    /**
+     * 0:销售单 1:结算单
+     */
+    private int type = 0;
+
+    /**
      * 开票的金额
      */
     private double moneys = 0.0d;
@@ -120,6 +130,40 @@ public class InsVSOutBean implements Serializable
     }
 
     /**
+     * @return the outBalanceId
+     */
+    public String getOutBalanceId()
+    {
+        return outBalanceId;
+    }
+
+    /**
+     * @param outBalanceId
+     *            the outBalanceId to set
+     */
+    public void setOutBalanceId(String outBalanceId)
+    {
+        this.outBalanceId = outBalanceId;
+    }
+
+    /**
+     * @return the type
+     */
+    public int getType()
+    {
+        return type;
+    }
+
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(int type)
+    {
+        this.type = type;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -142,6 +186,12 @@ public class InsVSOutBean implements Serializable
             .append(TAB)
             .append("outId = ")
             .append(this.outId)
+            .append(TAB)
+            .append("outBalanceId = ")
+            .append(this.outBalanceId)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
             .append(TAB)
             .append("moneys = ")
             .append(this.moneys)
