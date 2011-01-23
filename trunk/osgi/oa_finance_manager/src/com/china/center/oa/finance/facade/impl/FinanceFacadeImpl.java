@@ -62,6 +62,8 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
 
     private static Object OUTBILL_LOCK = new Object();
 
+    private static Object INVOICEINS_LOCK = new Object();
+
     /**
      * default constructor
      */
@@ -243,13 +245,16 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
 
         checkUser(user);
 
-        if (containAuth(user, AuthConstant.INVOICEINS_OPR))
+        synchronized (INVOICEINS_LOCK)
         {
-            return invoiceinsManager.addInvoiceinsBean(user, bean);
-        }
-        else
-        {
-            throw noAuth();
+            if (containAuth(user, AuthConstant.INVOICEINS_OPR))
+            {
+                return invoiceinsManager.addInvoiceinsBean(user, bean);
+            }
+            else
+            {
+                throw noAuth();
+            }
         }
     }
 
@@ -262,13 +267,16 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
 
         checkUser(user);
 
-        if (containAuth(user, AuthConstant.INVOICEINS_DEL))
+        synchronized (INVOICEINS_LOCK)
         {
-            return invoiceinsManager.deleteInvoiceinsBean(user, id);
-        }
-        else
-        {
-            throw noAuth();
+            if (containAuth(user, AuthConstant.INVOICEINS_DEL))
+            {
+                return invoiceinsManager.deleteInvoiceinsBean(user, id);
+            }
+            else
+            {
+                throw noAuth();
+            }
         }
     }
 

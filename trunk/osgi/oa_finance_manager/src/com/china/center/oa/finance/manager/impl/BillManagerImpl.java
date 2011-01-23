@@ -198,6 +198,12 @@ public class BillManagerImpl implements BillManager
     public boolean splitInBillBean(User user, String id, double newMoney)
         throws MYException
     {
+        return splitInBillBeanWithoutTransactional(user, id, newMoney);
+    }
+
+    public boolean splitInBillBeanWithoutTransactional(User user, String id, double newMoney)
+        throws MYException
+    {
         JudgeTools.judgeParameterIsNull(user, id);
 
         InBillBean bill = inBillDAO.find(id);

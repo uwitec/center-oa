@@ -40,6 +40,11 @@ public class InsVSOutBean implements Serializable
     private String outId = "";
 
     /**
+     * 开票的金额
+     */
+    private double moneys = 0.0d;
+
+    /**
      * default constructor
      */
     public InsVSOutBean()
@@ -95,6 +100,55 @@ public class InsVSOutBean implements Serializable
     public void setOutId(String outId)
     {
         this.outId = outId;
+    }
+
+    /**
+     * @return the moneys
+     */
+    public double getMoneys()
+    {
+        return moneys;
+    }
+
+    /**
+     * @param moneys
+     *            the moneys to set
+     */
+    public void setMoneys(double moneys)
+    {
+        this.moneys = moneys;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("InsVSOutBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("insId = ")
+            .append(this.insId)
+            .append(TAB)
+            .append("outId = ")
+            .append(this.outId)
+            .append(TAB)
+            .append("moneys = ")
+            .append(this.moneys)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 
 }

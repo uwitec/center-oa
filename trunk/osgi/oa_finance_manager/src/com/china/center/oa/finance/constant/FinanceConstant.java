@@ -125,6 +125,11 @@ public interface FinanceConstant
     int PAYAPPLY_TYPE_BING = 1;
 
     /**
+     * 临时
+     */
+    int PAYAPPLY_TYPE_TEMP = 2;
+
+    /**
      * 已收
      */
     @Defined(key = "inbillStatus", value = "已收")

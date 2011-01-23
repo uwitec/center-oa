@@ -70,13 +70,13 @@
             <type>date</type>
             <inner></inner>
         </condtion>
-        <condtion name="dutyId" caption="纳税实体">
+       <condtion name="dutyId" caption="纳税实体">
             <opr>=</opr>
             <datatype>0</datatype>
             <type>select</type>
             <option>$dutyList</option>
-        </condtion>
-        <condtion name="invoiceId" caption="发票类型">
+       </condtion>
+       <condtion name="invoiceId" caption="发票类型">
             <opr>=</opr>
             <datatype>1</datatype>
             <type>select</type>

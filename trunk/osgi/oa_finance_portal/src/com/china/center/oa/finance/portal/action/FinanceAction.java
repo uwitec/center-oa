@@ -641,7 +641,7 @@ public class FinanceAction extends DispatchAction
     }
 
     /**
-     * drawPayment3
+     * drawPayment3(销售单和付收款单的关联)
      * 
      * @param mapping
      * @param form
@@ -762,7 +762,7 @@ public class FinanceAction extends DispatchAction
     {
         PaymentApplyBean apply = new PaymentApplyBean();
 
-        apply.setType(FinanceConstant.PAYAPPLY_TYPE_BING);
+        apply.setType(FinanceConstant.PAYAPPLY_TYPE_TEMP);
         apply.setCustomerId(customerId);
         apply.setLocationId(user.getLocationId());
         apply.setLogTime(TimeTools.now());
@@ -775,6 +775,8 @@ public class FinanceAction extends DispatchAction
         String[] billIds = request.getParameterValues("billId");
 
         String outId = request.getParameter("outId");
+
+        double outTotal = MathTools.parseDouble(request.getParameter("total"));
 
         for (String billId : billIds)
         {
@@ -797,6 +799,11 @@ public class FinanceAction extends DispatchAction
             vsList.add(vs);
 
             total += vs.getMoneys();
+
+            if (total >= outTotal)
+            {
+                break;
+            }
         }
 
         apply.setVsList(vsList);

@@ -23,24 +23,32 @@ function check()
     
     var bills = document.getElementsByName('billId');
     
+    var isSelect = false;
+    
     for (var i = 0; i < bills.length; i++)
     {
 	    if (bills[i].checked)
 	    {
 	        pu += parseFloat(bills[i].pmoney);
+	        
+	        isSelect = true;
 	    }
     }
     
-    if (total == pu)
+    if (!isSelect)
     {
-        return true;
-    }
-    
-    if (pu > total)
-    {
-        alert('付款单累计金额不能大于:'+total+',请核对');
+        alert('请选择付款单');
+        
         return false;
     }
+    
+   
+    if (pu < total)
+    {
+        return window.confirm('付款单金额不足,确认当前只付款:' + pu + ',应付金额:' + total);
+    }
+    
+    $O('total').value = total;
     
     return true;
 }
@@ -54,6 +62,7 @@ function check()
 <input type="hidden" name="method" value="drawPayment3"> 
 <input type="hidden" name="customerId" value="${customerId}"> 
 <input type="hidden" name="outId" value="${outId}"> 
+<input type="hidden" name="total" value=""> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"

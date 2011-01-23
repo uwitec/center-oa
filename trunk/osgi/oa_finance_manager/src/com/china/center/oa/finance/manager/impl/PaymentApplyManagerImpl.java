@@ -9,6 +9,7 @@
 package com.china.center.oa.finance.manager.impl;
 
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.china.center.spring.ex.annotation.Exceptional;
@@ -24,6 +25,7 @@ import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.PaymentApplyDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.dao.PaymentVSOutDAO;
+import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.PaymentApplyManager;
 import com.china.center.oa.finance.vs.PaymentVSOutBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
@@ -31,6 +33,7 @@ import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.sail.bean.OutBean;
+import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.StringTools;
@@ -59,6 +62,8 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
     private FlowLogDAO flowLogDAO = null;
 
     private InBillDAO inBillDAO = null;
+
+    private BillManager billManager = null;
 
     private OutDAO outDAO = null;
 
@@ -94,11 +99,15 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
             vsItem.setLogTime(bean.getLogTime());
         }
 
-        paymentApplyDAO.saveEntityBean(bean);
+        // 原来的type
+        int oldType = bean.getType();
 
-        paymentVSOutDAO.saveAllEntityBeans(vsList);
+        if (bean.getType() == FinanceConstant.PAYAPPLY_TYPE_TEMP)
+        {
+            bean.setType(FinanceConstant.PAYAPPLY_TYPE_BING);
+        }
 
-        if (bean.getType() == FinanceConstant.PAYAPPLY_TYPE_BING)
+        if (oldType == FinanceConstant.PAYAPPLY_TYPE_BING)
         {
             for (PaymentVSOutBean vsItem : vsList)
             {
@@ -115,6 +124,75 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
                 inBillDAO.updateEntityBean(bill);
             }
         }
+
+        double tt = bean.getMoneys();
+
+        // 业务员勾款
+        if (oldType == FinanceConstant.PAYAPPLY_TYPE_TEMP)
+        {
+            String outId = vsList.get(0).getOutId();
+
+            OutBean out = outDAO.find(outId);
+
+            if (out == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            tt = 0.0d;
+
+            // 600
+            double lastMoney = out.getTotal() - out.getHadPay() - out.getBadDebts();
+
+            double total = 0.0d;
+
+            boolean remove = false;
+
+            for (Iterator iterator = vsList.iterator(); iterator.hasNext();)
+            {
+                PaymentVSOutBean vsItem = (PaymentVSOutBean)iterator.next();
+
+                if (remove)
+                {
+                    iterator.remove();
+                }
+
+                // 1800
+                total += vsItem.getMoneys();
+
+                // 保证金额不超出
+                if (total > lastMoney)
+                {
+                    // 拆分此单
+                    billManager.splitInBillBeanWithoutTransactional(user, vsItem.getBillId(),
+                        (total - lastMoney));
+
+                    remove = true;
+                }
+
+                // 更新预付金额
+                InBillBean bill = inBillDAO.find(vsItem.getBillId());
+
+                if (bill.getStatus() != FinanceConstant.INBILL_STATUS_NOREF)
+                {
+                    throw new MYException("关联的收款单必须是预收,请确认操作");
+                }
+
+                vsItem.setMoneys(bill.getMoneys());
+
+                bill.setStatus(FinanceConstant.INBILL_STATUS_PREPAYMENTS);
+
+                inBillDAO.updateEntityBean(bill);
+
+                tt += bill.getMoneys();
+            }
+        }
+
+        bean.setMoneys(tt);
+
+        paymentApplyDAO.saveEntityBean(bean);
+
+        paymentVSOutDAO.saveAllEntityBeans(vsList);
 
         saveFlowlog(user, bean);
 
@@ -146,6 +224,11 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         throws MYException
     {
         if (bean.getType() == FinanceConstant.PAYAPPLY_TYPE_BING)
+        {
+            return;
+        }
+
+        if (bean.getType() == FinanceConstant.PAYAPPLY_TYPE_TEMP)
         {
             return;
         }
@@ -410,6 +493,12 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
 
                 // 更新已经支付的金额
                 outDAO.updateHadPay(outId, hasPay);
+
+                // 如果全部支付就自动表示收款
+                if (out.getTotal() == hasPay)
+                {
+                    outDAO.modifyPay(outId, OutConstant.PAY_YES);
+                }
             }
         }
     }
@@ -750,6 +839,23 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
     public void setOutDAO(OutDAO outDAO)
     {
         this.outDAO = outDAO;
+    }
+
+    /**
+     * @return the billManager
+     */
+    public BillManager getBillManager()
+    {
+        return billManager;
+    }
+
+    /**
+     * @param billManager
+     *            the billManager to set
+     */
+    public void setBillManager(BillManager billManager)
+    {
+        this.billManager = billManager;
     }
 
 }

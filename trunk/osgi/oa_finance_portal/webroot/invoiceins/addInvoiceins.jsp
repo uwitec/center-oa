@@ -25,6 +25,8 @@ function check()
     
     var index = -1;
     
+    var totals = 0.0;
+    
     for (var i = 0; i < showArr.length; i++)
     {
         if (showArr[i].value != '' && index != -1 && index != (i + 1))
@@ -64,7 +66,18 @@ function check()
 	            
 	            return false;
 	        }
+	        
+	        totals += parseInt(amountArr[i].value, 10) * parseFloat(priceArr[i].value);
         }
+    }
+    
+    $O('hasMoney').value = totals;
+    
+    if (totals > parseFloat($$('mayMoney')))
+    {
+        alert('开票金额不能大于单据的销售金额');
+        
+        return false;
     }
     
     return true;
@@ -96,6 +109,9 @@ function loadShow()
             }
         }
     }
+    
+    $O('outId').value = '';
+    $O('mayMoney').value = '0.0';
 }
 
 function opens()
@@ -105,12 +121,14 @@ function opens()
         alert('请选择客户');
         return false;
     }
-    window.common.modal('../sail/out.do?method=rptQueryOut&mode=1&selectMode=1&load=1&invoiceId=' + $$('invoiceId') + '&dutyId=' + $$('dutyId') + '&customerId=' + $$('customerId'));
+    window.common.modal('../sail/out.do?method=rptQueryOut&mode=1&selectMode=1&invoiceStatus=0&load=1&invoiceId=' + $$('invoiceId') + '&dutyId=' + $$('dutyId') + '&customerId=' + $$('customerId'));
 }
 
 function getOut(oos)
 {
     var outId = $$('outId');
+    
+    var oldm = parseFloat($$('mayMoney'));
     
     for (var i = 0 ; i < oos.length; i++)
     {
@@ -119,15 +137,20 @@ function getOut(oos)
         if (outId.indexOf(oo.value) == -1)
         {
             outId += oo.value + ";";
+            
+             oldm += parseFloat(oo.pinvoicemoney);
         }
     }
     
     $O('outId').value = outId;
+    
+    $O('mayMoney').value = oldm;
 }
 
 function clears()
 {
     $O('outId').value = '';
+    $O('mayMoney').value = '0.0';
 }
 
 function selectCus()
@@ -157,7 +180,7 @@ function getCustomer(obj)
 <p:body width="98%">
 
 	<p:title>
-		<td class="caption"><strong>发票基本信息：</strong></td>
+		<td class="caption"><strong>发票基本信息：(关联多个单据默认依次填充单据的可开票金额)</strong></td>
 	</p:title>
 
 	<p:line flag="0" />
@@ -172,7 +195,7 @@ function getCustomer(obj)
 			
 			<p:pro field="unit" innerString="size=60" />
 
-			<p:pro field="invoiceId" innerString="style='WIDTH: 340px;'">
+			<p:pro field="invoiceId" innerString="style='WIDTH: 340px;' onchange=loadShow()">
 			    <c:forEach items="${invoiceList}" var="item">
 			    <option value="${item.id}">${item.fullName}</option>
 			    </c:forEach>
@@ -195,6 +218,12 @@ function getCustomer(obj)
                     class="button_class" onclick="opens()">&nbsp;
                 <input type="button" value="&nbsp;清 空&nbsp;" name="qout" id="qout"
                     class="button_class" onclick="clears()">&nbsp;&nbsp;
+            </p:cell>
+            
+            <p:cell title="金额">
+                可开票金额：<input type="text" size="20" readonly="readonly" name="mayMoney" value="0.0"> 
+                &nbsp;&nbsp;
+                当前开票金额：<input type="text" size="20" readonly="readonly" name="hasMoney" value="0.0"> 
             </p:cell>
 
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />

@@ -26,6 +26,9 @@ import com.china.center.oa.finance.manager.InvoiceinsManager;
 import com.china.center.oa.finance.vo.InvoiceinsVO;
 import com.china.center.oa.finance.vs.InsVSOutBean;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.sail.bean.OutBean;
+import com.china.center.oa.sail.constanst.OutConstant;
+import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.TimeTools;
@@ -49,6 +52,8 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
     private InvoiceinsItemDAO invoiceinsItemDAO = null;
 
     private InsVSOutDAO insVSOutDAO = null;
+
+    private OutDAO outDAO = null;
 
     /*
      * (non-Javadoc)
@@ -88,6 +93,34 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
                 insVSOutBean.setId(commonDAO.getSquenceString20());
 
                 insVSOutBean.setInsId(bean.getId());
+
+                OutBean out = outDAO.find(insVSOutBean.getOutId());
+
+                if (out == null)
+                {
+                    throw new MYException("数据错误,请确认操作");
+                }
+
+                if (insVSOutBean.getMoneys() + out.getInvoiceMoney() > out.getTotal())
+                {
+                    // TEMPLATE 数字格式化显示
+                    throw new MYException("单据[%s]开票溢出,开票金额[%.2f],销售金额[%.2f]", out.getFullId(),
+                        (insVSOutBean.getMoneys() + out.getInvoiceMoney()), out.getTotal());
+                }
+
+                if (insVSOutBean.getMoneys() + out.getInvoiceMoney() == out.getTotal())
+                {
+                    // 更新开票状态-结束
+                    outDAO.updateInvoiceStatus(out.getFullId(), out.getTotal(),
+                        OutConstant.INVOICESTATUS_END);
+                }
+
+                if (insVSOutBean.getMoneys() + out.getInvoiceMoney() < out.getTotal())
+                {
+                    // 更新开票状态-过程
+                    outDAO.updateInvoiceStatus(out.getFullId(), (insVSOutBean.getMoneys() + out
+                        .getInvoiceMoney()), OutConstant.INVOICESTATUS_INIT);
+                }
             }
 
             insVSOutDAO.saveAllEntityBeans(vsList);
@@ -199,5 +232,22 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
     public void setInsVSOutDAO(InsVSOutDAO insVSOutDAO)
     {
         this.insVSOutDAO = insVSOutDAO;
+    }
+
+    /**
+     * @return the outDAO
+     */
+    public OutDAO getOutDAO()
+    {
+        return outDAO;
+    }
+
+    /**
+     * @param outDAO
+     *            the outDAO to set
+     */
+    public void setOutDAO(OutDAO outDAO)
+    {
+        this.outDAO = outDAO;
     }
 }

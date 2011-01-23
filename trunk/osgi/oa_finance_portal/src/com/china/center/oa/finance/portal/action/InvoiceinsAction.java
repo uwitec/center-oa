@@ -48,6 +48,8 @@ import com.china.center.oa.publics.constant.InvoiceConstant;
 import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.ShowDAO;
+import com.china.center.oa.sail.bean.OutBean;
+import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.ListTools;
@@ -78,6 +80,8 @@ public class InvoiceinsAction extends DispatchAction
     private DutyDAO dutyDAO = null;
 
     private ShowDAO showDAO = null;
+
+    private OutDAO outDAO = null;
 
     private InvoiceDAO invoiceDAO = null;
 
@@ -278,6 +282,7 @@ public class InvoiceinsAction extends DispatchAction
         }
 
         double total = 0.0d;
+
         for (InvoiceinsItemBean invoiceinsItemBean : itemList)
         {
             total += invoiceinsItemBean.getAmount() * invoiceinsItemBean.getPrice();
@@ -297,6 +302,8 @@ public class InvoiceinsAction extends DispatchAction
 
         if ( !StringTools.isNullOrNone(outId))
         {
+            double canUse = bean.getMoneys();
+
             List<InsVSOutBean> vsList = new ArrayList<InsVSOutBean>();
 
             String[] split = outId.split(";");
@@ -305,12 +312,45 @@ public class InvoiceinsAction extends DispatchAction
             {
                 if ( !StringTools.isNullOrNone(split[i]))
                 {
+                    if (canUse == 0.0)
+                    {
+                        break;
+                    }
+
                     InsVSOutBean vs = new InsVSOutBean();
 
                     vs.setOutId(split[i]);
 
+                    OutBean out = outDAO.find(vs.getOutId());
+
+                    if (out == null)
+                    {
+                        throw new MYException(vs.getOutId() + "不存在,请确认操作");
+                    }
+
+                    // 剩余需要开票的金额
+                    double imoney = out.getTotal() - out.getInvoiceMoney();
+
+                    if (canUse >= imoney)
+                    {
+                        vs.setMoneys(imoney);
+
+                        canUse = canUse - imoney;
+                    }
+                    else
+                    {
+                        vs.setMoneys(canUse);
+
+                        canUse = 0.0d;
+                    }
+
                     vsList.add(vs);
                 }
+            }
+
+            if (canUse > 0)
+            {
+                throw new MYException("开票金额过多,请确认操作");
             }
 
             bean.setVsList(vsList);
@@ -489,5 +529,22 @@ public class InvoiceinsAction extends DispatchAction
     public void setShowDAO(ShowDAO showDAO)
     {
         this.showDAO = showDAO;
+    }
+
+    /**
+     * @return the outDAO
+     */
+    public OutDAO getOutDAO()
+    {
+        return outDAO;
+    }
+
+    /**
+     * @param outDAO
+     *            the outDAO to set
+     */
+    public void setOutDAO(OutDAO outDAO)
+    {
+        this.outDAO = outDAO;
     }
 }
