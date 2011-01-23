@@ -517,6 +517,11 @@ public class PublicQueryAction extends DispatchAction
         {
             List<InvoiceBean> invoiceList = invoiceDAO.listEntityBeans();
 
+            for (InvoiceBean invoiceBean : invoiceList)
+            {
+                invoiceBean.setName(invoiceBean.getFullName());
+            }
+
             selectMap.put(key, invoiceList);
 
             return;
