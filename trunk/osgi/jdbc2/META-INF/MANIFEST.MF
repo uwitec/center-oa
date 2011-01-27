@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: com.china.center.osgi.jdbc
 Bundle-SymbolicName: com.china.center.osgi.jdbc
 Bundle-Version: 1.0.0
-Export-Package: com.china.center.common;version="1.0.0",
+Export-Package: 
+ com.china.center.common;version="1.0.0",
  com.china.center.jdbc.annosql;version="1.0.0",
  com.china.center.jdbc.annosql.tools;version="1.0.0",
  com.china.center.jdbc.annotation;version="1.0.0",
