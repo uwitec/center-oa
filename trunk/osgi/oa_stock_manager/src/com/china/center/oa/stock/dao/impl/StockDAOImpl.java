@@ -87,4 +87,11 @@ public class StockDAOImpl extends BaseDAO<StockBean, StockVO> implements StockDA
 
         return true;
     }
+
+    public boolean updateConsign(String id, String consign)
+    {
+        this.jdbcOperation.updateField("consign", consign, id, this.claz);
+
+        return true;
+    }
 }

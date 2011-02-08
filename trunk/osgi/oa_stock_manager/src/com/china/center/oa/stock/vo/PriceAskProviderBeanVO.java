@@ -28,8 +28,14 @@ public class PriceAskProviderBeanVO extends PriceAskProviderBean
     @Relationship(relationField = "userId", tagField = "name")
     private String userName = "";
 
+    @Relationship(relationField = "userId", tagField = "stafferId")
+    private String stafferId = "";
+
     @Ignore
     private String pid = "";
+
+    @Ignore
+    private String stafferName = "";
 
     /**
      * 剩余的产品数量
@@ -147,6 +153,40 @@ public class PriceAskProviderBeanVO extends PriceAskProviderBean
     }
 
     /**
+     * @return the stafferId
+     */
+    public String getStafferId()
+    {
+        return stafferId;
+    }
+
+    /**
+     * @param stafferId
+     *            the stafferId to set
+     */
+    public void setStafferId(String stafferId)
+    {
+        this.stafferId = stafferId;
+    }
+
+    /**
+     * @return the stafferName
+     */
+    public String getStafferName()
+    {
+        return stafferName;
+    }
+
+    /**
+     * @param stafferName
+     *            the stafferName to set
+     */
+    public void setStafferName(String stafferName)
+    {
+        this.stafferName = stafferName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -155,31 +195,14 @@ public class PriceAskProviderBeanVO extends PriceAskProviderBean
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("PriceAskProviderBeanVO ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("productName = ")
-            .append(this.productName)
-            .append(TAB)
-            .append("productCode = ")
-            .append(this.productCode)
-            .append(TAB)
-            .append("providerName = ")
-            .append(this.providerName)
-            .append(TAB)
-            .append("userName = ")
-            .append(this.userName)
-            .append(TAB)
-            .append("pid = ")
-            .append(this.pid)
-            .append(TAB)
-            .append("remainmount = ")
-            .append(this.remainmount)
-            .append(TAB)
-            .append(" )");
+        retValue.append("PriceAskProviderBeanVO ( ").append(super.toString()).append(TAB).append("productName = ").append(
+            this.productName).append(TAB).append("productCode = ").append(this.productCode).append(TAB).append(
+            "providerName = ").append(this.providerName).append(TAB).append("userName = ").append(this.userName).append(
+            TAB).append("stafferId = ").append(this.stafferId).append(TAB).append("pid = ").append(this.pid).append(TAB).append(
+            "stafferName = ").append(this.stafferName).append(TAB).append("remainmount = ").append(this.remainmount).append(
+            TAB).append(" )");
 
         return retValue.toString();
     }

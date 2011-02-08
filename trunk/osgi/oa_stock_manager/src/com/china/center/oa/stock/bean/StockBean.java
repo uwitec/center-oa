@@ -24,7 +24,12 @@ import com.china.center.oa.stock.constant.StockConstant;
 
 
 /**
- * @author Administrator
+ * StockBean
+ * 
+ * @author ZHUZHU
+ * @version 2011-2-1
+ * @see StockBean
+ * @since 1.0
  */
 @Entity(name = "采购单")
 @Table(name = "T_CENTER_STOCK")
@@ -52,6 +57,9 @@ public class StockBean implements Serializable
     @Join(tagClass = DutyBean.class, type = JoinType.LEFT)
     private String dutyId = "";
 
+    /**
+     * 询价人所在分公司
+     */
     @Join(tagClass = LocationBean.class)
     private String locationId = "";
 
@@ -71,8 +79,11 @@ public class StockBean implements Serializable
     @Html(title = "最早付款日期", type = Element.DATE, must = true)
     private String nearlyPayDate = "";
 
+    /**
+     * V5版本已经废弃
+     */
     @Html(title = "询价方式", type = Element.SELECT, must = true)
-    private int type = PriceConstant.PRICE_ASK_TYPE_INNER;
+    private int type = PriceConstant.PRICE_ASK_TYPE_NET;
 
     /**
      * 采购类型
@@ -109,6 +120,11 @@ public class StockBean implements Serializable
      */
     @Html(title = "供应商片区", type = Element.SELECT)
     private String areaId = "";
+
+    /**
+     * 发货备注
+     */
+    private String consign = "";
 
     @Html(title = "备注", type = Element.TEXTAREA, maxLength = 100)
     private String description = "";
@@ -549,6 +565,23 @@ public class StockBean implements Serializable
     }
 
     /**
+     * @return the consign
+     */
+    public String getConsign()
+    {
+        return consign;
+    }
+
+    /**
+     * @param consign
+     *            the consign to set
+     */
+    public void setConsign(String consign)
+    {
+        this.consign = consign;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -557,82 +590,21 @@ public class StockBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("StockBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("userId = ")
-            .append(this.userId)
-            .append(TAB)
-            .append("stafferId = ")
-            .append(this.stafferId)
-            .append(TAB)
-            .append("owerId = ")
-            .append(this.owerId)
-            .append(TAB)
-            .append("dutyId = ")
-            .append(this.dutyId)
-            .append(TAB)
-            .append("locationId = ")
-            .append(this.locationId)
-            .append(TAB)
-            .append("status = ")
-            .append(this.status)
-            .append(TAB)
-            .append("exceptStatus = ")
-            .append(this.exceptStatus)
-            .append(TAB)
-            .append("needTime = ")
-            .append(this.needTime)
-            .append(TAB)
-            .append("willDate = ")
-            .append(this.willDate)
-            .append(TAB)
-            .append("nearlyPayDate = ")
-            .append(this.nearlyPayDate)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("stype = ")
-            .append(this.stype)
-            .append(TAB)
-            .append("stockType = ")
-            .append(this.stockType)
-            .append(TAB)
-            .append("logTime = ")
-            .append(this.logTime)
-            .append(TAB)
-            .append("flow = ")
-            .append(this.flow)
-            .append(TAB)
-            .append("total = ")
-            .append(this.total)
-            .append(TAB)
-            .append("pay = ")
-            .append(this.pay)
-            .append(TAB)
-            .append("invoice = ")
-            .append(this.invoice)
-            .append(TAB)
-            .append("invoiceType = ")
-            .append(this.invoiceType)
-            .append(TAB)
-            .append("areaId = ")
-            .append(this.areaId)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append("item = ")
-            .append(this.item)
-            .append(TAB)
-            .append(" )");
+        retValue.append("StockBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(TAB).append(
+            "userId = ").append(this.userId).append(TAB).append("stafferId = ").append(this.stafferId).append(TAB).append(
+            "owerId = ").append(this.owerId).append(TAB).append("dutyId = ").append(this.dutyId).append(TAB).append(
+            "locationId = ").append(this.locationId).append(TAB).append("status = ").append(this.status).append(TAB).append(
+            "exceptStatus = ").append(this.exceptStatus).append(TAB).append("needTime = ").append(this.needTime).append(
+            TAB).append("willDate = ").append(this.willDate).append(TAB).append("nearlyPayDate = ").append(
+            this.nearlyPayDate).append(TAB).append("type = ").append(this.type).append(TAB).append("stype = ").append(
+            this.stype).append(TAB).append("stockType = ").append(this.stockType).append(TAB).append("logTime = ").append(
+            this.logTime).append(TAB).append("flow = ").append(this.flow).append(TAB).append("total = ").append(
+            this.total).append(TAB).append("pay = ").append(this.pay).append(TAB).append("invoice = ").append(
+            this.invoice).append(TAB).append("invoiceType = ").append(this.invoiceType).append(TAB).append("areaId = ").append(
+            this.areaId).append(TAB).append("consign = ").append(this.consign).append(TAB).append("description = ").append(
+            this.description).append(TAB).append("item = ").append(this.item).append(TAB).append(" )");
 
         return retValue.toString();
     }

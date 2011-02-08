@@ -29,6 +29,8 @@ public interface StockItemDAO extends DAO<StockItemBean, StockItemVO>
 {
     boolean updateStatus(String id, int status);
 
+    boolean updatePay(String id, int pay);
+
     List<StockItemVO> queryStatStockItemVO(String beginTime, String endTime, PageSeparate separate);
 
     int countStatStockItem(String beginTime, String endTime);

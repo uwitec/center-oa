@@ -53,9 +53,14 @@ public class PriceAskProviderBean implements Serializable
     private int supportAmount = 0;
 
     /**
-     * 0:内部询价 1：网络询价
+     * 0:内部询价 1：外网询价
      */
     private int type = PriceConstant.PRICE_ASK_TYPE_INNER;
+
+    /**
+     * 如果是采购询价(0:普通询价 1:外网 2:卢工 3:马甸)
+     */
+    private int srcType = PriceConstant.PRICE_ASK_SRCTYPR_COMMON;
 
     private double price = 0.0d;
 
@@ -324,6 +329,23 @@ public class PriceAskProviderBean implements Serializable
     }
 
     /**
+     * @return the srcType
+     */
+    public int getSrcType()
+    {
+        return srcType;
+    }
+
+    /**
+     * @param srcType
+     *            the srcType to set
+     */
+    public void setSrcType(int srcType)
+    {
+        this.srcType = srcType;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -332,46 +354,15 @@ public class PriceAskProviderBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("PriceAskProviderBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("productId = ")
-            .append(this.productId)
-            .append(TAB)
-            .append("askId = ")
-            .append(this.askId)
-            .append(TAB)
-            .append("userId = ")
-            .append(this.userId)
-            .append(TAB)
-            .append("providerId = ")
-            .append(this.providerId)
-            .append(TAB)
-            .append("hasAmount = ")
-            .append(this.hasAmount)
-            .append(TAB)
-            .append("supportAmount = ")
-            .append(this.supportAmount)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("price = ")
-            .append(this.price)
-            .append(TAB)
-            .append("logTime = ")
-            .append(this.logTime)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append(" )");
+        retValue.append("PriceAskProviderBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("productId = ").append(this.productId).append(TAB).append("askId = ").append(this.askId).append(
+            TAB).append("userId = ").append(this.userId).append(TAB).append("providerId = ").append(this.providerId).append(
+            TAB).append("hasAmount = ").append(this.hasAmount).append(TAB).append("supportAmount = ").append(
+            this.supportAmount).append(TAB).append("type = ").append(this.type).append(TAB).append("srcType = ").append(
+            this.srcType).append(TAB).append("price = ").append(this.price).append(TAB).append("logTime = ").append(
+            this.logTime).append(TAB).append("description = ").append(this.description).append(TAB).append(" )");
 
         return retValue.toString();
     }

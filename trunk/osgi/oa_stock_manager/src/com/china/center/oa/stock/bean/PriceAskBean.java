@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Html;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Ignore;
@@ -62,7 +63,18 @@ public class PriceAskBean implements Serializable
     private String userId = "";
 
     /**
-     * 
+     * 供应商选择分区
+     */
+    private String areaId = "";
+
+    /**
+     * 关联的询价
+     */
+    @FK
+    private String refStock = "";
+
+    /**
+     * puserId
      */
     @Join(tagClass = UserBean.class, type = JoinType.LEFT, alias = "user1")
     private String puserId = "";
@@ -76,6 +88,11 @@ public class PriceAskBean implements Serializable
      * 询价类型
      */
     private int type = PriceConstant.PRICE_ASK_TYPE_INNER;
+
+    /**
+     * 询价来源
+     */
+    private int src = PriceConstant.PRICE_ASK_SRC_ASK;
 
     /**
      * amountStatus
@@ -514,6 +531,57 @@ public class PriceAskBean implements Serializable
     }
 
     /**
+     * @return the src
+     */
+    public int getSrc()
+    {
+        return src;
+    }
+
+    /**
+     * @param src
+     *            the src to set
+     */
+    public void setSrc(int src)
+    {
+        this.src = src;
+    }
+
+    /**
+     * @return the refStock
+     */
+    public String getRefStock()
+    {
+        return refStock;
+    }
+
+    /**
+     * @param refStock
+     *            the refStock to set
+     */
+    public void setRefStock(String refStock)
+    {
+        this.refStock = refStock;
+    }
+
+    /**
+     * @return the areaId
+     */
+    public String getAreaId()
+    {
+        return areaId;
+    }
+
+    /**
+     * @param areaId
+     *            the areaId to set
+     */
+    public void setAreaId(String areaId)
+    {
+        this.areaId = areaId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -522,82 +590,22 @@ public class PriceAskBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("PriceAskBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("productId = ")
-            .append(this.productId)
-            .append(TAB)
-            .append("amount = ")
-            .append(this.amount)
-            .append(TAB)
-            .append("srcamount = ")
-            .append(this.srcamount)
-            .append(TAB)
-            .append("price = ")
-            .append(this.price)
-            .append(TAB)
-            .append("logTime = ")
-            .append(this.logTime)
-            .append(TAB)
-            .append("processTime = ")
-            .append(this.processTime)
-            .append(TAB)
-            .append("endTime = ")
-            .append(this.endTime)
-            .append(TAB)
-            .append("userId = ")
-            .append(this.userId)
-            .append(TAB)
-            .append("puserId = ")
-            .append(this.puserId)
-            .append(TAB)
-            .append("instancy = ")
-            .append(this.instancy)
-            .append(TAB)
-            .append("status = ")
-            .append(this.status)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("amountStatus = ")
-            .append(this.amountStatus)
-            .append(TAB)
-            .append("productType = ")
-            .append(this.productType)
-            .append(TAB)
-            .append("overTime = ")
-            .append(this.overTime)
-            .append(TAB)
-            .append("locationId = ")
-            .append(this.locationId)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append("reason = ")
-            .append(this.reason)
-            .append(TAB)
-            .append("askDate = ")
-            .append(this.askDate)
-            .append(TAB)
-            .append("parentAsk = ")
-            .append(this.parentAsk)
-            .append(TAB)
-            .append("saveType = ")
-            .append(this.saveType)
-            .append(TAB)
-            .append("item = ")
-            .append(this.item)
-            .append(TAB)
-            .append(" )");
+        retValue.append("PriceAskBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("productId = ").append(this.productId).append(TAB).append("amount = ").append(this.amount).append(
+            TAB).append("srcamount = ").append(this.srcamount).append(TAB).append("price = ").append(this.price).append(
+            TAB).append("logTime = ").append(this.logTime).append(TAB).append("processTime = ").append(this.processTime).append(
+            TAB).append("endTime = ").append(this.endTime).append(TAB).append("userId = ").append(this.userId).append(
+            TAB).append("areaId = ").append(this.areaId).append(TAB).append("refStock = ").append(this.refStock).append(
+            TAB).append("puserId = ").append(this.puserId).append(TAB).append("instancy = ").append(this.instancy).append(
+            TAB).append("status = ").append(this.status).append(TAB).append("type = ").append(this.type).append(TAB).append(
+            "src = ").append(this.src).append(TAB).append("amountStatus = ").append(this.amountStatus).append(TAB).append(
+            "productType = ").append(this.productType).append(TAB).append("overTime = ").append(this.overTime).append(
+            TAB).append("locationId = ").append(this.locationId).append(TAB).append("description = ").append(
+            this.description).append(TAB).append("reason = ").append(this.reason).append(TAB).append("askDate = ").append(
+            this.askDate).append(TAB).append("parentAsk = ").append(this.parentAsk).append(TAB).append("saveType = ").append(
+            this.saveType).append(TAB).append("item = ").append(this.item).append(TAB).append(" )");
 
         return retValue.toString();
     }

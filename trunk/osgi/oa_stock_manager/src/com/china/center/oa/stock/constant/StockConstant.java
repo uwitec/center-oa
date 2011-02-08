@@ -21,7 +21,7 @@ public interface StockConstant
     /**
      * 提交
      */
-    @Defined(key = "stockStatus", value = "提交")
+    @Defined(key = "stockStatus", value = "待区域经理审核")
     int STOCK_STATUS_SUBMIT = 1;
 
     /**
@@ -33,31 +33,31 @@ public interface StockConstant
     /**
      * 区域经理通过
      */
-    @Defined(key = "stockStatus", value = "区域经理通过")
+    @Defined(key = "stockStatus", value = "待询价员询价")
     int STOCK_STATUS_MANAGERPASS = 3;
 
     /**
      * 询价员通过(外网询价员通过)
      */
-    @Defined(key = "stockStatus", value = "询价员通过")
+    @Defined(key = "stockStatus", value = "待采购主管审核")
     int STOCK_STATUS_PRICEPASS = 4;
 
     /**
      * 采购主管通过
      */
-    @Defined(key = "stockStatus", value = "采购主管通过")
+    @Defined(key = "stockStatus", value = "待董事长审核")
     int STOCK_STATUS_STOCKPASS = 5;
 
     /**
      * 采购经理通过
      */
-    @Defined(key = "stockStatus", value = "采购经理通过")
+    @Defined(key = "stockStatus", value = "待采购拿货")
     int STOCK_STATUS_STOCKMANAGERPASS = 6;
 
     /**
      * 采购审批完毕
      */
-    @Defined(key = "stockStatus", value = "采购审批完毕")
+    @Defined(key = "stockStatus", value = "待结束采购")
     int STOCK_STATUS_END = 7;
 
     /**
@@ -109,11 +109,13 @@ public interface StockConstant
     /**
      * 没有付款
      */
+    @Defined(key = "stockPay", value = "未付款")
     int STOCK_PAY_NO = 0;
 
     /**
      * 付款
      */
+    @Defined(key = "stockPay", value = "付款")
     int STOCK_PAY_YES = 1;
 
     /**
@@ -210,4 +212,15 @@ public interface StockConstant
     @Defined(key = "hasRef", value = "是")
     int STOCK_ITEM_HASREF_YES = 1;
 
+    /**
+     * 未拿货
+     */
+    @Defined(key = "stockItemFech", value = "未拿货")
+    int STOCK_ITEM_FECH_NO = 0;
+
+    /**
+     * 已拿货
+     */
+    @Defined(key = "stockItemFech", value = "已拿货")
+    int STOCK_ITEM_FECH_YES = 1;
 }

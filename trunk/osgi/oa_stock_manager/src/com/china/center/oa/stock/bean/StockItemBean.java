@@ -30,6 +30,7 @@ public class StockItemBean implements Serializable
     private String id = "";
 
     @FK
+    @Join(tagClass = StockBean.class)
     private String stockId = "";
 
     @Join(tagClass = ProductBean.class)
@@ -63,6 +64,11 @@ public class StockItemBean implements Serializable
 
     private int status = StockConstant.STOCK_ITEM_STATUS_INIT;
 
+    /**
+     * 拿货
+     */
+    private int fechProduct = StockConstant.STOCK_ITEM_FECH_NO;
+
     private String netAskId = "";
 
     /**
@@ -89,6 +95,11 @@ public class StockItemBean implements Serializable
     private String priceAskProviderId = "";
 
     private String description = "";
+
+    /**
+     * 是否付款
+     */
+    private int pay = StockConstant.STOCK_PAY_NO;
 
     @Ignore
     private List<PriceAskProviderBean> asks = null;
@@ -424,6 +435,40 @@ public class StockItemBean implements Serializable
     }
 
     /**
+     * @return the pay
+     */
+    public int getPay()
+    {
+        return pay;
+    }
+
+    /**
+     * @param pay
+     *            the pay to set
+     */
+    public void setPay(int pay)
+    {
+        this.pay = pay;
+    }
+
+    /**
+     * @return the fechProduct
+     */
+    public int getFechProduct()
+    {
+        return fechProduct;
+    }
+
+    /**
+     * @param fechProduct
+     *            the fechProduct to set
+     */
+    public void setFechProduct(int fechProduct)
+    {
+        this.fechProduct = fechProduct;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -432,70 +477,20 @@ public class StockItemBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("StockItemBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("stockId = ")
-            .append(this.stockId)
-            .append(TAB)
-            .append("productId = ")
-            .append(this.productId)
-            .append(TAB)
-            .append("refOutId = ")
-            .append(this.refOutId)
-            .append(TAB)
-            .append("hasRef = ")
-            .append(this.hasRef)
-            .append(TAB)
-            .append("providerId = ")
-            .append(this.providerId)
-            .append(TAB)
-            .append("amount = ")
-            .append(this.amount)
-            .append(TAB)
-            .append("productNum = ")
-            .append(this.productNum)
-            .append(TAB)
-            .append("status = ")
-            .append(this.status)
-            .append(TAB)
-            .append("netAskId = ")
-            .append(this.netAskId)
-            .append(TAB)
-            .append("showId = ")
-            .append(this.showId)
-            .append(TAB)
-            .append("price = ")
-            .append(this.price)
-            .append(TAB)
-            .append("prePrice = ")
-            .append(this.prePrice)
-            .append(TAB)
-            .append("sailPrice = ")
-            .append(this.sailPrice)
-            .append(TAB)
-            .append("total = ")
-            .append(this.total)
-            .append(TAB)
-            .append("logTime = ")
-            .append(this.logTime)
-            .append(TAB)
-            .append("priceAskProviderId = ")
-            .append(this.priceAskProviderId)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append("asks = ")
-            .append(this.asks)
-            .append(TAB)
-            .append(" )");
+        retValue.append("StockItemBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("stockId = ").append(this.stockId).append(TAB).append("productId = ").append(this.productId).append(
+            TAB).append("refOutId = ").append(this.refOutId).append(TAB).append("hasRef = ").append(this.hasRef).append(
+            TAB).append("providerId = ").append(this.providerId).append(TAB).append("amount = ").append(this.amount).append(
+            TAB).append("productNum = ").append(this.productNum).append(TAB).append("status = ").append(this.status).append(
+            TAB).append("fechProduct = ").append(this.fechProduct).append(TAB).append("netAskId = ").append(
+            this.netAskId).append(TAB).append("showId = ").append(this.showId).append(TAB).append("price = ").append(
+            this.price).append(TAB).append("prePrice = ").append(this.prePrice).append(TAB).append("sailPrice = ").append(
+            this.sailPrice).append(TAB).append("total = ").append(this.total).append(TAB).append("logTime = ").append(
+            this.logTime).append(TAB).append("priceAskProviderId = ").append(this.priceAskProviderId).append(TAB).append(
+            "description = ").append(this.description).append(TAB).append("pay = ").append(this.pay).append(TAB).append(
+            "asks = ").append(this.asks).append(TAB).append(" )");
 
         return retValue.toString();
     }

@@ -129,4 +129,40 @@ public interface PriceConstant
      */
     int PRICE_INSTANCY_NETWORK_16 = 5;
 
+    /**
+     * 询价来源-询价
+     */
+    @Defined(key = "priceAskSrc", value = "询价")
+    int PRICE_ASK_SRC_ASK = 0;
+
+    /**
+     * 询价来源-采购
+     */
+    @Defined(key = "priceAskSrc", value = "采购")
+    int PRICE_ASK_SRC_STOCK = 1;
+
+    /**
+     * 采购询价类型-普通(非采购询价)
+     */
+    @Defined(key = "priceAskSrcType", value = "普通")
+    int PRICE_ASK_SRCTYPR_COMMON = 0;
+
+    /**
+     * 采购询价类型-外网询价
+     */
+    @Defined(key = "priceAskSrcType", value = "外网询价")
+    int PRICE_ASK_SRCTYPR_NET = 1;
+
+    /**
+     * 采购询价类型-卢工询价
+     */
+    @Defined(key = "priceAskSrcType", value = "卢工询价")
+    int PRICE_ASK_SRCTYPR_LUGONG = 2;
+
+    /**
+     * 采购询价类型-马甸询价
+     */
+    @Defined(key = "priceAskSrcType", value = "马甸询价")
+    int PRICE_ASK_SRCTYPR_MADIAN = 3;
+
 }

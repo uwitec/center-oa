@@ -38,6 +38,9 @@ public interface StockManager extends ListenerManager<StockListener>
     boolean stockItemAskChange(String itemId, String providerId)
         throws MYException;
 
+    boolean fechProduct(User user, String itemId)
+        throws MYException;
+
     boolean stockItemAsk(StockItemBean bean)
         throws MYException;
 
@@ -50,7 +53,7 @@ public interface StockManager extends ListenerManager<StockListener>
     boolean updateStockNearlyPayDate(final User user, final String id, String nearlyPayDate)
         throws MYException;
 
-    String endStock(final User user, final String id)
+    String endStock(final User user, final String id, String reason)
         throws MYException;
 
     boolean delStockBean(final User user, final String id)
@@ -63,5 +66,16 @@ public interface StockManager extends ListenerManager<StockListener>
         throws MYException;
 
     boolean rejectStockToAsk(final User user, final String id, String reason)
+        throws MYException;
+
+    /**
+     * 修改采购项付款状态(无事务)
+     * 
+     * @param user
+     * @param stockItemId
+     * @return
+     * @throws MYException
+     */
+    boolean payStockItemWithoutTransaction(final User user, final String stockItemId)
         throws MYException;
 }

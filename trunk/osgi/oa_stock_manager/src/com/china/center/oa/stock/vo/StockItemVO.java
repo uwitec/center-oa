@@ -27,6 +27,9 @@ public class StockItemVO extends StockItemBean
     @Relationship(relationField = "providerId", tagField = "name")
     private String providerName = "";
 
+    @Relationship(relationField = "stockId", tagField = "logTime")
+    private String stockTime = "";
+
     @Ignore
     private List<PriceAskProviderBeanVO> asksVo = null;
 
@@ -103,5 +106,41 @@ public class StockItemVO extends StockItemBean
     public void setProviderName(String providerName)
     {
         this.providerName = providerName;
+    }
+
+    /**
+     * @return the stockTime
+     */
+    public String getStockTime()
+    {
+        return stockTime;
+    }
+
+    /**
+     * @param stockTime
+     *            the stockTime to set
+     */
+    public void setStockTime(String stockTime)
+    {
+        this.stockTime = stockTime;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuffer retValue = new StringBuffer();
+
+        retValue.append("StockItemVO ( ").append(super.toString()).append(TAB).append("productName = ").append(
+            this.productName).append(TAB).append("productCode = ").append(this.productCode).append(TAB).append(
+            "providerName = ").append(this.providerName).append(TAB).append("stockTime = ").append(this.stockTime).append(
+            TAB).append("asksVo = ").append(this.asksVo).append(TAB).append(" )");
+
+        return retValue.toString();
     }
 }

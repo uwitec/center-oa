@@ -36,6 +36,13 @@ public class StockItemDAOImpl extends BaseDAO<StockItemBean, StockItemVO> implem
         return true;
     }
 
+    public boolean updatePay(String id, int pay)
+    {
+        this.jdbcOperation.updateField("pay", pay, id, this.claz);
+
+        return true;
+    }
+
     /**
      * 根据统计查询
      * 

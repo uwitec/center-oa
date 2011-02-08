@@ -28,7 +28,9 @@ public interface PriceAskProviderDAO extends DAO<PriceAskProviderBean, PriceAskP
 {
     PriceAskProviderBean findBeanByAskIdAndProviderId(String askId, String providerId, int type);
 
-    List<PriceAskProviderBeanVO> queryByCondition(String askDate, String productId);
+    PriceAskProviderBeanVO findVOByAskIdAndProviderId(String askId, String providerId, int type);
+
+    List<PriceAskProviderBeanVO> queryByCondition(String askDate, String productId, String stockId);
 
     boolean deleteByProviderId(String askId, String providerId, int type);
 }

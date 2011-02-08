@@ -10,11 +10,11 @@
         T_CENTER_PRODUCT t3, T_CENTER_PROVIDE t4
         Where t2.askId = t1.id
         and t1.productId = t3.id
-        and t1.saveType = #saveType#
         and t1.productId = #productId#
         and t4.id = t2.providerId
-        and t2.type = #type#
+        and t1.src = #src#
         and t1.askDate >= #askDate#
+        and t1.refStock = #stockId#
 	</select>
 
 </sqlMap>

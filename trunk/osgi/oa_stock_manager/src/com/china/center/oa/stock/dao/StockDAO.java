@@ -33,4 +33,13 @@ public interface StockDAO extends DAO<StockBean, StockVO>
     boolean updateExceptStatus(String id, int exceptStatus);
 
     boolean updateNeedTime(String id, String date);
+
+    /**
+     * updateConsign
+     * 
+     * @param id
+     * @param consign
+     * @return
+     */
+    boolean updateConsign(String id, String consign);
 }

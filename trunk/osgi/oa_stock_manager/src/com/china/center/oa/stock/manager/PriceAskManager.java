@@ -28,6 +28,9 @@ public interface PriceAskManager
     boolean addPriceAskBean(User user, PriceAskBean bean)
         throws MYException;
 
+    boolean addPriceAskBeanWithoutTransactional(User user, PriceAskBean bean)
+        throws MYException;
+
     boolean updatePriceAskAmount(User user, final String id, int newAmount)
         throws MYException;
 

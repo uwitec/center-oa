@@ -77,6 +77,12 @@ public class PriceAskManagerImpl implements PriceAskManager
     public boolean addPriceAskBean(User user, PriceAskBean bean)
         throws MYException
     {
+        return addPriceAskBeanWithoutTransactional(user, bean);
+    }
+
+    public boolean addPriceAskBeanWithoutTransactional(User user, PriceAskBean bean)
+        throws MYException
+    {
         JudgeTools.judgeParameterIsNull(bean);
 
         // 如果是外网询价这里需要归并在一起
@@ -126,11 +132,13 @@ public class PriceAskManagerImpl implements PriceAskManager
      */
     private void handleNetAsk(final PriceAskBean bean)
     {
-        if (bean.getType() == PriceConstant.PRICE_ASK_TYPE_NET || bean.getType() == PriceConstant.PRICE_ASK_TYPE_BOTH)
+        // 只有询价的合并,采购的询价不合并
+        if (bean.getSrc() == PriceConstant.PRICE_ASK_SRC_ASK
+            && (bean.getType() == PriceConstant.PRICE_ASK_TYPE_NET || bean.getType() == PriceConstant.PRICE_ASK_TYPE_BOTH))
         {
             // 查看当天的产品外网询价是否存在
-            PriceAskBean absAsk = priceAskDAO.findAbsByProductIdAndProcessTime(bean.getProductId(), bean
-                .getProcessTime());
+            PriceAskBean absAsk = priceAskDAO.findAbsByProductIdAndProcessTime(bean.getProductId(),
+                bean.getProcessTime());
 
             if (absAsk == null)
             {
@@ -283,8 +291,8 @@ public class PriceAskManagerImpl implements PriceAskManager
             item.add(each);
         }
 
-        // 只要STOCK询价，此单自动结束
-        if (AuthHelper.containAuth(user, AuthConstant.PRICE_ASK_MANAGER))
+        // DROP 只要STOCK询价，此单自动结束
+        if (AuthHelper.containAuth(user, AuthConstant.PRICE_ASK_MANAGER) && false)
         {
             bean.setStatus(PriceConstant.PRICE_ASK_STATUS_END);
         }
