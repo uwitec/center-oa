@@ -143,6 +143,24 @@ function processInvoke()
     document.location.href = '../sail/out.do?method=findOut&fow=5&outId=' + getRadioValue("fullId");
 }
 
+function sureBack()
+{
+	if (getRadio('fullId').statuss == 0 && getRadio('fullId').outtype == 4)
+	if (window.confirm('确认领样退库?'))
+    document.location.href = '../sail/out.do?method=submitOut&outId=' + getRadioValue("fullId");
+    else
+    alert('不能操作');
+}
+
+function rejectBack()
+{
+	if (getRadio('fullId').statuss == 0 && getRadio('fullId').outtype == 4)
+	if (window.confirm('确认驳回领样退库?'))
+    document.location.href = '../sail/out.do?method=rejectBack&outId=' + getRadioValue("fullId");
+    else
+    alert('不能操作');
+}
+
 function centerCheck()
 {
     if (getRadio('fullId').statuss == 3 && getRadio('fullId').paytype == 1)
@@ -440,6 +458,7 @@ function reject()
 							   hasmap="${hasMap[item.fullId]}"
 							   index="${radioIndex}"
 							   con="${item.consign}"
+							   outtype="${item.outType}"
 							   pay="${item.reserve3}"
 							   paytype="${item.pay}"
 							   statuss='${item.status}' 
@@ -483,7 +502,7 @@ function reject()
 	<tr>
 		<td width="100%">
 		<div align="right">
-		<c:if test="${queryType != '4'}">
+		<c:if test="${queryType != '4' && queryType != '5'}">
         <input name="bu1"
                 type="button" class="button_class" value="&nbsp;审核通过&nbsp;"
                 onclick="check()" />&nbsp;&nbsp;<input type="button" name="bu2"
@@ -491,13 +510,21 @@ function reject()
                 onclick="reject()" />&nbsp;&nbsp;
 		<input
 			type="button" class="button_class"
-			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;"
+			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;
 		</c:if>	
 		
 		<c:if test="${queryType == '4'}">
         <input type="button" class="button_class"
                 value="&nbsp;&nbsp;处理调拨&nbsp;&nbsp;" onClick="processInvoke()"/>&nbsp;&nbsp;
         </c:if>
+        
+        <c:if test="${queryType == '5'}">
+        <input type="button" class="button_class"
+                value="&nbsp;&nbsp;确认退库&nbsp;&nbsp;" onClick="sureBack()"/>&nbsp;&nbsp;
+        <input type="button" class="button_class"
+                value="&nbsp;&nbsp;驳回退库&nbsp;&nbsp;" onClick="rejectBack()"/>&nbsp;&nbsp;
+        </c:if>
+        
 		</div>
 		</td>
 		<td width="0%"></td>

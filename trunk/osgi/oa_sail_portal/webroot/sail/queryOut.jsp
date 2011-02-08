@@ -114,8 +114,10 @@ function res()
 	$O('customerName').value = '';
 	$O("customerId").value = '';
 	$O("id").value = '';
+	$O("stafferName").value = '';
 	setSelectIndex($O('status'), 0);
 	setSelectIndex($O('pay'), 0);
+	setSelectIndex($O('department'), 0);
 }
 
 var jmap = new Object();
@@ -176,7 +178,7 @@ function payOut2()
 
 function payOut3()
 {
-    if (getRadio('fullId').statuss == 3 && getRadio('fullId').paytype != 1)
+    if (getRadio('fullId').statuss == 3 && getRadio('fullId').paytype != 1 && getRadio('fullId').outtype != 1)
     {
         $.messager.prompt('销售单坏账', '请输入销售单坏账金额', getRadio('fullId').baddebts, function(value, isOk){
                 if (isOk)
@@ -211,7 +213,7 @@ function payOut3()
 
 function payOut4()
 {
-    if (getRadio('fullId').statuss == 4 && getRadio('fullId').paytype == 1 && parseFloat(getRadio('fullId').baddebts) > 0.0)
+    if (getRadio('fullId').statuss == 4 && getRadio('fullId').paytype == 1 && parseFloat(getRadio('fullId').baddebts) > 0.0 && getRadio('fullId').outtype != 1)
     {
         if (window.confirm("确定取消坏账?"))
         {
@@ -359,6 +361,20 @@ function outBack()
     }
 }
 
+function swatchToSail()
+{
+	//个人领样
+    if (getRadio('fullId').statuss == 3 && getRadio('fullId').outtype == 1)
+    {
+    	if (window.confirm("确定领样转销售?"))
+        $l('../sail/out.do?method=swatchToSail&outId=' + getRadioValue("fullId"));
+    }
+    else
+    {
+        alert('不能操作');
+    }
+}
+
 </script>
 
 </head>
@@ -449,10 +465,24 @@ function outBack()
                             </c:forEach>
                         </select>
                         </td>
+					</tr>
 					
+					<tr class="content1">
+						<td width="15%" align="center">销售部门</td>
+						<td align="center">
+						<select name="department"
+							class="select_class" values=${department}>
+							<option value="">--</option>
+							<c:forEach items='${departementList}' var="item">
+								<option value="${item.name}">${item.name}</option>
+							</c:forEach>
+						</select>
+						</td>
+						<td width="15%" align="center">销售人员</td>
+						<td align="center"><input type="text" name="stafferName" value="${stafferName}"></td>
 					</tr>
 
-					<tr class="content1">
+					<tr class="content2">
 
 						<td colspan="4" align="right"><input type="button" id="query_b"
 							onclick="query()" class="button_class"
@@ -523,6 +553,7 @@ function outBack()
 						<td align="center" onclick="tableSort(this)" class="td_class">状态</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">${fg}类型</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">${fg}时间</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">结算通过</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">回款日期</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">超期(天)</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">金额</td>
@@ -553,6 +584,7 @@ function outBack()
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('outStatus', item.status)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('outType_out', item.outType)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.outTime}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.managerTime}</td>
 							<c:if test="${item.pay == 0}">
 							<td align="center" onclick="hrefAndSelect(this)"><font color=red>${item.redate}</font></td>
 							</c:if>
@@ -600,7 +632,7 @@ function outBack()
 	<tr>
 		<td width="100%">
 		<div align="right">
-		<c:if test="${queryType != '5' && queryType != '6' && queryType != '8'}">
+		<c:if test="${queryType != '5' && queryType != '6' && queryType != '9'}">
 		
 		<c:if test="${queryType == '2'}">
 		<input type="button" class="button_class" style="display: none;"
@@ -613,7 +645,7 @@ function outBack()
                 onclick="reject()" />&nbsp;&nbsp;
 		<input
 			type="button" class="button_class"
-			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;"
+			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;
 		</c:if>	
 		
 		
@@ -633,9 +665,11 @@ function outBack()
                 value="&nbsp;&nbsp;总部核对&nbsp;&nbsp;" onClick="centerCheck()"/>&nbsp;&nbsp;
         </c:if>
         
-        <c:if test="${queryType == '8'}">
+        <c:if test="${queryType == '9'}">
         <input type="button" class="button_class"
                 value="&nbsp;&nbsp;领样退库&nbsp;&nbsp;" onClick="outBack()"/>&nbsp;&nbsp;
+        <input type="button" class="button_class"
+                value="&nbsp;&nbsp;领样转销售&nbsp;&nbsp;" onClick="swatchToSail()"/>&nbsp;&nbsp;
         </c:if>
 		</div>
 		</td>

@@ -24,6 +24,7 @@
 			<forward name="handerInvokeBuy" path="/sail/handerInvokeBuy.jsp" />
 			<forward name="queryWarnOut" path="/sail/queryWarnOut.jsp" />
 			<forward name="rptQueryOut" path="/sail/rptQueryOut.jsp" />
+			<forward name="rptQueryOutBalance" path="/sail/rptQueryOutBalance.jsp" />
 		</action>
 		
 		<action path="/sail/transport" parameter="method"
@@ -32,6 +33,7 @@
             <forward name="transportList"
                 path="/transport/listTransport.jsp" />
             <forward name="addTransport" path="/transport/addTransport.jsp" />
+            <forward name="updateTransport" path="/transport/updateTransport.jsp" />
             <forward name="queryConsign" path="/transport/queryConsign.jsp" />
             <forward name="print1" path="/transport/print1.jsp" />
             <forward name="detailOut5" path="/transport/handleConsign.jsp" />

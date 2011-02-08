@@ -46,7 +46,7 @@ function hides(boo)
 
 function outBack()
 {
-    submit('确定领样退还?');  
+    submit('确定申请领样退还?');  
 }
 
 </script>
@@ -421,7 +421,7 @@ function outBack()
         <td width="100%">
         <div align="right"><input type="button" name="pr"
             class="button_class" onclick="outBack()"
-            value="&nbsp;&nbsp;确认领样退还&nbsp;&nbsp;">&nbsp;&nbsp;<input
+            value="&nbsp;&nbsp;申请领样退还&nbsp;&nbsp;">&nbsp;&nbsp;<input
             type="button" name="ba" class="button_class"
             onclick="javascript:history.go(-1)"
             value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>

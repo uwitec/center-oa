@@ -272,6 +272,8 @@ function del()
 						<td align="center" onclick="tableSort(this)" class="td_class">状态</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">客户</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">金额</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">发票</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">已开票</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">类型</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">提交人</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">时间</td>
@@ -291,6 +293,8 @@ function del()
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('outBalanceStatus', item.status)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.customerName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:get('invoiceStatus', item.invoiceStatus)}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.invoiceMoney)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('outBalanceType', item.type)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.logTime}</td>

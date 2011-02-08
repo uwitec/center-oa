@@ -546,7 +546,7 @@ function pagePrint()
     
     <tr>
         <td colspan='2' align='center'>
-        <div id="desc1" style="display: block;">
+        <div id="desc2" style="display: block;">
         <table width="100%" border="0" cellpadding="0" cellspacing="0"
             class="border">
             <tr>
@@ -590,7 +590,7 @@ function pagePrint()
     
     <tr>
         <td colspan='2' align='center'>
-        <div id="desc1" style="display: block;">
+        <div id="desc3" style="display: block;">
         <table width="100%" border="0" cellpadding="0" cellspacing="0"
             class="border">
             <tr>
@@ -603,6 +603,44 @@ function pagePrint()
                     </tr>
 
                     <c:forEach items="${refBuyList}" var="item" varStatus="vs">
+                        <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
+                            <td align="center"><a href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}">${item.fullId}</a></td>
+
+                            <td  align="center">${item.outTime}</td>
+
+                        </tr>
+                    </c:forEach>
+                </table>
+                </td>
+            </tr>
+        </table>
+        </div>
+        </td>
+    </tr>
+    
+    <tr>
+        <td height="10" colspan='2'></td>
+    </tr>
+
+    <tr>
+        <td background="../images/dot_line.gif" colspan='2'></td>
+    </tr>
+    
+    <tr>
+        <td colspan='2' align='center'>
+        <div id="desc4" style="display: block;">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0"
+            class="border">
+            <tr>
+                <td>
+                <table width="100%" border="0" cellspacing='1' id="tables">
+                    <tr align="center" class="content0">
+                        <td width="10%" align="center">领样转销售</td>
+                        
+                        <td width="15%" align="center">时间</td>
+                    </tr>
+
+                    <c:forEach items="${refOutList}" var="item" varStatus="vs">
                         <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
                             <td align="center"><a href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}">${item.fullId}</a></td>
 

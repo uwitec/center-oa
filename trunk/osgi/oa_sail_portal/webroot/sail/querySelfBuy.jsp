@@ -116,7 +116,7 @@ function coo(str1, str2)
 
 function modfiy()
 {
-	if (getRadio('fullId').statuss == '0' || getRadio('fullId').statuss == '2')
+	if ((getRadio('fullId').statuss == '0' || getRadio('fullId').statuss == '2') && getRadio('fullId').outtype != 4)
 	{
 		document.location.href = '../sail/out.do?method=findOut&outId=' + getRadioValue("fullId") + "&fow=1";
 	}
@@ -128,7 +128,7 @@ function modfiy()
 
 function del()
 {
-	if (getRadio('fullId').statuss == '0' || getRadio('fullId').statuss == '2' || getRadio('fullId').temptype == '1')
+	if ((getRadio('fullId').statuss == '0' || getRadio('fullId').statuss == '2' || getRadio('fullId').temptype == '1') && getRadio('fullId').outtype != 4)
 	{
 		 if (window.confirm("确定删除入库单?"))
 		document.location.href = '../sail/out.do?method=delOut&outId=' + getRadioValue("fullId");

@@ -24,6 +24,17 @@ function dels()
 	$l('../sail/transport.do?method=delTransport&id=' + getRadioValue('transports'));
 }
 
+function updateApplys()
+{
+	if (getRadioValue('transports') == '')
+	{
+		alert('请选择运输');
+		return;
+	}
+	
+	$l('../sail/transport.do?method=findTransport&id=' + getRadioValue('transports'));
+}
+
 </script>
 
 </head>
@@ -48,8 +59,11 @@ function dels()
 			<tr align=center class="content0">
 				<td align="center" class="td_class">选择</td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
-					width="35%"><strong>运输名称</strong></td>
+					width="15%"><strong>运输名称</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"><strong>所属分类</strong></td>
+				<td align="center" class="td_class" onclick="tableSort(this)"><strong>公司</strong></td>
+				<td align="center" class="td_class" onclick="tableSort(this)"><strong>联系电话</strong></td>
+				<td align="center" class="td_class" onclick="tableSort(this)"><strong>发货区域</strong></td>
 			</tr>
 
 			<c:forEach items="${transportList}" var="item" varStatus="vs">
@@ -58,6 +72,9 @@ function dels()
 						value="${item.id}" ${vs.index== 0 ? "checked" : ""}/></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.name}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.parent}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.company}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.conphone}</td>
+					<td align="center" onclick="hrefAndSelect(this)" title="${item.area}">${my:truncateString(item.area, 0, 30)}</td>
 				</tr>
 			</c:forEach>
 		</table>
@@ -69,7 +86,11 @@ function dels()
 	<p:button leftWidth="100%" rightWidth="0%">
 		<div align="right"><input type="button" class="button_class"
 			style="cursor: pointer" value="&nbsp;&nbsp;增加运输&nbsp;&nbsp;"
-			onclick="addApplys()">&nbsp;&nbsp;<input type="button"
+			onclick="addApplys()">&nbsp;&nbsp;
+			<input type="button" class="button_class"
+			style="cursor: pointer" value="&nbsp;&nbsp;修改运输&nbsp;&nbsp;"
+			onclick="updateApplys()">&nbsp;&nbsp;
+			<input type="button"
 			class="button_class" value="&nbsp;&nbsp;删除运输&nbsp;&nbsp;"
 			onclick="dels()"></div>
 	</p:button>

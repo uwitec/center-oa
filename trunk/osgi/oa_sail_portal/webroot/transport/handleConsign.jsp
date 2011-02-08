@@ -4,7 +4,7 @@
 
 <html>
 <head>
-<p:link title="处理发货单" />
+<p:link title="处理发货单" cal="true"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
@@ -24,7 +24,7 @@ function sub1()
 {
     if (formCheck())
     {
-        if (window.confirm('确次定发货单已经收货?'))
+        if (window.confirm('确定修改发货信息?'))
         {
             $O('method').value = 'reportConsign';
             outForm.submit();
@@ -37,6 +37,11 @@ function load()
 	loadForm();
     change();
     loadForm();
+    
+    <c:if test="${consignBean.reprotType > 0}">
+    setAllReadOnly($O('showTable'));
+    $detail($O('showTable'), ['transport1', 'transport']);
+    </c:if>
 }
 
 var jmap = new Object();
@@ -79,6 +84,7 @@ function change()
 	type="hidden" name="method" value="passConsign">
 <input type=hidden name="fullId" value="${out.fullId}" /> 
 <input type="hidden" value="3" name="statuss">
+<input type="hidden" value="${consignBean.currentStatus}" name="currentStatus">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
@@ -95,31 +101,14 @@ function change()
 	<p:line flag="0" />
 
 	<p:subBody width="98%">
-		<p:table cells="1">
+		<p:table cells="1" id="showTable">
 			  <tr class="content1">
-                            <td>销售单号：</td>
+                        <td width="15%">销售单号：</td>
                             <td colspan="3"><a title="点击查看明细" href="../sail/out.do?method=findOut&fow=99&outId=${out.fullId}">${out.fullId}</a></td>
                         </tr>
-			<c:if test="${consignBean.currentStatus < 2}">
-                        <tr class="content1">
-                            <td>运输方式：</td>
-                            <td colspan="3"><select name="transport1" oncheck="notNone"
-                                values="${tss1.id}" onchange="change()">
-                                <option value="">--</option>
-                                <c:forEach items="${transportList}" var="item">
-                                    <option value="${item.id}">${item.name}</option>
-                                </c:forEach>
-                            </select>&nbsp;&nbsp; <select name="transport" oncheck="notNone"
-                                values="${consignBean.transport}">
-                                <option value="">--</option>
-                            </select></td>
-                        </tr>
-                        
-                        <tr class="content2">
-                            <td>发货单号：</td>
-                            <td colspan="3"><input type="text" name="transportNo" id="transportNo" class="input_class"></td>
-                        </tr>
-
+						
+						<c:if test="${consignBean.currentStatus < 2}">
+						
                         <tr class="content1">
                             <td>发货单备注：</td>
                             <td colspan="3"><textarea rows="3" cols="55" name="applys" head="发货单备注"
@@ -130,25 +119,68 @@ function change()
                     <c:if test="${consignBean.currentStatus >= 2}">
                         <tr class="content1">
                             <td>运输方式：</td>
-                            <td colspan="3">${tss1.name} &gt;&gt; ${tss.name}</td>
+                            <td colspan="3"><select name="transport1"
+                                values="${tss1.id}" onchange="change()">
+                                <option value="">--</option>
+                                <c:forEach items="${transportList}" var="item">
+                                    <option value="${item.id}">${item.name}</option>
+                                </c:forEach>
+                            </select>&nbsp;&nbsp; <select name="transport"
+                                values="${consignBean.transport}">
+                                <option value="">--</option>
+                            </select></td>
                         </tr>
                         
                         <tr class="content2">
-                            <td>发货单号：</td>
-                            <td colspan="3">${consignBean.transportNo}</td>
+                             <td>发货单号：</td>
+                            <td colspan="3"><input type="text" name="transportNo" id="transportNo" value="${consignBean.transportNo}" class="input_class"></td>
                         </tr>
 
                         <tr class="content2">
-                            <td>发货单备注：</td>
-                            <td colspan="3"><textarea rows="3" cols="55" name="applys"
-                                readonly="readonly" oncheck="notNone">${consignBean.applys}</textarea></td>
+                             <td>检验人：</td>
+                            <td colspan="3"><input type="text" name="checker" value="${consignBean.checker}" class="input_class"></td>
+                        </tr>
+                        
+                        <tr class="content1">
+                             <td>打包人：</td>
+                            <td colspan="3"><input type="text" name="packager" value="${consignBean.packager}" class="input_class"></td>
+                        </tr>
+                        
+                        <tr class="content2">
+                             <td>打包时间：</td>
+                            <td colspan="3"><p:plugin name="packageTime" type="1" value="${consignBean.packageTime}"></p:plugin>
+                            </td>
+                        </tr>
+                        
+                        <tr class="content1">
+                             <td>包装件数：</td>
+                            <td colspan="3"><input type="text" name="packageAmount" value="${consignBean.packageAmount}" class="input_class"></td>
+                        </tr>
+                        
+                        <tr class="content2">
+                             <td>包装重量：</td>
+                            <td colspan="3"><input type="text" name="packageWeight" value="${consignBean.packageWeight}" class="input_class"></td>
+                        </tr>
+                        
+                        <tr class="content2">
+                             <td>回访时间：</td>
+                            <td colspan="3"><p:plugin name="visitTime" type="1" value="${consignBean.visitTime}"></p:plugin>
+                            </td>
+                        </tr>
+                        
+                        <tr class="content2">
+                            <td>是否满意服务：</td>
+                            <td colspan="3"><select name="promitType"
+                                values="${consignBean.reprotType}">
+                                <p:option type="consignPromitType"></p:option>
+                            </select></td>
                         </tr>
                     </c:if>
 
                     <c:if test="${consignBean.reprotType == 0 && consignBean.currentStatus >= 2}">
                         <tr class="content1">
                             <td>收货类型：</td>
-                            <td colspan="3"><select name="reprotType" oncheck="notNone"
+                            <td colspan="3"><select name="reprotType"
                                 values="${consignBean.reprotType}">
                                 <option value="">--</option>
                                 <option value="1">正常收货</option>
@@ -163,6 +195,12 @@ function change()
                             <td colspan="3">${consignBean.reprotType == 1 ? "正常收货" : "异常收货"}</td>
                         </tr>
                     </c:if>
+                    
+                      <tr class="content1">
+                            <td>发货单备注：</td>
+                            <td colspan="3"><textarea rows="3" cols="55" name="applys"
+                                readonly="readonly" oncheck="notNone">${consignBean.applys}</textarea></td>
+                       </tr>
 
 		</p:table>
 	</p:subBody>
@@ -175,7 +213,7 @@ function change()
                 value="&nbsp;&nbsp;审核通过&nbsp;&nbsp;">&nbsp;&nbsp;
             </c:if><c:if test="${consignBean.reprotType == 0 && consignBean.currentStatus >= 2}">
             <input type="button" class="button_class" onclick="sub1()"
-                value="&nbsp;&nbsp;确定收货&nbsp;&nbsp;">&nbsp;&nbsp;
+                value="&nbsp;&nbsp;修改发货信息&nbsp;&nbsp;">&nbsp;&nbsp;
             </c:if> <input type="button" class="button_class"
             onclick="javascript:history.go(-1)"
             value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>

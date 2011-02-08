@@ -4,11 +4,11 @@
 
 <html>
 <head>
-<p:link title="增加运输" />
+<p:link title="修改运输" />
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 
-<c:set var="dis" value="增加" />
+<c:set var="dis" value="修改" />
 
 <script language="javascript">
 function addApplys()
@@ -37,8 +37,9 @@ function change()
 
 </head>
 <body class="body_class" onload="load()">
-<form name="addApply" action="../sail/transport.do"><input
-	type="hidden" name="method" value="addTransport">
+<form name="addApply" action="../sail/transport.do">
+<input type="hidden" name="method" value="updateTransport">
+<input type="hidden" name="id" value="${bean.id}">
  <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
@@ -55,18 +56,17 @@ function change()
 	<p:line flag="0" />
 
 	<p:subBody width="98%">
-		<p:class value="com.china.center.oa.sail.bean.TransportBean" />
+		<p:class value="com.china.center.oa.sail.bean.TransportBean" opr="1"/>
 
 		<p:table cells="1">
 			<p:cell title="类型">
 				<select name="type" onchange="change()" oncheck="notNone;">
 					<option value="1">运输方式</option>
-					<option value="0">运输分类</option>
 				</select>
 				<font color="#FF0000">*</font>
 			</p:cell>
 
-			<p:pro field="name" />
+			<p:pro field="name" innerString="readonly=readonly"/>
 
 			<p:pro field="parent">
 				<option value="">--</option>

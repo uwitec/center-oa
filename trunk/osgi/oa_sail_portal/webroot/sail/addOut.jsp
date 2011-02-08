@@ -177,7 +177,7 @@ function load()
 							value="" title="请填入1到180之内的数字"><font color="#FF0000">*</font></td>
 
 						<td align="right">到货日期：</td>
-						<td><p:plugin name="arriveDate"  size="20" oncheck="notNone;cnow('30')"/><font color="#FF0000">*</font></td>
+						<td><p:plugin name="arriveDate"  size="20" oncheck="notNone;cnow('32')"/><font color="#FF0000">*</font></td>
 					</tr>
 					
 					<tr class="content2">

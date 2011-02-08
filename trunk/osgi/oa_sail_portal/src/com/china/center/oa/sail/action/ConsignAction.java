@@ -89,8 +89,8 @@ public class ConsignAction extends DispatchAction
     {
     }
 
-    public ActionForward queryTransport(ActionMapping mapping, ActionForm form,
-                                        HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward queryTransport(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                        HttpServletResponse reponse)
         throws ServletException
     {
         List<TransportBean> list = consignDAO.queryTransportByType(SailConstant.TRANSPORT_COMMON);
@@ -112,8 +112,8 @@ public class ConsignAction extends DispatchAction
         return mapping.findForward("transportList");
     }
 
-    public ActionForward preForAddTransport(ActionMapping mapping, ActionForm form,
-                                            HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward preForAddTransport(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                            HttpServletResponse reponse)
         throws ServletException
     {
         List<TransportBean> list = consignDAO.queryTransportByType(SailConstant.TRANSPORT_TYPE);
@@ -123,8 +123,8 @@ public class ConsignAction extends DispatchAction
         return mapping.findForward("addTransport");
     }
 
-    public ActionForward addTransport(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward addTransport(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse reponse)
         throws ServletException
     {
         TransportBean bean = new TransportBean();
@@ -157,6 +157,42 @@ public class ConsignAction extends DispatchAction
     }
 
     /**
+     * updateTransport
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward updateTransport(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                         HttpServletResponse reponse)
+        throws ServletException
+    {
+        TransportBean bean = new TransportBean();
+
+        BeanUtil.getBean(bean, request);
+
+        try
+        {
+            consignManager.updateTransport(bean);
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "请重新操作");
+
+            return queryTransport(mapping, form, request, reponse);
+        }
+
+        request.setAttribute(KeyConstant.MESSAGE, "成功修改运输方式:" + bean.getName());
+
+        return queryTransport(mapping, form, request, reponse);
+    }
+
+    /**
      * 查询发货单
      * 
      * @param mapping
@@ -166,8 +202,8 @@ public class ConsignAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryConsign(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward queryConsign(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -193,8 +229,8 @@ public class ConsignAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryTodayConsign(ActionMapping mapping, ActionForm form,
-                                           HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward queryTodayConsign(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                           HttpServletResponse reponse)
         throws ServletException
     {
         ConditionParse condition = new ConditionParse();
@@ -311,8 +347,8 @@ public class ConsignAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findConsign(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward findConsign(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse reponse)
         throws ServletException
     {
         String outId = request.getParameter("fullId");
@@ -394,8 +430,7 @@ public class ConsignAction extends DispatchAction
 
             for (TransportBean transportBean : ts)
             {
-                List<TransportBean> inner = consignDAO.queryTransportByParentId(transportBean
-                    .getId());
+                List<TransportBean> inner = consignDAO.queryTransportByParentId(transportBean.getId());
 
                 String temp = "";
                 for (TransportBean transportBean2 : inner)
@@ -442,8 +477,8 @@ public class ConsignAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward passConsign(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward passConsign(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse reponse)
         throws ServletException
     {
         ConsignBean bean = new ConsignBean();
@@ -482,7 +517,7 @@ public class ConsignAction extends DispatchAction
     }
 
     /**
-     * 通过发货单
+     * findTransport
      * 
      * @param mapping
      * @param form
@@ -491,8 +526,35 @@ public class ConsignAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward reportConsign(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward findTransport(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse reponse)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        TransportBean transport = consignDAO.findTransport(id);
+
+        List<TransportBean> ts = consignDAO.queryTransportByType(SailConstant.TRANSPORT_TYPE);
+
+        request.setAttribute("transportList", ts);
+
+        request.setAttribute("bean", transport);
+
+        return mapping.findForward("updateTransport");
+    }
+
+    /**
+     * 通过发货单(修改发货信息)
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward reportConsign(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse reponse)
         throws ServletException
     {
         ConsignBean bean = new ConsignBean();
@@ -508,11 +570,9 @@ public class ConsignAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        cc.setReprotType(bean.getReprotType());
-
         try
         {
-            consignManager.updateConsign(cc);
+            consignManager.updateConsign(bean);
         }
         catch (MYException e)
         {
@@ -540,8 +600,8 @@ public class ConsignAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward delTransport(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward delTransport(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse reponse)
         throws ServletException
     {
         String transportId = request.getParameter("id");

@@ -107,6 +107,7 @@ function load()
 <input type=hidden name="showIdList" value="" />
 <input type=hidden name="showNameList" value="" />
 <input type=hidden name="customercreditlevel" value="" />
+<input type=hidden name="refOutFullId" value="${bean.refOutFullId}" />
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">库单管理 &gt;&gt; 修改销售单(如果需要增加开发票品名,请到 公共资源-->配置管理)</td>
@@ -221,7 +222,7 @@ function load()
 							value="${bean.reday}" title="请填入1到180之内的数字"><font color="#FF0000">*</font></td>
 
 						<td align="right">到货日期：</td>
-						<td><p:plugin name="arriveDate"  size="20" oncheck="notNone;cnow('30')" value="${bean.arriveDate}"/><font color="#FF0000">*</font></td>
+						<td><p:plugin name="arriveDate"  size="20" oncheck="notNone;cnow('32')" value="${bean.arriveDate}"/><font color="#FF0000">*</font></td>
 					</tr>
 					
 					<tr class="content2">
@@ -300,8 +301,11 @@ function load()
 						<td width="10%" align="center">成本</td>
 						<td width="25%" align="center">类型</td>
 						<td width="15%" align="center">开发票品名</td>
-						<td width="15%" align="center"><input type="button" accesskey="A"
-							value="增加" class="button_class" onclick="addTr()"></td>
+						<td width="15%" align="center">
+						<c:if test="${!lock_sw}">
+						<input type="button" accesskey="A"
+							value="增加" class="button_class" onclick="addTr()">
+							</c:if></td>
 					</tr>
 
 					<tr class="content1" id="trCopy" style="display: none;">
@@ -352,7 +356,9 @@ function load()
 
 					<tr class="content2">
 						<td><input type="text" name="productName" id="unProductName"
+							<c:if test="${!lock_sw}">
 							onclick="opens(this)" 
+							</c:if>
 							productid="${fristBase.productId}" 
                             productcode="" 
                             price="${my:formatNum(fristBase.costPrice)}"
