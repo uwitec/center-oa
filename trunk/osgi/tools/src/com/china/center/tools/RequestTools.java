@@ -40,6 +40,8 @@ public abstract class RequestTools
      */
     public static void menuInitQuery(HttpServletRequest request)
     {
+        request.setAttribute("forward", "1");
+
         request.setAttribute("menu", "1");
     }
 
