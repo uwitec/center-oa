@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<query>
+    
+    <item name="queryTax" deaultpfix="TaxBean">
+        <condtion name="name" caption="名称">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="code" caption="编码">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="ptype" caption="分类">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$taxPtypeList</option>
+        </condtion>
+        <condtion name="type" caption="类型">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$taxType</option>
+        </condtion>
+        <condtion name="forward" caption="余额方向">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$taxForward</option>
+        </condtion>
+        <condtion name="unit" caption="辅助-单位">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$taxCheck</option>
+        </condtion>
+        <condtion name="department" caption="辅助-部门">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$taxCheck</option>
+        </condtion>
+        <condtion name="staffer" caption="辅助-职员">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$taxCheck</option>
+        </condtion>
+    </item>
+    
+    <item name="queryFinance" deaultpfix="FinanceBean">
+    	<condtion name="alogTime" filed="logTime" caption="开始时间">
+			<opr>&gt;=</opr>
+			<type>datetime</type>
+		</condtion>
+		<condtion name="blogTime" filed="logTime" caption="结束时间">
+			<opr>&lt;=</opr>
+			<type>datetime</type>
+		</condtion>
+		<condtion name="id" caption="标识">
+			<opr>like</opr>
+			<type>text</type>
+		</condtion>
+		<condtion name="dutyId" caption="纳税实体">
+			<opr>=</opr>
+			<datatype>0</datatype>
+			<type>select</type>
+			<option>$dutyList</option>
+		</condtion>
+		<condtion name="type" caption="类型">
+			<opr>=</opr>
+			<datatype>1</datatype>
+			<type>select</type>
+			<option>$financeType</option>
+		</condtion>
+		<condtion name="createType" caption="分类">
+			<opr>=</opr>
+			<datatype>1</datatype>
+			<type>select</type>
+			<option>$financeCreateType</option>
+		</condtion>
+	</item>
+	
+</query>

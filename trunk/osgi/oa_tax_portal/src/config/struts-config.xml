@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<struts-config>
+	<action-mappings>
+	
+		<action path="/tax/tax" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="queryTax" path="/tax/queryTax.jsp" />
+			<forward name="addTax" path="/tax/addTax.jsp" />
+			<forward name="detailTax" path="/tax/detailTax.jsp" />
+		</action>
+		
+		<action path="/finance/finance" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="queryFinance" path="/finance/queryFinance.jsp" />
+			<forward name="addFinance" path="/finance/addFinance.jsp" />
+			<forward name="detailFinance" path="/finance/detailFinance.jsp" />
+		</action>
+		
+	</action-mappings>
+</struts-config>
