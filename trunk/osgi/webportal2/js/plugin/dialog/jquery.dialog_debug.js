@@ -1031,6 +1031,7 @@ var BUTTON_CANCEL = Res._Button['Cancel'];
             
             var typeStr = '';
             var textStr = '';
+            var inputHtml = '';
             
             if (type == 1)
             {
@@ -1038,12 +1039,20 @@ var BUTTON_CANCEL = Res._Button['Cancel'];
             	
             	textStr = 'readonly=readonly'; 
             }
+            
+            inputHtml = '<input class="messager-input" id="prompt-messager-input" type="text" ' + textStr + ' value="' + initValue + '" style="width:220px;"/>' + typeStr;
+            
+            if (type == 2)
+            {
+            	inputHtml = '<textarea class="messager-input" id="prompt-messager-input"></textarea>';
+            }
+            
             win.html('<div class="messager-icon messager-question"></div>'
                         + '<div>' + msg + '</div>'
                         + '<br/>'
-                        + '<input class="messager-input" id="prompt-messager-input" type="text" ' + textStr + ' value="' + initValue + '" style="width:220px;"/>'
-                        + typeStr
+                        + inputHtml
                         + '<div style="clear:both;"/>');
+                        
             var bmap = {};
             
             bmap[BUTTON_OK] = function(){

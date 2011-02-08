@@ -1,4 +1,1084 @@
-/*
- * Compressed by JSA(www.xidea.org)
+/**
+ * dialog 1.1 - jQuery Plug-in
+ * 
  */
-var BUTTON_OK=Res._Button["OK"],BUTTON_CANCEL=Res._Button["Cancel"];(function($){function open(A){var _=$.data(A,"dialog"),B=_.options;switch(B.showType){case null:_.dialog.css("display","block");break;case"slide":_.dialog.slideDown(B.showSpeed,function(){resize(A)});break;case"fade":_.dialog.fadeIn(B.showSpeed,function(){resize(A)});break;case"show":_.dialog.show(B.showSpeed,function(){resize(A)});break}if(_.mask)_.mask.css("display","block");if(_.shadow)_.shadow.css("display","block");_.options.onOpen.call(A,A)}function close(A){var _=$.data(A,"dialog"),C=_.options;if(_.options.onClose.call(A,A)==false)return;switch(C.showType){case null:_.dialog.css("display","none");break;case"slide":_.dialog.slideUp(C.showSpeed);break;case"fade":_.dialog.fadeOut(C.showSpeed);break;case"show":_.dialog.hide(C.showSpeed);break}if(_.mask)_.mask.css("display","none");if(_.shadow)_.shadow.css("display","none");if(C.destroyOnClose==true){var B=C.showSpeed;if(C.showType==null)B=0;setTimeout(function(){_.dialog.remove();if(_.mask)_.mask.remove();if(_.shadow)_.shadow.remove()},B)}}function resize(D){var E=$.data(D,"dialog").dialog,_=$("div.dialog-content",E),A=$(E).height()-$("div.dialog-header",E).outerHeight(true);A-=$("div.dialog-button",E).outerHeight(true);if($.boxModel==true)A-=_.outerHeight(true)-_.height();else A+=_.outerHeight(true)-_.outerHeight();$("div.dialog-content",E).css("height",A);if($.boxModel==false){var C=$(E).width();$("div.dialog-content",E).css("width",C);$("div.dialog-button",E).css("padding","5px 0px 5px 0px;")}var B=$.data(D,"dialog").shadow;if(B){B.css({top:parseInt(E.css("top")),left:parseInt(E.css("left"))-5,width:E.outerWidth()+10,height:E.outerHeight()+5});$(".dialog-shadow-inner",B).shadow({hidden:false})}}function create(target,opts){var header=["<div class=\"dialog-header\">","<div class=\"dialog-title\">&nbsp;</div>","<div class=\"dialog-icon\">&nbsp;</div>","<a href=\"javascript:void(0)\" class=\"dialog-close\"></a>","</div>"],dialog=$("<div class=\"dialog\"></div>").width(opts.width);$(target).before(dialog);dialog.append(header.join("")).append($(target).addClass("dialog-content"));$("a.dialog-close",dialog).click(function(){close(target)});if(opts.buttons){var buttons=$("<div class=\"dialog-button\"></div>");for(var label in opts.buttons)$("<a></a>").attr("href","javascript:void(0)").addClass("l-btn").text(label).css("margin-right","10px").bind("click",eval(opts.buttons[label])).appendTo(buttons);$(dialog).append(buttons);$("a.l-btn",buttons).linkbutton()}return dialog}function center(_){$(_).css({left:($(window).width()-$(_).outerWidth(true))/2+$(document).scrollLeft(),top:100})}$.fn.dialog=function(_){if(typeof _=="string")switch(_){case"options":return $.data(this[0],"dialog").options}_=_||{};return this.each(function(){var A=null,E=null,D=$.data(this,"dialog");if(D){A=$.extend(D.options,_||{});E=D.dialog}else{A=$.extend({},$.fn.dialog.defaults,_||{});E=create(this,A);$.data(this,"dialog",{options:A,dialog:E});if(!_.width)_.width=A.width=parseInt($(this).css("width"))||A.width;if(!_.height)_.height=A.height=parseInt($(this).css("height"));if(_.top==null||_.top==undefined)_.top=A.top=parseInt($(this).css("top"))||$.fn.dialog.defaults.top;if(_.left==null||_.left==undefined)_.left=A.left=parseInt($(this).css("left"))||$.fn.dialog.defaults.left;if(!_.title)A.title=$(this).attr("title")||A.title;$(this).css("width",null);$(this).css("height",null);if(A.width)E.width(A.width);if(A.height)E.height(A.height);center(E)}if(_.width)E.width(_.width);if(_.height)E.height(_.height);if(_.left!=undefined&&_.left!=null)E.css("left",_.left);if(_.top!=undefined&&_.top!=null)E.css("top",_.top);$("div.dialog-title",E).html(A.title);if(/^[u4E00-u9FA5]/.test(A.title)==false&&$.browser.msie)$("div.dialog-title",E).css("padding-top","8px");if(A.iconCls){$(".dialog-header .dialog-icon",E).addClass(A.iconCls);$(".dialog-header .dialog-title",E).css("padding-left","20px")}else{$(".dialog-header .dialog-icon",E).attr("class","dialog-icon");$(".dialog-header .dialog-title",E).css("padding-left","5px")}var C=this;$(E).draggable({handle:"div.dialog-header",disabled:A.draggable==false,onDrag:function(){resize(C)}});$(E).resizable({disabled:A.resizable==false,onResize:function(){resize(C)}});if($.data(this,"dialog").mask)$.data(this,"dialog").mask.remove();if(A.modal==true)$.data(this,"dialog").mask=$("<div class=\"dialog-mask\"></div>").css({zIndex:$.fn.dialog.defaults.zIndex++,width:getPageArea().width,height:getPageArea().height}).appendTo($(document.body));if($.data(this,"dialog").shadow)$.data(this,"dialog").shadow.remove();if(A.shadow==true){var B=$("<div class=\"dialog-shadow\"><div class=\"dialog-shadow-inner\"></div></div>");$(".dialog-shadow-inner",B).shadow({width:5,fit:true,hidden:true});$.data(this,"dialog").shadow=B.css("z-index",$.fn.dialog.defaults.zIndex++).insertAfter(E)}E.css("z-index",$.fn.dialog.defaults.zIndex++);if(_.href)$(this).load(_.href,null,function(){resize(C);A.onLoad.apply(this,arguments)});if(A.closed==false){if(E.css("display")=="none"){open(this);resize(this)}}else if(E.css("display")=="block")close(this)})};$(window).resize(function(){$(".dialog-mask").css({width:$(window).width(),height:$(window).height()});setTimeout(function(){$(".dialog-mask").css({width:getPageArea().width,height:getPageArea().height})},50)});function getPageArea(){if(document.compatMode=="BackCompat")return{width:Math.max(document.body.scrollWidth,document.body.clientWidth),height:Math.max(document.body.scrollHeight,document.body.clientHeight)};else return{width:Math.max(document.documentElement.scrollWidth,document.documentElement.clientWidth),height:Math.max(document.documentElement.scrollHeight,document.documentElement.clientHeight)}}$.fn.dialog.defaults={zIndex:9000,title:"title",closed:false,destroyOnClose:false,draggable:true,resizable:true,modal:false,shadow:true,width:300,height:null,showType:null,showSpeed:600,left:null,top:null,iconCls:null,href:null,onOpen:function(){},onClose:function(){},onLoad:function(){}}})(jQuery);(function($){$.fn.shadow=function(_){return this.each(function(){function E(A){var B=["<div class=\"shadow\">","<div class=\"shadow-one\">","<div class=\"shadow-corner-a\"></div>","<div class=\"shadow-corner-b\"></div>","<div class=\"shadow-two\">","  <div class=\"shadow-three\">","      <div class=\"shadow-four\">","      </div>","  </div>","</div>","</div>","</div>"],_=$(B.join("")).insertAfter($(A));$(A).appendTo($(".shadow-four",_));return _}if($.data(this,"shadow"))$.extend($.data(this,"shadow").options,_||{});else $.data(this,"shadow",{options:$.extend({},$.fn.shadow.defaults,_||{}),shadow:E(this),oldWidth:$(this).width(),oldHeight:$(this).height()});if(!$.data(this,"shadow").shadow)$.data(this,"shadow").shadow=E(this);var A=$.data(this,"shadow").options,B=$.data(this,"shadow").shadow;if(A.hidden==true){$(this).insertAfter(B);B.remove();$.data(this,"shadow").shadow=null;return}$(".shadow-one",B).css({paddingLeft:A.width*2,paddingTop:A.width*2});$(".shadow-corner-a",B).css({width:A.width*2,height:A.width*2});$(".shadow-corner-b",B).css({width:A.width*2,height:A.width*2});$(".shadow-three",B).css({left:A.width*-2,top:A.width*-2});$(".shadow-four",B).css({left:A.width,top:A.width});if(A.fit==true){var D=$(B).parent();if($.boxModel==true){var C=$(this).outerWidth(true)-$(this).width();$(this).css({width:D.width()-2*A.width-C,height:D.height()-2*A.width-C});$(B).css({width:D.width(),height:D.height()});$(".shadow-one",B).css({width:D.width()-2*A.width,height:D.height()-2*A.width})}else{$(this).css({width:"100%",height:"100%"});$(B).css({width:D.width(),height:D.height()});$(".shadow-one",B).css({width:D.width(),height:D.height()})}}else{$(this).width($.data(this,"shadow").oldWidth).height($.data(this,"shadow").oldHeight);$(".shadow-one",B).css({width:"100%",height:"100%"});if($.boxModel==true)$(B).css({width:$(this).outerWidth(),height:$(this).outerHeight()});else $(B).css({width:$.data(this,"shadow").oldWidth+2*A.width,height:$.data(this,"shadow").oldHeight+2*A.width})}})};$.fn.shadow.defaults={hidden:false,fit:false,width:8}})(jQuery);(function($){$.fn.draggable=function(C){function B(_){$.data(_.data.target,"draggable").options.onStartDrag(_);return false}function A(A){var C=A.data,B=C.startLeft+A.pageX-C.startX,D=C.startTop+A.pageY-C.startY;if(A.data.parnet!=document.body)if($.boxModel==true){B+=$(A.data.parent).scrollLeft();D+=$(A.data.parent).scrollTop()}var _=$.data(A.data.target,"draggable").options;if(_.axis=="h")$(C.target).css("left",B);else if(_.axis=="v")$(C.target).css("top",D);else $(C.target).css({left:B,top:D});$.data(A.data.target,"draggable").options.onDrag(A);return false}function _(_){$(document).unbind(".draggable");$.data(_.data.target,"draggable").options.onStopDrag(_);return false}return this.each(function(){$(this).css("position","absolute");var D,H=$.data(this,"draggable");if(H){H.handle.unbind(".draggable");D=$.extend(H.options,C)}else D=$.extend({},$.fn.draggable.defaults,C||{});if(D.disabled==true){$(this).css("cursor","default");return}var F=null;if(typeof D.handle=="undefined"||D.handle==null)F=$(this);else F=(typeof D.handle=="string"?$(D.handle,this):F);$.data(this,"draggable",{options:D,handle:F});F.bind("mousedown.draggable",{target:this},G);F.bind("mousemove.draggable",{target:this},I);function G(D){if(E(D)==false)return;var C=$(D.data.target).position(),F={startLeft:C.left,startTop:C.top,startX:D.pageX,startY:D.pageY,target:D.data.target,parent:$(D.data.target).parent()[0]};$(document).bind("mousedown.draggable",F,B);$(document).bind("mousemove.draggable",F,A);$(document).bind("mouseup.draggable",F,_)}function I(_){if(E(_))$(this).css("cursor","move");else $(this).css("cursor","default")}function E(B){var I=$(F).offset(),G=$(F).outerWidth(),A=$(F).outerHeight(),_=B.pageY-I.top,E=I.left+G-B.pageX,C=I.top+A-B.pageY,H=B.pageX-I.left;return Math.min(_,E,C,H)>D.edge}})};$.fn.draggable.defaults={handle:null,disabled:false,edge:0,axis:null,onStartDrag:function(){},onDrag:function(){},onStopDrag:function(){}}})(jQuery);(function($){$.fn.linkbutton=function(A){function _(_){$(_).addClass("l-btn").wrapInner("<span class=\"l-btn-left\"><span class=\"l-btn-text\"></span></span>");var A=$(_).attr("icon");if(A)$(".l-btn-text",_).addClass(A).css("padding-left","20px")}return this.each(function(){var B,C=$.data(this,"linkbutton");if(C){B=$.extend(C.options,A||{});C.options=B}else{_(this);B=$.extend({},$.fn.linkbutton.defaults,A||{});if($(this).hasClass("l-btn-plain"))B.plain=true;if($(this).attr("disabled")){B.disabled=true;$(this).removeAttr("disabled")}C={options:B}}if(C.options.disabled){var E=$(this).attr("href");if(E){C.href=E;$(this).removeAttr("href")}var D=$(this).attr("onclick");if(D){C.onclick=D;$(this).attr("onclick",null)}$(this).addClass("l-btn-disabled")}else{if(C.href)$(this).attr("href",C.href);if(C.onclick)this.onclick=C.onclick;$(this).removeClass("l-btn-disabled")}if(C.options.plain==true)$(this).addClass("l-btn-plain");else $(this).removeClass("l-btn-plain");$.data(this,"linkbutton",C)})};$.fn.linkbutton.defaults={disabled:false,plain:false};$(function(){$("a.l-btn").linkbutton()})})(jQuery);(function($){$.fn.resizable=function(C){function B(_){$.data(_.data.target,"resizable").options.onStartResize(_);return false}function A(A){var C=A.data,G=$.data(C.target,"resizable").options,D=C.target;if(C.dir.indexOf("e")!=-1){var B=C.startWidth+A.pageX-C.startX;if($.boxModel==false)B+=C.deltaWidth;B=Math.min(Math.max(B,G.minWidth),G.maxWidth);$(D).css("width",B+"px")}if(C.dir.indexOf("s")!=-1){var _=C.startHeight+A.pageY-C.startY;if($.boxModel==false)_+=C.deltaHeight;_=Math.min(Math.max(_,G.minHeight),G.maxHeight);$(D).css("height",_+"px")}if(C.dir.indexOf("w")!=-1){B=C.startWidth-A.pageX+C.startX;if($.boxModel==false)B+=C.deltaWidth;if(B>=G.minWidth&&B<=G.maxWidth){var E=C.startLeft+A.pageX-C.startX;$(D).css({left:E+"px",width:B+"px"})}}if(C.dir.indexOf("n")!=-1){_=C.startHeight-A.pageY+C.startY;if($.boxModel==false)_+=C.deltaHeight;if(_>=G.minHeight&&_<=G.maxHeight){var F=C.startTop+A.pageY-C.startY;$(D).css({top:F+"px",height:_+"px"})}}$.data(A.data.target,"resizable").options.onResize(A);return false}function _(_){$(document).unbind(".resizable");$.data(_.data.target,"resizable").options.onStopResize(_);return false}return this.each(function(){var E=null,H=$.data(this,"resizable");if(H){$(this).unbind(".resizable");E=$.extend(H.options,C||{})}else E=$.extend({},$.fn.resizable.defaults,C||{});if(E.disabled==true)return;$.data(this,"resizable",{options:E});var G=this;$(this).bind("mousemove.resizable",J).bind("mousedown.resizable",F);function J(_){var A=D(_);if(A=="")$(G).css("cursor","default");else $(G).css("cursor",A+"-resize")}function F(C){var E=D(C);if(E=="")return;var F={target:this,dir:E,startLeft:I("left"),startTop:I("top"),startX:C.pageX,startY:C.pageY,startWidth:$(G).width(),startHeight:$(G).height(),deltaWidth:$(G).outerWidth()-$(G).width(),deltaHeight:$(G).outerHeight()-$(G).height()};$(document).bind("mousedown.resizable",F,B);$(document).bind("mousemove.resizable",F,A);$(document).bind("mouseup.resizable",F,_)}function D(B){var C="",F=$(G).offset(),D=$(G).outerWidth(),A=$(G).outerHeight(),_=E.edge;if(B.pageY>F.top&&B.pageY<F.top+_)C+="n";else if(B.pageY<F.top+A&&B.pageY>F.top+A-_)C+="s";if(B.pageX>F.left&&B.pageX<F.left+_)C+="w";else if(B.pageX<F.left+D&&B.pageX>F.left+D-_)C+="e";return C}function I(A){var _=parseInt($(G).css(A));if(isNaN(_))return 0;else return _}})};$.fn.resizable.defaults={disabled:false,minWidth:10,minHeight:10,maxWidth:10000,maxHeight:10000,edge:5,onStartResize:function(){},onResize:function(){},onStopResize:function(){}}})(jQuery);(function($){$.messager={show:function(A){A=$.extend({showType:"slide",showSpeed:600,width:250,height:100,msg:"",title:"",timeout:4000},A||{});var _=$("<div></div>").appendTo(document.body);_.html(A.msg);_.dialog({title:A.title,shadow:false,resizable:false,showType:A.showType,showSpeed:A.showSpeed,width:A.width,height:A.height,closed:false,onClose:function(){$(this).dialog("options").destroyOnClose=true}});_.parent().css({left:null,top:null,right:0,bottom:-document.body.scrollTop-document.documentElement.scrollTop});$(window).scroll(function(){_.parent().css("bottom",-document.body.scrollTop-document.documentElement.scrollTop)});if(A.timeout>0)setTimeout(function(){_.dialog({closed:true})},A.timeout)},alert:function(B,E,A,D){var _="<div>"+E+"</div>";switch(A){case"error":_="<div class=\"messager-icon messager-error\"></div>"+_;break;case"info":_="<div class=\"messager-icon messager-info\"></div>"+_;break;case"question":_="<div class=\"messager-icon messager-question\"></div>"+_;break;case"warning":_="<div class=\"messager-icon messager-warning\"></div>"+_;break}_+="<div style=\"clear:both;\"/>";var C=$("<div></div>").appendTo(document.body);C.html(_);C.dialog({title:B,modal:true,resizable:false,buttons:{"Ok":function(){C.dialog({closed:true});if(D)D()}},onClose:function(){$(this).dialog("options").destroyOnClose=true}})},confirm:function(_,C,B){var A=$("<div></div>").appendTo(document.body);A.html("<div class=\"messager-icon messager-question\"></div>"+"<div>"+C+"</div>"+"<div style=\"clear:both;\"/>");A.dialog({title:_,modal:true,resizable:false,buttons:{"Ok":function(){A.dialog({closed:true});if(B)B(true)},"Cancel":function(){A.dialog({closed:true});if(B)B(false)}},onClose:function(){$(this).dialog("options").destroyOnClose=true}})},prompt:function(_,H,A,G,E){var D=$("<div></div>").appendTo(document.body),C="",F="";if(E==1){C="<img src='../images/calendar.gif' style='cursor: pointer' align='top' onclick='return calDate(\"prompt-messager-input\");' height='20px' width='20px'/>";F="readonly=readonly"}D.html("<div class=\"messager-icon messager-question\"></div>"+"<div>"+H+"</div>"+"<br/>"+"<input class=\"messager-input\" id=\"prompt-messager-input\" type=\"text\" "+F+" value=\""+A+"\" style=\"width:220px;\"/>"+C+"<div style=\"clear:both;\"/>");var B={};B[BUTTON_OK]=function(){D.dialog({closed:true});if(G)G($(".messager-input",D).val(),true,$(".messager-input",D))};B[BUTTON_CANCEL]=function(){D.dialog({closed:true});if(G)G(null,false,$(".messager-input",D))};D.dialog({title:_,modal:true,resizable:false,buttons:B,onClose:function(){$(this).dialog("options").destroyOnClose=true}})}}})(jQuery)
+// depends public_resources.js
+// lang of button 
+var BUTTON_OK = Res._Button['OK'];
+var BUTTON_CANCEL = Res._Button['Cancel'];
+ 
+(function($){
+    function open(target) {
+        var state = $.data(target, 'dialog');
+        var options = state.options;
+        
+        switch(options.showType) {
+            case null:
+                state.dialog.css('display', 'block');
+                break;
+            case 'slide':
+                state.dialog.slideDown(options.showSpeed, function(){resize(target)});
+                break;
+            case 'fade':
+                state.dialog.fadeIn(options.showSpeed, function(){resize(target)});
+                break;
+            case 'show':
+                state.dialog.show(options.showSpeed, function(){resize(target)});
+                break;
+        }
+        
+        if (state.mask) {
+            state.mask.css('display', 'block');
+        }
+        if (state.shadow) {
+            state.shadow.css('display', 'block');
+        }
+        state.options.onOpen.call(target, target);
+    }
+    
+    function close(target) {
+        var state = $.data(target, 'dialog');
+        var options = state.options;
+        
+        if (state.options.onClose.call(target, target) == false) return;
+        
+        switch(options.showType) {
+            case null:
+                state.dialog.css('display', 'none');
+                break;
+            case 'slide':
+                state.dialog.slideUp(options.showSpeed);
+                break;
+            case 'fade':
+                state.dialog.fadeOut(options.showSpeed);
+                break;
+            case 'show':
+                state.dialog.hide(options.showSpeed);
+                break;
+                
+        }
+        
+        if (state.mask) {
+            state.mask.css('display', 'none');
+        }
+        if (state.shadow) {
+            state.shadow.css('display', 'none');
+        }
+        
+        // destroy the dialog window and remove it from the dom
+        if (options.destroyOnClose == true) {
+            var timeout = options.showSpeed;
+            if (options.showType == null) {
+                timeout = 0;
+            }
+            setTimeout(function(){
+                state.dialog.remove();
+                if (state.mask) {
+                    state.mask.remove();
+                }
+                if (state.shadow) {
+                    state.shadow.remove();
+                }
+            }, timeout);
+        }
+    }
+    
+    function resize(target) {
+        var dialog = $.data(target, 'dialog').dialog;
+        var content = $('div.dialog-content', dialog);
+        var height = $(dialog).height() - $('div.dialog-header', dialog).outerHeight(true);
+        height -= $('div.dialog-button', dialog).outerHeight(true);
+        if ($.boxModel == true) {
+            height -= content.outerHeight(true) - content.height();
+        } else {
+            height += content.outerHeight(true) - content.outerHeight();
+        }
+        $('div.dialog-content', dialog).css('height', height);
+        
+        if ($.boxModel == false) {
+            var width = $(dialog).width();
+            $('div.dialog-content', dialog).css('width', width);
+            $('div.dialog-button', dialog).css('padding', '5px 0px 5px 0px;');
+        }
+        
+        var shadow = $.data(target, 'dialog').shadow;
+        if (shadow) {
+            shadow.css({
+                top: parseInt(dialog.css('top')),
+                left: parseInt(dialog.css('left')) - 5,
+                width: dialog.outerWidth() + 10,
+                height: dialog.outerHeight() + 5
+            });
+            $('.dialog-shadow-inner', shadow).shadow({hidden:false});
+        }
+    }
+    
+    // create and return the dialog
+    function create(target, opts) {
+        var header = [
+                      '<div class="dialog-header">',
+                      '<div class="dialog-title">&nbsp;</div>',
+                      '<div class="dialog-icon">&nbsp;</div>',
+                      '<a href="javascript:void(0)" class="dialog-close"></a>',
+                      '</div>'
+                      ];
+        
+        var dialog = $('<div class="dialog"></div>').width(opts.width);
+        
+        $(target).before(dialog);
+        dialog.append(header.join('')).append($(target).addClass('dialog-content'));
+        $('a.dialog-close',dialog).click(function(){
+            close(target);
+        });
+        
+        if (opts.buttons) {
+            var buttons = $('<div class="dialog-button"></div>');
+            for(var label in opts.buttons) {
+                $('<a></a>').attr('href', 'javascript:void(0)').addClass('l-btn').text(label)
+                            .css('margin-right', '10px')
+                            .bind('click', eval(opts.buttons[label]))
+                            .appendTo(buttons);
+            }
+            $(dialog).append(buttons);
+            $('a.l-btn', buttons).linkbutton();
+        }
+            
+        return dialog;
+    }
+    
+    // center the dialog
+    function center(dialog) {
+        $(dialog).css({
+            left: ($(window).width() - $(dialog).outerWidth(true)) / 2 + $(document).scrollLeft(),
+            //top: ($(window).height() - $(dialog).outerHeight(true)) / 2 + $(document).scrollTop()
+            top: 100
+        });
+    }
+    
+    $.fn.dialog = function(options){
+        // method invoking
+        if (typeof options == 'string') {
+            switch(options) {
+                case 'options': // return the first element's options
+                    return $.data(this[0], 'dialog').options;
+            }
+        }
+        
+        options = options || {};
+        
+        return this.each(function(){
+            var opts = null;
+            var dialog = null;
+            var state = $.data(this, 'dialog');
+            if (state) {
+                opts = $.extend(state.options, options || {});
+                dialog = state.dialog;
+            } else {
+                opts = $.extend({}, $.fn.dialog.defaults, options || {});
+                dialog = create(this, opts);
+                $.data(this, 'dialog', {
+                    options: opts,
+                    dialog: dialog
+                });
+                
+                // read the options information from the tag
+                if (!options.width) {
+                    options.width = opts.width = parseInt($(this).css('width')) || opts.width;
+                }
+                if (!options.height) {
+                    options.height = opts.height = parseInt($(this).css('height'));
+                }
+                if (options.top == null || options.top == undefined) {
+                    options.top = opts.top = parseInt($(this).css('top')) || $.fn.dialog.defaults.top;
+                }
+                if (options.left == null || options.left == undefined) {
+                    options.left = opts.left = parseInt($(this).css('left')) || $.fn.dialog.defaults.left;
+                }
+                if (!options.title) {
+                    opts.title = $(this).attr('title') || opts.title;
+                }
+                
+                $(this).css('width', null);
+                $(this).css('height', null);
+                if (opts.width) dialog.width(opts.width);
+                if (opts.height) dialog.height(opts.height);
+                center(dialog);
+            }
+            
+            // set dialog position, width and height
+            if (options.width) dialog.width(options.width);
+            if (options.height) dialog.height(options.height);
+            if (options.left != undefined && options.left != null) dialog.css('left', options.left);
+            if (options.top != undefined && options.top != null) dialog.css('top', options.top);
+            
+            // set dialog title
+            $('div.dialog-title', dialog).html(opts.title); 
+            if (/^[u4E00-u9FA5]/.test(opts.title) == false && $.browser.msie) {
+                $('div.dialog-title', dialog).css('padding-top', '8px');
+            }
+            
+            if (opts.iconCls) {
+                $('.dialog-header .dialog-icon', dialog).addClass(opts.iconCls);
+                $('.dialog-header .dialog-title', dialog).css('padding-left', '20px');
+            } else {
+                $('.dialog-header .dialog-icon', dialog).attr('class', 'dialog-icon');
+                $('.dialog-header .dialog-title', dialog).css('padding-left', '5px');
+            }
+            
+            var target = this;
+            $(dialog).draggable({
+                handle: 'div.dialog-header',
+                disabled: opts.draggable == false,
+                onDrag:function(){
+                    resize(target);
+                }
+            });
+            
+            $(dialog).resizable({
+                disabled: opts.resizable == false,
+                onResize: function(){
+                    resize(target);
+                }
+            });
+            
+            if ($.data(this, 'dialog').mask) {
+                $.data(this, 'dialog').mask.remove();
+            }
+            if (opts.modal == true) {
+                $.data(this, 'dialog').mask = $('<div class="dialog-mask"></div>')
+                        .css({
+                            zIndex: $.fn.dialog.defaults.zIndex++,
+                            width: getPageArea().width,
+                            height: getPageArea().height
+                        })
+                        .appendTo($(document.body));
+            }
+            
+            if ($.data(this, 'dialog').shadow) {
+                $.data(this, 'dialog').shadow.remove();
+            }
+            if (opts.shadow == true) {
+                var shadow = $('<div class="dialog-shadow"><div class="dialog-shadow-inner"></div></div>');
+                $('.dialog-shadow-inner', shadow).shadow({width:5, fit:true, hidden:true});
+                $.data(this, 'dialog').shadow = shadow
+                        .css('z-index', $.fn.dialog.defaults.zIndex++)
+                        .insertAfter(dialog);
+            }
+            
+            dialog.css('z-index', $.fn.dialog.defaults.zIndex++);
+            
+            
+            // load the href content
+            if (options.href) {
+                $(this).load(options.href, null, function(){
+                    resize(target);
+                    opts.onLoad.apply(this, arguments); // trigger the onLoad event
+                });
+            }
+            
+            if (opts.closed == false) {
+                if (dialog.css('display') == 'none') {
+                    open(this);
+                    resize(this);   // resize the dialog
+                }
+            } else {
+                if (dialog.css('display') == 'block') {
+                    close(this);
+                }
+            }
+            
+        });
+        
+    };
+    
+    // when window resize, reset the width and height of the dialog's mask
+    $(window).resize(function(){
+        $('.dialog-mask').css({
+            width: $(window).width(),
+            height: $(window).height()
+        });
+        setTimeout(function(){
+            $('.dialog-mask').css({
+                width: getPageArea().width,
+                height: getPageArea().height
+            });
+        }, 50);
+    });
+    
+    function getPageArea() {
+        if (document.compatMode == 'BackCompat') {
+            return {
+                width: Math.max(document.body.scrollWidth, document.body.clientWidth),
+                height: Math.max(document.body.scrollHeight, document.body.clientHeight)
+            }
+        } else {
+            return {
+                width: Math.max(document.documentElement.scrollWidth, document.documentElement.clientWidth),
+                height: Math.max(document.documentElement.scrollHeight, document.documentElement.clientHeight)
+            }
+        }
+    }
+    
+    
+    $.fn.dialog.defaults = {
+        zIndex: 9000,
+        title: 'title',
+        closed: false,
+        destroyOnClose: false,
+        draggable: true,
+        resizable: true,
+        modal: false,
+        shadow: true,
+        width: 300,
+        height: null,
+        showType: null,
+        showSpeed: 600,
+        left: null,
+        top: null,
+        iconCls: null,
+        href:null,
+        onOpen: function(){},
+        onClose: function(){},
+        onLoad:function(){}
+    };
+})(jQuery);
+
+/**
+ * shadow 1.0 - jQuery Plug-in
+ * 
+ * Licensed under the GPL:
+ *   http://gplv3.fsf.org
+ *
+ * Copyright 2009 stworthy [ stworthy@gmail.com ] 
+ * 
+ * options:
+ *  hidden: boolean false to show the shadow and true to hide the shadow 
+ *  fit: boolean true to fit the parent container and false not
+ *  width: integer width The width in pixels of the shadow. Default: 8
+ * 
+ */
+(function($){
+    $.fn.shadow = function(options){
+        
+        return this.each(function(){
+            
+            // wrap the element and return the jQuery object
+            function wrapElem(target) {
+                var wraps = [
+                             '<div class="shadow">',
+                             '<div class="shadow-one">',
+                             '<div class="shadow-corner-a"></div>',
+                             '<div class="shadow-corner-b"></div>',
+                             '<div class="shadow-two">',
+                             '  <div class="shadow-three">',
+                             '      <div class="shadow-four">',
+                             '      </div>',
+                             '  </div>',
+                             '</div>',
+                             '</div>',
+                             '</div>'
+                             ];
+                
+                var shadow = $(wraps.join('')).insertAfter($(target));
+                $(target).appendTo($('.shadow-four', shadow));
+                return shadow;
+            }
+            
+            if ($.data(this, 'shadow')) {
+                $.extend($.data(this, 'shadow').options, options || {});
+            } else {
+                $.data(this, 'shadow', {
+                    options: $.extend({}, $.fn.shadow.defaults, options || {}),
+                    shadow: wrapElem(this),
+                    oldWidth: $(this).width(),  // the element old width and height
+                    oldHeight: $(this).height()
+                });
+            }
+            
+            if (!$.data(this, 'shadow').shadow) {
+                $.data(this, 'shadow').shadow = wrapElem(this);
+            }
+            
+            var opts = $.data(this, 'shadow').options;
+            var shadow = $.data(this, 'shadow').shadow;
+            
+            if (opts.hidden == true) {
+                $(this).insertAfter(shadow);
+                shadow.remove();
+                $.data(this, 'shadow').shadow = null;
+                return;
+            }
+            
+            $('.shadow-one', shadow).css({
+                paddingLeft: opts.width * 2,
+                paddingTop: opts.width * 2
+            });
+            $('.shadow-corner-a', shadow).css({
+                width: opts.width * 2,
+                height: opts.width * 2
+            });
+            $('.shadow-corner-b', shadow).css({
+                width: opts.width * 2,
+                height: opts.width * 2
+            });
+            $('.shadow-three', shadow).css({
+                left: opts.width * -2,
+                top: opts.width * -2
+            });
+            $('.shadow-four', shadow).css({
+                left: opts.width,
+                top: opts.width
+            });
+            
+            if (opts.fit == true) {
+                // make element and shadow fit the parent container
+                
+                var parent = $(shadow).parent();    // the parent container
+                
+                if ($.boxModel == true) {
+                    var delta = $(this).outerWidth(true) - $(this).width();
+                    $(this).css({
+                        width: parent.width() - 2*opts.width - delta,
+                        height: parent.height() - 2*opts.width - delta
+                    });
+                    $(shadow).css({
+                        width: parent.width(),
+                        height: parent.height()
+                    });
+                    $('.shadow-one', shadow).css({
+                        width: parent.width() - 2*opts.width,
+                        height: parent.height() - 2*opts.width
+                    });
+                
+                } else {
+                    $(this).css({
+                        width:'100%',
+                        height:'100%'
+                    });
+                    $(shadow).css({
+                        width: parent.width(),
+                        height: parent.height()
+                    });
+                    $('.shadow-one', shadow).css({
+                        width: parent.width(),
+                        height: parent.height()
+                    });
+                }
+            } else {
+                // restore the element's width and height
+                $(this).width($.data(this, 'shadow').oldWidth)
+                        .height($.data(this, 'shadow').oldHeight);
+                
+                $('.shadow-one', shadow).css({
+                    width:'100%',
+                    height:'100%'
+                });
+                
+                if ($.boxModel == true) {
+                    $(shadow).css({
+                        width: $(this).outerWidth(),
+                        height: $(this).outerHeight()
+                    });
+                } else {
+                    $(shadow).css({
+                        width: $.data(this, 'shadow').oldWidth + 2*opts.width,
+                        height: $.data(this, 'shadow').oldHeight + 2*opts.width
+                    });
+                }
+            }
+            
+        });
+    };
+    
+    $.fn.shadow.defaults = {
+            hidden: false,
+            fit: false,
+            width: 8
+    };
+})(jQuery);
+
+/**
+ * draggable 1.0 - jQuery Plug-in
+ * 
+ * Licensed under the GPL:
+ *   http://gplv3.fsf.org
+ *
+ * Copyright 2009 stworthy [ stworthy@gmail.com ] 
+ */
+(function($){
+    $.fn.draggable = function(options){
+        function doDown(e){
+            $.data(e.data.target, 'draggable').options.onStartDrag(e);
+            return false;
+        }
+        
+        function doMove(e){
+            var dragData = e.data;
+            var left = dragData.startLeft + e.pageX - dragData.startX;
+            var top = dragData.startTop + e.pageY - dragData.startY;
+            
+            if (e.data.parnet != document.body) {
+                if ($.boxModel == true) {
+                    left += $(e.data.parent).scrollLeft();
+                    top += $(e.data.parent).scrollTop();
+                }
+            }
+            
+            var opts = $.data(e.data.target, 'draggable').options;
+            if (opts.axis == 'h') {
+                $(dragData.target).css('left', left);
+            } else if (opts.axis == 'v') {
+                $(dragData.target).css('top', top);
+            } else {
+                $(dragData.target).css({
+                    left: left,
+                    top: top
+                });
+            }
+            $.data(e.data.target, 'draggable').options.onDrag(e);
+            return false;
+        }
+        
+        function doUp(e){
+            $(document).unbind('.draggable');
+            $.data(e.data.target, 'draggable').options.onStopDrag(e);
+            return false;
+        }
+        
+        
+        return this.each(function(){
+            $(this).css('position','absolute');
+            
+            var opts;
+            var state = $.data(this, 'draggable');
+            if (state) {
+                state.handle.unbind('.draggable');
+                opts = $.extend(state.options, options);
+            } else {
+                opts = $.extend({}, $.fn.draggable.defaults, options || {});
+            }
+            
+            if (opts.disabled == true) {
+                $(this).css('cursor', 'default');
+                return;
+            }
+            
+            var handle = null;
+            if (typeof opts.handle == 'undefined' || opts.handle == null){
+                handle = $(this);
+            } else {
+                handle = (typeof opts.handle == 'string' ? $(opts.handle, this) : handle);
+            }
+            $.data(this, 'draggable', {
+                options: opts,
+                handle: handle
+            });
+            
+            // bind mouse event using event namespace draggable
+            handle.bind('mousedown.draggable', {target:this}, onMouseDown);
+            handle.bind('mousemove.draggable', {target:this}, onMouseMove);
+            
+            function onMouseDown(e) {
+                if (checkArea(e) == false) return;
+
+                var position = $(e.data.target).position();
+                var data = {
+                    startLeft: position.left,
+                    startTop: position.top,
+                    startX: e.pageX,
+                    startY: e.pageY,
+                    target: e.data.target,
+                    parent: $(e.data.target).parent()[0]
+                };
+                
+                $(document).bind('mousedown.draggable', data, doDown);
+                $(document).bind('mousemove.draggable', data, doMove);
+                $(document).bind('mouseup.draggable', data, doUp);
+            }
+            
+            function onMouseMove(e) {
+                if (checkArea(e)){
+                    $(this).css('cursor', 'move');
+                } else {
+                    $(this).css('cursor', 'default');
+                }
+            }
+            
+            // check if the handle can be dragged
+            function checkArea(e) {
+                var offset = $(handle).offset();
+                var width = $(handle).outerWidth();
+                var height = $(handle).outerHeight();
+                var t = e.pageY - offset.top;
+                var r = offset.left + width - e.pageX;
+                var b = offset.top + height - e.pageY;
+                var l = e.pageX - offset.left;
+                
+                return Math.min(t,r,b,l) > opts.edge;
+            }
+            
+        });
+    };
+    
+    $.fn.draggable.defaults = {
+            handle: null,
+            disabled: false,
+            edge:0,
+            axis:null,  // v or h
+            onStartDrag: function(){},
+            onDrag: function(){},
+            onStopDrag: function(){}
+    };
+})(jQuery);
+
+/**
+ * linkbutton 1.0 - jQuery Plug-in
+ * 
+ * Licensed under the GPL:
+ *   http://gplv3.fsf.org
+ *
+ * Copyright 2009 stworthy [ stworthy@gmail.com ] 
+ */
+(function($){
+    $.fn.linkbutton = function(options){
+        
+        // wrap the link button, make sure to execute once
+        function wrapButton(target) {
+            $(target).addClass('l-btn')
+                     .wrapInner('<span class="l-btn-left"><span class="l-btn-text"></span></span>');
+            var iconCls = $(target).attr('icon');
+            if (iconCls) {
+                $('.l-btn-text', target).addClass(iconCls).css('padding-left', '20px');
+            }
+        }
+        
+        return this.each(function(){
+            var opts;
+            var state = $.data(this, 'linkbutton');
+            if (state) {
+                opts = $.extend(state.options, options || {});
+                state.options = opts;
+            } else {
+                wrapButton(this);
+                opts = $.extend({}, $.fn.linkbutton.defaults, options || {});
+                
+                if ($(this).hasClass('l-btn-plain')) {
+                    opts.plain = true;
+                }
+                
+                // the button initialize state is disabled
+                if ($(this).attr('disabled')) {
+                    opts.disabled = true;
+                    $(this).removeAttr('disabled');
+                }
+                
+                state = {options: opts};
+                
+            }
+            
+            if (state.options.disabled) {
+                var href = $(this).attr('href');
+                if (href) {
+                    state.href = href;
+                    $(this).removeAttr('href');
+                }
+                var onclick = $(this).attr('onclick');
+                if (onclick) {
+                    state.onclick = onclick;
+                    $(this).attr('onclick', null);
+                }
+                $(this).addClass('l-btn-disabled');
+            } else {
+                if (state.href) {
+                    $(this).attr('href', state.href);
+                }
+                if (state.onclick) {
+                    this.onclick = state.onclick;
+                }
+                $(this).removeClass('l-btn-disabled');
+            }
+            
+            if (state.options.plain == true) {
+                $(this).addClass('l-btn-plain');
+            } else {
+                $(this).removeClass('l-btn-plain');
+            }
+            
+            $.data(this, 'linkbutton', state);  // save the button state
+        });
+    };
+    
+    $.fn.linkbutton.defaults = {
+            disabled: false,
+            plain: false
+    };
+    
+    $(function(){
+        $('a.l-btn').linkbutton();
+    });
+})(jQuery);
+
+
+/**
+ * resizable 1.0 - jQuery Plug-in
+ * 
+ * Licensed under the GPL:
+ *   http://gplv3.fsf.org
+ *
+ * Copyright 2009 stworthy [ stworthy@gmail.com ] 
+ */
+(function($){
+    $.fn.resizable = function(options){
+        function doDown(e){
+            $.data(e.data.target, 'resizable').options.onStartResize(e);
+            return false;
+        }
+        
+        function doMove(e){
+            var resizeData = e.data;
+            var options = $.data(resizeData.target, 'resizable').options;
+            var target = resizeData.target;
+            if (resizeData.dir.indexOf('e') != -1) {
+                var width = resizeData.startWidth + e.pageX - resizeData.startX;
+                if ($.boxModel == false) {
+                    width += resizeData.deltaWidth;
+                }
+                width = Math.min(
+                            Math.max(width, options.minWidth),
+                            options.maxWidth
+                        );
+                $(target).css('width', width + 'px');
+            }
+            if (resizeData.dir.indexOf('s') != -1) {
+                var height = resizeData.startHeight + e.pageY - resizeData.startY;
+                if ($.boxModel == false) {
+                    height += resizeData.deltaHeight;
+                }
+                height = Math.min(
+                            Math.max(height, options.minHeight),
+                            options.maxHeight
+                        );
+                $(target).css('height', height + 'px');
+            }
+            if (resizeData.dir.indexOf('w') != -1) {
+                var width = resizeData.startWidth - e.pageX + resizeData.startX;
+                if ($.boxModel == false) {
+                    width += resizeData.deltaWidth;
+                }
+                if (width >= options.minWidth && width <= options.maxWidth) {
+                    var left = resizeData.startLeft + e.pageX - resizeData.startX;
+                    $(target).css({
+                        left: left + 'px',
+                        width: width + 'px'
+                    });
+                }
+            }
+            if (resizeData.dir.indexOf('n') != -1) {
+                var height = resizeData.startHeight - e.pageY + resizeData.startY;
+                if ($.boxModel == false) {
+                    height += resizeData.deltaHeight;
+                }
+                if (height >= options.minHeight && height <= options.maxHeight) {
+                    var top = resizeData.startTop + e.pageY - resizeData.startY;
+                    $(target).css({
+                        top: top + 'px',
+                        height: height + 'px'
+                    });
+                }
+            }
+            $.data(e.data.target, 'resizable').options.onResize(e);
+            return false;
+        }
+        
+        function doUp(e){
+            $(document).unbind('.resizable');
+            $.data(e.data.target, 'resizable').options.onStopResize(e);
+            return false;
+        }
+        
+        return this.each(function(){
+            var opts = null;
+            var state = $.data(this, 'resizable');
+            if (state) {
+                $(this).unbind('.resizable');
+                opts = $.extend(state.options, options || {});
+            } else {
+                opts = $.extend({}, $.fn.resizable.defaults, options || {});
+            }
+            
+            if (opts.disabled == true) {
+                return;
+            }
+            
+            $.data(this, 'resizable', {
+                options: opts
+            });
+            
+            var target = this;
+            
+            // bind mouse event using namespace resizable
+            $(this).bind('mousemove.resizable', onMouseMove)
+                   .bind('mousedown.resizable', onMouseDown);
+            
+            function onMouseMove(e) {
+                var dir = getDirection(e);
+                if (dir == '') {
+                    $(target).css('cursor', 'default');
+                } else {
+                    $(target).css('cursor', dir + '-resize');
+                }
+            }
+            
+            function onMouseDown(e) {
+                var dir = getDirection(e);
+                if (dir == '') return;
+                
+                var data = {
+                    target: this,
+                    dir: dir,
+                    startLeft: getCssValue('left'),
+                    startTop: getCssValue('top'),
+                    startX: e.pageX,
+                    startY: e.pageY,
+                    startWidth: $(target).width(),
+                    startHeight: $(target).height(),
+                    deltaWidth: $(target).outerWidth() - $(target).width(),
+                    deltaHeight: $(target).outerHeight() - $(target).height()
+                };
+                $(document).bind('mousedown.resizable', data, doDown);
+                $(document).bind('mousemove.resizable', data, doMove);
+                $(document).bind('mouseup.resizable', data, doUp);
+            }
+            
+            // get the resize direction
+            function getDirection(e) {
+                var dir = '';
+                var offset = $(target).offset();
+                var width = $(target).outerWidth();
+                var height = $(target).outerHeight();
+                var edge = opts.edge;
+                if (e.pageY > offset.top && e.pageY < offset.top + edge) {
+                    dir += 'n';
+                } else if (e.pageY < offset.top + height && e.pageY > offset.top + height - edge) {
+                    dir += 's';
+                }
+                if (e.pageX > offset.left && e.pageX < offset.left + edge) {
+                    dir += 'w';
+                } else if (e.pageX < offset.left + width && e.pageX > offset.left + width - edge) {
+                    dir += 'e';
+                }
+                return dir;
+            }
+            
+            function getCssValue(css) {
+                var val = parseInt($(target).css(css));
+                if (isNaN(val)) {
+                    return 0;
+                } else {
+                    return val;
+                }
+            }
+            
+        });
+    };
+    
+    $.fn.resizable.defaults = {
+            disabled:false,
+            minWidth: 10,
+            minHeight: 10,
+            maxWidth: 10000,//$(document).width(),
+            maxHeight: 10000,//$(document).height(),
+            edge:5,
+            onStartResize: function(){},
+            onResize: function(){},
+            onStopResize: function(){}
+    };
+    
+})(jQuery);
+
+/**
+ * linkbutton 1.0 - jQuery Plug-in
+ * 
+ * Licensed under the GPL:
+ *   http://gplv3.fsf.org
+ *
+ * Copyright 2009 stworthy [ stworthy@gmail.com ] 
+ * 
+ * Dependencies:
+ *  shadow
+ *  draggable
+ *  resizable
+ *  linkbutton
+ *  dialog
+ */
+(function($){
+    
+    $.messager = {
+        show: function(options) {
+            options = $.extend({
+                showType: 'slide',
+                showSpeed: 600,
+                width: 250,
+                height: 100,
+                msg: '',
+                title: '',
+                timeout: 4000
+            }, options || {});
+            
+            var win = $('<div></div>').appendTo(document.body);
+            win.html(options.msg);
+            win.dialog({
+                title:options.title,
+                shadow:false,
+                resizable:false,
+                showType:options.showType,
+                showSpeed:options.showSpeed,
+                width:options.width,
+                height:options.height,
+                closed:false,
+                onClose:function(){
+                    $(this).dialog('options').destroyOnClose = true;
+                }
+            });
+            
+            win.parent().css({
+                left: null,
+                top: null,
+                right: 0,
+                bottom: -document.body.scrollTop-document.documentElement.scrollTop
+            });
+            
+            $(window).scroll(function(){
+                win.parent().css('bottom', -document.body.scrollTop-document.documentElement.scrollTop);
+            });
+            
+            if (options.timeout > 0) {
+                setTimeout(function(){
+                    win.dialog({closed:true});
+                }, options.timeout);
+            }
+        },
+        
+        alert: function(title, msg, icon, fn) {
+            var content = '<div>' + msg + '</div>';
+            switch(icon) {
+                case 'error':
+                    content = '<div class="messager-icon messager-error"></div>' + content;
+                    break;
+                case 'info':
+                    content = '<div class="messager-icon messager-info"></div>' + content;
+                    break;
+                case 'question':
+                    content = '<div class="messager-icon messager-question"></div>' + content;
+                    break;
+                case 'warning':
+                    content = '<div class="messager-icon messager-warning"></div>' + content;
+                    break;
+            }
+            content += '<div style="clear:both;"/>';
+            
+            var win = $('<div></div>').appendTo(document.body);
+            win.html(content);
+            win.dialog({
+                title: title,
+                modal:true,
+                resizable:false,
+                buttons:{
+                    'Ok':function(){
+                        win.dialog({closed:true});
+                        if (fn){
+                            fn();
+                        }
+                    }
+                },
+                onClose:function(){
+                    $(this).dialog('options').destroyOnClose = true;
+                }
+            });
+        },
+        
+        confirm: function(title, msg, fn) {
+            var win = $('<div></div>').appendTo(document.body);
+            win.html('<div class="messager-icon messager-question"></div>'
+                        + '<div>' + msg + '</div>'
+                        + '<div style="clear:both;"/>');
+            win.dialog({
+                title: title,
+                modal:true,
+                resizable:false,
+                buttons:{
+                    'Ok':function(){
+                        win.dialog({closed:true});
+                        if (fn){
+                            fn(true);
+                        }
+                    },
+                    'Cancel':function(){
+                        win.dialog({closed:true});
+                        if (fn){
+                            fn(false);
+                        }
+                    }
+                },
+                onClose:function(){
+                    $(this).dialog('options').destroyOnClose = true;
+                }
+            });
+        },
+        
+        prompt: function(title, msg, initValue, fn, type) {
+            var win = $('<div></div>').appendTo(document.body);
+            
+            var typeStr = '';
+            var textStr = '';
+            var inputHtml = '';
+            
+            if (type == 1)
+            {
+            	typeStr = "<img src='../images/calendar.gif' style='cursor: pointer' align='top' onclick='return calDate(\"prompt-messager-input\");' height='20px' width='20px'/>";
+            	
+            	textStr = 'readonly=readonly'; 
+            }
+            
+            inputHtml = '<input class="messager-input" id="prompt-messager-input" type="text" ' + textStr + ' value="' + initValue + '" style="width:220px;"/>' + typeStr;
+            
+            if (type == 2)
+            {
+            	inputHtml = '<textarea class="messager-input" style="width:95%" id="prompt-messager-input"></textarea>';
+            }
+            
+            win.html('<div class="messager-icon messager-question"></div>'
+                        + '<div>' + msg + '</div>'
+                        + '<br/>'
+                        + inputHtml
+                        + '<div style="clear:both;"/>');
+                        
+            var bmap = {};
+            
+            bmap[BUTTON_OK] = function(){
+                        win.dialog({closed:true});
+                        if (fn){
+                            fn($('.messager-input', win).val(), true, $('.messager-input', win));
+                        }
+                    };
+                    
+            bmap[BUTTON_CANCEL] = function(){
+                        win.dialog({closed:true});
+                        if (fn){
+                            fn(null, false, $('.messager-input', win));
+                        }
+                    };
+            win.dialog({
+                title: title,
+                modal:true,
+                resizable:false,
+                buttons:bmap,
+                onClose:function(){
+                    $(this).dialog('options').destroyOnClose = true;
+                }
+            });
+        }
+    };
+    
+})(jQuery);
+

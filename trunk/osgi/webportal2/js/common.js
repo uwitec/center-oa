@@ -746,8 +746,11 @@ function getOptionText(obj)
     {
         obj = $O(obj);
     }
-
+    
+    if (obj.options && obj.options.length > 0)
     return obj.options[obj.selectedIndex].text;
+    else
+    return '';
 }
 
 
@@ -1231,7 +1234,12 @@ function $auth()
 	}
 	
 	return [];
-} 
+}
+
+function getAllDef()
+{
+	return window.top.topFrame.allDef;
+}
 
 if (window.addEventCommon)
 window.addEventCommon(window, 'load', loadForm);
