@@ -35,11 +35,16 @@ function load()
 		     {id: 'add', bclass: 'add', caption: '创建流程实例',  onpress : addBean},
 		     {id: 'search', bclass: 'search',  onpress : doSearch}
 		     ],
-		 <p:conf/>
+		 <p:conf />
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);
- }
+}
+
+function $callBack()
+{
+    loadForm();
+}
 
 function addBean(opr, grid)
 {
