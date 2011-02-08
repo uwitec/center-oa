@@ -346,13 +346,13 @@ public class ProductBean implements Serializable
      */
     private String shortspell = "";
 
-    @Html(title = "预留1")
+    @Html(title = "外箱尺寸")
     private String reserve1 = "";
 
-    @Html(title = "预留2")
+    @Html(title = "单箱数量")
     private String reserve2 = "";
 
-    @Html(title = "预留3")
+    @Html(title = "单箱毛重")
     private String reserve3 = "";
 
     @Html(title = "预留4")
@@ -1422,194 +1422,41 @@ public class ProductBean implements Serializable
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue
-            .append("ProductBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("name = ")
-            .append(this.name)
-            .append(TAB)
-            .append("code = ")
-            .append(this.code)
-            .append(TAB)
-            .append("abstractType = ")
-            .append(this.abstractType)
-            .append(TAB)
-            .append("refId = ")
-            .append(this.refId)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("ptype = ")
-            .append(this.ptype)
-            .append(TAB)
-            .append("ctype = ")
-            .append(this.ctype)
-            .append(TAB)
-            .append("typeName = ")
-            .append(this.typeName)
-            .append(TAB)
-            .append("specification = ")
-            .append(this.specification)
-            .append(TAB)
-            .append("model = ")
-            .append(this.model)
-            .append(TAB)
-            .append("amountUnit = ")
-            .append(this.amountUnit)
-            .append(TAB)
-            .append("weightUnit = ")
-            .append(this.weightUnit)
-            .append(TAB)
-            .append("cubageUnit = ")
-            .append(this.cubageUnit)
-            .append(TAB)
-            .append("version = ")
-            .append(this.version)
-            .append(TAB)
-            .append("design = ")
-            .append(this.design)
-            .append(TAB)
-            .append("stockType = ")
-            .append(this.stockType)
-            .append(TAB)
-            .append("materielSource = ")
-            .append(this.materielSource)
-            .append(TAB)
-            .append("storeUnit = ")
-            .append(this.storeUnit)
-            .append(TAB)
-            .append("abc = ")
-            .append(this.abc)
-            .append(TAB)
-            .append("batchModal = ")
-            .append(this.batchModal)
-            .append(TAB)
-            .append("checkDays = ")
-            .append(this.checkDays)
-            .append(TAB)
-            .append("maxStoreDays = ")
-            .append(this.maxStoreDays)
-            .append(TAB)
-            .append("safeStoreDays = ")
-            .append(this.safeStoreDays)
-            .append(TAB)
-            .append("makeDays = ")
-            .append(this.makeDays)
-            .append(TAB)
-            .append("flowDays = ")
-            .append(this.flowDays)
-            .append(TAB)
-            .append("minAmount = ")
-            .append(this.minAmount)
-            .append(TAB)
-            .append("status = ")
-            .append(this.status)
-            .append(TAB)
-            .append("assembleFlag = ")
-            .append(this.assembleFlag)
-            .append(TAB)
-            .append("lastOrderDate = ")
-            .append(this.lastOrderDate)
-            .append(TAB)
-            .append("consumeInDay = ")
-            .append(this.consumeInDay)
-            .append(TAB)
-            .append("orderAmount = ")
-            .append(this.orderAmount)
-            .append(TAB)
-            .append("mainProvider = ")
-            .append(this.mainProvider)
-            .append(TAB)
-            .append("assistantProvider1 = ")
-            .append(this.assistantProvider1)
-            .append(TAB)
-            .append("assistantProvider2 = ")
-            .append(this.assistantProvider2)
-            .append(TAB)
-            .append("assistantProvider3 = ")
-            .append(this.assistantProvider3)
-            .append(TAB)
-            .append("assistantProvider4 = ")
-            .append(this.assistantProvider4)
-            .append(TAB)
-            .append("sailType = ")
-            .append(this.sailType)
-            .append(TAB)
-            .append("adjustPrice = ")
-            .append(this.adjustPrice)
-            .append(TAB)
-            .append("financeType = ")
-            .append(this.financeType)
-            .append(TAB)
-            .append("dutyType = ")
-            .append(this.dutyType)
-            .append(TAB)
-            .append("cost = ")
-            .append(this.cost)
-            .append(TAB)
-            .append("planCost = ")
-            .append(this.planCost)
-            .append(TAB)
-            .append("batchPrice = ")
-            .append(this.batchPrice)
-            .append(TAB)
-            .append("sailPrice = ")
-            .append(this.sailPrice)
-            .append(TAB)
-            .append("checkFlag = ")
-            .append(this.checkFlag)
-            .append(TAB)
-            .append("checkType = ")
-            .append(this.checkType)
-            .append(TAB)
-            .append("checkStandard = ")
-            .append(this.checkStandard)
-            .append(TAB)
-            .append("picPath = ")
-            .append(this.picPath)
-            .append(TAB)
-            .append("logTime = ")
-            .append(this.logTime)
-            .append(TAB)
-            .append("createrId = ")
-            .append(this.createrId)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append("fullspell = ")
-            .append(this.fullspell)
-            .append(TAB)
-            .append("shortspell = ")
-            .append(this.shortspell)
-            .append(TAB)
-            .append("reserve1 = ")
-            .append(this.reserve1)
-            .append(TAB)
-            .append("reserve2 = ")
-            .append(this.reserve2)
-            .append(TAB)
-            .append("reserve3 = ")
-            .append(this.reserve3)
-            .append(TAB)
-            .append("reserve4 = ")
-            .append(this.reserve4)
-            .append(TAB)
-            .append("reserve5 = ")
-            .append(this.reserve5)
-            .append(TAB)
-            .append("reserve6 = ")
-            .append(this.reserve6)
-            .append(TAB)
-            .append("vsList = ")
-            .append(this.vsList)
-            .append(TAB)
-            .append(" )");
+        retValue.append("ProductBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("name = ").append(this.name).append(TAB).append("code = ").append(this.code).append(TAB).append(
+            "abstractType = ").append(this.abstractType).append(TAB).append("refId = ").append(this.refId).append(TAB).append(
+            "type = ").append(this.type).append(TAB).append("ptype = ").append(this.ptype).append(TAB).append(
+            "ctype = ").append(this.ctype).append(TAB).append("typeName = ").append(this.typeName).append(TAB).append(
+            "specification = ").append(this.specification).append(TAB).append("model = ").append(this.model).append(TAB).append(
+            "amountUnit = ").append(this.amountUnit).append(TAB).append("weightUnit = ").append(this.weightUnit).append(
+            TAB).append("cubageUnit = ").append(this.cubageUnit).append(TAB).append("version = ").append(this.version).append(
+            TAB).append("design = ").append(this.design).append(TAB).append("stockType = ").append(this.stockType).append(
+            TAB).append("materielSource = ").append(this.materielSource).append(TAB).append("storeUnit = ").append(
+            this.storeUnit).append(TAB).append("abc = ").append(this.abc).append(TAB).append("batchModal = ").append(
+            this.batchModal).append(TAB).append("checkDays = ").append(this.checkDays).append(TAB).append(
+            "maxStoreDays = ").append(this.maxStoreDays).append(TAB).append("safeStoreDays = ").append(
+            this.safeStoreDays).append(TAB).append("makeDays = ").append(this.makeDays).append(TAB).append(
+            "flowDays = ").append(this.flowDays).append(TAB).append("minAmount = ").append(this.minAmount).append(TAB).append(
+            "status = ").append(this.status).append(TAB).append("assembleFlag = ").append(this.assembleFlag).append(TAB).append(
+            "lastOrderDate = ").append(this.lastOrderDate).append(TAB).append("consumeInDay = ").append(
+            this.consumeInDay).append(TAB).append("orderAmount = ").append(this.orderAmount).append(TAB).append(
+            "mainProvider = ").append(this.mainProvider).append(TAB).append("assistantProvider1 = ").append(
+            this.assistantProvider1).append(TAB).append("assistantProvider2 = ").append(this.assistantProvider2).append(
+            TAB).append("assistantProvider3 = ").append(this.assistantProvider3).append(TAB).append(
+            "assistantProvider4 = ").append(this.assistantProvider4).append(TAB).append("sailType = ").append(
+            this.sailType).append(TAB).append("adjustPrice = ").append(this.adjustPrice).append(TAB).append(
+            "financeType = ").append(this.financeType).append(TAB).append("dutyType = ").append(this.dutyType).append(
+            TAB).append("cost = ").append(this.cost).append(TAB).append("planCost = ").append(this.planCost).append(TAB).append(
+            "batchPrice = ").append(this.batchPrice).append(TAB).append("sailPrice = ").append(this.sailPrice).append(
+            TAB).append("checkFlag = ").append(this.checkFlag).append(TAB).append("checkType = ").append(this.checkType).append(
+            TAB).append("checkStandard = ").append(this.checkStandard).append(TAB).append("picPath = ").append(
+            this.picPath).append(TAB).append("logTime = ").append(this.logTime).append(TAB).append("createrId = ").append(
+            this.createrId).append(TAB).append("description = ").append(this.description).append(TAB).append(
+            "fullspell = ").append(this.fullspell).append(TAB).append("shortspell = ").append(this.shortspell).append(
+            TAB).append("reserve1 = ").append(this.reserve1).append(TAB).append("reserve2 = ").append(this.reserve2).append(
+            TAB).append("reserve3 = ").append(this.reserve3).append(TAB).append("reserve4 = ").append(this.reserve4).append(
+            TAB).append("reserve5 = ").append(this.reserve5).append(TAB).append("reserve6 = ").append(this.reserve6).append(
+            TAB).append("vsList = ").append(this.vsList).append(TAB).append(" )");
 
         return retValue.toString();
     }

@@ -51,8 +51,10 @@ public class ProviderDAOImpl extends BaseDAO<ProviderBean, ProviderVO> implement
     {
         condition.removeWhereStr();
 
-        String sql = "select t1.* from T_CENTER_PROVIDE t1, T_CENTER_PRODUCTTYPEVSCUSTOMER t2 where t1.id = t2.customerId "
-                     + condition.toString();
+        String subQuery = "select distinct(t1.id) as id from T_CENTER_PROVIDE t1, T_CENTER_PRODUCTTYPEVSCUSTOMER t2 where t1.id = t2.customerId "
+                          + condition.toString();
+
+        String sql = "select tt1.* from T_CENTER_PROVIDE tt1, (" + subQuery + ") tt2 where tt1.id = tt2.id";
 
         PageSeparate page = new PageSeparate(limit, limit);
 
