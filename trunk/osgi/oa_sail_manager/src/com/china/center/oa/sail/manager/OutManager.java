@@ -44,6 +44,29 @@ public interface OutManager extends ListenerManager<OutListener>
         throws MYException;
 
     /**
+     * coloneOutWithAffair(事务提交,入库单)
+     * 
+     * @param outBean
+     * @param user
+     * @param type
+     * @return
+     * @throws MYException
+     */
+    String coloneOutWithAffair(final OutBean outBean, final User user, int type)
+        throws MYException;
+
+    /**
+     * coloneOutWithOutAffair(自动生成个人领样的退货入库单,且在保存态)
+     * 
+     * @param outBean
+     * @param user
+     * @return
+     * @throws MYException
+     */
+    String coloneOutWithoutAffair(final OutBean outBean, final User user, int type)
+        throws MYException;
+
+    /**
      * 采购入库的操作(没有事务)
      * 
      * @param outBean
@@ -102,8 +125,7 @@ public interface OutManager extends ListenerManager<OutListener>
      * @return 修改后的单据状态
      * @throws MYException
      */
-    int pass(final String fullId, final User user, final int nextStatus, final String reason,
-             final String depotpartId)
+    int pass(final String fullId, final User user, final int nextStatus, final String reason, final String depotpartId)
         throws MYException;
 
     boolean check(final String fullId, final User user, final String checks)
@@ -111,7 +133,7 @@ public interface OutManager extends ListenerManager<OutListener>
 
     OutBean findOutById(final String fullId);
 
-    boolean delOut(final String fullId)
+    boolean delOut(User user, final String fullId)
         throws MYException;
 
     boolean updateOut(final OutBean out)
@@ -215,4 +237,15 @@ public interface OutManager extends ListenerManager<OutListener>
      * @return
      */
     int findOutStatusInLog(String fullId);
+
+    /**
+     * 是否是领样转销售
+     * 
+     * @param fullId
+     * @return
+     */
+    boolean isSwatchToSail(String fullId);
+
+    String addSwatchToSail(final User user, final OutBean outBean)
+        throws MYException;
 }

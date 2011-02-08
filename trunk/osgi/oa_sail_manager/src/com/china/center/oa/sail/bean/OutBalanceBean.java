@@ -41,6 +41,7 @@ public class OutBalanceBean implements Serializable
     private String id = "";
 
     @FK
+    @Join(tagClass = OutBean.class)
     private String outId = "";
 
     private double total = 0.0d;
@@ -60,6 +61,16 @@ public class OutBalanceBean implements Serializable
     private String description = "";
 
     private String reason = "";
+
+    /**
+     * 开发票状态(0:没有开票 1:全部开票)
+     */
+    private int invoiceStatus = OutConstant.INVOICESTATUS_INIT;
+
+    /**
+     * 开发票的金额(已经开票的金额)
+     */
+    private double invoiceMoney = 0.0d;
 
     /**
      * 退货库
@@ -282,6 +293,40 @@ public class OutBalanceBean implements Serializable
     }
 
     /**
+     * @return the invoiceStatus
+     */
+    public int getInvoiceStatus()
+    {
+        return invoiceStatus;
+    }
+
+    /**
+     * @param invoiceStatus
+     *            the invoiceStatus to set
+     */
+    public void setInvoiceStatus(int invoiceStatus)
+    {
+        this.invoiceStatus = invoiceStatus;
+    }
+
+    /**
+     * @return the invoiceMoney
+     */
+    public double getInvoiceMoney()
+    {
+        return invoiceMoney;
+    }
+
+    /**
+     * @param invoiceMoney
+     *            the invoiceMoney to set
+     */
+    public void setInvoiceMoney(double invoiceMoney)
+    {
+        this.invoiceMoney = invoiceMoney;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -290,49 +335,17 @@ public class OutBalanceBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("OutBalanceBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("outId = ")
-            .append(this.outId)
-            .append(TAB)
-            .append("total = ")
-            .append(this.total)
-            .append(TAB)
-            .append("status = ")
-            .append(this.status)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("logTime = ")
-            .append(this.logTime)
-            .append(TAB)
-            .append("customerId = ")
-            .append(this.customerId)
-            .append(TAB)
-            .append("stafferId = ")
-            .append(this.stafferId)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append("reason = ")
-            .append(this.reason)
-            .append(TAB)
-            .append("dirDepot = ")
-            .append(this.dirDepot)
-            .append(TAB)
-            .append("baseBalanceList = ")
-            .append(this.baseBalanceList)
-            .append(TAB)
-            .append(" )");
+        retValue.append("OutBalanceBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("outId = ").append(this.outId).append(TAB).append("total = ").append(this.total).append(TAB).append(
+            "status = ").append(this.status).append(TAB).append("type = ").append(this.type).append(TAB).append(
+            "logTime = ").append(this.logTime).append(TAB).append("customerId = ").append(this.customerId).append(TAB).append(
+            "stafferId = ").append(this.stafferId).append(TAB).append("description = ").append(this.description).append(
+            TAB).append("reason = ").append(this.reason).append(TAB).append("invoiceStatus = ").append(
+            this.invoiceStatus).append(TAB).append("invoiceMoney = ").append(this.invoiceMoney).append(TAB).append(
+            "dirDepot = ").append(this.dirDepot).append(TAB).append("baseBalanceList = ").append(this.baseBalanceList).append(
+            TAB).append(" )");
 
         return retValue.toString();
     }

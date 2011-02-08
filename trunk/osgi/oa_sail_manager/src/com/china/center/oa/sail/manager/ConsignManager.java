@@ -27,6 +27,9 @@ public interface ConsignManager
     boolean addTransport(TransportBean bean)
         throws MYException;
 
+    boolean updateTransport(TransportBean bean)
+        throws MYException;
+
     boolean addConsign(ConsignBean bean)
         throws MYException;
 

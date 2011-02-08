@@ -28,6 +28,10 @@ public interface ConsignDAO
 {
     boolean addTransport(TransportBean bean);
 
+    boolean updateTransport(TransportBean bean);
+
+    TransportBean findTransport(String id);
+
     boolean addConsign(ConsignBean bean);
 
     boolean updateConsign(ConsignBean bean);

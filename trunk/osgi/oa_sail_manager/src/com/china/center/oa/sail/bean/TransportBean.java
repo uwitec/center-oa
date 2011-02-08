@@ -42,6 +42,18 @@ public class TransportBean implements Serializable
     @Html(title = "所属分类", type = Element.SELECT, must = true, oncheck = JCheck.NOT_NONE)
     private String parent = "0";
 
+    @Html(title = "物流公司", maxLength = 40)
+    private String company = "";
+
+    @Html(title = "联系电话 ", maxLength = 40)
+    private String conphone = "";
+
+    @Html(title = "发货区域 ", maxLength = 40)
+    private String area = "";
+
+    @Html(title = "发车时间 ", maxLength = 40)
+    private String outTime = "";
+
     /**
      * default constructor
      */
@@ -121,6 +133,74 @@ public class TransportBean implements Serializable
     }
 
     /**
+     * @return the company
+     */
+    public String getCompany()
+    {
+        return company;
+    }
+
+    /**
+     * @param company
+     *            the company to set
+     */
+    public void setCompany(String company)
+    {
+        this.company = company;
+    }
+
+    /**
+     * @return the conphone
+     */
+    public String getConphone()
+    {
+        return conphone;
+    }
+
+    /**
+     * @param conphone
+     *            the conphone to set
+     */
+    public void setConphone(String conphone)
+    {
+        this.conphone = conphone;
+    }
+
+    /**
+     * @return the area
+     */
+    public String getArea()
+    {
+        return area;
+    }
+
+    /**
+     * @param area
+     *            the area to set
+     */
+    public void setArea(String area)
+    {
+        this.area = area;
+    }
+
+    /**
+     * @return the outTime
+     */
+    public String getOutTime()
+    {
+        return outTime;
+    }
+
+    /**
+     * @param outTime
+     *            the outTime to set
+     */
+    public void setOutTime(String outTime)
+    {
+        this.outTime = outTime;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -129,25 +209,13 @@ public class TransportBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("TransportBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("name = ")
-            .append(this.name)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("parent = ")
-            .append(this.parent)
-            .append(TAB)
-            .append(" )");
+        retValue.append("TransportBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("name = ").append(this.name).append(TAB).append("type = ").append(this.type).append(TAB).append(
+            "parent = ").append(this.parent).append(TAB).append("company = ").append(this.company).append(TAB).append(
+            "conphone = ").append(this.conphone).append(TAB).append("area = ").append(this.area).append(TAB).append(
+            "outTime = ").append(this.outTime).append(TAB).append(" )");
 
         return retValue.toString();
     }

@@ -9,6 +9,7 @@
 package com.china.center.oa.sail.dao.impl;
 
 
+import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.dao.OutBalanceDAO;
@@ -25,4 +26,12 @@ import com.china.center.oa.sail.vo.OutBalanceVO;
  */
 public class OutBalanceDAOImpl extends BaseDAO<OutBalanceBean, OutBalanceVO> implements OutBalanceDAO
 {
+    public boolean updateInvoiceStatus(String id, double invoiceMoney, int invoiceStatus)
+    {
+        String sql = BeanTools.getUpdateHead(claz) + "set invoiceMoney = ?, invoiceStatus = ? where id = ?";
+
+        jdbcOperation.update(sql, invoiceMoney, invoiceStatus, id);
+
+        return true;
+    }
 }

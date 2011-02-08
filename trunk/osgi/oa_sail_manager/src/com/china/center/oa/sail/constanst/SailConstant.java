@@ -287,4 +287,22 @@ public interface SailConstant
     int ROLE_TOP = 3;
 
     String SYSTEM_USER = "999999";
+
+    /**
+     * 满意度--初始
+     */
+    @Defined(key = "consignPromitType", value = "初始")
+    int CONSIGN_PROMITTYPE_INIT = 0;
+
+    /**
+     * 满意度--满意
+     */
+    @Defined(key = "consignPromitType", value = "满意")
+    int CONSIGN_PROMITTYPE_OK = 1;
+
+    /**
+     * 满意度--不满意
+     */
+    @Defined(key = "consignPromitType", value = "不满意")
+    int CONSIGN_PROMITTYPE_NO = 2;
 }

@@ -43,6 +43,16 @@ public class ConsignDAOImpl implements ConsignDAO
         return jdbcOperation.save(bean) > 0;
     }
 
+    public boolean updateTransport(TransportBean bean)
+    {
+        return jdbcOperation.update(bean) > 0;
+    }
+
+    public TransportBean findTransport(String id)
+    {
+        return jdbcOperation.find(id, TransportBean.class);
+    }
+
     public boolean addConsign(ConsignBean bean)
     {
         return jdbcOperation.save(bean) > 0;

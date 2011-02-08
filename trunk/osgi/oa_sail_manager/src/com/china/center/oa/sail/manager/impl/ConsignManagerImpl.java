@@ -68,6 +68,13 @@ public class ConsignManagerImpl implements ConsignManager
         return consignDAO.addTransport(bean);
     }
 
+    @Transactional(rollbackFor = MYException.class)
+    public boolean updateTransport(TransportBean bean)
+        throws MYException
+    {
+        return consignDAO.updateTransport(bean);
+    }
+
     /*
      * (non-Javadoc)
      * 
