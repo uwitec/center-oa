@@ -90,8 +90,8 @@ public class ReportsAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward statReports(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward statReports(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -124,8 +124,8 @@ public class ReportsAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryForStatReports(ActionMapping mapping, ActionForm form,
-                                             HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward queryForStatReports(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                             HttpServletResponse reponse)
         throws ServletException
     {
         List<DepotpartBean> list = depotpartDAO.listEntityBeans();
@@ -147,13 +147,12 @@ public class ReportsAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward listStorageLog(ActionMapping mapping, ActionForm form,
-                                        HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward listStorageLog(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                        HttpServletResponse reponse)
         throws ServletException
     {
-        Map<String, List<StorageLogBean>> map = (Map<String, List<StorageLogBean>>)request
-            .getSession()
-            .getAttribute("logsMap");
+        Map<String, List<StorageLogBean>> map = (Map<String, List<StorageLogBean>>)request.getSession().getAttribute(
+            "logsMap");
 
         String productId = request.getParameter("productId");
 
@@ -187,8 +186,8 @@ public class ReportsAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward listStorageLog2(ActionMapping mapping, ActionForm form,
-                                         HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward listStorageLog2(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                         HttpServletResponse reponse)
         throws ServletException
     {
         ConditionParse condition = new ConditionParse();
@@ -232,8 +231,7 @@ public class ReportsAction extends DispatchAction
     {
         OutputStream out = null;
 
-        List<StatProductBean> statList = (List<StatProductBean>)request.getSession().getAttribute(
-            "statList");
+        List<StatProductBean> statList = (List<StatProductBean>)request.getSession().getAttribute("statList");
 
         String filenName = TimeTools.now("MMddHHmmss") + ".xls";
 
@@ -316,14 +314,14 @@ public class ReportsAction extends DispatchAction
         return null;
     }
 
-    public ActionForward exportAll(ActionMapping mapping, ActionForm form,
-                                   HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward exportAll(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                   HttpServletResponse reponse)
         throws ServletException
     {
         OutputStream out = null;
 
-        List<StorageRelationVO> statList = storageRelationDAO.queryStorageRelationByCondition(
-            new ConditionParse(), false);
+        List<StorageRelationVO> statList = storageRelationDAO.queryStorageRelationByCondition(new ConditionParse(),
+            false);
 
         String filenName = TimeTools.now("MMddHHmmss") + "_ALL.xls";
 
@@ -469,8 +467,7 @@ public class ReportsAction extends DispatchAction
             bean.setChangeAmount(change);
 
             // 获得当前的数量
-            int sum = storageRelationDAO.sumProductInDepotpartId(bean.getProductId(), bean
-                .getDepotpartId());
+            int sum = storageRelationDAO.sumProductInDepotpartId(bean.getProductId(), bean.getDepotpartId());
 
             bean.setCurrentAmount(sum);
 
@@ -532,6 +529,13 @@ public class ReportsAction extends DispatchAction
         if ( !StringTools.isNullOrNone(depotpartId))
         {
             condition.addCondition("depotpartId", "=", depotpartId);
+        }
+
+        String productName = request.getParameter("productName");
+
+        if ( !StringTools.isNullOrNone(productName))
+        {
+            condition.addCondition("t2.name", "like", productName);
         }
 
         condition.addCondition("order by t1.id");
