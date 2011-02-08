@@ -16,6 +16,7 @@ import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.oa.finance.constant.FinanceConstant;
 
 
 /**
@@ -47,7 +48,7 @@ public class InsVSOutBean implements Serializable
     /**
      * 0:销售单 1:结算单
      */
-    private int type = 0;
+    private int type = FinanceConstant.INSVSOUT_TYPE_OUT;
 
     /**
      * 开票的金额
@@ -174,29 +175,10 @@ public class InsVSOutBean implements Serializable
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue
-            .append("InsVSOutBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("insId = ")
-            .append(this.insId)
-            .append(TAB)
-            .append("outId = ")
-            .append(this.outId)
-            .append(TAB)
-            .append("outBalanceId = ")
-            .append(this.outBalanceId)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("moneys = ")
-            .append(this.moneys)
-            .append(TAB)
-            .append(" )");
+        retValue.append("InsVSOutBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("insId = ").append(this.insId).append(TAB).append("outId = ").append(this.outId).append(TAB).append(
+            "outBalanceId = ").append(this.outBalanceId).append(TAB).append("type = ").append(this.type).append(TAB).append(
+            "moneys = ").append(this.moneys).append(TAB).append(" )");
 
         return retValue.toString();
     }

@@ -64,8 +64,14 @@ public class OutBillBean implements Serializable
     @Join(tagClass = BankBean.class)
     private String bankId = "";
 
+    /**
+     * 关联stockItemId
+     */
     @FK
     private String stockId = "";
+
+    @Html(title = "采购项", readonly = true)
+    private String stockItemId = "";
 
     @Html(title = "金额", type = Element.DOUBLE, must = true)
     private double moneys = 0.0d;
@@ -392,59 +398,15 @@ public class OutBillBean implements Serializable
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue
-            .append("OutBillBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("payType = ")
-            .append(this.payType)
-            .append(TAB)
-            .append("status = ")
-            .append(this.status)
-            .append(TAB)
-            .append("lock = ")
-            .append(this.lock)
-            .append(TAB)
-            .append("bankId = ")
-            .append(this.bankId)
-            .append(TAB)
-            .append("stockId = ")
-            .append(this.stockId)
-            .append(TAB)
-            .append("moneys = ")
-            .append(this.moneys)
-            .append(TAB)
-            .append("provideId = ")
-            .append(this.provideId)
-            .append(TAB)
-            .append("stafferId = ")
-            .append(this.stafferId)
-            .append(TAB)
-            .append("ownerId = ")
-            .append(this.ownerId)
-            .append(TAB)
-            .append("locationId = ")
-            .append(this.locationId)
-            .append(TAB)
-            .append("destBankId = ")
-            .append(this.destBankId)
-            .append(TAB)
-            .append("refBillId = ")
-            .append(this.refBillId)
-            .append(TAB)
-            .append("logTime = ")
-            .append(this.logTime)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append(" )");
+        retValue.append("OutBillBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("type = ").append(this.type).append(TAB).append("payType = ").append(this.payType).append(TAB).append(
+            "status = ").append(this.status).append(TAB).append("lock = ").append(this.lock).append(TAB).append(
+            "bankId = ").append(this.bankId).append(TAB).append("stockId = ").append(this.stockId).append(TAB).append(
+            "moneys = ").append(this.moneys).append(TAB).append("provideId = ").append(this.provideId).append(TAB).append(
+            "stafferId = ").append(this.stafferId).append(TAB).append("ownerId = ").append(this.ownerId).append(TAB).append(
+            "locationId = ").append(this.locationId).append(TAB).append("destBankId = ").append(this.destBankId).append(
+            TAB).append("refBillId = ").append(this.refBillId).append(TAB).append("logTime = ").append(this.logTime).append(
+            TAB).append("description = ").append(this.description).append(TAB).append(" )");
 
         return retValue.toString();
     }
@@ -464,6 +426,23 @@ public class OutBillBean implements Serializable
     public void setInvoiceId(String invoiceId)
     {
         this.invoiceId = invoiceId;
+    }
+
+    /**
+     * @return the stockItemId
+     */
+    public String getStockItemId()
+    {
+        return stockItemId;
+    }
+
+    /**
+     * @param stockItemId
+     *            the stockItemId to set
+     */
+    public void setStockItemId(String stockItemId)
+    {
+        this.stockItemId = stockItemId;
     }
 
 }

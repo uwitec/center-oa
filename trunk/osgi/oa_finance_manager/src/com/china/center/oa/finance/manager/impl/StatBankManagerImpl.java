@@ -102,8 +102,7 @@ public class StatBankManagerImpl implements StatBankManager
 
         cal.add(Calendar.MONTH, -2);
 
-        String lastestKey = TimeTools
-            .getStringByFormat(new Date(cal.getTime().getTime()), "yyyyMM");
+        String lastestKey = TimeTools.getStringByFormat(new Date(cal.getTime().getTime()), "yyyyMM");
 
         StatBankBean lastStat = statBankDAO.findByBankIdAndTimeKey(bankBean.getId(), lastestKey);
 
@@ -176,6 +175,67 @@ public class StatBankManagerImpl implements StatBankManager
         newStat.setDescription("系统自动结余,锁定收款单:" + inLockNumber + "个,锁定付款单:" + outLockNumber + "个");
 
         statBankDAO.saveEntityBean(newStat);
+    }
+
+    public double findTotalByBankId(String bankId)
+    {
+        Calendar calNew = Calendar.getInstance();
+
+        calNew.add(Calendar.MONTH, -1);
+
+        // 获得上月的结余
+        String timeKey = TimeTools.getStringByFormat(new Date(calNew.getTime().getTime()), "yyyyMM");
+
+        StatBankBean lastStat = statBankDAO.findByBankIdAndTimeKey(bankId, timeKey);
+
+        if (lastStat == null)
+        {
+            lastStat = new StatBankBean();
+
+            lastStat.setTotal(0.0d);
+
+            lastStat.setBankId(bankId);
+
+            lastStat.setTimeKey(timeKey);
+        }
+
+        String ym = TimeTools.now("yyyy-MM-");
+
+        // 统计上一个月的余额
+        String beginTime = ym + "01 00:00:00";
+
+        String endTime = ym + "31 23:59:59";
+
+        ConditionParse inCon = new ConditionParse();
+
+        inCon.addWhereStr();
+
+        inCon.addCondition("InBillBean.bankId", "=", bankId);
+
+        inCon.addCondition("InBillBean.logTime", ">=", beginTime);
+
+        inCon.addCondition("InBillBean.logTime", "<=", endTime);
+
+        // 总收入
+        double inTotal = inBillDAO.sumByCondition(inCon) + lastStat.getTotal();
+
+        ConditionParse outCon = new ConditionParse();
+
+        outCon.addWhereStr();
+
+        outCon.addCondition("OutBillBean.bankId", "=", bankId);
+
+        outCon.addCondition("OutBillBean.logTime", ">=", beginTime);
+
+        outCon.addCondition("OutBillBean.logTime", "<=", endTime);
+
+        double outTotal = outBillDAO.sumByCondition(outCon);
+
+        // 月结余
+        double lastTotal = inTotal - outTotal;
+
+        // 本月统计
+        return lastTotal;
     }
 
     /**
@@ -262,5 +322,4 @@ public class StatBankManagerImpl implements StatBankManager
     {
         this.bankDAO = bankDAO;
     }
-
 }

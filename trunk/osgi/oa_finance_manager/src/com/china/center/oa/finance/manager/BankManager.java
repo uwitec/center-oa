@@ -9,9 +9,11 @@
 package com.china.center.oa.finance.manager;
 
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.BankBean;
+import com.china.center.oa.finance.listener.BankListener;
 
 
 /**
@@ -22,7 +24,7 @@ import com.china.center.oa.finance.bean.BankBean;
  * @see BankManager
  * @since 3.0
  */
-public interface BankManager
+public interface BankManager extends ListenerManager<BankListener>
 {
     boolean addBean(User user, BankBean bean)
         throws MYException;

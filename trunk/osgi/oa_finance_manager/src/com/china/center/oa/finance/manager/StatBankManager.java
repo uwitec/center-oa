@@ -22,4 +22,6 @@ public interface StatBankManager
      * 每月1号统计银行的结余
      */
     void statBank();
+
+    double findTotalByBankId(String bankId);
 }

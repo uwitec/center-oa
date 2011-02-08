@@ -231,4 +231,16 @@ public interface FinanceConstant
     @Defined(key = "outbillType", value = "税金")
     int OUTBILL_TYPE_DUTY = 9;
 
+    /**
+     * 销售单
+     */
+    @Defined(key = "invsoutType", value = "销售单")
+    int INSVSOUT_TYPE_OUT = 0;
+
+    /**
+     * 委托结算
+     */
+    @Defined(key = "invsoutType", value = "委托结算")
+    int INSVSOUT_TYPE_BALANCE = 1;
+
 }

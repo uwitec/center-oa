@@ -22,9 +22,11 @@ import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.manager.BillManager;
+import com.china.center.oa.finance.manager.StatBankManager;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.dao.OutDAO;
+import com.china.center.oa.stock.manager.StockManager;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
@@ -50,6 +52,10 @@ public class BillManagerImpl implements BillManager
     private CommonDAO commonDAO = null;
 
     private PaymentDAO paymentDAO = null;
+
+    private StockManager stockManager = null;
+
+    private StatBankManager statBankManager = null;
 
     private static Object LOCK = new Object();
 
@@ -89,8 +95,8 @@ public class BillManagerImpl implements BillManager
                 // 发现支付的金额过多
                 if (hasPay + bean.getMoneys() > out.getTotal())
                 {
-                    throw new MYException("销售单[%s]的总金额[%.2f],当前已付金额[%.2f],本次申请付款[%.2f],付款金额超出销售金额",
-                        bean.getOutId(), out.getTotal(), hasPay, bean.getMoneys());
+                    throw new MYException("销售单[%s]的总金额[%.2f],当前已付金额[%.2f],本次申请付款[%.2f],付款金额超出销售金额", bean.getOutId(),
+                        out.getTotal(), hasPay, bean.getMoneys());
                 }
 
                 // 更新已经支付的金额
@@ -164,9 +170,22 @@ public class BillManagerImpl implements BillManager
     {
         JudgeTools.judgeParameterIsNull(user, bean);
 
+        double total = statBankManager.findTotalByBankId(bean.getBankId());
+
+        if (total - bean.getMoneys() < 0)
+        {
+            throw new MYException("帐户剩余[%.2f],当前付款金额[%.2f],金额不足", total, bean.getMoneys());
+        }
+
         bean.setId(commonDAO.getSquenceString20());
 
         bean.setLogTime(TimeTools.now());
+
+        if ( !StringTools.isNullOrNone(bean.getStockItemId()))
+        {
+            // 关联采购项付款状态
+            stockManager.payStockItemWithoutTransaction(user, bean.getStockItemId());
+        }
 
         return outBillDAO.saveEntityBean(bean);
     }
@@ -332,5 +351,39 @@ public class BillManagerImpl implements BillManager
     public void setOutBillDAO(OutBillDAO outBillDAO)
     {
         this.outBillDAO = outBillDAO;
+    }
+
+    /**
+     * @return the statBankManager
+     */
+    public StatBankManager getStatBankManager()
+    {
+        return statBankManager;
+    }
+
+    /**
+     * @param statBankManager
+     *            the statBankManager to set
+     */
+    public void setStatBankManager(StatBankManager statBankManager)
+    {
+        this.statBankManager = statBankManager;
+    }
+
+    /**
+     * @return the stockManager
+     */
+    public StockManager getStockManager()
+    {
+        return stockManager;
+    }
+
+    /**
+     * @param stockManager
+     *            the stockManager to set
+     */
+    public void setStockManager(StockManager stockManager)
+    {
+        this.stockManager = stockManager;
     }
 }

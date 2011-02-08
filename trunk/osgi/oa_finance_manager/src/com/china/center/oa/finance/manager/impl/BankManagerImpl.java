@@ -9,14 +9,18 @@
 package com.china.center.oa.finance.manager.impl;
 
 
+import java.util.Collection;
+
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.expression.Expression;
 import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.dao.BankDAO;
+import com.china.center.oa.finance.listener.BankListener;
 import com.china.center.oa.finance.manager.BankManager;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.tools.JudgeTools;
@@ -31,7 +35,7 @@ import com.china.center.tools.JudgeTools;
  * @since 3.0
  */
 @Exceptional
-public class BankManagerImpl implements BankManager
+public class BankManagerImpl extends AbstractListenerManager<BankListener> implements BankManager
 {
     private BankDAO bankDAO = null;
 
@@ -64,6 +68,13 @@ public class BankManagerImpl implements BankManager
 
         bankDAO.saveEntityBean(bean);
 
+        Collection<BankListener> listenerMapValues = this.listenerMapValues();
+
+        for (BankListener bankListener : listenerMapValues)
+        {
+            bankListener.onAddBank(user, bean);
+        }
+
         return true;
     }
 
@@ -83,10 +94,15 @@ public class BankManagerImpl implements BankManager
 
         if (old == null)
         {
-            throw new MYException("数据错误,请确认操作");
+            throw new MYException("银行不能被删除,请确认操作");
         }
 
-        // TODO 银行被使用不能删除
+        Collection<BankListener> listenerMapValues = this.listenerMapValues();
+
+        for (BankListener bankListener : listenerMapValues)
+        {
+            bankListener.onDeleteBank(user, old);
+        }
 
         bankDAO.deleteEntityBean(id);
 

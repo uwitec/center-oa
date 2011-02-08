@@ -50,5 +50,7 @@
     <osgi:reference id="outDAO" interface="com.china.center.oa.sail.dao.OutDAO" />
     
     <osgi:reference id="outBalanceDAO" interface="com.china.center.oa.sail.dao.OutBalanceDAO" />
+    
+    <osgi:reference id="stockManager" interface="com.china.center.oa.stock.manager.StockManager" />
 	
 </beans>

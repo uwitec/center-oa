@@ -86,6 +86,8 @@ public class InvoiceinsBean implements Serializable
 
     private String logTime = "";
 
+    private String refIds = "";
+
     @Html(title = "备注", maxLength = 200, type = Element.TEXTAREA)
     private String description = "";
 
@@ -351,55 +353,33 @@ public class InvoiceinsBean implements Serializable
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue
-            .append("InvoiceinsBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("invoiceId = ")
-            .append(this.invoiceId)
-            .append(TAB)
-            .append("dutyId = ")
-            .append(this.dutyId)
-            .append(TAB)
-            .append("unit = ")
-            .append(this.unit)
-            .append(TAB)
-            .append("reveive = ")
-            .append(this.reveive)
-            .append(TAB)
-            .append("locationId = ")
-            .append(this.locationId)
-            .append(TAB)
-            .append("customerId = ")
-            .append(this.customerId)
-            .append(TAB)
-            .append("moneys = ")
-            .append(this.moneys)
-            .append(TAB)
-            .append("invoiceDate = ")
-            .append(this.invoiceDate)
-            .append(TAB)
-            .append("stafferId = ")
-            .append(this.stafferId)
-            .append(TAB)
-            .append("logTime = ")
-            .append(this.logTime)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append("itemList = ")
-            .append(this.itemList)
-            .append(TAB)
-            .append("vsList = ")
-            .append(this.vsList)
-            .append(TAB)
-            .append(" )");
+        retValue.append("InvoiceinsBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("invoiceId = ").append(this.invoiceId).append(TAB).append("dutyId = ").append(this.dutyId).append(
+            TAB).append("unit = ").append(this.unit).append(TAB).append("reveive = ").append(this.reveive).append(TAB).append(
+            "locationId = ").append(this.locationId).append(TAB).append("customerId = ").append(this.customerId).append(
+            TAB).append("moneys = ").append(this.moneys).append(TAB).append("invoiceDate = ").append(this.invoiceDate).append(
+            TAB).append("stafferId = ").append(this.stafferId).append(TAB).append("logTime = ").append(this.logTime).append(
+            TAB).append("description = ").append(this.description).append(TAB).append("itemList = ").append(
+            this.itemList).append(TAB).append("vsList = ").append(this.vsList).append(TAB).append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the refIds
+     */
+    public String getRefIds()
+    {
+        return refIds;
+    }
+
+    /**
+     * @param refIds
+     *            the refIds to set
+     */
+    public void setRefIds(String refIds)
+    {
+        this.refIds = refIds;
     }
 
 }

@@ -14,6 +14,7 @@ import java.io.Serializable;
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Html;
 import com.china.center.jdbc.annotation.Id;
+import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.Element;
@@ -45,6 +46,22 @@ public class BankBean implements Serializable
     @Join(tagClass = DutyBean.class)
     @Html(title = "纳税实体", type = Element.SELECT)
     private String dutyId = "";
+
+    /**
+     * 生成科目所使用
+     */
+    @Ignore
+    @Html(title = "科目编码", must = true, maxLength = 40)
+    private String code = "";
+
+    @Ignore
+    private int unit = 0;
+
+    @Ignore
+    private int department = 0;
+
+    @Ignore
+    private int staffer = 0;
 
     /**
      * 余额
@@ -147,41 +164,6 @@ public class BankBean implements Serializable
     }
 
     /**
-     * Constructs a <code>String</code> with all attributes in name = value format.
-     * 
-     * @return a <code>String</code> representation of this object.
-     */
-    public String toString()
-    {
-        final String TAB = ",";
-
-        StringBuilder retValue = new StringBuilder();
-
-        retValue
-            .append("BankBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("name = ")
-            .append(this.name)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("dutyId = ")
-            .append(this.dutyId)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append(" )");
-
-        return retValue.toString();
-    }
-
-    /**
      * @return the total
      */
     public double getTotal()
@@ -196,6 +178,95 @@ public class BankBean implements Serializable
     public void setTotal(double total)
     {
         this.total = total;
+    }
+
+    /**
+     * @return the code
+     */
+    public String getCode()
+    {
+        return code;
+    }
+
+    /**
+     * @param code
+     *            the code to set
+     */
+    public void setCode(String code)
+    {
+        this.code = code;
+    }
+
+    /**
+     * @return the unit
+     */
+    public int getUnit()
+    {
+        return unit;
+    }
+
+    /**
+     * @param unit
+     *            the unit to set
+     */
+    public void setUnit(int unit)
+    {
+        this.unit = unit;
+    }
+
+    /**
+     * @return the department
+     */
+    public int getDepartment()
+    {
+        return department;
+    }
+
+    /**
+     * @param department
+     *            the department to set
+     */
+    public void setDepartment(int department)
+    {
+        this.department = department;
+    }
+
+    /**
+     * @return the staffer
+     */
+    public int getStaffer()
+    {
+        return staffer;
+    }
+
+    /**
+     * @param staffer
+     *            the staffer to set
+     */
+    public void setStaffer(int staffer)
+    {
+        this.staffer = staffer;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuffer retValue = new StringBuffer();
+
+        retValue.append("BankBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(TAB).append(
+            "name = ").append(this.name).append(TAB).append("type = ").append(this.type).append(TAB).append("dutyId = ").append(
+            this.dutyId).append(TAB).append("code = ").append(this.code).append(TAB).append("unit = ").append(this.unit).append(
+            TAB).append("department = ").append(this.department).append(TAB).append("staffer = ").append(this.staffer).append(
+            TAB).append("total = ").append(this.total).append(TAB).append("description = ").append(this.description).append(
+            TAB).append(" )");
+
+        return retValue.toString();
     }
 
 }

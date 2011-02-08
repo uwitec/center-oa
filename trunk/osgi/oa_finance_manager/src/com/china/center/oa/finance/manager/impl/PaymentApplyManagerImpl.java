@@ -164,8 +164,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
                 if (total > lastMoney)
                 {
                     // 拆分此单
-                    billManager.splitInBillBeanWithoutTransactional(user, vsItem.getBillId(),
-                        (total - lastMoney));
+                    billManager.splitInBillBeanWithoutTransactional(user, vsItem.getBillId(), (total - lastMoney));
 
                     remove = true;
                 }
@@ -265,8 +264,8 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
 
         if (hasUsed + bean.getMoneys() > payment.getMoney())
         {
-            throw new MYException("回款使用金额溢出,总金额[%.2f],已使用金额[%.2f],本次申请金额[%.2f],请确认操作", payment
-                .getMoney(), hasUsed, bean.getMoneys());
+            throw new MYException("回款使用金额溢出,总金额[%.2f],已使用金额[%.2f],本次申请金额[%.2f],请确认操作", payment.getMoney(), hasUsed,
+                bean.getMoneys());
         }
     }
 
@@ -299,8 +298,8 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
 
         if (hasUsed + bean.getMoneys() > payment.getMoney())
         {
-            throw new MYException("回款使用金额溢出,总金额[%.2f],已使用金额[%.2f],本次申请金额[%.2f],请确认操作", payment
-                .getMoney(), hasUsed, bean.getMoneys());
+            throw new MYException("回款使用金额溢出,总金额[%.2f],已使用金额[%.2f],本次申请金额[%.2f],请确认操作", payment.getMoney(), hasUsed,
+                bean.getMoneys());
         }
     }
 
@@ -403,8 +402,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
                 {
                     inBean.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
 
-                    inBean.setDescription("自动生成收款单,从回款单:" + payment.getId() + ",关联的销售单:"
-                                          + item.getOutId());
+                    inBean.setDescription("自动生成收款单,从回款单:" + payment.getId() + ",关联的销售单:" + item.getOutId());
                 }
 
                 inBean.setOutId(item.getOutId());
@@ -460,12 +458,18 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
             // 发现支付的金额过多
             if (hasPay + out.getBadDebts() > out.getTotal())
             {
-                throw new MYException("销售单[%s]的总金额[%.2f],当前已付金额[%.2f],坏账金额[%.2f],付款金额超出销售金额",
-                    outId, out.getTotal(), hasPay, out.getBadDebts());
+                throw new MYException("销售单[%s]的总金额[%.2f],当前已付金额[%.2f],坏账金额[%.2f],付款金额超出销售金额", outId, out.getTotal(),
+                    hasPay, out.getBadDebts());
             }
 
             // 更新已经支付的金额
             outDAO.updateHadPay(outId, hasPay);
+
+            // 如果全部支付就自动表示收款
+            if (out.getTotal() == hasPay)
+            {
+                outDAO.modifyPay(outId, OutConstant.PAY_YES);
+            }
         }
 
         if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_PAYMENT)
@@ -487,8 +491,8 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
                 // 发现支付的金额过多
                 if (hasPay + out.getBadDebts() > out.getTotal())
                 {
-                    throw new MYException("销售单[%s]的总金额[%.2f],当前已付金额[%.2f],坏账金额[%.2f],付款金额超出销售金额",
-                        outId, out.getTotal(), hasPay, out.getBadDebts());
+                    throw new MYException("销售单[%s]的总金额[%.2f],当前已付金额[%.2f],坏账金额[%.2f],付款金额超出销售金额", outId,
+                        out.getTotal(), hasPay, out.getBadDebts());
                 }
 
                 // 更新已经支付的金额
@@ -568,8 +572,8 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
 
         if (hasUsed + apply.getMoneys() > payment.getMoney())
         {
-            throw new MYException("回款使用金额溢出,总金额[%.2f],已使用金额[%.2f],本次申请金额[%.2f],请确认操作", payment
-                .getMoney(), hasUsed, apply.getMoneys());
+            throw new MYException("回款使用金额溢出,总金额[%.2f],已使用金额[%.2f],本次申请金额[%.2f],请确认操作", payment.getMoney(), hasUsed,
+                apply.getMoneys());
         }
 
         return apply;

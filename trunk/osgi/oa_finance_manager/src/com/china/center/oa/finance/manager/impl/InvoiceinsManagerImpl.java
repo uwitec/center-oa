@@ -19,6 +19,7 @@ import com.china.center.common.MYException;
 import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.oa.finance.bean.InvoiceinsBean;
 import com.china.center.oa.finance.bean.InvoiceinsItemBean;
+import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.dao.InsVSOutDAO;
 import com.china.center.oa.finance.dao.InvoiceinsDAO;
 import com.china.center.oa.finance.dao.InvoiceinsItemDAO;
@@ -26,8 +27,10 @@ import com.china.center.oa.finance.manager.InvoiceinsManager;
 import com.china.center.oa.finance.vo.InvoiceinsVO;
 import com.china.center.oa.finance.vs.InsVSOutBean;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
+import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.ListTools;
@@ -50,6 +53,8 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
     private InvoiceinsDAO invoiceinsDAO = null;
 
     private InvoiceinsItemDAO invoiceinsItemDAO = null;
+
+    private OutBalanceDAO outBalanceDAO = null;
 
     private InsVSOutDAO insVSOutDAO = null;
 
@@ -94,32 +99,66 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
 
                 insVSOutBean.setInsId(bean.getId());
 
-                OutBean out = outDAO.find(insVSOutBean.getOutId());
-
-                if (out == null)
+                if (insVSOutBean.getType() == FinanceConstant.INSVSOUT_TYPE_OUT)
                 {
-                    throw new MYException("数据错误,请确认操作");
+                    // 销售单
+                    OutBean out = outDAO.find(insVSOutBean.getOutId());
+
+                    if (out == null)
+                    {
+                        throw new MYException("数据错误,请确认操作");
+                    }
+
+                    if (insVSOutBean.getMoneys() + out.getInvoiceMoney() > out.getTotal())
+                    {
+                        // TEMPLATE 数字格式化显示
+                        throw new MYException("单据[%s]开票溢出,开票金额[%.2f],销售金额[%.2f]", out.getFullId(),
+                            (insVSOutBean.getMoneys() + out.getInvoiceMoney()), out.getTotal());
+                    }
+
+                    if (insVSOutBean.getMoneys() + out.getInvoiceMoney() == out.getTotal())
+                    {
+                        // 更新开票状态-结束
+                        outDAO.updateInvoiceStatus(out.getFullId(), out.getTotal(), OutConstant.INVOICESTATUS_END);
+                    }
+
+                    if (insVSOutBean.getMoneys() + out.getInvoiceMoney() < out.getTotal())
+                    {
+                        // 更新开票状态-过程
+                        outDAO.updateInvoiceStatus(out.getFullId(), (insVSOutBean.getMoneys() + out.getInvoiceMoney()),
+                            OutConstant.INVOICESTATUS_INIT);
+                    }
                 }
-
-                if (insVSOutBean.getMoneys() + out.getInvoiceMoney() > out.getTotal())
+                else
                 {
-                    // TEMPLATE 数字格式化显示
-                    throw new MYException("单据[%s]开票溢出,开票金额[%.2f],销售金额[%.2f]", out.getFullId(),
-                        (insVSOutBean.getMoneys() + out.getInvoiceMoney()), out.getTotal());
-                }
+                    // 结算清单
+                    OutBalanceBean balance = outBalanceDAO.find(insVSOutBean.getOutId());
 
-                if (insVSOutBean.getMoneys() + out.getInvoiceMoney() == out.getTotal())
-                {
-                    // 更新开票状态-结束
-                    outDAO.updateInvoiceStatus(out.getFullId(), out.getTotal(),
-                        OutConstant.INVOICESTATUS_END);
-                }
+                    if (balance == null)
+                    {
+                        throw new MYException("数据错误,请确认操作");
+                    }
 
-                if (insVSOutBean.getMoneys() + out.getInvoiceMoney() < out.getTotal())
-                {
-                    // 更新开票状态-过程
-                    outDAO.updateInvoiceStatus(out.getFullId(), (insVSOutBean.getMoneys() + out
-                        .getInvoiceMoney()), OutConstant.INVOICESTATUS_INIT);
+                    if (insVSOutBean.getMoneys() + balance.getInvoiceMoney() > balance.getTotal())
+                    {
+                        // TEMPLATE 数字格式化显示
+                        throw new MYException("委托结算单[%s]开票溢出,开票金额[%.2f],销售金额[%.2f]", balance.getId(),
+                            (insVSOutBean.getMoneys() + balance.getInvoiceMoney()), balance.getTotal());
+                    }
+
+                    if (insVSOutBean.getMoneys() + balance.getInvoiceMoney() == balance.getTotal())
+                    {
+                        // 更新开票状态-结束
+                        outBalanceDAO.updateInvoiceStatus(balance.getId(), balance.getTotal(),
+                            OutConstant.INVOICESTATUS_END);
+                    }
+
+                    if (insVSOutBean.getMoneys() + balance.getInvoiceMoney() < balance.getTotal())
+                    {
+                        // 更新开票状态-过程
+                        outBalanceDAO.updateInvoiceStatus(balance.getId(),
+                            (insVSOutBean.getMoneys() + balance.getInvoiceMoney()), OutConstant.INVOICESTATUS_INIT);
+                    }
                 }
             }
 
@@ -249,5 +288,22 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
     public void setOutDAO(OutDAO outDAO)
     {
         this.outDAO = outDAO;
+    }
+
+    /**
+     * @return the outBalanceDAO
+     */
+    public OutBalanceDAO getOutBalanceDAO()
+    {
+        return outBalanceDAO;
+    }
+
+    /**
+     * @param outBalanceDAO
+     *            the outBalanceDAO to set
+     */
+    public void setOutBalanceDAO(OutBalanceDAO outBalanceDAO)
+    {
+        this.outBalanceDAO = outBalanceDAO;
     }
 }
