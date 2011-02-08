@@ -26,7 +26,7 @@ import com.china.center.oa.publics.constant.PublicConstant;
  * @see
  * @since
  */
-@Entity(cache = true)
+@Entity(cache = false)
 @Table(name = "T_CENTER_AUTH")
 public class AuthBean implements DataClone<AuthBean>, Serializable
 {

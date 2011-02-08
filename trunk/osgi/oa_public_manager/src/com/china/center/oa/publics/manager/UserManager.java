@@ -37,8 +37,7 @@ public interface UserManager
     boolean delBean(User user, String id)
         throws MYException;
 
-    User findUser(String id)
-        throws MYException;
+    User findUser(String id);
 
     boolean containAuth(User user, String... authId);
 

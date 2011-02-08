@@ -264,10 +264,7 @@ public class UserManagerImpl implements UserManager
     }
 
     public User findUser(String id)
-        throws MYException
     {
-        JudgeTools.judgeParameterIsNull(id);
-
         UserVO user = userDAO.findVO(id);
 
         if (user == null)
@@ -339,12 +336,9 @@ public class UserManagerImpl implements UserManager
      */
     public boolean containAuth(String id, String authId)
     {
-        User user = null;
-        try
-        {
-            user = findUser(id);
-        }
-        catch (MYException e)
+        User user = findUser(id);
+
+        if (user == null)
         {
             return false;
         }

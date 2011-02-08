@@ -608,4 +608,15 @@ public interface AuthConstant
      * 付款操作
      */
     String OUTBILL_OPR = "1607";
+
+    /**
+     * 科目操作
+     */
+    String TAX_OPR = "1801";
+
+    /**
+     * 凭证操作
+     */
+    String FINANCE_OPR = "1802";
+
 }

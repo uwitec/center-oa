@@ -195,4 +195,9 @@ public interface PublicConstant
     @Defined(key = "oprMode", value = "提交")
     int OPRMODE_SUBMIT = 2;
 
+    /**
+     * 默认纳税实体
+     */
+    String DEFAULR_DUTY_ID = "90201008080000000001";
+
 }
