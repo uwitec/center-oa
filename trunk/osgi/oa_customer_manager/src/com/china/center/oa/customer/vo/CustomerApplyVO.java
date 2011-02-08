@@ -31,6 +31,9 @@ public class CustomerApplyVO extends CustomerApplyBean
     @Relationship(tagField = "name", relationField = "cityId")
     private String cityName = "";
 
+    @Relationship(tagField = "name", relationField = "areaId")
+    private String areaName = "";
+
     @Relationship(tagField = "name", relationField = "updaterId")
     private String stafferName = "";
 
@@ -113,6 +116,23 @@ public class CustomerApplyVO extends CustomerApplyBean
     }
 
     /**
+     * @return the areaName
+     */
+    public String getAreaName()
+    {
+        return areaName;
+    }
+
+    /**
+     * @param areaName
+     *            the areaName to set
+     */
+    public void setAreaName(String areaName)
+    {
+        this.areaName = areaName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -121,25 +141,12 @@ public class CustomerApplyVO extends CustomerApplyBean
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("CustomerApplyVO ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("provinceName = ")
-            .append(this.provinceName)
-            .append(TAB)
-            .append("cityName = ")
-            .append(this.cityName)
-            .append(TAB)
-            .append("stafferName = ")
-            .append(this.stafferName)
-            .append(TAB)
-            .append("hlocalName = ")
-            .append(this.hlocalName)
-            .append(TAB)
-            .append(" )");
+        retValue.append("CustomerApplyVO ( ").append(super.toString()).append(TAB).append("provinceName = ").append(
+            this.provinceName).append(TAB).append("cityName = ").append(this.cityName).append(TAB).append("areaName = ").append(
+            this.areaName).append(TAB).append("stafferName = ").append(this.stafferName).append(TAB).append(
+            "hlocalName = ").append(this.hlocalName).append(TAB).append(" )");
 
         return retValue.toString();
     }

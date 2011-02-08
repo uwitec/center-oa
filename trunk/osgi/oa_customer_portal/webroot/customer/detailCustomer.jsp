@@ -30,24 +30,13 @@ function load()
         setOption($O('provinceId'), pList[i].id, pList[i].name);
     }
     
-    changes($O('cityId'));
-    
     loadForm();
     
-    changes($O('cityId'));
+    //changes($O('cityId'));
     
-    loadForm();
+    //loadForm();
     
-    changeArea();
     
-    setAllReadOnly();
-    
-    if (updateCode == '1')
-    {
-        $r('code', false);
-        
-        $O('code').value = '';
-    }
     
     //testclip();
 }
@@ -168,10 +157,11 @@ function testclip()
 
             <p:pro field="provinceId"
                 innerString="quick=true onchange=changes(this)" />
-           <p:pro field="cityId" innerString="quick=true onchange=changeArea(this)" />
+                
+            <p:cell title="地市">${bean.cityName}</p:cell>
             
-            <p:pro field="areaId" innerString="quick=true" cell="2"/>
-
+            <p:cell title="县区" end="true">${bean.areaName}</p:cell>
+                
             <p:pro field="selltype" innerString="quick=true">
                 <p:option type="101"></p:option>
             </p:pro>

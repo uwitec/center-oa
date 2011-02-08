@@ -65,7 +65,7 @@ public interface DAO<Bean extends Serializable, VO extends Serializable>
      * @param key
      * @return
      */
-    boolean deleteEntityBean(Serializable key);
+    boolean deleteEntityBean(Serializable id);
 
     /**
      * delete all bean in table
@@ -118,10 +118,10 @@ public interface DAO<Bean extends Serializable, VO extends Serializable>
     /**
      * find unique entity bean
      * 
-     * @param key
+     * @param id
      * @return
      */
-    Bean find(Serializable key);
+    Bean find(Serializable id);
 
     /**
      * find unique entity bean

@@ -127,9 +127,15 @@ public abstract class BeanTools
         return "update " + getTableName(claz) + " " + getClassName(claz) + " ";
     }
 
+    /**
+     * MYSQL的删除不能增加表后缀
+     * 
+     * @param claz
+     * @return
+     */
     public static String getDeleteHead(Class<?> claz)
     {
-        return "delete from " + getTableName(claz) + " " + getClassName(claz) + " ";
+        return "delete from " + getTableName(claz) + " ";
     }
 
     public static String getCountHead(Class<?> claz)
@@ -139,8 +145,7 @@ public abstract class BeanTools
 
     public static String getSumHead(Class<?> claz, String sumField)
     {
-        return "select sum(" + sumField + ") from " + getTableName(claz) + " " + getClassName(claz)
-               + " ";
+        return "select sum(" + sumField + ") from " + getTableName(claz) + " " + getClassName(claz) + " ";
     }
 
     /**
@@ -463,8 +468,7 @@ public abstract class BeanTools
      * @throws MYSqlException
      */
     public static <T> List<T> getBeans(List<Map> list, Class<T> claz)
-        throws InstantiationException, IllegalAccessException, InvocationTargetException,
-        NoSuchMethodException
+        throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException
     {
         List<T> result = new ArrayList<T>(list.size());
 
@@ -494,8 +498,8 @@ public abstract class BeanTools
     }
 
     public static <T> T getBean(Map map, Class<T> claz)
-        throws InstantiationException, IllegalAccessException, InvocationTargetException,
-        NoSuchMethodException, MYSqlException
+        throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException,
+        MYSqlException
     {
         T obj = claz.newInstance();
 
