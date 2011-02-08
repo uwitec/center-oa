@@ -18,6 +18,25 @@ function selectCus()
     window.common.modal('../provider/provider.do?method=rptQueryProvider&load=1');
 }
 
+function selectStockItem()
+{
+	if ($$('type') != 0)
+	{
+		alert('请选择采购付款');
+        
+        return false;
+	}
+	
+	if ($O('provideId').value == '')
+    {
+        alert('请选择供应商');
+        
+        return false;
+    }
+    
+    window.common.modal('../stock/stock.do?method=rptQueryStockItem&load=1&providerId=' + $$('provideId'));
+}
+
 function getProvider(id, name)
 {
     $O('provideId').value = id;
@@ -36,14 +55,40 @@ function getStaffers(oo)
     $O('ownerId').value = obj.value;
     $O('ownerName').value = obj.pname;
 }
+
+function getStockItem(oo)
+{
+    var obj = oo[0];
+    
+    $O('stockItemId').value = obj.value;
+    $O('stockId').value = obj.pid;
+    $O('moneys').value = obj.ptotal;
+}
+
+function changeAll()
+{
+	$O('stockItemId').value = '';
+    $O('stockId').value = '';
+    $O('moneys').value = '';
+    
+    if ($$('type') == 0)
+    {
+    	$O('moneys').readOnly = true;
+    }
+    else
+    {
+    	$O('moneys').readOnly = false;
+    }
+}
 </script>
 
 </head>
-<body class="body_class">
+<body class="body_class" onload="changeAll()">
 <form name="formEntry" action="../finance/bill.do" method="post">
 <input type="hidden" name="method" value="addOutBill">
 <input type="hidden" name="provideId" value="">
 <input type="hidden" name="ownerId" value="">
+<input type="hidden" name="stockId" value="">
 
 <p:navigation
 	height="22">
@@ -74,7 +119,7 @@ function getStaffers(oo)
                 <p:option type="outbillPayType"/>
             </p:pro>
 			
-			<p:pro field="type">
+			<p:pro field="type" innerString="onchange=changeAll()">
 				<p:option type="outbillType"/>
 			</p:pro>
 			
@@ -88,6 +133,11 @@ function getStaffers(oo)
             <p:pro field="provideId" innerString="size=60">
                 <input type="button" value="&nbsp;选 择&nbsp;" name="qout1" id="qout1"
                     class="button_class" onclick="selectCus()">&nbsp;
+            </p:pro>
+            
+            <p:pro field="stockItemId" innerString="size=60">
+                <input type="button" value="&nbsp;选 择&nbsp;" name="qout5" id="qout5"
+                    class="button_class" onclick="selectStockItem()">&nbsp;
             </p:pro>
             
             <p:pro field="ownerId" innerString="size=60">

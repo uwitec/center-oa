@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="收款单详细" />
+<p:link title="付款单详细" />
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
@@ -18,14 +18,14 @@
 <form name="formEntry" action="../finance/invoiceins.do" method="post">
 <input type="hidden" name="method" value=""> <p:navigation
 	height="22">
-	<td width="550" class="navigation"><span>收款单详细</td>
+	<td width="550" class="navigation"><span>付款单详细</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
 <p:body width="98%">
 
 	<p:title>
-		<td class="caption"><strong>收款单信息：</strong></td>
+		<td class="caption"><strong>付款单信息：</strong></td>
 	</p:title>
 
 	<p:line flag="0" />
@@ -65,7 +65,7 @@
             </p:cell>
 			
 			<p:cell title="关联单据">
-			    ${bean.stockId}
+			    ${bean.stockId}-->${bean.stockItemId}
             </p:cell>
             
             <p:cell title="开单人">

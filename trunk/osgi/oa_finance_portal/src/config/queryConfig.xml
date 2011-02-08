@@ -12,6 +12,12 @@
             <type>select</type>
             <option>$bankType</option>
         </condtion>
+        <condtion name="dutyId" caption="纳税实体">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$dutyList</option>
+        </condtion>
     </item>
     
     <item name="queryPayment" deaultpfix="PaymentBean">
@@ -83,6 +89,10 @@
             <option>$invoiceList</option>
         </condtion>
         <condtion name="unit" caption="开票单位">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="refIds" caption="单据标识">
             <opr>like</opr>
             <type>text</type>
         </condtion>
@@ -244,6 +254,19 @@
             <datatype>1</datatype>
             <type>select</type>
             <option>$billLock</option>
+        </condtion>
+    </item>
+    
+    <item name="queryStat" deaultpfix="StatBankBean">
+        <condtion name="timeKey" filed="timeKey" caption="统计年月(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="bankId" caption="帐户">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$bankList</option>
         </condtion>
     </item>
     

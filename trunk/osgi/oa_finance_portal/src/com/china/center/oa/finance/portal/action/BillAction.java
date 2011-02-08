@@ -77,8 +77,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryInBill(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse response)
+    public ActionForward queryInBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -93,8 +93,7 @@ public class BillAction extends DispatchAction
 
         condtion.addCondition("order by InBillBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYINBILL, request, condtion,
-            this.inBillDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYINBILL, request, condtion, this.inBillDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -109,8 +108,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryOutBill(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse response)
+    public ActionForward queryOutBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -125,8 +124,7 @@ public class BillAction extends DispatchAction
 
         condtion.addCondition("order by OutBillBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYOUTBILL, request, condtion,
-            this.outBillDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYOUTBILL, request, condtion, this.outBillDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -141,11 +139,11 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddInBill(ActionMapping mapping, ActionForm form,
-                                         HttpServletRequest request, HttpServletResponse response)
+    public ActionForward preForAddInBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                         HttpServletResponse response)
         throws ServletException
     {
-        List<BankBean> banlList = bankDAO.listEntityBeans();
+        List<BankBean> banlList = bankDAO.listEntityBeans("order by BankBean.name");
 
         request.setAttribute("bankList", banlList);
 
@@ -162,11 +160,11 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddOutBill(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse response)
+    public ActionForward preForAddOutBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse response)
         throws ServletException
     {
-        List<BankBean> banlList = bankDAO.listEntityBeans();
+        List<BankBean> banlList = bankDAO.listEntityBeans("order by BankBean.name");
 
         request.setAttribute("bankList", banlList);
 
@@ -187,8 +185,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addInBill(ActionMapping mapping, ActionForm form,
-                                   HttpServletRequest request, HttpServletResponse response)
+    public ActionForward addInBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                   HttpServletResponse response)
         throws ServletException
     {
         InBillBean bean = new InBillBean();
@@ -233,8 +231,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addOutBill(ActionMapping mapping, ActionForm form,
-                                    HttpServletRequest request, HttpServletResponse response)
+    public ActionForward addOutBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                    HttpServletResponse response)
         throws ServletException
     {
         OutBillBean bean = new OutBillBean();
@@ -277,8 +275,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteInBill(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse response)
+    public ActionForward deleteInBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -313,8 +311,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteOutBill(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse response)
+    public ActionForward deleteOutBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -349,8 +347,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward querySelfInBill(ActionMapping mapping, ActionForm form,
-                                         HttpServletRequest request, HttpServletResponse response)
+    public ActionForward querySelfInBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                         HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -367,8 +365,7 @@ public class BillAction extends DispatchAction
 
         condtion.addCondition("order by InBillBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFINBILL, request, condtion,
-            this.inBillDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFINBILL, request, condtion, this.inBillDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -384,8 +381,7 @@ public class BillAction extends DispatchAction
      * @throws ServletException
      */
     public ActionForward preForBingInBillByCustomerId(ActionMapping mapping, ActionForm form,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse response)
+                                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String customerId = request.getParameter("customerId");
@@ -421,8 +417,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findInBill(ActionMapping mapping, ActionForm form,
-                                    HttpServletRequest request, HttpServletResponse response)
+    public ActionForward findInBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                    HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -449,8 +445,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findOutBill(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse response)
+    public ActionForward findOutBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -477,8 +473,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward splitInBill(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse response)
+    public ActionForward splitInBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();

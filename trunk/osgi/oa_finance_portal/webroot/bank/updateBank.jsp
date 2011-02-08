@@ -39,13 +39,13 @@ function addBean()
 
 		<p:table cells="1">
 
-			<p:pro field="name" innerString="size=60"/>
+			<p:pro field="name" innerString="size=60 readonly=readonly"/>
             
-            <p:pro field="type" innerString="readonly=true">
+            <p:pro field="type">
                 <p:option type="bankType"/>
             </p:pro>
             
-            <p:pro field="dutyId" innerString="readonly=true">
+            <p:pro field="dutyId">
                 <p:option type="dutyList"/>
             </p:pro>
 

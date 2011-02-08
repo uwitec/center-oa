@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="收款单管理" link="true" guid="true" cal="true" dialog="true" />
+<p:link title="付款单管理" link="true" guid="true" cal="true" dialog="true" />
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
@@ -22,12 +22,12 @@ function load()
      preload();
      
      guidMap = {
-         title: '收款单列表',
+         title: '付款单列表',
          url: gurl + 'query' + ukey,
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} llock={lock}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},
-             {display: '帐号', name : 'bankName', width : '10%'},
+             {display: '帐号', name : 'bankName', sortable : true, cname: 'bankId', width : '10%'},
              {display: '类型', name : 'type', cc: 'outbillType', width : '8%'},
              {display: '付款方式', name : 'payType', cc: 'outbillPayType', width : '8%'},
              {display: '锁定', name : 'lock', cc: 'billLock', width : '8%'},

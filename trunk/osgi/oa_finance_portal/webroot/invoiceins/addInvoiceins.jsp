@@ -124,6 +124,17 @@ function opens()
     window.common.modal('../sail/out.do?method=rptQueryOut&mode=1&selectMode=1&invoiceStatus=0&load=1&invoiceId=' + $$('invoiceId') + '&dutyId=' + $$('dutyId') + '&customerId=' + $$('customerId'));
 }
 
+function openBalance()
+{
+    if ($O('customerId').value == '')
+    {
+        alert('请选择客户');
+        return false;
+    }
+    window.common.modal('../sail/out.do?method=rptQueryOutBalance&mode=1&type=0&selectMode=1&invoiceStatus=0&load=1&invoiceId=' + $$('invoiceId') + '&dutyId=' + $$('dutyId') + '&customerId=' + $$('customerId'));
+}
+
+
 function getOut(oos)
 {
     var outId = $$('outId');
@@ -145,6 +156,11 @@ function getOut(oos)
     $O('outId').value = outId;
     
     $O('mayMoney').value = oldm;
+}
+
+function getOutBalance(oos)
+{
+	return getOut(oos);
 }
 
 function clears()
@@ -214,8 +230,10 @@ function getCustomer(obj)
 			
 			<p:cell title="关联单据" end="true">
 			    <input type="text" size="60" readonly="readonly" name="outId"> 
-                <input type="button" value="&nbsp;选 择&nbsp;" name="qout" id="qout"
+                <input type="button" value="&nbsp;销售单&nbsp;" name="qout" id="qout"
                     class="button_class" onclick="opens()">&nbsp;
+                 <input type="button" value="&nbsp;委托清单&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="openBalance()">&nbsp;
                 <input type="button" value="&nbsp;清 空&nbsp;" name="qout" id="qout"
                     class="button_class" onclick="clears()">&nbsp;&nbsp;
             </p:cell>

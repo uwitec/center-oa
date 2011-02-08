@@ -33,6 +33,7 @@ import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.actionhelper.json.AjaxResult;
+import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
@@ -46,7 +47,9 @@ import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.PaymentApplyDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.dao.PaymentVSOutDAO;
+import com.china.center.oa.finance.dao.StatBankDAO;
 import com.china.center.oa.finance.facade.FinanceFacade;
+import com.china.center.oa.finance.manager.StatBankManager;
 import com.china.center.oa.finance.vo.BankVO;
 import com.china.center.oa.finance.vo.InBillVO;
 import com.china.center.oa.finance.vo.PaymentApplyVO;
@@ -102,6 +105,10 @@ public class FinanceAction extends DispatchAction
 
     private PaymentApplyDAO paymentApplyDAO = null;
 
+    private StatBankManager statBankManager = null;
+
+    private StatBankDAO statBankDAO = null;
+
     private static final String QUERYBANK = "queryBank";
 
     private static final String RPTQUERYBANK = "rptQueryBank";
@@ -111,6 +118,8 @@ public class FinanceAction extends DispatchAction
     private static final String QUERYSELFPAYMENT = "querySelfPayment";
 
     private static final String QUERYPAYMENTAPPLY = "queryPaymentApply";
+
+    private static final String QUERYSTAT = "queryStat";
 
     private static final String QUERYSELFPAYMENTAPPLY = "querySelfPaymentApply";
 
@@ -131,8 +140,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddBank(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse response)
+    public ActionForward preForAddBank(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse response)
         throws ServletException
     {
         List<DutyBean> dutyList = dutyDAO.listEntityBeans();
@@ -142,8 +151,18 @@ public class FinanceAction extends DispatchAction
         return mapping.findForward("addBank");
     }
 
-    public ActionForward queryBank(ActionMapping mapping, ActionForm form,
-                                   HttpServletRequest request, HttpServletResponse response)
+    /**
+     * queryBank
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryBank(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                   HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -152,8 +171,43 @@ public class FinanceAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYBANK, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYBANK, request, condtion,
-            this.bankDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYBANK, request, condtion, this.bankDAO,
+            new HandleResult<BankVO>()
+            {
+                public void handle(BankVO obj)
+                {
+                    double total = statBankManager.findTotalByBankId(obj.getId());
+
+                    obj.setTotal(total);
+                }
+            });
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryStat
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryStat(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                   HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        ActionTools.processJSONQueryCondition(QUERYSTAT, request, condtion);
+
+        condtion.addCondition("order by StatBankBean.logTime desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSTAT, request, condtion, this.statBankDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -168,8 +222,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryPaymentApply(ActionMapping mapping, ActionForm form,
-                                           HttpServletRequest request, HttpServletResponse response)
+    public ActionForward queryPaymentApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                           HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -182,8 +236,7 @@ public class FinanceAction extends DispatchAction
 
         condtion.addCondition("PaymentApplyBean.locationId", "=", user.getLocationId());
 
-        condtion.addIntCondition("PaymentApplyBean.status", "=",
-            FinanceConstant.PAYAPPLY_STATUS_INIT);
+        condtion.addIntCondition("PaymentApplyBean.status", "=", FinanceConstant.PAYAPPLY_STATUS_INIT);
 
         condtion.addCondition("order by PaymentApplyBean.logTime desc");
 
@@ -203,8 +256,7 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward querySelfPaymentApply(ActionMapping mapping, ActionForm form,
-                                               HttpServletRequest request,
+    public ActionForward querySelfPaymentApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                                HttpServletResponse response)
         throws ServletException
     {
@@ -220,8 +272,8 @@ public class FinanceAction extends DispatchAction
 
         condtion.addCondition("order by PaymentApplyBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFPAYMENTAPPLY, request,
-            condtion, this.paymentApplyDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFPAYMENTAPPLY, request, condtion,
+            this.paymentApplyDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -236,8 +288,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryPayment(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse response)
+    public ActionForward queryPayment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -250,14 +302,13 @@ public class FinanceAction extends DispatchAction
 
         condtion.addCondition("order by PaymentBean.id desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPAYMENT, request, condtion,
-            this.paymentDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPAYMENT, request, condtion, this.paymentDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
 
-    public ActionForward querySelfPayment(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse response)
+    public ActionForward querySelfPayment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -271,8 +322,7 @@ public class FinanceAction extends DispatchAction
 
         condtion.addCondition("order by PaymentBean.id desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFPAYMENT, request, condtion,
-            this.paymentDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFPAYMENT, request, condtion, this.paymentDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -316,8 +366,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryBank(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward rptQueryBank(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -344,8 +394,8 @@ public class FinanceAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYBANK);
 
-            list = bankDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
-                RPTQUERYBANK), PageSeparateTools.getPageSeparate(request, RPTQUERYBANK));
+            list = bankDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, RPTQUERYBANK),
+                PageSeparateTools.getPageSeparate(request, RPTQUERYBANK));
         }
 
         List<DutyBean> dutyList = dutyDAO.listEntityBeans();
@@ -390,8 +440,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addBank(ActionMapping mapping, ActionForm form,
-                                 HttpServletRequest request, HttpServletResponse response)
+    public ActionForward addBank(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                 HttpServletResponse response)
         throws ServletException
     {
         BankBean bean = new BankBean();
@@ -428,8 +478,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateBank(ActionMapping mapping, ActionForm form,
-                                    HttpServletRequest request, HttpServletResponse response)
+    public ActionForward updateBank(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                    HttpServletResponse response)
         throws ServletException
     {
         BankBean bean = new BankBean();
@@ -466,8 +516,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteBank(ActionMapping mapping, ActionForm form,
-                                    HttpServletRequest request, HttpServletResponse response)
+    public ActionForward deleteBank(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                    HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -502,8 +552,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deletePayment(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse response)
+    public ActionForward deletePayment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -538,8 +588,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deletePaymentApply(ActionMapping mapping, ActionForm form,
-                                            HttpServletRequest request, HttpServletResponse response)
+    public ActionForward deletePaymentApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                            HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -574,8 +624,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward drawPayment(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse response)
+    public ActionForward drawPayment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse response)
         throws ServletException
     {
         try
@@ -613,8 +663,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward drawPayment2(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse response)
+    public ActionForward drawPayment2(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse response)
         throws ServletException
     {
         try
@@ -650,8 +700,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward drawPayment3(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse response)
+    public ActionForward drawPayment3(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse response)
         throws ServletException
     {
         try
@@ -706,8 +756,7 @@ public class FinanceAction extends DispatchAction
 
             String outMoney = request.getParameter("outMoney" + i);
 
-            if (StringTools.isNullOrNone(outMoney)
-                || MathTools.parseDouble(outMoney.trim()) == 0.0d)
+            if (StringTools.isNullOrNone(outMoney) || MathTools.parseDouble(outMoney.trim()) == 0.0d)
             {
                 continue;
             }
@@ -829,8 +878,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward dropPayment(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse response)
+    public ActionForward dropPayment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -865,8 +914,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findBank(ActionMapping mapping, ActionForm form,
-                                  HttpServletRequest request, HttpServletResponse response)
+    public ActionForward findBank(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                  HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -906,8 +955,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForRefBill(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse response)
+    public ActionForward preForRefBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse response)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -965,8 +1014,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward uploadPayment(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse response)
+    public ActionForward uploadPayment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -1032,16 +1081,12 @@ public class FinanceAction extends DispatchAction
                         }
                         catch (MYException e)
                         {
-                            builder.append("第[" + currentNumber + "]错误:").append(
-                                e.getErrorContent()).append("<br>");
+                            builder.append("第[" + currentNumber + "]错误:").append(e.getErrorContent()).append("<br>");
                         }
                     }
                     else
                     {
-                        builder
-                            .append("第[" + currentNumber + "]错误:")
-                            .append("数据长度不足4格,备注可以为空")
-                            .append("<br>");
+                        builder.append("第[" + currentNumber + "]错误:").append("数据长度不足4格,备注可以为空").append("<br>");
                     }
 
                     if (addSucess)
@@ -1124,8 +1169,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findPayment(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse response)
+    public ActionForward findPayment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1176,8 +1221,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findPaymentApply(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse response)
+    public ActionForward findPaymentApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1229,8 +1274,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward passPaymentApply(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse response)
+    public ActionForward passPaymentApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1267,8 +1312,8 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rejectPaymentApply(ActionMapping mapping, ActionForm form,
-                                            HttpServletRequest request, HttpServletResponse response)
+    public ActionForward rejectPaymentApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                            HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1463,6 +1508,40 @@ public class FinanceAction extends DispatchAction
     public void setOutDAO(OutDAO outDAO)
     {
         this.outDAO = outDAO;
+    }
+
+    /**
+     * @return the statBankManager
+     */
+    public StatBankManager getStatBankManager()
+    {
+        return statBankManager;
+    }
+
+    /**
+     * @param statBankManager
+     *            the statBankManager to set
+     */
+    public void setStatBankManager(StatBankManager statBankManager)
+    {
+        this.statBankManager = statBankManager;
+    }
+
+    /**
+     * @return the statBankDAO
+     */
+    public StatBankDAO getStatBankDAO()
+    {
+        return statBankDAO;
+    }
+
+    /**
+     * @param statBankDAO
+     *            the statBankDAO to set
+     */
+    public void setStatBankDAO(StatBankDAO statBankDAO)
+    {
+        this.statBankDAO = statBankDAO;
     }
 
 }

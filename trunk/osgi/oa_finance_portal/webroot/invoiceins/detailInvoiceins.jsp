@@ -104,6 +104,30 @@
 
 	</p:subBody>
 	
+	<p:tr />
+	
+	<p:subBody width="100%">
+
+		<p:table cells="1">
+
+			<tr align="center" class="content0">
+				<td width="40%" align="center">类型</td>
+				<td width="40%" align="center">单据</td>
+				<td width="30%" align="center">开票金额</td>
+			</tr>
+			
+			<c:forEach items="${bean.vsList}" var="item">
+			<tr align="center" class="content0">
+                <td align="center">${my:get('invsoutType', item.type)}</td>
+                <td align="center">${item.outId}</td>
+                <td align="center">${my:formatNum(item.moneys)}</td>
+            </tr>
+            </c:forEach>
+
+		</p:table>
+
+	</p:subBody>
+	
 	<p:line flag="1" />
 
 	<p:button leftWidth="100%" rightWidth="0%">

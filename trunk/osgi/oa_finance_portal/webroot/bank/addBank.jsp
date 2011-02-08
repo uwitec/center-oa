@@ -40,6 +40,8 @@ function addBean()
 
 			<p:pro field="name" innerString="size=60"/>
 			
+			<p:pro field="code" innerString="size=60"/>
+			
 			<p:pro field="type">
 				<p:option type="bankType"/>
 			</p:pro>
@@ -47,6 +49,12 @@ function addBean()
 			<p:pro field="dutyId">
                 <p:option type="dutyList"/>
             </p:pro>
+            
+            <p:cell title="辅助核算项">
+				<input type="checkbox" name="unit" value="1">单位<br>
+				<input type="checkbox" name="department" value="1">部门<br>
+				<input type="checkbox" name="staffer" value="1">职员
+			</p:cell>
 
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
 

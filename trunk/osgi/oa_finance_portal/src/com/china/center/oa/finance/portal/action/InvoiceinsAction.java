@@ -33,6 +33,7 @@ import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.finance.bean.InvoiceinsBean;
 import com.china.center.oa.finance.bean.InvoiceinsItemBean;
+import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.dao.InsVSOutDAO;
 import com.china.center.oa.finance.dao.InvoiceinsDAO;
 import com.china.center.oa.finance.dao.InvoiceinsItemDAO;
@@ -48,7 +49,9 @@ import com.china.center.oa.publics.constant.InvoiceConstant;
 import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.ShowDAO;
+import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
+import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -85,6 +88,8 @@ public class InvoiceinsAction extends DispatchAction
 
     private InvoiceDAO invoiceDAO = null;
 
+    private OutBalanceDAO outBalanceDAO = null;
+
     private InvoiceinsManager invoiceinsManager = null;
 
     private static final String QUERYINVOICEINS = "queryInvoiceins";
@@ -106,8 +111,7 @@ public class InvoiceinsAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddInvoiceins(ActionMapping mapping, ActionForm form,
-                                             HttpServletRequest request,
+    public ActionForward preForAddInvoiceins(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                              HttpServletResponse response)
         throws ServletException
     {
@@ -150,8 +154,8 @@ public class InvoiceinsAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findInvoiceins(ActionMapping mapping, ActionForm form,
-                                        HttpServletRequest request, HttpServletResponse response)
+    public ActionForward findInvoiceins(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                        HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -182,8 +186,8 @@ public class InvoiceinsAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryInvoiceins(ActionMapping mapping, ActionForm form,
-                                         HttpServletRequest request, HttpServletResponse response)
+    public ActionForward queryInvoiceins(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                         HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -198,8 +202,7 @@ public class InvoiceinsAction extends DispatchAction
 
         condtion.addCondition("order by InvoiceinsBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYINVOICEINS, request, condtion,
-            this.invoiceinsDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYINVOICEINS, request, condtion, this.invoiceinsDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -214,8 +217,8 @@ public class InvoiceinsAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addInvoiceins(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse response)
+    public ActionForward addInvoiceins(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse response)
         throws ServletException
     {
         try
@@ -321,27 +324,61 @@ public class InvoiceinsAction extends DispatchAction
 
                     vs.setOutId(split[i]);
 
+                    vs.setType(FinanceConstant.INSVSOUT_TYPE_OUT);
+
                     OutBean out = outDAO.find(vs.getOutId());
+
+                    OutBalanceBean balance = null;
 
                     if (out == null)
                     {
-                        throw new MYException(vs.getOutId() + "不存在,请确认操作");
+                        balance = outBalanceDAO.find(vs.getOutId());
+
+                        if (balance == null)
+                        {
+                            throw new MYException("数据错误,请确认操作");
+                        }
+                        else
+                        {
+                            vs.setType(FinanceConstant.INSVSOUT_TYPE_BALANCE);
+                        }
                     }
 
-                    // 剩余需要开票的金额
-                    double imoney = out.getTotal() - out.getInvoiceMoney();
-
-                    if (canUse >= imoney)
+                    if (vs.getType() == FinanceConstant.INSVSOUT_TYPE_OUT)
                     {
-                        vs.setMoneys(imoney);
+                        // 剩余需要开票的金额
+                        double imoney = out.getTotal() - out.getInvoiceMoney();
 
-                        canUse = canUse - imoney;
+                        if (canUse >= imoney)
+                        {
+                            vs.setMoneys(imoney);
+
+                            canUse = canUse - imoney;
+                        }
+                        else
+                        {
+                            vs.setMoneys(canUse);
+
+                            canUse = 0.0d;
+                        }
                     }
                     else
                     {
-                        vs.setMoneys(canUse);
+                        // 剩余需要开票的金额
+                        double imoney = balance.getTotal() - balance.getInvoiceMoney();
 
-                        canUse = 0.0d;
+                        if (canUse >= imoney)
+                        {
+                            vs.setMoneys(imoney);
+
+                            canUse = canUse - imoney;
+                        }
+                        else
+                        {
+                            vs.setMoneys(canUse);
+
+                            canUse = 0.0d;
+                        }
                     }
 
                     vsList.add(vs);
@@ -356,6 +393,17 @@ public class InvoiceinsAction extends DispatchAction
             bean.setVsList(vsList);
         }
 
+        List<InsVSOutBean> vsList = bean.getVsList();
+
+        StringBuffer buffer = new StringBuffer();
+
+        for (InsVSOutBean insVSOutBean : vsList)
+        {
+            buffer.append(insVSOutBean.getOutId()).append(';');
+        }
+
+        bean.setRefIds(buffer.toString());
+
         return bean;
     }
 
@@ -369,8 +417,8 @@ public class InvoiceinsAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteInvoiceins(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse response)
+    public ActionForward deleteInvoiceins(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -546,5 +594,22 @@ public class InvoiceinsAction extends DispatchAction
     public void setOutDAO(OutDAO outDAO)
     {
         this.outDAO = outDAO;
+    }
+
+    /**
+     * @return the outBalanceDAO
+     */
+    public OutBalanceDAO getOutBalanceDAO()
+    {
+        return outBalanceDAO;
+    }
+
+    /**
+     * @param outBalanceDAO
+     *            the outBalanceDAO to set
+     */
+    public void setOutBalanceDAO(OutBalanceDAO outBalanceDAO)
+    {
+        this.outBalanceDAO = outBalanceDAO;
     }
 }
