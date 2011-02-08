@@ -88,12 +88,14 @@ public abstract class DefinedCommon
             }
         }
 
+        // 获得最后一个,逻辑上有点问题哦
         if (index >= oo.size())
         {
             return oo.get(oo.size() - 1).getValue();
         }
 
-        return oo.get(index).getValue();
+        // return oo.get(index).getValue();
+        return "";
     }
 
     public static String getValue(String key, String indexKey)

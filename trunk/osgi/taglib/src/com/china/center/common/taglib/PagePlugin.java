@@ -35,7 +35,8 @@ public class PagePlugin extends BodyTagCenterSupport
      * 默认构建器
      */
     public PagePlugin()
-    {}
+    {
+    }
 
     public int doStartTag()
         throws JspException
@@ -67,7 +68,7 @@ public class PagePlugin extends BodyTagCenterSupport
         HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
         // String line = "\r\n";
 
-        String special = " readonly=readonly ";
+        String special = " readonly=readonly class='input_class'";
 
         String sname = " name = '" + name + "' ";
         String check = " oncheck = \"" + oncheck + "\" ";
@@ -80,8 +81,8 @@ public class PagePlugin extends BodyTagCenterSupport
             ssize = " size = '" + size + "' ";
         }
 
-        buffer.append("<input type=text").append(sname).append(id).append(check).append(
-            innerString).append(svalue).append(special);
+        buffer.append("<input type=text").append(sname).append(id).append(check).append(innerString).append(svalue).append(
+            special);
         buffer.append(ssize).append(">");
 
         String timeType = null;
@@ -94,16 +95,15 @@ public class PagePlugin extends BodyTagCenterSupport
             timeType = "calDate";
         }
 
-        buffer.append("<img src='"
-                      + request.getContextPath()
-                      + TagLibConstant.DEST_FOLDER_NAME
-                      + "calendar.gif' style='cursor: pointer' title='请选择时间' align='top' onclick='return "
-                      + timeType + "(\"" + name + "\");' height='20px' width='20px'/>");
+        buffer.append("<img src='" + request.getContextPath() + TagLibConstant.DEST_FOLDER_NAME
+                      + "calendar.gif' style='cursor: pointer' title='请选择时间' align='top' onclick='return " + timeType
+                      + "(\"" + name + "\");' height='20px' width='20px'/>");
 
     }
 
     private void writeEnd(StringBuffer buffer)
-    {}
+    {
+    }
 
     /**
      * @return the type
