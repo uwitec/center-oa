@@ -190,8 +190,6 @@ function updatePass(id)
 				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="5%"><strong>状态</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
-                    width="5%"><strong>类型</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="5%"><strong>紧急程度</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="10%"><strong>录入时间</strong></td>
@@ -224,7 +222,6 @@ function updatePass(id)
 					<a>${item.productName}</a></td>
 					<td align="center" onclick="hrefAndSelect(this, true)">${item.amount}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskStatus', item.status)}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskType', item.type)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskInstancy',
 					item.instancy)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.logTime}</td>

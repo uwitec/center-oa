@@ -112,7 +112,7 @@ function selectCustomer(index)
 {
 	cindex = index;
 	
-	window.common.modal("../stock/stock.do?method=rptInQueryPriceAskProvider&firstLoad=1&productId=${bean.productId}&userId=${stock.userId}");
+	window.common.modal("../stock/stock.do?method=rptInQueryPriceAskProvider&firstLoad=1&productId=${bean.productId}&userId=${stock.userId}&stockId=${stock.id}");
 }
 
 
@@ -165,7 +165,7 @@ function createAskBean()
 <p:body width="98%">
 
 	<p:title>
-		<td class="caption"><strong>询价信息：选择外网询价结果</strong></td>
+		<td class="caption"><strong>选择询价结果：</strong></td>
 	</p:title>
 
 	<p:line flag="0" />
@@ -275,7 +275,7 @@ function createAskBean()
 			name="adds" style="cursor: pointer"
 			value="&nbsp;&nbsp;确认询价&nbsp;&nbsp;" onclick="addBean()">&nbsp;&nbsp;
 		<input type="button" class="button_class"
-            name="adds" style="cursor: pointer"
+            name="adds" style="cursor: pointer;display: none;"
             value="&nbsp;&nbsp;自动生成外网询价单&nbsp;&nbsp;" onclick="createAskBean()">&nbsp;&nbsp;
 		<input type="button" class="button_class"
 			onclick="javascript:history.go(-1)"

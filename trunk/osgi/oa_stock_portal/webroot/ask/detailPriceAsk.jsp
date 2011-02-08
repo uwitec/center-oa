@@ -14,14 +14,14 @@
 </head>
 <body class="body_class">
 <form><p:navigation height="22">
-	<td width="550" class="navigation">紧急询价明细</td>
+	<td width="550" class="navigation">询价明细</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
 <p:body width="100%">
 
 	<p:title>
-		<td class="caption"><strong>紧急询价信息：</strong></td>
+		<td class="caption"><strong>询价信息：</strong></td>
 	</p:title>
 
 	<p:line flag="0" />
@@ -70,6 +70,14 @@
 			</c:if>
 			</p:cell>
 			
+			<p:cells title="来源" celspan="1">
+			${my:get('priceAskSrc', bean.src)}
+			</p:cells>
+			
+			<p:cells title="供应商片区" celspan="1">
+			${my:get('123', bean.areaId)}
+			</p:cells>
+			
 			<p:cells title="备注" celspan="2">
             ${bean.description}
             </p:cells>
@@ -95,6 +103,7 @@
 				<td width="10%" align="center">数量</td>
 				<td width="10%" align="center">数量满足</td>
 				<td width="5%" align="center">类型</td>
+				<td width="5%" align="center">询价方</td>
 				<td width="30%" align="center">备注</td>
 				<td width="10%" align="center" onclick="tableSort(this)" class="td_class">时间</td>
 			</tr>
@@ -114,6 +123,7 @@
 					<td  align="center">${item.hasAmount == 0 ? "满足" : "<font color=red>不满足</font>"}</td>
 					
 					<td  align="center">${my:get('priceAskType', item.type)}</td>
+					<td  align="center">${my:get('priceAskSrcType', item.srcType)}</td>
 					<td  align="center">${item.description}</td>
 					<td  align="center">${item.logTime}</td>
 				</tr>

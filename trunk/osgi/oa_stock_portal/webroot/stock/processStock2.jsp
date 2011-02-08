@@ -12,39 +12,13 @@
 <script src="../js/plugin/dialog/jquery.dialog.js"></script>
 
 <script language="javascript">
-function ask(id)
+
+function fech(id)
 {
-	document.location.href = '../stock/stock.do?method=preForSockAsk&id=${bean.id}&ltype=${ltype}&itemId=' + id;
+	if (window.confirm('确认是否拿货?'))
+	document.location.href = '../stock/stock.do?method=fechProduct&id=${bean.id}&itemId=' + id;
 }
 
-function passTO()
-{
-	$.messager.prompt('最早付款日期', '请选择最早付款日期', '', function(value, opr){
-                if (opr)
-                {
-                    $Dbuttons(true);
-                    
-                    var sss = value;
-                    
-                    if (!(sss == null || sss == ''))
-                    {
-                    	$O('nearlyPayDate').value = sss;
-                        $O('method').value = 'updateStockStatus';
-						$O('reject').value = '';
-						$O('pass').value = '1';
-						formEntry.submit();
-                    }
-                    else
-                    {
-                    	alert('请选择最早付款日期');
-                    	
-                        $Dbuttons(false);
-                        
-                        passTo(id, type);
-                    }
-                }
-            }, 1);
-}
 </script>
 
 </head>
@@ -157,7 +131,7 @@ function passTO()
 				<td width="10%" align="center">实际价格</td>
 				<td width="20%" align="center">供应商</td>
 				<td width="5%" align="center">合计金额</td>
-				<td width="10%" align="center">询 价</td>
+				<td width="10%" align="center">拿 货</td>
 			</tr>
 
 			<c:forEach items="${bean.itemVO}" var="item" varStatus="vs">
@@ -179,9 +153,9 @@ function passTO()
 					<td align="center">${my:formatNum(item.total)}</td>
 
 					<td align="center">
-					<c:if test="${item.status == 0}">
-					<a title="采购询价"
-						href="javascript:ask('${item.id}')">
+					<c:if test="${item.fechProduct == 0 && item.netAskId == user.stafferId}">
+					<a title="拿货"
+						href="javascript:fech('${item.id}')">
 					<img src="../images/opr/change.gif" border="0" height="15" width="15"></a>
 					</c:if>
 					</td>
@@ -193,10 +167,7 @@ function passTO()
 	<p:line flag="1" />
 
 	<p:button leftWidth="100%" rightWidth="0%">
-		<div align="right"><input type="button" class="button_class"
-			name="sub1" style="cursor: pointer"
-			value="&nbsp;&nbsp;通 过&nbsp;&nbsp;" onclick="passTO()">
-			&nbsp;&nbsp;
+		<div align="right">
 			<input type="button" class="button_class"
 			onclick="javascript:history.go(-1)"
 			value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>

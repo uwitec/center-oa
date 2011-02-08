@@ -275,8 +275,7 @@ function change()
 			</p:pro>
 			
 			<p:pro field="type" value="${bean.type}" innerString="readonly=true">
-                <option value="0">内部询价</option>
-                <option value="1">外网询价</option>
+                <option value="1">外网/卢工/马甸询价</option>
             </p:pro>
             
             <p:pro field="stockType" outString="公卖是全公司的都可销售 自卖是只有自己可以销售" innerString="readonly=true">

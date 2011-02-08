@@ -29,10 +29,12 @@
             validate="false">
              <forward name="addStock"/>
              <forward name="processStock"/>
+             <forward name="processStock2"/>
              <forward name="rptPriceAskProviderList"/>
              <forward name="stockAskPriceForNet"/>
              <forward name="stockAskPrice"/>
              <forward name="stockAskChange"/>
+			 <forward name="rptQueryStockItem"/>
         </action>
 		
 	</action-mappings>

@@ -284,8 +284,7 @@ function clearValues()
 			<p:pro field="willDate"/>
 			
 			<p:pro field="type">
-                <option value="1">外网询价</option>
-                <option value="0">内部询价</option>
+                <option value="1">外网/卢工/马甸询价</option>
             </p:pro>
 
 			<p:pro field="flow" innerString="quick='true'" outString="支持简拼选择">

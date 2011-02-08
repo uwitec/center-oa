@@ -29,6 +29,8 @@
 	
 	<osgi:reference id="showDAO" interface="com.china.center.oa.publics.dao.ShowDAO" />
 	
+	<osgi:reference id="stafferDAO" interface="com.china.center.oa.publics.dao.StafferDAO" />
+	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	
 	<osgi:reference id="flowLogDAO" interface="com.china.center.oa.publics.dao.FlowLogDAO" />

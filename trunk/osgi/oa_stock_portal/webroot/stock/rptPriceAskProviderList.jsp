@@ -67,9 +67,11 @@ function query()
 					<tr align="center" class="content0">
 						<td align="center" width="8%" align="center">选择</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">时间</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">类型</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">询价人</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">供应商</td>
-						<td align="center" onclick="tableSort(this)" class="td_class">产品编码</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">产品名称</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">产品编码</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">可提供数量</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">剩余数量</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">价格</td>
@@ -82,6 +84,8 @@ function query()
 							     pproviderName="${item.providerName}" pamount="${item.remainmount}"
 								pn="${item.productName}" pp="${my:formatNum(item.price)}" paskid="${item.askId}" value="${item.productId}" /></td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.logTime}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskSrcType', item.srcType)}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.providerName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.productName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.productCode}</td>

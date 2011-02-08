@@ -48,6 +48,7 @@ import com.china.center.oa.stock.vo.PriceAskBeanVO;
 import com.china.center.oa.stock.vo.PriceAskProviderBeanVO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
+import com.china.center.tools.MathTools;
 import com.china.center.tools.SequenceTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
@@ -397,6 +398,7 @@ public class PriceAskAction extends DispatchAction
         String[] providers = request.getParameterValues("check_init");
 
         String askType = request.getParameter("askType");
+        String srcType = request.getParameter("srcType");
 
         User user = Helper.getUser(request);
 
@@ -435,10 +437,13 @@ public class PriceAskAction extends DispatchAction
                 bean.setDescription(request.getParameter("description_" + providers[i]));
 
                 // 内网询价而且是满足，自动补足数量
-                if (bean.getHasAmount() == PriceConstant.HASAMOUNT_OK)
+                if (bean.getHasAmount() == PriceConstant.HASAMOUNT_OK && bean.getSupportAmount() < pbean.getAmount())
                 {
                     bean.setSupportAmount(pbean.getAmount());
                 }
+
+                bean.setSrcType(MathTools.parseInt(srcType));
+
                 item.add(bean);
             }
         }
@@ -663,8 +668,7 @@ public class PriceAskAction extends DispatchAction
 
             bean.setProcessTime(newTime);
 
-            bean.setAskDate(TimeTools
-                .getStringByFormat(new Date(dateByFormat.getTime() + 24 * 3600 * 1000), "yyyyMMdd"));
+            bean.setAskDate(TimeTools.getStringByFormat(new Date(dateByFormat.getTime() + 24 * 3600 * 1000), "yyyyMMdd"));
         }
         else
         {
@@ -1201,19 +1205,37 @@ public class PriceAskAction extends DispatchAction
         // 处理询价的(外网询价)
         if (conditionType == 3)
         {
-            if (AuthHelper.containAuth(user, AuthConstant.PRICE_ASK_NET_INNER_PROCESS))
+            String src = request.getParameter("src");
+
+            // 询价
+            if ("0".equals(src))
             {
-                // 只能看到普通存储的
-                condtion.addIntCondition("PriceAskBean.saveType", "=", PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
+                if (AuthHelper.containAuth(user, AuthConstant.PRICE_ASK_NET_INNER_PROCESS))
+                {
+                    // 只能看到普通存储的
+                    condtion.addIntCondition("PriceAskBean.saveType", "=", PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
+                }
+                else
+                {
+                    // 只能看到普通存储的
+                    condtion.addIntCondition("PriceAskBean.saveType", "=", PriceConstant.PRICE_ASK_SAVE_TYPE_COMMON);
+                }
+
+                condtion.addIntCondition("PriceAskBean.src", "=", PriceConstant.PRICE_ASK_SRC_ASK);
+
+                // 外网和内外网
+                condtion.addCondition("AND PriceAskBean.type in (1, 2)");
             }
             else
             {
+                // 采购
                 // 只能看到普通存储的
                 condtion.addIntCondition("PriceAskBean.saveType", "=", PriceConstant.PRICE_ASK_SAVE_TYPE_COMMON);
-            }
 
-            // 外网和内外网
-            condtion.addCondition("AND PriceAskBean.type in (1, 2)");
+                condtion.addIntCondition("PriceAskBean.src", "=", PriceConstant.PRICE_ASK_SRC_STOCK);
+
+                request.setAttribute("src", "1");
+            }
         }
 
         // 处理询价的(外网询价调整数量的)
@@ -1227,9 +1249,9 @@ public class PriceAskAction extends DispatchAction
             // 没有放行的
             condtion.addIntCondition("PriceAskBean.amountStatus", "=", 0);
 
-            // 只能看见制定数量的产品询价
-            condtion.addIntCondition("PriceAskBean.amount", ">", parameterDAO
-                .getInt(SysConfigConstant.ASK_PRODUCT_AMOUNT_MAX));
+            // 只能看见额定数量的产品询价
+            condtion.addIntCondition("PriceAskBean.amount", ">",
+                parameterDAO.getInt(SysConfigConstant.ASK_PRODUCT_AMOUNT_MAX));
 
             condtion.addCondition("AND PriceAskBean.status in (0, 1)");
         }
@@ -1267,6 +1289,13 @@ public class PriceAskAction extends DispatchAction
         if ( !StringTools.isNullOrNone(overTime))
         {
             condtion.addIntCondition("PriceAskBean.overTime", "=", overTime);
+        }
+
+        String src = request.getParameter("src");
+
+        if ( !StringTools.isNullOrNone(src))
+        {
+            condtion.addIntCondition("PriceAskBean.src", "=", src);
         }
 
         String instancy = request.getParameter("instancy");

@@ -15,6 +15,7 @@ import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.vo.FlowLogVO;
 import com.china.center.oa.stock.vo.StockItemVO;
+import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.MathTools;
 import com.china.center.tools.StringTools;
@@ -61,8 +62,7 @@ public abstract class StockHelper
             buffer.append("<td  align='center'>" + bean.getProductName() + "</td>");
             buffer.append("<td  align='center'>" + bean.getAmount() + "</td>");
             buffer.append("<td  align='center'>" + MathTools.formatNum(bean.getPrice()) + "</td>");
-            buffer.append("<td  align='center'>" + MathTools.formatNum(bean.getPrePrice())
-                          + "</td>");
+            buffer.append("<td  align='center'>" + MathTools.formatNum(bean.getPrePrice()) + "</td>");
 
             if (type == 0 || type == 1)
             {
@@ -70,8 +70,7 @@ public abstract class StockHelper
             }
             else
             {
-                buffer.append("<td  align='center'>" + StringTools.print(bean.getProviderName())
-                              + "</td>");
+                buffer.append("<td  align='center'>" + StringTools.print(bean.getProviderName()) + "</td>");
             }
             buffer.append("<td  align='center'>" + MathTools.formatNum(bean.getTotal()) + "</td>");
 
@@ -86,52 +85,8 @@ public abstract class StockHelper
 
     public static String getStatus(int i)
     {
-        if (i == 0)
-        {
-            return "保存";
-        }
+        return ElTools.get("stockStatus", i);
 
-        if (i == 1)
-        {
-            return "提交";
-        }
-
-        if (i == 2)
-        {
-            return "<font color=red>驳回</font>";
-        }
-
-        if (i == 3)
-        {
-            return "区域经理通过";
-        }
-
-        if (i == 4)
-        {
-            return "询价员通过";
-        }
-
-        if (i == 5)
-        {
-            return "采购主管通过";
-        }
-
-        if (i == 6)
-        {
-            return "采购经理通过";
-        }
-
-        if (i == 7)
-        {
-            return "结束进入采购中";
-        }
-
-        if (i == 8)
-        {
-            return "采购结束";
-        }
-
-        return "";
     }
 
     public static FlowLogVO getStockFlowLogVO(FlowLogBean bean)

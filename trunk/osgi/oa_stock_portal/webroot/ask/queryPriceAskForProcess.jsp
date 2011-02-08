@@ -90,7 +90,7 @@ function selectProduct(index)
 
 function process(id)
 {
-	document.location.href = '../stock/ask.do?method=preForProcessAskPrice&fw=queryPriceAskForProcess&id=' + id;
+	document.location.href = '../stock/ask.do?method=preForProcessAskPrice&fw=queryPriceAskForProcess&id=' + id + '&srcType=' + $$('srcType');
 }
 
 function end(id)
@@ -166,10 +166,11 @@ function updatePass(id)
 <form name="formEntry" action="../stock/ask.do"><input
 	type="hidden" name="method" value="queryPriceAskForProcess"> <input
 	type="hidden" name="id" value=""> <input type="hidden"
-	name="productId" value="${productId}"><input type="hidden"
-	value="1" name="firstLoad">
+	name="productId" value="${productId}">
+<input type="hidden" value="1" name="firstLoad">
+<input type="hidden" value="${srcType}" name="srcType">
 	 <p:navigation height="22">
-	<td width="550" class="navigation">询价管理 &gt;&gt; 询价处理(内网)</td>
+	<td width="550" class="navigation">询价管理 &gt;&gt; 询价处理(卢工/马甸)</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -219,12 +220,11 @@ function updatePass(id)
 			</tr>
 
 			<tr align=center class="content1">
-				<td align="center">是否逾期</td>
-				<td align="center" width="35%"><select name="overTime"
-					class="select_class" values="${pmap.overTime}">
+				<td align="center">询价来源</td>
+				<td align="center" width="35%"><select name="src"
+					class="select_class" values="${pmap.src}">
 					<option value="">--</option>
-					<option value="1">是</option>
-					<option value="0">否</option>
+					<p:option type="priceAskSrc"></p:option>
 				</select></td>
 				<td align="center">询价类型</td>
                 <td align="center" width="35%"><select name="type"
@@ -274,7 +274,7 @@ function updatePass(id)
 				<td align="center" class="td_class" onclick="tableSort(this)"
                     width="5%"><strong>类型</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
-					width="5%"><strong>紧急程度</strong></td>
+					width="5%"><strong>来源</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="5%"><strong>区域</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
@@ -318,8 +318,8 @@ function updatePass(id)
 					<td align="center" onclick="hrefAndSelect(this, true)">${item.price}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskStatus', item.status)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskType', item.type)}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskInstancy',
-					item.instancy)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskSrc',
+					item.src)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.locationName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.logTime}</td>
 					<c:if test="${item.overTime == 0}">

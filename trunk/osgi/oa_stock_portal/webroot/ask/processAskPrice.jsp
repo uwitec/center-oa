@@ -91,7 +91,7 @@ function init()
 function selectCustomer(index)
 {
 	cindex = index;
-	window.common.modal("../provider/provider.do?method=rptQueryProvider&load=1&productTypeId=${product.type}&productId=${product.id}");
+	window.common.modal("../provider/provider.do?method=rptQueryProvider&load=1&productTypeId=${product.type}&productId=${product.id}&areaId=${bean.areaId}");
 }
 
 function getProvider(id, name)
@@ -138,6 +138,7 @@ function rejectBean()
 	<input type="hidden" name="customerId_4" value="">
 	<input type="hidden" value="0" name="askType">
 	<input type="hidden" value="" name="reason">
+	<input type="hidden" value="${srcType}" name="srcType">
 	<input type="hidden" value="${fw}" name="fw">
 	<input
 	type="hidden" name="id" value="${bean.id}"> <p:navigation
@@ -188,6 +189,14 @@ function rejectBean()
 			<p:cell title="处理时间">
 			${bean.processTime}
 			</p:cell>
+			
+			<p:cells title="来源" celspan="1">
+			${my:get('priceAskSrc', bean.src)}
+			</p:cells>
+			
+			<p:cells title="供应商片区" celspan="1">
+			${my:get('123', bean.areaId)}
+			</p:cells>
 			
 			<p:cells title="备注" celspan="2">
             ${bean.description}
