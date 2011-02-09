@@ -16,6 +16,7 @@
 			<forward name="queryFinance" path="/finance/queryFinance.jsp" />
 			<forward name="addFinance" path="/finance/addFinance.jsp" />
 			<forward name="detailFinance" path="/finance/detailFinance.jsp" />
+			<forward name="rptQueryUnit" path="/finance/rptQueryUnit.jsp" />
 		</action>
 		
 	</action-mappings>

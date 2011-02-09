@@ -104,16 +104,7 @@ function load()
 	addTr();
 	addTr();
 	addTr();
-	
-	//加载hint
-	var list = initData();
-	
-	var taxs = document.getElementsByName('taxId');
-	
-	for (var i = 0; i < taxs.length; i++)
-	{
-		new hint(taxs[i], list, HINT_MODE.CLIENT, false, null, callClick);
-	}
+
 }
 
 function callClick(obj, el)
@@ -209,6 +200,7 @@ function callClick(obj, el)
          <td width="60%" align="center">
          <input type="text" style="width: 50%;"
                 name="taxId" value="">
+         <input type="hidden" name="taxId2" value="">
          <select name="departmentId" class="select_class" style="width: 15%;display: none;">
          <option value="">选择部门</option>
          <c:forEach var="item" items="${departmentBeanList}">

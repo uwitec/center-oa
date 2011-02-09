@@ -50,7 +50,7 @@ function hint(id, ca, mode, single, dataCall, enterCall)
 {
 	// Public Variables:
 	this.actb_timeOut    = -1;                  // Autocomplete Timeout in ms (-1: autocomplete never time out)
-	this.actb_lim        = 10;                   // Number of elements autocomplete can show (-1: no limit)
+	this.actb_lim        = 20;                   // Number of elements autocomplete can show (-1: no limit)
 	this.actb_firstText  = false;                // should the auto complete be limited to the beginning of keyword?
 	this.single          = single;                // support single spell
 	this.actb_mouse      = true;                // Enable Mouse Support

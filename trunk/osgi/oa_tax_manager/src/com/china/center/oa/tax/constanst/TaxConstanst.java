@@ -75,4 +75,16 @@ public interface TaxConstanst
      */
     @Defined(key = "financeCreateType", value = "手工")
     int FINANCE_CREATETYPE_HAND = 0;
+
+    /**
+     * 客户
+     */
+    @Defined(key = "unitType", value = "客户")
+    int UNIT_TYPE_CUSTOMER = 0;
+
+    /**
+     * 供应商
+     */
+    @Defined(key = "unitType", value = "供应商")
+    int UNIT_TYPE_PROVIDE = 1;
 }

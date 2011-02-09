@@ -59,6 +59,9 @@ public class FinanceItemBean implements Serializable
 
     private String unitId = "";
 
+    /**
+     * 0:客户 1:供应商
+     */
     private int unitType = 0;
 
     private String departmentId = "";
@@ -355,15 +358,59 @@ public class FinanceItemBean implements Serializable
 
         StringBuffer retValue = new StringBuffer();
 
-        retValue.append("FinanceItemBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("pid = ").append(this.pid).append(TAB).append("pareId = ").append(this.pareId).append(TAB).append(
-            "name = ").append(this.name).append(TAB).append("type = ").append(this.type).append(TAB).append(
-            "forward = ").append(this.forward).append(TAB).append("taxId = ").append(this.taxId).append(TAB).append(
-            "dutyId = ").append(this.dutyId).append(TAB).append("inmoney = ").append(this.inmoney).append(TAB).append(
-            "outmoney = ").append(this.outmoney).append(TAB).append("description = ").append(this.description).append(
-            TAB).append("logTime = ").append(this.logTime).append(TAB).append("unitId = ").append(this.unitId).append(
-            TAB).append("unitType = ").append(this.unitType).append(TAB).append("departmentId = ").append(
-            this.departmentId).append(TAB).append("stafferId = ").append(this.stafferId).append(TAB).append(" )");
+        retValue
+            .append("FinanceItemBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("pid = ")
+            .append(this.pid)
+            .append(TAB)
+            .append("pareId = ")
+            .append(this.pareId)
+            .append(TAB)
+            .append("name = ")
+            .append(this.name)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("forward = ")
+            .append(this.forward)
+            .append(TAB)
+            .append("taxId = ")
+            .append(this.taxId)
+            .append(TAB)
+            .append("dutyId = ")
+            .append(this.dutyId)
+            .append(TAB)
+            .append("inmoney = ")
+            .append(this.inmoney)
+            .append(TAB)
+            .append("outmoney = ")
+            .append(this.outmoney)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("unitId = ")
+            .append(this.unitId)
+            .append(TAB)
+            .append("unitType = ")
+            .append(this.unitType)
+            .append(TAB)
+            .append("departmentId = ")
+            .append(this.departmentId)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

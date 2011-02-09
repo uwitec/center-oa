@@ -50,6 +50,25 @@ function getTrInnerObj(obj, name)
 	return null;
 }
 
+function getTrInnerObj2(tr, name)
+{
+    var inputs1 = tr.getElementsByTagName('input');
+    
+    var inputs2 = tr.getElementsByTagName('select');
+    
+    var inputs = concat2(inputs1, inputs2);
+    
+    for (var i = 0; i < inputs.length; i++)
+    {
+        if (inputs[i].name == name)
+        {
+            return inputs[i];
+        }
+    }
+    
+    return null;
+}
+
 
 function taxChange(obj)
 {
@@ -153,6 +172,10 @@ function taxChange(obj)
 				$v2(unitEle, false);
 			}
 			
+			var hid = getTrInnerObj(obj, 'taxId2');
+			
+			hid.value = taxList[i].id;
+			
 			break;
 		}
 	}
@@ -177,7 +200,7 @@ function getStaffers(oos)
     current.value = obj.pname;
 }
 
-function getCustomer(obj)
+function getUnit(obj)
 {
 	var hid = getNextInput(current.nextSibling);
     hid.value = obj.value;
@@ -188,7 +211,7 @@ function getCustomer(obj)
 function selectUnit(obj)
 {
 	current = obj;
-	window.common.modal('../customer/customer.do?method=rptQueryAllCustomer&load=1');
+	window.common.modal('../finance/finance.do?method=rptQueryUnit&load=1');
 }
 
 function getNextInput(el)

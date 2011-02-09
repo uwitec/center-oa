@@ -105,7 +105,6 @@ public class BankListenerTaxImpl implements BankListener
      * 
      * @see com.center.china.osgi.publics.ParentListener#getListenerType()
      */
-    @Override
     public String getListenerType()
     {
         return "BankListener.TaxImpl";

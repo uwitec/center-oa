@@ -23,5 +23,11 @@ public interface StatBankManager
      */
     void statBank();
 
+    /**
+     * findTotalByBankId
+     * 
+     * @param bankId
+     * @return
+     */
     double findTotalByBankId(String bankId);
 }

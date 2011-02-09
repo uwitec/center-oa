@@ -64,4 +64,6 @@
 
 	<osgi:reference id="financeItemDAO" interface="com.china.center.oa.tax.dao.FinanceItemDAO" />
 	
+	<osgi:reference id="unitDAO" interface="com.china.center.oa.tax.dao.UnitDAO" />
+	
 </beans>

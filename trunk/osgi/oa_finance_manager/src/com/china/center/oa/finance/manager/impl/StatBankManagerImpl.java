@@ -102,7 +102,8 @@ public class StatBankManagerImpl implements StatBankManager
 
         cal.add(Calendar.MONTH, -2);
 
-        String lastestKey = TimeTools.getStringByFormat(new Date(cal.getTime().getTime()), "yyyyMM");
+        String lastestKey = TimeTools
+            .getStringByFormat(new Date(cal.getTime().getTime()), "yyyyMM");
 
         StatBankBean lastStat = statBankDAO.findByBankIdAndTimeKey(bankBean.getId(), lastestKey);
 
@@ -184,7 +185,8 @@ public class StatBankManagerImpl implements StatBankManager
         calNew.add(Calendar.MONTH, -1);
 
         // 获得上月的结余
-        String timeKey = TimeTools.getStringByFormat(new Date(calNew.getTime().getTime()), "yyyyMM");
+        String timeKey = TimeTools
+            .getStringByFormat(new Date(calNew.getTime().getTime()), "yyyyMM");
 
         StatBankBean lastStat = statBankDAO.findByBankIdAndTimeKey(bankId, timeKey);
 
@@ -201,7 +203,7 @@ public class StatBankManagerImpl implements StatBankManager
 
         String ym = TimeTools.now("yyyy-MM-");
 
-        // 统计上一个月的余额
+        // 统计本月的余额
         String beginTime = ym + "01 00:00:00";
 
         String endTime = ym + "31 23:59:59";

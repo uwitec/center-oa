@@ -26,4 +26,6 @@
 
 	<bean id="financeManager" class="com.china.center.oa.tax.manager.impl.FinanceManagerImpl" />
 
+	<bean id="unitDAO" class="com.china.center.oa.tax.dao.impl.UnitDAOImpl" />
+
 </beans>

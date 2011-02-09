@@ -1,12 +1,13 @@
 function addTr()
 {
+	var list = initData();
     for (var i = 0; i < 2; i++)
     {
-        addTrInner();
+        addTrInner(list);
     }
 }
 
-function addTrInner()
+function addTrInner(list)
 {
     var table = $O("tables");
     
@@ -33,6 +34,8 @@ function addTrInner()
     }
     
     trow.appendChild(tcell);
+    
+    new hint(getTrInnerObj2(trow, 'taxId'), list, HINT_MODE.CLIENT, false, null, callClick);
     
     return trow;
 }

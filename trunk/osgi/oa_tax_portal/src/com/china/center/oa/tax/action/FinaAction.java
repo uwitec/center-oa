@@ -29,28 +29,29 @@ import com.center.china.osgi.publics.User;
 import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
+import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.actionhelper.jsonimpl.JSONArray;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
-import com.china.center.oa.customer.bean.CustomerBean;
-import com.china.center.oa.customer.dao.CustomerDAO;
-import com.china.center.oa.product.bean.ProviderBean;
-import com.china.center.oa.product.dao.ProviderDAO;
+import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.DepartmentBean;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.FinanceItemBean;
 import com.china.center.oa.tax.bean.TaxBean;
+import com.china.center.oa.tax.bean.UnitBean;
 import com.china.center.oa.tax.constanst.TaxConstanst;
 import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.oa.tax.dao.FinanceItemDAO;
 import com.china.center.oa.tax.dao.TaxDAO;
+import com.china.center.oa.tax.dao.UnitDAO;
 import com.china.center.oa.tax.facade.TaxFacade;
 import com.china.center.oa.tax.vo.FinanceItemVO;
 import com.china.center.oa.tax.vo.FinanceVO;
@@ -80,9 +81,7 @@ public class FinaAction extends DispatchAction
 
     private DutyDAO dutyDAO = null;
 
-    private CustomerDAO customerDAO = null;
-
-    private ProviderDAO providerDAO = null;
+    private UnitDAO unitDAO = null;
 
     private DepartmentDAO departmentDAO = null;
 
@@ -93,6 +92,8 @@ public class FinaAction extends DispatchAction
     private FinanceItemDAO financeItemDAO = null;
 
     private static final String QUERYFINANCE = "queryFinance";
+
+    private static String RPTQUERYUNIT = "rptQueryUnit";
 
     /**
      * default constructor
@@ -111,8 +112,8 @@ public class FinaAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryFinance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward queryFinance(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -125,7 +126,8 @@ public class FinaAction extends DispatchAction
 
         condtion.addCondition("order by FinanceBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCE, request, condtion, this.financeDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCE, request, condtion,
+            this.financeDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -169,8 +171,8 @@ public class FinaAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addFinance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse response)
+    public ActionForward addFinance(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         FinanceBean bean = new FinanceBean();
@@ -209,8 +211,8 @@ public class FinaAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteFinance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward deleteFinance(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -245,8 +247,8 @@ public class FinaAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findFinance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward findFinance(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -290,24 +292,11 @@ public class FinaAction extends DispatchAction
 
             if (tax.getUnit() == TaxConstanst.TAX_CHECK_YES)
             {
-                if (tax.getUnit() == 0)
+                UnitBean unit = unitDAO.find(item.getUnitId());
+
+                if (unit != null)
                 {
-                    CustomerBean cus = customerDAO.find(item.getUnitId());
-
-                    if (cus != null)
-                    {
-                        item.setUnitName(cus.getName());
-                    }
-                }
-
-                if (tax.getUnit() == 1)
-                {
-                    ProviderBean pro = providerDAO.find(item.getUnitId());
-
-                    if (pro != null)
-                    {
-                        item.setUnitName(pro.getName());
-                    }
+                    item.setUnitName(unit.getName());
                 }
             }
         }
@@ -331,7 +320,7 @@ public class FinaAction extends DispatchAction
     {
         String[] departmentIds = request.getParameterValues("departmentId");
         String[] idescriptions = request.getParameterValues("idescription");
-        String[] taxIds = request.getParameterValues("taxId");
+        String[] taxIds = request.getParameterValues("taxId2");
         String[] stafferId2s = request.getParameterValues("stafferId2");
         String[] unitId2s = request.getParameterValues("unitId2");
         String[] inmoneys = request.getParameterValues("inmoney");
@@ -398,7 +387,14 @@ public class FinaAction extends DispatchAction
 
                 item.setUnitId(unitId2s[i]);
 
-                // TODO 供应商还是客户
+                UnitBean unit = unitDAO.find(item.getUnitId());
+
+                if (unit == null)
+                {
+                    throw new MYException("单位不存在,请确认操作");
+                }
+
+                item.setUnitType(unit.getType());
             }
 
             item.setName(idescriptions[i]);
@@ -449,8 +445,8 @@ public class FinaAction extends DispatchAction
      * @param response
      * @return
      */
-    public ActionForward preForAddFinance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward preForAddFinance(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
     {
         List<TaxBean> taxList = taxDAO.listEntityBeans("order by TaxBean.code asc");
 
@@ -469,6 +465,79 @@ public class FinaAction extends DispatchAction
         request.setAttribute("taxListStr", object.toString());
 
         return mapping.findForward("addFinance");
+    }
+
+    /**
+     * rptQueryUnit
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryUnit(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        List<UnitBean> list = null;
+
+        if (PageSeparateTools.isFirstLoad(request))
+        {
+            ConditionParse condtion = new ConditionParse();
+
+            condtion.addWhereStr();
+
+            setInnerCondition(request, condtion);
+
+            int total = unitDAO.countByCondition(condtion.toString());
+
+            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+
+            PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYUNIT);
+
+            list = unitDAO.queryEntityBeansByCondition(condtion, page);
+        }
+        else
+        {
+            PageSeparateTools.processSeparate(request, RPTQUERYUNIT);
+
+            list = unitDAO.queryEntityBeansByCondition(PageSeparateTools.getCondition(request,
+                RPTQUERYUNIT), PageSeparateTools.getPageSeparate(request, RPTQUERYUNIT));
+        }
+
+        request.setAttribute("list", list);
+
+        return mapping.findForward(RPTQUERYUNIT);
+    }
+
+    private void setInnerCondition(HttpServletRequest request, ConditionParse condtion)
+    {
+        String name = request.getParameter("name");
+
+        String code = request.getParameter("code");
+
+        String type = request.getParameter("type");
+
+        if ( !StringTools.isNullOrNone(name))
+        {
+            condtion.addCondition("name", "like", name);
+        }
+
+        if ( !StringTools.isNullOrNone(code))
+        {
+            condtion.addCondition("code", "like", code);
+        }
+
+        if ( !StringTools.isNullOrNone(type))
+        {
+            condtion.addIntCondition("type", "=", type);
+        }
+
+        condtion.addCondition("order by id desc");
     }
 
     /**
@@ -591,37 +660,20 @@ public class FinaAction extends DispatchAction
     }
 
     /**
-     * @return the customerDAO
+     * @return the unitDAO
      */
-    public CustomerDAO getCustomerDAO()
+    public UnitDAO getUnitDAO()
     {
-        return customerDAO;
+        return unitDAO;
     }
 
     /**
-     * @param customerDAO
-     *            the customerDAO to set
+     * @param unitDAO
+     *            the unitDAO to set
      */
-    public void setCustomerDAO(CustomerDAO customerDAO)
+    public void setUnitDAO(UnitDAO unitDAO)
     {
-        this.customerDAO = customerDAO;
-    }
-
-    /**
-     * @return the providerDAO
-     */
-    public ProviderDAO getProviderDAO()
-    {
-        return providerDAO;
-    }
-
-    /**
-     * @param providerDAO
-     *            the providerDAO to set
-     */
-    public void setProviderDAO(ProviderDAO providerDAO)
-    {
-        this.providerDAO = providerDAO;
+        this.unitDAO = unitDAO;
     }
 
 }
