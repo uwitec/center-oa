@@ -9,6 +9,8 @@
 	<property name="basearch" value="${arch}" />
 	<property name="basenl" value="${nl}" />
 	<property name="jar_dir" value="${dependlib}/service" />
+	<property name="javadoc_dir" value="${dependlib}/javadoc" />
+	<property name="api" value="${dependlib}/api" />
 
 	<!-- Compiler settings. -->
 	<property name="javacFailOnError" value="true" />
@@ -17,9 +19,30 @@
 	<property name="logExtension" value=".log" />
 	<property name="compilerArg" value="" />
 	<property name="javacSource" value="1.5" />
-	<property name="javacTarget" value="1.6" />
+	<property name="javacTarget" value="1.5" />
 	<property name="fork" value="false" />
+	<property name="executable" value="" />
 	<property name="memorymaximumsize" value="1024M" />
+
+	<!-- JarSigner settings. -->
+	<property name="jarsigner.home" value="${java.home}/../bin" />
+	<property name="keytool" value="keytool.exe" />
+	<property name="validity" value="3650" />
+	<property name="jarsigner" value="jarsigner.exe" />
+	<property name="keystore" value="keystore" />
+	<property name="alias" value="ISECORE" />
+	<property name="storepass" value="huapasswordwei" />
+	<property name="keypass" value="huapasswordwei" />
+	<property name="keyalg" value="RSA" />
+
+	<property name="deploy.dir" value="${basedir}" />
+	<property name="commonName" value="name" />
+	<property name="organizationUnit" value="huawei" />
+	<property name="organizationName" value="huawei" />
+	<property name="localityName" value="NJ" />
+	<property name="stateName" value="JS" />
+	<property name="country" value="CN" />
+	<property name="dname" value="CN=${commonName},OU=${organizationUnit},O=${organizationName},L=${localityName},ST=${stateName},C=${country}" />
 
 	<condition property="dir_bootclasspath" value="${java.home}/../Classes">
 		<os family="mac" />
@@ -41,7 +64,7 @@
 		</not>
 	</condition>
 
-	<target name="init" depends="properties,init_lib">
+	<target name="init" depends="properties">
 		<condition property="pluginTemp" value="${buildTempFolder}/plugins">
 			<isset property="buildTempFolder" />
 		</condition>
@@ -51,6 +74,7 @@
 		</condition>
 		<property name="build.result.folder" value="${basedir}" />
 		<property name="temp.folder" value="${basedir}/temp.folder" />
+		<property name="temp.folder.api" value="${basedir}/temp.folder.api" />
 		<property name="plugin.destination" value="${basedir}" />
 	</target>
 
@@ -76,8 +100,8 @@
 		</antcall>
 		<jar destfile="${jar_dir}/${bundleName}.jar" basedir="${temp.folder}/${bundleName}" filesetmanifest="merge" />
 		<delete dir="${temp.folder}" />
+		<delete dir="${temp.folder.api}" />
 		<delete dir="${build.result.folder}/@dot" />
-		<antcall target="delete_lib" />
 	</target>
 
 
@@ -85,38 +109,17 @@
 		<delete dir="${temp.folder}/@dot.bin" />
 		<mkdir dir="${temp.folder}/@dot.bin" />
 		<path id="@dot.classpath">
-			<!-- include eclipse osgi bundle -->
-			<fileset dir="${dependlib}/bootstrap">
+			<fileset dir="${dependlib}">
 				<include name="**/*.jar" />
 			</fileset>
-			<!-- include depend jar in self lib -->
-			<fileset dir="${plugin.destination}/lib">
-				<include name="**/*.jar" />
-			</fileset>
-			<fileset dir="${plugin.destination}/WEB-INF/lib">
-				<include name="**/*.jar" />
-			</fileset>
-			<!-- include service bundles which depended by this module -->
-			<fileset dir="${dependlib}/service">
-				<include name="**/*.jar" />
-			</fileset>
-			<!-- include dev jar -->
-			<fileset dir="${dependlib}/lib">
-				<include name="**/*.jar" />
-			</fileset>
-			<fileset dir="${dependlib}/lib_self">
-				<include name="**/*.jar" />
-			</fileset>
-			<!-- include systen bundles -->
-			<fileset dir="${dependlib}/bundles">
+			<fileset dir="${plugin.destination}">
 				<include name="**/*.jar" />
 			</fileset>
 		</path>
 		<!-- compile the source code -->
-		<javac destdir="${temp.folder}/@dot.bin" fork="${fork}" memorymaximumsize="${memorymaximumsize}" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bundleBootClasspath}" source="${bundleJavacSource}" target="${bundleJavacTarget}" encoding="UTF-8">
+		<javac destdir="${temp.folder}/@dot.bin" fork="${fork}" executable="${executable}" memorymaximumsize="${memorymaximumsize}" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bundleBootClasspath}" source="${bundleJavacSource}" target="${bundleJavacTarget}" encoding="UTF-8">
 			<classpath refid="@dot.classpath" />
 			<src path="src/" />
-			<compilerarg value="-Xlint:unchecked" />
 			<compilerarg value="-Xlint:deprecation" />
 		</javac>
 		<antcall target="delete_lib" />
@@ -142,6 +145,14 @@
 				<exclude name=".settings/**" />
 				<exclude name=".*" />
 				<exclude name="build*.*" />
+			</fileset>
+		</copy>
+		<mkdir dir="${temp.folder.api}" />
+		<copy todir="${temp.folder.api}" failonerror="true" overwrite="false">
+			<!--copy class-->
+			<fileset dir="${temp.folder}/@dot.bin">
+				<include name="com/**" />
+				<exclude name="**/impl/**" />
 			</fileset>
 		</copy>
 		<delete dir="${temp.folder}/@dot.bin" />
@@ -199,9 +210,12 @@
 
 	<target name="clean" depends="init" description="Clean the plug-in: ${bundleName} of all the zips, jars and logs created.">
 		<delete dir="${build.result.folder}/@dot" />
+		<delete dir="${temp.folder.api}" />
 		<delete file="${build.result.folder}/src.zip" />
 		<delete file="${plugin.destination}/${bundleName}.zip" />
 		<delete file="${jar_dir}/${bundleName}.jar" />
+		<delete file="${api}/${bundleName}_api.jar" />
+		<delete file="${javadoc_dir}/${bundleName}_javadoc.zip" />
 		<delete dir="${temp.folder}" />
 	</target>
 
@@ -228,6 +242,61 @@
 		</delete>
 		<zip destfile="${plugin.destination}/${bundleName}.zip" basedir="${temp.folder}" filesonly="true" whenempty="skip" update="false" />
 		<delete dir="${temp.folder}" />
+	</target>
+
+	<target name="create_doc" unless="Fragment-Host">
+		<mkdir dir="${basedir}/javadoc" />
+		<javadoc destdir="${basedir}/javadoc" access="private" author="true" splitindex="true" use="true" version="true" source="${javacSource}" encoding="UTF-8" docencoding="UTF-8" charset="UTF-8" locale="en_US">
+			<classpath refid="@dot.classpath" />
+			<packageset dir="${basedir}/src">
+				<exclude name="**/impl" />
+			</packageset>
+		</javadoc>
+
+		<zip destfile="${javadoc_dir}/${bundleName}_javadoc.zip" basedir="${basedir}/javadoc" filesonly="true" whenempty="skip" update="false" />
+		<delete dir="${basedir}/javadoc" />
+	</target>
+
+	<!-- //////////////////////////////////////////////////////////////////////////// -->
+	<!-- 创建证书 -->
+	<target name="keytool">
+		<echo message="keytool..." />
+		<echo message="dname = { ${dname} }" />
+		<exec dir="${dependlib}/service" executable="${jarsigner.home}/${keytool}">
+			<arg line="-genkey" />
+			<arg line="-alias ${alias}" />
+			<arg line="-dname ${dname}" />
+			<arg line="-keypass ${keypass}" />
+			<arg line="-validity ${validity}" />
+			<arg line="-keystore ${keystore}" />
+			<arg line="-storepass ${storepass}" />
+			<arg line="-keyalg ${keyalg}" />
+		</exec>
+
+		<echo message="keytool...done." />
+
+	</target>
+
+	<!-- 对JAR进行数字签名 -->
+	<target name="jarsigner" unless="Fragment-Host">
+		<antcall target="keytool" />
+		<echo message="jarsigner..." />
+		<exec dir="${dependlib}/service" executable="${jarsigner.home}/${jarsigner}">
+			<arg line="-keystore ${keystore}" />
+			<arg line="-storepass ${storepass}" />
+			<arg line="-keypass ${keypass}" />
+			<arg line="-signedjar ${keyalg}_${bundleName}.jar ${bundleName}.jar" />
+			<arg line="${alias}" />
+		</exec>
+
+		<echo message="jarsigner...done." />
+
+		<delete file="${dependlib}/service/${keystore}" />
+
+		<delete file="${dependlib}/service/${bundleName}.jar" />
+
+		<rename dest="${dependlib}/service/${bundleName}.jar" src="${dependlib}/service/${keyalg}_${bundleName}.jar" />
+
 	</target>
 
 </project>
