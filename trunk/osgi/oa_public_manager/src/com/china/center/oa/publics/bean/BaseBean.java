@@ -28,7 +28,7 @@ public abstract class BaseBean implements Serializable
     protected String id = "";
 
     @Unique
-    @Html(title = "名称���", must = true, maxLength = 100)
+    @Html(title = "名称", must = true, maxLength = 100)
     protected String name = "";
 
     /**
