@@ -31,14 +31,14 @@
 	<property name="jarsigner" value="jarsigner.exe" />
 	<property name="keystore" value="keystore" />
 	<property name="alias" value="ISECORE" />
-	<property name="storepass" value="huapasswordwei" />
-	<property name="keypass" value="huapasswordwei" />
+	<property name="storepass" value="chinapasswordcenter" />
+	<property name="keypass" value="chinapasswordcenter" />
 	<property name="keyalg" value="RSA" />
 
 	<property name="deploy.dir" value="${basedir}" />
 	<property name="commonName" value="name" />
-	<property name="organizationUnit" value="huawei" />
-	<property name="organizationName" value="huawei" />
+	<property name="organizationUnit" value="chinacenter" />
+	<property name="organizationName" value="chinacenter" />
 	<property name="localityName" value="NJ" />
 	<property name="stateName" value="JS" />
 	<property name="country" value="CN" />
