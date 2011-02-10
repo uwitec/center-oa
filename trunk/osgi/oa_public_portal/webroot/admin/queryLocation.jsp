@@ -8,6 +8,9 @@
 <script src="../js/pop.js"></script>
 <script src="../js/json.js"></script>
 <script type="text/javascript">
+
+var allDef = window.top.topFrame.allDef;
+
 function load()
 {
 	 $("#mainTable").flexigrid
