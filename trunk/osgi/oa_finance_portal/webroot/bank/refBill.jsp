@@ -17,7 +17,7 @@ function addBean()
 function check()
 {
     //计算是否回款溢出
-    var total = ${my:formatNum(out.total - out.hadPay - out.badDebts)};
+    var total = ${lastMoney};
     
     var pu = 0.0;
     
@@ -66,14 +66,14 @@ function check()
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javascript:history.go(-1)">回款管理</span> &gt;&gt; 销售关联</td>
+		onclick="javascript:history.go(-1)">回款管理</span> &gt;&gt; 销售/委托关联</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
 <p:body width="98%">
 
 	<p:title>
-		<td class="caption"><strong>此单需付款金额:${my:formatNum(out.total - out.hadPay - out.badDebts)}</strong></td>
+		<td class="caption"><strong>此单需付款金额:${lastMoney}</strong></td>
 	</p:title>
 
 	<p:line flag="0" />

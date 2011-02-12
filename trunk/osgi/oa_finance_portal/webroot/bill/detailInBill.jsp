@@ -60,8 +60,8 @@
                ${bean.customerName}
             </p:cell>
 			
-			<p:cell title="关联单据">
-			    ${bean.outId}
+			<p:cell title="销售/委托">
+			    ${bean.outId}/${bean.outBalanceId}
             </p:cell>
             
             <p:cell title="关联回款">

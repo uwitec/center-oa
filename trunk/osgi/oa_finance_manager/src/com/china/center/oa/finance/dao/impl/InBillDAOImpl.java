@@ -51,4 +51,11 @@ public class InBillDAOImpl extends BaseDAO<InBillBean, InBillVO> implements InBi
         return this.jdbcOperation.update("set InBillBean.ulock = ? " + condition.toString(), claz,
             FinanceConstant.BILL_LOCK_YES);
     }
+
+    public double sumByOutBalanceId(String outBalanceId)
+    {
+        return this.jdbcOperation.queryForDouble(BeanTools.getSumHead(claz, "moneys")
+                                                 + "where InBillBean.outBalanceId = ?",
+            outBalanceId);
+    }
 }

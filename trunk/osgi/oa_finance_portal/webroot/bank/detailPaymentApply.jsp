@@ -63,7 +63,8 @@
 	<p:subBody width="100%">
         <table width="100%" border="0" cellspacing='1' id="tables">
             <tr align="center" class="content0">
-                <td width="10%" align="center">关联单据</td>
+                <td width="10%" align="center">销售单</td>
+                <td width="10%" align="center">委托结算</td>
                 <td width="10%" align="center">金额</td>
                 <td width="10%" align="center">收款单</td>
             </tr>
@@ -71,6 +72,7 @@
             <c:forEach items="${vsList}" var="item" varStatus="vs">
                 <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
                     <td align="center">${item.outId}</td>
+                    <td align="center">${item.outBalanceId}</td>
 
                     <td align="center">${my:formatNum(item.moneys)}</td>
                     

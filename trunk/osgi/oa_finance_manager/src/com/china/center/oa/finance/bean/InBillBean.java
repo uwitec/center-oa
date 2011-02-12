@@ -63,6 +63,11 @@ public class InBillBean implements Serializable
     @FK
     private String outId = "";
 
+    /**
+     * 结算单
+     */
+    private String outBalanceId = "";
+
     @Html(title = "金额", type = Element.DOUBLE, must = true)
     private double moneys = 0.0d;
 
@@ -376,6 +381,23 @@ public class InBillBean implements Serializable
     }
 
     /**
+     * @return the outBalanceId
+     */
+    public String getOutBalanceId()
+    {
+        return outBalanceId;
+    }
+
+    /**
+     * @param outBalanceId
+     *            the outBalanceId to set
+     */
+    public void setOutBalanceId(String outBalanceId)
+    {
+        this.outBalanceId = outBalanceId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -407,6 +429,9 @@ public class InBillBean implements Serializable
             .append(TAB)
             .append("outId = ")
             .append(this.outId)
+            .append(TAB)
+            .append("outBalanceId = ")
+            .append(this.outBalanceId)
             .append(TAB)
             .append("moneys = ")
             .append(this.moneys)

@@ -35,6 +35,14 @@ public interface InBillDAO extends DAO<InBillBean, InBillVO>
      */
     double sumByOutId(String outId);
 
+    /**
+     * sumByOutId(这里包括申请关联的)
+     * 
+     * @param outId
+     * @return
+     */
+    double sumByOutBalanceId(String outBalanceId);
+
     double sumByCondition(ConditionParse condition);
 
     int lockByCondition(ConditionParse condition);

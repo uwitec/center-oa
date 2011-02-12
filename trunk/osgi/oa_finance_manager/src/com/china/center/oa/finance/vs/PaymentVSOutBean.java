@@ -37,7 +37,15 @@ public class PaymentVSOutBean implements Serializable
     @FK
     private String parentId = "";
 
+    /**
+     * 销售单
+     */
     private String outId = "";
+
+    /**
+     * 结算单
+     */
+    private String outBalanceId = "";
 
     private String paymentId = "";
 
@@ -216,6 +224,23 @@ public class PaymentVSOutBean implements Serializable
     }
 
     /**
+     * @return the outBalanceId
+     */
+    public String getOutBalanceId()
+    {
+        return outBalanceId;
+    }
+
+    /**
+     * @param outBalanceId
+     *            the outBalanceId to set
+     */
+    public void setOutBalanceId(String outBalanceId)
+    {
+        this.outBalanceId = outBalanceId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -238,6 +263,9 @@ public class PaymentVSOutBean implements Serializable
             .append(TAB)
             .append("outId = ")
             .append(this.outId)
+            .append(TAB)
+            .append("outBalanceId = ")
+            .append(this.outBalanceId)
             .append(TAB)
             .append("paymentId = ")
             .append(this.paymentId)
