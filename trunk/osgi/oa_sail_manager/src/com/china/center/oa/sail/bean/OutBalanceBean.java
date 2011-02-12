@@ -50,6 +50,16 @@ public class OutBalanceBean implements Serializable
 
     private int type = OutConstant.OUTBALANCE_TYPE_SAIL;
 
+    /**
+     * 0:没有付款 1:付款
+     */
+    private int pay = OutConstant.PAY_NOT;
+
+    /**
+     * 已经支付的金额
+     */
+    private double payMoney = 0.0d;
+
     private String logTime = "";
 
     @Join(tagClass = CustomerBean.class)
@@ -327,6 +337,40 @@ public class OutBalanceBean implements Serializable
     }
 
     /**
+     * @return the pay
+     */
+    public int getPay()
+    {
+        return pay;
+    }
+
+    /**
+     * @param pay
+     *            the pay to set
+     */
+    public void setPay(int pay)
+    {
+        this.pay = pay;
+    }
+
+    /**
+     * @return the payMoney
+     */
+    public double getPayMoney()
+    {
+        return payMoney;
+    }
+
+    /**
+     * @param payMoney
+     *            the payMoney to set
+     */
+    public void setPayMoney(double payMoney)
+    {
+        this.payMoney = payMoney;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -335,17 +379,61 @@ public class OutBalanceBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("OutBalanceBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("outId = ").append(this.outId).append(TAB).append("total = ").append(this.total).append(TAB).append(
-            "status = ").append(this.status).append(TAB).append("type = ").append(this.type).append(TAB).append(
-            "logTime = ").append(this.logTime).append(TAB).append("customerId = ").append(this.customerId).append(TAB).append(
-            "stafferId = ").append(this.stafferId).append(TAB).append("description = ").append(this.description).append(
-            TAB).append("reason = ").append(this.reason).append(TAB).append("invoiceStatus = ").append(
-            this.invoiceStatus).append(TAB).append("invoiceMoney = ").append(this.invoiceMoney).append(TAB).append(
-            "dirDepot = ").append(this.dirDepot).append(TAB).append("baseBalanceList = ").append(this.baseBalanceList).append(
-            TAB).append(" )");
+        retValue
+            .append("OutBalanceBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("outId = ")
+            .append(this.outId)
+            .append(TAB)
+            .append("total = ")
+            .append(this.total)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("pay = ")
+            .append(this.pay)
+            .append(TAB)
+            .append("payMoney = ")
+            .append(this.payMoney)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("customerId = ")
+            .append(this.customerId)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("reason = ")
+            .append(this.reason)
+            .append(TAB)
+            .append("invoiceStatus = ")
+            .append(this.invoiceStatus)
+            .append(TAB)
+            .append("invoiceMoney = ")
+            .append(this.invoiceMoney)
+            .append(TAB)
+            .append("dirDepot = ")
+            .append(this.dirDepot)
+            .append(TAB)
+            .append("baseBalanceList = ")
+            .append(this.baseBalanceList)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

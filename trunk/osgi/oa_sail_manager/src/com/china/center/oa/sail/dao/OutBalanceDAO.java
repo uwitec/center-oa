@@ -25,4 +25,15 @@ import com.china.center.oa.sail.vo.OutBalanceVO;
 public interface OutBalanceDAO extends DAO<OutBalanceBean, OutBalanceVO>
 {
     boolean updateInvoiceStatus(String id, double invoiceMoney, int invoiceStatus);
+
+    /**
+     * 更新已经付款金额
+     * 
+     * @param fullId
+     * @param hadPay
+     * @return
+     */
+    boolean updateHadPay(String id, double hadPay);
+
+    boolean updatePay(String id, int pay);
 }

@@ -107,7 +107,7 @@ function change()
                             <td colspan="3"><a title="点击查看明细" href="../sail/out.do?method=findOut&fow=99&outId=${out.fullId}">${out.fullId}</a></td>
                         </tr>
 						
-						<c:if test="${consignBean.currentStatus < 2}">
+					<c:if test="${consignBean.currentStatus < 2}">
 						
                         <tr class="content1">
                             <td>发货单备注：</td>
@@ -196,11 +196,15 @@ function change()
                         </tr>
                     </c:if>
                     
+                    <c:if test="${consignBean.currentStatus >= 2}">
+                    
                       <tr class="content1">
                             <td>发货单备注：</td>
                             <td colspan="3"><textarea rows="3" cols="55" name="applys"
-                                readonly="readonly" oncheck="notNone">${consignBean.applys}</textarea></td>
+                                readonly="readonly">${consignBean.applys}</textarea></td>
                        </tr>
+                       
+                    </c:if>
 
 		</p:table>
 	</p:subBody>

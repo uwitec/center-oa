@@ -61,6 +61,7 @@ function press()
 <input type="hidden" value="${selectMode}" name="selectMode"> 
 <input type="hidden" value="${type}" name="type"> 
 <input type="hidden" value="${invoiceStatus}" name="invoiceStatus"> 
+<input type="hidden" value="${pay}" name="pay"> 
 
 <p:navigation
 	height="22">
@@ -109,7 +110,8 @@ function press()
 				<td align="center" width="5%">选择</td>
 				<td align="center" width="15%"><strong>销售单号</strong></td>
 				<td align="center" width="10%"><strong>客户</strong></td>
-				<td align="center" width="10%"><strong>总金额</strong></td>
+				<td align="center" width="10%"><strong>结算金额</strong></td>
+				<td align="center" width="10%"><strong>已付款</strong></td>
 				<td align="center" width="10%"><strong>状态</strong></td>
 				<td align="center" width="10%"><strong>发票</strong></td>
 				<td align="center" width="10%"><strong>已开票</strong></td>
@@ -120,11 +122,13 @@ function press()
 				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
 					<td align="center"><input type=${selectMode == 1 ? 'checkbox' : 'radio'} name="beans" value="${item.id}" 
 					ptotal="${my:formatNum(item.total)}"
+					plast="${my:formatNum(item.total - item.payMoney)}"
 					pinvoicemoney="${my:formatNum(item.total - item.invoiceMoney)}"
 					></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.outId}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.customerName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.payMoney)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('outBalanceStatus', item.status)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('invoiceStatus', item.invoiceStatus)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.invoiceMoney)}</td>

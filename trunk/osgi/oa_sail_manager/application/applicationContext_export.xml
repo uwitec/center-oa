@@ -27,4 +27,6 @@
 
 	<osgi:service ref="baseBalanceDAO" interface="com.china.center.oa.sail.dao.BaseBalanceDAO" />
 
+	<osgi:service ref="outQueryDAO" interface="com.china.center.oa.sail.dao.OutQueryDAO" />
+
 </beans>

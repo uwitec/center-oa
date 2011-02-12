@@ -178,6 +178,19 @@ function del()
     }
 }
 
+function refBill()
+{
+    if (getRadio('fullId').statuss == 1 && getRadio('fullId').ptype == 0)
+    {
+        document.location.href = '../finance/bank.do?method=preForRefBillForOutBalance&outBalanceId=' + getRadioValue("fullId") + '&customerId=' + getRadio('fullId').pcustomerid;
+    }
+    else
+    {
+        alert('不能操作!');
+    }
+}
+
+
 </script>
 
 </head>
@@ -268,10 +281,12 @@ function del()
 				<table width="100%" border="0" cellspacing='1' id="mainTable">
 					<tr align="center" class="content0">
 						<td align="center" width="5%" align="center">选择</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">标识</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">销售单号</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">状态</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">客户</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">金额</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">付款</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">发票</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">已开票</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">类型</td>
@@ -284,15 +299,23 @@ function del()
 						>
 							<td align="center"><input type="radio" name="fullId" 
 								statuss='${item.status}' 
+								ptype='${item.type}' 
+								pcustomerid='${item.customerId}' 
 								value="${item.id}" ${vs.index== 0 ? "checked" : ""}/></td>
 							<td align="center" onclick="hrefAndSelect(this)">
 							<a href="../sail/out.do?method=findOutBalance&id=${item.id}">
-							${item.outId}
+							${item.id}
 							</a>
 							</td>
+							<td align="center" onclick="hrefAndSelect(this)">
+                            <a href="../sail/out.do?method=findOut&outId=${item.outId}">
+                            ${item.outId}
+                            </a>
+                            </td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('outBalanceStatus', item.status)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.customerName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.payMoney)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('invoiceStatus', item.invoiceStatus)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.invoiceMoney)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('outBalanceType', item.type)}</td>
@@ -327,6 +350,10 @@ function del()
 		<td width="100%">
 		<div align="right">
 		<c:if test="${queryType == '1'}">
+		<input
+            type="button" class="button_class"
+            value="&nbsp;&nbsp;勾 款&nbsp;&nbsp;" onclick="refBill()" />&nbsp;&nbsp;
+            
 		<input type="button" class="button_class"
 			value="&nbsp;&nbsp;删 除&nbsp;&nbsp;" onClick="del()">&nbsp;&nbsp;
 		</c:if>

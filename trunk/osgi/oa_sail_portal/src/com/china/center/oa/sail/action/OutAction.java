@@ -207,8 +207,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryForAdd(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse reponse)
+    public ActionForward queryForAdd(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         // 是否锁定库存
@@ -243,8 +243,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddOutBalance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                             HttpServletResponse reponse)
+    public ActionForward preForAddOutBalance(ActionMapping mapping, ActionForm form,
+                                             HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -303,8 +303,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findOutBalance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse reponse)
+    public ActionForward findOutBalance(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -360,7 +360,8 @@ public class OutAction extends DispatchAction
         // 只能看到自己的仓库
         if ("1".equals(flag))
         {
-            List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(), AuthConstant.EXPAND_AUTH_DEPOT);
+            List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(),
+                AuthConstant.EXPAND_AUTH_DEPOT);
 
             for (Iterator iterator = locationList.iterator(); iterator.hasNext();)
             {
@@ -460,8 +461,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse reponse)
+    public ActionForward queryProvider(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         List<ProviderBean> list = null;
@@ -524,7 +525,8 @@ public class OutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        outList = outDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request, exportKey));
+        outList = outDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request,
+            exportKey));
 
         filenName = "Export_" + TimeTools.now("MMddHHmmss") + ".xls";
 
@@ -733,8 +735,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward exportNotPay(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse reponse)
+    public ActionForward exportNotPay(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         // 应收客户导出
@@ -850,8 +852,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addOutBalance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse reponse)
+    public ActionForward addOutBalance(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         OutBalanceBean bean = new OutBalanceBean();
@@ -892,8 +894,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward outBack(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 HttpServletResponse reponse)
+    public ActionForward outBack(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -935,7 +937,8 @@ public class OutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        if (oldOut.getType() != OutConstant.OUT_TYPE_OUTBILL && oldOut.getOutType() != OutConstant.OUTTYPE_OUT_SWATCH)
+        if (oldOut.getType() != OutConstant.OUT_TYPE_OUTBILL
+            && oldOut.getOutType() != OutConstant.OUTTYPE_OUT_SWATCH)
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
 
@@ -1015,7 +1018,8 @@ public class OutAction extends DispatchAction
 
                     if (each.getInway() + back > each.getAmount())
                     {
-                        request.setAttribute(KeyConstant.ERROR_MESSAGE, each.getProductName() + "的退货数量超过:"
+                        request.setAttribute(KeyConstant.ERROR_MESSAGE, each.getProductName()
+                                                                        + "的退货数量超过:"
                                                                         + each.getAmount());
 
                         return mapping.findForward("error");
@@ -1036,7 +1040,8 @@ public class OutAction extends DispatchAction
                         baseBean.setShowId(each.getShowId());
                         baseBean.setCostPrice(each.getCostPrice());
                         baseBean.setProductId(each.getProductId());
-                        baseBean.setCostPriceKey(StorageRelationHelper.getPriceKey(each.getCostPrice()));
+                        baseBean.setCostPriceKey(StorageRelationHelper.getPriceKey(each
+                            .getCostPrice()));
                         baseBean.setOwner(each.getOwner());
                         baseBean.setDepotpartId(each.getDepotpartId());
 
@@ -1061,7 +1066,8 @@ public class OutAction extends DispatchAction
             if (newBaseList.size() > 0)
             {
                 // CORE 个人领样退库
-                String fullId = outManager.coloneOutWithAffair(out, user, StorageConstant.OPR_STORAGE_SWATH);
+                String fullId = outManager.coloneOutWithAffair(out, user,
+                    StorageConstant.OPR_STORAGE_SWATH);
 
                 request.setAttribute(KeyConstant.MESSAGE, "成功申请退库:" + fullId);
             }
@@ -1207,7 +1213,8 @@ public class OutAction extends DispatchAction
 
         BeanUtil.getBean(outBean, request);
 
-        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT)
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT)
         {
             if (StringTools.isNullOrNone(outBean.getDestinationId()))
             {
@@ -1257,7 +1264,8 @@ public class OutAction extends DispatchAction
 
                 if ("提交".equals(saves))
                 {
-                    outManager.submit(outBean.getFullId(), user, StorageConstant.OPR_STORAGE_INOTHER);
+                    outManager.submit(outBean.getFullId(), user,
+                        StorageConstant.OPR_STORAGE_INOTHER);
                 }
             }
             catch (MYException e)
@@ -1287,8 +1295,12 @@ public class OutAction extends DispatchAction
 
         OutBean checkOut = outDAO.find(outBean.getFullId());
 
-        request.getSession().setAttribute(KeyConstant.MESSAGE,
-            "此库单的单号是:" + outBean.getFullId() + ".下一步是:" + OutHelper.getStatus(checkOut.getStatus()));
+        request
+            .getSession()
+            .setAttribute(
+                KeyConstant.MESSAGE,
+                "此库单的单号是:" + outBean.getFullId() + ".下一步是:"
+                    + OutHelper.getStatus(checkOut.getStatus()));
 
         CommonTools.removeParamers(request);
 
@@ -1315,8 +1327,9 @@ public class OutAction extends DispatchAction
      * @param outBean
      * @param map
      */
-    private ActionForward processCommonOut(ActionMapping mapping, HttpServletRequest request, User user, String saves,
-                                           String fullId, OutBean outBean, ParamterMap map)
+    private ActionForward processCommonOut(ActionMapping mapping, HttpServletRequest request,
+                                           User user, String saves, String fullId, OutBean outBean,
+                                           ParamterMap map)
     {
         // 增加库单
         if ( !StringTools.isNullOrNone(fullId))
@@ -1413,8 +1426,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward submitOut(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                   HttpServletResponse reponse)
+    public ActionForward submitOut(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         synchronized (S_LOCK)
@@ -1474,8 +1487,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward querySelfOut(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse reponse)
+    public ActionForward querySelfOut(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         User user = (User)request.getSession().getAttribute("user");
@@ -1504,8 +1517,8 @@ public class OutAction extends DispatchAction
             {
                 OldPageSeparateTools.processSeparate(request, QUERYSELFOUT);
 
-                list = outDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request, QUERYSELFOUT),
-                    OldPageSeparateTools.getPageSeparate(request, QUERYSELFOUT));
+                list = outDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request,
+                    QUERYSELFOUT), OldPageSeparateTools.getPageSeparate(request, QUERYSELFOUT));
             }
         }
         catch (Exception e)
@@ -1560,8 +1573,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward querySelfBuy(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse reponse)
+    public ActionForward querySelfBuy(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         User user = (User)request.getSession().getAttribute("user");
@@ -1590,8 +1603,8 @@ public class OutAction extends DispatchAction
             {
                 OldPageSeparateTools.processSeparate(request, QUERYSELFBUY);
 
-                list = outDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request, QUERYSELFBUY),
-                    OldPageSeparateTools.getPageSeparate(request, QUERYSELFBUY));
+                list = outDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request,
+                    QUERYSELFBUY), OldPageSeparateTools.getPageSeparate(request, QUERYSELFBUY));
             }
         }
         catch (Exception e)
@@ -1635,8 +1648,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryOutBalance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse reponse)
+    public ActionForward queryOutBalance(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         User user = (User)request.getSession().getAttribute("user");
@@ -1676,8 +1689,9 @@ public class OutAction extends DispatchAction
             {
                 OldPageSeparateTools.processSeparate(request, QUERYSELFOUTBALANCE);
 
-                list = outBalanceDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request,
-                    QUERYSELFOUTBALANCE), OldPageSeparateTools.getPageSeparate(request, QUERYSELFOUTBALANCE));
+                list = outBalanceDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(
+                    request, QUERYSELFOUTBALANCE), OldPageSeparateTools.getPageSeparate(request,
+                    QUERYSELFOUTBALANCE));
             }
         }
         catch (Exception e)
@@ -1708,12 +1722,14 @@ public class OutAction extends DispatchAction
 
         User user = (User)request.getSession().getAttribute("user");
 
-        if ("1".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.SAIL_LOCATION_MANAGER))
+        if ("1".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.SAIL_LOCATION_MANAGER))
         {
             throw new MYException("用户没有此操作的权限");
         }
 
-        if ("2".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.SAIL_MONEY_CENTER))
+        if ("2".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.SAIL_MONEY_CENTER))
         {
             throw new MYException("用户没有此操作的权限");
         }
@@ -1723,7 +1739,8 @@ public class OutAction extends DispatchAction
             throw new MYException("用户没有此操作的权限");
         }
 
-        if ("4".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.SAIL_ADMIN))
+        if ("4".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.SAIL_ADMIN))
         {
             throw new MYException("用户没有此操作的权限");
         }
@@ -1733,7 +1750,8 @@ public class OutAction extends DispatchAction
             throw new MYException("用户没有此操作的权限");
         }
 
-        if ("6".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.SAIL_CENTER_CHECK))
+        if ("6".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.SAIL_CENTER_CHECK))
         {
             throw new MYException("用户没有此操作的权限");
         }
@@ -1743,12 +1761,14 @@ public class OutAction extends DispatchAction
             throw new MYException("用户没有此操作的权限");
         }
 
-        if ("8".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.BUY_SUBMIT))
+        if ("8".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.BUY_SUBMIT))
         {
             throw new MYException("用户没有此操作的权限");
         }
 
-        if ("9".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.SAIL_SUBMIT))
+        if ("9".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.SAIL_SUBMIT))
         {
             throw new MYException("用户没有此操作的权限");
         }
@@ -1768,7 +1788,8 @@ public class OutAction extends DispatchAction
 
         User user = (User)request.getSession().getAttribute("user");
 
-        if ("1".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.BUY_LOCATION_MANAGER))
+        if ("1".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.BUY_LOCATION_MANAGER))
         {
             throw new MYException("用户没有此操作的权限");
         }
@@ -1778,17 +1799,20 @@ public class OutAction extends DispatchAction
             throw new MYException("用户没有此操作的权限");
         }
 
-        if ("3".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.BUY_CHAIRMA))
+        if ("3".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.BUY_CHAIRMA))
         {
             throw new MYException("用户没有此操作的权限");
         }
 
-        if ("4".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.BUY_SUBMIT))
+        if ("4".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.BUY_SUBMIT))
         {
             throw new MYException("用户没有此操作的权限");
         }
 
-        if ("5".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.BUY_SUBMIT))
+        if ("5".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.BUY_SUBMIT))
         {
             throw new MYException("用户没有此操作的权限");
         }
@@ -1808,7 +1832,8 @@ public class OutAction extends DispatchAction
 
         User user = (User)request.getSession().getAttribute("user");
 
-        if ("2".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.SAIL_MONEY_CENTER))
+        if ("2".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.SAIL_MONEY_CENTER))
         {
             throw new MYException("用户没有此操作的权限");
         }
@@ -1824,8 +1849,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryOut(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse reponse)
+    public ActionForward queryOut(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         User user = (User)request.getSession().getAttribute("user");
@@ -1867,8 +1892,8 @@ public class OutAction extends DispatchAction
             {
                 OldPageSeparateTools.processSeparate(request, QUERYOUT);
 
-                list = outDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request, QUERYOUT),
-                    OldPageSeparateTools.getPageSeparate(request, QUERYOUT));
+                list = outDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request,
+                    QUERYOUT), OldPageSeparateTools.getPageSeparate(request, QUERYOUT));
             }
         }
         catch (Exception e)
@@ -1939,8 +1964,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryBuy(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse reponse)
+    public ActionForward queryBuy(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         User user = (User)request.getSession().getAttribute("user");
@@ -1982,8 +2007,8 @@ public class OutAction extends DispatchAction
             {
                 OldPageSeparateTools.processSeparate(request, QUERYBUY);
 
-                list = outDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request, QUERYBUY),
-                    OldPageSeparateTools.getPageSeparate(request, QUERYBUY));
+                list = outDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request,
+                    QUERYBUY), OldPageSeparateTools.getPageSeparate(request, QUERYBUY));
             }
         }
         catch (Exception e)
@@ -2043,7 +2068,8 @@ public class OutAction extends DispatchAction
         if ("3".equals(queryType) || "4".equals(queryType))
         {
             // 只能看到自己的仓库
-            List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(), AuthConstant.EXPAND_AUTH_DEPOT);
+            List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(),
+                AuthConstant.EXPAND_AUTH_DEPOT);
 
             for (Iterator iterator = depotList.iterator(); iterator.hasNext();)
             {
@@ -2100,7 +2126,8 @@ public class OutAction extends DispatchAction
             total += outBean.getTotal();
 
             // 是否超期 超期几天
-            if ( !StringTools.isNullOrNone(outBean.getRedate()) && outBean.getPay() == OutConstant.PAY_NOT)
+            if ( !StringTools.isNullOrNone(outBean.getRedate())
+                && outBean.getPay() == OutConstant.PAY_NOT)
             {
                 int overDays = TimeTools.cdate(TimeTools.now_short(), outBean.getRedate());
 
@@ -2110,12 +2137,14 @@ public class OutAction extends DispatchAction
                 }
                 else
                 {
-                    overDayMap.put(outBean.getFullId(), "<font color=red><b>" + overDays + "</b></font>");
+                    overDayMap.put(outBean.getFullId(), "<font color=red><b>" + overDays
+                                                        + "</b></font>");
                 }
             }
 
             // 款到发货
-            if (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_MONEY && outBean.getPay() == OutConstant.PAY_YES)
+            if (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_MONEY
+                && outBean.getPay() == OutConstant.PAY_YES)
             {
                 overDayMap.put(outBean.getFullId(), String.valueOf(0));
             }
@@ -2423,7 +2452,8 @@ public class OutAction extends DispatchAction
         {
             if (OldPageSeparateTools.isMenuLoad(request))
             {
-                condtion.addIntCondition("OutBalanceBean.status", "=", OutConstant.OUTBALANCE_STATUS_SUBMIT);
+                condtion.addIntCondition("OutBalanceBean.status", "=",
+                    OutConstant.OUTBALANCE_STATUS_SUBMIT);
 
                 request.setAttribute("status", OutConstant.OUTBALANCE_STATUS_SUBMIT);
             }
@@ -2579,7 +2609,8 @@ public class OutAction extends DispatchAction
         {
             if (OldPageSeparateTools.isMenuLoad(request))
             {
-                condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_LOCATION_MANAGER_CHECK);
+                condtion.addIntCondition("OutBean.status", "=",
+                    OutConstant.STATUS_LOCATION_MANAGER_CHECK);
 
                 request.setAttribute("status", OutConstant.STATUS_LOCATION_MANAGER_CHECK);
             }
@@ -2805,7 +2836,8 @@ public class OutAction extends DispatchAction
         {
             if (OldPageSeparateTools.isMenuLoad(request))
             {
-                condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_LOCATION_MANAGER_CHECK);
+                condtion.addIntCondition("OutBean.status", "=",
+                    OutConstant.STATUS_LOCATION_MANAGER_CHECK);
 
                 request.setAttribute("status", OutConstant.STATUS_LOCATION_MANAGER_CHECK);
             }
@@ -2888,7 +2920,8 @@ public class OutAction extends DispatchAction
     private void setDepotCondotionInBuy(User user, ConditionParse condtion)
     {
         // 只能看到自己的仓库
-        List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(), AuthConstant.EXPAND_AUTH_DEPOT);
+        List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(),
+            AuthConstant.EXPAND_AUTH_DEPOT);
 
         if (ListTools.isEmptyOrNull(depotAuthList))
         {
@@ -2931,7 +2964,8 @@ public class OutAction extends DispatchAction
     private void setLocalDepotConditionInBuy(User user, ConditionParse condtion)
     {
         // 只能看到自己的仓库
-        List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(), AuthConstant.EXPAND_AUTH_DEPOT);
+        List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(),
+            AuthConstant.EXPAND_AUTH_DEPOT);
 
         if (ListTools.isEmptyOrNull(depotAuthList))
         {
@@ -2974,7 +3008,8 @@ public class OutAction extends DispatchAction
     private void setDepotCondotionInOut(User user, ConditionParse condtion)
     {
         // 只能看到自己的仓库
-        List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(), AuthConstant.EXPAND_AUTH_DEPOT);
+        List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(),
+            AuthConstant.EXPAND_AUTH_DEPOT);
 
         if (ListTools.isEmptyOrNull(depotAuthList))
         {
@@ -3018,8 +3053,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryWarnOut(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse reponse)
+    public ActionForward queryWarnOut(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         User user = (User)request.getSession().getAttribute("user");
@@ -3112,7 +3147,8 @@ public class OutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        if (bean.getStatus() == OutConstant.STATUS_SAVE || bean.getStatus() == OutConstant.STATUS_REJECT)
+        if (bean.getStatus() == OutConstant.STATUS_SAVE
+            || bean.getStatus() == OutConstant.STATUS_REJECT)
         {
             try
             {
@@ -3162,8 +3198,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rejectBack(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse reponse)
+    public ActionForward rejectBack(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String fullId = request.getParameter("outId");
@@ -3186,7 +3222,8 @@ public class OutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        if (bean.getStatus() == OutConstant.STATUS_SAVE || bean.getStatus() == OutConstant.STATUS_REJECT)
+        if (bean.getStatus() == OutConstant.STATUS_SAVE
+            || bean.getStatus() == OutConstant.STATUS_REJECT)
         {
             try
             {
@@ -3229,8 +3266,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward processInvoke(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse reponse)
+    public ActionForward processInvoke(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String fullId = request.getParameter("outId");
@@ -3304,7 +3341,8 @@ public class OutAction extends DispatchAction
 
             List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(fullId);
 
-            DepotpartBean defaultOKDepotpart = depotpartDAO.findDefaultOKDepotpart(bean.getDestinationId());
+            DepotpartBean defaultOKDepotpart = depotpartDAO.findDefaultOKDepotpart(bean
+                .getDestinationId());
 
             if (defaultOKDepotpart == null)
             {
@@ -3326,7 +3364,8 @@ public class OutAction extends DispatchAction
 
             try
             {
-                String ful = outManager.coloneOutAndSubmitAffair(newOut, user, StorageConstant.OPR_STORAGE_REDEPLOY);
+                String ful = outManager.coloneOutAndSubmitAffair(newOut, user,
+                    StorageConstant.OPR_STORAGE_REDEPLOY);
 
                 request.setAttribute(KeyConstant.MESSAGE, fullId + "成功自动接收:" + ful);
             }
@@ -3334,7 +3373,8 @@ public class OutAction extends DispatchAction
             {
                 _logger.warn(e, e);
 
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不能自动接收，请核实:" + e.getErrorContent());
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不能自动接收，请核实:"
+                                                                + e.getErrorContent());
 
                 return mapping.findForward("error");
             }
@@ -3363,7 +3403,8 @@ public class OutAction extends DispatchAction
             {
                 _logger.warn(e, e);
 
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不能转调，请核实:" + e.getErrorContent());
+                request
+                    .setAttribute(KeyConstant.ERROR_MESSAGE, "库单不能转调，请核实:" + e.getErrorContent());
 
                 return mapping.findForward("error");
             }
@@ -3432,8 +3473,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward passOutBalance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse reponse)
+    public ActionForward passOutBalance(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -3470,8 +3511,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rejectOutBalance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse reponse)
+    public ActionForward rejectOutBalance(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -3508,8 +3549,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteOutBalance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse reponse)
+    public ActionForward deleteOutBalance(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -3656,8 +3697,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward payOut2(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 HttpServletResponse reponse)
+    public ActionForward payOut2(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String fullId = request.getParameter("outId");
@@ -3719,8 +3760,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward payOut3(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 HttpServletResponse reponse)
+    public ActionForward payOut3(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String fullId = request.getParameter("outId");
@@ -3784,8 +3825,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateInvoice(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse reponse)
+    public ActionForward updateInvoice(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String fullId = request.getParameter("outId");
@@ -3842,8 +3883,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward payOut4(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 HttpServletResponse reponse)
+    public ActionForward payOut4(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String fullId = request.getParameter("outId");
@@ -3906,7 +3947,8 @@ public class OutAction extends DispatchAction
      * @throws ServletException
      */
     public synchronized ActionForward modifyOutStatus(ActionMapping mapping, ActionForm form,
-                                                      HttpServletRequest request, HttpServletResponse reponse)
+                                                      HttpServletRequest request,
+                                                      HttpServletResponse reponse)
         throws ServletException
     {
         String fullId = request.getParameter("outId");
@@ -3968,7 +4010,8 @@ public class OutAction extends DispatchAction
         {
             try
             {
-                resultStatus = outManager.submit(out.getFullId(), user, StorageConstant.OPR_STORAGE_OUTBILLIN);
+                resultStatus = outManager.submit(out.getFullId(), user,
+                    StorageConstant.OPR_STORAGE_OUTBILLIN);
 
                 request.setAttribute(KeyConstant.MESSAGE, out.getFullId() + "库单成功提交!");
             }
@@ -3982,9 +4025,11 @@ public class OutAction extends DispatchAction
             }
         }
         // 进入库单 库管--分经理--总裁--董事长
-        else if (out.getType() == OutConstant.OUT_TYPE_INBILL && statuss != OutConstant.STATUS_SUBMIT)
+        else if (out.getType() == OutConstant.OUT_TYPE_INBILL
+                 && statuss != OutConstant.STATUS_SUBMIT)
         {
-            if (out.getOutType() == OutConstant.OUTTYPE_IN_COMMON || out.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT)
+            if (out.getOutType() == OutConstant.OUTTYPE_IN_COMMON
+                || out.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT)
             {
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "采购入库和调拨没有此操作");
 
@@ -3996,7 +4041,8 @@ public class OutAction extends DispatchAction
             {
                 try
                 {
-                    resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_CEO_CHECK, reason, depotpartId);
+                    resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_CEO_CHECK,
+                        reason, depotpartId);
                 }
                 catch (MYException e)
                 {
@@ -4013,7 +4059,8 @@ public class OutAction extends DispatchAction
             {
                 try
                 {
-                    resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_CHAIRMA_CHECK, reason, depotpartId);
+                    resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_CHAIRMA_CHECK,
+                        reason, depotpartId);
                 }
                 catch (MYException e)
                 {
@@ -4030,7 +4077,8 @@ public class OutAction extends DispatchAction
             {
                 try
                 {
-                    resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_PASS, reason, depotpartId);
+                    resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_PASS, reason,
+                        depotpartId);
                 }
                 catch (MYException e)
                 {
@@ -4066,7 +4114,8 @@ public class OutAction extends DispatchAction
             {
                 try
                 {
-                    resultStatus = outManager.submit(fullId, user, StorageConstant.OPR_STORAGE_OUTBILL);
+                    resultStatus = outManager.submit(fullId, user,
+                        StorageConstant.OPR_STORAGE_OUTBILL);
                 }
                 catch (MYException e)
                 {
@@ -4083,7 +4132,8 @@ public class OutAction extends DispatchAction
             {
                 try
                 {
-                    resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_SUBMIT, reason, depotpartId);
+                    resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_SUBMIT, reason,
+                        depotpartId);
                 }
                 catch (MYException e)
                 {
@@ -4096,15 +4146,16 @@ public class OutAction extends DispatchAction
             }
 
             // 结算中心通过 物流管理员 库管通过 总裁通过
-            if (statuss == OutConstant.STATUS_MANAGER_PASS || statuss == OutConstant.STATUS_FLOW_PASS
-                || statuss == OutConstant.STATUS_PASS)
+            if (statuss == OutConstant.STATUS_MANAGER_PASS
+                || statuss == OutConstant.STATUS_FLOW_PASS || statuss == OutConstant.STATUS_PASS)
             {
                 // 这里需要计算客户的信用金额-是否报送物流中心经理审批
                 boolean outCredit = parameterDAO.getBoolean(SysConfigConstant.OUT_CREDIT);
 
                 // 如果是黑名单的客户(且没有付款)
                 if (outCredit && out.getReserve3() == OutConstant.OUT_SAIL_TYPE_MONEY
-                    && out.getType() == OutConstant.OUT_TYPE_OUTBILL && out.getPay() == OutConstant.PAY_NOT)
+                    && out.getType() == OutConstant.OUT_TYPE_OUTBILL
+                    && out.getPay() == OutConstant.PAY_NOT)
                 {
                     request.setAttribute(KeyConstant.ERROR_MESSAGE, "只有结算中心确定已经回款后才可以审批此销售单");
 
@@ -4159,7 +4210,8 @@ public class OutAction extends DispatchAction
 
         }
 
-        importLog.info(fullId + ":" + user.getStafferName() + ";form:" + oldStatus + ";to" + resultStatus + "(SUCCESS)");
+        importLog.info(fullId + ":" + user.getStafferName() + ";form:" + oldStatus + ";to"
+                       + resultStatus + "(SUCCESS)");
 
         RequestTools.actionInitQuery(request);
 
@@ -4196,8 +4248,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward swatchToSail(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse reponse)
+    public ActionForward swatchToSail(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         synchronized (S_LOCK)
@@ -4347,8 +4399,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findOut(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 HttpServletResponse reponse)
+    public ActionForward findOut(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String outId = RequestTools.getValueFromRequest(request, "outId");
@@ -4375,7 +4427,8 @@ public class OutAction extends DispatchAction
 
             List<FlowLogBean> logs = flowLogDAO.queryEntityBeansByFK(outId);
 
-            List<FlowLogVO> voList = ListTools.changeList(logs, FlowLogVO.class, FlowLogHelper.class, "getOutLogVO");
+            List<FlowLogVO> voList = ListTools.changeList(logs, FlowLogVO.class,
+                FlowLogHelper.class, "getOutLogVO");
 
             request.setAttribute("bean", bean);
 
@@ -4446,8 +4499,8 @@ public class OutAction extends DispatchAction
         // 修改发票类型
         if ("6".equals(fow))
         {
-            List<InvoiceBean> invoiceList = invoiceDAO.queryEntityBeansByCondition("where forward = ?",
-                InvoiceConstant.INVOICE_FORWARD_OUT);
+            List<InvoiceBean> invoiceList = invoiceDAO.queryEntityBeansByCondition(
+                "where forward = ?", InvoiceConstant.INVOICE_FORWARD_OUT);
 
             request.setAttribute("invoiceList", invoiceList);
 
@@ -4472,7 +4525,8 @@ public class OutAction extends DispatchAction
 
                 for (OutBean outBean : refList)
                 {
-                    if (outManager.isSwatchToSail(outBean.getFullId()) && !OutHelper.isSailEnd(outBean))
+                    if (outManager.isSwatchToSail(outBean.getFullId())
+                        && !OutHelper.isSailEnd(outBean))
                     {
                         // 异常不能增加,只能有一个当前的
                         request.setAttribute(KeyConstant.ERROR_MESSAGE, "领样转销售只能存在一个未审批结束的,请重新操作");
@@ -4645,7 +4699,7 @@ public class OutAction extends DispatchAction
     }
 
     /**
-     * rptQueryOut
+     * 查询销售单
      * 
      * @param mapping
      * @param form
@@ -4654,8 +4708,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryOut(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse reponse)
+    public ActionForward rptQueryOut(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -4682,8 +4736,8 @@ public class OutAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYOUT);
 
-            list = outDAO.queryEntityBeansByCondition(PageSeparateTools.getCondition(request, RPTQUERYOUT),
-                PageSeparateTools.getPageSeparate(request, RPTQUERYOUT));
+            list = outDAO.queryEntityBeansByCondition(PageSeparateTools.getCondition(request,
+                RPTQUERYOUT), PageSeparateTools.getPageSeparate(request, RPTQUERYOUT));
         }
 
         request.setAttribute("list", list);
@@ -4701,8 +4755,8 @@ public class OutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryOutBalance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse reponse)
+    public ActionForward rptQueryOutBalance(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -4729,8 +4783,10 @@ public class OutAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYOUTBALANCE);
 
-            list = outBalanceDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, RPTQUERYOUTBALANCE),
-                PageSeparateTools.getPageSeparate(request, RPTQUERYOUTBALANCE));
+            list = outBalanceDAO
+                .queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                    RPTQUERYOUTBALANCE), PageSeparateTools.getPageSeparate(request,
+                    RPTQUERYOUTBALANCE));
         }
 
         request.setAttribute("list", list);
@@ -4827,6 +4883,9 @@ public class OutAction extends DispatchAction
         if ("0".equals(mode))
         {
             condtion.addCondition("and OutBean.status in (1, 3, 6, 7, 8, 9)");
+
+            // 过滤委托代销
+            condtion.addIntCondition("OutBean.outType", "<>", OutConstant.OUTTYPE_OUT_CONSIGN);
         }
 
         // 需要开票的销售单
@@ -4894,6 +4953,8 @@ public class OutAction extends DispatchAction
 
         String type = request.getParameter("type");
 
+        String pay = request.getParameter("pay");
+
         String customerId = request.getParameter("customerId");
 
         String invoiceStatus = request.getParameter("invoiceStatus");
@@ -4923,6 +4984,11 @@ public class OutAction extends DispatchAction
             condtion.addIntCondition("OutBalanceBean.type", "=", type);
         }
 
+        if ( !StringTools.isNullOrNone(pay))
+        {
+            condtion.addIntCondition("OutBalanceBean.pay", "=", pay);
+        }
+
         if ( !StringTools.isNullOrNone(customerId))
         {
             condtion.addCondition("OutBalanceBean.customerId", "=", customerId);
@@ -4949,7 +5015,8 @@ public class OutAction extends DispatchAction
         if (sb2 != null)
         {
             // 设置其剩余的信用额度
-            request.setAttribute("credit", ElTools.formatNum(sb2.getCredit() * sb2.getLever() - noPayBusiness));
+            request.setAttribute("credit", ElTools.formatNum(sb2.getCredit() * sb2.getLever()
+                                                             - noPayBusiness));
         }
 
         if ( !"1".equals(flag))
@@ -4962,13 +5029,15 @@ public class OutAction extends DispatchAction
 
             for (StafferBean stafferBean : managerList)
             {
-                double noPayBusinessInM = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(stafferBean.getId(),
-                    YYTools.getStatBeginDate(), YYTools.getStatEndDate());
+                double noPayBusinessInM = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(
+                    stafferBean.getId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
 
                 StafferBean manager = stafferDAO.find(user.getStafferId());
 
-                mList.add(stafferBean.getName() + "的信用额度剩余:"
-                          + ElTools.formatNum(manager.getCredit() * manager.getLever() - noPayBusinessInM));
+                mList.add(stafferBean.getName()
+                          + "的信用额度剩余:"
+                          + ElTools.formatNum(manager.getCredit() * manager.getLever()
+                                              - noPayBusinessInM));
 
                 request.setAttribute("mList", mList);
             }

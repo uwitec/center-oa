@@ -28,9 +28,28 @@ public class OutBalanceDAOImpl extends BaseDAO<OutBalanceBean, OutBalanceVO> imp
 {
     public boolean updateInvoiceStatus(String id, double invoiceMoney, int invoiceStatus)
     {
-        String sql = BeanTools.getUpdateHead(claz) + "set invoiceMoney = ?, invoiceStatus = ? where id = ?";
+        String sql = BeanTools.getUpdateHead(claz)
+                     + "set invoiceMoney = ?, invoiceStatus = ? where id = ?";
 
         jdbcOperation.update(sql, invoiceMoney, invoiceStatus, id);
+
+        return true;
+    }
+
+    public boolean updateHadPay(String id, double hadPay)
+    {
+        String sql = BeanTools.getUpdateHead(claz) + "set payMoney = ? where id = ?";
+
+        jdbcOperation.update(sql, hadPay, id);
+
+        return true;
+    }
+
+    public boolean updatePay(String id, int pay)
+    {
+        String sql = BeanTools.getUpdateHead(claz) + "set pay = ? where id = ?";
+
+        jdbcOperation.update(sql, pay, id);
 
         return true;
     }

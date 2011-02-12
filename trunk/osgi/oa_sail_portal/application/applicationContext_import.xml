@@ -81,6 +81,8 @@
     <osgi:reference id="baseBalanceDAO" interface="com.china.center.oa.sail.dao.BaseBalanceDAO" />
     
     <osgi:reference id="inBillDAO" interface="com.china.center.oa.finance.dao.InBillDAO" />
+    
+    <osgi:reference id="outQueryDAO" interface="com.china.center.oa.sail.dao.OutQueryDAO" />
 	
 	
 </beans>
