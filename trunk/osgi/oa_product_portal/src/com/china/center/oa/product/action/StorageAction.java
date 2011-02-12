@@ -792,6 +792,11 @@ public class StorageAction extends DispatchAction
         {
             StorageRelationVO storageRelationBean = (StorageRelationVO)iterator.next();
 
+            if ( !StorageConstant.PUBLIC_STAFFER.equals(storageRelationBean.getStafferId()))
+            {
+                iterator.remove();
+            }
+
             ProductBean product = productDAO.find(storageRelationBean.getProductId());
 
             if (product != null)

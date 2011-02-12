@@ -281,7 +281,7 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
             wrap.setProductId(each.getProductId());
             wrap.setType(StorageConstant.OPR_DDEPOTPART_CHANGE);
             wrap.setSerializeId(sid);
-            wrap.setRefId(sid);
+            wrap.setRefId(commonDAO.getSquenceString());
 
             storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, true);
 
@@ -302,7 +302,7 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
                 eachWrap.setProductId(newItemBean.getProductId());
                 eachWrap.setType(StorageConstant.OPR_DDEPOTPART_CHANGE);
                 eachWrap.setSerializeId(sid);
-                eachWrap.setRefId(sid);
+                eachWrap.setRefId(commonDAO.getSquenceString());
 
                 total += newItemBean.getAmount();
 

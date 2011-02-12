@@ -488,7 +488,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
 
                         if ( !StorageConstant.PUBLIC_STAFFER.equals(srb.getStafferId()))
                         {
-                            throw new RuntimeException("只能操作公共储位,请重新操作");
+                            throw new RuntimeException("只能操作公共库存,请重新操作");
                         }
 
                         ProductChangeWrap addWrap = new ProductChangeWrap();
@@ -502,6 +502,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
                         addWrap.setStorageId(dirStorageId);
                         addWrap.setSerializeId(sid);
                         addWrap.setDepotpartId(srb.getDepotpartId());
+                        addWrap.setRefId(commonDAO.getSquenceString());
 
                         ProductChangeWrap deleteWrap = new ProductChangeWrap();
 
@@ -513,6 +514,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
                         deleteWrap.setStorageId(sourceStorageId);
                         deleteWrap.setSerializeId(sid);
                         deleteWrap.setDepotpartId(srb.getDepotpartId());
+                        deleteWrap.setRefId(commonDAO.getSquenceString());
 
                         try
                         {
@@ -637,6 +639,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
                     deleteWrap.setStorageId(srb.getStorageId());
                     deleteWrap.setSerializeId(sid);
                     deleteWrap.setDepotpartId(srb.getDepotpartId());
+                    deleteWrap.setRefId(sid);
 
                     ProductChangeWrap addWrap = new ProductChangeWrap();
 
@@ -657,6 +660,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
                     }
                     addWrap.setSerializeId(sid);
                     addWrap.setDepotpartId(dirDepotpartId);
+                    addWrap.setRefId(sid);
 
                     try
                     {
