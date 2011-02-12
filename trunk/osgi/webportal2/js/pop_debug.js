@@ -28,7 +28,7 @@ function parseIntInner(str)
 
 var g_center_handle;
 
-var g_pop_h_old = 80;
+var g_pop_h_old = 120;
 
 var g_pop_h = g_pop_h_old;
 
