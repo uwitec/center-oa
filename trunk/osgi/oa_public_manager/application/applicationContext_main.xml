@@ -125,4 +125,6 @@
 
 	<bean id="showManager" class="com.china.center.oa.publics.manager.impl.ShowManagerImpl" />
 
+	<bean id="stafferVSIndustryDAO" class="com.china.center.oa.publics.dao.impl.StafferVSIndustryDAOImpl" />
+
 </beans>

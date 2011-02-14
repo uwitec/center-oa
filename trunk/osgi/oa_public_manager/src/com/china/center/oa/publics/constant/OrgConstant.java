@@ -19,12 +19,12 @@ package com.china.center.oa.publics.constant;
 public interface OrgConstant
 {
     /**
-     * 大区(二级组织)
+     * 大区ID(二级组织)
      */
     String ORG_BIG_LOCATION = "2";
 
     /**
-     * 事业部(二级组织)
+     * 事业部ID(二级组织)
      */
     String ORG_BIG_DEPARTMENT = "3";
 

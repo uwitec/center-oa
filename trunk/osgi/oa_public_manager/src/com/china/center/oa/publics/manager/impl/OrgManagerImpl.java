@@ -10,6 +10,7 @@ package com.china.center.oa.publics.manager.impl;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -19,17 +20,20 @@ import java.util.Set;
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.OrgConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.OrgDAO;
 import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.StafferVSPriDAO;
+import com.china.center.oa.publics.listener.OrgListener;
 import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.publics.vs.OrgBean;
 import com.china.center.oa.publics.wrap.StafferOrgWrap;
@@ -47,7 +51,7 @@ import com.china.center.tools.StringTools;
  * @since 1.0
  */
 @Exceptional
-public class OrgManagerImpl implements OrgManager
+public class OrgManagerImpl extends AbstractListenerManager<OrgListener> implements OrgManager
 {
     private OrgDAO orgDAO = null;
 
@@ -196,7 +200,7 @@ public class OrgManagerImpl implements OrgManager
     {
         JudgeTools.judgeParameterIsNull(user, id);
 
-        checkDelBean(id);
+        checkDelBean(user, id);
 
         principalshipDAO.deleteEntityBean(id);
 
@@ -223,12 +227,14 @@ public class OrgManagerImpl implements OrgManager
         for (PrincipalshipBean principalshipBean : plist)
         {
             // 查询下一级岗位
-            List<PrincipalshipBean> vos = principalshipDAO.querySubPrincipalship(principalshipBean.getId());
+            List<PrincipalshipBean> vos = principalshipDAO.querySubPrincipalship(principalshipBean
+                .getId());
 
             for (PrincipalshipBean orgBean : vos)
             {
                 // 子组织下的人员
-                List<StafferBean> pplist = stafferDAO.queryStafferByPrincipalshipId(orgBean.getId());
+                List<StafferBean> pplist = stafferDAO
+                    .queryStafferByPrincipalshipId(orgBean.getId());
 
                 if ( !pplist.isEmpty())
                 {
@@ -276,7 +282,7 @@ public class OrgManagerImpl implements OrgManager
         return list;
     }
 
-    private void checkDelBean(String id)
+    private void checkDelBean(User user, String id)
         throws MYException
     {
         PrincipalshipBean bean = principalshipDAO.find(id);
@@ -297,6 +303,12 @@ public class OrgManagerImpl implements OrgManager
             throw new MYException("组织上有人员挂靠,不能删除");
         }
 
+        Collection<OrgListener> listenerMapValues = this.listenerMapValues();
+
+        for (OrgListener orgListener : listenerMapValues)
+        {
+            orgListener.onDeleteOrg(user, bean);
+        }
     }
 
     /**
@@ -497,6 +509,51 @@ public class OrgManagerImpl implements OrgManager
             }
         }
 
+    }
+
+    public PrincipalshipBean findByIdAndSpecialLevel(String id, int level)
+    {
+        PrincipalshipBean principalship = principalshipDAO.find(id);
+
+        if (principalship == null)
+        {
+            return null;
+        }
+
+        if (principalship.getLevel() == level)
+        {
+            return principalship;
+        }
+
+        if (principalship.getLevel() < level)
+        {
+            return null;
+        }
+
+        // 获取父级
+        for (int i = 0; i < 20; i++ )
+        {
+            PrincipalshipBean parent = principalshipDAO.find(principalship.getParentId());
+
+            if (parent == null)
+            {
+                return null;
+            }
+
+            if (parent.getLevel() == level)
+            {
+                return parent;
+            }
+
+            principalship = parent;
+        }
+
+        return null;
+    }
+
+    public List<PrincipalshipBean> listAllIndustry()
+    {
+        return principalshipDAO.queryEntityBeansByFK(OrgConstant.ORG_BIG_DEPARTMENT);
     }
 
     /**

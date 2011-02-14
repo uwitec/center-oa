@@ -73,6 +73,19 @@
 			</list>
 		</property>
 	</bean>
-
+	
+	<bean id="orgListenerProductImpl" class="com.china.center.oa.product.listener.impl.OrgListenerProductImpl" />
+	
+	<bean id="orgListenerLoadListener"
+        class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="orgManager" />
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="orgListenerProductImpl" />
+            </list>
+        </property>
+    </bean>
 
 </beans>

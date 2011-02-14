@@ -20,6 +20,7 @@ import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.IbatisDaoSupport;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.sail.bean.OutBean;
+import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.vo.OutVO;
 import com.china.center.tools.TimeTools;
@@ -310,7 +311,10 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
 
     public boolean updateInvoice(String fullId, String invoiceId)
     {
-        jdbcOperation.updateField("invoiceId", invoiceId, fullId, this.claz);
+        String sql = BeanTools.getUpdateHead(claz)
+                     + "set invoiceId = ?, hasInvoice = ? where fullid = ?";
+
+        jdbcOperation.update(sql, invoiceId, OutConstant.HASINVOICE_YES, fullId);
 
         return true;
     }

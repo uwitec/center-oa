@@ -38,7 +38,7 @@ function load()
     change();
     loadForm();
     
-    <c:if test="${consignBean.reprotType > 0}">
+    <c:if test="${consignBean.reprotType > 0 || readonly}">
     setAllReadOnly($O('showTable'));
     $detail($O('showTable'), ['transport1', 'transport']);
     </c:if>
@@ -87,8 +87,7 @@ function change()
 <input type="hidden" value="${consignBean.currentStatus}" name="currentStatus">
 <p:navigation
 	height="22">
-	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javascript:history.go(-1)">发货单管理</span> &gt;&gt; 发货单处理</td>
+	<td width="550" class="navigation">发货单</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -212,13 +211,17 @@ function change()
 	<p:line flag="1" />
 
 	<p:button leftWidth="100%" rightWidth="0%">
-		<div align="right" id="pr"><c:if test="${init}">
-            <input type="button" class="button_class" onclick="sub()"
-                value="&nbsp;&nbsp;审核通过&nbsp;&nbsp;">&nbsp;&nbsp;
-            </c:if><c:if test="${consignBean.reprotType == 0 && consignBean.currentStatus >= 2}">
-            <input type="button" class="button_class" onclick="sub1()"
-                value="&nbsp;&nbsp;修改发货信息&nbsp;&nbsp;">&nbsp;&nbsp;
-            </c:if> <input type="button" class="button_class"
+		<div align="right" id="pr">
+		    <c:if test="${!readonly}">
+			    <c:if test="${init}">
+	            <input type="button" class="button_class" onclick="sub()"
+	                value="&nbsp;&nbsp;审核通过&nbsp;&nbsp;">&nbsp;&nbsp;
+	            </c:if><c:if test="${consignBean.reprotType == 0 && consignBean.currentStatus >= 2}">
+	            <input type="button" class="button_class" onclick="sub1()"
+	                value="&nbsp;&nbsp;修改发货信息&nbsp;&nbsp;">&nbsp;&nbsp;
+	            </c:if> 
+            </c:if> 
+            <input type="button" class="button_class"
             onclick="javascript:history.go(-1)"
             value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>
 	</p:button>

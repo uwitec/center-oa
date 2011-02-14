@@ -102,5 +102,7 @@
 	<osgi:reference id="menuManager" interface="com.china.center.oa.publics.manager.MenuManager" />
 	
 	<osgi:reference id="showDAO" interface="com.china.center.oa.publics.dao.ShowDAO" />
+	
+	<osgi:reference id="stafferVSIndustryDAO" interface="com.china.center.oa.publics.dao.StafferVSIndustryDAO" />
 
 </beans>

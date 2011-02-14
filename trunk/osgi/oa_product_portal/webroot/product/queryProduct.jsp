@@ -158,7 +158,7 @@ function callBackFunLocation(data)
         
         var ck = '';
         
-        if (item.code == '1')
+        if (item.parentId == '1')
         {
         	ck = 'checked=true'
         }

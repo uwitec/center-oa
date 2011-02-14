@@ -177,6 +177,8 @@
 		</condtion>
 	</item>
 	
+	<item name="queryPublicStorageRelation" alias="queryStorageRelation"/>
+	
 	<item name="queryDepotStorageRelation" deaultpfix="StorageRelationBean">
         <condtion name="name" caption="名称" pfix="ProductBean">
             <opr>like</opr>

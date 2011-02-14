@@ -296,7 +296,7 @@ function managerChange()
     if ($$('outType') == 2)
     {
         showTr('duty_tr', true);
-        showTr('invoice_tr', true);
+        showTr('invoice_tr', false);
     }
     
     if ($$('outType') == 1 || $$('outType') == 3)

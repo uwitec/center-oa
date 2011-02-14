@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@include file="../common/common.jsp"%>
 
 //当前的焦点对象
 var oo;
@@ -294,6 +295,14 @@ function check()
 function checkTotal()
 {
     messk = '';
+    
+    <c:if test="${lock_sw}">
+    
+     messk += '\r\n';
+     
+     messk += '由于是领样转销售保存库存后需要提交才能进入销售流程';
+    </c:if>
+    
     var gh = $O('nameList').value.split('~');
     var ghk = $O('amontList').value.split('~');
 
@@ -302,7 +311,6 @@ function checkTotal()
     {
         messk += '\r\n' + '产品【' + gh[i] + '】   数量:' + ghk[i];
     }
-
 
     if ($O('saves').value == 'save')
     {

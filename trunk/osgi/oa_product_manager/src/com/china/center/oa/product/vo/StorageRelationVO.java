@@ -59,6 +59,9 @@ public class StorageRelationVO extends StorageRelationBean
     @Ignore
     private int errorAmount = 0;
 
+    @Ignore
+    private double batchPrice = 0.0d;
+
     /**
      * default constructor
      */
@@ -220,6 +223,23 @@ public class StorageRelationVO extends StorageRelationBean
     }
 
     /**
+     * @return the batchPrice
+     */
+    public double getBatchPrice()
+    {
+        return batchPrice;
+    }
+
+    /**
+     * @param batchPrice
+     *            the batchPrice to set
+     */
+    public void setBatchPrice(double batchPrice)
+    {
+        this.batchPrice = batchPrice;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -228,15 +248,43 @@ public class StorageRelationVO extends StorageRelationBean
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("StorageRelationVO ( ").append(super.toString()).append(TAB).append("productName = ").append(
-            this.productName).append(TAB).append("productCode = ").append(this.productCode).append(TAB).append(
-            "storageName = ").append(this.storageName).append(TAB).append("depotpartName = ").append(this.depotpartName).append(
-            TAB).append("locationName = ").append(this.locationName).append(TAB).append("stafferName = ").append(
-            this.stafferName).append(TAB).append("mayAmount = ").append(this.mayAmount).append(TAB).append(
-            "preassignAmount = ").append(this.preassignAmount).append(TAB).append("errorAmount = ").append(
-            this.errorAmount).append(TAB).append(" )");
+        retValue
+            .append("StorageRelationVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("productName = ")
+            .append(this.productName)
+            .append(TAB)
+            .append("productCode = ")
+            .append(this.productCode)
+            .append(TAB)
+            .append("storageName = ")
+            .append(this.storageName)
+            .append(TAB)
+            .append("depotpartName = ")
+            .append(this.depotpartName)
+            .append(TAB)
+            .append("locationName = ")
+            .append(this.locationName)
+            .append(TAB)
+            .append("stafferName = ")
+            .append(this.stafferName)
+            .append(TAB)
+            .append("mayAmount = ")
+            .append(this.mayAmount)
+            .append(TAB)
+            .append("preassignAmount = ")
+            .append(this.preassignAmount)
+            .append(TAB)
+            .append("errorAmount = ")
+            .append(this.errorAmount)
+            .append(TAB)
+            .append("batchPrice = ")
+            .append(this.batchPrice)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

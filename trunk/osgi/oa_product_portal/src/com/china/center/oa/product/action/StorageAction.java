@@ -56,6 +56,8 @@ import com.china.center.oa.product.vo.StorageLogVO;
 import com.china.center.oa.product.vo.StorageRelationVO;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.constant.PublicConstant;
+import com.china.center.oa.publics.dao.StafferVSIndustryDAO;
+import com.china.center.oa.publics.vs.StafferVSIndustryBean;
 import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -95,6 +97,8 @@ public class StorageAction extends DispatchAction
 
     private StorageApplyDAO storageApplyDAO = null;
 
+    private StafferVSIndustryDAO stafferVSIndustryDAO = null;
+
     private static final String QUERYSTORAGE = "queryStorage";
 
     private static final String QUERYSTORAGERELATION = "queryStorageRelation";
@@ -106,6 +110,8 @@ public class StorageAction extends DispatchAction
     private static final String RPTQUERYPRODUCTINDEPOTPART = "rptQueryProductInDepotpart";
 
     private static final String QUERYSTORAGEAPPLY = "queryStorageApply";
+
+    private static final String QUERYPUBLICSTORAGERELATION = "queryPublicStorageRelation";
 
     private static final String RPTQUERYSTORAGERELATIONINDEPOT = "rptQueryStorageRelationInDepot";
 
@@ -154,6 +160,45 @@ public class StorageAction extends DispatchAction
         ActionTools.processJSONQueryCondition(QUERYSTORAGERELATION, request, condtion);
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSTORAGERELATION, request,
+            condtion, this.storageRelationDAO, new HandleResult<StorageRelationVO>()
+            {
+                public void handle(StorageRelationVO vo)
+                {
+                    if (StringTools.isNullOrNone(vo.getStafferName()))
+                    {
+                        vo.setStafferName("公共");
+                    }
+
+                }
+            });
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryPublicStorageRelation
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryPublicStorageRelation(ActionMapping mapping, ActionForm form,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        condtion.addCondition("StorageRelationBean.stafferId", "=", StorageConstant.PUBLIC_STAFFER);
+
+        ActionTools.processJSONQueryCondition(QUERYPUBLICSTORAGERELATION, request, condtion);
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPUBLICSTORAGERELATION, request,
             condtion, this.storageRelationDAO, new HandleResult<StorageRelationVO>()
             {
                 public void handle(StorageRelationVO vo)
@@ -1000,7 +1045,7 @@ public class StorageAction extends DispatchAction
         }
         else
         {
-            createList(list, condtion, sailLocation, page, queryList);
+            createList(list, condtion, sailLocation, page, queryList, request);
         }
 
         for (StorageRelationVO vo : list)
@@ -1017,6 +1062,14 @@ public class StorageAction extends DispatchAction
 
             // 预支数量
             vo.setPreassignAmount(preassign);
+
+            ProductBean product = productDAO.find(vo.getProductId());
+
+            if (product != null)
+            {
+                // 设置批发价
+                vo.setBatchPrice(product.getBatchPrice());
+            }
         }
 
         // 查询仓库下的良品仓
@@ -1040,11 +1093,13 @@ public class StorageAction extends DispatchAction
      */
     private void createList(List<StorageRelationVO> list, ConditionParse condtion,
                             String sailLocation, PageSeparate page,
-                            List<StorageRelationVO> queryList)
+                            List<StorageRelationVO> queryList, HttpServletRequest request)
     {
+        User user = Helper.getUser(request);
+
         for (StorageRelationVO each : queryList)
         {
-            if (hasInSailLocation(each.getProductId(), sailLocation))
+            if (hasInSailLocation(each.getProductId(), sailLocation, user))
             {
                 list.add(each);
 
@@ -1072,7 +1127,7 @@ public class StorageAction extends DispatchAction
 
             for (StorageRelationVO each : queryList)
             {
-                if (hasInSailLocation(each.getProductId(), sailLocation))
+                if (hasInSailLocation(each.getProductId(), sailLocation, user))
                 {
                     list.add(each);
 
@@ -1085,9 +1140,23 @@ public class StorageAction extends DispatchAction
         }
     }
 
-    private boolean hasInSailLocation(String productId, String sailLocation)
+    private boolean hasInSailLocation(String productId, String sailLocation, User user)
     {
-        return productVSLocationDAO.countByProductIdAndLocationId(productId, sailLocation) > 0;
+        List<StafferVSIndustryBean> vsList = stafferVSIndustryDAO.queryEntityBeansByFK(user
+            .getStafferId());
+
+        for (StafferVSIndustryBean stafferVSIndustryBean : vsList)
+        {
+            int count = productVSLocationDAO.countByProductIdAndLocationId(productId,
+                stafferVSIndustryBean.getIndustryId());
+
+            if (count > 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private ConditionParse setRptQueryProductCondition(HttpServletRequest request)
@@ -1359,5 +1428,22 @@ public class StorageAction extends DispatchAction
     public void setProductVSLocationDAO(ProductVSLocationDAO productVSLocationDAO)
     {
         this.productVSLocationDAO = productVSLocationDAO;
+    }
+
+    /**
+     * @return the stafferVSIndustryDAO
+     */
+    public StafferVSIndustryDAO getStafferVSIndustryDAO()
+    {
+        return stafferVSIndustryDAO;
+    }
+
+    /**
+     * @param stafferVSIndustryDAO
+     *            the stafferVSIndustryDAO to set
+     */
+    public void setStafferVSIndustryDAO(StafferVSIndustryDAO stafferVSIndustryDAO)
+    {
+        this.stafferVSIndustryDAO = stafferVSIndustryDAO;
     }
 }

@@ -818,4 +818,5 @@ public class StafferBean implements Serializable
     {
         this.black = black;
     }
+
 }

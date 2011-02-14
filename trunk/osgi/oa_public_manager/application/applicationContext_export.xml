@@ -108,4 +108,6 @@
 
 	<osgi:service ref="showManager" interface="com.china.center.oa.publics.manager.ShowManager" />
 
+	<osgi:service ref="stafferVSIndustryDAO" interface="com.china.center.oa.publics.dao.StafferVSIndustryDAO" />
+
 </beans>

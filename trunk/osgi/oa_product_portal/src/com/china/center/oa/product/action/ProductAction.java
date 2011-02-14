@@ -79,11 +79,12 @@ import com.china.center.oa.product.vs.ProductVSLocationBean;
 import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.EnumBean;
-import com.china.center.oa.publics.bean.LocationBean;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.EnumDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
+import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.FileTools;
@@ -133,6 +134,8 @@ public class ProductAction extends DispatchAction
     private StorageRelationDAO storageRelationDAO = null;
 
     private EnumDAO enumDAO = null;
+
+    private OrgManager orgManager = null;
 
     private ProductVSLocationDAO productVSLocationDAO = null;
 
@@ -1655,17 +1658,17 @@ public class ProductAction extends DispatchAction
 
         request.setAttribute("beanList", beanList);
 
-        List<LocationBean> locationList = locationDAO.listEntityBeans();
+        List<PrincipalshipBean> locationList = orgManager.listAllIndustry();
 
-        for (LocationBean locationBean : locationList)
+        for (PrincipalshipBean locationBean : locationList)
         {
-            locationBean.setCode("0");
+            locationBean.setParentId("0");
 
             for (ProductVSLocationBean vs : beanList)
             {
                 if (vs.getLocationId().equals(locationBean.getId()))
                 {
-                    locationBean.setCode("1");
+                    locationBean.setParentId("1");
                 }
             }
         }
@@ -2142,5 +2145,22 @@ public class ProductAction extends DispatchAction
     public void setStorageRelationDAO(StorageRelationDAO storageRelationDAO)
     {
         this.storageRelationDAO = storageRelationDAO;
+    }
+
+    /**
+     * @return the orgManager
+     */
+    public OrgManager getOrgManager()
+    {
+        return orgManager;
+    }
+
+    /**
+     * @param orgManager
+     *            the orgManager to set
+     */
+    public void setOrgManager(OrgManager orgManager)
+    {
+        this.orgManager = orgManager;
     }
 }

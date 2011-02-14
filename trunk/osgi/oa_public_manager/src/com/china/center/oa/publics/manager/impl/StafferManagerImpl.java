@@ -23,15 +23,19 @@ import com.china.center.common.MYException;
 import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.OrgConstant;
 import com.china.center.oa.publics.constant.StafferConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.publics.dao.StafferVSIndustryDAO;
 import com.china.center.oa.publics.dao.StafferVSPriDAO;
 import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.listener.StafferListener;
+import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.publics.manager.StafferManager;
 import com.china.center.oa.publics.vo.StafferVO;
+import com.china.center.oa.publics.vs.StafferVSIndustryBean;
 import com.china.center.oa.publics.vs.StafferVSPriBean;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.StringTools;
@@ -56,7 +60,11 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
 
     private StafferVSPriDAO stafferVSPriDAO = null;
 
+    private StafferVSIndustryDAO stafferVSIndustryDAO = null;
+
     private PrincipalshipDAO principalshipDAO = null;
+
+    private OrgManager orgManager = null;
 
     public StafferManagerImpl()
     {
@@ -93,9 +101,29 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
 
         stafferDAO.saveEntityBean(bean);
 
+        Set<String> set = new HashSet<String>();
+
         for (StafferVSPriBean stafferVSPriBean : priList)
         {
             stafferVSPriBean.setStafferId(bean.getId());
+
+            PrincipalshipBean second = orgManager.findByIdAndSpecialLevel(stafferVSPriBean
+                .getPrincipalshipId(), 3);
+
+            if (second != null && OrgConstant.ORG_BIG_DEPARTMENT.equals(second.getParentId()))
+            {
+                set.add(second.getId());
+            }
+        }
+
+        for (String iid : set)
+        {
+            StafferVSIndustryBean vs = new StafferVSIndustryBean();
+
+            vs.setIndustryId(iid);
+            vs.setStafferId(bean.getId());
+
+            stafferVSIndustryDAO.saveEntityBean(vs);
         }
 
         stafferVSPriDAO.saveAllEntityBeans(priList);
@@ -145,9 +173,31 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
         // save VS
         stafferVSPriDAO.deleteEntityBeansByFK(bean.getId());
 
+        stafferVSIndustryDAO.deleteEntityBeansByFK(bean.getId());
+
+        Set<String> set = new HashSet<String>();
+
         for (StafferVSPriBean stafferVSPriBean : priList)
         {
             stafferVSPriBean.setStafferId(bean.getId());
+
+            PrincipalshipBean second = orgManager.findByIdAndSpecialLevel(stafferVSPriBean
+                .getPrincipalshipId(), 3);
+
+            if (second != null && OrgConstant.ORG_BIG_DEPARTMENT.equals(second.getParentId()))
+            {
+                set.add(second.getId());
+            }
+        }
+
+        for (String iid : set)
+        {
+            StafferVSIndustryBean vs = new StafferVSIndustryBean();
+
+            vs.setIndustryId(iid);
+            vs.setStafferId(bean.getId());
+
+            stafferVSIndustryDAO.saveEntityBean(vs);
         }
 
         stafferVSPriDAO.saveAllEntityBeans(priList);
@@ -219,6 +269,8 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
         stafferDAO.updateEntityBean(bean);
 
         stafferVSPriDAO.deleteEntityBeansByFK(stafferId);
+
+        stafferVSIndustryDAO.deleteEntityBeansByFK(bean.getId());
 
         return true;
     }
@@ -400,5 +452,39 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
     public void setPrincipalshipDAO(PrincipalshipDAO principalshipDAO)
     {
         this.principalshipDAO = principalshipDAO;
+    }
+
+    /**
+     * @return the stafferVSIndustryDAO
+     */
+    public StafferVSIndustryDAO getStafferVSIndustryDAO()
+    {
+        return stafferVSIndustryDAO;
+    }
+
+    /**
+     * @param stafferVSIndustryDAO
+     *            the stafferVSIndustryDAO to set
+     */
+    public void setStafferVSIndustryDAO(StafferVSIndustryDAO stafferVSIndustryDAO)
+    {
+        this.stafferVSIndustryDAO = stafferVSIndustryDAO;
+    }
+
+    /**
+     * @return the orgManager
+     */
+    public OrgManager getOrgManager()
+    {
+        return orgManager;
+    }
+
+    /**
+     * @param orgManager
+     *            the orgManager to set
+     */
+    public void setOrgManager(OrgManager orgManager)
+    {
+        this.orgManager = orgManager;
     }
 }

@@ -602,7 +602,13 @@ function swatchToSail()
 							>${my:get("consignStatus", item.consign)}</a></td>
 							</c:if>
 							<c:if test="${queryType != '3'}">
-                            <td align="center" onclick="hrefAndSelect(this)">${my:get("consignStatus", item.consign)}</td>
+                            <td align="center" onclick="hrefAndSelect(this)">
+                            <a
+                            href="../sail/transport.do?method=findConsign&forward=2&fullId=${item.fullId}"
+                            >
+                            ${my:get("consignStatus", item.consign)}
+                            </a>
+                            </td>
                             </c:if>
 						</tr>
 					</c:forEach>

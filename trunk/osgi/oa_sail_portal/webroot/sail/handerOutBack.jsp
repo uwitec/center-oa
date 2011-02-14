@@ -31,7 +31,7 @@ function load()
 
     hides(true);
     
-    $detail($O('viewTable'), ['pr', 'ba', 'backUnm']);
+    $detail($O('viewTable'), ['pr', 'ba', 'backUnm', 'adescription']);
     
     highlights($("#mainTable").get(0), ['未付款'], 'red');
     
@@ -273,6 +273,15 @@ function outBack()
                         <td align="right">总部核对：</td>
                         <td colspan="3">
                        ${bean.checks}
+                       </td>
+                    </tr>
+                    
+                    <tr class="content2">
+                        <td align="right">退货备注：</td>
+                        <td colspan="3">
+                       <textarea rows="3" cols="55" oncheck="notNone;"
+                            name="adescription"></textarea>
+                            <font color="#FF0000">*</font>
                        </td>
                     </tr>
 

@@ -902,6 +902,8 @@ public class OutAction extends DispatchAction
 
         String outId = request.getParameter("outId");
 
+        String adescription = request.getParameter("adescription");
+
         // 查询是否被关联
         ConditionParse con = new ConditionParse();
 
@@ -975,7 +977,7 @@ public class OutAction extends DispatchAction
 
         out.setRefOutFullId(outId);
 
-        out.setDescription("个人领样退库,单号:" + outId);
+        out.setDescription("个人领样退库,领样单号:" + outId + ". " + adescription);
 
         List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outId);
 
@@ -1541,7 +1543,7 @@ public class OutAction extends DispatchAction
 
             if (temp != null)
             {
-                outBean.setConsign(temp.getReprotType());
+                outBean.setConsign(temp.getCurrentStatus());
             }
         }
 

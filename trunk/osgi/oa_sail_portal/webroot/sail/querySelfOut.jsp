@@ -453,6 +453,7 @@ function load()
 						<td align="center" onclick="tableSort(this)" class="td_class">付款</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">${fg}人</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">仓库</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">发货单</td>
 					</tr>
 
 					<c:forEach items="${listOut1}" var="item" varStatus="vs">
@@ -483,6 +484,13 @@ function load()
 							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.hadPay)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.depotName}</td>
+							<td align="center" onclick="hrefAndSelect(this)">
+                            <a
+                            href="../sail/transport.do?method=findConsign&forward=2&fullId=${item.fullId}"
+                            >
+                            ${my:get('consignStatus', item.consign)}
+                            </a>
+                            </td>
 						</tr>
 					</c:forEach>
 				</table>
