@@ -308,9 +308,6 @@ function rejectBean()
 		<div align="right"><input type="button" class="button_class"
 			name="adds" style="cursor: pointer"
 			value="&nbsp;&nbsp;确 定&nbsp;&nbsp;" onclick="addBean()">&nbsp;&nbsp;
-			<input type="button" class="button_class"
-			name="reject_b" style="cursor: pointer"
-			value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;" onclick="rejectBean()">&nbsp;&nbsp;
 		<input type="button" class="button_class"
 			onclick="javascript:history.go(-1)"
 			value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>
