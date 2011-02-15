@@ -115,6 +115,14 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         {
             for (PaymentVSOutBean vsItem : vsList)
             {
+                // 校验是否一个销售单被多次绑定
+                int count = paymentApplyDAO.countApplyByOutId(vsItem.getOutId());
+
+                if (count > 0)
+                {
+                    throw new MYException("单据[%s]已经申请付款,请审批付款后再提交新的申请", vsItem.getOutId());
+                }
+
                 // 更新预付金额
                 InBillBean bill = inBillDAO.find(vsItem.getBillId());
 
@@ -129,12 +137,35 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
             }
         }
 
+        // 界面上直接回款绑定销售和预收
+        if (oldType == FinanceConstant.PAYAPPLY_TYPE_PAYMENT)
+        {
+            for (PaymentVSOutBean vsItem : vsList)
+            {
+                // 校验是否一个销售单被多次绑定
+                int count = paymentApplyDAO.countApplyByOutId(vsItem.getOutId());
+
+                if (count > 0)
+                {
+                    throw new MYException("单据[%s]已经申请付款,请审批付款后再提交新的申请", vsItem.getOutId());
+                }
+            }
+        }
+
         double tt = bean.getMoneys();
 
         // 业务员勾款(销售单界面勾款)
         if (oldType == FinanceConstant.PAYAPPLY_TYPE_TEMP)
         {
             String outId = vsList.get(0).getOutId();
+
+            // 校验是否一个销售单被多次申请付款
+            int count = paymentApplyDAO.countApplyByOutId(outId);
+
+            if (count > 0)
+            {
+                throw new MYException("单据[%s]已经申请付款,请审批付款后再提交新的申请", outId);
+            }
 
             String outBalanceId = vsList.get(0).getOutBalanceId();
 

@@ -55,7 +55,7 @@ function load()
          buttons : [
              {id: 'get', bclass: 'draw', caption: '认领', onpress : drawBean},
              {id: 'oget1', bclass: 'odraw', caption: '退领', onpress : odrawBean},
-             {id: 'oget2', bclass: 'update', caption: '关联销售', onpress : refBean},
+             //{id: 'oget2', bclass: 'update', caption: '关联销售', onpress : refBean},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>

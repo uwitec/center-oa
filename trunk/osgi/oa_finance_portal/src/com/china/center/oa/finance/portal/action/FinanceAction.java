@@ -624,7 +624,7 @@ public class FinanceAction extends DispatchAction
     }
 
     /**
-     * 领取回款(可以绑定委托清单)
+     * 领取回款(第一次领取回款,可以绑定委托清单)
      * 
      * @param mapping
      * @param form
@@ -663,7 +663,7 @@ public class FinanceAction extends DispatchAction
     }
 
     /**
-     * drawPayment2
+     * drawPayment2(认领到的回款绑定预收或者销售)方法废弃
      * 
      * @param mapping
      * @param form
@@ -735,7 +735,7 @@ public class FinanceAction extends DispatchAction
     }
 
     /**
-     * 付款申请
+     * 付款申请(只有第一次认领才会调用)
      * 
      * @param request
      * @param id
@@ -748,6 +748,7 @@ public class FinanceAction extends DispatchAction
     {
         PaymentApplyBean apply = new PaymentApplyBean();
 
+        apply.setType(FinanceConstant.PAYAPPLY_TYPE_PAYMENT);
         apply.setCustomerId(customerId);
         apply.setLocationId(user.getLocationId());
         apply.setLogTime(TimeTools.now());
@@ -755,6 +756,8 @@ public class FinanceAction extends DispatchAction
         apply.setStafferId(user.getStafferId());
 
         List<PaymentVSOutBean> vsList = new ArrayList<PaymentVSOutBean>();
+
+        PaymentBean pay = paymentDAO.find(id);
 
         double total = 0.0d;
 
@@ -822,7 +825,25 @@ public class FinanceAction extends DispatchAction
             return;
         }
 
-        apply.setMoneys(total);
+        // 没有全部使用,增加预收
+        if (total < pay.getMoney())
+        {
+            PaymentVSOutBean vs = new PaymentVSOutBean();
+
+            vs.setLocationId(user.getLocationId());
+
+            vs.setMoneys(pay.getMoney() - total);
+
+            vs.setOutId("");
+
+            vs.setPaymentId(id);
+
+            vs.setStafferId(user.getStafferId());
+
+            vsList.add(vs);
+        }
+
+        apply.setMoneys(pay.getMoney());
 
         financeFacade.addPaymentApply(user.getId(), apply);
     }

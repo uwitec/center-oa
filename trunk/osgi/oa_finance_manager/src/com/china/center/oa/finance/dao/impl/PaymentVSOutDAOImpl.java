@@ -25,4 +25,5 @@ import com.china.center.oa.finance.vs.PaymentVSOutBean;
  */
 public class PaymentVSOutDAOImpl extends BaseDAO<PaymentVSOutBean, PaymentVSOutVO> implements PaymentVSOutDAO
 {
+
 }

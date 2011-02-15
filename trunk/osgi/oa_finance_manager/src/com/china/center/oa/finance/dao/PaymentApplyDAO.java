@@ -24,5 +24,5 @@ import com.china.center.oa.finance.vo.PaymentApplyVO;
  */
 public interface PaymentApplyDAO extends DAO<PaymentApplyBean, PaymentApplyVO>
 {
-
+    int countApplyByOutId(String outId);
 }

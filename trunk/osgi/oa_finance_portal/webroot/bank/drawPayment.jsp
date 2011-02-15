@@ -36,7 +36,7 @@ function check()
     
     if (total > pu)
     {
-        return window.confirm('回款没有全部使用,确认是否先领取回款?');
+        return window.confirm('回款没有全部使用,系统自动把剩余的转预收,确认是否先领取回款?');
     }
     
     alert('回款金额使用溢出,请核对');
