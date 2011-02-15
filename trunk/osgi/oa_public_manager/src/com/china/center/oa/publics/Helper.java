@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.center.china.osgi.config.ConfigLoader;
 import com.center.china.osgi.publics.User;
+import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.constant.StafferConstant;
 import com.china.center.oa.publics.vo.UserVO;
@@ -39,6 +40,11 @@ public abstract class Helper
     public static User getUser(HttpServletRequest request)
     {
         return (User)request.getSession().getAttribute("user");
+    }
+
+    public static StafferBean getStaffer(HttpServletRequest request)
+    {
+        return (StafferBean)request.getSession().getAttribute("g_stafferBean");
     }
 
     /**

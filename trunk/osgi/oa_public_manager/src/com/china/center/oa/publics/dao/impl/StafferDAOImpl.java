@@ -130,15 +130,15 @@ public class StafferDAOImpl extends BaseDAO<StafferBean, StafferVO> implements S
             "StafferDAOImpl.queryStafferByAuthId", paramterMap);
     }
 
-    public List<StafferBean> queryStafferByAuthIdAndLocationId(String authId, String locationId)
+    public List<StafferBean> queryStafferByAuthIdAndIndustryId(String authId, String locationId)
     {
         Map<String, Object> paramterMap = new HashMap();
 
         paramterMap.put("authId", authId);
-        paramterMap.put("locationId", locationId);
+        paramterMap.put("industryId", locationId);
 
         return (List<StafferBean>)this.ibatisDaoSupport.queryForList(
-            "StafferDAOImpl.queryStafferByAuthIdAndLocationId", paramterMap);
+            "StafferDAOImpl.queryStafferByAuthIdAndIndustryId", paramterMap);
     }
 
     /**

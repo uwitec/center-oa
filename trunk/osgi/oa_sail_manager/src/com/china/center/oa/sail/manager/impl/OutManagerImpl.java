@@ -266,6 +266,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             outBean.setTotal(0.0d);
         }
 
+        setInvoiceId(outBean);
+
         // 增加管理员操作在数据库事务中完成
         TransactionTemplate tran = new TransactionTemplate(transactionManager);
         try
@@ -405,6 +407,14 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         return fullId;
     }
 
+    private void setInvoiceId(final OutBean outBean)
+    {
+        // 行业
+        StafferBean sb = stafferDAO.find(outBean.getStafferId());
+
+        outBean.setIndustryId(sb.getIndustryId());
+    }
+
     public String addSwatchToSail(final User user, final OutBean outBean)
         throws MYException
     {
@@ -431,6 +441,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         outBean.setFullId(fullId);
 
         outBean.setStatus(OutConstant.STATUS_SAVE);
+
+        setInvoiceId(outBean);
 
         // 增加管理员操作在数据库事务中完成
         TransactionTemplate tran = new TransactionTemplate(transactionManager);
@@ -563,6 +575,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         // 保存库单
         outBean.setStatus(OutConstant.STATUS_SAVE);
+
+        setInvoiceId(outBean);
 
         // 保存入库单
         outDAO.saveEntityBean(outBean);
@@ -883,7 +897,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                                                                       * sb2.getLever())
                                                 + ".职员信用已经使用额度是:"
                                                 + MathTools.formatNum(noPayBusiness)
-                                                + ".信用未超支,不需要分公司经理担保");
+                                                + ".信用未超支,不需要事业部经理担保");
                         }
                     }
 
@@ -1770,6 +1784,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         final OutBean oldBean = outDAO.find(out.getFullId());
 
         out.setStatus(oldBean.getStatus());
+
+        setInvoiceId(out);
 
         // 入库操作在数据库事务中完成
         TransactionTemplate tran = new TransactionTemplate(transactionManager);

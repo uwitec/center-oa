@@ -74,6 +74,9 @@ public class StafferBean implements Serializable
     @Join(tagClass = LocationBean.class)
     private String locationId = "";
 
+    @Join(tagClass = PrincipalshipBean.class, type = JoinType.LEFT)
+    private String industryId = "";
+
     @Html(title = "性别", must = true, type = Element.SELECT)
     private int sex = PublicConstant.SEX_MAN;
 
@@ -693,6 +696,40 @@ public class StafferBean implements Serializable
     }
 
     /**
+     * @return the black
+     */
+    public int getBlack()
+    {
+        return black;
+    }
+
+    /**
+     * @param black
+     *            the black to set
+     */
+    public void setBlack(int black)
+    {
+        this.black = black;
+    }
+
+    /**
+     * @return the industryId
+     */
+    public String getIndustryId()
+    {
+        return industryId;
+    }
+
+    /**
+     * @param industryId
+     *            the industryId to set
+     */
+    public void setIndustryId(String industryId)
+    {
+        this.industryId = industryId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -725,8 +762,14 @@ public class StafferBean implements Serializable
             .append("lever = ")
             .append(this.lever)
             .append(TAB)
+            .append("black = ")
+            .append(this.black)
+            .append(TAB)
             .append("locationId = ")
             .append(this.locationId)
+            .append(TAB)
+            .append("industryId = ")
+            .append(this.industryId)
             .append(TAB)
             .append("sex = ")
             .append(this.sex)
@@ -800,23 +843,6 @@ public class StafferBean implements Serializable
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the black
-     */
-    public int getBlack()
-    {
-        return black;
-    }
-
-    /**
-     * @param black
-     *            the black to set
-     */
-    public void setBlack(int black)
-    {
-        this.black = black;
     }
 
 }

@@ -112,7 +112,7 @@ public interface OutConstant
     /**
      * 分公司总经理审批
      */
-    @Defined(key = "outStatus", value = "待分公司经理审批")
+    @Defined(key = "outStatus", value = "待事业部经理审批")
     int STATUS_LOCATION_MANAGER_CHECK = 8;
 
     /**

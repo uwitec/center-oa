@@ -109,6 +109,11 @@ public class OutBean implements Serializable
     @Join(tagClass = DepotBean.class)
     private String location = "";
 
+    /**
+     * 销售行业范围
+     */
+    private String industryId = "";
+
     private String connector = "";
 
     private String phone = "";
@@ -210,7 +215,7 @@ public class OutBean implements Serializable
     private int reserve2 = OutConstant.OUT_CREDIT_COMMON;
 
     /**
-     * 0:货到收款 1:款到发货(黑名单) 2:使用业务员信用额度 3:使用了分公司经理的信用
+     * 0:货到收款 1:款到发货(黑名单) 2:使用业务员信用额度 3:使用了事业部经理的信用
      */
     private int reserve3 = OutConstant.OUT_SAIL_TYPE_COMMON;
 
@@ -1260,6 +1265,23 @@ public class OutBean implements Serializable
     }
 
     /**
+     * @return the industryId
+     */
+    public String getIndustryId()
+    {
+        return industryId;
+    }
+
+    /**
+     * @param industryId
+     *            the industryId to set
+     */
+    public void setIndustryId(String industryId)
+    {
+        this.industryId = industryId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -1327,6 +1349,9 @@ public class OutBean implements Serializable
             .append(TAB)
             .append("location = ")
             .append(this.location)
+            .append(TAB)
+            .append("industryId = ")
+            .append(this.industryId)
             .append(TAB)
             .append("connector = ")
             .append(this.connector)

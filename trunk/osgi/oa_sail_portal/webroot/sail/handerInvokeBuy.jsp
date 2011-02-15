@@ -74,7 +74,7 @@ function resetReserve3()
         
     setOption($O('reserve3'), '2', '客户信用和业务员信用额度担保');  
     setOption($O('reserve3'), '1', '款到发货(黑名单客户/零售)');  
-    setOption($O('reserve3'), '3', '分公司经理担保');  
+    setOption($O('reserve3'), '3', '事业部经理担保');  
 }
 
 function total()

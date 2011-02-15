@@ -2603,6 +2603,8 @@ public class OutAction extends DispatchAction
             condtion.addIntCondition("OutBean.tempType", "=", tempType);
         }
 
+        StafferBean staffer = Helper.getStaffer(request);
+
         // 这里是过滤
         String queryType = RequestTools.getValueFromRequest(request, "queryType");
 
@@ -2617,7 +2619,7 @@ public class OutAction extends DispatchAction
                 request.setAttribute("status", OutConstant.STATUS_LOCATION_MANAGER_CHECK);
             }
 
-            condtion.addCondition("OutBean.locationId", "=", user.getLocationId());
+            condtion.addCondition("OutBean.industryId", "=", staffer.getIndustryId());
         }
         // 结算中心查询
         else if ("2".equals(queryType))
@@ -5024,8 +5026,8 @@ public class OutAction extends DispatchAction
         if ( !"1".equals(flag))
         {
             // 分公司经理的额度
-            List<StafferBean> managerList = stafferManager.queryStafferByAuthIdAndLocationId(
-                AuthConstant.SAIL_LOCATION_MANAGER, user.getLocationId());
+            List<StafferBean> managerList = stafferManager.queryStafferByAuthIdAndIndustryId(
+                AuthConstant.SAIL_LOCATION_MANAGER, sb2.getIndustryId());
 
             List<String> mList = new ArrayList<String>();
 

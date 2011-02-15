@@ -335,6 +335,8 @@ function getProductAbs(ox)
         
         setObj2(inps[0], ox[i]);
     }
+    
+    alert('选择虚拟产品后需要重新点击品名选择库存');
 }
 
 function setObj(src, dest)

@@ -35,7 +35,6 @@ import com.china.center.oa.publics.listener.StafferListener;
 import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.publics.manager.StafferManager;
 import com.china.center.oa.publics.vo.StafferVO;
-import com.china.center.oa.publics.vs.StafferVSIndustryBean;
 import com.china.center.oa.publics.vs.StafferVSPriBean;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.StringTools;
@@ -99,9 +98,9 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
             bean.setPrincipalshipId(priList.get(0).getPrincipalshipId());
         }
 
-        stafferDAO.saveEntityBean(bean);
-
         Set<String> set = new HashSet<String>();
+
+        String industryId = "";
 
         for (StafferVSPriBean stafferVSPriBean : priList)
         {
@@ -113,18 +112,22 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
             if (second != null && OrgConstant.ORG_BIG_DEPARTMENT.equals(second.getParentId()))
             {
                 set.add(second.getId());
+
+                industryId = second.getId();
             }
         }
 
-        for (String iid : set)
+        if (set.size() > 1)
         {
-            StafferVSIndustryBean vs = new StafferVSIndustryBean();
-
-            vs.setIndustryId(iid);
-            vs.setStafferId(bean.getId());
-
-            stafferVSIndustryDAO.saveEntityBean(vs);
+            throw new MYException("职员只能在一个事业部下面");
         }
+
+        if (set.size() == 1)
+        {
+            bean.setIndustryId(industryId);
+        }
+
+        stafferDAO.saveEntityBean(bean);
 
         stafferVSPriDAO.saveAllEntityBeans(priList);
 
@@ -168,14 +171,14 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
             bean.setPrincipalshipId(priList.get(0).getPrincipalshipId());
         }
 
-        stafferDAO.updateEntityBean(bean);
-
         // save VS
         stafferVSPriDAO.deleteEntityBeansByFK(bean.getId());
 
         stafferVSIndustryDAO.deleteEntityBeansByFK(bean.getId());
 
         Set<String> set = new HashSet<String>();
+
+        String industryId = "";
 
         for (StafferVSPriBean stafferVSPriBean : priList)
         {
@@ -187,18 +190,22 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
             if (second != null && OrgConstant.ORG_BIG_DEPARTMENT.equals(second.getParentId()))
             {
                 set.add(second.getId());
+
+                industryId = second.getId();
             }
         }
 
-        for (String iid : set)
+        if (set.size() > 1)
         {
-            StafferVSIndustryBean vs = new StafferVSIndustryBean();
-
-            vs.setIndustryId(iid);
-            vs.setStafferId(bean.getId());
-
-            stafferVSIndustryDAO.saveEntityBean(vs);
+            throw new MYException("职员只能在一个事业部下面");
         }
+
+        if (set.size() == 1)
+        {
+            bean.setIndustryId(industryId);
+        }
+
+        stafferDAO.updateEntityBean(bean);
 
         stafferVSPriDAO.saveAllEntityBeans(priList);
 
@@ -322,9 +329,9 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
         return stafferDAO.queryStafferByAuthId(authId);
     }
 
-    public List<StafferBean> queryStafferByAuthIdAndLocationId(String authId, String locationId)
+    public List<StafferBean> queryStafferByAuthIdAndIndustryId(String authId, String industryId)
     {
-        return stafferDAO.queryStafferByAuthIdAndLocationId(authId, locationId);
+        return stafferDAO.queryStafferByAuthIdAndIndustryId(authId, industryId);
     }
 
     /**

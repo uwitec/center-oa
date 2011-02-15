@@ -55,9 +55,10 @@ import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.vo.StorageLogVO;
 import com.china.center.oa.product.vo.StorageRelationVO;
 import com.china.center.oa.publics.Helper;
+import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.PublicConstant;
+import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.StafferVSIndustryDAO;
-import com.china.center.oa.publics.vs.StafferVSIndustryBean;
 import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -86,6 +87,8 @@ public class StorageAction extends DispatchAction
     private DepotpartDAO depotpartDAO = null;
 
     private DepotDAO depotDAO = null;
+
+    private StafferDAO stafferDAO = null;
 
     private StorageLogDAO storageLogDAO = null;
 
@@ -1095,7 +1098,13 @@ public class StorageAction extends DispatchAction
                             String sailLocation, PageSeparate page,
                             List<StorageRelationVO> queryList, HttpServletRequest request)
     {
-        User user = Helper.getUser(request);
+        StafferBean user = Helper.getStaffer(request);
+
+        // 如果没有行业直接退出
+        if (StringTools.isNullOrNone(user.getIndustryId()))
+        {
+            return;
+        }
 
         for (StorageRelationVO each : queryList)
         {
@@ -1140,23 +1149,9 @@ public class StorageAction extends DispatchAction
         }
     }
 
-    private boolean hasInSailLocation(String productId, String sailLocation, User user)
+    private boolean hasInSailLocation(String productId, String sailLocation, StafferBean user)
     {
-        List<StafferVSIndustryBean> vsList = stafferVSIndustryDAO.queryEntityBeansByFK(user
-            .getStafferId());
-
-        for (StafferVSIndustryBean stafferVSIndustryBean : vsList)
-        {
-            int count = productVSLocationDAO.countByProductIdAndLocationId(productId,
-                stafferVSIndustryBean.getIndustryId());
-
-            if (count > 0)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return productVSLocationDAO.countByProductIdAndLocationId(productId, user.getIndustryId()) > 0;
     }
 
     private ConditionParse setRptQueryProductCondition(HttpServletRequest request)
@@ -1445,5 +1440,22 @@ public class StorageAction extends DispatchAction
     public void setStafferVSIndustryDAO(StafferVSIndustryDAO stafferVSIndustryDAO)
     {
         this.stafferVSIndustryDAO = stafferVSIndustryDAO;
+    }
+
+    /**
+     * @return the stafferDAO
+     */
+    public StafferDAO getStafferDAO()
+    {
+        return stafferDAO;
+    }
+
+    /**
+     * @param stafferDAO
+     *            the stafferDAO to set
+     */
+    public void setStafferDAO(StafferDAO stafferDAO)
+    {
+        this.stafferDAO = stafferDAO;
     }
 }

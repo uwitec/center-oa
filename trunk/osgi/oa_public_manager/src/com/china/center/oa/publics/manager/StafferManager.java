@@ -55,5 +55,5 @@ public interface StafferManager extends ListenerManager<StafferListener>
 
     List<StafferBean> queryStafferByAuthId(String authId);
 
-    List<StafferBean> queryStafferByAuthIdAndLocationId(String authId, String locationId);
+    List<StafferBean> queryStafferByAuthIdAndIndustryId(String authId, String industryId);
 }
