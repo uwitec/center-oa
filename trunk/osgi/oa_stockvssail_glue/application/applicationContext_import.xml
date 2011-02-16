@@ -58,5 +58,7 @@
     <osgi:reference id="stockManager" interface="com.china.center.oa.stock.manager.StockManager" />
     
     <osgi:reference id="outManager" interface="com.china.center.oa.sail.manager.OutManager" />
+    
+    <osgi:reference id="depotpartDAO" interface="com.china.center.oa.product.dao.DepotpartDAO" />
 
 </beans>

@@ -35,6 +35,7 @@
              <forward name="stockAskPrice"/>
              <forward name="stockAskChange"/>
 			 <forward name="rptQueryStockItem"/>
+			 <forward name="updateStockDutyConfig"/>
         </action>
 		
 	</action-mappings>

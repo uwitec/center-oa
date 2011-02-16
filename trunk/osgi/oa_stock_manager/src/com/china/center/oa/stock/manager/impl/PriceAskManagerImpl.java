@@ -326,11 +326,13 @@ public class PriceAskManagerImpl implements PriceAskManager
         {
             priceAskProviderBean.setAskId(bean.getId());
 
-            priceAskProviderDAO.deleteByProviderId(bean.getId(), priceAskProviderBean.getProviderId(),
-                priceAskProviderBean.getType());
-
-            priceAskProviderDAO.saveEntityBean(priceAskProviderBean);
+            // 删除类型下的供应商
+            priceAskProviderDAO.deleteByProviderId(bean.getId(), priceAskProviderBean
+                .getProviderId(), priceAskProviderBean.getSrcType());
         }
+
+        // 全部保存
+        priceAskProviderDAO.saveAllEntityBeans(items);
 
         // 如果是ABS的询价就反映到各个子询价单据上
         if (bean.getSaveType() == PriceConstant.PRICE_ASK_SAVE_TYPE_ABS)

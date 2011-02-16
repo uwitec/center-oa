@@ -44,9 +44,15 @@ function lverify()
 				alert('供应商不能为空');
 				return false;
 			}
+			
+			if ($O('nearlyPayDate_' + i).value == '')
+            {
+                alert('最早付款时间不能为空');
+                return false;
+            }
 
 
-			if (imap[$O('customerId_' + i).value] == $O('customerId_' + i).value)
+			if (false && imap[$O('customerId_' + i).value] == $O('customerId_' + i).value)
 			{
 				alert('选择的供应商不能重复');
 				return false;
@@ -95,15 +101,18 @@ function init()
 			$d('qout_' + index, false);
 			$d('price_' + index, false);
 			$d('amount_' + index, false);
+			$d('description_' + index, false);
 		}
 		else
 		{
 			$O('price_' + index).value = '';
 			$O('customerName_' + index).value = '';
 			$O('customerId_' + index).value = '';
+			$O('description_' + index).value = '';
 			$d('qout_' + index);
 			$d('price_' + index);
 			$d('amount_' + index);
+			$d('description_' + index);
 		}
 	}
 }
@@ -120,8 +129,9 @@ function getPriceAskProvider(oo)
 {
     if (cindex != -1)
     {
-        $O("customerName_" + cindex).value = oo.pproviderName;
-        $O("customerId_" + cindex).value = oo.pprovideriId;
+        $O("customerName_" + cindex).value = oo.pprovidername;
+        $O("customerId_" + cindex).value = oo.pprovideriid;
+        $O("stafferId_" + cindex).value = oo.pstafferid;
         $O("price_" + cindex).value = oo.pp;
         $O("netaskId_" + cindex).value = oo.ppid;
     }
@@ -146,6 +156,12 @@ function createAskBean()
 	<input type="hidden" name="customerId_2" value="">
 	<input type="hidden" name="customerId_3" value="">
 	<input type="hidden" name="customerId_4" value="">
+	
+	<input type="hidden" name="stafferId_0" value="">
+    <input type="hidden" name="stafferId_1" value="">
+    <input type="hidden" name="stafferId_2" value="">
+    <input type="hidden" name="stafferId_3" value="">
+    <input type="hidden" name="stafferId_4" value="">
 	
 	<input type="hidden" name="netaskId_0" value="">
     <input type="hidden" name="netaskId_1" value="">
@@ -206,7 +222,10 @@ function createAskBean()
 							type="text" name="price_0" value="" size="6" oncheck="isFloat;">&nbsp;
 							数量:<input
                             type="text" name="amount_0" value="" size="6" oncheck="isNumber;">&nbsp;
-
+                                最早付款时间:<p:plugin type="0" name="nearlyPayDate_0"></p:plugin><br>
+                                备注:
+                            <input
+                            type="text" name="description_0" value="" size="60">&nbsp;
 							</td>
 					</tr>
 
@@ -220,6 +239,10 @@ function createAskBean()
 							type="text" name="price_1" value="" size="6" oncheck="isFloat;">&nbsp;
 							数量:<input
                             type="text" name="amount_1" value="" size="6" oncheck="isNumber;">&nbsp;
+                             最早付款时间:<p:plugin type="0" name="nearlyPayDate_1"></p:plugin><br>
+                            备注:
+                            <input
+                            type="text" name="description_1" value="" size="60">&nbsp;
 
 						</td>
 					</tr>
@@ -234,6 +257,10 @@ function createAskBean()
 							type="text" name="price_2" value="" size="6" oncheck="isFloat;">&nbsp;
 							数量:<input
                             type="text" name="amount_2" value="" size="6" oncheck="isNumber;">&nbsp;
+                             最早付款时间:<p:plugin type="0" name="nearlyPayDate_2"></p:plugin><br>
+                            备注:
+                            <input
+                            type="text" name="description_2" value="" size="60">&nbsp;
 							</td>
 					</tr>
 
@@ -247,6 +274,10 @@ function createAskBean()
 							type="text" name="price_3" value="" size="6" oncheck="isFloat;">&nbsp;
 							数量:<input
                             type="text" name="amount_3" value="" size="6" oncheck="isNumber;">&nbsp;
+                             最早付款时间:<p:plugin type="0" name="nearlyPayDate_3"></p:plugin><br>
+                            备注:
+                            <input
+                            type="text" name="description_3" value="" size="60">&nbsp;
 							</td>
 					</tr>
 
@@ -260,6 +291,10 @@ function createAskBean()
 							type="text" name="price_4" value="" size="6" oncheck="isFloat;">&nbsp;
 							数量:<input
                             type="text" name="amount_4" value="" size="6" oncheck="isNumber;">&nbsp;
+                             最早付款时间:<p:plugin type="0" name="nearlyPayDate_4"></p:plugin><br>
+                            备注:
+                            <input
+                            type="text" name="description_4" value="" size="60">&nbsp;
 							</td>
 					</tr>
 				</table>

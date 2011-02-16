@@ -33,17 +33,21 @@ public class PriceAskProviderDAOImpl extends BaseDAO<PriceAskProviderBean, Price
 {
     private IbatisDaoSupport ibatisDaoSupport = null;
 
-    public PriceAskProviderBean findBeanByAskIdAndProviderId(String askId, String providerId, int type)
+    public PriceAskProviderBean findBeanByAskIdAndProviderId(String askId, String providerId,
+                                                             int type)
     {
-        return this.jdbcOperation.queryObjects("where askId = ? and providerId = ? and type = ?", this.claz, askId,
-            providerId, type).uniqueResult(this.claz);
+        return this.jdbcOperation.queryObjects("where askId = ? and providerId = ? and type = ?",
+            this.claz, askId, providerId, type).uniqueResult(this.claz);
     }
 
-    public PriceAskProviderBeanVO findVOByAskIdAndProviderId(String askId, String providerId, int type)
+    public PriceAskProviderBeanVO findVOByAskIdAndProviderId(String askId, String providerId,
+                                                             int type)
     {
-        return this.jdbcOperation.queryObjects(
-            "where PriceAskProviderBean.askId = ? and  PriceAskProviderBean.providerId = ? and  PriceAskProviderBean.type = ?",
-            this.clazVO, askId, providerId, type).uniqueResult(this.clazVO);
+        return this.jdbcOperation
+            .queryObjects(
+                "where PriceAskProviderBean.askId = ? and  PriceAskProviderBean.providerId = ? and  PriceAskProviderBean.type = ?",
+                this.clazVO, askId, providerId, type)
+            .uniqueResult(this.clazVO);
     }
 
     /**
@@ -54,7 +58,8 @@ public class PriceAskProviderDAOImpl extends BaseDAO<PriceAskProviderBean, Price
      * @param askDate
      * @return
      */
-    public List<PriceAskProviderBeanVO> queryByCondition(String askDate, String productId, String stockId)
+    public List<PriceAskProviderBeanVO> queryByCondition(String askDate, String productId,
+                                                         String stockId)
     {
         Map<String, Object> paramterMap = new HashMap();
 
@@ -70,7 +75,8 @@ public class PriceAskProviderDAOImpl extends BaseDAO<PriceAskProviderBean, Price
 
         paramterMap.put("stockId", stockId);
 
-        return (List)this.ibatisDaoSupport.queryForList("PriceAskProviderDAOImpl.queryByCondition", paramterMap);
+        return (List)this.ibatisDaoSupport.queryForList("PriceAskProviderDAOImpl.queryByCondition",
+            paramterMap);
     }
 
     /**
@@ -82,7 +88,8 @@ public class PriceAskProviderDAOImpl extends BaseDAO<PriceAskProviderBean, Price
      */
     public boolean deleteByProviderId(String askId, String providerId, int type)
     {
-        this.jdbcOperation.delete("where askId = ? and providerId = ? and type = ?", claz, askId, providerId, type);
+        this.jdbcOperation.delete("where askId = ? and providerId = ? and srcType = ?", claz,
+            askId, providerId, type);
 
         return true;
     }

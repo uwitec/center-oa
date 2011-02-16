@@ -13,6 +13,7 @@ import com.center.china.osgi.publics.ParentListener;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.stock.bean.StockBean;
+import com.china.center.oa.stock.bean.StockItemBean;
 
 
 /**
@@ -32,6 +33,6 @@ public interface StockListener extends ParentListener
      * @param bean
      * @throws MYException
      */
-    void onEndStock(final User user, final StockBean bean)
+    void onEndStockItem(final User user, final StockBean bean, final StockItemBean item)
         throws MYException;;
 }

@@ -17,7 +17,7 @@ function ask(id)
 	document.location.href = '../stock/stock.do?method=preForSockAsk&id=${bean.id}&ltype=${ltype}&itemId=' + id;
 }
 
-function passTO()
+function passTO2()
 {
 	$.messager.prompt('最早付款日期', '请选择最早付款日期', '', function(value, opr){
                 if (opr)
@@ -44,6 +44,18 @@ function passTO()
                     }
                 }
             }, 1);
+}
+
+function passTO()
+{
+    if (window.confirm('确定审核通过此采购单?'))
+    {
+        $O('nearlyPayDate').value = '';
+        $O('method').value = 'updateStockStatus';
+        $O('reject').value = '';
+        $O('pass').value = '1';
+        formEntry.submit();
+    }
 }
 </script>
 
@@ -157,7 +169,7 @@ function passTO()
 				<td width="10%" align="center">实际价格</td>
 				<td width="20%" align="center">供应商</td>
 				<td width="5%" align="center">合计金额</td>
-				<td width="10%" align="center">询 价</td>
+				<td width="10%" align="center">确认价格</td>
 			</tr>
 
 			<c:forEach items="${bean.itemVO}" var="item" varStatus="vs">

@@ -95,7 +95,8 @@ public class PriceAskAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForProcessAskPrice(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward preForProcessAskPrice(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
                                                HttpServletResponse reponse)
         throws ServletException
     {
@@ -135,8 +136,8 @@ public class PriceAskAction extends DispatchAction
 
         if ("1".equals(net))
         {
-            PriceAskProviderBean paskBean = priceAskProviderDAO.findBeanByAskIdAndProviderId(id, user.getId(),
-                PriceConstant.PRICE_ASK_TYPE_NET);
+            PriceAskProviderBean paskBean = priceAskProviderDAO.findBeanByAskIdAndProviderId(id,
+                user.getId(), PriceConstant.PRICE_ASK_TYPE_NET);
 
             request.setAttribute("paskBean", paskBean);
 
@@ -156,8 +157,8 @@ public class PriceAskAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward endAskPrice(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse reponse)
+    public ActionForward endAskPrice(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -203,8 +204,8 @@ public class PriceAskAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward processAskPrice(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse reponse)
+    public ActionForward processAskPrice(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -285,13 +286,15 @@ public class PriceAskAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findPriceAsk(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse reponse)
+    public ActionForward findPriceAsk(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
 
-        String type = request.getParameter("type");
+        String self = request.getParameter("self");
+
+        int srcType = CommonTools.parseInt(request.getParameter("srcType"));
 
         PriceAskBeanVO bean = null;
         try
@@ -317,8 +320,11 @@ public class PriceAskAction extends DispatchAction
             }
             else
             {
-
-                filterItem(user, items, CommonTools.parseInt(type));
+                if ( !"1".equals(self))
+                {
+                    // 只能看到自己
+                    filterItem(user, items, 1, srcType);
+                }
             }
 
             request.setAttribute("bean", bean);
@@ -354,6 +360,51 @@ public class PriceAskAction extends DispatchAction
             for (int i = items.size() - 1; i >= 0; i-- )
             {
                 if ( !items.get(i).getUserId().equals(user.getId()))
+                {
+                    items.remove(i);
+                }
+            }
+        }
+
+        // 供应商询价员只能看到供应商下面
+        if (type == 3)
+        {
+            for (int i = items.size() - 1; i >= 0; i-- )
+            {
+                if ( !items.get(i).getProviderId().equals(user.getId()))
+                {
+                    items.remove(i);
+                }
+            }
+        }
+
+        // 只能看到外网询价的结果
+        if (type == 2)
+        {
+            for (int i = items.size() - 1; i >= 0; i-- )
+            {
+                if (items.get(i).getType() == PriceConstant.PRICE_ASK_TYPE_INNER)
+                {
+                    items.remove(i);
+                }
+            }
+        }
+    }
+
+    private void filterItem(User user, List<PriceAskProviderBeanVO> items, int type, int srcType)
+    {
+        if (type == 0)
+        {
+            return;
+        }
+
+        // 询价员只能看到自己的
+        if (type == 1)
+        {
+            for (int i = items.size() - 1; i >= 0; i-- )
+            {
+                if ( !items.get(i).getUserId().equals(user.getId())
+                    || items.get(i).getSrcType() != srcType)
                 {
                     items.remove(i);
                 }
@@ -430,14 +481,17 @@ public class PriceAskAction extends DispatchAction
 
                 bean.setUserId(user.getId());
 
-                bean.setHasAmount(CommonTools.parseInt(request.getParameter("hasAmount_" + providers[i])));
+                bean.setHasAmount(CommonTools.parseInt(request.getParameter("hasAmount_"
+                                                                            + providers[i])));
 
-                bean.setSupportAmount(CommonTools.parseInt(request.getParameter("supportAmount_" + providers[i])));
+                bean.setSupportAmount(CommonTools.parseInt(request.getParameter("supportAmount_"
+                                                                                + providers[i])));
 
                 bean.setDescription(request.getParameter("description_" + providers[i]));
 
                 // 内网询价而且是满足，自动补足数量
-                if (bean.getHasAmount() == PriceConstant.HASAMOUNT_OK && bean.getSupportAmount() < pbean.getAmount())
+                if (bean.getHasAmount() == PriceConstant.HASAMOUNT_OK
+                    && bean.getSupportAmount() < pbean.getAmount())
                 {
                     bean.setSupportAmount(pbean.getAmount());
                 }
@@ -461,8 +515,8 @@ public class PriceAskAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addPriceAsk(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse reponse)
+    public ActionForward addPriceAsk(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         PriceAskBean bean = new PriceAskBean();
@@ -552,7 +606,8 @@ public class PriceAskAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updatePriceAskAmount(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward updatePriceAskAmount(ActionMapping mapping, ActionForm form,
+                                              HttpServletRequest request,
                                               HttpServletResponse reponse)
         throws ServletException
     {
@@ -590,7 +645,8 @@ public class PriceAskAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updatePriceAskAmountStatus(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward updatePriceAskAmountStatus(ActionMapping mapping, ActionForm form,
+                                                    HttpServletRequest request,
                                                     HttpServletResponse reponse)
         throws ServletException
     {
@@ -661,14 +717,16 @@ public class PriceAskAction extends DispatchAction
         // 和当前时间比较
         if (StringTools.compare(TimeTools.now(), bean.getProcessTime()) > 0)
         {
-            Date dateByFormat = TimeTools.getDateByFormat(bean.getProcessTime(), TimeTools.LONG_FORMAT);
-
-            String newTime = TimeTools.getStringByFormat(new Date(dateByFormat.getTime() + 24 * 3600 * 1000),
+            Date dateByFormat = TimeTools.getDateByFormat(bean.getProcessTime(),
                 TimeTools.LONG_FORMAT);
+
+            String newTime = TimeTools.getStringByFormat(new Date(
+                dateByFormat.getTime() + 24 * 3600 * 1000), TimeTools.LONG_FORMAT);
 
             bean.setProcessTime(newTime);
 
-            bean.setAskDate(TimeTools.getStringByFormat(new Date(dateByFormat.getTime() + 24 * 3600 * 1000), "yyyyMMdd"));
+            bean.setAskDate(TimeTools.getStringByFormat(new Date(
+                dateByFormat.getTime() + 24 * 3600 * 1000), "yyyyMMdd"));
         }
         else
         {
@@ -686,8 +744,8 @@ public class PriceAskAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryPriceAsk(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse reponse)
+    public ActionForward queryPriceAsk(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -725,7 +783,8 @@ public class PriceAskAction extends DispatchAction
                 {
                     User user = Helper.getUser(request);
 
-                    List<PriceAskProviderBeanVO> items = priceAskProviderDAO.queryEntityVOsByFK(priceAskBeanVO.getId());
+                    List<PriceAskProviderBeanVO> items = priceAskProviderDAO
+                        .queryEntityVOsByFK(priceAskBeanVO.getId());
 
                     filterItem(user, items, 0);
 
@@ -762,11 +821,14 @@ public class PriceAskAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryPriceAskForProcess(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward queryPriceAskForProcess(ActionMapping mapping, ActionForm form,
+                                                 HttpServletRequest request,
                                                  HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
+
+        int srcType = CommonTools.parseInt(request.getParameter("srcType"));
 
         ConditionParse condtion = new ConditionParse();
 
@@ -779,7 +841,8 @@ public class PriceAskAction extends DispatchAction
                 setConditionForAsk(request, condtion, 1);
             }
 
-            QueryTools.commonQueryVO("queryPriceAskForProcess", request, list, condtion, this.priceAskDAO);
+            QueryTools.commonQueryVO("queryPriceAskForProcess", request, list, condtion,
+                this.priceAskDAO);
 
             Map<String, String> map = new HashMap<String, String>();
 
@@ -802,13 +865,14 @@ public class PriceAskAction extends DispatchAction
                 {
                     User user = Helper.getUser(request);
 
-                    List<PriceAskProviderBeanVO> items = priceAskProviderDAO.queryEntityVOsByFK(priceAskBeanVO.getId());
+                    List<PriceAskProviderBeanVO> items = priceAskProviderDAO
+                        .queryEntityVOsByFK(priceAskBeanVO.getId());
 
-                    filterItem(user, items, 1);
+                    filterItem(user, items, 1, srcType);
 
                     if (items.size() > 0)
                     {
-                        map.put(priceAskBeanVO.getId(), PriceAskHelper.createTable(items, user, 0));
+                        map.put(priceAskBeanVO.getId(), PriceAskHelper.createTable(items, user, 1));
                     }
                 }
             }
@@ -840,7 +904,8 @@ public class PriceAskAction extends DispatchAction
      * @throws ServletException
      */
     public ActionForward queryPriceAskForNetProviderProcess(ActionMapping mapping, ActionForm form,
-                                                            HttpServletRequest request, HttpServletResponse reponse)
+                                                            HttpServletRequest request,
+                                                            HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -856,7 +921,8 @@ public class PriceAskAction extends DispatchAction
                 setConditionForAsk(request, condtion, 2);
             }
 
-            QueryTools.commonQueryVO("queryPriceAskForNetProviderProcess", request, list, condtion, this.priceAskDAO);
+            QueryTools.commonQueryVO("queryPriceAskForNetProviderProcess", request, list, condtion,
+                this.priceAskDAO);
 
             Map<String, String> map = new HashMap<String, String>();
 
@@ -879,7 +945,8 @@ public class PriceAskAction extends DispatchAction
                 {
                     User user = Helper.getUser(request);
 
-                    List<PriceAskProviderBeanVO> items = priceAskProviderDAO.queryEntityVOsByFK(priceAskBeanVO.getId());
+                    List<PriceAskProviderBeanVO> items = priceAskProviderDAO
+                        .queryEntityVOsByFK(priceAskBeanVO.getId());
 
                     filterItem(user, items, 3);
 
@@ -918,13 +985,16 @@ public class PriceAskAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryPriceAskForNetProcess(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward queryPriceAskForNetProcess(ActionMapping mapping, ActionForm form,
+                                                    HttpServletRequest request,
                                                     HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
 
         ConditionParse condtion = new ConditionParse();
+
+        int srcType = CommonTools.parseInt(request.getParameter("srcType"));
 
         List<PriceAskBeanVO> list = new ArrayList<PriceAskBeanVO>();
 
@@ -935,7 +1005,8 @@ public class PriceAskAction extends DispatchAction
                 setConditionForAsk(request, condtion, 3);
             }
 
-            QueryTools.commonQueryVO("queryPriceAskForNetProcess", request, list, condtion, this.priceAskDAO);
+            QueryTools.commonQueryVO("queryPriceAskForNetProcess", request, list, condtion,
+                this.priceAskDAO);
 
             Map<String, String> map = new HashMap<String, String>();
 
@@ -958,9 +1029,17 @@ public class PriceAskAction extends DispatchAction
                 {
                     User user = Helper.getUser(request);
 
-                    List<PriceAskProviderBeanVO> items = priceAskProviderDAO.queryEntityVOsByFK(priceAskBeanVO.getId());
+                    List<PriceAskProviderBeanVO> items = priceAskProviderDAO
+                        .queryEntityVOsByFK(priceAskBeanVO.getId());
 
-                    filterItem(user, items, 2);
+                    if (srcType == 1)
+                    {
+                        filterItem(user, items, 1, srcType);
+                    }
+                    else
+                    {
+                        filterItem(user, items, 2);
+                    }
 
                     if (items.size() > 0)
                     {
@@ -995,7 +1074,8 @@ public class PriceAskAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryPriceAskForNetManager(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward queryPriceAskForNetManager(ActionMapping mapping, ActionForm form,
+                                                    HttpServletRequest request,
                                                     HttpServletResponse reponse)
         throws ServletException
     {
@@ -1012,7 +1092,8 @@ public class PriceAskAction extends DispatchAction
                 setConditionForAsk(request, condtion, 4);
             }
 
-            QueryTools.commonQueryVO("queryPriceAskForNetManager", request, list, condtion, this.priceAskDAO);
+            QueryTools.commonQueryVO("queryPriceAskForNetManager", request, list, condtion,
+                this.priceAskDAO);
 
             Map<String, String> map = new HashMap<String, String>();
 
@@ -1035,7 +1116,8 @@ public class PriceAskAction extends DispatchAction
                 {
                     User user = Helper.getUser(request);
 
-                    List<PriceAskProviderBeanVO> items = priceAskProviderDAO.queryEntityVOsByFK(priceAskBeanVO.getId());
+                    List<PriceAskProviderBeanVO> items = priceAskProviderDAO
+                        .queryEntityVOsByFK(priceAskBeanVO.getId());
 
                     filterItem(user, items, 2);
 
@@ -1106,7 +1188,8 @@ public class PriceAskAction extends DispatchAction
         }
         else
         {
-            condtion.addCondition("PriceBean.logTime", ">=", TimeTools.getDateShortString( -7) + " 00:00:00");
+            condtion.addCondition("PriceBean.logTime", ">=", TimeTools.getDateShortString( -7)
+                                                             + " 00:00:00");
 
             request.setAttribute("alogTime", TimeTools.getDateShortString( -7));
         }
@@ -1133,7 +1216,8 @@ public class PriceAskAction extends DispatchAction
      * @param request
      * @param condtion
      */
-    private void setConditionForAsk(HttpServletRequest request, ConditionParse condtion, int conditionType)
+    private void setConditionForAsk(HttpServletRequest request, ConditionParse condtion,
+                                    int conditionType)
     {
         condtion.addWhereStr();
 
@@ -1157,7 +1241,8 @@ public class PriceAskAction extends DispatchAction
         if (conditionType == 1)
         {
             // 只能看到普通存储的
-            condtion.addIntCondition("PriceAskBean.saveType", "=", PriceConstant.PRICE_ASK_SAVE_TYPE_COMMON);
+            condtion.addIntCondition("PriceAskBean.saveType", "=",
+                PriceConstant.PRICE_ASK_SAVE_TYPE_COMMON);
 
             // 内网和内外网
             condtion.addCondition("AND PriceAskBean.type in (0, 2)");
@@ -1166,8 +1251,9 @@ public class PriceAskAction extends DispatchAction
         // 外网询价员(供应商询价员)的逻辑
         if (conditionType == 2)
         {
-            List<ProductTypeVSCustomer> typeList = (List<ProductTypeVSCustomer>)request.getSession().getAttribute(
-                "typeList");
+            List<ProductTypeVSCustomer> typeList = (List<ProductTypeVSCustomer>)request
+                .getSession()
+                .getAttribute("typeList");
 
             StringBuilder sb = new StringBuilder();
 
@@ -1193,7 +1279,8 @@ public class PriceAskAction extends DispatchAction
                                   + " or PriceAskBean.amountStatus = 1) ");
 
             // 只能看到虚拟存储的
-            condtion.addIntCondition("PriceAskBean.saveType", "=", PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
+            condtion.addIntCondition("PriceAskBean.saveType", "=",
+                PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
 
             condtion.addCondition("AND PriceAskBean.status in (0, 1)");
 
@@ -1213,12 +1300,14 @@ public class PriceAskAction extends DispatchAction
                 if (AuthHelper.containAuth(user, AuthConstant.PRICE_ASK_NET_INNER_PROCESS))
                 {
                     // 只能看到普通存储的
-                    condtion.addIntCondition("PriceAskBean.saveType", "=", PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
+                    condtion.addIntCondition("PriceAskBean.saveType", "=",
+                        PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
                 }
                 else
                 {
                     // 只能看到普通存储的
-                    condtion.addIntCondition("PriceAskBean.saveType", "=", PriceConstant.PRICE_ASK_SAVE_TYPE_COMMON);
+                    condtion.addIntCondition("PriceAskBean.saveType", "=",
+                        PriceConstant.PRICE_ASK_SAVE_TYPE_COMMON);
                 }
 
                 condtion.addIntCondition("PriceAskBean.src", "=", PriceConstant.PRICE_ASK_SRC_ASK);
@@ -1230,9 +1319,11 @@ public class PriceAskAction extends DispatchAction
             {
                 // 采购
                 // 只能看到普通存储的
-                condtion.addIntCondition("PriceAskBean.saveType", "=", PriceConstant.PRICE_ASK_SAVE_TYPE_COMMON);
+                condtion.addIntCondition("PriceAskBean.saveType", "=",
+                    PriceConstant.PRICE_ASK_SAVE_TYPE_COMMON);
 
-                condtion.addIntCondition("PriceAskBean.src", "=", PriceConstant.PRICE_ASK_SRC_STOCK);
+                condtion
+                    .addIntCondition("PriceAskBean.src", "=", PriceConstant.PRICE_ASK_SRC_STOCK);
 
                 request.setAttribute("src", "1");
             }
@@ -1244,14 +1335,15 @@ public class PriceAskAction extends DispatchAction
             condtion.addCondition(" AND PriceAskBean.type in (1, 2) ");
 
             // 只能看到虚拟存储的
-            condtion.addIntCondition("PriceAskBean.saveType", "=", PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
+            condtion.addIntCondition("PriceAskBean.saveType", "=",
+                PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
 
             // 没有放行的
             condtion.addIntCondition("PriceAskBean.amountStatus", "=", 0);
 
             // 只能看见额定数量的产品询价
-            condtion.addIntCondition("PriceAskBean.amount", ">",
-                parameterDAO.getInt(SysConfigConstant.ASK_PRODUCT_AMOUNT_MAX));
+            condtion.addIntCondition("PriceAskBean.amount", ">", parameterDAO
+                .getInt(SysConfigConstant.ASK_PRODUCT_AMOUNT_MAX));
 
             condtion.addCondition("AND PriceAskBean.status in (0, 1)");
         }
@@ -1313,7 +1405,8 @@ public class PriceAskAction extends DispatchAction
         }
         else
         {
-            condtion.addCondition("PriceAskBean.logTime", ">=", TimeTools.getDateShortString( -7) + " 00:00:00");
+            condtion.addCondition("PriceAskBean.logTime", ">=", TimeTools.getDateShortString( -7)
+                                                                + " 00:00:00");
 
             QueryTools.setParMapAttribute(request, "alogTime", TimeTools.getDateShortString( -7));
         }
@@ -1326,7 +1419,8 @@ public class PriceAskAction extends DispatchAction
         }
         else
         {
-            condtion.addCondition("PriceAskBean.logTime", "<=", TimeTools.now_short() + " 23:59:59");
+            condtion
+                .addCondition("PriceAskBean.logTime", "<=", TimeTools.now_short() + " 23:59:59");
 
             QueryTools.setParMapAttribute(request, "blogTime", TimeTools.now_short());
         }
@@ -1344,8 +1438,8 @@ public class PriceAskAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward delPriceAsk(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse reponse)
+    public ActionForward delPriceAsk(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1380,8 +1474,8 @@ public class PriceAskAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rejectPriceAsk(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse reponse)
+    public ActionForward rejectPriceAsk(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");

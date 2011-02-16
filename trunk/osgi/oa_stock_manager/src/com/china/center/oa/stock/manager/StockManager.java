@@ -38,7 +38,7 @@ public interface StockManager extends ListenerManager<StockListener>
     boolean stockItemAskChange(String itemId, String providerId)
         throws MYException;
 
-    boolean fechProduct(User user, String itemId)
+    boolean fechProduct(User user, String itemId, String depotpartId)
         throws MYException;
 
     boolean stockItemAsk(StockItemBean bean)
@@ -48,6 +48,9 @@ public interface StockManager extends ListenerManager<StockListener>
         throws MYException;
 
     boolean updateStockBean(final User user, final StockBean bean)
+        throws MYException;
+
+    boolean updateStockDutyConfig(final User user, final StockBean bean)
         throws MYException;
 
     boolean updateStockNearlyPayDate(final User user, final String id, String nearlyPayDate)

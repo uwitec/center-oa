@@ -119,9 +119,8 @@ function showDiv(id)
               外网/卢工/马甸询价
             </p:cells>
             
-            <p:pro field="willDate"/>
+            <p:pro field="willDate" cell="2"/>
             
-            <p:pro field="nearlyPayDate" cell="1"/>
             
             <p:cells celspan="2" title="纳税实体">
             ${bean.dutyName}
@@ -142,17 +141,18 @@ function showDiv(id)
 	<p:subBody width="100%">
 		<table width="100%" border="0" cellspacing='1' id="tables">
 			<tr align="center" class="content0">
-				<td width="15%" align="center">采购产品</td>
+				<td width="10%" align="center">采购产品</td>
 				<td width="5%" align="center">采购数量</td>
 				<td width="5%" align="center">当前数量</td>
 				<td width="5%" align="center">是否询价</td>
 				<td width="5%" align="center">是否拿货</td>
-				<td width="10%" align="center">参考价格</td>
-				<td width="10%" align="center">实际价格</td>
+				<td width="10%" align="center">参考/实际价格</td>
+				<td width="10%" align="center">付款时间</td>
 				<td width="15%" align="center">供应商</td>
 				<td width="5%" align="center">付款</td>
 				<td width="5%" align="center">是否入库</td>
 				<td width="10%" align="center">合计金额</td>
+				<td width="10%" align="center">描述</td>
 				<td width="10%" align="center">开单名</td>
 				
 			</tr>
@@ -171,10 +171,11 @@ function showDiv(id)
 
 					<td align="center">${my:get('stockItemFech', item.fechProduct)}</td>
 					
-					<td align="center">${my:formatNum(item.prePrice)}</td>
+					<td align="center">${my:formatNum(item.prePrice)}/${my:formatNum(item.price)}</td>
 
-					<td align="center">${my:formatNum(item.price)}</td>
 
+					<td align="center">${item.nearlyPayDate}</td>
+					
 					<td align="center">${item.providerName}</td>
 					
 					<td align="center">${item.pay == 0 ? "未付款" : "已付款"}</td>
@@ -192,6 +193,8 @@ function showDiv(id)
                     </c:if>
 
 					<td align="center">${my:formatNum(item.total)}</td>
+					
+					<td align="center">${item.description}</td>
 					
 					<td align="center">
 					 <select name="showId_3" style="WIDTH: 150px;" values="${item.showId}" autodisplay="1">

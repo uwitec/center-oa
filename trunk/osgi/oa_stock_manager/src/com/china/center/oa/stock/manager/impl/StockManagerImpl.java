@@ -119,7 +119,8 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
             throw new MYException("区域不存在");
         }
 
-        bean.setId(lb.getCode() + "_CG" + TimeTools.now("yyyyMMddHHmm") + commonDAO.getSquenceString());
+        bean.setId(lb.getCode() + "_CG" + TimeTools.now("yyyyMMddHHmm")
+                   + commonDAO.getSquenceString());
 
         bean.setStatus(StockConstant.STOCK_STATUS_INIT);
 
@@ -163,7 +164,8 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
             throw new MYException("没有权限");
         }
 
-        if (sb.getStatus() != StockConstant.STOCK_STATUS_REJECT && sb.getStatus() != StockConstant.STOCK_STATUS_INIT)
+        if (sb.getStatus() != StockConstant.STOCK_STATUS_REJECT
+            && sb.getStatus() != StockConstant.STOCK_STATUS_INIT)
         {
             throw new MYException("采购单不存在初始或者驳回状态不能删除");
         }
@@ -207,17 +209,9 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
             throw new MYException("采购单不存在采购中,不能结束采购");
         }
 
-        // 采购入库
-        Collection<StockListener> listenerMapValues = this.listenerMapValues();
-
-        // TODO_OSGI 采购到货后生成管理凭证
-        for (StockListener stockListener : listenerMapValues)
-        {
-            stockListener.onEndStock(user, bean);
-        }
-
         // 更新状态并且记录日志
-        updateStockStatus(user, id, StockConstant.STOCK_STATUS_LASTEND, PublicConstant.OPRMODE_PASS, "采购结束,自动转入库");
+        updateStockStatus(user, id, StockConstant.STOCK_STATUS_LASTEND,
+            PublicConstant.OPRMODE_PASS, "采购结束");
 
         // 更新发货备注
         stockDAO.updateConsign(id, reason);
@@ -232,14 +226,15 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
      * @return
      * @throws MYException
      */
-    private boolean updateStockStatus(final User user, final String id, int nextStatus, int oprMode, String reason)
+    private boolean updateStockStatus(final User user, final String id, int nextStatus,
+                                      int oprMode, String reason)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, id);
 
-        StockBean sb = stockDAO.find(id);
+        StockBean old = stockDAO.find(id);
 
-        if (sb == null)
+        if (old == null)
         {
             throw new MYException("采购单不存在");
         }
@@ -250,10 +245,24 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
         // 只有驳回
         if (oprMode == PublicConstant.OPRMODE_REJECT)
         {
-            stockDAO.updateExceptStatus(id, StockConstant.EXCEPTSTATUS_COMMON);
+            // 回退信息
+            old.setWillDate(0);
+
+            old.setDutyId("");
+
+            old.setInvoice(0);
+
+            old.setInvoiceType("");
+
+            old.setExceptStatus(StockConstant.EXCEPTSTATUS_COMMON);
+
+            old.setStatus(nextStatus);
+
+            // 更新采购主单据
+            stockDAO.updateEntityBean(old);
         }
 
-        addLog(user, id, nextStatus, sb, oprMode, reason);
+        addLog(user, id, nextStatus, old, oprMode, reason);
 
         return true;
     }
@@ -266,7 +275,8 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
      * @param status
      * @param sb
      */
-    private void addLog(final User user, final String id, int status, StockBean sb, int oprMode, String reason)
+    private void addLog(final User user, final String id, int status, StockBean sb, int oprMode,
+                        String reason)
     {
         FlowLogBean log = new FlowLogBean();
 
@@ -428,7 +438,8 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
                 stockDAO.updateExceptStatus(id, StockConstant.EXCEPTSTATUS_EXCEPTION_MONEY);
 
                 // 获得董事长的人员
-                List<StafferBean> sbList = stafferDAO.queryStafferByAuthId(AuthConstant.STOCK_NOTICE_CHAIRMA);
+                List<StafferBean> sbList = stafferDAO
+                    .queryStafferByAuthId(AuthConstant.STOCK_NOTICE_CHAIRMA);
 
                 for (StafferBean stafferBean : sbList)
                 {
@@ -466,7 +477,8 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
         }
 
         // 处理外网询价的特殊流程
-        if (nextStatus == StockConstant.STOCK_STATUS_MANAGERPASS && sb.getType() == PriceConstant.PRICE_ASK_TYPE_NET)
+        if (nextStatus == StockConstant.STOCK_STATUS_MANAGERPASS
+            && sb.getType() == PriceConstant.PRICE_ASK_TYPE_NET)
         {
             // 直接到(采购主管)
             nextStatus = StockConstant.STOCK_STATUS_PRICEPASS;
@@ -603,7 +615,8 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
     private void checkEndStock(StockBean sb, int nextStatus, List<StockItemVO> itemList)
         throws MYException
     {
-        if (nextStatus == StockConstant.STOCK_STATUS_END && sb.getType() == PriceConstant.PRICE_ASK_TYPE_NET)
+        if (nextStatus == StockConstant.STOCK_STATUS_END
+            && sb.getType() == PriceConstant.PRICE_ASK_TYPE_NET)
         {
             // 需要校验数量是
             for (StockItemBean iitem : itemList)
@@ -616,7 +629,8 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
                 // 事务内已经被使用的
                 int sum = stockItemDAO.sumNetProductByPid(iitem.getPriceAskProviderId());
 
-                PriceAskProviderBeanVO ppb = priceAskProviderDAO.findVO(iitem.getPriceAskProviderId());
+                PriceAskProviderBeanVO ppb = priceAskProviderDAO.findVO(iitem
+                    .getPriceAskProviderId());
 
                 if (ppb == null)
                 {
@@ -625,9 +639,10 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
 
                 if (ppb.getSupportAmount() < sum)
                 {
-                    throw new MYException("外网采购中供应商[%s]提供的产品[%s]数量只有%d已经使用了%d,你请求的采购数量[%d]已经超出(可能其他业务员已经采购一空)",
-                        ppb.getProviderName(), ppb.getProductName(), ppb.getSupportAmount(), (sum - iitem.getAmount()),
-                        iitem.getAmount());
+                    throw new MYException(
+                        "外网采购中供应商[%s]提供的产品[%s]数量只有%d已经使用了%d,你请求的采购数量[%d]已经超出(可能其他业务员已经采购一空)", ppb
+                            .getProviderName(), ppb.getProductName(), ppb.getSupportAmount(),
+                        (sum - iitem.getAmount()), iitem.getAmount());
                 }
             }
         }
@@ -679,7 +694,8 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
 
         if (current == StockConstant.STOCK_STATUS_STOCKPASS)
         {
-            if (AuthHelper.containAuth(user, AuthConstant.STOCK_NET_STOCK_PASS, AuthConstant.STOCK_INNER_STOCK_PASS))
+            if (AuthHelper.containAuth(user, AuthConstant.STOCK_NET_STOCK_PASS,
+                AuthConstant.STOCK_INNER_STOCK_PASS))
             {
                 return StockConstant.STOCK_STATUS_STOCKMANAGERPASS;
             }
@@ -716,8 +732,10 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
             throw new MYException("采购单不存在");
         }
 
-        if (sb.getStatus() == StockConstant.STOCK_STATUS_REJECT || sb.getStatus() == StockConstant.STOCK_STATUS_INIT
-            || sb.getStatus() == StockConstant.STOCK_STATUS_END || sb.getStatus() == StockConstant.STOCK_STATUS_LASTEND)
+        if (sb.getStatus() == StockConstant.STOCK_STATUS_REJECT
+            || sb.getStatus() == StockConstant.STOCK_STATUS_INIT
+            || sb.getStatus() == StockConstant.STOCK_STATUS_END
+            || sb.getStatus() == StockConstant.STOCK_STATUS_LASTEND)
         {
             throw new MYException("采购单状态错误");
         }
@@ -803,8 +821,8 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
 
         recoverStockItemAsk(id);
 
-        return updateStockStatus(user, id, StockConstant.STOCK_STATUS_MANAGERPASS, PublicConstant.OPRMODE_REJECT,
-            reason);
+        return updateStockStatus(user, id, StockConstant.STOCK_STATUS_MANAGERPASS,
+            PublicConstant.OPRMODE_REJECT, reason);
     }
 
     /*
@@ -847,8 +865,8 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
     {
         JudgeTools.judgeParameterIsNull(itemId, providerId);
 
-        PriceAskProviderBean bean = priceAskProviderDAO.findBeanByAskIdAndProviderId(itemId, providerId,
-            PriceConstant.PRICE_ASK_TYPE_INNER);
+        PriceAskProviderBean bean = priceAskProviderDAO.findBeanByAskIdAndProviderId(itemId,
+            providerId, PriceConstant.PRICE_ASK_TYPE_INNER);
 
         if (bean == null)
         {
@@ -900,16 +918,23 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
      * @throws MYException
      */
     @Transactional(rollbackFor = {MYException.class})
-    public boolean fechProduct(User user, String itemId)
+    public boolean fechProduct(User user, String itemId, String depotpartId)
         throws MYException
     {
-        JudgeTools.judgeParameterIsNull(itemId, user);
+        JudgeTools.judgeParameterIsNull(itemId, user, depotpartId);
 
         StockItemBean item = stockItemDAO.find(itemId);
 
         if (item == null)
         {
             throw new MYException("系统错误");
+        }
+
+        StockBean stock = stockDAO.findVO(item.getStockId());
+
+        if (stock == null)
+        {
+            throw new MYException("数据错误,请确认操作");
         }
 
         if (item.getFechProduct() == StockConstant.STOCK_ITEM_FECH_YES)
@@ -919,8 +944,19 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
 
         item.setFechProduct(StockConstant.STOCK_ITEM_FECH_YES);
 
+        item.setDepotpartId(depotpartId);
+
         // 更新item
         stockItemDAO.updateEntityBean(item);
+
+        // 采购入库
+        Collection<StockListener> listenerMapValues = this.listenerMapValues();
+
+        // TODO_OSGI 采购到货后生成管理凭证和生成付款单申请
+        for (StockListener stockListener : listenerMapValues)
+        {
+            stockListener.onEndStockItem(user, stock, item);
+        }
 
         List<StockItemBean> items = stockItemDAO.queryEntityBeansByFK(item.getStockId());
 
@@ -939,8 +975,8 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
         if (all)
         {
             // 修改成待结束采购
-            updateStockStatus(user, item.getStockId(), StockConstant.STOCK_STATUS_END, PublicConstant.OPRMODE_PASS,
-                "拿货结束");
+            updateStockStatus(user, item.getStockId(), StockConstant.STOCK_STATUS_END,
+                PublicConstant.OPRMODE_PASS, "拿货结束");
         }
 
         return true;
@@ -958,15 +994,21 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
     {
         JudgeTools.judgeParameterIsNull(oldItem, newItemList);
 
+        // 删除旧的采购申请
         stockItemDAO.deleteEntityBean(oldItem.getId());
 
+        double total = 0.0d;
         for (StockItemBean stockItemBean : newItemList)
         {
             stockItemBean.setStatus(StockConstant.STOCK_ITEM_STATUS_ASK);
             stockItemBean.setTotal(stockItemBean.getAmount() * stockItemBean.getPrice());
+
+            total += stockItemBean.getTotal();
         }
 
         stockItemDAO.saveAllEntityBeans(newItemList);
+
+        stockDAO.updateTotal(oldItem.getStockId(), total);
 
         return true;
     }
@@ -1011,7 +1053,8 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
             throw new MYException("采购单不存在");
         }
 
-        if (sb.getStatus() != StockConstant.STOCK_STATUS_REJECT && sb.getStatus() != StockConstant.STOCK_STATUS_INIT)
+        if (sb.getStatus() != StockConstant.STOCK_STATUS_REJECT
+            && sb.getStatus() != StockConstant.STOCK_STATUS_INIT)
         {
             throw new MYException("采购单不存在驳回状态不能修改");
         }
@@ -1030,6 +1073,56 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
 
             stockItemDAO.saveEntityBean(stockItemBean);
         }
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean updateStockDutyConfig(User user, StockBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, bean);
+
+        StockBean old = stockDAO.find(bean.getId());
+
+        if (old == null)
+        {
+            throw new MYException("采购单不存在");
+        }
+
+        if (old.getStatus() != StockConstant.STOCK_STATUS_PRICEPASS)
+        {
+            throw new MYException("采购单不存在带采购主管审批状态不能配置");
+        }
+
+        old.setWillDate(bean.getWillDate());
+
+        old.setDutyId(bean.getDutyId());
+
+        old.setInvoice(bean.getInvoice());
+
+        old.setInvoiceType(bean.getInvoiceType());
+
+        // 更新采购主单据
+        stockDAO.updateEntityBean(old);
+
+        List<StockItemBean> items = bean.getItem();
+
+        List<StockItemBean> oldItems = stockItemDAO.queryEntityBeansByFK(bean.getId());
+
+        // 仅仅更新showID
+        for (StockItemBean newItem : items)
+        {
+            for (StockItemBean oldItem : oldItems)
+            {
+                if (oldItem.getProductId().equals(newItem.getProductId()))
+                {
+                    oldItem.setShowId(newItem.getShowId());
+                }
+            }
+        }
+
+        stockItemDAO.updateAllEntityBeans(oldItems);
 
         return true;
     }
@@ -1341,4 +1434,5 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
     {
         this.priceAskDAO = priceAskDAO;
     }
+
 }

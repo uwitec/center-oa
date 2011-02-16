@@ -38,7 +38,10 @@ import com.china.center.actionhelper.jsonimpl.JSONArray;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
+import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.bean.ProductBean;
+import com.china.center.oa.product.constant.DepotConstant;
+import com.china.center.oa.product.dao.DepotpartDAO;
 import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.dao.StorageRelationDAO;
 import com.china.center.oa.publics.Helper;
@@ -133,6 +136,8 @@ public class StockAction extends DispatchAction
 
     private StafferDAO stafferDAO = null;
 
+    private DepotpartDAO depotpartDAO = null;
+
     private static String RPTQUERYSTOCKITEM = "rptQueryStockItem";
 
     /**
@@ -152,8 +157,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addStock(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse reponse)
+    public ActionForward addStock(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         StockBean bean = new StockBean();
@@ -229,8 +234,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward createAskBean(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse reponse)
+    public ActionForward createAskBean(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String itemId = request.getParameter("itemId");
@@ -285,8 +290,8 @@ public class StockAction extends DispatchAction
      * @param user
      * @param bean
      */
-    private void setAutoAskBean(ActionMapping mapping, HttpServletRequest request, String itemId, StockItemBean item,
-                                User user, PriceAskBean bean)
+    private void setAutoAskBean(ActionMapping mapping, HttpServletRequest request, String itemId,
+                                StockItemBean item, User user, PriceAskBean bean)
     {
         bean.setId(SequenceTools.getSequence("ASK", 5));
 
@@ -339,8 +344,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateStock(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse reponse)
+    public ActionForward updateStock(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         StockBean bean = new StockBean();
@@ -384,6 +389,57 @@ public class StockAction extends DispatchAction
     }
 
     /**
+     * updateStock2
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward updateStockDutyConfig(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
+                                               HttpServletResponse reponse)
+        throws ServletException
+    {
+        StockBean bean = new StockBean();
+
+        try
+        {
+            BeanUtil.getBean(bean, request);
+
+            setStockBean(bean, request);
+
+            User user = Helper.getUser(request);
+
+            bean.setUserId(user.getId());
+
+            bean.setLocationId(user.getLocationId());
+
+            bean.setLogTime(TimeTools.now());
+
+            bean.setStafferId(user.getStafferId());
+
+            bean.setExceptStatus(StockConstant.EXCEPTSTATUS_COMMON);
+
+            stockManager.updateStockDutyConfig(user, bean);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功修改采购单:" + bean.getId());
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "修改采购单失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        return queryStock(mapping, form, request, reponse);
+    }
+
+    /**
      * 修改采购单的状态
      * 
      * @param mapping
@@ -393,8 +449,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateStockStatus(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse reponse)
+    public ActionForward updateStockStatus(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -403,7 +459,7 @@ public class StockAction extends DispatchAction
 
         String pass = request.getParameter("pass");
 
-        String nearlyPayDate = request.getParameter("nearlyPayDate");
+        String nearlyPayDate = TimeTools.now_short(30);
 
         String reject = request.getParameter("reject");
 
@@ -463,8 +519,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward endStock(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse reponse)
+    public ActionForward endStock(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -503,8 +559,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward stockItemAskChange(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse reponse)
+    public ActionForward stockItemAskChange(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -547,19 +603,21 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward fechProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse reponse)
+    public ActionForward fechProduct(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String itemId = request.getParameter("itemId");
+
+        String depotpartId = request.getParameter("depotpartId");
 
         try
         {
             User user = Helper.getUser(request);
 
-            stockManager.fechProduct(user, itemId);
+            stockManager.fechProduct(user, itemId, depotpartId);
 
-            request.setAttribute(KeyConstant.MESSAGE, "成功拿货");
+            request.setAttribute(KeyConstant.MESSAGE, "成功拿货,且自动生成入库单");
         }
         catch (MYException e)
         {
@@ -642,7 +700,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptInQueryPriceAskProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward rptInQueryPriceAskProvider(ActionMapping mapping, ActionForm form,
+                                                    HttpServletRequest request,
                                                     HttpServletResponse reponse)
         throws ServletException
     {
@@ -653,8 +712,8 @@ public class StockAction extends DispatchAction
         String stockId = request.getParameter("stockId");
 
         // 价格是每天都询价
-        List<PriceAskProviderBeanVO> beanList = priceAskProviderDAO.queryByCondition(TimeTools.now("yyyyMMdd"),
-            productId, stockId);
+        List<PriceAskProviderBeanVO> beanList = priceAskProviderDAO.queryByCondition(TimeTools
+            .now("yyyyMMdd"), productId, stockId);
 
         // 获取PID
         for (PriceAskProviderBeanVO vo : beanList)
@@ -677,6 +736,8 @@ public class StockAction extends DispatchAction
             if (fuser != null)
             {
                 vo.setStafferName(fuser.getStafferName());
+
+                vo.setStafferId(fuser.getStafferId());
             }
         }
 
@@ -695,8 +756,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryStockItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse reponse)
+    public ActionForward rptQueryStockItem(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -723,8 +784,8 @@ public class StockAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYSTOCKITEM);
 
-            list = stockItemDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, RPTQUERYSTOCKITEM),
-                PageSeparateTools.getPageSeparate(request, RPTQUERYSTOCKITEM));
+            list = stockItemDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                RPTQUERYSTOCKITEM), PageSeparateTools.getPageSeparate(request, RPTQUERYSTOCKITEM));
         }
 
         request.setAttribute("list", list);
@@ -801,8 +862,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findStock(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                   HttpServletResponse reponse)
+    public ActionForward findStock(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -856,53 +917,35 @@ public class StockAction extends DispatchAction
 
             request.setAttribute("maxItem", 5 - last);
 
-            return mapping.findForward("updateStock");
+            if ("1".equals(update))
+            {
+                return mapping.findForward("updateStock");
+            }
+            else
+            {
+                return mapping.findForward("updateStockDutyConfig");
+            }
         }
 
         if ("1".equals(process))
         {
+            // 这里先校验是否已经配置
+            if (StringTools.isNullOrNone(vo.getDutyId()))
+            {
+                return ActionTools.toError("请先配置税务属性", mapping, request);
+            }
+
             return mapping.findForward("processStock");
         }
 
         // 询价人拿货
         if ("2".equals(process))
         {
-            List<StockItemVO> itemVO = vo.getItemVO();
+            // 查询采购中心的良品仓区
+            List<DepotpartBean> depotpartList = depotpartDAO
+                .queryOkDepotpartInDepot(DepotConstant.STOCK_DEPOT_ID);
 
-            for (StockItemVO stockItemVO : itemVO)
-            {
-                List<PriceAskBean> priceAskList = priceAskDAO.queryEntityBeansByFK(id);
-
-                PriceAskBean ask = null;
-
-                for (PriceAskBean priceAskBean : priceAskList)
-                {
-                    if (priceAskBean.getProductId().equals(stockItemVO.getProductId()))
-                    {
-                        ask = priceAskBean;
-                        break;
-                    }
-                }
-
-                if (ask == null)
-                {
-                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "没有询价");
-
-                    return mapping.findForward("error");
-                }
-
-                PriceAskProviderBeanVO askp = priceAskProviderDAO.findVOByAskIdAndProviderId(ask.getId(),
-                    stockItemVO.getProviderId(), PriceConstant.PRICE_ASK_TYPE_NET);
-
-                if (askp == null)
-                {
-                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "没有询价");
-
-                    return mapping.findForward("error");
-                }
-
-                stockItemVO.setNetAskId(askp.getStafferId());
-            }
+            request.setAttribute("depotpartList", depotpartList);
 
             return mapping.findForward("processStock2");
         }
@@ -925,7 +968,8 @@ public class StockAction extends DispatchAction
         {
             if (StockItemVO.getStatus() > StockConstant.STOCK_ITEM_STATUS_INIT)
             {
-                List<PriceAskProviderBeanVO> items = priceAskProviderDAO.queryEntityVOsByFK(StockItemVO.getId());
+                List<PriceAskProviderBeanVO> items = priceAskProviderDAO
+                    .queryEntityVOsByFK(StockItemVO.getId());
 
                 map1.put(StockItemVO.getId(), items);
 
@@ -969,8 +1013,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddStock(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse reponse)
+    public ActionForward preForAddStock(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         prepare(request);
@@ -1017,8 +1061,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForSockAsk(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse reponse)
+    public ActionForward preForSockAsk(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -1088,8 +1132,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward stockItemAskPrice(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse reponse)
+    public ActionForward stockItemAskPrice(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1176,7 +1220,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward stockItemAskPriceForNet(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward stockItemAskPriceForNet(ActionMapping mapping, ActionForm form,
+                                                 HttpServletRequest request,
                                                  HttpServletResponse reponse)
         throws ServletException
     {
@@ -1222,13 +1267,14 @@ public class StockAction extends DispatchAction
     }
 
     /**
-     * setNewStockItemList
+     * CORE 采购确认价格的核心
      * 
      * @param request
      * @param bean
      * @param newItemList
      */
-    private void setNewStockItemList(HttpServletRequest request, StockItemBean bean, List<StockItemBean> newItemList)
+    private void setNewStockItemList(HttpServletRequest request, StockItemBean bean,
+                                     List<StockItemBean> newItemList)
     {
         String[] providers = request.getParameterValues("check_init");
 
@@ -1240,7 +1286,8 @@ public class StockAction extends DispatchAction
 
                 BeanUtil.copyProperties(newBean, bean);
 
-                newBean.setAmount(CommonTools.parseInt(request.getParameter("amount_" + providers[i])));
+                newBean.setAmount(CommonTools.parseInt(request.getParameter("amount_"
+                                                                            + providers[i])));
 
                 newBean.setPrice(Float.parseFloat(request.getParameter("price_" + providers[i])));
 
@@ -1249,6 +1296,12 @@ public class StockAction extends DispatchAction
                 newBean.setProviderId(request.getParameter("customerId_" + providers[i]));
 
                 newBean.setPriceAskProviderId(request.getParameter("netaskId_" + providers[i]));
+
+                newBean.setStafferId(request.getParameter("stafferId_" + providers[i]));
+
+                newBean.setDescription(request.getParameter("description_" + providers[i]));
+
+                newBean.setNearlyPayDate(request.getParameter("nearlyPayDate_" + providers[i]));
 
                 newItemList.add(newBean);
             }
@@ -1284,7 +1337,8 @@ public class StockAction extends DispatchAction
 
                 bean.setProviderId(request.getParameter("customerId_" + providers[i]));
 
-                bean.setHasAmount(CommonTools.parseInt(request.getParameter("hasAmount_" + providers[i])));
+                bean.setHasAmount(CommonTools.parseInt(request.getParameter("hasAmount_"
+                                                                            + providers[i])));
 
                 bean.setUserId(Helper.getUser(request).getId());
 
@@ -1309,44 +1363,51 @@ public class StockAction extends DispatchAction
             throw new MYException("用户没有此操作的权限");
         }
 
-        if ("1".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.STOCK_MANAGER_PASS))
+        if ("1".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.STOCK_MANAGER_PASS))
         {
             throw new MYException("用户没有此操作的权限");
         }
 
-        if ("2".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.STOCK_NET_STOCK_PASS))
+        if ("2".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.STOCK_NET_STOCK_PASS))
         {
             throw new MYException("用户没有此操作的权限");
         }
 
-        if ("3".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.STOCK_PRICE_PASS))
+        if ("3".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.STOCK_PRICE_PASS))
         {
             throw new MYException("用户没有此操作的权限");
         }
 
-        if ("4".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.STOCK_INNER_STOCK_PASS))
+        if ("4".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.STOCK_INNER_STOCK_PASS))
         {
             throw new MYException("用户没有此操作的权限");
         }
 
-        if ("5".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.STOCK_STOCK_MANAGER_PASS))
+        if ("5".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.STOCK_STOCK_MANAGER_PASS))
         {
             throw new MYException("用户没有此操作的权限");
         }
 
-        if ("6".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.STOCK_NOTICE_CHAIRMA))
+        if ("6".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.STOCK_NOTICE_CHAIRMA))
         {
             throw new MYException("用户没有此操作的权限");
         }
 
-        if ("7".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.STOCK_NOTICE_CEO))
+        if ("7".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.STOCK_NOTICE_CEO))
         {
             throw new MYException("用户没有此操作的权限");
         }
 
         if ("8".equals(queryType)
-            && !userManager.containAuth(user, AuthConstant.PRICE_ASK_PROCESS, AuthConstant.PRICE_ASK_MANAGER,
-                AuthConstant.PRICE_ASK_NET_INNER_PROCESS))
+            && !userManager.containAuth(user, AuthConstant.PRICE_ASK_PROCESS,
+                AuthConstant.PRICE_ASK_MANAGER, AuthConstant.PRICE_ASK_NET_INNER_PROCESS))
         {
             throw new MYException("用户没有此操作的权限");
         }
@@ -1369,8 +1430,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryStock(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse reponse)
+    public ActionForward queryStock(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -1414,8 +1475,9 @@ public class StockAction extends DispatchAction
             {
                 OldPageSeparateTools.processSeparate(request, "queryStock");
 
-                list = stockDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request, "queryStock"),
-                    OldPageSeparateTools.getPageSeparate(request, "queryStock"));
+                list = stockDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(
+                    request, "queryStock"), OldPageSeparateTools.getPageSeparate(request,
+                    "queryStock"));
             }
 
             // 页面显示div用
@@ -1432,7 +1494,8 @@ public class StockAction extends DispatchAction
 
                 List<StockItemVO> itemVO = stockItemDAO.queryEntityVOsByFK(StockVO.getId());
 
-                div.put(StockVO.getId(), StockHelper.createTable(itemVO, CommonTools.parseInt(ltype)));
+                div.put(StockVO.getId(), StockHelper.createTable(itemVO, CommonTools
+                    .parseInt(ltype)));
             }
 
             List<LocationBean> locations = locationDAO.listEntityBeans();
@@ -1585,13 +1648,15 @@ public class StockAction extends DispatchAction
         // 董事长(只能审核价格不是最小的)
         if (type == 5)
         {
-            condtion.addIntCondition("StockBean.exceptStatus", "=", StockConstant.EXCEPTSTATUS_EXCEPTION_MIN);
+            condtion.addIntCondition("StockBean.exceptStatus", "=",
+                StockConstant.EXCEPTSTATUS_EXCEPTION_MIN);
         }
 
         // 董事长(只能审核钱过多的)
         if (type == 6)
         {
-            condtion.addIntCondition("StockBean.exceptStatus", "=", StockConstant.EXCEPTSTATUS_EXCEPTION_MONEY);
+            condtion.addIntCondition("StockBean.exceptStatus", "=",
+                StockConstant.EXCEPTSTATUS_EXCEPTION_MONEY);
         }
 
         String status = request.getParameter("status");
@@ -1701,7 +1766,8 @@ public class StockAction extends DispatchAction
         }
         else
         {
-            condtion.addCondition("StockBean.logTime", ">=", TimeTools.getDateShortString( -30) + " 00:00:00");
+            condtion.addCondition("StockBean.logTime", ">=", TimeTools.getDateShortString( -30)
+                                                             + " 00:00:00");
 
             request.setAttribute("alogTime", TimeTools.getDateShortString( -30));
         }
@@ -1714,7 +1780,8 @@ public class StockAction extends DispatchAction
         }
         else
         {
-            condtion.addCondition("StockBean.logTime", "<=", TimeTools.getDateShortString(0) + " 23:59:59");
+            condtion.addCondition("StockBean.logTime", "<=", TimeTools.getDateShortString(0)
+                                                             + " 23:59:59");
 
             request.setAttribute("blogTime", TimeTools.getDateShortString(0));
         }
@@ -1732,8 +1799,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward delStock(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse reponse)
+    public ActionForward delStock(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1768,8 +1835,8 @@ public class StockAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward exportStock(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse reponse)
+    public ActionForward exportStock(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         OutputStream out = null;
@@ -1845,15 +1912,19 @@ public class StockAction extends DispatchAction
                         ws.addCell(new Label(j++ , i, item.getId()));
                         ws.addCell(new Label(j++ , i, item.getUserName()));
                         ws.addCell(new Label(j++ , i, item.getLocationName()));
-                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(item.getTotal()))));
+                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(item
+                            .getTotal()))));
 
                         ws.addCell(new Label(j++ , i, vo.getProductName()));
                         ws.addCell(new Label(j++ , i, vo.getProductCode()));
                         ws.addCell(new Label(j++ , i, String.valueOf(vo.getAmount())));
-                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(vo.getPrePrice()))));
-                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(vo.getPrice()))));
+                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(vo
+                            .getPrePrice()))));
+                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(vo
+                            .getPrice()))));
                         ws.addCell(new Label(j++ , i, vo.getProviderName()));
-                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(vo.getTotal()))));
+                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(vo
+                            .getTotal()))));
                     }
 
                 }
@@ -2199,5 +2270,22 @@ public class StockAction extends DispatchAction
     public void setStafferDAO(StafferDAO stafferDAO)
     {
         this.stafferDAO = stafferDAO;
+    }
+
+    /**
+     * @return the depotpartDAO
+     */
+    public DepotpartDAO getDepotpartDAO()
+    {
+        return depotpartDAO;
+    }
+
+    /**
+     * @param depotpartDAO
+     *            the depotpartDAO to set
+     */
+    public void setDepotpartDAO(DepotpartDAO depotpartDAO)
+    {
+        this.depotpartDAO = depotpartDAO;
     }
 }

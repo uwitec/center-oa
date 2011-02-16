@@ -105,8 +105,6 @@ function load()
 	
 	change();
 	
-    loadShow();
-    
     loadForm();
 }
 
@@ -265,8 +263,6 @@ function change()
             
 			<p:pro field="needTime" value="${bean.needTime}"/>
 			
-			<p:pro field="willDate"/>
-			
 			<p:pro field="flow" innerString="quick='true'" outString="支持简拼选择" value="${bean.flow}">
 			<option value="">--</option>
 			<c:forEach items="${departementList}" var="item">
@@ -281,19 +277,6 @@ function change()
             <p:pro field="stockType" outString="公卖是全公司的都可销售 自卖是只有自己可以销售" innerString="readonly=true">
 				<option value="">--</option>
                <p:option type="stockSailType"></p:option>
-            </p:pro>
-            
-             <p:pro field="dutyId" innerString="style='width: 300px' onchange=loadShow()">
-                <c:forEach items="${dutyList}" var="item">
-                <option value="${item.id}">${item.name}</option>
-                </c:forEach>
-            </p:pro>
-			
-            <p:pro field="invoiceType" innerString="style='width: 300px' readonly=true" >
-                <option value="">没有发票</option>
-                <c:forEach items="${invoiceList}" var="item">
-				<option value="${item.id}">${item.fullName}</option>
-				</c:forEach>
             </p:pro>
             
             <p:pro field="areaId" innerString="style='width: 300px'">
@@ -317,11 +300,7 @@ function change()
 							type="text" name="price_0" value="${bean.itemVO[0].prePrice}" size="6" oncheck="notNone;isFloat;">&nbsp;
 							数量:<input
 							type="text" name="amount_0" value="${bean.itemVO[0].amount}" size="6" oncheck="notNone;isNumber;">&nbsp;
-                               开发票品名:
-                               <select name="showId_0" style="WIDTH: 150px;" quick=true values="${bean.itemVO[0].showId}">
-                                 <p:option type="123"></p:option>
-                               </select>
-
+                              
 							</td>
 					</tr>
 
@@ -335,10 +314,7 @@ function change()
 							type="text" name="price_1" value="${bean.itemVO[1].prePrice}" size="6" oncheck="notNone;isFloat;">&nbsp;
 							数量:<input
 							type="text" name="amount_1" value="${bean.itemVO[1].amount}" size="6" oncheck="notNone;isNumber;">&nbsp;
-                               开发票品名:
-                               <select name="showId_1" style="WIDTH: 150px;" quick=true values="${bean.itemVO[1].showId}">
-                                 <p:option type="123"></p:option>
-                               </select>
+                               
 
 						</td>
 					</tr>
@@ -353,10 +329,7 @@ function change()
 							type="text" name="price_2" value="${bean.itemVO[2].prePrice}" size="6" oncheck="notNone;isFloat;">&nbsp;
 							数量:<input
 							type="text" name="amount_2" value="${bean.itemVO[2].amount}" size="6" oncheck="notNone;isNumber;">&nbsp;
-                               开发票品名:
-                               <select name="showId_2" style="WIDTH: 150px;" quick=true values="${bean.itemVO[2].showId}">
-                                 <p:option type="123"></p:option>
-                               </select>
+                              
 							</td>
 					</tr>
 
@@ -371,10 +344,7 @@ function change()
 							数量:<input
 							type="text" name="amount_3" value="${bean.itemVO[3].amount}" size="6" oncheck="notNone;isNumber;">
 							&nbsp;
-                               开发票品名:
-                               <select name="showId_3" style="WIDTH: 150px;" quick=true values="${bean.itemVO[3].showId}">
-                                 <p:option type="123"></p:option>
-                               </select>
+                               
 							</td>
 					</tr>
 
@@ -389,10 +359,6 @@ function change()
 							数量:<input
 							type="text" name="amount_4" value="${bean.itemVO[4].amount}" size="6" oncheck="notNone;isNumber;">
 							&nbsp;
-                               开发票品名:
-                               <select name="showId_4" style="WIDTH: 150px;" quick=true values="${bean.itemVO[4].showId}">
-                                 <p:option type="123"></p:option>
-                               </select>
 							</td>
 					</tr>
 				</table>

@@ -14,18 +14,22 @@ import java.util.List;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.constant.StorageConstant;
+import com.china.center.oa.product.dao.DepotpartDAO;
 import com.china.center.oa.product.helper.StorageRelationHelper;
 import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.stock.bean.StockBean;
+import com.china.center.oa.stock.bean.StockItemBean;
 import com.china.center.oa.stock.constant.StockConstant;
 import com.china.center.oa.stock.dao.StockItemDAO;
 import com.china.center.oa.stock.listener.StockListener;
 import com.china.center.oa.stock.vo.StockItemVO;
+import com.china.center.oa.stock.vo.StockVO;
 import com.china.center.tools.TimeTools;
 
 
@@ -43,6 +47,8 @@ public class StockListenerSailImpl implements StockListener
 
     private StockItemDAO stockItemDAO = null;
 
+    private DepotpartDAO depotpartDAO = null;
+
     /**
      * default constructor
      */
@@ -53,10 +59,10 @@ public class StockListenerSailImpl implements StockListener
     /**
      * 生成入库单
      */
-    public void onEndStock(User user, StockBean bean)
+    public void onEndStockItem(User user, StockBean bean, final StockItemBean each)
         throws MYException
     {
-        autoToOut(user, bean);
+        autoToOut(user, bean, each);
     }
 
     /**
@@ -68,13 +74,18 @@ public class StockListenerSailImpl implements StockListener
      * @param out
      * @throws MYException
      */
-    private void autoToOut(final User user, StockBean bean)
+    private void autoToOut(final User user, StockBean bean, final StockItemBean each)
         throws MYException
     {
         List<StockItemVO> items = stockItemDAO.queryEntityVOsByFK(bean.getId());
 
         for (StockItemVO item : items)
         {
+            if ( !item.getId().equals(each.getId()))
+            {
+                continue;
+            }
+
             List<BaseBean> baseList = new ArrayList<BaseBean>();
 
             OutBean out = new OutBean();
@@ -125,9 +136,22 @@ public class StockListenerSailImpl implements StockListener
             baseBean.setProductId(item.getProductId());
             baseBean.setCostPriceKey(StorageRelationHelper.getPriceKey(item.getPrice()));
             baseBean.setOwner(bean.getOwerId());
-            baseBean.setDepotpartId(DepotConstant.STOCK_DEPOTPART_ID);
+            baseBean.setOwnerName( ((StockVO)bean).getOwerName());
 
-            baseBean.setDepotpartName("采购仓区");
+            // 来源于入库的仓区
+            baseBean.setDepotpartId(each.getDepotpartId());
+
+            DepotpartBean deport = depotpartDAO.find(each.getDepotpartId());
+
+            if (deport != null)
+            {
+                baseBean.setDepotpartName(deport.getName());
+            }
+            else
+            {
+                throw new MYException("仓区不存在");
+            }
+
             // 成本
             baseBean.setDescription(String.valueOf(item.getPrice()));
             baseList.add(baseBean);
@@ -184,6 +208,23 @@ public class StockListenerSailImpl implements StockListener
     public void setStockItemDAO(StockItemDAO stockItemDAO)
     {
         this.stockItemDAO = stockItemDAO;
+    }
+
+    /**
+     * @return the depotpartDAO
+     */
+    public DepotpartDAO getDepotpartDAO()
+    {
+        return depotpartDAO;
+    }
+
+    /**
+     * @param depotpartDAO
+     *            the depotpartDAO to set
+     */
+    public void setDepotpartDAO(DepotpartDAO depotpartDAO)
+    {
+        this.depotpartDAO = depotpartDAO;
     }
 
 }

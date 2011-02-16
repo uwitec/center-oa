@@ -78,7 +78,7 @@ function reject(id)
 
 function detail(id)
 {
-	document.location.href = '../stock/ask.do?method=findPriceAsk&id=' + id;
+	document.location.href = '../stock/ask.do?method=findPriceAsk&self=1&id=' + id;
 }
 
 function selectProduct(index)
@@ -288,7 +288,7 @@ function updatePass(id)
 					<td align="center" onclick="hrefAndSelect(this)"
 					onMouseOver="showDiv('${item.id}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"
 					>
-					<a onclick="hrefAndSelect(this)" href="../stock/ask.do?method=findPriceAsk&id=${item.id}">
+					<a onclick="hrefAndSelect(this)" href="../stock/ask.do?method=findPriceAsk&id=${item.id}&self=1">
 					${item.id}
 					</a></td>
 					<td align="center" onclick="hrefAndSelect(this)">

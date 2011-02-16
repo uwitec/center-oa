@@ -127,8 +127,8 @@ function showDiv(id)
 
 function passTo(id, type, stype)
 {
-	//正常审批 或者是 代销采购
-	if ((type != 4 && type != 2) || stype == '1')
+	//正常审批 或者是 代销采购(这路不选择付款时间了)
+	if ((type != 4 && type != 2) || stype == '1' || true)
 	{
 		if (window.confirm('确定通过此采购单?'))
 		{
@@ -190,6 +190,16 @@ function update(id)
 	$O('process').value = '';
 	$O('update').value = '1';
 	formEntry.submit();
+}
+
+function update2(id)
+{
+    $O('method').value = 'findStock';
+    $O('id').value = id;
+    $O('stockAskChange').value = '';
+    $O('process').value = '';
+    $O('update').value = '2';
+    formEntry.submit();
 }
 
 function ask(id)
@@ -379,13 +389,13 @@ function exports()
 				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="10%"><strong>到货日期</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this, true)"
-					width="10%"><strong>合计金额</strong></td>
+					width="7%"><strong>合计金额</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="5%"><strong>采购类型</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="10%"><strong>更新时间</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
-					width="5%"><strong>操作</strong></td>
+					width="8%"><strong>操作</strong></td>
 			</tr>
 
 			<c:forEach items="${list}" var="item" varStatus="vs">
@@ -445,6 +455,9 @@ function exports()
 						</c:if>
 						
 						<c:if test="${ltype == '2'}">
+						    <a title="采购税务配置" href="javascript:update2('${item.id}')"> <img
+                                src="../images/opr/edit.gif" border="0" height="15" width="15"></a>
+                                  
                             <a title="采购单询价" href="javascript:ask('${item.id}')"> <img id="ask_img_${vs.index}"
                                 src="../images/opr/change.gif" border="0" height="15" width="15"></a>
                                 

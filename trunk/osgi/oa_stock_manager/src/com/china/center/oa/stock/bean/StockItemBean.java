@@ -53,6 +53,11 @@ public class StockItemBean implements Serializable
     private String providerId = "";
 
     /**
+     * 采用谁的询价
+     */
+    private String stafferId = "";
+
+    /**
      * 采购数量
      */
     private int amount = 0;
@@ -76,6 +81,11 @@ public class StockItemBean implements Serializable
      */
     private String showId = "";
 
+    /**
+     * 最终的仓区
+     */
+    private String depotpartId = "";
+
     private double price = 0.0d;
 
     private double prePrice = 0.0d;
@@ -86,6 +96,11 @@ public class StockItemBean implements Serializable
     private double sailPrice = 0.0d;
 
     private double total = 0.0d;
+
+    /**
+     * 采购主管必填,早于这个日期是不能付款的
+     */
+    private String nearlyPayDate = "";
 
     private String logTime = "";
 
@@ -469,6 +484,40 @@ public class StockItemBean implements Serializable
     }
 
     /**
+     * @return the stafferId
+     */
+    public String getStafferId()
+    {
+        return stafferId;
+    }
+
+    /**
+     * @param stafferId
+     *            the stafferId to set
+     */
+    public void setStafferId(String stafferId)
+    {
+        this.stafferId = stafferId;
+    }
+
+    /**
+     * @return the nearlyPayDate
+     */
+    public String getNearlyPayDate()
+    {
+        return nearlyPayDate;
+    }
+
+    /**
+     * @param nearlyPayDate
+     *            the nearlyPayDate to set
+     */
+    public void setNearlyPayDate(String nearlyPayDate)
+    {
+        this.nearlyPayDate = nearlyPayDate;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -477,21 +526,100 @@ public class StockItemBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("StockItemBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("stockId = ").append(this.stockId).append(TAB).append("productId = ").append(this.productId).append(
-            TAB).append("refOutId = ").append(this.refOutId).append(TAB).append("hasRef = ").append(this.hasRef).append(
-            TAB).append("providerId = ").append(this.providerId).append(TAB).append("amount = ").append(this.amount).append(
-            TAB).append("productNum = ").append(this.productNum).append(TAB).append("status = ").append(this.status).append(
-            TAB).append("fechProduct = ").append(this.fechProduct).append(TAB).append("netAskId = ").append(
-            this.netAskId).append(TAB).append("showId = ").append(this.showId).append(TAB).append("price = ").append(
-            this.price).append(TAB).append("prePrice = ").append(this.prePrice).append(TAB).append("sailPrice = ").append(
-            this.sailPrice).append(TAB).append("total = ").append(this.total).append(TAB).append("logTime = ").append(
-            this.logTime).append(TAB).append("priceAskProviderId = ").append(this.priceAskProviderId).append(TAB).append(
-            "description = ").append(this.description).append(TAB).append("pay = ").append(this.pay).append(TAB).append(
-            "asks = ").append(this.asks).append(TAB).append(" )");
+        retValue
+            .append("StockItemBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("stockId = ")
+            .append(this.stockId)
+            .append(TAB)
+            .append("productId = ")
+            .append(this.productId)
+            .append(TAB)
+            .append("refOutId = ")
+            .append(this.refOutId)
+            .append(TAB)
+            .append("hasRef = ")
+            .append(this.hasRef)
+            .append(TAB)
+            .append("providerId = ")
+            .append(this.providerId)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("amount = ")
+            .append(this.amount)
+            .append(TAB)
+            .append("productNum = ")
+            .append(this.productNum)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("fechProduct = ")
+            .append(this.fechProduct)
+            .append(TAB)
+            .append("netAskId = ")
+            .append(this.netAskId)
+            .append(TAB)
+            .append("showId = ")
+            .append(this.showId)
+            .append(TAB)
+            .append("price = ")
+            .append(this.price)
+            .append(TAB)
+            .append("prePrice = ")
+            .append(this.prePrice)
+            .append(TAB)
+            .append("sailPrice = ")
+            .append(this.sailPrice)
+            .append(TAB)
+            .append("total = ")
+            .append(this.total)
+            .append(TAB)
+            .append("nearlyPayDate = ")
+            .append(this.nearlyPayDate)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("priceAskProviderId = ")
+            .append(this.priceAskProviderId)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("pay = ")
+            .append(this.pay)
+            .append(TAB)
+            .append("asks = ")
+            .append(this.asks)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the depotpartId
+     */
+    public String getDepotpartId()
+    {
+        return depotpartId;
+    }
+
+    /**
+     * @param depotpartId
+     *            the depotpartId to set
+     */
+    public void setDepotpartId(String depotpartId)
+    {
+        this.depotpartId = depotpartId;
     }
 }

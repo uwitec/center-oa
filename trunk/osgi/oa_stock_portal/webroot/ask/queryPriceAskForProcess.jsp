@@ -288,7 +288,7 @@ function updatePass(id)
 					<td align="center" onclick="hrefAndSelect(this)"
 					onMouseOver="showDiv('${item.id}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"
 					>
-					<a onclick="hrefAndSelect(this)" href="../stock/ask.do?method=findPriceAsk&id=${item.id}">
+					<a onclick="hrefAndSelect(this)" href="../stock/ask.do?method=findPriceAsk&id=${item.id}&srcType=${srcType}">
 					${item.id}
 					</a></td>
 					<td align="center" onclick="hrefAndSelect(this)">

@@ -313,10 +313,8 @@ function rejectBean()
 			value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>
 	</p:button>
 
-	<tr>
-		<td colspan='2' align="center"><FONT color="blue">${MESSAGE_INFO}</FONT><FONT
-			color="red">${errorInfo}</FONT></td>
-	</tr>
+	<p:message2/>
+	
 </p:body></form>
 </body>
 </html>
