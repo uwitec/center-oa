@@ -200,7 +200,7 @@ function change()
                       <tr class="content1">
                             <td>发货单备注：</td>
                             <td colspan="3"><textarea rows="3" cols="55" name="applys"
-                                readonly="readonly">${consignBean.applys}</textarea></td>
+                                >${consignBean.applys}</textarea></td>
                        </tr>
                        
                     </c:if>

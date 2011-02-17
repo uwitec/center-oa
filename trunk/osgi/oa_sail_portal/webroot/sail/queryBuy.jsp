@@ -502,7 +502,7 @@ function reject()
 	<tr>
 		<td width="100%">
 		<div align="right">
-		<c:if test="${queryType != '4' && queryType != '5'}">
+		<c:if test="${queryType != '4' && queryType != '5' && queryType != '6'}">
         <input name="bu1"
                 type="button" class="button_class" value="&nbsp;审核通过&nbsp;"
                 onclick="check()" />&nbsp;&nbsp;<input type="button" name="bu2"

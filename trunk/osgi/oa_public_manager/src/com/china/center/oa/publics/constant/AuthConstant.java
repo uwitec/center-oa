@@ -575,6 +575,11 @@ public interface AuthConstant
     String BUY_CHAIRMA = "1504";
 
     /**
+     * 入库单-所有入库单查看
+     */
+    String BUY_QUERYALL = "1505";
+
+    /**
      * 帐户操作
      */
     String BANK_OPR = "1601";

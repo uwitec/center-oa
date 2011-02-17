@@ -48,7 +48,7 @@ public class TransportBean implements Serializable
     @Html(title = "联系电话 ", maxLength = 40)
     private String conphone = "";
 
-    @Html(title = "发货区域 ", maxLength = 40)
+    @Html(title = "发货区域 ", type = Element.TEXTAREA, maxLength = 400)
     private String area = "";
 
     @Html(title = "发车时间 ", maxLength = 40)
@@ -211,11 +211,35 @@ public class TransportBean implements Serializable
 
         StringBuffer retValue = new StringBuffer();
 
-        retValue.append("TransportBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("name = ").append(this.name).append(TAB).append("type = ").append(this.type).append(TAB).append(
-            "parent = ").append(this.parent).append(TAB).append("company = ").append(this.company).append(TAB).append(
-            "conphone = ").append(this.conphone).append(TAB).append("area = ").append(this.area).append(TAB).append(
-            "outTime = ").append(this.outTime).append(TAB).append(" )");
+        retValue
+            .append("TransportBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("name = ")
+            .append(this.name)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("parent = ")
+            .append(this.parent)
+            .append(TAB)
+            .append("company = ")
+            .append(this.company)
+            .append(TAB)
+            .append("conphone = ")
+            .append(this.conphone)
+            .append(TAB)
+            .append("area = ")
+            .append(this.area)
+            .append(TAB)
+            .append("outTime = ")
+            .append(this.outTime)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }
