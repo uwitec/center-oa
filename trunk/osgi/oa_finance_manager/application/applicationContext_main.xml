@@ -49,4 +49,6 @@
 
 	<bean id="statBankManager" class="com.china.center.oa.finance.manager.impl.StatBankManagerImpl" />
 
+	<bean id="stockPayApplyDAO" class="com.china.center.oa.finance.dao.impl.StockPayApplyDAOImpl" />
+
 </beans>

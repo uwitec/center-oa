@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.finance.bean.PaymentApplyBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
@@ -26,6 +27,7 @@ import com.china.center.oa.finance.dao.PaymentVSOutDAO;
 import com.china.center.oa.finance.manager.PaymentManager;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
+import com.china.center.tools.JudgeTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -87,6 +89,40 @@ public class PaymentManagerImpl implements PaymentManager
         }
 
         return paymentDAO.deleteEntityBean(id);
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean batchDeleteBean(User user, String id)
+        throws MYException
+    {
+        PaymentBean pay = paymentDAO.find(id);
+
+        if (pay == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        JudgeTools.judgeParameterIsNull(pay.getBatchId());
+
+        ConditionParse con = new ConditionParse();
+
+        con.addWhereStr();
+
+        con.addCondition("batchId", "=", pay.getBatchId());
+
+        List<PaymentBean> payList = paymentDAO.queryEntityBeansByCondition(con);
+
+        for (PaymentBean paymentBean : payList)
+        {
+            if (paymentBean.getStatus() != FinanceConstant.PAYMENT_STATUS_INIT)
+            {
+                throw new MYException("回款已经被人认领,不能删除");
+            }
+        }
+
+        paymentDAO.deleteEntityBeansByCondition(con);
+
+        return true;
     }
 
     @Transactional(rollbackFor = MYException.class)

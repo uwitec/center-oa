@@ -34,6 +34,17 @@ public interface PaymentManager
         throws MYException;
 
     /**
+     * batchDeleteBean
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean batchDeleteBean(User user, String id)
+        throws MYException;
+
+    /**
      * 领取回款(需要同步)
      * 
      * @param stafferId

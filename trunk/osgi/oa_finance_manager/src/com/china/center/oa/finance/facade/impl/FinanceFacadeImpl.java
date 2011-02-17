@@ -183,6 +183,25 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
+    public boolean batchDeletePaymentBean(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.PAYMENT_OPR))
+        {
+            return paymentManager.batchDeleteBean(user, id);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
     public boolean drawPaymentBean(String userId, String id, String customerId)
         throws MYException
     {

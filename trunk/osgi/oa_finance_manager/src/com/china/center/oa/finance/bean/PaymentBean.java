@@ -53,6 +53,8 @@ public class PaymentBean implements Serializable
     @Join(tagClass = CustomerBean.class, type = JoinType.LEFT)
     private String customerId = "";
 
+    private String batchId = "";
+
     private int type = FinanceConstant.PAYMENT_PAY_PUBLIC;
 
     private int status = FinanceConstant.PAYMENT_STATUS_INIT;
@@ -324,6 +326,23 @@ public class PaymentBean implements Serializable
     }
 
     /**
+     * @return the batchId
+     */
+    public String getBatchId()
+    {
+        return batchId;
+    }
+
+    /**
+     * @param batchId
+     *            the batchId to set
+     */
+    public void setBatchId(String batchId)
+    {
+        this.batchId = batchId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -355,6 +374,9 @@ public class PaymentBean implements Serializable
             .append(TAB)
             .append("customerId = ")
             .append(this.customerId)
+            .append(TAB)
+            .append("batchId = ")
+            .append(this.batchId)
             .append(TAB)
             .append("type = ")
             .append(this.type)

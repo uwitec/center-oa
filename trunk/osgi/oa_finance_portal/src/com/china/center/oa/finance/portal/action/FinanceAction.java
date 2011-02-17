@@ -71,6 +71,7 @@ import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.MathTools;
 import com.china.center.tools.RequestDataStream;
+import com.china.center.tools.SequenceTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
@@ -574,6 +575,42 @@ public class FinanceAction extends DispatchAction
             User user = Helper.getUser(request);
 
             financeFacade.deletePaymentBean(user.getId(), id);
+
+            ajax.setSuccess("成功删除");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("删除失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * batchDeletePayment
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward batchDeletePayment(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            User user = Helper.getUser(request);
+
+            financeFacade.batchDeletePaymentBean(user.getId(), id);
 
             ajax.setSuccess("成功删除");
         }
@@ -1186,6 +1223,8 @@ public class FinanceAction extends DispatchAction
 
         String bankId = rds.getParameter("bankId");
 
+        String batchId = SequenceTools.getSequence();
+
         if (rds.haveStream())
         {
             try
@@ -1213,7 +1252,7 @@ public class FinanceAction extends DispatchAction
                     {
                         try
                         {
-                            addSucess = createPayment(user, bankId, obj);
+                            addSucess = createPayment(user, bankId, obj, batchId);
                         }
                         catch (MYException e)
                         {
@@ -1262,7 +1301,7 @@ public class FinanceAction extends DispatchAction
         return mapping.findForward("uploadPayment");
     }
 
-    private boolean createPayment(User user, String bankId, String[] obj)
+    private boolean createPayment(User user, String bankId, String[] obj, String batchId)
         throws MYException
     {
         PaymentBean bean = new PaymentBean();
@@ -1290,6 +1329,7 @@ public class FinanceAction extends DispatchAction
         bean.setFromer(obj[2]);
         bean.setMoney(MathTools.parseDouble(obj[3]));
         bean.setReceiveTime(obj[4]);
+        bean.setBatchId(batchId);
 
         if (obj.length == 6)
         {

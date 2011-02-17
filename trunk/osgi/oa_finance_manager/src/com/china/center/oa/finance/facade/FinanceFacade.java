@@ -47,6 +47,17 @@ public interface FinanceFacade
         throws MYException;
 
     /**
+     * batchDeletePaymentBean
+     * 
+     * @param userId
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean batchDeletePaymentBean(String userId, String id)
+        throws MYException;
+
+    /**
      * 领取回款(需要同步)
      * 
      * @param stafferId

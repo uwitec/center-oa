@@ -34,7 +34,7 @@ function load()
              {display: '回款来源', name : 'fromer', width : '12%'},
              {display: '回款金额', name : 'money', width : '8%', toFixed: 2},
              {display: '使用金额', name : 'useMoney', width : '8%', toFixed: 2},
-             {display: '回款日期', name : 'receiveTime', width : '10%', sortable : true,},
+             {display: '回款批次', name : 'batchId', width : '10%', sortable : true,},
              {display: '标识', name : 'id', sortable : true, width : 'auto'}
              ],
          extAtt: {
@@ -42,6 +42,7 @@ function load()
          },
          buttons : [
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1602'},
+             {id: 'del1', bclass: 'del',  caption: '删除批次', onpress : delBean1, auth: '1602'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -61,6 +62,17 @@ function addBean(opr, grid)
 {
     $l(gurl + 'preForAdd' + ukey);
     //$l(addUrl);
+}
+
+function delBean1(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 0)
+    {    
+        if(window.confirm('确定删除此批次的回款单?'))    
+        $ajax(gurl + 'batchDelete' + ukey + '&id=' + getRadioValue('checkb'), callBackFun);
+    }
+    else
+    $error('不能操作');
 }
 
 function delBean(opr, grid)
