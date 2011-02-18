@@ -23,6 +23,7 @@ import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.InvoiceinsManager;
 import com.china.center.oa.finance.manager.PaymentApplyManager;
 import com.china.center.oa.finance.manager.PaymentManager;
+import com.china.center.oa.finance.manager.StockPayApplyManager;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.facade.AbstarctFacade;
 import com.china.center.oa.publics.manager.UserManager;
@@ -51,6 +52,8 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
 
     private PaymentApplyManager paymentApplyManager = null;
 
+    private StockPayApplyManager stockPayApplyManager = null;
+
     /**
      * 回款操作锁
      */
@@ -63,6 +66,8 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
     private static Object OUTBILL_LOCK = new Object();
 
     private static Object INVOICEINS_LOCK = new Object();
+
+    private static Object STOCKPAYAPPLY_LOCK = new Object();
 
     /**
      * default constructor
@@ -488,6 +493,50 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
+    public boolean rejectStockPayApply(String userId, String id, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (STOCKPAYAPPLY_LOCK)
+        {
+            if (containAuth(user, AuthConstant.STOCK_PAY_CEO, AuthConstant.STOCK_PAY_SEC))
+            {
+                return stockPayApplyManager.rejectStockPayApply(user, id, reason);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean submitStockPayApply(String userId, String id, double payMoney, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (STOCKPAYAPPLY_LOCK)
+        {
+            if (containAuth(user, AuthConstant.STOCK_PAY_APPLY))
+            {
+                return stockPayApplyManager.submitStockPayApply(user, id, payMoney, reason);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
     /**
      * @return the bankManager
      */
@@ -588,5 +637,22 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
     public void setBillManager(BillManager billManager)
     {
         this.billManager = billManager;
+    }
+
+    /**
+     * @return the stockPayApplyManager
+     */
+    public StockPayApplyManager getStockPayApplyManager()
+    {
+        return stockPayApplyManager;
+    }
+
+    /**
+     * @param stockPayApplyManager
+     *            the stockPayApplyManager to set
+     */
+    public void setStockPayApplyManager(StockPayApplyManager stockPayApplyManager)
+    {
+        this.stockPayApplyManager = stockPayApplyManager;
     }
 }

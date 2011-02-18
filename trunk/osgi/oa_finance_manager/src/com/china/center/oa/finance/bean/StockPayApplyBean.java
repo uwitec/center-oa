@@ -22,6 +22,7 @@ import com.china.center.oa.finance.constant.StockPayApplyConstant;
 import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
+import com.china.center.oa.publics.bean.StafferBean;
 
 
 /**
@@ -52,6 +53,9 @@ public class StockPayApplyBean implements Serializable
     private String provideId = "";
 
     private String stockId = "";
+
+    @Join(tagClass = StafferBean.class)
+    private String stafferId = "";
 
     @FK(index = AnoConstant.FK_FIRST)
     private String stockItemId = "";
@@ -297,6 +301,23 @@ public class StockPayApplyBean implements Serializable
     }
 
     /**
+     * @return the stafferId
+     */
+    public String getStafferId()
+    {
+        return stafferId;
+    }
+
+    /**
+     * @param stafferId
+     *            the stafferId to set
+     */
+    public void setStafferId(String stafferId)
+    {
+        this.stafferId = stafferId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -308,7 +329,7 @@ public class StockPayApplyBean implements Serializable
         StringBuilder retValue = new StringBuilder();
 
         retValue
-            .append("StockPayAoolyBean ( ")
+            .append("StockPayApplyBean ( ")
             .append(super.toString())
             .append(TAB)
             .append("id = ")
@@ -328,6 +349,9 @@ public class StockPayApplyBean implements Serializable
             .append(TAB)
             .append("stockId = ")
             .append(this.stockId)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
             .append(TAB)
             .append("stockItemId = ")
             .append(this.stockItemId)

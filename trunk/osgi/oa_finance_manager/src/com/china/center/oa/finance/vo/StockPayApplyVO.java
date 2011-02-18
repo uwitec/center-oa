@@ -34,6 +34,9 @@ public class StockPayApplyVO extends StockPayApplyBean
     @Relationship(relationField = "provideId")
     private String provideName = "";
 
+    @Relationship(relationField = "stafferId")
+    private String stafferName = "";
+
     /**
      * default constructor
      */
@@ -93,6 +96,23 @@ public class StockPayApplyVO extends StockPayApplyBean
     }
 
     /**
+     * @return the stafferName
+     */
+    public String getStafferName()
+    {
+        return stafferName;
+    }
+
+    /**
+     * @param stafferName
+     *            the stafferName to set
+     */
+    public void setStafferName(String stafferName)
+    {
+        this.stafferName = stafferName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -115,6 +135,9 @@ public class StockPayApplyVO extends StockPayApplyBean
             .append(TAB)
             .append("provideName = ")
             .append(this.provideName)
+            .append(TAB)
+            .append("stafferName = ")
+            .append(this.stafferName)
             .append(TAB)
             .append(" )");
 

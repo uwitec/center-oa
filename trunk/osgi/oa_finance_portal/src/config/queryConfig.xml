@@ -270,4 +270,31 @@
         </condtion>
     </item>
     
+    <item name="queryStockPayApply" deaultpfix="StockPayApplyBean">
+        <condtion name="alogTime" filed="payDate" caption="付款开始时间">
+            <opr>&gt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="blogTime" filed="payDate" caption="付款结束时间">
+            <opr>&lt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="stockId" filed="stockId" caption="采购单号(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="provideName" filed="name" caption="供应商" pfix="ProviderBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+         <condtion name="status" caption="状态">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$stockPayApplyStatus</option>
+        </condtion>
+    </item>
+    
 </query>

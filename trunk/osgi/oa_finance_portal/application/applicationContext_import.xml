@@ -75,4 +75,6 @@
     
     <osgi:reference id="statBankManager" interface="com.china.center.oa.finance.manager.StatBankManager" />
     
+    <osgi:reference id="stockPayApplyDAO" interface="com.china.center.oa.finance.dao.StockPayApplyDAO" />
+    
 </beans>

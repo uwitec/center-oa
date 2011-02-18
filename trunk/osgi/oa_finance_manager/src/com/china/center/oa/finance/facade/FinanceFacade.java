@@ -155,4 +155,26 @@ public interface FinanceFacade
      */
     boolean deleteOutBillBean(String userId, String id)
         throws MYException;
+
+    /**
+     * 通过(需要同步)
+     * 
+     * @param stafferId
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean submitStockPayApply(String userId, String id, double payMoney, String reason)
+        throws MYException;
+
+    /**
+     * 驳回(需要同步)
+     * 
+     * @param stafferId
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean rejectStockPayApply(String userId, String id, String reason)
+        throws MYException;
 }

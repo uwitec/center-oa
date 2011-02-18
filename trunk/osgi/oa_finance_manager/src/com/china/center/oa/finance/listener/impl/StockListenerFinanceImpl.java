@@ -74,6 +74,8 @@ public class StockListenerFinanceImpl implements StockListener
 
         apply.setStockItemId(item.getId());
 
+        apply.setStafferId(bean.getStafferId());
+
         stockPayApplyDAO.saveEntityBean(apply);
     }
 

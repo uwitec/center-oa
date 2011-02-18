@@ -40,4 +40,6 @@
     
     <bean name="/finance/bill" class="com.china.center.oa.finance.portal.action.BillAction" />
     
+    <bean name="/finance/stock" class="com.china.center.oa.finance.portal.action.StockPayAction" />
+    
 </beans>

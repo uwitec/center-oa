@@ -37,6 +37,14 @@
             <forward name="addOutBill" path="/bill/addOutBill.jsp" />
             <forward name="detailOutBill" path="/bill/detailOutBill.jsp" />
         </action>
+        
+        <action path="/finance/stock" parameter="method"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+            <forward name="queryStockPayApply" path="/stockapply/queryStockPayApply.jsp" />
+            <forward name="detailStockPayApply" path="/stockapply/detailStockPayApply.jsp" />
+            <forward name="handleStockPayApply" path="/stockapply/handleStockPayApply.jsp" />
+        </action>
 		
 	</action-mappings>
 </struts-config>

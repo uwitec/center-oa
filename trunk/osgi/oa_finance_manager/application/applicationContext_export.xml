@@ -50,4 +50,6 @@
 
 	<osgi:service ref="stockPayApplyDAO" interface="com.china.center.oa.finance.dao.StockPayApplyDAO" />
 
+	<osgi:service ref="stockPayApplyManager" interface="com.china.center.oa.finance.manager.StockPayApplyManager" />
+
 </beans>

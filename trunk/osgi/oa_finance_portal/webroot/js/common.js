@@ -131,6 +131,19 @@ function resetRadio(name)
     return null;
 }
 
+function setRadioValue(name, value)
+{
+    var obj = document.getElementsByName(name);
+    
+    for (var i = 0; i < obj.length; i++)
+    {
+    	if (obj[i].value == value)
+    	{
+            obj[i].checked = true;
+    	}
+    }
+}
+
 
 /**
  * 设置select的选择
@@ -165,7 +178,7 @@ function setSelectIndex(selectObj, index)
 
     if (!isNoneInCommon(index))
     {
-        index = parseInt(index);
+        index = parseInt(index, 10);
 
         var os = selectObj.options;
 
@@ -279,7 +292,7 @@ function $innerDetail(obj, ignoreArray)
     {
         var ele = elements[i];
         
-        if (!containInList(ignoreArray, ele.name))
+        if (!containInList(ignoreArray, ele.name) && ele.type.toLowerCase() != 'hidden')
         {
         	ele.setAttribute('autodisplay', 1);
         }
@@ -496,7 +509,7 @@ function eload(elements)
 
             if (!isNoneInCommon(index))
             {
-                var index = parseInt(index);
+                var index = parseInt(index, 10);
 
                 if (index == rIndex)
                 {
@@ -733,8 +746,11 @@ function getOptionText(obj)
     {
         obj = $O(obj);
     }
-
+    
+    if (obj.options && obj.options.length > 0)
     return obj.options[obj.selectedIndex].text;
+    else
+    return '';
 }
 
 
@@ -910,6 +926,15 @@ function removeAllItem(fromSelect)
     fromSelect.blur;
 }
 
+function removeOption(fromSelect, value)
+{
+    for (i=fromSelect.options.length-1; i>=0; i--)
+    {
+    	if (fromSelect.options[i].value == value)
+        fromSelect.remove(i);
+    }
+}
+
 function $Dbuttons(f)
 {
     var bus = document.getElementsByTagName('input');
@@ -1009,9 +1034,14 @@ function hrefAndSelect(obj)
 
         for (i = 0; i < rad.length; i++)
         {
-            if (rad[i].type.toLowerCase() == 'radio' || rad[i].type.toLowerCase() == 'checkbox')
+            if (rad[i].type.toLowerCase() == 'checkbox')
             {
                 rad[i].checked = !rad[i].checked;
+            }
+            
+            if (rad[i].type.toLowerCase() == 'radio')
+            {
+                rad[i].checked = true;
             }
         }
     }
@@ -1164,7 +1194,15 @@ function callBackFun(data)
     reloadTip(data.msg, data.ret == 0);
 
     if (data.ret == 0 && commonQuery)
-    commonQuery();
+    {
+    	//if (gobal_guid && gobal_guid.p && gobal_guid.p.queryMode == 1 && window.resetsModal)
+    	//{
+    		// clear pop-query
+    		//resetsModal();
+    	//}
+    	
+        commonQuery();
+    }
 }
 
 function $c()
@@ -1196,7 +1234,12 @@ function $auth()
 	}
 	
 	return [];
-} 
+}
+
+function getAllDef()
+{
+	return window.top.topFrame.allDef;
+}
 
 if (window.addEventCommon)
 window.addEventCommon(window, 'load', loadForm);
