@@ -495,6 +495,21 @@ public interface AuthConstant
     String STOCK_PRICE_END = "1309";
 
     /**
+     * 采购付款-申请
+     */
+    String STOCK_PAY_APPLY = "1310";
+
+    /**
+     * 采购付款-总裁审批
+     */
+    String STOCK_PAY_CEO = "1311";
+
+    /**
+     * 采购付款-财务审批
+     */
+    String STOCK_PAY_SEC = "1312";
+
+    /**
      * 提交库单(业务员)
      */
     String SAIL_SUBMIT = "1401";

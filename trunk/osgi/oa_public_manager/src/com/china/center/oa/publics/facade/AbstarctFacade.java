@@ -64,6 +64,19 @@ public abstract class AbstarctFacade
         return false;
     }
 
+    protected boolean containAllAuth(User user, String... authId)
+    {
+        for (String auth : authId)
+        {
+            if ( !containAuth(user, auth))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     protected void checkUser(User user)
         throws MYException
     {
