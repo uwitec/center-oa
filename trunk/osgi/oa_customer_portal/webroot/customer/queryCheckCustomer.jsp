@@ -34,7 +34,7 @@ function load()
 		     {display: '时段', name : 'time_', content: '{beginTime}至{endTime}', width : 'auto', cc: 'commonStatus'}
 		     ],
 		 extAtt: {
-		     id : {begin : '<a href=../customer/queryCheckItem.jsp?id={id}>', end : '</a>'}
+		     id : {begin : '<a href=../customer/queryCheckItem.jsp?id={id}&menu=1>', end : '</a>'}
 		 },
 		 buttons : [
 		     {id: 'add', bclass: 'add', onpress : addBean, auth: '021601'},
@@ -117,7 +117,7 @@ function queryItem(opr, grid)
     {
        if (getRadio('checkb').lstatus == 2)
        {
-           $l('../customer/queryCheckItem.jsp?id=' + getRadioValue('checkb'));
+           $l('../customer/queryCheckItem.jsp?id=' + getRadioValue('checkb') + '&menu=1' );
        }
        else
        {

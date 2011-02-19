@@ -126,7 +126,8 @@ public class CustomerCreditAction extends DispatchAction
      * @throws ServletException
      */
     public ActionForward preForConfigStaticCustomerCredit(ActionMapping mapping, ActionForm form,
-                                                          HttpServletRequest request, HttpServletResponse response)
+                                                          HttpServletRequest request,
+                                                          HttpServletResponse response)
         throws ServletException
     {
         String cid = request.getParameter("cid");
@@ -162,11 +163,13 @@ public class CustomerCreditAction extends DispatchAction
 
             subCondition.addCondition("order by CreditItemThrBean.indexPos");
 
-            List<CreditItemThrVO> subList = creditItemThrDAO.queryEntityVOsByCondition(subCondition);
+            List<CreditItemThrVO> subList = creditItemThrDAO
+                .queryEntityVOsByCondition(subCondition);
 
             if (ListTools.isEmptyOrNull(subList))
             {
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, creditItemSecVO.getName() + "没有配置子项,不能配置客户静态指标");
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, creditItemSecVO.getName()
+                                                                + "没有配置子项,不能配置客户静态指标");
 
                 return mapping.findForward("querySelfCustomer");
             }
@@ -190,7 +193,8 @@ public class CustomerCreditAction extends DispatchAction
         }
         else
         {
-            List<CustomerCreditApplyVO> customerCreditList = customerCreditApplyDAO.queryEntityVOsByFK(cid);
+            List<CustomerCreditApplyVO> customerCreditList = customerCreditApplyDAO
+                .queryEntityVOsByFK(cid);
 
             for (AbstractCustomerCredit customerCreditVO : customerCreditList)
             {
@@ -218,8 +222,8 @@ public class CustomerCreditAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward interposeCredit(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward interposeCredit(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String cid = request.getParameter("cid");
@@ -254,7 +258,8 @@ public class CustomerCreditAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryCustomerCreditLog(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward queryCustomerCreditLog(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
                                                 HttpServletResponse response)
         throws ServletException
     {
@@ -268,10 +273,10 @@ public class CustomerCreditAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYCUSTOMERCREDITLOG, request, condtion);
 
-        condtion.addCondition("order by CreditlogBean.logTime desc");
+        condtion.addCondition("order by CreditlogBean.id desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCUSTOMERCREDITLOG, request, condtion,
-            this.creditlogDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCUSTOMERCREDITLOG, request,
+            condtion, this.creditlogDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -286,7 +291,8 @@ public class CustomerCreditAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryCustomerCredit(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward queryCustomerCredit(ActionMapping mapping, ActionForm form,
+                                             HttpServletRequest request,
                                              HttpServletResponse response)
         throws ServletException
     {
@@ -302,8 +308,8 @@ public class CustomerCreditAction extends DispatchAction
 
         condtion.addCondition("order by CustomerCreditBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCUSTOMERCREDIT, request, condtion,
-            this.customerCreditDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCUSTOMERCREDIT, request,
+            condtion, this.customerCreditDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -339,7 +345,8 @@ public class CustomerCreditAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward configStaticCustomerCredit(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward configStaticCustomerCredit(ActionMapping mapping, ActionForm form,
+                                                    HttpServletRequest request,
                                                     HttpServletResponse response)
         throws ServletException
     {
@@ -404,7 +411,8 @@ public class CustomerCreditAction extends DispatchAction
 
             bean.setPtype(parent.getType());
 
-            bean.setVal( (staticAmount * parent.getPer() * creditItemSecVO.getPer() * thr.getPer()) / 1000000.0d);
+            bean
+                .setVal( (staticAmount * parent.getPer() * creditItemSecVO.getPer() * thr.getPer()) / 1000000.0d);
 
             bean.setValueId(valueId);
 
@@ -445,8 +453,10 @@ public class CustomerCreditAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward doPassApplyConfigStaticCustomerCredit(ActionMapping mapping, ActionForm form,
-                                                               HttpServletRequest request, HttpServletResponse response)
+    public ActionForward doPassApplyConfigStaticCustomerCredit(ActionMapping mapping,
+                                                               ActionForm form,
+                                                               HttpServletRequest request,
+                                                               HttpServletResponse response)
         throws ServletException
     {
         String cid = request.getParameter("cid");
@@ -481,7 +491,8 @@ public class CustomerCreditAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward doRejectApplyConfigStaticCustomerCredit(ActionMapping mapping, ActionForm form,
+    public ActionForward doRejectApplyConfigStaticCustomerCredit(ActionMapping mapping,
+                                                                 ActionForm form,
                                                                  HttpServletRequest request,
                                                                  HttpServletResponse response)
         throws ServletException
@@ -518,7 +529,8 @@ public class CustomerCreditAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward uploadCustomerCredit(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward uploadCustomerCredit(ActionMapping mapping, ActionForm form,
+                                              HttpServletRequest request,
                                               HttpServletResponse response)
         throws ServletException
     {
@@ -578,7 +590,8 @@ public class CustomerCreditAction extends DispatchAction
 
                     if (StringTools.isNullOrNone(ccode))
                     {
-                        builder.append("第[" + currentNumber + "]错误:").append("客户编码为空").append("<br>");
+                        builder.append("第[" + currentNumber + "]错误:").append("客户编码为空").append(
+                            "<br>");
 
                         fault++ ;
 
@@ -593,7 +606,10 @@ public class CustomerCreditAction extends DispatchAction
                     }
                     else
                     {
-                        builder.append("第[" + currentNumber + "]错误:").append("数据长度不足21格,数据不足").append("<br>");
+                        builder
+                            .append("第[" + currentNumber + "]错误:")
+                            .append("数据长度不足21格,数据不足")
+                            .append("<br>");
                     }
 
                     if (addSucess)
@@ -639,8 +655,8 @@ public class CustomerCreditAction extends DispatchAction
      * @param currentNumber
      * @return
      */
-    private boolean innerAdd(User user, StringBuilder builder, String[] obj, String stafferId, int currentNumber,
-                             int staticAmount)
+    private boolean innerAdd(User user, StringBuilder builder, String[] obj, String stafferId,
+                             int currentNumber, int staticAmount)
     {
         boolean addSucess = false;
 
@@ -650,18 +666,22 @@ public class CustomerCreditAction extends DispatchAction
 
             if (customer == null)
             {
-                builder.append("<font color=red>第[" + currentNumber + "]行错误:").append("客户不存在").append("</font><br>");
+                builder
+                    .append("<font color=red>第[" + currentNumber + "]行错误:")
+                    .append("客户不存在")
+                    .append("</font><br>");
 
                 return false;
             }
 
             // 定向解析
-            String[] keys = new String[] {"80000000000000000001", "80000000000000000002", "80000000000000000003",
-                "80000000000000000004", "80000000000000000011", "80000000000000000012", "80000000000000000013",
-                "80000000000000000014", "80000000000000000021", "80000000000000000022", "80000000000000000023",
-                "80000000000000000024", "80000000000000000031", "80000000000000000032", "80000000000000000033",
-                "80000000000000000034", "80000000000000000035", "80000000000000000036", "80000000000000000037",
-                "80000000000000000038"};
+            String[] keys = new String[] {"80000000000000000001", "80000000000000000002",
+                "80000000000000000003", "80000000000000000004", "80000000000000000011",
+                "80000000000000000012", "80000000000000000013", "80000000000000000014",
+                "80000000000000000021", "80000000000000000022", "80000000000000000023",
+                "80000000000000000024", "80000000000000000031", "80000000000000000032",
+                "80000000000000000033", "80000000000000000034", "80000000000000000035",
+                "80000000000000000036", "80000000000000000037", "80000000000000000038"};
 
             List<CustomerCreditBean> ccList = new ArrayList();
 
@@ -676,7 +696,8 @@ public class CustomerCreditAction extends DispatchAction
                     continue;
                 }
 
-                CreditItemThrBean creditItemThr = creditItemThrDAO.findByUnique(valieName.trim(), str);
+                CreditItemThrBean creditItemThr = creditItemThrDAO.findByUnique(valieName.trim(),
+                    str);
 
                 if (creditItemThr == null)
                 {
@@ -708,7 +729,8 @@ public class CustomerCreditAction extends DispatchAction
                 each.setValueId(creditItemThr.getId());
 
                 each
-                    .setVal( (staticAmount * creditItem.getPer() * creditItemSec.getPer() * creditItemThr.getPer()) / 1000000.0d);
+                    .setVal( (staticAmount * creditItem.getPer() * creditItemSec.getPer() * creditItemThr
+                        .getPer()) / 1000000.0d);
 
                 each.setLog(user.getStafferName() + "导入修改:" + each.getVal());
 
@@ -727,7 +749,10 @@ public class CustomerCreditAction extends DispatchAction
         {
             addSucess = false;
 
-            builder.append("<font color=red>第[" + currentNumber + "]行错误:").append(e.getMessage()).append("</font><br>");
+            builder
+                .append("<font color=red>第[" + currentNumber + "]行错误:")
+                .append(e.getMessage())
+                .append("</font><br>");
         }
 
         return addSucess;

@@ -84,7 +84,7 @@ function queryHis()
 {
     if (getRadio('checkb') && getRadioValue('checkb'))
     {
-         $l('../customer/queryHisCustomer.jsp?id=' + getRadioValue('checkb'));
+         $l('../customer/queryHisCustomer.jsp?id=' + getRadioValue('checkb') + '&menu=1');
     }
 }
 
@@ -92,7 +92,7 @@ function queryVistor()
 {
     if (getRadio('checkb') && getRadioValue('checkb'))
     {
-         $l('../customer/queryWorkCustomer.jsp?targerId=' + getRadioValue('checkb'));
+         $l('../customer/queryWorkCustomer.jsp?targerId=' + getRadioValue('checkb') + '&menu=1');
     }
     else
     {
@@ -104,7 +104,7 @@ function queryCreditLog()
 {
     if (getRadio('checkb') && getRadioValue('checkb'))
     {
-         $l('../credit/queryCustomerCreditLog.jsp?targerId=' + getRadioValue('checkb'));
+         $l('../credit/queryCustomerCreditLog.jsp?targerId=' + getRadioValue('checkb') + '&menu=1');
     }
     else
     {
@@ -116,7 +116,7 @@ function queryCredit()
 {
     if (getRadio('checkb') && getRadioValue('checkb'))
     {
-         $l('../credit/queryCustomerCredit.jsp?targerId=' + getRadioValue('checkb'));
+         $l('../credit/queryCustomerCredit.jsp?targerId=' + getRadioValue('checkb') + '&menu=1');
     }
     else
     {

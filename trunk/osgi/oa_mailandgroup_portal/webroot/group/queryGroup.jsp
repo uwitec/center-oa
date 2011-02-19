@@ -39,7 +39,7 @@ function load()
 
 function addBean(opr, grid)
 {
-    $l('../group/addGroup.jsp?type=0');
+    $l('../group/addGroup.jsp?type=0&menu=1');
 }
 
 function delBean(opr, grid)
