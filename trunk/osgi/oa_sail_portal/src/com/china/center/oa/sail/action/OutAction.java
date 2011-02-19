@@ -726,7 +726,7 @@ public class OutAction extends DispatchAction
     }
 
     /**
-     * export
+     * TEMPLATE 导出XLS文件
      * 
      * @param mapping
      * @param form

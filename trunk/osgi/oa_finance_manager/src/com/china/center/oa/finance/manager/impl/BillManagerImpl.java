@@ -134,11 +134,12 @@ public class BillManagerImpl implements BillManager
         if ( !StringTools.isNullOrNone(bill.getOutId())
             || !StringTools.isNullOrNone(bill.getOutBalanceId()))
         {
-            // 如果销售单已经全部付款,那么需要倒回,同时修改付款状态
-            // 如果销售单已经结束,那么销售单状态需要回到待回款的状态,同时增加流程日志
-            // 如果是委托代销的关联，委托代销也需要回到待回款状态
-
             throw new MYException("单据已经被销售单[%s]绑定,请确认操作", bill.getOutId());
+        }
+
+        if ( !StringTools.isNullOrNone(bill.getPaymentId()))
+        {
+            throw new MYException("单据已经和回款绑定,只能通过退领删除收款,请确认操作", bill.getOutId());
         }
 
         inBillDAO.deleteEntityBean(id);

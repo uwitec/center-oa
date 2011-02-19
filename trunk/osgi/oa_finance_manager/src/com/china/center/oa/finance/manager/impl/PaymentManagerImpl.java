@@ -190,6 +190,9 @@ public class PaymentManagerImpl implements PaymentManager
                 throw new MYException("回款已经生成收款单且收款单已经被月结锁定,不能退领");
             }
 
+            // 如果销售单已经全部付款,那么需要倒回,同时修改付款状态
+            // 如果销售单已经结束,那么销售单状态需要回到待回款的状态,同时增加流程日志
+            // 如果是委托代销的关联，委托代销也需要回到待回款状态
             if ( !StringTools.isNullOrNone(inBillBean.getOutId()))
             {
                 throw new MYException("回款已经生成收款单且和销售绑定[%s],不能退领", inBillBean.getOutId());

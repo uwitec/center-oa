@@ -161,10 +161,31 @@ function change()
                             <td colspan="3"><input type="text" name="packageWeight" value="${consignBean.packageWeight}" class="input_class"></td>
                         </tr>
                         
-                        <tr class="content2">
+                        <tr class="content1">
                              <td>回访时间：</td>
                             <td colspan="3"><p:plugin name="visitTime" type="1" value="${consignBean.visitTime}"></p:plugin>
                             </td>
+                        </tr>
+                        
+                        <tr class="content2">
+                             <td>到货时间：</td>
+                            <td colspan="3"><p:plugin name="arriveTime" type="1" value="${consignBean.arriveTime}"></p:plugin>
+                            </td>
+                        </tr>
+                        
+                        <tr class="content1">
+                             <td>备货人：</td>
+                            <td colspan="3"><input type="text" name="preparer" value="${consignBean.preparer}" class="input_class"></td>
+                        </tr>
+                        
+                        <tr class="content2">
+                             <td>监控设备：</td>
+                            <td colspan="3"><input type="text" name="mathine" value="${consignBean.mathine}" class="input_class"></td>
+                        </tr>
+                        
+                        <tr class="content1">
+                             <td>运费：</td>
+                            <td colspan="3"><input type="text" name="transportFee" value="${consignBean.transportFee}" oncheck="isFloat2" class="input_class"></td>
                         </tr>
                         
                         <tr class="content2">

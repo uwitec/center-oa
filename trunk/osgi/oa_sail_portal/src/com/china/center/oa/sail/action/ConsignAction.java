@@ -9,15 +9,25 @@
 package com.china.center.oa.sail.action;
 
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import jxl.Workbook;
+import jxl.write.Label;
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,6 +54,7 @@ import com.china.center.oa.sail.dao.ConsignDAO;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.manager.ConsignManager;
 import com.china.center.oa.sail.vo.OutVO;
+import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.DecSecurity;
@@ -335,6 +346,8 @@ public class ConsignAction extends DispatchAction
         }
 
         condition.addCondition("order by t2.arriveDate desc");
+
+        request.getSession().setAttribute("g_queryConsign_condition", condition);
     }
 
     /**
@@ -637,6 +650,149 @@ public class ConsignAction extends DispatchAction
         request.setAttribute(KeyConstant.MESSAGE, "成功删除运输方式");
 
         return queryTransport(mapping, form, request, reponse);
+    }
+
+    /**
+     * exportConsign
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportConsign(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        ConditionParse condition = (ConditionParse)request.getSession().getAttribute(
+            "g_queryConsign_condition");
+
+        List<ConsignBean> beanList = consignDAO.queryConsignByCondition(condition);
+
+        OutputStream out = null;
+
+        String filenName = null;
+
+        filenName = "Consign_" + TimeTools.now("MMddHHmmss") + ".xls";
+
+        if (beanList.size() == 0)
+        {
+            return null;
+        }
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WritableWorkbook wwb = null;
+
+        WritableSheet ws = null;
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            // create a excel
+            wwb = Workbook.createWorkbook(out);
+
+            ws = wwb.createSheet("CONSIGN", 0);
+
+            int i = 0, j = 0;
+
+            ConsignBean element = null;
+
+            WritableFont font = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD, false,
+                jxl.format.UnderlineStyle.NO_UNDERLINE, jxl.format.Colour.BLUE);
+
+            WritableCellFormat format = new WritableCellFormat(font);
+
+            ws.addCell(new Label(j++ , i, "销售单号", format));
+            ws.addCell(new Label(j++ , i, "运输方式", format));
+            ws.addCell(new Label(j++ , i, "发货单号", format));
+            ws.addCell(new Label(j++ , i, "检验人", format));
+            ws.addCell(new Label(j++ , i, "打包人", format));
+            ws.addCell(new Label(j++ , i, "打包时间", format));
+            ws.addCell(new Label(j++ , i, "包装件数", format));
+            ws.addCell(new Label(j++ , i, "包装重量", format));
+            ws.addCell(new Label(j++ , i, "回访时间", format));
+            ws.addCell(new Label(j++ , i, "到货时间", format));
+            ws.addCell(new Label(j++ , i, "备货人", format));
+            ws.addCell(new Label(j++ , i, "监控设备", format));
+            ws.addCell(new Label(j++ , i, "运费", format));
+            ws.addCell(new Label(j++ , i, "是否满意服务", format));
+            ws.addCell(new Label(j++ , i, "收货类型", format));
+            ws.addCell(new Label(j++ , i, "备注", format));
+
+            for (Iterator iter = beanList.iterator(); iter.hasNext();)
+            {
+                element = (ConsignBean)iter.next();
+
+                j = 0;
+                i++ ;
+
+                String tname = "";
+
+                TransportBean transportBean = consignDAO.findTransport(element.getTransport());
+
+                if (transportBean != null)
+                {
+                    tname = transportBean.getName();
+                }
+
+                ws.addCell(new Label(j++ , i, element.getFullId()));
+                ws.addCell(new Label(j++ , i, tname));
+                ws.addCell(new Label(j++ , i, element.getTransportNo()));
+                ws.addCell(new Label(j++ , i, element.getChecker()));
+                ws.addCell(new Label(j++ , i, element.getPackager()));
+                ws.addCell(new Label(j++ , i, element.getPackageTime()));
+                ws.addCell(new Label(j++ , i, element.getPackageAmount()));
+                ws.addCell(new Label(j++ , i, element.getPackageWeight()));
+                ws.addCell(new Label(j++ , i, element.getVisitTime()));
+                ws.addCell(new Label(j++ , i, element.getArriveTime()));
+                ws.addCell(new Label(j++ , i, element.getPreparer()));
+                ws.addCell(new Label(j++ , i, element.getMathine()));
+                ws.addCell(new Label(j++ , i, element.getTransportFee()));
+                ws.addCell(new Label(j++ , i, ElTools.get("consignPromitType", element
+                    .getPromitType())));
+                ws.addCell(new Label(j++ , i, ElTools.get("consignReprotType", element
+                    .getReprotType())));
+                ws.addCell(new Label(j++ , i, element.getApplys()));
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+
+            return null;
+        }
+        finally
+        {
+            if (wwb != null)
+            {
+                try
+                {
+                    wwb.write();
+                    wwb.close();
+                }
+                catch (Exception e1)
+                {
+                }
+            }
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
     }
 
     /**

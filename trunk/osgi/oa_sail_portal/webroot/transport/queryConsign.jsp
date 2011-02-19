@@ -34,6 +34,12 @@ function pagePrint()
 	
 	window.open('../sail/transport.do?method=findConsign&forward=1&fullId=' + getRadioValue("consigns"));
 }
+
+function exports()
+{
+    if (window.confirm("确定导出当前的全部查询的发货单?"))
+    document.location.href = '../sail/transport.do?method=exportConsign';
+}
 </script>
 
 </head>
@@ -153,6 +159,9 @@ function pagePrint()
 	<p:button leftWidth="98%" rightWidth="2%">
 		
 		<div align="right">
+		    <input
+            type="button" class="button_class"
+            value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;
 			<input type="button" 
 			class="button_class" onclick="pagePrint()"
 			value="&nbsp;&nbsp;定制打印&nbsp;&nbsp;">&nbsp;&nbsp;

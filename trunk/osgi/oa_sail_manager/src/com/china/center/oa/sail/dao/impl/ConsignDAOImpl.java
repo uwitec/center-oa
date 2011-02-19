@@ -82,21 +82,23 @@ public class ConsignDAOImpl implements ConsignDAO
     {
         condition.removeWhereStr();
 
-        return jdbcOperation.queryForListBySql(
-            "select * from T_CENTER_OUTPRODUCT t1, t_center_out t2 where t1.fullId = t2.fullId " + condition,
-            ConsignBean.class);
+        return jdbcOperation.queryObjectsBySql(
+            "select * from T_CENTER_OUTPRODUCT t1, t_center_out t2 where t1.fullId = t2.fullId "
+                + condition).setMaxResults(1000).list(ConsignBean.class);
     }
 
     public int countTransport(String transportId)
     {
-        return jdbcOperation.queryForInt("select count(1) from T_CENTER_OUTPRODUCT where transport = ?", transportId);
+        return jdbcOperation.queryForInt(
+            "select count(1) from T_CENTER_OUTPRODUCT where transport = ?", transportId);
     }
 
     public ConsignBean findConsignById(String id)
     {
-        List<ConsignBean> list = jdbcOperation.queryForListBySql(
-            "select * from T_CENTER_OUTPRODUCT t1, t_center_out t2 where t1.fullId = ? and t1.fullId = t2.fullId",
-            ConsignBean.class, id);
+        List<ConsignBean> list = jdbcOperation
+            .queryForListBySql(
+                "select * from T_CENTER_OUTPRODUCT t1, t_center_out t2 where t1.fullId = ? and t1.fullId = t2.fullId",
+                ConsignBean.class, id);
 
         if (list.size() != 1)
         {
@@ -108,7 +110,8 @@ public class ConsignDAOImpl implements ConsignDAO
 
     public List<TransportBean> queryTransportByType(int type)
     {
-        return jdbcOperation.queryForList("where type = ? order by parent", TransportBean.class, type);
+        return jdbcOperation.queryForList("where type = ? order by parent", TransportBean.class,
+            type);
     }
 
     public List<TransportBean> queryTransportByParentId(String parentId)
@@ -128,8 +131,10 @@ public class ConsignDAOImpl implements ConsignDAO
 
     public int countByName(String name, int type)
     {
-        return jdbcOperation.queryForInt("select count(1) from " + BeanTools.getTableName(TransportBean.class)
-                                         + " where NAME = ? and type = ?", new Object[] {name, type});
+        return jdbcOperation.queryForInt("select count(1) from "
+                                         + BeanTools.getTableName(TransportBean.class)
+                                         + " where NAME = ? and type = ?",
+            new Object[] {name, type});
     }
 
     /**

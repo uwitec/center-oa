@@ -65,6 +65,14 @@ public class ConsignBean extends OutBean
 
     private String visitTime = "";
 
+    private String arriveTime = "";
+
+    private String preparer = "";
+
+    private String mathine = "";
+
+    private String transportFee = "";
+
     /**
      * default constructor
      */
@@ -311,6 +319,74 @@ public class ConsignBean extends OutBean
     }
 
     /**
+     * @return the arriveTime
+     */
+    public String getArriveTime()
+    {
+        return arriveTime;
+    }
+
+    /**
+     * @param arriveTime
+     *            the arriveTime to set
+     */
+    public void setArriveTime(String arriveTime)
+    {
+        this.arriveTime = arriveTime;
+    }
+
+    /**
+     * @return the preparer
+     */
+    public String getPreparer()
+    {
+        return preparer;
+    }
+
+    /**
+     * @param preparer
+     *            the preparer to set
+     */
+    public void setPreparer(String preparer)
+    {
+        this.preparer = preparer;
+    }
+
+    /**
+     * @return the mathine
+     */
+    public String getMathine()
+    {
+        return mathine;
+    }
+
+    /**
+     * @param mathine
+     *            the mathine to set
+     */
+    public void setMathine(String mathine)
+    {
+        this.mathine = mathine;
+    }
+
+    /**
+     * @return the transportFee
+     */
+    public String getTransportFee()
+    {
+        return transportFee;
+    }
+
+    /**
+     * @param transportFee
+     *            the transportFee to set
+     */
+    public void setTransportFee(String transportFee)
+    {
+        this.transportFee = transportFee;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -319,17 +395,67 @@ public class ConsignBean extends OutBean
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("ConsignBean ( ").append(super.toString()).append(TAB).append("fullId = ").append(this.fullId).append(
-            TAB).append("transport = ").append(this.transport).append(TAB).append("transportNo = ").append(
-            this.transportNo).append(TAB).append("currentStatus = ").append(this.currentStatus).append(TAB).append(
-            "reprotType = ").append(this.reprotType).append(TAB).append("promitType = ").append(this.promitType).append(
-            TAB).append("applys = ").append(this.applys).append(TAB).append("arriveDate = ").append(this.arriveDate).append(
-            TAB).append("checker = ").append(this.checker).append(TAB).append("packager = ").append(this.packager).append(
-            TAB).append("packageTime = ").append(this.packageTime).append(TAB).append("packageAmount = ").append(
-            this.packageAmount).append(TAB).append("packageWeight = ").append(this.packageWeight).append(TAB).append(
-            "visitTime = ").append(this.visitTime).append(TAB).append(" )");
+        retValue
+            .append("ConsignBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("fullId = ")
+            .append(this.fullId)
+            .append(TAB)
+            .append("transport = ")
+            .append(this.transport)
+            .append(TAB)
+            .append("transportNo = ")
+            .append(this.transportNo)
+            .append(TAB)
+            .append("currentStatus = ")
+            .append(this.currentStatus)
+            .append(TAB)
+            .append("reprotType = ")
+            .append(this.reprotType)
+            .append(TAB)
+            .append("promitType = ")
+            .append(this.promitType)
+            .append(TAB)
+            .append("applys = ")
+            .append(this.applys)
+            .append(TAB)
+            .append("arriveDate = ")
+            .append(this.arriveDate)
+            .append(TAB)
+            .append("checker = ")
+            .append(this.checker)
+            .append(TAB)
+            .append("packager = ")
+            .append(this.packager)
+            .append(TAB)
+            .append("packageTime = ")
+            .append(this.packageTime)
+            .append(TAB)
+            .append("packageAmount = ")
+            .append(this.packageAmount)
+            .append(TAB)
+            .append("packageWeight = ")
+            .append(this.packageWeight)
+            .append(TAB)
+            .append("visitTime = ")
+            .append(this.visitTime)
+            .append(TAB)
+            .append("arriveTime = ")
+            .append(this.arriveTime)
+            .append(TAB)
+            .append("preparer = ")
+            .append(this.preparer)
+            .append(TAB)
+            .append("mathine = ")
+            .append(this.mathine)
+            .append(TAB)
+            .append("transportFee = ")
+            .append(this.transportFee)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }
