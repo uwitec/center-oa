@@ -30,7 +30,10 @@ import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.oa.finance.bean.BankBean;
+import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.constant.StockPayApplyConstant;
+import com.china.center.oa.finance.dao.BankDAO;
 import com.china.center.oa.finance.dao.StockPayApplyDAO;
 import com.china.center.oa.finance.facade.FinanceFacade;
 import com.china.center.oa.finance.vo.StockPayApplyVO;
@@ -39,6 +42,7 @@ import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.MathTools;
+import com.china.center.tools.RequestTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
@@ -58,6 +62,8 @@ public class StockPayAction extends DispatchAction
     private StockPayApplyDAO stockPayApplyDAO = null;
 
     private FlowLogDAO flowLogDAO = null;
+
+    private BankDAO bankDAO = null;
 
     private FinanceFacade financeFacade = null;
 
@@ -105,11 +111,7 @@ public class StockPayAction extends DispatchAction
 
         if (StringTools.isNullOrNone(alogTime) && StringTools.isNullOrNone(blogTime))
         {
-            changeMap.put("alogTime", TimeTools.now_short( -3));
-
             changeMap.put("blogTime", TimeTools.now_short());
-
-            condtion.addCondition("StockPayApplyBean.payDate", ">=", TimeTools.now_short( -3));
 
             condtion.addCondition("StockPayApplyBean.payDate", "<=", TimeTools.now_short());
         }
@@ -138,15 +140,57 @@ public class StockPayAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYCEOSTOCKPAYAPPLY, request, condtion);
 
-        condtion.addIntCondition("StockPayApplyBean.status", "=",
-            StockPayApplyConstant.APPLY_STATUS_CEO);
+        String mode = RequestTools.getValueFromRequest(request, "mode");
 
-        condtion.addCondition("order by StockPayApplyBean.logTime desc");
+        if ("1".equals(mode))
+        {
+            condtion.addIntCondition("StockPayApplyBean.status", "=",
+                StockPayApplyConstant.APPLY_STATUS_CEO);
+        }
+        else
+        {
+            condtion.addIntCondition("StockPayApplyBean.status", "=",
+                StockPayApplyConstant.APPLY_STATUS_SEC);
+        }
+
+        condtion.addCondition("order by StockPayApplyBean.payDate");
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCEOSTOCKPAYAPPLY, request,
             condtion, this.stockPayApplyDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * 告警列表
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryWarnStockPayApply(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
+                                                HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        condtion.addCondition("and StockPayApplyBean.status in (0, 1) ");
+
+        condtion.addCondition("StockPayApplyBean.payDate", "=", TimeTools.now_short());
+
+        condtion.addCondition("order by StockPayApplyBean.payDate desc");
+
+        List<StockPayApplyVO> warnList = stockPayApplyDAO.queryEntityVOsByCondition(condtion);
+
+        request.setAttribute("warnList", warnList);
+
+        return mapping.findForward("queryWarnStockPayApply");
     }
 
     /**
@@ -163,9 +207,13 @@ public class StockPayAction extends DispatchAction
                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
+        CommonTools.saveParamers(request);
+
         String id = request.getParameter("id");
 
         String update = request.getParameter("update");
+
+        String mode = request.getParameter("mode");
 
         StockPayApplyVO bean = stockPayApplyDAO.findVO(id);
 
@@ -186,6 +234,13 @@ public class StockPayAction extends DispatchAction
         {
             if (TimeTools.now_short().compareTo(bean.getPayDate()) >= 0)
             {
+                if ("2".equals(mode))
+                {
+                    List<BankBean> bankList = bankDAO.queryEntityBeansByFK(bean.getDutyId());
+
+                    request.setAttribute("bankList", bankList);
+                }
+
                 return mapping.findForward("handleStockPayApply");
             }
             else
@@ -235,7 +290,136 @@ public class StockPayAction extends DispatchAction
 
         CommonTools.removeParamers(request);
 
+        request.setAttribute("mode", "0");
+
         return mapping.findForward("queryStockPayApply");
+    }
+
+    /**
+     * passStockPayByCEO
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward passStockPayByCEO(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        String reason = request.getParameter("reason");
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            financeFacade.passStockPayByCEO(user.getId(), id, reason);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        request.setAttribute("mode", "1");
+
+        return mapping.findForward("queryCEOStockPayApply");
+    }
+
+    /**
+     * endStockPayBySEC(结束)
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward endStockPayBySEC(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        String reason = request.getParameter("reason");
+        String bankId = request.getParameter("bankId");
+        String payType = request.getParameter("payType");
+
+        OutBillBean outBill = new OutBillBean();
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            outBill.setBankId(bankId);
+
+            outBill.setPayType(MathTools.parseInt(payType));
+
+            financeFacade.endStockPayBySEC(user.getId(), id, reason, outBill);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        request.setAttribute("mode", "2");
+
+        return mapping.findForward("queryCEOStockPayApply");
+    }
+
+    /**
+     * rejectStockPay
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rejectStockPayApply(ActionMapping mapping, ActionForm form,
+                                             HttpServletRequest request,
+                                             HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        String reason = request.getParameter("reason");
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            financeFacade.rejectStockPayApply(user.getId(), id, reason);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        CommonTools.saveParamers(request);
+
+        return mapping.findForward("queryCEOStockPayApply");
     }
 
     /**
@@ -287,5 +471,22 @@ public class StockPayAction extends DispatchAction
     public void setFinanceFacade(FinanceFacade financeFacade)
     {
         this.financeFacade = financeFacade;
+    }
+
+    /**
+     * @return the bankDAO
+     */
+    public BankDAO getBankDAO()
+    {
+        return bankDAO;
+    }
+
+    /**
+     * @param bankDAO
+     *            the bankDAO to set
+     */
+    public void setBankDAO(BankDAO bankDAO)
+    {
+        this.bankDAO = bankDAO;
     }
 }

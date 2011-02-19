@@ -67,13 +67,11 @@ function getStockItem(oo)
 
 function changeAll()
 {
-	$O('stockItemId').value = '';
-    $O('stockId').value = '';
     $O('moneys').value = '';
     
     if ($$('type') == 0)
     {
-    	$O('moneys').readOnly = true;
+    	$O('moneys').readOnly = false;
     }
     else
     {
@@ -133,11 +131,6 @@ function changeAll()
             <p:pro field="provideId" innerString="size=60">
                 <input type="button" value="&nbsp;选 择&nbsp;" name="qout1" id="qout1"
                     class="button_class" onclick="selectCus()">&nbsp;
-            </p:pro>
-            
-            <p:pro field="stockItemId" innerString="size=60">
-                <input type="button" value="&nbsp;选 择&nbsp;" name="qout5" id="qout5"
-                    class="button_class" onclick="selectStockItem()">&nbsp;
             </p:pro>
             
             <p:pro field="ownerId" innerString="size=60">

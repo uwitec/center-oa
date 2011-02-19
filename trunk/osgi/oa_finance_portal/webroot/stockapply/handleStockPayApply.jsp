@@ -12,9 +12,16 @@
 
 function passBean()
 {
+    $O('method').value = 'passStockPayByCEO';
+    
+	submit('确定通过付款申请?', null, null);
+}
+
+function submitBean()
+{
     $O('method').value = 'submitStockPay';
     
-	submit('确定提交付款申请?', null, checkValue);
+    submit('确定提交付款申请?', null, checkValue);
 }
 
 function checkValue()
@@ -32,11 +39,17 @@ function checkValue()
 
 function rejectBean()
 {
-    $O('method').value = 'rejectPaymentApply';
+    $O('method').value = 'rejectStockPayApply';
     
     submit('确定驳回付款申请?', null, null);
 }
 
+function endBean()
+{
+    $O('method').value = 'endStockPayBySEC';
+    
+    submit('确定付款给供应商?付款金额:${my:formatNum(bean.moneys)}', null, null);
+}
 
 </script>
 
@@ -45,6 +58,7 @@ function rejectBean()
 <form name="formEntry" action="../finance/stock.do" method="post">
 <input type="hidden" name="method" value="submitStockPay"> 
 <input type="hidden" name="id" value="${bean.id}"> 
+<input type="hidden" name="mode" value="${mode}"> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">
@@ -108,10 +122,29 @@ function rejectBean()
                ${bean.description}
             </p:cell>
 
+            <c:if test="${bean.status == 0 || bean.status == 1}">
             <p:cell title="付款金额" end="true">
                 <input type="text" oncheck="notNone;isFloat;" name="payMoney" value="${my:formatNum(bean.moneys)}">
                 <font color="red">*</font>
-            </p:cell>            
+            </p:cell> 
+            </c:if>       
+            
+            <c:if test="${bean.status == 3}">
+            <p:cell title="银行帐户" end="true">
+                <select name="bankId" style="width: 400px" class="select_class" oncheck="notNone">
+                <option value="">--</option>
+                <p:option type="bankList"></p:option>
+                </select>
+                <font color="red">*</font>
+            </p:cell> 
+            
+            <p:cell title="付款方式" end="true">
+                <select name="payType" style="width: 400px" class="select_class" oncheck="notNone">
+                <p:option type="outbillPayType"></p:option>
+                </select>
+                <font color="red">*</font>
+            </p:cell> 
+            </c:if>         
 
 			<p:cell title="审批意见" end="true">
 				<textarea rows=3 cols=55 oncheck="notNone;maxLength(200);" name="reason"></textarea>
@@ -157,9 +190,31 @@ function rejectBean()
 	<p:line flag="1" />
 
 	<p:button leftWidth="100%" rightWidth="0%">
-		<div align="right"><input type="button" class="button_class"
-			id="ok_b" style="cursor: pointer" value="&nbsp;&nbsp;提 交&nbsp;&nbsp;"
-			onclick="passBean()">&nbsp;&nbsp;
+		<div align="right">
+			<c:if test="${bean.status == 0 || bean.status == 1}">
+			<input type="button" class="button_class"
+				id="ok_b" style="cursor: pointer" value="&nbsp;&nbsp;提 交&nbsp;&nbsp;"
+				onclick="submitBean()">&nbsp;&nbsp;
+			</c:if>
+			
+			<c:if test="${bean.status == 2}">
+            <input type="button" class="button_class"
+                id="ok_p" style="cursor: pointer" value="&nbsp;&nbsp;通 过&nbsp;&nbsp;"
+                onclick="passBean()">&nbsp;&nbsp;
+            <input type="button" class="button_class"
+            id="re_b" style="cursor: pointer" value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;"
+            onclick="rejectBean()">&nbsp;&nbsp;
+            </c:if>
+            
+            <c:if test="${bean.status == 3}">
+            <input type="button" class="button_class"
+                id="ok_p2" style="cursor: pointer" value="&nbsp;&nbsp;付 款&nbsp;&nbsp;"
+                onclick="endBean()">&nbsp;&nbsp;
+            <input type="button" class="button_class"
+            id="re_b" style="cursor: pointer" value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;"
+            onclick="rejectBean()">&nbsp;&nbsp;
+            </c:if>
+            
             <input
             type="button" name="ba" class="button_class"
             onclick="javascript:history.go(-1)"

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.bean.PaymentBean;
@@ -26,6 +27,8 @@ import com.china.center.oa.finance.manager.StatBankManager;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.dao.OutDAO;
+import com.china.center.oa.stock.bean.StockItemBean;
+import com.china.center.oa.stock.dao.StockItemDAO;
 import com.china.center.oa.stock.manager.StockManager;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.StringTools;
@@ -54,6 +57,8 @@ public class BillManagerImpl implements BillManager
     private PaymentDAO paymentDAO = null;
 
     private StockManager stockManager = null;
+
+    private StockItemDAO stockItemDAO = null;
 
     private StatBankManager statBankManager = null;
 
@@ -95,8 +100,8 @@ public class BillManagerImpl implements BillManager
                 // 发现支付的金额过多
                 if (hasPay + bean.getMoneys() > out.getTotal())
                 {
-                    throw new MYException("销售单[%s]的总金额[%.2f],当前已付金额[%.2f],本次申请付款[%.2f],付款金额超出销售金额", bean.getOutId(),
-                        out.getTotal(), hasPay, bean.getMoneys());
+                    throw new MYException("销售单[%s]的总金额[%.2f],当前已付金额[%.2f],本次申请付款[%.2f],付款金额超出销售金额",
+                        bean.getOutId(), out.getTotal(), hasPay, bean.getMoneys());
                 }
 
                 // 更新已经支付的金额
@@ -121,14 +126,19 @@ public class BillManagerImpl implements BillManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        if ( !StringTools.isNullOrNone(bill.getOutId()))
-        {
-            throw new MYException("单据已经被销售单[%s]绑定,请确认操作", bill.getOutId());
-        }
-
         if (bill.getLock() == FinanceConstant.BILL_LOCK_YES)
         {
             throw new MYException("单据已经被统计固化,请确认操作");
+        }
+
+        if ( !StringTools.isNullOrNone(bill.getOutId())
+            || !StringTools.isNullOrNone(bill.getOutBalanceId()))
+        {
+            // 如果销售单已经全部付款,那么需要倒回,同时修改付款状态
+            // 如果销售单已经结束,那么销售单状态需要回到待回款的状态,同时增加流程日志
+            // 如果是委托代销的关联，委托代销也需要回到待回款状态
+
+            throw new MYException("单据已经被销售单[%s]绑定,请确认操作", bill.getOutId());
         }
 
         inBillDAO.deleteEntityBean(id);
@@ -168,6 +178,12 @@ public class BillManagerImpl implements BillManager
     public boolean addOutBillBean(User user, OutBillBean bean)
         throws MYException
     {
+        return addOutBillBeanWithoutTransaction(user, bean);
+    }
+
+    public boolean addOutBillBeanWithoutTransaction(User user, OutBillBean bean)
+        throws MYException
+    {
         JudgeTools.judgeParameterIsNull(user, bean);
 
         double total = statBankManager.findTotalByBankId(bean.getBankId());
@@ -181,13 +197,47 @@ public class BillManagerImpl implements BillManager
 
         bean.setLogTime(TimeTools.now());
 
-        if ( !StringTools.isNullOrNone(bean.getStockItemId()))
-        {
-            // 关联采购项付款状态
-            stockManager.payStockItemWithoutTransaction(user, bean.getStockItemId());
-        }
+        // 处理采购付款
+        handleStockItem(user, bean);
 
         return outBillDAO.saveEntityBean(bean);
+    }
+
+    /**
+     * handleStockItem
+     * 
+     * @param user
+     * @param bean
+     * @throws MYException
+     */
+    private void handleStockItem(User user, OutBillBean bean)
+        throws MYException
+    {
+        if ( !StringTools.isNullOrNone(bean.getStockItemId()))
+        {
+            // 检查是否item全部付款
+            StockItemBean item = stockItemDAO.find(bean.getStockItemId());
+
+            if (item == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            ConditionParse con = new ConditionParse();
+
+            con.addWhereStr();
+
+            con.addCondition("OutBillBean.stockItemId", "=", bean.getStockItemId());
+
+            double sum = outBillDAO.sumByCondition(con);
+
+            // 全部付款
+            if ( (sum + bean.getMoneys()) == item.getTotal())
+            {
+                // 关联采购项付款状态
+                stockManager.payStockItemWithoutTransaction(user, bean.getStockItemId());
+            }
+        }
     }
 
     @Transactional(rollbackFor = MYException.class)
@@ -201,6 +251,12 @@ public class BillManagerImpl implements BillManager
         if (bill == null)
         {
             throw new MYException("数据错误,请确认操作");
+        }
+
+        if ( !StringTools.isNullOrNone(bill.getStockId())
+            || !StringTools.isNullOrNone(bill.getStockItemId()))
+        {
+            throw new MYException("单据已经被采购单[%s]关联,请确认操作", bill.getStockId());
         }
 
         if (bill.getLock() == FinanceConstant.BILL_LOCK_YES)
@@ -386,4 +442,22 @@ public class BillManagerImpl implements BillManager
     {
         this.stockManager = stockManager;
     }
+
+    /**
+     * @return the stockItemDAO
+     */
+    public StockItemDAO getStockItemDAO()
+    {
+        return stockItemDAO;
+    }
+
+    /**
+     * @param stockItemDAO
+     *            the stockItemDAO to set
+     */
+    public void setStockItemDAO(StockItemDAO stockItemDAO)
+    {
+        this.stockItemDAO = stockItemDAO;
+    }
+
 }

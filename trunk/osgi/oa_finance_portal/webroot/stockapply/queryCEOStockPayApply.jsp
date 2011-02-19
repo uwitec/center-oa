@@ -17,13 +17,16 @@ var ukey = 'StockPayApply';
 var allDef = getAllDef();
 var guidMap;
 var thisObj;
+
+var mode = '<p:value key="mode"/>';
+
 function load()
 {
      preload();
      
      guidMap = {
          title: '审批列表',
-         url: gurl + 'queryCEO' + ukey,
+         url: gurl + 'queryCEO' + ukey + '&mode=' + mode,
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} lstafferId={stafferId}>', width : 40, align: 'center'},
              {display: '采购人', name : 'stafferName', width : '8%'},
@@ -36,7 +39,7 @@ function load()
              {display: '时间', name : 'logTime', sortable : true, width : 'auto'}
              ],
          extAtt: {
-             stafferName : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
+             stafferName : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}&mode=' + mode + '>', end : '</a>'}
          },
          buttons : [
              {id: 'pass', caption: '处理',bclass: 'update', auth: '1606', onpress : doProcess},
@@ -80,7 +83,7 @@ function doProcess()
 {
     if (getRadio('checkb') && getRadioValue('checkb'))
     {   
-        $l(gurl + 'find' + ukey + '&update=1&id=' + getRadioValue('checkb'));
+        $l(gurl + 'find' + ukey + '&update=1&id=' + getRadioValue('checkb') + '&mode=' + mode);
     }
     else
     $error('不能操作');

@@ -79,6 +79,9 @@ public interface BillManager
     boolean addOutBillBean(User user, OutBillBean bean)
         throws MYException;
 
+    boolean addOutBillBeanWithoutTransaction(User user, OutBillBean bean)
+        throws MYException;
+
     /**
      * deleteOutBillBean
      * 

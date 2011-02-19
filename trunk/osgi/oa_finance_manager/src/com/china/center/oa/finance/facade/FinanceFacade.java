@@ -177,4 +177,10 @@ public interface FinanceFacade
      */
     boolean rejectStockPayApply(String userId, String id, String reason)
         throws MYException;
+
+    boolean passStockPayByCEO(String userId, String id, String reason)
+        throws MYException;
+
+    boolean endStockPayBySEC(String userId, String id, String reason, OutBillBean outBill)
+        throws MYException;
 }

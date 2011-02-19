@@ -15,9 +15,11 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
-import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.bean.StatBankBean;
@@ -52,6 +54,8 @@ public class StatBankManagerImpl implements StatBankManager
 
     private BankDAO bankDAO = null;
 
+    private PlatformTransactionManager transactionManager = null;
+
     /**
      * default constructor
      */
@@ -64,16 +68,33 @@ public class StatBankManagerImpl implements StatBankManager
      * 
      * @see com.china.center.oa.finance.manager.StatBankManager#statBank()
      */
-    @Transactional(rollbackFor = MYException.class)
     public void statBank()
     {
         Calendar cal = Calendar.getInstance();
 
         cal.add(Calendar.MONTH, -1);
 
-        String timeKey = TimeTools.getStringByFormat(new Date(cal.getTime().getTime()), "yyyyMM");
+        final String timeKey = TimeTools.getStringByFormat(new Date(cal.getTime().getTime()),
+            "yyyyMM");
 
-        statBankInner(timeKey);
+        try
+        {
+            TransactionTemplate tran = new TransactionTemplate(transactionManager);
+
+            tran.execute(new TransactionCallback()
+            {
+                public Object doInTransaction(TransactionStatus arg0)
+                {
+                    statBankInner(timeKey);
+
+                    return Boolean.TRUE;
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            triggerLog.error(e, e);
+        }
     }
 
     private void statBankInner(String timeKey)
@@ -323,5 +344,22 @@ public class StatBankManagerImpl implements StatBankManager
     public void setBankDAO(BankDAO bankDAO)
     {
         this.bankDAO = bankDAO;
+    }
+
+    /**
+     * @return the transactionManager
+     */
+    public PlatformTransactionManager getTransactionManager()
+    {
+        return transactionManager;
+    }
+
+    /**
+     * @param transactionManager
+     *            the transactionManager to set
+     */
+    public void setTransactionManager(PlatformTransactionManager transactionManager)
+    {
+        this.transactionManager = transactionManager;
     }
 }

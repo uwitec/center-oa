@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.PaymentApplyBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
@@ -28,6 +29,7 @@ import com.china.center.oa.finance.manager.PaymentManager;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -173,36 +175,39 @@ public class PaymentManagerImpl implements PaymentManager
             throw new MYException("只能释放自己的回款单,请确认操作");
         }
 
-        double hasUsed = inBillDAO.sumByPaymentId(id);
+        ConditionParse condition = new ConditionParse();
 
-        if (hasUsed > 0.0)
+        condition.addWhereStr();
+
+        condition.addCondition("paymentId", "=", id);
+
+        List<InBillBean> billList = inBillDAO.queryEntityBeansByCondition(condition);
+
+        for (InBillBean inBillBean : billList)
         {
-            throw new MYException("回款已经生成收款单,不能退领");
-        }
-
-        List<PaymentApplyBean> queryEntityBeansByFK = paymentApplyDAO.queryEntityBeansByFK(id);
-
-        for (PaymentApplyBean paymentApplyBean : queryEntityBeansByFK)
-        {
-            if (paymentApplyBean.getStatus() == FinanceConstant.PAYAPPLY_STATUS_INIT)
+            if (inBillBean.getLock() == FinanceConstant.BILL_LOCK_YES)
             {
-                throw new MYException("有付款申请没有结束,请重新操作");
+                throw new MYException("回款已经生成收款单且收款单已经被月结锁定,不能退领");
             }
 
-            if (paymentApplyBean.getStatus() == FinanceConstant.PAYAPPLY_STATUS_PASS)
+            if ( !StringTools.isNullOrNone(inBillBean.getOutId()))
             {
-                throw new MYException("回款已经生成收款单,请重新操作");
+                throw new MYException("回款已经生成收款单且和销售绑定[%s],不能退领", inBillBean.getOutId());
             }
         }
+
+        List<PaymentApplyBean> applyList = paymentApplyDAO.queryEntityBeansByFK(id);
 
         // 清除驳回的申请
-        for (PaymentApplyBean paymentApplyBean : queryEntityBeansByFK)
+        for (PaymentApplyBean paymentApplyBean : applyList)
         {
             paymentApplyDAO.deleteEntityBean(paymentApplyBean.getId());
 
             paymentVSOutDAO.deleteEntityBeansByFK(paymentApplyBean.getId());
 
             flowLogDAO.deleteEntityBeansByFK(paymentApplyBean.getId());
+
+            inBillDAO.deleteEntityBeansByCondition(condition);
         }
 
         pay.setStafferId("");
@@ -210,6 +215,8 @@ public class PaymentManagerImpl implements PaymentManager
         pay.setCustomerId("");
 
         pay.setStatus(FinanceConstant.PAYMENT_STATUS_INIT);
+
+        pay.setUseall(FinanceConstant.PAYMENT_USEALL_INIT);
 
         return paymentDAO.updateEntityBean(pay);
     }

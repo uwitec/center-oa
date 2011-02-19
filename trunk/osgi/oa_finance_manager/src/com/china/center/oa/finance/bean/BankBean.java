@@ -12,6 +12,7 @@ package com.china.center.oa.finance.bean;
 import java.io.Serializable;
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Html;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Ignore;
@@ -43,6 +44,7 @@ public class BankBean implements Serializable
     @Html(title = "类型", type = Element.SELECT)
     private int type = FinanceConstant.BANK_TYPE_NOTDUTY;
 
+    @FK
     @Join(tagClass = DutyBean.class)
     @Html(title = "纳税实体", type = Element.SELECT)
     private String dutyId = "";
@@ -259,12 +261,41 @@ public class BankBean implements Serializable
 
         StringBuffer retValue = new StringBuffer();
 
-        retValue.append("BankBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(TAB).append(
-            "name = ").append(this.name).append(TAB).append("type = ").append(this.type).append(TAB).append("dutyId = ").append(
-            this.dutyId).append(TAB).append("code = ").append(this.code).append(TAB).append("unit = ").append(this.unit).append(
-            TAB).append("department = ").append(this.department).append(TAB).append("staffer = ").append(this.staffer).append(
-            TAB).append("total = ").append(this.total).append(TAB).append("description = ").append(this.description).append(
-            TAB).append(" )");
+        retValue
+            .append("BankBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("name = ")
+            .append(this.name)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("dutyId = ")
+            .append(this.dutyId)
+            .append(TAB)
+            .append("code = ")
+            .append(this.code)
+            .append(TAB)
+            .append("unit = ")
+            .append(this.unit)
+            .append(TAB)
+            .append("department = ")
+            .append(this.department)
+            .append(TAB)
+            .append("staffer = ")
+            .append(this.staffer)
+            .append(TAB)
+            .append("total = ")
+            .append(this.total)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

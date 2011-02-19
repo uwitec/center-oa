@@ -47,7 +47,7 @@
 
 	<bean id="statBankDAO" class="com.china.center.oa.finance.dao.impl.StatBankDAOImpl" />
 
-	<bean id="statBankManager" class="com.china.center.oa.finance.manager.impl.StatBankManagerImpl" />
+	<bean id="statBankManager" class="com.china.center.oa.finance.manager.impl.StatBankManagerImpl" init-method="statBank"/>
 
 	<bean id="stockPayApplyDAO" class="com.china.center.oa.finance.dao.impl.StockPayApplyDAOImpl" />
 

@@ -537,6 +537,50 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
+    public boolean passStockPayByCEO(String userId, String id, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (STOCKPAYAPPLY_LOCK)
+        {
+            if (containAuth(user, AuthConstant.STOCK_PAY_CEO))
+            {
+                return stockPayApplyManager.passStockPayByCEO(user, id, reason);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean endStockPayBySEC(String userId, String id, String reason, OutBillBean outBill)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (STOCKPAYAPPLY_LOCK)
+        {
+            if (containAuth(user, AuthConstant.STOCK_PAY_SEC))
+            {
+                return stockPayApplyManager.endStockPayBySEC(user, id, reason, outBill);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
     /**
      * @return the bankManager
      */

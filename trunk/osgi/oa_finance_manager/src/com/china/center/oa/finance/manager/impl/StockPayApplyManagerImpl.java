@@ -14,9 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.bean.StockPayApplyBean;
+import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.constant.StockPayApplyConstant;
 import com.china.center.oa.finance.dao.StockPayApplyDAO;
+import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.StockPayApplyManager;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.constant.PublicConstant;
@@ -41,6 +44,8 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
     private StockPayApplyDAO stockPayApplyDAO = null;
 
     private FlowLogDAO flowLogDAO = null;
+
+    private BillManager billManager = null;
 
     private CommonDAO commonDAO = null;
 
@@ -89,12 +94,13 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
 
         stockPayApplyDAO.updateEntityBean(apply);
 
-        savePassLog(user, preStatus, apply, reason);
+        saveFlowLog(user, preStatus, apply, reason, PublicConstant.OPRMODE_PASS);
 
         return true;
     }
 
-    private void savePassLog(User user, int preStatus, StockPayApplyBean apply, String reason)
+    private void saveFlowLog(User user, int preStatus, StockPayApplyBean apply, String reason,
+                             int oprMode)
     {
         FlowLogBean log = new FlowLogBean();
 
@@ -102,7 +108,7 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
 
         log.setActor(user.getStafferName());
 
-        log.setOprMode(PublicConstant.OPRMODE_PASS);
+        log.setOprMode(oprMode);
 
         log.setDescription(reason);
 
@@ -151,11 +157,174 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
         return apply;
     }
 
+    /**
+     * checkPassByCEO
+     * 
+     * @param id
+     * @param payMoney
+     * @return
+     * @throws MYException
+     */
+    private StockPayApplyBean checkPassByCEO(String id)
+        throws MYException
+    {
+        StockPayApplyBean apply = stockPayApplyDAO.find(id);
+
+        if (apply == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (apply.getStatus() != StockPayApplyConstant.APPLY_STATUS_CEO)
+        {
+            throw new MYException("状态不能通过,请确认操作");
+        }
+
+        if (TimeTools.now_short().compareTo(apply.getPayDate()) < 0)
+        {
+            throw new MYException("付款的最早时间还没有到,请确认操作");
+        }
+
+        return apply;
+    }
+
+    private StockPayApplyBean checkEndPass(String id)
+        throws MYException
+    {
+        StockPayApplyBean apply = stockPayApplyDAO.find(id);
+
+        if (apply == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (apply.getStatus() != StockPayApplyConstant.APPLY_STATUS_SEC)
+        {
+            throw new MYException("状态不能通过,请确认操作");
+        }
+
+        if (TimeTools.now_short().compareTo(apply.getPayDate()) < 0)
+        {
+            throw new MYException("付款的最早时间还没有到,请确认操作");
+        }
+
+        return apply;
+    }
+
+    private StockPayApplyBean checkReject(String id)
+        throws MYException
+    {
+        StockPayApplyBean apply = stockPayApplyDAO.find(id);
+
+        if (apply == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (TimeTools.now_short().compareTo(apply.getPayDate()) < 0)
+        {
+            throw new MYException("付款的最早时间还没有到,请确认操作");
+        }
+
+        return apply;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean passStockPayByCEO(User user, String id, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        StockPayApplyBean apply = checkPassByCEO(id);
+
+        apply.setStatus(StockPayApplyConstant.APPLY_STATUS_SEC);
+
+        stockPayApplyDAO.updateEntityBean(apply);
+
+        saveFlowLog(user, StockPayApplyConstant.APPLY_STATUS_CEO, apply, reason,
+            PublicConstant.OPRMODE_PASS);
+
+        return true;
+    }
+
     @Transactional(rollbackFor = MYException.class)
     public boolean rejectStockPayApply(User user, String id, String reason)
         throws MYException
     {
-        return false;
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        StockPayApplyBean apply = checkReject(id);
+
+        int preStatus = apply.getStatus();
+
+        apply.setStatus(StockPayApplyConstant.APPLY_STATUS_REJECT);
+
+        stockPayApplyDAO.updateEntityBean(apply);
+
+        saveFlowLog(user, preStatus, apply, reason, PublicConstant.OPRMODE_REJECT);
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean endStockPayBySEC(User user, String id, String reason, OutBillBean outBill)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id, outBill.getBankId());
+
+        StockPayApplyBean apply = checkEndPass(id);
+
+        // 生成付款
+        createOutBill(user, outBill, apply);
+
+        apply.setStatus(StockPayApplyConstant.APPLY_STATUS_END);
+
+        apply.setInBillId(outBill.getId());
+
+        // 结束申请流程
+        stockPayApplyDAO.updateEntityBean(apply);
+
+        saveFlowLog(user, StockPayApplyConstant.APPLY_STATUS_SEC, apply, reason,
+            PublicConstant.OPRMODE_PASS);
+
+        return true;
+    }
+
+    /**
+     * createOutBill
+     * 
+     * @param user
+     * @param outBill
+     * @param apply
+     * @throws MYException
+     */
+    private void createOutBill(User user, OutBillBean outBill, StockPayApplyBean apply)
+        throws MYException
+    {
+        // 自动生成付款单
+        outBill.setDescription("采购付款单:" + apply.getStockId());
+
+        outBill.setInvoiceId(apply.getInvoiceId());
+
+        outBill.setLocationId(apply.getLocationId());
+
+        outBill.setLogTime(TimeTools.now());
+
+        outBill.setType(FinanceConstant.OUTBILL_TYPE_STOCK);
+
+        outBill.setMoneys(apply.getMoneys());
+
+        outBill.setOwnerId(apply.getStafferId());
+
+        outBill.setStafferId(user.getStafferId());
+
+        outBill.setProvideId(apply.getProvideId());
+
+        outBill.setStockId(apply.getStockId());
+
+        outBill.setStockItemId(apply.getStockItemId());
+
+        billManager.addOutBillBeanWithoutTransaction(user, outBill);
     }
 
     /**
@@ -209,4 +378,20 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
         this.commonDAO = commonDAO;
     }
 
+    /**
+     * @return the billManager
+     */
+    public BillManager getBillManager()
+    {
+        return billManager;
+    }
+
+    /**
+     * @param billManager
+     *            the billManager to set
+     */
+    public void setBillManager(BillManager billManager)
+    {
+        this.billManager = billManager;
+    }
 }

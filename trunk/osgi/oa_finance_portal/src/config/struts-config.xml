@@ -42,6 +42,8 @@
             type="org.springframework.web.struts.DelegatingActionProxy"
             validate="false">
             <forward name="queryStockPayApply" path="/stockapply/queryStockPayApply.jsp" />
+            <forward name="queryCEOStockPayApply" path="/stockapply/queryCEOStockPayApply.jsp" />
+            <forward name="queryWarnStockPayApply" path="/stockapply/queryWarnStockPayApply.jsp" />
             <forward name="detailStockPayApply" path="/stockapply/detailStockPayApply.jsp" />
             <forward name="handleStockPayApply" path="/stockapply/handleStockPayApply.jsp" />
         </action>

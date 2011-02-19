@@ -297,4 +297,6 @@
         </condtion>
     </item>
     
+    <item name="queryCEOStockPayApply" alias="queryStockPayApply"/>
+    
 </query>

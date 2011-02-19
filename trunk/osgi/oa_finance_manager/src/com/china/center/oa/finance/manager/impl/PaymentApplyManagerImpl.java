@@ -301,7 +301,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
 
         if (payment.getUseall() == FinanceConstant.PAYMENT_USEALL_END)
         {
-            throw new MYException("回款单已经使用结束,请确认操作");
+            throw new MYException("回款单已经全部被使用,请确认操作");
         }
 
         List<PaymentVSOutBean> vsList = bean.getVsList();

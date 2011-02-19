@@ -74,6 +74,10 @@
                ${bean.logTime}
             </p:cell>
             
+            <p:cell title="付款单">
+               <a href="../finance/bill.do?method=findOutBill&id=${bean.inBillId}">${bean.inBillId}</a>
+            </p:cell>
+            
             <p:cell title="备注" end="true">
                ${bean.description}
             </p:cell>

@@ -60,6 +60,9 @@ public class StockPayApplyBean implements Serializable
     @FK(index = AnoConstant.FK_FIRST)
     private String stockItemId = "";
 
+    /**
+     * 付款单ID
+     */
     private String inBillId = "";
 
     private double moneys = 0.0d;

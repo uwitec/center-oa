@@ -11,6 +11,7 @@ package com.china.center.oa.finance.manager;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.finance.bean.OutBillBean;
 
 
 /**
@@ -32,6 +33,28 @@ public interface StockPayApplyManager
      * @throws MYException
      */
     boolean submitStockPayApply(User user, String id, double payMoney, String reason)
+        throws MYException;
+
+    /**
+     * 通过(需要同步)
+     * 
+     * @param stafferId
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean passStockPayByCEO(User user, String id, String reason)
+        throws MYException;
+
+    /**
+     * 结束申请付款(需要同步)
+     * 
+     * @param stafferId
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean endStockPayBySEC(User user, String id, String reason, OutBillBean outBill)
         throws MYException;
 
     /**
