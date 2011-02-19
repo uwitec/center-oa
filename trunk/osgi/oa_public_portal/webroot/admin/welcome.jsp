@@ -33,7 +33,7 @@ function load()
     </c:if>
     
     <c:if test='${my:auth(user, "1310") && my:dym("com.china.center.oa.finance.portal")}'>
-    <li><a href="#fragment-StockPay"><span>采购付款</span></a></li>
+    <li><a href="#fragment-StockPay"><span>今天付款</span></a></li>
     </c:if>
 	
 </ul>
