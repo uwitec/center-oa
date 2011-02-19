@@ -281,29 +281,37 @@ function check()
         {
             hi = "注意:当前业务员下有超期的销售单  ";
         }
+        
+         $.messager.prompt('通过', '请输入意见', '同意', function(r){
+                if (r)
+                {
+                    $Dbuttons(true);
+                    
+                    getObj('method').value = 'modifyOutStatus';
 
-        if (window.confirm(hi + "确定审核通过销售单?"))
-        {
-            $Dbuttons(true);
-            
-            getObj('method').value = 'modifyOutStatus';
-
-            getObj('statuss').value = nextStatusMap[queryType];
-            
-            getObj('oldStatus').value = getRadio('fullId').statuss;
-
-            getObj('outId').value = getRadioValue("fullId");
-
-            getObj('radioIndex').value = $Index('fullId');
-
-            getObj('reason').value = '同意';
-
-            adminForm.submit();
-        }
-        else
-        {
-            $Dbuttons(false);  
-        }
+		            getObj('statuss').value = nextStatusMap[queryType];
+		            
+		            getObj('oldStatus').value = getRadio('fullId').statuss;
+		
+		            getObj('outId').value = getRadioValue("fullId");
+		
+		            getObj('radioIndex').value = $Index('fullId');
+        
+                    var sss = r;
+        
+                    getObj('reason').value = r;
+        
+                    if (!(sss == null || sss == ''))
+                    {
+                        adminForm.submit();
+                    }
+                    else
+                    {
+                        $Dbuttons(false);
+                    }
+                }
+               
+            });
     }
     else
     {
