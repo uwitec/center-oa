@@ -48,7 +48,7 @@ public class RegisterActionConfig implements ApplicationContextAware
     }
 
     /**
-     * @return ���� actionConfigManager
+     * @return actionConfigManager
      */
     public ActionConfigManager getActionConfigManager()
     {
@@ -57,7 +57,7 @@ public class RegisterActionConfig implements ApplicationContextAware
 
     public void destroy()
     {
-        // ͨ��actionConfigManagerע�ᵽwp����
+        // ͨactionConfigManagerעᵽwp
         for (ActionConfigWrap config : actionConfigSet)
         {
             actionConfigManager.removeActionConfig(config.getPath());
@@ -65,7 +65,7 @@ public class RegisterActionConfig implements ApplicationContextAware
     }
 
     /**
-     * @param ��actionConfigManager���и�ֵ
+     * @param actionConfigManagerֵ
      */
     public void setActionConfigManager(ActionConfigManager actionConfigManager)
     {
@@ -101,7 +101,7 @@ public class RegisterActionConfig implements ApplicationContextAware
             readMemberFromXML(path);
         }
 
-        // ͨ��actionConfigManagerע�ᵽwp����
+        // ͨactionConfigManagerעᵽwp
         for (ActionConfigWrap config : actionConfigSet)
         {
             actionConfigManager.addActionConfig(config, context.getBean(config.getPath()));
@@ -146,7 +146,7 @@ public class RegisterActionConfig implements ApplicationContextAware
 
                 config.setValidate(Boolean.valueOf(actionElement.attributeValue("validate")));
 
-                // ��������forward
+                // forward
                 List<Element> forwardElements = actionElement.elements("forward");
 
                 boolean hasError = false;
@@ -213,7 +213,8 @@ public class RegisterActionConfig implements ApplicationContextAware
                     config.addForwardConfig(forward);
                 }
 
-                if ( !StringTools.isNullOrNone(config.getBean()) && !StringTools.isNullOrNone(config.getFolder()))
+                if ( !StringTools.isNullOrNone(config.getBean())
+                    && !StringTools.isNullOrNone(config.getFolder()))
                 {
                     // 增加默认的 addBean updateBean queryBean detailBean
                     String[] ss = new String[] {"add", "update", "delete", "detail", "query"};
@@ -272,7 +273,7 @@ public class RegisterActionConfig implements ApplicationContextAware
     }
 
     /**
-     * @return ���� paths
+     * @return paths
      */
     public String getPaths()
     {
@@ -280,7 +281,7 @@ public class RegisterActionConfig implements ApplicationContextAware
     }
 
     /**
-     * @param ��paths���и�ֵ
+     * @param pathsֵ
      */
     public void setPaths(String paths)
     {
