@@ -129,6 +129,7 @@ function checkLock()
     <a href="welcome.jsp" target="main" title="我的桌面"><img src="../images/oa/desk.png" width="20px" height="20px" border="0"/></a>
     </c:if>
     <a target="_blank" href="../help/main.jsp" title="联机帮助"><img src="../images/oa/help.png" width="20px" height="20px" border="0"/></a>
+    <a href="../down/down.do?method=downTemplateFileByName&fileName=OA.ppt" target="_blank" title="系统使用指南"><img src="../images/oa/help.png" width="20px" height="20px" border="0"/></a>
     <a href="${g_logout}" target="_parent" title="退出登录"><img src="../images/oa/logout.gif" width="20px" height="20px" border="0"/></a>
     </td>
     <td ondblclick="sho()" width="2%"></td>
