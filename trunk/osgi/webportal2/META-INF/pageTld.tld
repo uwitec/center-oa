@@ -584,6 +584,19 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
+	
+	<tag>
+        <name>value</name>
+        <tagclass>
+            com.china.center.common.taglib.PageValue
+        </tagclass>
+        <bodycontent>JSP</bodycontent>
+        <attribute>
+            <name>key</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
 
 </taglib>
 

@@ -46,7 +46,7 @@ public abstract class RequestTools
     }
 
     /**
-     * 从parameter和attribute里面获取属性(parameter优先)
+     * 从parameter和attribute里面获取属性(parameter优先/request/session)
      * 
      * @param request
      * @param key
@@ -64,6 +64,15 @@ public abstract class RequestTools
             if (attribute != null)
             {
                 keyValue = attribute.toString();
+            }
+            else
+            {
+                attribute = request.getSession().getAttribute(key);
+
+                if (attribute != null)
+                {
+                    keyValue = attribute.toString();
+                }
             }
         }
 
