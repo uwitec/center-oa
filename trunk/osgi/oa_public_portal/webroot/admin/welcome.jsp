@@ -31,6 +31,10 @@ function load()
 	<c:if test='${my:auth(user, "1401") && my:dym("com.china.center.oa.sail.portal")}'>
     <li><a href="#fragment-Out"><span>回款预警</span></a></li>
     </c:if>
+    
+    <c:if test='${my:auth(user, "1310") && my:dym("com.china.center.oa.finance.portal")}'>
+    <li><a href="#fragment-StockPay"><span>采购付款</span></a></li>
+    </c:if>
 	
 </ul>
 <c:if test='${my:dym("com.china.center.oa.flow.portal")}'>
@@ -42,7 +46,7 @@ function load()
 <c:if test="${!my:dym('com.china.center.oa.flow.portal')}">
 <div id="fragment-1"><IFRAME height="100%"
     src="test.htm"
-    id="ifr1" frameborder="0" width="100%" scrolling="auto"></IFRAME></div>
+    id="ifr2" frameborder="0" width="100%" scrolling="auto"></IFRAME></div>
 </c:if>
 
 <!-- ///////////////////////////////////////////////////////////////////////// -->
@@ -50,13 +54,19 @@ function load()
 <c:if test='${my:auth(user, "1411") && my:dym("com.china.center.oa.sail.portal")}'>
 <div id="fragment-Consign"><IFRAME height="100%"
     src="../sail/transport.do?method=queryTodayConsign"
-    id="ifr1" frameborder="0" width="100%" scrolling="auto"></IFRAME></div>
+    id="ifr3" frameborder="0" width="100%" scrolling="auto"></IFRAME></div>
 </c:if>
 
 <c:if test='${my:auth(user, "1401") && my:dym("com.china.center.oa.sail.portal")}'>
 <div id="fragment-Out"><IFRAME height="100%"
     src="../sail/out.do?method=queryWarnOut"
-    id="ifr1" frameborder="0" width="100%" scrolling="auto"></IFRAME></div>
+    id="ifr4" frameborder="0" width="100%" scrolling="auto"></IFRAME></div>
+</c:if>
+
+<c:if test='${my:auth(user, "1310") && my:dym("com.china.center.oa.finance.portal")}'>
+<div id="fragment-StockPay"><IFRAME height="100%"
+    src="../finance/stock.do?method=queryWarnStockPayApply"
+    id="ifr5" frameborder="0" width="100%" scrolling="auto"></IFRAME></div>
 </c:if>
 
 </div>

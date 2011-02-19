@@ -45,7 +45,8 @@ public interface ProductFacade
     boolean deleteProductBean(String userId, String id)
         throws MYException;
 
-    boolean configProductVSLocation(String userId, String productId, List<ProductVSLocationBean> vsList)
+    boolean configProductVSLocation(String userId, String productId,
+                                    List<ProductVSLocationBean> vsList)
         throws MYException;
 
     boolean changeProductStatus(String userId, String productId, int oldStatus, int newStatus)
@@ -102,10 +103,12 @@ public interface ProductFacade
     boolean deleteStorageRelation(String userId, String id)
         throws MYException;
 
-    boolean transferStorageRelation(String userId, String sourceStorageId, String dirStorageId, String[] relations)
+    boolean transferStorageRelation(String userId, String sourceStorageId, String dirStorageId,
+                                    String[] relations)
         throws MYException;
 
-    boolean transferStorageRelationInDepotpart(String userId, String sourceRelationId, String dirDepotpartId, int amount)
+    String transferStorageRelationInDepotpart(String userId, String sourceRelationId,
+                                              String dirDepotpartId, int amount)
         throws MYException;
 
     /**

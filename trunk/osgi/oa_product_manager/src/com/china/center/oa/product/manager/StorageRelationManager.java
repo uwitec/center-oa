@@ -98,8 +98,8 @@ public interface StorageRelationManager extends ListenerManager<StorageRelationL
      * @return
      * @throws MYException
      */
-    boolean transferStorageRelationInDepotpart(User user, String sourceRelationId,
-                                               String dirDepotpartId, int amount)
+    String transferStorageRelationInDepotpart(User user, String sourceRelationId,
+                                              String dirDepotpartId, int amount)
         throws MYException;
 
     void lockStorageRelation();

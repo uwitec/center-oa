@@ -55,9 +55,10 @@ function load()
 <form name="formEntry" action="../depot/storage.do" method="post">
 <input type="hidden" value="moveDepotpart" name="method"> 
 <input type="hidden" value="" name="sourceRelationId"> 
+<input type="hidden" value="${id}" name="id"> 
 <p:navigation
 	height="22">
-	<td width="550" class="navigation">仓区管理 &gt;&gt; <span
+	<td width="550" class="navigation"><span
 		style="cursor: hand" onclick="javascript:history.go(-1)">仓区列表</span>
 	&gt;&gt; 产品移动</td>
 	<td width="85"></td>

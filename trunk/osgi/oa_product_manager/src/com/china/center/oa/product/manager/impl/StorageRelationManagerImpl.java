@@ -549,10 +549,10 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
      * @see com.china.center.oa.product.manager.StorageRelationManager#transferStorageRelationInDepotpart(com.center.china.osgi.publics.User,
      *      java.lang.String, java.lang.String, int)
      */
-    public synchronized boolean transferStorageRelationInDepotpart(final User user,
-                                                                   final String sourceRelationId,
-                                                                   final String dirDepotpartId,
-                                                                   final int amount)
+    public synchronized String transferStorageRelationInDepotpart(final User user,
+                                                                  final String sourceRelationId,
+                                                                  final String dirDepotpartId,
+                                                                  final int amount)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, sourceRelationId, dirDepotpartId);
@@ -614,6 +614,8 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
             }
         }
 
+        final String sid = commonDAO.getSquenceString();
+
         try
         {
             // 增加管理员操作在数据库事务中完成
@@ -623,7 +625,6 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
             {
                 public Object doInTransaction(TransactionStatus arg0)
                 {
-                    String sid = commonDAO.getSquenceString();
                     // 首先是源仓区减去产品数量
 
                     String des = "从仓区[" + oldDepotpart.getName() + "]转移到[" + newDepotpart.getName()
@@ -685,7 +686,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
             throw new MYException(e.getMessage());
         }
 
-        return true;
+        return sid;
     }
 
     /*

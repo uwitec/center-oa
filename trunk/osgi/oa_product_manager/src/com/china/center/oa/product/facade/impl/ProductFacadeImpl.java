@@ -133,7 +133,8 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
      * @see com.china.center.oa.product.facade.ProductFacade#configProductVSLocation(java.lang.String, java.lang.String,
      *      java.util.List)
      */
-    public boolean configProductVSLocation(String userId, String productId, List<ProductVSLocationBean> vsList)
+    public boolean configProductVSLocation(String userId, String productId,
+                                           List<ProductVSLocationBean> vsList)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(userId, productId);
@@ -166,7 +167,8 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
 
         checkUser(user);
 
-        if (containAuth(user, AuthConstant.PRODUCT_OPR) || containAuth(user, AuthConstant.PRODUCT_CHECK))
+        if (containAuth(user, AuthConstant.PRODUCT_OPR)
+            || containAuth(user, AuthConstant.PRODUCT_CHECK))
         {
             return productManager.deleteProductBean(user, id);
         }
@@ -581,8 +583,8 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
         }
     }
 
-    public boolean transferStorageRelation(String userId, String sourceStorageId, String dirStorageId,
-                                           String[] relations)
+    public boolean transferStorageRelation(String userId, String sourceStorageId,
+                                           String dirStorageId, String[] relations)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(userId, sourceStorageId, dirStorageId, relations);
@@ -593,7 +595,8 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
 
         if (containAuth(user, AuthConstant.STORAGE_OPR))
         {
-            return storageRelationManager.transferStorageRelation(user, sourceStorageId, dirStorageId, relations);
+            return storageRelationManager.transferStorageRelation(user, sourceStorageId,
+                dirStorageId, relations);
         }
         else
         {
@@ -601,8 +604,8 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
         }
     }
 
-    public boolean transferStorageRelationInDepotpart(String userId, String sourceRelationId, String dirDepotpartId,
-                                                      int amount)
+    public String transferStorageRelationInDepotpart(String userId, String sourceRelationId,
+                                                     String dirDepotpartId, int amount)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(userId, sourceRelationId, dirDepotpartId);
@@ -613,8 +616,8 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
 
         if (containAuth(user, AuthConstant.DEPOTPART_OPR))
         {
-            return storageRelationManager.transferStorageRelationInDepotpart(user, sourceRelationId, dirDepotpartId,
-                amount);
+            return storageRelationManager.transferStorageRelationInDepotpart(user,
+                sourceRelationId, dirDepotpartId, amount);
         }
         else
         {

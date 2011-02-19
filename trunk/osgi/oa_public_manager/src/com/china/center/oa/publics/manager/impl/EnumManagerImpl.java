@@ -116,7 +116,7 @@ public class EnumManagerImpl implements EnumManager
 
         try
         {
-            // 增加管理员操作在数据库事务中完成
+            // TEMPLATE 事务处理
             TransactionTemplate tran = new TransactionTemplate(transactionManager);
 
             tran.execute(new TransactionCallback()

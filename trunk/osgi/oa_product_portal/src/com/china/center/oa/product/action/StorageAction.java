@@ -62,6 +62,7 @@ import com.china.center.oa.publics.dao.StafferVSIndustryDAO;
 import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
+import com.china.center.tools.RequestTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
@@ -502,7 +503,9 @@ public class StorageAction extends DispatchAction
                                              HttpServletResponse response)
         throws ServletException
     {
-        String depotId = request.getParameter("id");
+        CommonTools.saveParamers(request);
+
+        String depotId = RequestTools.getValueFromRequest(request, "id");
 
         List<DepotpartBean> depotpartList = depotpartDAO.queryEntityBeansByFK(depotId);
 
@@ -925,7 +928,7 @@ public class StorageAction extends DispatchAction
      * @throws ServletException
      */
     public ActionForward moveDepotpart(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse reponse)
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String destDepotpartId = request.getParameter("dest");
@@ -938,8 +941,10 @@ public class StorageAction extends DispatchAction
 
         try
         {
-            productFacade.transferStorageRelationInDepotpart(user.getId(), sourceRelationId,
-                destDepotpartId, CommonTools.parseInt(amount));
+            String id = productFacade.transferStorageRelationInDepotpart(user.getId(),
+                sourceRelationId, destDepotpartId, CommonTools.parseInt(amount));
+
+            request.setAttribute(KeyConstant.MESSAGE, "产品仓区间转移成功,流水号:" + id);
         }
         catch (MYException e)
         {
@@ -948,9 +953,7 @@ public class StorageAction extends DispatchAction
             return mapping.findForward("queryStorageRelation");
         }
 
-        request.setAttribute(KeyConstant.MESSAGE, "产品仓区间转移成功");
-
-        return mapping.findForward("queryStorageRelation");
+        return preForMoveDepotpart(mapping, form, request, response);
     }
 
     /**
