@@ -142,12 +142,15 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         {
             for (PaymentVSOutBean vsItem : vsList)
             {
-                // 校验是否一个销售单被多次绑定
-                int count = paymentApplyDAO.countApplyByOutId(vsItem.getOutId());
-
-                if (count > 0)
+                if ( !StringTools.isNullOrNone(vsItem.getOutId()))
                 {
-                    throw new MYException("单据[%s]已经申请付款,请审批付款后再提交新的申请", vsItem.getOutId());
+                    // 校验是否一个销售单被多次绑定
+                    int count = paymentApplyDAO.countApplyByOutId(vsItem.getOutId());
+
+                    if (count > 0)
+                    {
+                        throw new MYException("单据[%s]已经申请付款,请审批付款后再提交新的申请", vsItem.getOutId());
+                    }
                 }
             }
         }

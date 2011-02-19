@@ -236,11 +236,7 @@ public class FinanceAction extends DispatchAction
 
         condtion.addWhereStr();
 
-        User user = Helper.getUser(request);
-
         ActionTools.processJSONQueryCondition(QUERYPAYMENTAPPLY, request, condtion);
-
-        condtion.addCondition("PaymentApplyBean.locationId", "=", user.getLocationId());
 
         condtion.addIntCondition("PaymentApplyBean.status", "=",
             FinanceConstant.PAYAPPLY_STATUS_INIT);
