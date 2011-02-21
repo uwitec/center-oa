@@ -58,11 +58,11 @@ function addBean()
 				<p:option type="productType"/>
 			</p:pro>
 			
-			<p:pro field="ptype" innerString="readonly=true">
+			<p:pro field="ptype">
 				<p:option type="productPtype"/>
 			</p:pro>
 			
-			<p:pro field="ctype" innerString="readonly=true">
+			<p:pro field="ctype">
 				<p:option type="productCtype"/>
 			</p:pro>
 			

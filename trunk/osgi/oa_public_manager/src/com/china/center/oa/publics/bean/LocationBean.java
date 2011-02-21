@@ -46,7 +46,7 @@ public class LocationBean implements Serializable
     @Html(title = "标识", must = true, oncheck = JCheck.ONLY_LETTER, maxLength = 10, tip = "只能是字母")
     private String code = "";
 
-    @Html(name = "parentName", title = "四级组织", must = true, maxLength = 20)
+    @Html(name = "parentName", title = "父级组织", must = true, maxLength = 20)
     @Join(tagClass = PrincipalshipBean.class)
     private String parentId = "";
 
