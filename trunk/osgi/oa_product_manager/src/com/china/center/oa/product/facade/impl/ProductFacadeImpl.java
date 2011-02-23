@@ -36,6 +36,7 @@ import com.china.center.oa.product.vo.ComposeProductVO;
 import com.china.center.oa.product.vo.PriceChangeVO;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
 import com.china.center.oa.publics.constant.AuthConstant;
+import com.china.center.oa.publics.constant.PublicLock;
 import com.china.center.oa.publics.facade.AbstarctFacade;
 import com.china.center.tools.JudgeTools;
 
@@ -67,8 +68,6 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
     private StorageRelationManager storageRelationManager = null;
 
     private StorageApplyManager storageApplyManager = null;
-
-    private static Object LOCK = new Object();
 
     /**
      * default constructor
@@ -658,7 +657,8 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
     public boolean addPriceChange(String userId, PriceChangeBean bean)
         throws MYException
     {
-        synchronized (LOCK)
+        // LOCK 产品调价
+        synchronized (PublicLock.PRODUCT_CORE)
         {
             JudgeTools.judgeParameterIsNull(userId, bean);
 
@@ -680,7 +680,8 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
     public boolean rollbackPriceChange(String userId, String id)
         throws MYException
     {
-        synchronized (LOCK)
+        // LOCK 产品调价回滚
+        synchronized (PublicLock.PRODUCT_CORE)
         {
             JudgeTools.judgeParameterIsNull(userId, id);
 
@@ -764,19 +765,23 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
     public boolean lastPassComposeProduct(String userId, String id)
         throws MYException
     {
-        JudgeTools.judgeParameterIsNull(userId);
-
-        User user = userManager.findUser(userId);
-
-        checkUser(user);
-
-        if (containAuth(user, AuthConstant.PRODUCT_CD_CRO))
+        // LOCK 合成产品
+        synchronized (PublicLock.PRODUCT_CORE)
         {
-            return composeProductManager.lastPassComposeProduct(user, id);
-        }
-        else
-        {
-            throw noAuth();
+            JudgeTools.judgeParameterIsNull(userId);
+
+            User user = userManager.findUser(userId);
+
+            checkUser(user);
+
+            if (containAuth(user, AuthConstant.PRODUCT_CD_CRO))
+            {
+                return composeProductManager.lastPassComposeProduct(user, id);
+            }
+            else
+            {
+                throw noAuth();
+            }
         }
     }
 
@@ -833,14 +838,17 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
     public boolean passStorageApply(String userId, String id)
         throws MYException
     {
-        JudgeTools.judgeParameterIsNull(userId, id);
+        // LOCK 产品私买属性转移
+        synchronized (PublicLock.PRODUCT_CORE)
+        {
+            JudgeTools.judgeParameterIsNull(userId, id);
 
-        User user = userManager.findUser(userId);
+            User user = userManager.findUser(userId);
 
-        checkUser(user);
+            checkUser(user);
 
-        return storageApplyManager.passBean(user, id);
-
+            return storageApplyManager.passBean(user, id);
+        }
     }
 
     public boolean rejectStorageApply(String userId, String id)

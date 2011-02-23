@@ -94,7 +94,7 @@ public class BankManagerImpl extends AbstractListenerManager<BankListener> imple
 
         if (old == null)
         {
-            throw new MYException("银行不能被删除,请确认操作");
+            throw new MYException("数据错误,请确认操作");
         }
 
         Collection<BankListener> listenerMapValues = this.listenerMapValues();

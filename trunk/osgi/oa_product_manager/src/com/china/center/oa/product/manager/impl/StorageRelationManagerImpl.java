@@ -43,6 +43,7 @@ import com.china.center.oa.product.listener.StorageRelationListener;
 import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
+import com.china.center.oa.publics.constant.PublicLock;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.StringTools;
@@ -125,11 +126,8 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.china.center.oa.product.manager.StorageRelationManager#changeStorageRelationWithTransaction(com.center.china.osgi.publics.User,
-     *      com.china.center.oa.product.wrap.ProductChangeWrap)
+    /**
+     * CORE 处理库存变动的核心
      */
     public synchronized StorageRelationBean changeStorageRelationWithoutTransaction(
                                                                                     User user,
@@ -387,43 +385,47 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
      * @see com.china.center.oa.product.manager.StorageRelationManager#changeStorageRelationWithoutTransaction(com.center.china.osgi.publics.User,
      *      com.china.center.oa.product.wrap.ProductChangeWrap)
      */
-    public synchronized StorageRelationBean changeStorageRelationWithTransaction(
-                                                                                 final User user,
-                                                                                 final ProductChangeWrap bean,
-                                                                                 final boolean deleteZeroRelation)
+    public StorageRelationBean changeStorageRelationWithTransaction(final User user,
+                                                                    final ProductChangeWrap bean,
+                                                                    final boolean deleteZeroRelation)
         throws MYException
     {
-        StorageRelationBean result = null;
-
-        try
+        // LOCK 产品库存变动,单独提供事务
+        synchronized (PublicLock.PRODUCT_CORE)
         {
-            // 增加管理员操作在数据库事务中完成
-            TransactionTemplate tran = new TransactionTemplate(transactionManager);
 
-            result = (StorageRelationBean)tran.execute(new TransactionCallback()
+            StorageRelationBean result = null;
+
+            try
             {
-                public Object doInTransaction(TransactionStatus arg0)
+                // 增加管理员操作在数据库事务中完成
+                TransactionTemplate tran = new TransactionTemplate(transactionManager);
+
+                result = (StorageRelationBean)tran.execute(new TransactionCallback()
                 {
-                    try
+                    public Object doInTransaction(TransactionStatus arg0)
                     {
-                        return changeStorageRelationWithoutTransaction(user, bean,
-                            deleteZeroRelation);
+                        try
+                        {
+                            return changeStorageRelationWithoutTransaction(user, bean,
+                                deleteZeroRelation);
+                        }
+                        catch (MYException e)
+                        {
+                            throw new RuntimeException(e.getErrorContent());
+                        }
                     }
-                    catch (MYException e)
-                    {
-                        throw new RuntimeException(e.getErrorContent());
-                    }
-                }
-            });
-        }
-        catch (Exception e)
-        {
-            _logger.error(e, e);
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.error(e, e);
 
-            throw new MYException(e.getMessage());
-        }
+                throw new MYException(e.getMessage());
+            }
 
-        return result;
+            return result;
+        }
     }
 
     /*
@@ -432,10 +434,8 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
      * @see com.china.center.oa.product.manager.StorageRelationManager#transferStorageRelation(com.center.china.osgi.publics.User,
      *      java.lang.String, java.lang.String, java.lang.String[])
      */
-    public synchronized boolean transferStorageRelation(final User user,
-                                                        final String sourceStorageId,
-                                                        final String dirStorageId,
-                                                        final String[] relations)
+    public boolean transferStorageRelation(final User user, final String sourceStorageId,
+                                           final String dirStorageId, final String[] relations)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, sourceStorageId, dirStorageId, relations);
@@ -459,85 +459,89 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
             throw new MYException("不能跨仓区移动,请确认操作");
         }
 
-        try
+        // LOCK 储位产品转移,只能是公共的库存
+        synchronized (PublicLock.PRODUCT_CORE)
         {
-            // 增加管理员操作在数据库事务中完成
-            TransactionTemplate tran = new TransactionTemplate(transactionManager);
-
-            tran.execute(new TransactionCallback()
+            try
             {
-                public Object doInTransaction(TransactionStatus arg0)
+                // 增加管理员操作在数据库事务中完成
+                TransactionTemplate tran = new TransactionTemplate(transactionManager);
+
+                tran.execute(new TransactionCallback()
                 {
-                    String sid = commonDAO.getSquenceString();
-
-                    // 循环IDS
-                    for (String relation : relations)
+                    public Object doInTransaction(TransactionStatus arg0)
                     {
-                        // ProductChangeWrap
-                        StorageRelationBean srb = storageRelationDAO.find(relation);
+                        String sid = commonDAO.getSquenceString();
 
-                        if (srb == null)
+                        // 循环IDS
+                        for (String relation : relations)
                         {
-                            throw new RuntimeException("储位内没有产品数据,请重新操作");
+                            // ProductChangeWrap
+                            StorageRelationBean srb = storageRelationDAO.find(relation);
+
+                            if (srb == null)
+                            {
+                                throw new RuntimeException("储位内没有产品数据,请重新操作");
+                            }
+
+                            if ( !srb.getStorageId().equals(sourceStorageId))
+                            {
+                                throw new RuntimeException("储位不对,请重新操作");
+                            }
+
+                            if ( !StorageConstant.PUBLIC_STAFFER.equals(srb.getStafferId()))
+                            {
+                                throw new RuntimeException("只能操作公共库存,请重新操作");
+                            }
+
+                            ProductChangeWrap addWrap = new ProductChangeWrap();
+
+                            addWrap.setType(StorageConstant.OPR_STORAGE_MOVE);
+                            addWrap.setChange(srb.getAmount());
+                            addWrap.setDescription("从" + source.getName() + "转移到" + dir.getName()
+                                                   + "(" + sid + ")");
+                            addWrap.setPrice(srb.getPrice());
+                            addWrap.setProductId(srb.getProductId());
+                            addWrap.setStorageId(dirStorageId);
+                            addWrap.setSerializeId(sid);
+                            addWrap.setDepotpartId(srb.getDepotpartId());
+                            addWrap.setRefId(commonDAO.getSquenceString());
+
+                            ProductChangeWrap deleteWrap = new ProductChangeWrap();
+
+                            deleteWrap.setType(StorageConstant.OPR_STORAGE_MOVE);
+                            deleteWrap.setChange( -srb.getAmount());
+                            deleteWrap.setDescription(addWrap.getDescription());
+                            deleteWrap.setPrice(srb.getPrice());
+                            deleteWrap.setProductId(srb.getProductId());
+                            deleteWrap.setStorageId(sourceStorageId);
+                            deleteWrap.setSerializeId(sid);
+                            deleteWrap.setDepotpartId(srb.getDepotpartId());
+                            deleteWrap.setRefId(commonDAO.getSquenceString());
+
+                            try
+                            {
+                                // 因为仓区、产品、价格是唯一主键(先删除再增加)
+                                changeStorageRelationWithoutTransaction(user, deleteWrap, true);
+
+                                changeStorageRelationWithoutTransaction(user, addWrap, false);
+                            }
+                            catch (MYException e)
+                            {
+                                throw new RuntimeException(e.getErrorContent());
+                            }
                         }
 
-                        if ( !srb.getStorageId().equals(sourceStorageId))
-                        {
-                            throw new RuntimeException("储位不对,请重新操作");
-                        }
-
-                        if ( !StorageConstant.PUBLIC_STAFFER.equals(srb.getStafferId()))
-                        {
-                            throw new RuntimeException("只能操作公共库存,请重新操作");
-                        }
-
-                        ProductChangeWrap addWrap = new ProductChangeWrap();
-
-                        addWrap.setType(StorageConstant.OPR_STORAGE_MOVE);
-                        addWrap.setChange(srb.getAmount());
-                        addWrap.setDescription("从" + source.getName() + "转移到" + dir.getName() + "("
-                                               + sid + ")");
-                        addWrap.setPrice(srb.getPrice());
-                        addWrap.setProductId(srb.getProductId());
-                        addWrap.setStorageId(dirStorageId);
-                        addWrap.setSerializeId(sid);
-                        addWrap.setDepotpartId(srb.getDepotpartId());
-                        addWrap.setRefId(commonDAO.getSquenceString());
-
-                        ProductChangeWrap deleteWrap = new ProductChangeWrap();
-
-                        deleteWrap.setType(StorageConstant.OPR_STORAGE_MOVE);
-                        deleteWrap.setChange( -srb.getAmount());
-                        deleteWrap.setDescription(addWrap.getDescription());
-                        deleteWrap.setPrice(srb.getPrice());
-                        deleteWrap.setProductId(srb.getProductId());
-                        deleteWrap.setStorageId(sourceStorageId);
-                        deleteWrap.setSerializeId(sid);
-                        deleteWrap.setDepotpartId(srb.getDepotpartId());
-                        deleteWrap.setRefId(commonDAO.getSquenceString());
-
-                        try
-                        {
-                            // 因为仓区、产品、价格是唯一主键(先删除再增加)
-                            changeStorageRelationWithoutTransaction(user, deleteWrap, true);
-
-                            changeStorageRelationWithoutTransaction(user, addWrap, false);
-                        }
-                        catch (MYException e)
-                        {
-                            throw new RuntimeException(e.getErrorContent());
-                        }
+                        return Boolean.TRUE;
                     }
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.error(e, e);
 
-                    return Boolean.TRUE;
-                }
-            });
-        }
-        catch (Exception e)
-        {
-            _logger.error(e, e);
-
-            throw new MYException(e.getMessage());
+                throw new MYException(e.getMessage());
+            }
         }
 
         return true;
@@ -549,10 +553,9 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
      * @see com.china.center.oa.product.manager.StorageRelationManager#transferStorageRelationInDepotpart(com.center.china.osgi.publics.User,
      *      java.lang.String, java.lang.String, int)
      */
-    public synchronized String transferStorageRelationInDepotpart(final User user,
-                                                                  final String sourceRelationId,
-                                                                  final String dirDepotpartId,
-                                                                  final int amount)
+    public String transferStorageRelationInDepotpart(final User user,
+                                                     final String sourceRelationId,
+                                                     final String dirDepotpartId, final int amount)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, sourceRelationId, dirDepotpartId);
@@ -616,74 +619,85 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
 
         final String sid = commonDAO.getSquenceString();
 
-        try
+        // 检查转移的产品是否存在销售未通过的(防止库存是负数的情况)
+        int count = this.sumPreassignByStorageRelation(srb);
+
+        if (count > 0)
         {
-            // 增加管理员操作在数据库事务中完成
-            TransactionTemplate tran = new TransactionTemplate(transactionManager);
-
-            tran.execute(new TransactionCallback()
-            {
-                public Object doInTransaction(TransactionStatus arg0)
-                {
-                    // 首先是源仓区减去产品数量
-
-                    String des = "从仓区[" + oldDepotpart.getName() + "]转移到[" + newDepotpart.getName()
-                                 + "]";
-
-                    ProductChangeWrap deleteWrap = new ProductChangeWrap();
-
-                    deleteWrap.setType(StorageConstant.OPR_DDEPOTPART_MOVE);
-                    deleteWrap.setChange( -amount);
-                    deleteWrap.setDescription(des);
-                    deleteWrap.setPrice(srb.getPrice());
-                    deleteWrap.setProductId(srb.getProductId());
-                    deleteWrap.setStorageId(srb.getStorageId());
-                    deleteWrap.setSerializeId(sid);
-                    deleteWrap.setDepotpartId(srb.getDepotpartId());
-                    deleteWrap.setRefId(sid);
-
-                    ProductChangeWrap addWrap = new ProductChangeWrap();
-
-                    addWrap.setType(StorageConstant.OPR_DDEPOTPART_MOVE);
-                    addWrap.setChange(amount);
-                    addWrap.setDescription(des);
-                    addWrap.setPrice(srb.getPrice());
-                    addWrap.setProductId(srb.getProductId());
-
-                    if (newRelationBean != null)
-                    {
-                        addWrap.setStorageId(newRelationBean.getStorageId());
-                    }
-                    else
-                    {
-                        // 就是仓区下没有此价格的储位关系,此时默认转移到在仓区下第一个储位
-                        addWrap.setStorageId(sbs.get(0).getId());
-                    }
-                    addWrap.setSerializeId(sid);
-                    addWrap.setDepotpartId(dirDepotpartId);
-                    addWrap.setRefId(sid);
-
-                    try
-                    {
-                        // 因为仓区、产品、价格是唯一主键(先删除再增加)
-                        changeStorageRelationWithoutTransaction(user, deleteWrap, false);
-
-                        changeStorageRelationWithoutTransaction(user, addWrap, false);
-                    }
-                    catch (MYException e)
-                    {
-                        throw new RuntimeException(e.getErrorContent());
-                    }
-
-                    return Boolean.TRUE;
-                }
-            });
+            throw new MYException("转移的产品存在[%d]个未发货(在销售单中),不能仓区间转移,请确认操作", count);
         }
-        catch (Exception e)
-        {
-            _logger.error(e, e);
 
-            throw new MYException(e.getMessage());
+        // LOCK 仓区产品转移
+        synchronized (PublicLock.PRODUCT_CORE)
+        {
+            try
+            {
+                // 增加管理员操作在数据库事务中完成
+                TransactionTemplate tran = new TransactionTemplate(transactionManager);
+
+                tran.execute(new TransactionCallback()
+                {
+                    public Object doInTransaction(TransactionStatus arg0)
+                    {
+                        // 首先是源仓区减去产品数量
+                        String des = "从仓区[" + oldDepotpart.getName() + "]转移到["
+                                     + newDepotpart.getName() + "]";
+
+                        ProductChangeWrap deleteWrap = new ProductChangeWrap();
+
+                        deleteWrap.setType(StorageConstant.OPR_DDEPOTPART_MOVE);
+                        deleteWrap.setChange( -amount);
+                        deleteWrap.setDescription(des);
+                        deleteWrap.setPrice(srb.getPrice());
+                        deleteWrap.setProductId(srb.getProductId());
+                        deleteWrap.setStorageId(srb.getStorageId());
+                        deleteWrap.setSerializeId(sid);
+                        deleteWrap.setDepotpartId(srb.getDepotpartId());
+                        deleteWrap.setRefId(sid);
+
+                        ProductChangeWrap addWrap = new ProductChangeWrap();
+
+                        addWrap.setType(StorageConstant.OPR_DDEPOTPART_MOVE);
+                        addWrap.setChange(amount);
+                        addWrap.setDescription(des);
+                        addWrap.setPrice(srb.getPrice());
+                        addWrap.setProductId(srb.getProductId());
+
+                        if (newRelationBean != null)
+                        {
+                            addWrap.setStorageId(newRelationBean.getStorageId());
+                        }
+                        else
+                        {
+                            // 就是仓区下没有此价格的储位关系,此时默认转移到在仓区下第一个储位
+                            addWrap.setStorageId(sbs.get(0).getId());
+                        }
+                        addWrap.setSerializeId(sid);
+                        addWrap.setDepotpartId(dirDepotpartId);
+                        addWrap.setRefId(sid);
+
+                        try
+                        {
+                            // 因为仓区、产品、价格是唯一主键(先删除再增加)
+                            changeStorageRelationWithoutTransaction(user, deleteWrap, false);
+
+                            changeStorageRelationWithoutTransaction(user, addWrap, false);
+                        }
+                        catch (MYException e)
+                        {
+                            throw new RuntimeException(e.getErrorContent());
+                        }
+
+                        return Boolean.TRUE;
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.error(e, e);
+
+                throw new MYException(e.getMessage());
+            }
         }
 
         return sid;
@@ -695,46 +709,50 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
      * @see com.china.center.oa.product.manager.StorageRelationManager#deleteStorageRelation(com.center.china.osgi.publics.User,
      *      java.lang.String)
      */
-    public synchronized boolean deleteStorageRelation(User user, final String id)
+    public boolean deleteStorageRelation(User user, final String id)
         throws MYException
     {
-        JudgeTools.judgeParameterIsNull(user, id);
-
-        final StorageRelationBean old = storageRelationDAO.find(id);
-
-        if (old == null)
+        // LOCK 删除产品数量为0的数据
+        synchronized (PublicLock.PRODUCT_CORE)
         {
-            throw new MYException("数据错误,请确认操作");
-        }
+            JudgeTools.judgeParameterIsNull(user, id);
 
-        if (old.getAmount() != 0)
-        {
-            throw new MYException("储位内产品数量大于0,不能删除,请确认操作");
-        }
+            final StorageRelationBean old = storageRelationDAO.find(id);
 
-        try
-        {
-            // 增加管理员操作在数据库事务中完成
-            TransactionTemplate tran = new TransactionTemplate(transactionManager);
-
-            tran.execute(new TransactionCallback()
+            if (old == null)
             {
-                public Object doInTransaction(TransactionStatus arg0)
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            if (old.getAmount() != 0)
+            {
+                throw new MYException("储位内产品数量大于0,不能删除,请确认操作");
+            }
+
+            try
+            {
+                // 增加管理员操作在数据库事务中完成
+                TransactionTemplate tran = new TransactionTemplate(transactionManager);
+
+                tran.execute(new TransactionCallback()
                 {
-                    storageRelationDAO.deleteEntityBean(id);
+                    public Object doInTransaction(TransactionStatus arg0)
+                    {
+                        storageRelationDAO.deleteEntityBean(id);
 
-                    return Boolean.TRUE;
-                }
-            });
+                        return Boolean.TRUE;
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.error(e, e);
+
+                throw new MYException(e.getCause().toString());
+            }
+
+            return true;
         }
-        catch (Exception e)
-        {
-            _logger.error(e, e);
-
-            throw new MYException(e.getCause().toString());
-        }
-
-        return true;
     }
 
     public int sumPreassignByStorageRelation(StorageRelationBean bean)
