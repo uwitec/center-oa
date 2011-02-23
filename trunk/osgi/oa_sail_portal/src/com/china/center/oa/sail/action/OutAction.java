@@ -63,6 +63,7 @@ import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.InvoiceConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
+import com.china.center.oa.publics.constant.PublicLock;
 import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DepartmentDAO;
@@ -3495,17 +3496,21 @@ public class OutAction extends DispatchAction
 
         User user = (User)request.getSession().getAttribute("user");
 
-        try
+        // LOCK 委托代销结算单通过(退库)
+        synchronized (PublicLock.PRODUCT_CORE)
         {
-            outManager.passOutBalance(user, id);
+            try
+            {
+                outManager.passOutBalance(user, id);
 
-            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
-        }
-        catch (MYException e)
-        {
-            _logger.warn(e, e);
+                request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+            }
+            catch (MYException e)
+            {
+                _logger.warn(e, e);
 
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+            }
         }
 
         RequestTools.actionInitQuery(request);

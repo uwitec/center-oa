@@ -54,6 +54,7 @@ import com.china.center.oa.publics.bean.ShowBean;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.InvoiceConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
+import com.china.center.oa.publics.constant.PublicLock;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
@@ -607,30 +608,34 @@ public class StockAction extends DispatchAction
                                      HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
-        String itemId = request.getParameter("itemId");
-
-        String depotpartId = request.getParameter("depotpartId");
-
-        try
+        // LOCK 采购拿货变动库存
+        synchronized (PublicLock.PRODUCT_CORE)
         {
-            User user = Helper.getUser(request);
+            String itemId = request.getParameter("itemId");
 
-            stockManager.fechProduct(user, itemId, depotpartId);
+            String depotpartId = request.getParameter("depotpartId");
 
-            request.setAttribute(KeyConstant.MESSAGE, "成功拿货,且自动生成入库单");
+            try
+            {
+                User user = Helper.getUser(request);
+
+                stockManager.fechProduct(user, itemId, depotpartId);
+
+                request.setAttribute(KeyConstant.MESSAGE, "成功拿货,且自动生成入库单");
+            }
+            catch (MYException e)
+            {
+                _logger.warn(e);
+
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "拿货失败:" + e.getMessage());
+            }
+
+            CommonTools.removeParamers(request);
+
+            request.setAttribute("forward", "1");
+
+            return queryStock(mapping, form, request, reponse);
         }
-        catch (MYException e)
-        {
-            _logger.warn(e);
-
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "拿货失败:" + e.getMessage());
-        }
-
-        CommonTools.removeParamers(request);
-
-        request.setAttribute("forward", "1");
-
-        return queryStock(mapping, form, request, reponse);
     }
 
     /**

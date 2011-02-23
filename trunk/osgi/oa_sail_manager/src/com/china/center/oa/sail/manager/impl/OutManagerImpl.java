@@ -55,6 +55,7 @@ import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.NotifyBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.bean.UserBean;
+import com.china.center.oa.publics.constant.PublicLock;
 import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
@@ -494,12 +495,43 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         return fullId;
     }
 
-    @Exceptional
-    @Transactional(rollbackFor = {MYException.class})
-    public String coloneOutAndSubmitAffair(final OutBean outBean, final User user, int type)
+    public String coloneOutAndSubmitAffair(final OutBean outBean, final User user, final int type)
         throws MYException
     {
-        return coloneOutAndSubmitWithOutAffair(outBean, user, type);
+        // LOCK 自动生成入库单
+        synchronized (PublicLock.PRODUCT_CORE)
+        {
+            String result = "";
+
+            try
+            {
+                // 增加管理员操作在数据库事务中完成
+                TransactionTemplate tran = new TransactionTemplate(transactionManager);
+
+                result = (String)tran.execute(new TransactionCallback()
+                {
+                    public Object doInTransaction(TransactionStatus arg0)
+                    {
+                        try
+                        {
+                            return coloneOutAndSubmitWithOutAffair(outBean, user, type);
+                        }
+                        catch (MYException e)
+                        {
+                            throw new RuntimeException(e.getErrorContent());
+                        }
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.error(e, e);
+
+                throw new MYException(e.getMessage(), e);
+            }
+
+            return result;
+        }
     }
 
     public String coloneOutAndSubmitWithOutAffair(OutBean outBean, User user, int type)
@@ -507,7 +539,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     {
         String fullId = coloneOutWithoutAffair(outBean, user, type);
 
-        // 提交
+        // 提交(上级已经使用全局锁了)
         this.submitWithOutAffair(fullId, user, type);
 
         return fullId;
@@ -604,12 +636,43 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
      * @return
      * @throws Exception
      */
-    @Exceptional
-    @Transactional(rollbackFor = {MYException.class})
-    public int submit(final String fullId, final User user, int storageType)
+    public int submit(final String fullId, final User user, final int storageType)
         throws MYException
     {
-        return submitWithOutAffair(fullId, user, storageType);
+        // LOCK 库存提交(当是入库单的时候是变动库存的)
+        synchronized (PublicLock.PRODUCT_CORE)
+        {
+            Integer result = 0;
+
+            try
+            {
+                // 增加管理员操作在数据库事务中完成
+                TransactionTemplate tran = new TransactionTemplate(transactionManager);
+
+                result = (Integer)tran.execute(new TransactionCallback()
+                {
+                    public Object doInTransaction(TransactionStatus arg0)
+                    {
+                        try
+                        {
+                            return submitWithOutAffair(fullId, user, storageType);
+                        }
+                        catch (MYException e)
+                        {
+                            throw new RuntimeException(e.getErrorContent());
+                        }
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.error(e, e);
+
+                throw new MYException(e.getMessage());
+            }
+
+            return result;
+        }
     }
 
     /*
@@ -1386,82 +1449,86 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         final DepotBean depot = checkDepotInPass(nextStatus, outBean);
 
-        // 入库操作在数据库事务中完成
-        TransactionTemplate tran = new TransactionTemplate(transactionManager);
-        try
+        // LOCK 销售单/入库单通过(这里是销售单库存变动的核心)
+        synchronized (PublicLock.PRODUCT_CORE)
         {
-            tran.execute(new TransactionCallback()
+            // 入库操作在数据库事务中完成
+            TransactionTemplate tran = new TransactionTemplate(transactionManager);
+            try
             {
-                public Object doInTransaction(TransactionStatus arg0)
+                tran.execute(new TransactionCallback()
                 {
-                    int newNextStatus = nextStatus;
-
-                    if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+                    public Object doInTransaction(TransactionStatus arg0)
                     {
-                        // 直接把结算中心通过的设置成物流管理员通过(跳过物流)
-                        if (newNextStatus == OutConstant.STATUS_MANAGER_PASS
-                            && depot.getType() == DepotConstant.DEPOT_TYPE_LOCATION)
+                        int newNextStatus = nextStatus;
+
+                        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                         {
-                            newNextStatus = OutConstant.STATUS_FLOW_PASS;
+                            // 直接把结算中心通过的设置成物流管理员通过(跳过物流)
+                            if (newNextStatus == OutConstant.STATUS_MANAGER_PASS
+                                && depot.getType() == DepotConstant.DEPOT_TYPE_LOCATION)
+                            {
+                                newNextStatus = OutConstant.STATUS_FLOW_PASS;
+                            }
                         }
-                    }
 
-                    importLog.info(outBean.getFullId() + ":" + user.getStafferName() + ":"
-                                   + newNextStatus + ":redrectFrom:" + oldStatus);
+                        importLog.info(outBean.getFullId() + ":" + user.getStafferName() + ":"
+                                       + newNextStatus + ":redrectFrom:" + oldStatus);
 
-                    // 修改状态
-                    outDAO.modifyOutStatus(outBean.getFullId(), newNextStatus);
+                        // 修改状态
+                        outDAO.modifyOutStatus(outBean.getFullId(), newNextStatus);
 
-                    if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
-                    {
-                        handerPassOut(fullId, user, outBean, depot, newNextStatus);
-                    }
-                    else
-                    {
-                        handerPassBuy(fullId, user, outBean, newNextStatus);
-                    }
-
-                    addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_PASS,
-                        newNextStatus);
-
-                    // 把状态放到最新的out里面
-                    outBean.setStatus(newNextStatus);
-
-                    // OSGI 驳回监听实现
-                    Collection<OutListener> listenerMapValues = listenerMapValues();
-
-                    for (OutListener listener : listenerMapValues)
-                    {
-                        try
+                        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                         {
-                            listener.onPass(user, outBean);
+                            handerPassOut(fullId, user, outBean, depot, newNextStatus);
                         }
-                        catch (MYException e)
+                        else
                         {
-                            throw new RuntimeException(e.getErrorContent());
+                            handerPassBuy(fullId, user, outBean, newNextStatus);
                         }
+
+                        addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_PASS,
+                            newNextStatus);
+
+                        // 把状态放到最新的out里面
+                        outBean.setStatus(newNextStatus);
+
+                        // OSGI 驳回监听实现
+                        Collection<OutListener> listenerMapValues = listenerMapValues();
+
+                        for (OutListener listener : listenerMapValues)
+                        {
+                            try
+                            {
+                                listener.onPass(user, outBean);
+                            }
+                            catch (MYException e)
+                            {
+                                throw new RuntimeException(e.getErrorContent());
+                            }
+                        }
+
+                        notifyOut(outBean, user, 0);
+
+                        return Boolean.TRUE;
                     }
-
-                    notifyOut(outBean, user, 0);
-
-                    return Boolean.TRUE;
-                }
-            });
-        }
-        catch (TransactionException e)
-        {
-            _logger.error(e, e);
-            throw new MYException("数据库内部错误");
-        }
-        catch (DataAccessException e)
-        {
-            _logger.error(e, e);
-            throw new MYException("数据库内部错误");
-        }
-        catch (Exception e)
-        {
-            _logger.error(e, e);
-            throw new MYException("处理异常:" + e.getMessage());
+                });
+            }
+            catch (TransactionException e)
+            {
+                _logger.error(e, e);
+                throw new MYException("数据库内部错误");
+            }
+            catch (DataAccessException e)
+            {
+                _logger.error(e, e);
+                throw new MYException("数据库内部错误");
+            }
+            catch (Exception e)
+            {
+                _logger.error(e, e);
+                throw new MYException("处理异常:" + e.getMessage());
+            }
         }
 
         // 更新后的状态
