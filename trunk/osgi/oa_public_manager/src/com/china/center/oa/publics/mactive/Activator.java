@@ -11,7 +11,7 @@ import org.osgi.framework.BundleContext;
 import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.common.taglib.MapBean;
 import com.china.center.oa.publics.constant.CommonConstant;
-import com.china.center.oa.publics.constant.DutyComstant;
+import com.china.center.oa.publics.constant.DutyConstant;
 import com.china.center.oa.publics.constant.InvoiceConstant;
 import com.china.center.oa.publics.constant.OperationConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
@@ -33,7 +33,7 @@ public class Activator implements BundleActivator
         {
             add(PublicConstant.class);
             add(StafferConstant.class);
-            add(DutyComstant.class);
+            add(DutyConstant.class);
             add(InvoiceConstant.class);
             add(OperationConstant.class);
             add(CommonConstant.class);

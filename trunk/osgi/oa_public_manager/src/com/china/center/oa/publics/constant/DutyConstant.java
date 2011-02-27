@@ -17,10 +17,10 @@ import com.china.center.jdbc.annotation.Defined;
  * 
  * @author ZHUZHU
  * @version 2010-8-8
- * @see DutyComstant
+ * @see DutyConstant
  * @since 1.0
  */
-public interface DutyComstant
+public interface DutyConstant
 {
     @Defined(key = "dutyType", value = "一般纳税人")
     int DUTY_TYPE_COMMON = 0;

@@ -18,6 +18,7 @@ import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.Unique;
 import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.jdbc.clone.DataClone;
+import com.china.center.oa.publics.constant.DutyConstant;
 
 
 /**
@@ -40,7 +41,7 @@ public class DutyBean implements DataClone<DutyBean>, Serializable
     private String name = "";
 
     @Html(title = "纳税类型", must = true, type = Element.SELECT)
-    private int type = 0;
+    private int type = DutyConstant.DUTY_TYPE_COMMON;
 
     @Html(title = "税务证号", must = true, maxLength = 100)
     private String icp = "";
