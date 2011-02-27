@@ -17,6 +17,7 @@ import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.LocationBean;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.bean.UserBean;
 import com.china.center.oa.stock.constant.PriceConstant;
@@ -62,6 +63,12 @@ public class StockBean implements Serializable
      */
     @Join(tagClass = LocationBean.class)
     private String locationId = "";
+
+    /**
+     * 事业部属性
+     */
+    @Join(tagClass = PrincipalshipBean.class, type = JoinType.LEFT)
+    private String industryId = "";
 
     private int status = StockConstant.STOCK_STATUS_INIT;
 
@@ -592,20 +599,101 @@ public class StockBean implements Serializable
 
         StringBuffer retValue = new StringBuffer();
 
-        retValue.append("StockBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(TAB).append(
-            "userId = ").append(this.userId).append(TAB).append("stafferId = ").append(this.stafferId).append(TAB).append(
-            "owerId = ").append(this.owerId).append(TAB).append("dutyId = ").append(this.dutyId).append(TAB).append(
-            "locationId = ").append(this.locationId).append(TAB).append("status = ").append(this.status).append(TAB).append(
-            "exceptStatus = ").append(this.exceptStatus).append(TAB).append("needTime = ").append(this.needTime).append(
-            TAB).append("willDate = ").append(this.willDate).append(TAB).append("nearlyPayDate = ").append(
-            this.nearlyPayDate).append(TAB).append("type = ").append(this.type).append(TAB).append("stype = ").append(
-            this.stype).append(TAB).append("stockType = ").append(this.stockType).append(TAB).append("logTime = ").append(
-            this.logTime).append(TAB).append("flow = ").append(this.flow).append(TAB).append("total = ").append(
-            this.total).append(TAB).append("pay = ").append(this.pay).append(TAB).append("invoice = ").append(
-            this.invoice).append(TAB).append("invoiceType = ").append(this.invoiceType).append(TAB).append("areaId = ").append(
-            this.areaId).append(TAB).append("consign = ").append(this.consign).append(TAB).append("description = ").append(
-            this.description).append(TAB).append("item = ").append(this.item).append(TAB).append(" )");
+        retValue
+            .append("StockBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("userId = ")
+            .append(this.userId)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("owerId = ")
+            .append(this.owerId)
+            .append(TAB)
+            .append("dutyId = ")
+            .append(this.dutyId)
+            .append(TAB)
+            .append("locationId = ")
+            .append(this.locationId)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("exceptStatus = ")
+            .append(this.exceptStatus)
+            .append(TAB)
+            .append("needTime = ")
+            .append(this.needTime)
+            .append(TAB)
+            .append("willDate = ")
+            .append(this.willDate)
+            .append(TAB)
+            .append("nearlyPayDate = ")
+            .append(this.nearlyPayDate)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("stype = ")
+            .append(this.stype)
+            .append(TAB)
+            .append("stockType = ")
+            .append(this.stockType)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("flow = ")
+            .append(this.flow)
+            .append(TAB)
+            .append("total = ")
+            .append(this.total)
+            .append(TAB)
+            .append("pay = ")
+            .append(this.pay)
+            .append(TAB)
+            .append("invoice = ")
+            .append(this.invoice)
+            .append(TAB)
+            .append("invoiceType = ")
+            .append(this.invoiceType)
+            .append(TAB)
+            .append("areaId = ")
+            .append(this.areaId)
+            .append(TAB)
+            .append("consign = ")
+            .append(this.consign)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("item = ")
+            .append(this.item)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the industryId
+     */
+    public String getIndustryId()
+    {
+        return industryId;
+    }
+
+    /**
+     * @param industryId
+     *            the industryId to set
+     */
+    public void setIndustryId(String industryId)
+    {
+        this.industryId = industryId;
     }
 }

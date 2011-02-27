@@ -324,10 +324,10 @@ function load()
 						</select></td>
 
 						<td align="center"><input type="text" style="width: 100%" id="unAmount"
-							maxlength="6" onkeyup="cc(this)" name="amount"></td>
+							maxlength="8" onkeyup="cc(this)" name="amount"></td>
 
 						<td align="center"><input type="text" style="width: 100%" id="unPrice"
-							maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
+							maxlength="11" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
 
 						<td align="center"><input type="text"
 							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>

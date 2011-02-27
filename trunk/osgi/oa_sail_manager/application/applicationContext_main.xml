@@ -30,4 +30,6 @@
 
 	<bean id="outQueryDAO" class="com.china.center.oa.sail.dao.impl.OutQueryDAOImpl" />
 
+	<bean id="unitViewDAO" class="com.china.center.oa.sail.dao.impl.UnitViewDAOImpl" />
+
 </beans>

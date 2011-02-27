@@ -28,6 +28,9 @@ public class StockVO extends StockBean
     @Relationship(relationField = "locationId")
     private String locationName = "";
 
+    @Relationship(relationField = "industryId")
+    private String industryName = "";
+
     @Relationship(relationField = "dutyId")
     private String dutyName = "";
 
@@ -201,5 +204,22 @@ public class StockVO extends StockBean
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the industryName
+     */
+    public String getIndustryName()
+    {
+        return industryName;
+    }
+
+    /**
+     * @param industryName
+     *            the industryName to set
+     */
+    public void setIndustryName(String industryName)
+    {
+        this.industryName = industryName;
     }
 }

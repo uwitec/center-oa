@@ -74,7 +74,7 @@ public interface OutConstant
     int STATUS_SAVE = 0;
 
     /**
-     * 业务员提交
+     * 待结算中心审批
      */
     @Defined(key = "outStatus", value = "待结算中心审批")
     int STATUS_SUBMIT = 1;
@@ -86,7 +86,7 @@ public interface OutConstant
     int STATUS_REJECT = 2;
 
     /**
-     * 库管发货(这里的销售单库存就变动了)(一般此通过即是销售单已经OK status in (3, 4))
+     * 待回款(这里的销售单库存就变动了)(一般此通过即是销售单已经OK status in (3, 4))
      */
     @Defined(key = "outStatus", value = "待回款")
     int STATUS_PASS = 3;

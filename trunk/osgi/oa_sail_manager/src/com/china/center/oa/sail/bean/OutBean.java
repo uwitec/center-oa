@@ -110,9 +110,14 @@ public class OutBean implements Serializable
     private String location = "";
 
     /**
-     * 销售行业范围
+     * 销售行业范围(4级组织)
      */
     private String industryId = "";
+
+    /**
+     * 5级组织
+     */
+    private String industryId2 = "";
 
     private String connector = "";
 
@@ -1282,6 +1287,23 @@ public class OutBean implements Serializable
     }
 
     /**
+     * @return the industryId2
+     */
+    public String getIndustryId2()
+    {
+        return industryId2;
+    }
+
+    /**
+     * @param industryId2
+     *            the industryId2 to set
+     */
+    public void setIndustryId2(String industryId2)
+    {
+        this.industryId2 = industryId2;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -1352,6 +1374,9 @@ public class OutBean implements Serializable
             .append(TAB)
             .append("industryId = ")
             .append(this.industryId)
+            .append(TAB)
+            .append("industryId2 = ")
+            .append(this.industryId2)
             .append(TAB)
             .append("connector = ")
             .append(this.connector)

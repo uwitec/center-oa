@@ -51,6 +51,7 @@ import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.ShowBean;
+import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.InvoiceConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
@@ -644,8 +645,10 @@ public class StockAction extends DispatchAction
      * @param pbean
      * @param item
      * @param request
+     * @throws MYException
      */
     private void setStockBean(StockBean pbean, HttpServletRequest request)
+        throws MYException
     {
         String[] indexs = request.getParameterValues("check_init");
 
@@ -693,6 +696,22 @@ public class StockAction extends DispatchAction
         pbean.setItem(item);
 
         pbean.setType(PriceConstant.PRICE_ASK_TYPE_NET);
+
+        User user = Helper.getUser(request);
+
+        StafferBean sb = stafferDAO.find(user.getStafferId());
+
+        if (sb == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (StringTools.isNullOrNone(sb.getIndustryId()))
+        {
+            throw new MYException("职员[%s]没有事业部属性(事业部下的4级组织),请确认", sb.getName());
+        }
+
+        pbean.setIndustryId(sb.getIndustryId());
     }
 
     /**
@@ -1614,8 +1633,10 @@ public class StockAction extends DispatchAction
      * 
      * @param request
      * @param condtion
+     * @throws MYException
      */
     private void setCondition(HttpServletRequest request, ConditionParse condtion, int type)
+        throws MYException
     {
         condtion.addWhereStr();
 
@@ -1627,14 +1648,17 @@ public class StockAction extends DispatchAction
             condtion.addCondition("StockBean.stafferId", "=", user.getStafferId());
         }
 
-        // manager
+        // 事业部经理
         if (type == 1)
         {
-            // 总部的manager可以看到所有的
-            if ( !AuthHelper.containAuth(user, AuthConstant.STOCK_NOTICE_CEO))
+            StafferBean sb = stafferDAO.find(user.getStafferId());
+
+            if (sb == null)
             {
-                condtion.addCondition("StockBean.locationId", "=", user.getLocationId());
+                throw new MYException("数据错误,请确认操作");
             }
+
+            condtion.addCondition("StockBean.industryId", "=", sb.getIndustryId());
         }
 
         // 暂时没有

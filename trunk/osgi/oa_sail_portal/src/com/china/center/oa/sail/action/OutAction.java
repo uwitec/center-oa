@@ -1775,6 +1775,12 @@ public class OutAction extends DispatchAction
         {
             throw new MYException("用户没有此操作的权限");
         }
+
+        if ("10".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.SAIL_QUERY_SUB))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
     }
 
     /**
@@ -2734,6 +2740,11 @@ public class OutAction extends DispatchAction
             request.setAttribute("status", OutConstant.STATUS_PASS);
 
             setDepotCondotionInOut(user, condtion);
+        }
+        // 查询下属的销售单
+        else if ("10".equals(queryType))
+        {
+            condtion.addCondition("OutBean.industryId2", "=", staffer.getIndustryId2());
         }
         // 未知的则什么都没有
         else

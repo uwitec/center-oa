@@ -414,6 +414,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         StafferBean sb = stafferDAO.find(outBean.getStafferId());
 
         outBean.setIndustryId(sb.getIndustryId());
+
+        outBean.setIndustryId2(sb.getIndustryId2());
     }
 
     public String addSwatchToSail(final User user, final OutBean outBean)
@@ -3056,7 +3058,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         // 从分公司经理审核通过到提交
         if (newNextStatus == OutConstant.STATUS_SUBMIT)
         {
-            // 只有信用已经超支的情况下才启用分公司经理的信用
+            // 只有信用已经超支的情况下才启用分事业部经理的信用
             if (outBean.getReserve2() == OutConstant.OUT_CREDIT_OVER)
             {
                 // 加入审批人的信用(是自己使用的信用+担保的信用)
@@ -3064,6 +3066,12 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                     .getStafferId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
 
                 StafferBean staffer = stafferDAO.find(user.getStafferId());
+
+                // 这里自己不能给自己担保的
+                if (outBean.getStafferId().equals(user.getStafferId()))
+                {
+                    throw new RuntimeException("事业部经理担保中,自己不能给自己担保");
+                }
 
                 // 这里分公司总经理的信用已经使用结束了,此时直接抛出异常
                 if (noPayBusinessByManager > staffer.getCredit())

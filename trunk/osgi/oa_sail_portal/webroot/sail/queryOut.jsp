@@ -646,24 +646,28 @@ function swatchToSail()
 	<tr>
 		<td width="100%">
 		<div align="right">
-		<c:if test="${queryType != '5' && queryType != '6' && queryType != '9'}">
 		
-		<c:if test="${queryType == '2'}">
-		<input type="button" class="button_class" style="display: none;"
-                value="&nbsp;&nbsp;确认回款&nbsp;&nbsp;" onClick="payOut()">&nbsp;&nbsp;
-        </c:if>
-        <input name="bu1"
-                type="button" class="button_class" value="&nbsp;审核通过&nbsp;"
-                onclick="check()" />&nbsp;&nbsp;<input type="button" name="bu2"
-                class="button_class" value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;"
-                onclick="reject()" />&nbsp;&nbsp;
-		<input
-			type="button" class="button_class"
-			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;
+		<c:if test="${queryType != '5' && queryType != '6' && queryType != '9' && queryType != '10'}">
+		
+			<c:if test="${queryType == '2'}">
+				<input type="button" class="button_class" style="display: none;"
+		                value="&nbsp;&nbsp;确认回款&nbsp;&nbsp;" onClick="payOut()">&nbsp;&nbsp;
+	        </c:if>
+	        
+	        <input name="bu1"
+	                type="button" class="button_class" value="&nbsp;审核通过&nbsp;"
+	                onclick="check()" />&nbsp;&nbsp;<input type="button" name="bu2"
+	                class="button_class" value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;"
+	                onclick="reject()" />&nbsp;&nbsp;
+			<input
+				type="button" class="button_class"
+				value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;
 		</c:if>	
 		
 		
-		
+		<c:if test="${queryType == '10'}">
+             <input type="button" class="button_class" value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;
+        </c:if>
 		
 		<c:if test="${queryType == '5'}">
 		<input type="button" class="button_class"

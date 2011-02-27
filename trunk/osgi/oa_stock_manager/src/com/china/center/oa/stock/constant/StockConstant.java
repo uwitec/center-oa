@@ -19,9 +19,9 @@ public interface StockConstant
     int STOCK_STATUS_INIT = 0;
 
     /**
-     * 提交
+     * 待事业部经理审核
      */
-    @Defined(key = "stockStatus", value = "待区域经理审核")
+    @Defined(key = "stockStatus", value = "待事业部经理审核")
     int STOCK_STATUS_SUBMIT = 1;
 
     /**

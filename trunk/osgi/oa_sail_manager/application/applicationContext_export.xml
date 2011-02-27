@@ -29,4 +29,6 @@
 
 	<osgi:service ref="outQueryDAO" interface="com.china.center.oa.sail.dao.OutQueryDAO" />
 
+	<osgi:service ref="unitViewDAO" interface="com.china.center.oa.sail.dao.UnitViewDAO" />
+
 </beans>

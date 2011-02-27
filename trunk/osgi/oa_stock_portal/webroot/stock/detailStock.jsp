@@ -65,8 +65,8 @@ function showDiv(id)
 			${bean.owerName}
 			</p:cell>
 
-			<p:cell title="区域">
-			${bean.locationName}
+			<p:cell title="事业部">
+			${bean.industryName}
 			</p:cell>
 
 			<p:cell title="状态">
