@@ -54,6 +54,7 @@ import com.china.center.oa.product.facade.ProductFacade;
 import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.vo.StorageLogVO;
 import com.china.center.oa.product.vo.StorageRelationVO;
+import com.china.center.oa.product.vs.ProductVSLocationBean;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.PublicConstant;
@@ -1037,7 +1038,7 @@ public class StorageAction extends DispatchAction
 
         int total = storageRelationDAO.countVOByCondition(condtion.toString());
 
-        PageSeparate page = new PageSeparate(total, 50);
+        PageSeparate page = new PageSeparate(total, 100);
 
         PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYSTORAGERELATIONINDEPOT);
 
@@ -1152,9 +1153,33 @@ public class StorageAction extends DispatchAction
         }
     }
 
+    /**
+     * hasInSailLocation
+     * 
+     * @param productId
+     * @param sailLocation
+     * @param user
+     * @return
+     */
     private boolean hasInSailLocation(String productId, String sailLocation, StafferBean user)
     {
-        return productVSLocationDAO.countByProductIdAndLocationId(productId, user.getIndustryId()) > 0;
+        List<ProductVSLocationBean> list = productVSLocationDAO.queryEntityBeansByFK(productId);
+
+        // 如果没有设置就是全部可以销售
+        if (list.size() == 0)
+        {
+            return true;
+        }
+
+        for (ProductVSLocationBean productVSLocationBean : list)
+        {
+            if (productVSLocationBean.getLocationId().equals(user.getIndustryId()))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private ConditionParse setRptQueryProductCondition(HttpServletRequest request)

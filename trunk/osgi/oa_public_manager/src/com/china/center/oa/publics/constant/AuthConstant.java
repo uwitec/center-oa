@@ -570,6 +570,11 @@ public interface AuthConstant
     String SAIL_TRANSPORT_MANAGER = "1412";
 
     /**
+     * 查询部下的申请单(5以下的)
+     */
+    String SAIL_QUERY_SUB = "1413";
+
+    /**
      * 提交入库单
      */
     String BUY_SUBMIT = "1501";

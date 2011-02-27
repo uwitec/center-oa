@@ -66,7 +66,7 @@ public class DBJob implements CommonJob
                               + getPassword()
                               + " "
                               + getDb_name()
-                              + " --skip-opt --create-option --set-charset --default-character-set=gbk -e --max_allowed_packet=1047552 --net_buffer_length=16384>"
+                              + " --skip-opt --create-option --set-charset --default-character-set=utf8 -e --max_allowed_packet=1047552 --net_buffer_length=16384>"
                               + filePath;
 
             write.writeLine(content);

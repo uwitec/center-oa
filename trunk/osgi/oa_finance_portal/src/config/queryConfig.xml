@@ -61,6 +61,10 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
+        <condtion name="money" caption="金额">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
     </item>
     
     <item name="querySelfPayment" alias="queryPayment"/>

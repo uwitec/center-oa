@@ -159,12 +159,12 @@ function callBackFunLocation(data)
         
         var ck = '';
         
-        if (item.parentId == '1')
+        if (item.level == '1')
         {
         	ck = 'checked=true'
         }
         
-        var llog = '<input type=checkbox ' + ck + ' name=locationCheck value=' + item.id + '> ' + item.name + '<br>';
+        var llog = '<input type=checkbox ' + ck + ' name=locationCheck value=' + item.id + '> ' + item.parentId + '-->' + item.name + '<br>';
         
         htm += llog;
     }

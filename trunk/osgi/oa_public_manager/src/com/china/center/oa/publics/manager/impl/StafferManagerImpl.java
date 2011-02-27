@@ -106,14 +106,33 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
         {
             stafferVSPriBean.setStafferId(bean.getId());
 
-            PrincipalshipBean second = orgManager.findByIdAndSpecialLevel(stafferVSPriBean
-                .getPrincipalshipId(), 3);
+            PrincipalshipBean four = orgManager.findByIdAndSpecialLevel(stafferVSPriBean
+                .getPrincipalshipId(), 4);
 
-            if (second != null && OrgConstant.ORG_BIG_DEPARTMENT.equals(second.getParentId()))
+            if (four != null)
             {
-                set.add(second.getId());
+                PrincipalshipBean three = principalshipDAO.find(four.getParentId());
 
-                industryId = second.getId();
+                if (three != null && OrgConstant.ORG_BIG_DEPARTMENT.equals(three.getParentId()))
+                {
+                    set.add(four.getId());
+
+                    // 四级组织ID
+                    industryId = four.getId();
+
+                    PrincipalshipBean five = orgManager.findByIdAndSpecialLevel(stafferVSPriBean
+                        .getPrincipalshipId(), 5);
+
+                    if (five != null)
+                    {
+                        if ( !StringTools.isNullOrNone(bean.getIndustryId2()))
+                        {
+                            throw new MYException("职员只能在一个事业部下面的一个5级组织下");
+                        }
+
+                        bean.setIndustryId2(five.getId());
+                    }
+                }
             }
         }
 
@@ -184,14 +203,33 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
         {
             stafferVSPriBean.setStafferId(bean.getId());
 
-            PrincipalshipBean second = orgManager.findByIdAndSpecialLevel(stafferVSPriBean
-                .getPrincipalshipId(), 3);
+            PrincipalshipBean four = orgManager.findByIdAndSpecialLevel(stafferVSPriBean
+                .getPrincipalshipId(), 4);
 
-            if (second != null && OrgConstant.ORG_BIG_DEPARTMENT.equals(second.getParentId()))
+            if (four != null)
             {
-                set.add(second.getId());
+                PrincipalshipBean three = principalshipDAO.find(four.getParentId());
 
-                industryId = second.getId();
+                if (three != null && OrgConstant.ORG_BIG_DEPARTMENT.equals(three.getParentId()))
+                {
+                    set.add(four.getId());
+
+                    // 四级组织ID
+                    industryId = four.getId();
+
+                    PrincipalshipBean five = orgManager.findByIdAndSpecialLevel(stafferVSPriBean
+                        .getPrincipalshipId(), 5);
+
+                    if (five != null)
+                    {
+                        if ( !StringTools.isNullOrNone(bean.getIndustryId2()))
+                        {
+                            throw new MYException("职员只能在一个事业部下面的一个5级组织下");
+                        }
+
+                        bean.setIndustryId2(five.getId());
+                    }
+                }
             }
         }
 

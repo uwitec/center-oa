@@ -74,8 +74,16 @@ public class StafferBean implements Serializable
     @Join(tagClass = LocationBean.class)
     private String locationId = "";
 
+    /**
+     * 四级组织
+     */
     @Join(tagClass = PrincipalshipBean.class, type = JoinType.LEFT)
     private String industryId = "";
+
+    /**
+     * 五级组织
+     */
+    private String industryId2 = "";
 
     @Html(title = "性别", must = true, type = Element.SELECT)
     private int sex = PublicConstant.SEX_MAN;
@@ -730,6 +738,23 @@ public class StafferBean implements Serializable
     }
 
     /**
+     * @return the industryId2
+     */
+    public String getIndustryId2()
+    {
+        return industryId2;
+    }
+
+    /**
+     * @param industryId2
+     *            the industryId2 to set
+     */
+    public void setIndustryId2(String industryId2)
+    {
+        this.industryId2 = industryId2;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -770,6 +795,9 @@ public class StafferBean implements Serializable
             .append(TAB)
             .append("industryId = ")
             .append(this.industryId)
+            .append(TAB)
+            .append("industryId2 = ")
+            .append(this.industryId2)
             .append(TAB)
             .append("sex = ")
             .append(this.sex)

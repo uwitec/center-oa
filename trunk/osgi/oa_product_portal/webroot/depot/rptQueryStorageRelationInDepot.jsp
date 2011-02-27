@@ -94,7 +94,7 @@ function queryAbs()
 <input type="hidden" value="${sailLocation}" name="sailLocation">
 <p:navigation
 	height="22">
-	<td width="550" class="navigation">产品库存管理(最多返回前50个)</td>
+	<td width="550" class="navigation">产品库存管理(最多返回前100个)</td>
 	<td width="85"></td>
 </p:navigation> <br>
 

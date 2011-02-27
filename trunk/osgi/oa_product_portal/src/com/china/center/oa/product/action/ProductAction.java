@@ -1662,13 +1662,13 @@ public class ProductAction extends DispatchAction
 
         for (PrincipalshipBean locationBean : locationList)
         {
-            locationBean.setParentId("0");
+            locationBean.setLevel(0);
 
             for (ProductVSLocationBean vs : beanList)
             {
                 if (vs.getLocationId().equals(locationBean.getId()))
                 {
-                    locationBean.setParentId("1");
+                    locationBean.setLevel(1);
                 }
             }
         }

@@ -553,7 +553,25 @@ public class OrgManagerImpl extends AbstractListenerManager<OrgListener> impleme
 
     public List<PrincipalshipBean> listAllIndustry()
     {
-        return principalshipDAO.queryEntityBeansByFK(OrgConstant.ORG_BIG_DEPARTMENT);
+        List<PrincipalshipBean> list = new ArrayList<PrincipalshipBean>();
+
+        List<PrincipalshipBean> three = principalshipDAO
+            .queryEntityBeansByFK(OrgConstant.ORG_BIG_DEPARTMENT);
+
+        for (PrincipalshipBean principalshipBean : three)
+        {
+            List<PrincipalshipBean> subList = principalshipDAO
+                .queryEntityBeansByFK(principalshipBean.getId());
+
+            for (PrincipalshipBean four : subList)
+            {
+                four.setParentId(principalshipBean.getName());
+            }
+
+            list.addAll(subList);
+        }
+
+        return list;
     }
 
     /**
