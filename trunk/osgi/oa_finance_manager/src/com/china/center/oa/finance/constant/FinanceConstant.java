@@ -83,6 +83,12 @@ public interface FinanceConstant
     int INBILL_TYPE_INTEREST = 3;
 
     /**
+     * 其他
+     */
+    @Defined(key = "inbillType", value = "其他")
+    int INBILL_TYPE_OTHER = 99;
+
+    /**
      * 可使用
      */
     @Defined(key = "paymentUseall", value = "未使用")
@@ -230,6 +236,12 @@ public interface FinanceConstant
      */
     @Defined(key = "outbillType", value = "税金")
     int OUTBILL_TYPE_DUTY = 9;
+
+    /**
+     * 其他
+     */
+    @Defined(key = "outbillType", value = "其他")
+    int OUTBILL_TYPE_OTHER = 99;
 
     /**
      * 销售单
