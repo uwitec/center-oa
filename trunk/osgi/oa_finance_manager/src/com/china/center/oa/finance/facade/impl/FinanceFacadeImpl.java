@@ -9,6 +9,8 @@
 package com.china.center.oa.finance.facade.impl;
 
 
+import java.util.List;
+
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.BankBean;
@@ -162,6 +164,25 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         if (containAuth(user, AuthConstant.PAYMENT_OPR))
         {
             return paymentManager.addBean(user, bean);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    public boolean addPaymentBeanList(String userId, List<PaymentBean> beanList)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, beanList);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.PAYMENT_OPR))
+        {
+            return paymentManager.addBeanList(user, beanList);
         }
         else
         {

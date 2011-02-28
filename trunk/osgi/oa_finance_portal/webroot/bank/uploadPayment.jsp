@@ -69,7 +69,7 @@ function getBank(obj)
 <p:body width="100%">
 
 	<p:title>
-		<td class="caption"><strong>选择文件：</strong></td>
+		<td class="caption"><strong>选择文件：(数据一定少于2000条,否则系统容易错误)</strong></td>
 	</p:title>
 
 	<p:line flag="0" />

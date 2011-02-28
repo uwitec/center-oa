@@ -72,7 +72,7 @@ public class InBillBean implements Serializable
     private double moneys = 0.0d;
 
     @Html(title = "客户", name = "customerName", readonly = true, must = true)
-    @Join(tagClass = CustomerBean.class)
+    @Join(tagClass = CustomerBean.class, type = JoinType.LEFT)
     private String customerId = "";
 
     /**

@@ -85,7 +85,7 @@ public interface FinanceConstant
     /**
      * 可使用
      */
-    @Defined(key = "paymentUseall", value = "可使用")
+    @Defined(key = "paymentUseall", value = "未使用")
     int PAYMENT_USEALL_INIT = 0;
 
     /**

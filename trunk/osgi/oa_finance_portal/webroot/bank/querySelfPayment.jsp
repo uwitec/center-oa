@@ -34,7 +34,7 @@ function load()
      preload();
      
      guidMap = {
-         title: '回款列表',
+         title: '回款列表(回款认领被驳回后想重新认领请先退领再认领)',
          url: gurl + 'querySelfPayment',
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} lstafferId={stafferId} luseall={useall}>', width : 40, align: 'center'},
@@ -47,7 +47,7 @@ function load()
              {display: '回款来源', name : 'fromer', width : '12%'},
              {display: '回款金额', name : 'money', width : '8%', toFixed: 2},
              {display: '回款日期', name : 'receiveTime', width : '8%', sortable : true,},
-             {display: '标识', name : 'id', sortable : true, width : 'auto'}
+             {display: '标识', name : 'refId', sortable : true, width : 'auto'}
              ],
          extAtt: {
              //name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}

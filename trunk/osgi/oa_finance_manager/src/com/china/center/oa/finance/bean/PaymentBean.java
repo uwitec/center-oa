@@ -14,9 +14,12 @@ import java.io.Serializable;
 import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.FK;
+import com.china.center.jdbc.annotation.Html;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.annotation.Unique;
+import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
@@ -40,21 +43,30 @@ public class PaymentBean implements Serializable
 
     private String name = "";
 
+    @Html(title = "回款来源", must = true)
     private String fromer = "";
 
+    @Unique(dependFields = "refId")
     @FK(index = AnoConstant.FK_DEFAULT)
     @Join(tagClass = BankBean.class)
+    @Html(title = "银行帐户", type = Element.SELECT, must = true)
     private String bankId = "";
 
     @FK(index = AnoConstant.FK_FIRST)
     @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
     private String stafferId = "";
 
+    /**
+     * customerId
+     */
     @Join(tagClass = CustomerBean.class, type = JoinType.LEFT)
     private String customerId = "";
 
+    private String refId = "";
+
     private String batchId = "";
 
+    @Html(title = "类型", type = Element.SELECT, must = true)
     private int type = FinanceConstant.PAYMENT_PAY_PUBLIC;
 
     private int status = FinanceConstant.PAYMENT_STATUS_INIT;
@@ -66,6 +78,7 @@ public class PaymentBean implements Serializable
      */
     private double useMoney = 0.0d;
 
+    @Html(title = "金额", must = true, type = Element.DOUBLE)
     private double money = 0.0d;
 
     /**
@@ -78,6 +91,7 @@ public class PaymentBean implements Serializable
      */
     private String logTime = "";
 
+    @Html(title = "备注", type = Element.TEXTAREA, maxLength = 200)
     private String description = "";
 
     /**
@@ -405,6 +419,23 @@ public class PaymentBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the refId
+     */
+    public String getRefId()
+    {
+        return refId;
+    }
+
+    /**
+     * @param refId
+     *            the refId to set
+     */
+    public void setRefId(String refId)
+    {
+        this.refId = refId;
     }
 
 }

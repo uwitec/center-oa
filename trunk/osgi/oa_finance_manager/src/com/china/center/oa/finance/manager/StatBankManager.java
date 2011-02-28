@@ -24,7 +24,7 @@ public interface StatBankManager
     void statBank();
 
     /**
-     * findTotalByBankId
+     * 查询帐号的余额
      * 
      * @param bankId
      * @return

@@ -75,6 +75,20 @@ public class PaymentManagerImpl implements PaymentManager
     }
 
     @Transactional(rollbackFor = MYException.class)
+    public boolean addBeanList(User user, List<PaymentBean> beanList)
+        throws MYException
+    {
+        for (PaymentBean paymentBean : beanList)
+        {
+            paymentBean.setId(commonDAO.getSquenceString20());
+
+            paymentBean.setLogTime(TimeTools.now());
+        }
+
+        return paymentDAO.saveAllEntityBeans(beanList);
+    }
+
+    @Transactional(rollbackFor = MYException.class)
     public boolean deleteBean(User user, String id)
         throws MYException
     {
@@ -89,6 +103,8 @@ public class PaymentManagerImpl implements PaymentManager
         {
             throw new MYException("回款已经被人认领,不能删除");
         }
+
+        // TODO 如果自动生成的收款单已经被统计锁定是不能删除的
 
         return paymentDAO.deleteEntityBean(id);
     }

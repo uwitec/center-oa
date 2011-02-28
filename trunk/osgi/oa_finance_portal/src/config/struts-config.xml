@@ -5,6 +5,7 @@
             type="org.springframework.web.struts.DelegatingActionProxy"
             validate="false">
             <forward name="addBank" path="/bank/addBank.jsp" />
+            <forward name="addPayment" path="/bank/addPayment.jsp" />
             <forward name="updateBank" path="/bank/updateBank.jsp" />
             <forward name="queryBank" path="/bank/queryBank.jsp" />
             <forward name="rptQueryBank" path="/bank/rptQueryBank.jsp" />
@@ -15,6 +16,7 @@
             <forward name="detailPaymentApply" path="/bank/detailPaymentApply.jsp" />
             <forward name="handlePaymentApply" path="/bank/handlePaymentApply.jsp" />
             <forward name="queryPaymentApply" path="/bank/queryPaymentApply.jsp" />
+            <forward name="queryPayment" path="/bank/queryPayment.jsp" />
             <forward name="querySelfPaymentApply" path="/bank/querySelfPaymentApply.jsp" />
             <forward name="refBill" path="/bank/refBill.jsp" />
         </action>

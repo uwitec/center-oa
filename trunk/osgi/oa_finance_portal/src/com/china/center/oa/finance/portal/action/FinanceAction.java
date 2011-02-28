@@ -11,6 +11,7 @@ package com.china.center.oa.finance.portal.action;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -475,6 +476,50 @@ public class FinanceAction extends DispatchAction
     }
 
     /**
+     * addPaymentk
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward addPayment(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        PaymentBean bean = new PaymentBean();
+
+        try
+        {
+            BeanUtil.getBean(bean, request);
+
+            bean.setRefId("99" + SequenceTools.getSequence());
+
+            bean.setBatchId(SequenceTools.getSequence());
+
+            bean.setReceiveTime(TimeTools.now_short());
+
+            User user = Helper.getUser(request);
+
+            financeFacade.addPaymentBean(user.getId(), bean);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功增加帐户:" + bean.getName());
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "增加失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        return mapping.findForward("queryPayment");
+    }
+
+    /**
      * updateBank
      * 
      * @param mapping
@@ -705,6 +750,7 @@ public class FinanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
+    @Deprecated
     public ActionForward drawPayment2(ActionMapping mapping, ActionForm form,
                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
@@ -852,13 +898,7 @@ public class FinanceAction extends DispatchAction
 
         apply.setVsList(vsList);
 
-        // 没有申请付款
-        if (vsList.size() == 0)
-        {
-            return;
-        }
-
-        // 没有全部使用,增加预收
+        // 没有全部使用,增加预收(这里保证全部使用)
         if (total < pay.getMoney())
         {
             PaymentVSOutBean vs = new PaymentVSOutBean();
@@ -1110,6 +1150,27 @@ public class FinanceAction extends DispatchAction
     }
 
     /**
+     * preForRefPayment
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward preForAddPayment(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        List<BankBean> bankList = bankDAO.listEntityBeans();
+
+        request.setAttribute("bankList", bankList);
+
+        return mapping.findForward("addPayment");
+    }
+
+    /**
      * 委托代销勾款
      * 
      * @param mapping
@@ -1211,15 +1272,15 @@ public class FinanceAction extends DispatchAction
             return mapping.findForward("uploadPayment");
         }
 
-        int success = 0;
-
-        int fault = 0;
-
         StringBuilder builder = new StringBuilder();
 
         String bankId = rds.getParameter("bankId");
 
         String batchId = SequenceTools.getSequence();
+
+        List<PaymentBean> payList = new LinkedList<PaymentBean>();
+
+        boolean allSuccess = true;
 
         if (rds.haveStream())
         {
@@ -1242,18 +1303,20 @@ public class FinanceAction extends DispatchAction
                     // 序号 回款来源 回款金额 回款日期 备注
                     int currentNumber = reader.getCurrentLineNumber();
 
-                    boolean addSucess = false;
-
                     if (obj.length >= 5)
                     {
                         try
                         {
-                            addSucess = createPayment(user, bankId, obj, batchId);
+                            createPayment(user, bankId, obj, batchId, payList);
                         }
                         catch (MYException e)
                         {
                             builder.append("第[" + currentNumber + "]错误:").append(
                                 e.getErrorContent()).append("<br>");
+
+                            allSuccess = false;
+
+                            break;
                         }
                     }
                     else
@@ -1262,16 +1325,16 @@ public class FinanceAction extends DispatchAction
                             .append("第[" + currentNumber + "]错误:")
                             .append("数据长度不足4格,备注可以为空")
                             .append("<br>");
-                    }
 
-                    if (addSucess)
-                    {
-                        success++ ;
+                        allSuccess = false;
+
+                        break;
                     }
-                    else
-                    {
-                        fault++ ;
-                    }
+                }
+
+                if (allSuccess && payList.size() > 0)
+                {
+                    financeFacade.addPaymentBeanList(user.getId(), payList);
                 }
             }
             catch (Exception e)
@@ -1288,19 +1351,57 @@ public class FinanceAction extends DispatchAction
 
         StringBuilder result = new StringBuilder();
 
-        result.append("导入成功:").append(success).append("条,失败:").append(fault).append("条<br>");
-
-        result.append(builder.toString());
+        if (allSuccess)
+        {
+            result.append("导入成功:").append(payList.size()).append("条<br>");
+        }
+        else
+        {
+            result.append(builder.toString());
+        }
 
         request.setAttribute(KeyConstant.MESSAGE, result.toString());
 
         return mapping.findForward("uploadPayment");
     }
 
-    private boolean createPayment(User user, String bankId, String[] obj, String batchId)
+    /**
+     * createPayment
+     * 
+     * @param user
+     * @param bankId
+     * @param obj
+     * @param batchId
+     * @param payList
+     * @return
+     * @throws MYException
+     */
+    private boolean createPayment(User user, String bankId, String[] obj, String batchId,
+                                  List<PaymentBean> payList)
         throws MYException
     {
         PaymentBean bean = new PaymentBean();
+
+        boolean allEmpty = true;
+
+        for (int i = 0; i < obj.length; i++ )
+        {
+            if ( !StringTools.isNullOrNone(obj[i]))
+            {
+                allEmpty = false;
+                break;
+            }
+        }
+
+        if (allEmpty)
+        {
+            return true;
+        }
+
+        if (StringTools.isNullOrNone(obj[0]))
+        {
+            throw new MYException("缺少唯一标识");
+        }
 
         if (StringTools.isNullOrNone(obj[1]))
         {
@@ -1321,6 +1422,7 @@ public class FinanceAction extends DispatchAction
             bean.setType(FinanceConstant.PAYMENT_PAY_PUBLIC);
         }
 
+        bean.setRefId(obj[0].trim());
         bean.setBankId(bankId);
         bean.setFromer(obj[2]);
         bean.setMoney(MathTools.parseDouble(obj[3]));
@@ -1332,7 +1434,20 @@ public class FinanceAction extends DispatchAction
             bean.setDescription(obj[5]);
         }
 
-        return financeFacade.addPaymentBean(user.getId(), bean);
+        PaymentBean oldPay = paymentDAO.findByUnique(bean.getBankId(), bean.getRefId());
+
+        if (oldPay != null && oldPay.getMoney() != bean.getMoney())
+        {
+            throw new MYException("导入金额出现错误,标识[%s]已经存在,且金额不一致", bean.getRefId());
+        }
+
+        // 插入新的值
+        if (oldPay == null)
+        {
+            payList.add(bean);
+        }
+
+        return true;
     }
 
     /**

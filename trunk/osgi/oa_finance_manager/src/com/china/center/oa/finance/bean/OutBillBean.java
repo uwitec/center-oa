@@ -76,8 +76,11 @@ public class OutBillBean implements Serializable
     @Html(title = "金额", type = Element.DOUBLE, must = true)
     private double moneys = 0.0d;
 
+    /**
+     * TODO 建议使用VIEW代替供应商/客户
+     */
     @Html(title = "供应商", name = "provideName", readonly = true, must = true)
-    @Join(tagClass = ProviderBean.class)
+    @Join(tagClass = ProviderBean.class, type = JoinType.LEFT)
     private String provideId = "";
 
     /**
@@ -398,15 +401,59 @@ public class OutBillBean implements Serializable
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue.append("OutBillBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("type = ").append(this.type).append(TAB).append("payType = ").append(this.payType).append(TAB).append(
-            "status = ").append(this.status).append(TAB).append("lock = ").append(this.lock).append(TAB).append(
-            "bankId = ").append(this.bankId).append(TAB).append("stockId = ").append(this.stockId).append(TAB).append(
-            "moneys = ").append(this.moneys).append(TAB).append("provideId = ").append(this.provideId).append(TAB).append(
-            "stafferId = ").append(this.stafferId).append(TAB).append("ownerId = ").append(this.ownerId).append(TAB).append(
-            "locationId = ").append(this.locationId).append(TAB).append("destBankId = ").append(this.destBankId).append(
-            TAB).append("refBillId = ").append(this.refBillId).append(TAB).append("logTime = ").append(this.logTime).append(
-            TAB).append("description = ").append(this.description).append(TAB).append(" )");
+        retValue
+            .append("OutBillBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("payType = ")
+            .append(this.payType)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("lock = ")
+            .append(this.lock)
+            .append(TAB)
+            .append("bankId = ")
+            .append(this.bankId)
+            .append(TAB)
+            .append("stockId = ")
+            .append(this.stockId)
+            .append(TAB)
+            .append("moneys = ")
+            .append(this.moneys)
+            .append(TAB)
+            .append("provideId = ")
+            .append(this.provideId)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("ownerId = ")
+            .append(this.ownerId)
+            .append(TAB)
+            .append("locationId = ")
+            .append(this.locationId)
+            .append(TAB)
+            .append("destBankId = ")
+            .append(this.destBankId)
+            .append(TAB)
+            .append("refBillId = ")
+            .append(this.refBillId)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

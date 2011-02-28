@@ -87,7 +87,10 @@ public class BillManagerImpl implements BillManager
         {
             bean.setId(commonDAO.getSquenceString20());
 
-            bean.setLogTime(TimeTools.now());
+            if (StringTools.isNullOrNone(bean.getLogTime()))
+            {
+                bean.setLogTime(TimeTools.now());
+            }
 
             // 验证销售单绑定策略
             if ( !StringTools.isNullOrNone(bean.getOutId()))

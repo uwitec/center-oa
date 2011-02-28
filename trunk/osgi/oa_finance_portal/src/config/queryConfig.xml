@@ -57,12 +57,18 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
-        <condtion name="id" caption="标识">
+        <condtion name="refId" caption="标识">
             <opr>like</opr>
             <type>text</type>
         </condtion>
-        <condtion name="money" caption="金额">
-            <opr>=</opr>
+        <condtion name="amoney" filed="money" caption="金额从">
+            <opr>&gt;=</opr>
+            <datatype>1</datatype>
+            <type>text</type>
+        </condtion>
+        <condtion name="bmoney" filed="money" caption="到">
+            <opr>&lt;=</opr>
+            <datatype>1</datatype>
             <type>text</type>
         </condtion>
     </item>

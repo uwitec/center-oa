@@ -73,18 +73,21 @@ function getStaffers(oo)
 			<p:pro field="type">
 				<p:option type="inbillType"/>
 			</p:pro>
-
-            <p:pro field="customerId" innerString="size=60">
+            
+            <!--  
+            <p:pro field="customerId" innerString="size=60 style='display: none'">
                 <input type="button" value="&nbsp;选 择&nbsp;" name="qout1" id="qout1"
                     class="button_class" onclick="selectCus()">&nbsp;
             </p:pro>
             
-            <p:pro field="ownerId" innerString="size=60">
+            <p:pro field="ownerId" innerString="size=60 style='display: none'">
                 <input type="button" value="&nbsp;选 择&nbsp;" name="qout2" id="qout2"
                     class="button_class" onclick="selectStaffer()">&nbsp;
                 <input type="button" value="&nbsp;清 空&nbsp;" name="qout3" id="qout3"
                         class="button_class" onclick="clears()">&nbsp;
             </p:pro>
+            
+            -->
             
             <p:pro field="moneys"/>
 

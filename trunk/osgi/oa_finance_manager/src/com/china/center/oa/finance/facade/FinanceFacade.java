@@ -9,6 +9,8 @@
 package com.china.center.oa.finance.facade;
 
 
+import java.util.List;
+
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.bean.InBillBean;
@@ -38,6 +40,9 @@ public interface FinanceFacade
         throws MYException;
 
     boolean addPaymentBean(String userId, PaymentBean bean)
+        throws MYException;
+
+    boolean addPaymentBeanList(String userId, List<PaymentBean> beanList)
         throws MYException;
 
     boolean updatePaymentBean(String userId, PaymentBean bean)

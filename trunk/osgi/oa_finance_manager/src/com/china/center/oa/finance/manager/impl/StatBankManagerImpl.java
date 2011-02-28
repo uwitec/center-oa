@@ -26,6 +26,7 @@ import com.china.center.oa.finance.bean.StatBankBean;
 import com.china.center.oa.finance.dao.BankDAO;
 import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
+import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.dao.StatBankDAO;
 import com.china.center.oa.finance.manager.StatBankManager;
 import com.china.center.oa.publics.dao.CommonDAO;
@@ -51,6 +52,8 @@ public class StatBankManagerImpl implements StatBankManager
     private OutBillDAO outBillDAO = null;
 
     private CommonDAO commonDAO = null;
+
+    private PaymentDAO paymentDAO = null;
 
     private BankDAO bankDAO = null;
 
@@ -239,8 +242,11 @@ public class StatBankManagerImpl implements StatBankManager
 
         inCon.addCondition("InBillBean.logTime", "<=", endTime);
 
+        // 获取没有认领的回款
+        double sumNotUserByBankId = paymentDAO.sumNotUserByBankId(bankId);
+
         // 总收入
-        double inTotal = inBillDAO.sumByCondition(inCon) + lastStat.getTotal();
+        double inTotal = inBillDAO.sumByCondition(inCon) + lastStat.getTotal() + sumNotUserByBankId;
 
         ConditionParse outCon = new ConditionParse();
 
@@ -361,5 +367,22 @@ public class StatBankManagerImpl implements StatBankManager
     public void setTransactionManager(PlatformTransactionManager transactionManager)
     {
         this.transactionManager = transactionManager;
+    }
+
+    /**
+     * @return the paymentDAO
+     */
+    public PaymentDAO getPaymentDAO()
+    {
+        return paymentDAO;
+    }
+
+    /**
+     * @param paymentDAO
+     *            the paymentDAO to set
+     */
+    public void setPaymentDAO(PaymentDAO paymentDAO)
+    {
+        this.paymentDAO = paymentDAO;
     }
 }

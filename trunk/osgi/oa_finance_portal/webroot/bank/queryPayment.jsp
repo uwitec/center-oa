@@ -33,14 +33,15 @@ function load()
              {display: '认领人', name : 'stafferName', cc: 'paymentStatus', width : '5%'},
              {display: '回款来源', name : 'fromer', width : '12%'},
              {display: '回款/使用', name : 'money', content: '{money}/{useMoney}',  width : '10%', toFixed: 2},
-             {display: '回款批次', name : 'batchId', width : '10%', sortable : true,},
              {display: '回款时间', name : 'receiveTime', width : '8%', sortable : true,},
-             {display: '标识', name : 'id', sortable : true, width : 'auto'}
+             {display: '回款批次', name : 'batchId', width : '10%', sortable : true,},
+             {display: '标识', name : 'refId', sortable : true, width : 'auto'}
              ],
          extAtt: {
              //name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
+             {id: 'add', bclass: 'add',  onpress : addBean, auth: '1602'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1602'},
              {id: 'del1', bclass: 'del',  caption: '删除批次', onpress : delBean1, auth: '1602'},
              {id: 'search', bclass: 'search', onpress : doSearch}

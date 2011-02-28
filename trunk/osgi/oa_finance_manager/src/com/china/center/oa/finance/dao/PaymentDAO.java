@@ -24,5 +24,5 @@ import com.china.center.oa.finance.vo.PaymentVO;
  */
 public interface PaymentDAO extends DAO<PaymentBean, PaymentVO>
 {
-
+    double sumNotUserByBankId(String bankId);
 }

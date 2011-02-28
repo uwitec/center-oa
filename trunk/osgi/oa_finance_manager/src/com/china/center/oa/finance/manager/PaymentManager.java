@@ -9,6 +9,8 @@
 package com.china.center.oa.finance.manager;
 
 
+import java.util.List;
+
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.PaymentBean;
@@ -25,6 +27,9 @@ import com.china.center.oa.finance.bean.PaymentBean;
 public interface PaymentManager
 {
     boolean addBean(User user, PaymentBean bean)
+        throws MYException;
+
+    boolean addBeanList(User user, List<PaymentBean> beanList)
         throws MYException;
 
     boolean updateBean(User user, PaymentBean bean)
