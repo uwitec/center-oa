@@ -140,10 +140,66 @@ function updateInvoice()
     }
 }
 
+var dutyMap = {};
+
+<c:forEach items="${dutyList}" var="item">
+    dutyMap['${item.id}'] = [];
+    <c:forEach items="${item.outInvoiceBeanList}" var="item2" varStatus="vs">
+        dutyMap['${item.id}'][${vs.index}] = '${item2.id}';
+    </c:forEach>
+</c:forEach>
+
+function showInvoice(dutyId)
+{
+    var list = document.getElementsByTagName('p');
+    
+    var iList = dutyMap[dutyId];
+    
+    for (var i = 0; i < list.length; i++)
+    {
+        var ele = list[i];
+        
+        if (isIn(iList, ele.id))
+        {
+            $v(ele, true);
+        }
+        else
+        {
+            $v(ele, false);
+        }
+    }
+}
+
+function isIn(list, id)
+{
+    if (id.indexOf('s_') != 0)
+    {
+        return true;
+    }
+    
+    for (var i = 0; i < list.length; i++)
+    {
+        if (('s_' + list[i]) == id)
+        {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 function preUpdateInvoice()
 {
+    if (getRadio('fullId').pinvoiceid == '')
+    {
+        alert('销售单开单选择不开发票,不能修改开票类型!');
+        return;
+    }
+    
     if (parseFloat(getRadio('fullId').pinvoicemoney) == 0)
     {
+        showInvoice(getRadio('fullId').pdutyid);
+        
         setRadioValue('invoices', getRadio('fullId').pinvoiceid);
         
         $('#dlg').dialog({closed:false});
@@ -466,6 +522,7 @@ function load()
 								statuss='${item.status}' 
 								pinvoicemoney='${item.invoiceMoney}' 
 								pinvoiceid='${item.invoiceId}' 
+								pdutyid='${item.dutyId}' 
 								value="${item.fullId}" ${vs.index== 0 ? "checked" : ""}/></td>
 							<td align="center"
 							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}">${item.mark ? "<font color=blue><B>" : ""}
@@ -561,7 +618,7 @@ function load()
 <div id="dlg" title="选择发票类型" style="width:400px;">
     <div style="padding:20px;height:200px;" id="dia_inner" title="">
     <c:forEach items="${invoiceList}" var="item">
-    <input type="radio" name="invoices" value="${item.id}">${item.fullName}<br>
+    <p id="s_${item.id}"><input type="radio" name="invoices" value="${item.id}">${item.fullName}<br></p>
     </c:forEach>
     </div>
 </div>

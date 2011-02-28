@@ -29,7 +29,7 @@ import com.china.center.oa.publics.constant.DutyConstant;
  * @see DutyBean
  * @since 1.0
  */
-@Entity(cache = true)
+@Entity(cache = false)
 @Table(name = "T_CENTER_DUTYENTITY")
 public class DutyBean implements DataClone<DutyBean>, Serializable
 {
@@ -59,6 +59,7 @@ public class DutyBean implements DataClone<DutyBean>, Serializable
     {
         this.id = dutyBean.id;
         this.name = dutyBean.name;
+        this.type = dutyBean.type;
         this.icp = dutyBean.icp;
         this.description = dutyBean.description;
     }

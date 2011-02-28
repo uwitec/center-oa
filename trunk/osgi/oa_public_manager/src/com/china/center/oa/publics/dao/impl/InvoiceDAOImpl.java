@@ -45,4 +45,43 @@ public class InvoiceDAOImpl extends BaseDAO<InvoiceBean, InvoiceBean> implements
 
         return this.queryEntityBeansByCondition(condition);
     }
+
+    public List<InvoiceBean> queryForwardInByDutyId(String dutyId)
+    {
+        String sql = "select t1.* from T_CENTER_INVOICE t1, T_CENTER_DUTYENTITY t2 , T_CENTER_VS_DUTYINV t3 "
+                     + "where t1.forward = ? and t1.id = t3.invoiceId and t3.dutyType = t2.type and t2.id = ?";
+
+        return this.jdbcOperation
+            .queryObjectsBySql(sql, InvoiceConstant.INVOICE_FORWARD_IN, dutyId)
+            .list(this.claz);
+    }
+
+    public List<InvoiceBean> queryForwardInByType(int type)
+    {
+        String sql = "select t1.* from T_CENTER_INVOICE t1, T_CENTER_VS_DUTYINV t2 "
+                     + "where t1.forward = ? and t1.id = t2.invoiceId and t2.dutyType = ?";
+
+        return this.jdbcOperation
+            .queryObjectsBySql(sql, InvoiceConstant.INVOICE_FORWARD_IN, type)
+            .list(this.claz);
+    }
+
+    public List<InvoiceBean> queryForwardOutByDutyId(String dutyId)
+    {
+        String sql = "select t1.* from T_CENTER_INVOICE t1, T_CENTER_DUTYENTITY t2 , T_CENTER_VS_DUTYINV t3 "
+                     + "where t1.forward = ? and t1.id = t3.invoiceId and t3.dutyType = t2.type and t2.id = ?";
+
+        return this.jdbcOperation.queryObjectsBySql(sql, InvoiceConstant.INVOICE_FORWARD_OUT,
+            dutyId).list(this.claz);
+    }
+
+    public List<InvoiceBean> queryForwardOutByType(int type)
+    {
+        String sql = "select t1.* from T_CENTER_INVOICE t1, T_CENTER_VS_DUTYINV t2 "
+                     + "where t1.forward = ? and t1.id = t2.invoiceId and t2.dutyType = ?";
+
+        return this.jdbcOperation
+            .queryObjectsBySql(sql, InvoiceConstant.INVOICE_FORWARD_OUT, type)
+            .list(this.claz);
+    }
 }

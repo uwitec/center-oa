@@ -110,4 +110,6 @@
 
 	<osgi:service ref="stafferVSIndustryDAO" interface="com.china.center.oa.publics.dao.StafferVSIndustryDAO" />
 
+	<osgi:service ref="dutyVSInvoiceDAO" interface="com.china.center.oa.publics.dao.DutyVSInvoiceDAO" />
+
 </beans>

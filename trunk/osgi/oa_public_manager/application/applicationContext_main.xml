@@ -127,4 +127,6 @@
 
 	<bean id="stafferVSIndustryDAO" class="com.china.center.oa.publics.dao.impl.StafferVSIndustryDAOImpl" />
 
+	<bean id="dutyVSInvoiceDAO" class="com.china.center.oa.publics.dao.impl.DutyVSInvoiceDAOImpl" />
+
 </beans>

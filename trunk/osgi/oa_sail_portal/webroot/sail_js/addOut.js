@@ -231,6 +231,32 @@ function loadShow()
 			}
 		}
 	}
+	
+	var vsjson = vsJSON;
+	
+	//var invMap = {};
+    //var invFullMap = {};
+	
+	var dutyObj = $O('dutyId');
+	
+	var invObj = $O('invoiceId');
+	
+	removeAllItem(invObj);
+	
+	if (invMap[dutyObj.value] == '3')
+	{
+		setOption(invObj, '', '没有发票');
+	}
+	
+	for (var i = 0; i < vsjson.length; i++)
+	{
+		var item = vsjson[i];
+		
+		if (item.dutyType == invMap[dutyObj.value])
+        {
+            setOption(invObj, item.invoiceId, invFullMap[item.invoiceId]);
+        }
+	}
 }
 
 function clearArray(array, flag)

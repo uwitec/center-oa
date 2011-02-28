@@ -12,6 +12,7 @@ package com.china.center.oa.publics.dao.impl;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.dao.DutyDAO;
+import com.china.center.oa.publics.vo.DutyVO;
 
 
 /**
@@ -22,6 +23,6 @@ import com.china.center.oa.publics.dao.DutyDAO;
  * @see DutyDAOImpl
  * @since 1.0
  */
-public class DutyDAOImpl extends BaseDAO<DutyBean, DutyBean> implements DutyDAO
+public class DutyDAOImpl extends BaseDAO<DutyBean, DutyVO> implements DutyDAO
 {
 }

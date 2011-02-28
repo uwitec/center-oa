@@ -28,4 +28,12 @@ public interface InvoiceDAO extends DAO<InvoiceBean, InvoiceBean>
     List<InvoiceBean> listForwardIn();
 
     List<InvoiceBean> listForwardOut();
+
+    List<InvoiceBean> queryForwardInByDutyId(String dutyId);
+
+    List<InvoiceBean> queryForwardInByType(int type);
+
+    List<InvoiceBean> queryForwardOutByDutyId(String dutyId);
+
+    List<InvoiceBean> queryForwardOutByType(int type);
 }

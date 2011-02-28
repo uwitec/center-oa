@@ -8,8 +8,11 @@
  */
 package com.china.center.oa.publics.dao;
 
+
 import com.china.center.jdbc.inter.DAO;
 import com.china.center.oa.publics.bean.DutyBean;
+import com.china.center.oa.publics.vo.DutyVO;
+
 
 /**
  * DutyDAO
@@ -19,7 +22,7 @@ import com.china.center.oa.publics.bean.DutyBean;
  * @see DutyDAO
  * @since 1.0
  */
-public interface DutyDAO extends DAO<DutyBean, DutyBean>
+public interface DutyDAO extends DAO<DutyBean, DutyVO>
 {
 
 }

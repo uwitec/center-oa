@@ -13,10 +13,24 @@ var obj;
 
 var showJSON = JSON.parse('${showJSON}');
 
+var invoicesJSON = JSON.parse('${invoicesJSON}');
+
+var vsJSON = JSON.parse('${vsJSON}');
+
 function selectCustomer()
 {
     window.common.modal("../customer/customer.do?method=rptQuerySelfCustomer&stafferId=${user.stafferId}&load=1");
 }
+
+var invMap = {};
+var invFullMap = {};
+<c:forEach items="${invoiceList}" var="item">
+  invFullMap['${item.id}'] = '${item.fullName}';
+</c:forEach>
+
+<c:forEach items="${dutyList}" var="item">
+  invMap['${item.id}'] = '${item.type}';
+</c:forEach>
 
 //默认黑名单
 var BLACK_LEVEL = '90000000000000000000';
@@ -68,9 +82,9 @@ function resetReserve3()
 {
     removeAllItem($O('reserve3'));
         
+    setOption($O('reserve3'), '3', '事业部经理担保');  
     setOption($O('reserve3'), '2', '客户信用和业务员信用额度担保');  
     setOption($O('reserve3'), '1', '款到发货(黑名单客户/零售)');  
-    setOption($O('reserve3'), '3', '事业部经理担保');  
 }
 
 function resetReserve3_ZS()

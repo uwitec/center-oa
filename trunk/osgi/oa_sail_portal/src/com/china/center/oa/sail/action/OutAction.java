@@ -68,6 +68,7 @@ import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
+import com.china.center.oa.publics.dao.DutyVSInvoiceDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
@@ -79,7 +80,9 @@ import com.china.center.oa.publics.manager.AuthManager;
 import com.china.center.oa.publics.manager.FatalNotify;
 import com.china.center.oa.publics.manager.StafferManager;
 import com.china.center.oa.publics.manager.UserManager;
+import com.china.center.oa.publics.vo.DutyVO;
 import com.china.center.oa.publics.vo.FlowLogVO;
+import com.china.center.oa.publics.vs.DutyVSInvoiceBean;
 import com.china.center.oa.sail.bean.BaseBalanceBean;
 import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.ConsignBean;
@@ -181,6 +184,8 @@ public class OutAction extends DispatchAction
     private BaseBalanceDAO baseBalanceDAO = null;
 
     private OutBalanceDAO outBalanceDAO = null;
+
+    private DutyVSInvoiceDAO dutyVSInvoiceDAO = null;
 
     private static String QUERYSELFOUT = "querySelfOut";
 
@@ -409,6 +414,19 @@ public class OutAction extends DispatchAction
 
         request.setAttribute("invoiceList", invoiceList);
 
+        List<DutyVSInvoiceBean> vsList = dutyVSInvoiceDAO.listEntityBeans();
+
+        // 过滤
+        fiterVS(invoiceList, vsList);
+
+        JSONArray vsJSON = new JSONArray(vsList, true);
+
+        request.setAttribute("vsJSON", vsJSON.toString());
+
+        JSONArray invoices = new JSONArray(invoiceList, true);
+
+        request.setAttribute("invoicesJSON", invoices.toString());
+
         List<DutyBean> dutyList = dutyDAO.listEntityBeans();
 
         request.setAttribute("dutyList", dutyList);
@@ -423,6 +441,30 @@ public class OutAction extends DispatchAction
         StafferBean staffer = stafferDAO.find(user.getStafferId());
 
         request.setAttribute("staffer", staffer);
+    }
+
+    private void fiterVS(List<InvoiceBean> invoiceList, List<DutyVSInvoiceBean> vsList)
+    {
+        for (Iterator iterator = vsList.iterator(); iterator.hasNext();)
+        {
+            DutyVSInvoiceBean dutyVSInvoiceBean = (DutyVSInvoiceBean)iterator.next();
+
+            boolean delete = true;
+
+            for (InvoiceBean invoiceBean : invoiceList)
+            {
+                if (dutyVSInvoiceBean.getInvoiceId().equals(invoiceBean.getId()))
+                {
+                    delete = false;
+                    break;
+                }
+            }
+
+            if (delete)
+            {
+                iterator.remove();
+            }
+        }
     }
 
     private boolean hasOver(String stafferName)
@@ -1552,6 +1594,18 @@ public class OutAction extends DispatchAction
             InvoiceConstant.INVOICE_FORWARD_OUT);
 
         request.setAttribute("invoiceList", invoiceList);
+
+        List<DutyVO> dutyList = dutyDAO.listEntityVOs();
+
+        for (DutyVO vo : dutyList)
+        {
+            List<InvoiceBean> queryForwardOutByDutyId = invoiceDAO.queryForwardOutByDutyId(vo
+                .getId());
+
+            vo.setOutInvoiceBeanList(queryForwardOutByDutyId);
+        }
+
+        request.setAttribute("dutyList", dutyList);
 
         List<DepotBean> depotList = depotDAO.listEntityBeans();
 
@@ -5597,5 +5651,22 @@ public class OutAction extends DispatchAction
     public void setInBillDAO(InBillDAO inBillDAO)
     {
         this.inBillDAO = inBillDAO;
+    }
+
+    /**
+     * @return the dutyVSInvoiceDAO
+     */
+    public DutyVSInvoiceDAO getDutyVSInvoiceDAO()
+    {
+        return dutyVSInvoiceDAO;
+    }
+
+    /**
+     * @param dutyVSInvoiceDAO
+     *            the dutyVSInvoiceDAO to set
+     */
+    public void setDutyVSInvoiceDAO(DutyVSInvoiceDAO dutyVSInvoiceDAO)
+    {
+        this.dutyVSInvoiceDAO = dutyVSInvoiceDAO;
     }
 }

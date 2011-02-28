@@ -184,9 +184,9 @@ function load()
                         <td align="right">付款方式：</td>
                         <td colspan="1">
                         <select name="reserve3" class="select_class" oncheck="notNone;" head="付款方式" style="width: 240px">
+                            <option value='3'>事业部经理担保</option>
                             <option value='2'>客户信用和业务员信用额度担保</option>
                             <option value='1'>款到发货(黑名单客户/零售)</option>
-                            <option value='3'>事业部经理担保</option>
                         </select>
                         <font color="#FF0000">*</font></td>
                         <td align="right">纳税实体：</td>
@@ -203,10 +203,6 @@ function load()
                         <td align="right">发票类型：</td>
                         <td colspan="3">
                         <select name="invoiceId" class="select_class" head="发票类型" style="width: 400px">
-                           <option value="">没有发票</option>
-                            <c:forEach items="${invoiceList}" var="item">
-                            <option value="${item.id}">${item.fullName}</option>
-                            </c:forEach>
                         </select>
                         <font color="#FF0000">*</font></td>
                     </tr>
