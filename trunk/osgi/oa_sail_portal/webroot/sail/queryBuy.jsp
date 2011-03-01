@@ -145,18 +145,22 @@ function processInvoke()
 
 function sureBack()
 {
-	if (getRadio('fullId').statuss == 0 && getRadio('fullId').outtype == 4)
-	if (window.confirm('确认领样退库?'))
-    document.location.href = '../sail/out.do?method=submitOut&outId=' + getRadioValue("fullId");
+	if (getRadio('fullId').statuss == 0 && (getRadio('fullId').outtype == 4 || getRadio('fullId').outtype == 5))
+	{
+	   if (window.confirm('确认退库?'))
+        document.location.href = '../sail/out.do?method=submitOut&outId=' + getRadioValue("fullId");
+    }
     else
     alert('不能操作');
 }
 
 function rejectBack()
 {
-	if (getRadio('fullId').statuss == 0 && getRadio('fullId').outtype == 4)
-	if (window.confirm('确认驳回领样退库?'))
-    document.location.href = '../sail/out.do?method=rejectBack&outId=' + getRadioValue("fullId");
+	if (getRadio('fullId').statuss == 0 && (getRadio('fullId').outtype == 4 || getRadio('fullId').outtype == 5))
+	{
+	   if (window.confirm('确认驳回退库?'))
+        document.location.href = '../sail/out.do?method=rejectBack&outId=' + getRadioValue("fullId");
+    }
     else
     alert('不能操作');
 }

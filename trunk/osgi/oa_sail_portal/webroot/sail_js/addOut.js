@@ -207,7 +207,7 @@ function clearsAll()
 	clearArray(document.getElementsByName('rstafferName'));
 }
 
-function loadShow()
+function loadShow(mode)
 {
 	var json = showJSON;
 	
@@ -230,6 +230,11 @@ function loadShow()
 				setOption(each, item.id, item.name);
 			}
 		}
+	}
+	
+	if (mode)
+	{
+		return;
 	}
 	
 	var vsjson = vsJSON;

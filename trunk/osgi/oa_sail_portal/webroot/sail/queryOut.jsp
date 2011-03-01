@@ -369,6 +369,19 @@ function outBack()
     }
 }
 
+function outBack2()
+{
+    //个人领样
+    if ((getRadio('fullId').statuss == 3 || getRadio('fullId').statuss == 4))
+    {
+        $l('../sail/out.do?method=findOut&fow=92&outId=' + getRadioValue("fullId"));
+    }
+    else
+    {
+        alert('不能操作');
+    }
+}
+
 function swatchToSail()
 {
 	//个人领样
@@ -647,7 +660,7 @@ function swatchToSail()
 		<td width="100%">
 		<div align="right">
 		
-		<c:if test="${queryType != '5' && queryType != '6' && queryType != '9' && queryType != '10'}">
+		<c:if test="${queryType != '5' && queryType != '6' && queryType != '8' && queryType != '9' && queryType != '10'}">
 		
 			<c:if test="${queryType == '2'}">
 				<input type="button" class="button_class" style="display: none;"
@@ -672,8 +685,9 @@ function swatchToSail()
 		<c:if test="${queryType == '5'}">
 		<input type="button" class="button_class"
                 value="&nbsp;&nbsp;确认回款&nbsp;&nbsp;" onClick="payOut2()"/>&nbsp;&nbsp;
+        <!--  
         <input type="button" class="button_class"
-                value="&nbsp;&nbsp;确认坏账&nbsp;&nbsp;" onClick="payOut3()"/>&nbsp;&nbsp;
+                value="&nbsp;&nbsp;确认坏账&nbsp;&nbsp;" onClick="payOut3()"/>&nbsp;&nbsp;-->
         <input type="button" class="button_class"
                 value="&nbsp;&nbsp;坏账取消&nbsp;&nbsp;" onClick="payOut4()"/>&nbsp;&nbsp;
 		</c:if>
@@ -689,6 +703,12 @@ function swatchToSail()
         <input type="button" class="button_class"
                 value="&nbsp;&nbsp;领样转销售&nbsp;&nbsp;" onClick="swatchToSail()"/>&nbsp;&nbsp;
         </c:if>
+        
+        <c:if test="${queryType == '8'}">
+        <input type="button" class="button_class"
+                value="&nbsp;&nbsp;销售退单&nbsp;&nbsp;" onClick="outBack2()"/>&nbsp;&nbsp;
+        </c:if>
+        
 		</div>
 		</td>
 		<td width="0%"></td>

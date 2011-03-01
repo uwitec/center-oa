@@ -12,6 +12,7 @@
 			<forward name="listOut1" path="/sail/listOut1.jsp" />
 			<forward name="detailOut" path="/sail/detailOut.jsp" />
 			<forward name="handerOutBack" path="/sail/handerOutBack.jsp" />
+			<forward name="handerOutBack2" path="/sail/handerOutBack2.jsp" />
 			<forward name="print" path="/sail/print.jsp" />
 			<forward name="addOutBalance" path="/sail/addOutBalance.jsp" />
 			<forward name="queryOutBalance" path="/sail/queryOutBalance.jsp" />

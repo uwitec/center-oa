@@ -108,11 +108,7 @@ function change()
 						
 					<c:if test="${consignBean.currentStatus < 2}">
 						
-                        <tr class="content1">
-                            <td>处理：</td>
-                            <td colspan="3"><textarea rows="3" cols="55" name="applys" head="处理"
-                                oncheck="notNone">${consignBean.applys}</textarea></td>
-                        </tr>
+                       
                     </c:if>
 
                     <c:if test="${consignBean.currentStatus >= 2}">

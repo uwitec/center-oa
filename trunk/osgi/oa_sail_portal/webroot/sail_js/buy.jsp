@@ -36,6 +36,7 @@ function titleChange()
     {
         removeOption($O('outType'), 0);
         removeOption($O('outType'), 4);
+        removeOption($O('outType'), 5);
     }
 }
 

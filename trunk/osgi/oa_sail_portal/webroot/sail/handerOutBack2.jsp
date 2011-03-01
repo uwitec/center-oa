@@ -4,13 +4,12 @@
 
 <html>
 <head>
-<p:link title="销售单明细" />
+<p:link title="销售退货" />
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/math.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/cnchina.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
-<script language="JavaScript" src="../js/key.js"></script>
 <script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../js/json.js"></script>
 <script language="JavaScript" src="../sail_js/addOut.js"></script>
@@ -32,7 +31,7 @@ function load()
 
     hides(true);
     
-    $detail($O('viewTable'), ['pr', 'ba']);
+    $detail($O('viewTable'), ['pr', 'ba', 'backUnm', 'adescription']);
     
     highlights($("#mainTable").get(0), ['未付款'], 'red');
     
@@ -45,48 +44,22 @@ function hides(boo)
 }
 
 
-function pagePrint()
+function outBack()
 {
-    $O('na').style.display = 'none';
-    $O('pr').style.display = 'none';
-    $O('ba').style.display = 'none';
-    $O('desc1').style.display = 'none';
-    window.print();
-
-    $O('pr').style.display = 'inline';
-    $O('ba').style.display = 'inline';
-    $O('na').style.display = 'block';
-    $O('desc1').style.display = 'block';
+    submit('确定申请销售退货?');  
 }
 
 </script>
 </head>
 <body class="body_class" onload="load()">
 <form name="outForm" method=post action="../sail/out.do">
-<input
-	type=hidden name="method" value="addOut" />
-<input type=hidden name="nameList" /> 
-<input type=hidden name="idsList" /> 
-<input
-	type=hidden name="unitList" /> 
-	<input type=hidden name="amontList" />
-<input type=hidden name="priceList" /> 
-<input type=hidden
-	name="totalList" /> 
-<input type=hidden name="totalss" /> 
-<input type=hidden name="customerId" value="${bean.customerId}"/> 
-<input type=hidden name="type"
-	value='0' /> 
-<input type=hidden name="saves" value="" />
-<input type=hidden name="desList" value="" />
-<input type=hidden name="otherList" value="" />
-<input type=hidden name="showIdList" value="" />
-<input type=hidden name="showNameList" value="" />
-<input type=hidden name="customercreditlevel" value="" />
+<input type=hidden name="method" value="outBack2">
+<input type=hidden name="outId" value="${bean.fullId}"> 
+
 <div id="na">
 <p:navigation
 	height="22">
-	<td width="550" class="navigation">销售单明细</td>
+	<td width="550" class="navigation">销售退货</td>
 				<td width="85"></td>
 </p:navigation> <br>
 </div>
@@ -248,18 +221,7 @@ function pagePrint()
                         </td>
                     </tr>
                     
-                    <tr class="content2">
-                        <td align="right">开票金额：</td>
-                        <td colspan="1">
-                        ${my:formatNum(bean.invoiceMoney)}
-                        </td>
-                        <td align="right">开票状态：</td>
-                        <td colspan="1">
-                        ${my:get('invoiceStatus', bean.invoiceStatus)}
-                        </td>
-                    </tr>
-                    
-                     <tr class="content1">
+                     <tr class="content2">
                         <td align="right">状态：</td>
                         <td colspan="1">
                         <select name="status" class="select_class"  values="${bean.status}">
@@ -272,7 +234,7 @@ function pagePrint()
                        </td>
                     </tr>
                     
-                     <tr class="content2">
+                     <tr class="content1">
                         <td align="right">分公司：</td>
                         <td colspan="1">
                        ${bean.locationName}
@@ -283,7 +245,7 @@ function pagePrint()
                        </td>
                     </tr>
                     
-                    <tr class="content1">
+                    <tr class="content2">
                         <td align="right">信用描述：</td>
                         <td colspan="3">
                         <font color="red">
@@ -292,14 +254,14 @@ function pagePrint()
                        </td>
                     </tr>
                     
-                     <tr class="content2">
+                     <tr class="content1">
                         <td align="right">信用担保：</td>
                         <td colspan="3">
-                       客户:${my:formatNum(bean.curcredit)}/${bean.stafferName}:${my:formatNum(bean.staffcredit)}/事业部经理:${my:formatNum(bean.managercredit)}
+                       客户:${my:formatNum(bean.curcredit)}/${bean.stafferName}:${my:formatNum(bean.staffcredit)}/分公司经理:${my:formatNum(bean.managercredit)}
                        </td>
                     </tr>
 
-					<tr class="content1">
+					<tr class="content2">
 						<td align="right">销售单备注：</td>
 						<td colspan="3"><textarea rows="3" cols="55" oncheck="notNone;"
 							name="description"><c:out value="${bean.description}"/></textarea>
@@ -307,10 +269,19 @@ function pagePrint()
 							</td>
 					</tr>
 					
-					 <tr class="content2">
+					 <tr class="content1">
                         <td align="right">总部核对：</td>
                         <td colspan="3">
                        ${bean.checks}
+                       </td>
+                    </tr>
+                    
+                    <tr class="content2">
+                        <td align="right">退货备注：</td>
+                        <td colspan="3">
+                       <textarea rows="3" cols="55" oncheck="notNone;"
+                            name="adescription"></textarea>
+                            <font color="#FF0000">*</font>
                        </td>
                     </tr>
 
@@ -349,99 +320,11 @@ function pagePrint()
 						<td width="10%" align="center">销售价</td>
 						<td width="10%" align="center">金额<span id="total"></span></td>
 						<td width="10%" align="center">成本</td>
-						<td width="25%" align="center">类型</td>
-						<td width="15%" align="center">开发票品名</td>
+						<td width="25%" align="center">已退数量</td>
+						<td width="15%" align="center">退货数量</td>
 					</tr>
 
-					<tr class="content1" id="trCopy" style="display: none;">
-						<td>
-						<input type="text" name="productName"
-							onclick="opens(this)"
-							productid="" 
-							productcode="" 
-							price=""
-							stafferid=""
-							depotpartid=""
-							readonly="readonly"
-							style="width: 100%; cursor: hand">
-						</td>
-
-						<td><select name="unit" style="WIDTH: 50px;">
-							<option value="套">套</option>
-							<option value="枚">枚</option>
-							<option value="个">个</option>
-							<option value="本">本</option>
-						</select></td>
-
-						<td align="center"><input type="text"
-							style="width: 100%" maxlength="6" onkeyup="cc(this)"
-							name="amount"></td>
-
-						<td align="center"><input type="text"
-							style="width: 100%" maxlength="8" onkeyup="cc(this)"
-							onblur="blu(this)" name="price"></td>
-
-						<td align="center"><input type="text"
-							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
-
-						<td align="center"><input type="text" readonly="readonly"
-							style="width: 100%" name="desciprt"></td>
-							
-						<td align="center"><input type="text" readonly="readonly"
-							style="width: 100%" name="rstafferName"></td>
-							
-						<td  align="center">
-						<select name="outProductName" style="WIDTH: 150px;" quick=true>
-							<p:option type="123"></p:option>
-						</select>
-						</td>
-
-						<td align="center"></td>
-					</tr>
-
-					<tr class="content2">
-						<td align="center"><input type="text" name="productName" id="unProductName"
-							onclick="opens(this)" 
-							productid="${fristBase.productId}" 
-                            productcode="" 
-                            price="${my:formatNum(fristBase.costPrice)}"
-                            stafferid="${fristBase.owner}"
-                            depotpartid="${fristBase.depotpartId}"
-							readonly="readonly"
-							style="width: 100%; cursor: pointer"
-							value="${fristBase.productName}"></td>
-
-						<td align="center"><select name="unit" style="WIDTH: 50px;" values="${fristBase.unit}">
-							<option value="套">套</option>
-							<option value="枚">枚</option>
-							<option value="个">个</option>
-							<option value="本">本</option>
-						</select></td>
-
-						<td align="center"><input type="text" style="width: 100%" id="unAmount" value="${fristBase.amount}"
-							maxlength="6" onkeyup="cc(this)" name="amount"></td>
-
-						<td align="center"><input type="text" style="width: 100%" id="unPrice" value="${fristBase.price}"
-							maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
-
-						<td align="center"><input type="text" value="${fristBase.value}"
-							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
-
-						<td align="center"><input type="text" id="unDesciprt" readonly="readonly" value="${fristBase.description}"
-							style="width: 100%" name="desciprt"></td>
-							
-						<td align="center"><input type="text" id="unRstafferName" readonly="readonly" value="${fristBase.depotpartName}-->${fristBase.ownerName}"
-							style="width: 100%" name="rstafferName"></td>
-							
-						<td align="center">
-						<select name="outProductName" style="WIDTH: 150px;" quick=true values="${fristBase.showId}">
-							<p:option type="123"></p:option>
-						</select>
-						</td>
-
-					</tr>
-					
-					<c:forEach items="${lastBaseList}" var="fristBase" varStatus="vs">
+					<c:forEach items="${bean.baseList}" var="fristBase" varStatus="vs">
                     <tr class="content2">
                         <td align="center"><input type="text" name="productName"
                             onclick="opens(this)" 
@@ -473,12 +356,13 @@ function pagePrint()
                         <td align="center"><input type="text"  readonly="readonly" value="${fristBase.description}"
                             style="width: 100%" name="desciprt"></td>
                             
-                        <td align="center"><input type="text" readonly="readonly" value="${fristBase.depotpartName}-->${fristBase.ownerName}"
-                            style="width: 100%" name="rstafferName"></td>
+                        <td align="center">${fristBase.inway}</td>
                             
-                        <td align="center">
-                        <select name="outProductName" style="WIDTH: 150px;" quick=true values="${fristBase.showId}">
-                        </select>
+                       <td  align="center">
+                        <input type="text" value="0" oncheck="isNumber;range(0, ${fristBase.amount - fristBase.inway})"
+                            style="width: 100%" name="backUnm">
+                            
+                         <input type="hidden" name="baseItem" value="${fristBase.id}">
                         </td>
 
                     </tr>
@@ -508,97 +392,8 @@ function pagePrint()
                 <td>
                 <table width="100%" border="0" cellspacing='1' id="tables">
                     <tr align="center" class="content0">
-                        <td width="10%" align="center">收款单</td>
-                        <td width="10%" align="center">帐户</td>
-                        <td width="10%" align="center">金额</td>
-                        <td width="15%" align="center">时间</td>
-                    </tr>
-
-                    <c:forEach items="${billList}" var="item" varStatus="vs">
-                        <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
-                            <td align="center"><a href="../finance/bill.do?method=findInBill&id=${item.id}">${item.id}</a></td>
-
-                            <td  align="center">${item.bankName}</td>
-
-                            <td  align="center">${my:formatNum(item.moneys)}</td>
-
-                            <td  align="center">${item.logTime}</td>
-
-                        </tr>
-                    </c:forEach>
-                </table>
-                </td>
-            </tr>
-        </table>
-        </div>
-        </td>
-    </tr>
-    
-    <c:if test="${bean.type == 0 && bean.outType == 3}">
-    
-    <tr>
-        <td height="10" colspan='2'></td>
-    </tr>
-
-    <tr>
-        <td background="../images/dot_line.gif" colspan='2'></td>
-    </tr>
-    
-    <tr>
-        <td colspan='2' align='center'>
-        <div id="desc2" style="display: block;">
-        <table width="100%" border="0" cellpadding="0" cellspacing="0"
-            class="border">
-            <tr>
-                <td>
-                <table width="100%" border="0" cellspacing='1' id="tables">
-                    <tr align="center" class="content0">
-                        <td width="10%" align="center">委托结算类型</td>
-                        <td width="10%" align="center">金额</td>
-                        <td width="15%" align="center">时间</td>
-                    </tr>
-
-                    <c:forEach items="${balanceList}" var="item" varStatus="vs">
-                        <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
-                            <td  align="center"><a href="../sail/out.do?method=findOutBalance&id=${item.id}">${my:get('outBalanceType', item.type)}</a></td>
-
-                            <td  align="center">${my:formatNum(item.total)}</td>
-
-                            <td  align="center">${item.logTime}</td>
-
-                        </tr>
-                    </c:forEach>
-                </table>
-                </td>
-            </tr>
-        </table>
-        </div>
-        </td>
-    </tr>
-    
-    </c:if>
-    
-    <c:if test="${my:length(refBuyList) > 0}">
-    
-    <tr>
-        <td height="10" colspan='2'></td>
-    </tr>
-
-    <tr>
-        <td background="../images/dot_line.gif" colspan='2'></td>
-    </tr>
-    
-    <tr>
-        <td colspan='2' align='center'>
-        <div id="desc3" style="display: block;">
-        <table width="100%" border="0" cellpadding="0" cellspacing="0"
-            class="border">
-            <tr>
-                <td>
-                <table width="100%" border="0" cellspacing='1' id="tables">
-                    <tr align="center" class="content0">
-                        <td width="10%" align="center">退货</td>
-                        <td width="10%" align="center">金额</td>
+                        <td width="10%" align="center">销售退货</td>
+                        
                         <td width="15%" align="center">时间</td>
                     </tr>
 
@@ -606,7 +401,6 @@ function pagePrint()
                         <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
                             <td align="center"><a href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}">${item.fullId}</a></td>
 
-                            <td  align="center">${my:formatNum(item.total)}</td>
                             <td  align="center">${item.outTime}</td>
 
                         </tr>
@@ -619,50 +413,6 @@ function pagePrint()
         </td>
     </tr>
     
-    </c:if>
-    
-    <c:if test="${my:length(refOutList) > 0}">
-    
-    <tr>
-        <td height="10" colspan='2'></td>
-    </tr>
-
-    <tr>
-        <td background="../images/dot_line.gif" colspan='2'></td>
-    </tr>
-    
-    <tr>
-        <td colspan='2' align='center'>
-        <div id="desc4" style="display: block;">
-        <table width="100%" border="0" cellpadding="0" cellspacing="0"
-            class="border">
-            <tr>
-                <td>
-                <table width="100%" border="0" cellspacing='1' id="tables">
-                    <tr align="center" class="content0">
-                        <td width="10%" align="center">领样转销售</td>
-                        <td width="10%" align="center">金额</td>
-                        <td width="15%" align="center">时间</td>
-                    </tr>
-
-                    <c:forEach items="${refOutList}" var="item" varStatus="vs">
-                        <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
-                            <td align="center"><a href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}">${item.fullId}</a></td>
-                            <td align="center">${my:formatNum(item.total)}</td>
-                            <td align="center">${item.outTime}</td>
-
-                        </tr>
-                    </c:forEach>
-                </table>
-                </td>
-            </tr>
-        </table>
-        </div>
-        </td>
-    </tr>
-    
-    </c:if>
-
 	<tr>
 		<td height="10" colspan='2'></td>
 	</tr>
@@ -671,54 +421,6 @@ function pagePrint()
         <td background="../images/dot_line.gif" colspan='2'></td>
     </tr>
 	
-	<tr>
-        <td colspan='2' align='center'>
-        <div id="desc1" style="display: block;">
-        <table width="100%" border="0" cellpadding="0" cellspacing="0"
-            class="border">
-            <tr>
-                <td>
-                <table width="100%" border="0" cellspacing='1' id="tables">
-                    <tr align="center" class="content0">
-                        <td width="10%" align="center">审批人</td>
-                        <td width="10%" align="center">审批动作</td>
-                        <td width="10%" align="center">前状态</td>
-                        <td width="10%" align="center">后状态</td>
-                        <td width="45%" align="center">意见</td>
-                        <td width="15%" align="center">时间</td>
-                    </tr>
-
-                    <c:forEach items="${logList}" var="item" varStatus="vs">
-                        <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
-                            <td align="center">${item.actor}</td>
-
-                            <td  align="center">${item.oprModeName}</td>
-
-                            <td  align="center">${item.preStatusName}</td>
-
-                            <td  align="center">${item.afterStatusName}</td>
-
-                            <td  align="center">${item.description}</td>
-
-                            <td  align="center">${item.logTime}</td>
-
-                        </tr>
-                    </c:forEach>
-                </table>
-                </td>
-            </tr>
-        </table>
-        </div>
-        </td>
-    </tr>
-
-    <tr>
-        <td height="10" colspan='2'></td>
-    </tr>
-
-    <tr>
-        <td background="../images/dot_line.gif" colspan='2'></td>
-    </tr>
 
     <tr>
         <td height="10" colspan='2'></td>
@@ -727,8 +429,8 @@ function pagePrint()
 	<tr>
         <td width="100%">
         <div align="right"><input type="button" name="pr"
-            class="button_class" onclick="pagePrint()"
-            value="&nbsp;&nbsp;打 印&nbsp;&nbsp;">&nbsp;&nbsp;<input
+            class="button_class" onclick="outBack()"
+            value="&nbsp;&nbsp;申请销售退单&nbsp;&nbsp;">&nbsp;&nbsp;<input
             type="button" name="ba" class="button_class"
             onclick="javascript:history.go(-1)"
             value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>

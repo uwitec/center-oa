@@ -1085,6 +1085,11 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             {
                 nextStatus = OutConstant.STATUS_PASS;
             }
+            // 销售退单直接通过
+            else if (outBean.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK)
+            {
+                nextStatus = OutConstant.STATUS_PASS;
+            }
             // 调拨直接是submit
             else if (outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT)
             {
@@ -1133,9 +1138,10 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             return;
         }
 
-        // 处理入库单的库存变动 采购入库/领样退货
+        // 处理入库单的库存变动 采购入库/领样退货/销售退单
         if (outBean.getOutType() == OutConstant.OUTTYPE_IN_COMMON
-            || outBean.getOutType() == OutConstant.OUTTYPE_IN_SWATCH)
+            || outBean.getOutType() == OutConstant.OUTTYPE_IN_SWATCH
+            || outBean.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK)
         {
             String sequence = commonDAO.getSquenceString();
 

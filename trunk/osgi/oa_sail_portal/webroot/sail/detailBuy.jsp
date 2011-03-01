@@ -20,14 +20,13 @@
 
 <%@include file="../sail_js/buy.jsp"%>
 
-
 function load()
 {
     titleChange();
     
     loadForm();
     
-    loadShow();
+    loadShow(true);
     
     loadForm();
 
