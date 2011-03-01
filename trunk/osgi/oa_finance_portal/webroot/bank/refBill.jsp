@@ -42,10 +42,26 @@ function check()
         return false;
     }
     
+    var bad = parseFloat($$('badMoney'));
+    
    
-    if (pu < total)
+    if ((pu + bad) < total)
     {
-        return window.confirm('付款单金额不足,确认当前只付款:' + pu + ',应付金额:' + total);
+        return window.confirm('付款单金额不足,确认当前只付款:' + pu + ',应付金额:' + total + ',坏账金额:' + bad);
+    }
+    
+    if (pu > total && bad > 0)
+    {
+        alert('预收金额充足,不需要坏账');
+        
+        return false;
+    }
+    
+    if ((total - pu) - bad < 0)
+    {
+        alert('坏账金额过多,当前最多坏账金额:' + (total - pu));
+        
+        return false;
     }
     
     $O('total').value = total;
@@ -107,6 +123,21 @@ function check()
 
                         </tr>
                     </c:forEach>
+                </table>
+                </td>
+            </tr>
+        </table>
+        
+        <table width="100%" border="0" cellpadding="0" cellspacing="0"
+            class="border">
+            <tr>
+                <td>
+                <table width="100%" border="0" cellspacing='1' id="tables">
+                    <tr align="center" class="content0">
+                        <td width="15%" align="center">坏账金额</td>
+                        <td align="left"><input type="text" name="badMoney" oncheck="isFloat" value="0.0"></td>
+                    </tr>
+
                 </table>
                 </td>
             </tr>

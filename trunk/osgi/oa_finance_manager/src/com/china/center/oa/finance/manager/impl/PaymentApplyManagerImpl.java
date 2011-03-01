@@ -525,11 +525,17 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
                     outId, out.getTotal(), hasPay, out.getBadDebts());
             }
 
+            // 有坏账的存在
+            if (apply.getBadMoney() != 0)
+            {
+                outDAO.modifyBadDebts(outId, apply.getBadMoney());
+            }
+
             // 更新已经支付的金额
             outDAO.updateHadPay(outId, hasPay);
 
             // 如果全部支付就自动表示收款
-            if (out.getTotal() == hasPay)
+            if (out.getTotal() == (hasPay + apply.getBadMoney()))
             {
                 outDAO.modifyPay(outId, OutConstant.PAY_YES);
             }

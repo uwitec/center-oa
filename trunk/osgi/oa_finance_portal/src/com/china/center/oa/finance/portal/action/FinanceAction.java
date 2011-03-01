@@ -940,6 +940,7 @@ public class FinanceAction extends DispatchAction
         apply.setLocationId(user.getLocationId());
         apply.setLogTime(TimeTools.now());
         apply.setStafferId(user.getStafferId());
+        apply.setBadMoney(MathTools.parseDouble(request.getParameter("badMoney")));
 
         List<PaymentVSOutBean> vsList = new ArrayList<PaymentVSOutBean>();
 

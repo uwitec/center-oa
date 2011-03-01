@@ -54,6 +54,11 @@ public class PaymentApplyBean implements Serializable
     private double moneys = 0.0d;
 
     /**
+     * 坏账金额
+     */
+    private double badMoney = 0.0d;
+
+    /**
      * 申请类型
      */
     private int type = FinanceConstant.PAYAPPLY_TYPE_PAYMENT;
@@ -289,6 +294,23 @@ public class PaymentApplyBean implements Serializable
     }
 
     /**
+     * @return the badMoney
+     */
+    public double getBadMoney()
+    {
+        return badMoney;
+    }
+
+    /**
+     * @param badMoney
+     *            the badMoney to set
+     */
+    public void setBadMoney(double badMoney)
+    {
+        this.badMoney = badMoney;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -314,6 +336,9 @@ public class PaymentApplyBean implements Serializable
             .append(TAB)
             .append("moneys = ")
             .append(this.moneys)
+            .append(TAB)
+            .append("badMoney = ")
+            .append(this.badMoney)
             .append(TAB)
             .append("type = ")
             .append(this.type)

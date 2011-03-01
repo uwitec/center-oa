@@ -59,6 +59,10 @@ function rejectBean()
                ${my:formatNum(bean.moneys)}
             </p:cell>
             
+            <p:cell title="坏账金额">
+               <font color="red">${my:formatNum(bean.badMoney)}</font>
+            </p:cell>
+            
             <p:cell title="类型">
                ${my:get('payApplyType', bean.type)}
             </p:cell>
