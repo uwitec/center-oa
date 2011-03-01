@@ -113,6 +113,12 @@ public interface StorageConstant
     int OPR_STORAGE_SWATH = 12;
 
     /**
+     * 销售退库
+     */
+    @Defined(key = "storageType", value = "销售退库")
+    int OPR_STORAGE_OUTBACK = 13;
+
+    /**
      * 公共的职员
      */
     String PUBLIC_STAFFER = "0";

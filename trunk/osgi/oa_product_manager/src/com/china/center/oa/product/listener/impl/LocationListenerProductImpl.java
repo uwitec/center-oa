@@ -13,7 +13,6 @@ import java.util.List;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
-import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.oa.product.dao.ProductVSLocationDAO;
 import com.china.center.oa.publics.listener.LocationListener;
 import com.china.center.oa.publics.vs.LocationVSCityBean;
@@ -44,7 +43,8 @@ public class LocationListenerProductImpl implements LocationListener
      * @see com.china.center.oa.publics.listener.LocationListener#onAddLocationVSCityBefore(com.center.china.osgi.publics.User,
      *      java.lang.String, java.util.List)
      */
-    public void onAddLocationVSCityBefore(User user, String locationId, List<LocationVSCityBean> list)
+    public void onAddLocationVSCityBefore(User user, String locationId,
+                                          List<LocationVSCityBean> list)
         throws MYException
     {
 
@@ -68,7 +68,7 @@ public class LocationListenerProductImpl implements LocationListener
     public void onDeleteLocation(User user, String locationId)
         throws MYException
     {
-        productVSLocationDAO.deleteEntityBeansByFK(locationId, AnoConstant.FK_FIRST);
+
     }
 
     /*
@@ -77,7 +77,8 @@ public class LocationListenerProductImpl implements LocationListener
      * @see com.china.center.oa.publics.listener.LocationListener#onDeleteLocationVSCity(com.center.china.osgi.publics.User,
      *      java.lang.String, java.util.List)
      */
-    public void onDeleteLocationVSCity(User user, String locationId, List<LocationVSCityBean> deleteList)
+    public void onDeleteLocationVSCity(User user, String locationId,
+                                       List<LocationVSCityBean> deleteList)
         throws MYException
     {
 
