@@ -43,7 +43,8 @@ public class LocationListenerCustomerImpl implements LocationListener
      * @see com.china.center.oa.publics.listener.LocationListener#onAddLocationVSCityBefore(com.center.china.osgi.publics.User,
      *      java.lang.String, java.util.List)
      */
-    public void onAddLocationVSCityBefore(User user, String locationId, List<LocationVSCityBean> list)
+    public void onAddLocationVSCityBefore(User user, String locationId,
+                                          List<LocationVSCityBean> list)
         throws MYException
     {
         customerDAO.updateCustomerLocation(locationId, PublicConstant.CENTER_LOCATION);
@@ -80,20 +81,21 @@ public class LocationListenerCustomerImpl implements LocationListener
      * @see com.china.center.oa.publics.listener.LocationListener#onDeleteLocationVSCity(com.center.china.osgi.publics.User,
      *      java.lang.String, java.util.List)
      */
-    public void onDeleteLocationVSCity(User user, String locationId, List<LocationVSCityBean> deleteList)
+    public void onDeleteLocationVSCity(User user, String locationId,
+                                       List<LocationVSCityBean> deleteList)
         throws MYException
     {
-        // NOTE ZHUZHU 区域迁移核心的逻辑处理
+        // CORE 区域迁移核心的逻辑处理
         for (LocationVSCityBean each : deleteList)
         {
             // 更新拓展客户的申请状态
-            customerDAO.updateCityCustomerToInit(each.getCityId());
+            // customerDAO.updateCityCustomerToInit(each.getCityId());
 
             // 更新客户的新旧属性为新客户,因为关系剥离后客户的新旧属性肯定是新的
             stafferVSCustomerDAO.updateNewByCityId(each.getCityId());
 
             // 删除存在的客户关系
-            stafferVSCustomerDAO.delVSByCityId(each.getCityId());
+            // stafferVSCustomerDAO.delVSByCityId(each.getCityId());
 
             // 更新申请中的拓展客户的申请状态
             customerDAO.updateApplyCityCustomerToInit(each.getCityId());
