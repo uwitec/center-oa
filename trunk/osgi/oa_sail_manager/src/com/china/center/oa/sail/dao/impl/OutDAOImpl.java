@@ -184,8 +184,8 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
 
     public Integer sumPreassignAmount(Map parMap)
     {
-        Integer result = (Integer)jdbcOperation.getIbatisDaoSupport().queryForObject(
-            "OutDAO.sumPreassignAmount", parMap);
+        Integer result = (Integer)ibatisDaoSupport.queryForObject("OutDAO.sumPreassignAmount",
+            parMap);
 
         if (result == null)
         {

@@ -1091,6 +1091,7 @@ public class OutAction extends DispatchAction
                         baseBean.setCostPriceKey(StorageRelationHelper.getPriceKey(each
                             .getCostPrice()));
                         baseBean.setOwner(each.getOwner());
+                        baseBean.setOwnerName(each.getOwnerName());
                         baseBean.setDepotpartId(each.getDepotpartId());
 
                         baseBean.setDepotpartName(each.getDepotpartName());
@@ -1299,6 +1300,7 @@ public class OutAction extends DispatchAction
                         baseBean.setCostPriceKey(StorageRelationHelper.getPriceKey(each
                             .getCostPrice()));
                         baseBean.setOwner(each.getOwner());
+                        baseBean.setOwnerName(each.getOwnerName());
                         baseBean.setDepotpartId(each.getDepotpartId());
 
                         baseBean.setDepotpartName(each.getDepotpartName());
@@ -1725,6 +1727,7 @@ public class OutAction extends DispatchAction
                 }
 
                 outManager.submit(fullId, user, type);
+
             }
             catch (MYException e)
             {
@@ -1733,6 +1736,20 @@ public class OutAction extends DispatchAction
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理错误:" + e.getErrorContent());
 
                 return mapping.findForward("error");
+            }
+
+            if ( (out.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK || out.getOutType() == OutConstant.OUTTYPE_IN_SWATCH)
+                && !StringTools.isNullOrNone(out.getRefOutFullId()))
+            {
+                // 验证(销售单)是否可以全部回款
+                try
+                {
+                    outManager.payOut(user, out.getRefOutFullId(), "自动核对付款");
+                }
+                catch (MYException e)
+                {
+                    _logger.info(e, e);
+                }
             }
 
             CommonTools.saveParamers(request);

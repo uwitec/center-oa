@@ -125,7 +125,8 @@ public interface OutManager extends ListenerManager<OutListener>
      * @return 修改后的单据状态
      * @throws MYException
      */
-    int pass(final String fullId, final User user, final int nextStatus, final String reason, final String depotpartId)
+    int pass(final String fullId, final User user, final int nextStatus, final String reason,
+             final String depotpartId)
         throws MYException;
 
     boolean check(final String fullId, final User user, final String checks)

@@ -347,7 +347,23 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         base.setCostPrice(MathTools.parseDouble(coreList[1]));
                         base
                             .setCostPriceKey(StorageRelationHelper.getPriceKey(base.getCostPrice()));
+
                         base.setOwner(coreList[2]);
+
+                        if ("0".equals(base.getOwner()))
+                        {
+                            base.setOwnerName("公共");
+                        }
+                        else
+                        {
+                            StafferBean sb = stafferDAO.find(base.getOwner());
+
+                            if (sb != null)
+                            {
+                                base.setOwnerName(sb.getName());
+                            }
+                        }
+
                         base.setDepotpartId(coreList[3]);
 
                         DepotpartBean deport = depotpartDAO.find(base.getDepotpartId());
@@ -1929,73 +1945,11 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
         }
 
+        // 个人领样全部是自己验证回款
         if (out.getType() == OutConstant.OUT_TYPE_OUTBILL
             && out.getOutType() == OutConstant.OUTTYPE_OUT_SWATCH)
         {
-            List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(fullId);
-
-            // 退货
-            List<OutBean> refBuyList = queryRefOut(fullId);
-
-            // 销售
-            ConditionParse con = new ConditionParse();
-
-            con.addWhereStr();
-
-            con.addCondition("OutBean.refOutFullId", "=", fullId);
-
-            con.addCondition(" and OutBean.status in (3, 4)");
-
-            con.addCondition("OutBean.type", "=", OutConstant.OUT_TYPE_OUTBILL);
-
-            // 包括保存的,防止溢出
-            List<OutBean> refList = outDAO.queryEntityBeansByCondition(con);
-
-            // 计算出已经退货的数量
-            for (BaseBean baseBean : baseList)
-            {
-                int hasBack = 0;
-
-                for (OutBean ref : refBuyList)
-                {
-                    List<BaseBean> refBaseList = ref.getBaseList();
-
-                    for (BaseBean refBase : refBaseList)
-                    {
-                        if (refBase.equals(baseBean))
-                        {
-                            hasBack += refBase.getAmount();
-
-                            break;
-                        }
-                    }
-                }
-
-                for (OutBean ref : refList)
-                {
-                    List<BaseBean> refBaseList = baseDAO.queryEntityBeansByFK(ref.getFullId());
-
-                    for (BaseBean refBase : refBaseList)
-                    {
-                        if (refBase.equals(baseBean))
-                        {
-                            hasBack += refBase.getAmount();
-
-                            break;
-                        }
-                    }
-                }
-
-                baseBean.setInway(hasBack);
-            }
-
-            for (BaseBean baseBean : baseList)
-            {
-                if (baseBean.getInway() != baseBean.getAmount())
-                {
-                    throw new MYException(baseBean.getProductName() + "没有全部退库");
-                }
-            }
+            processSwithPay(fullId);
         }
         else
         {
@@ -2008,15 +1962,87 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
         }
 
-        // 付款的金额
-        // outDAO.modifyOutHadPay(fullId, out.getTotal() - out.getBadDebts());
-
         addOutLog(fullId, user, out, reason, SailConstant.OPR_OUT_PASS, out.getStatus());
 
         notifyOut(out, user, 2);
 
         // 修改付款标识
         return outDAO.modifyPay(fullId, OutConstant.PAY_YES);
+    }
+
+    /**
+     * 个人领样全部是自己验证回款
+     * 
+     * @param fullId
+     * @throws MYException
+     */
+    private void processSwithPay(String fullId)
+        throws MYException
+    {
+        List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(fullId);
+
+        // 退货
+        List<OutBean> refBuyList = queryRefOut(fullId);
+
+        // 销售
+        ConditionParse con = new ConditionParse();
+
+        con.addWhereStr();
+
+        con.addCondition("OutBean.refOutFullId", "=", fullId);
+
+        con.addCondition(" and OutBean.status in (3, 4)");
+
+        con.addCondition("OutBean.type", "=", OutConstant.OUT_TYPE_OUTBILL);
+
+        // 包括保存的,防止溢出
+        List<OutBean> refList = outDAO.queryEntityBeansByCondition(con);
+
+        // 计算出已经退货的数量
+        for (BaseBean baseBean : baseList)
+        {
+            int hasBack = 0;
+
+            for (OutBean ref : refBuyList)
+            {
+                List<BaseBean> refBaseList = ref.getBaseList();
+
+                for (BaseBean refBase : refBaseList)
+                {
+                    if (refBase.equals(baseBean))
+                    {
+                        hasBack += refBase.getAmount();
+
+                        break;
+                    }
+                }
+            }
+
+            for (OutBean ref : refList)
+            {
+                List<BaseBean> refBaseList = baseDAO.queryEntityBeansByFK(ref.getFullId());
+
+                for (BaseBean refBase : refBaseList)
+                {
+                    if (refBase.equals(baseBean))
+                    {
+                        hasBack += refBase.getAmount();
+
+                        break;
+                    }
+                }
+            }
+
+            baseBean.setInway(hasBack);
+        }
+
+        for (BaseBean baseBean : baseList)
+        {
+            if (baseBean.getInway() != baseBean.getAmount())
+            {
+                throw new MYException(baseBean.getProductName() + "没有全部退库");
+            }
+        }
     }
 
     /*
