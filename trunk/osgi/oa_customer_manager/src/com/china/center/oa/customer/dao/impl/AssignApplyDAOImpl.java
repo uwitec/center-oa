@@ -9,6 +9,7 @@
 package com.china.center.oa.customer.dao.impl;
 
 
+import com.china.center.jdbc.inter.IbatisDaoSupport;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.customer.bean.AssignApplyBean;
 import com.china.center.oa.customer.dao.AssignApplyDAO;
@@ -25,10 +26,29 @@ import com.china.center.oa.customer.vo.AssignApplyVO;
  */
 public class AssignApplyDAOImpl extends BaseDAO<AssignApplyBean, AssignApplyVO> implements AssignApplyDAO
 {
+    private IbatisDaoSupport ibatisDaoSupport = null;
+
     public boolean delAssignByCityId(String cityId)
     {
-        this.jdbcOperation.getIbatisDaoSupport().delete("CustomerDAOImpl.delAssignByCityId", cityId);
+        ibatisDaoSupport.delete("CustomerDAOImpl.delAssignByCityId", cityId);
 
         return true;
+    }
+
+    /**
+     * @return the ibatisDaoSupport
+     */
+    public IbatisDaoSupport getIbatisDaoSupport()
+    {
+        return ibatisDaoSupport;
+    }
+
+    /**
+     * @param ibatisDaoSupport
+     *            the ibatisDaoSupport to set
+     */
+    public void setIbatisDaoSupport(IbatisDaoSupport ibatisDaoSupport)
+    {
+        this.ibatisDaoSupport = ibatisDaoSupport;
     }
 }

@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.springframework.jdbc.core.RowCallbackHandler;
 
+import com.china.center.jdbc.inter.IbatisDaoSupport;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
@@ -41,6 +42,8 @@ import com.china.center.tools.StringTools;
  */
 public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implements CustomerDAO
 {
+    private IbatisDaoSupport ibatisDaoSupport = null;
+
     /**
      * 区域ID
      * 
@@ -347,11 +350,9 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
      */
     public int autoUpdateCustomerStatus()
     {
-        this.jdbcOperation.getIbatisDaoSupport().update(
-            "CustomerDAOImpl.preAutoUpdateCustomerStatus", null);
+        ibatisDaoSupport.update("CustomerDAOImpl.preAutoUpdateCustomerStatus", null);
 
-        return this.jdbcOperation.getIbatisDaoSupport().update(
-            "CustomerDAOImpl.autoUpdateCustomerStatus", null);
+        return ibatisDaoSupport.update("CustomerDAOImpl.autoUpdateCustomerStatus", null);
     }
 
     /**
@@ -362,8 +363,7 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
      */
     public boolean updateCityCustomerToInit(String cityId)
     {
-        this.jdbcOperation.getIbatisDaoSupport().update("CustomerDAOImpl.updateCityCustomerToInit",
-            cityId);
+        ibatisDaoSupport.update("CustomerDAOImpl.updateCityCustomerToInit", cityId);
 
         return true;
     }
@@ -385,24 +385,21 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
 
         if (flag == CustomerConstant.RECLAIMSTAFFER_ALL)
         {
-            this.jdbcOperation.getIbatisDaoSupport().update(
-                "CustomerDAOImpl.updateAllCustomerByStafferId", map);
+            ibatisDaoSupport.update("CustomerDAOImpl.updateAllCustomerByStafferId", map);
         }
 
         if (flag == CustomerConstant.RECLAIMSTAFFER_EXPEND)
         {
             map.put("selltype", CustomerConstant.SELLTYPE_EXPEND);
 
-            this.jdbcOperation.getIbatisDaoSupport().update(
-                "CustomerDAOImpl.updateCustomerByStafferIdAndSelltype", map);
+            ibatisDaoSupport.update("CustomerDAOImpl.updateCustomerByStafferIdAndSelltype", map);
         }
 
         if (flag == CustomerConstant.RECLAIMSTAFFER_TER)
         {
             map.put("selltype", CustomerConstant.SELLTYPE_TER);
 
-            this.jdbcOperation.getIbatisDaoSupport().update(
-                "CustomerDAOImpl.updateCustomerByStafferIdAndSelltype", map);
+            ibatisDaoSupport.update("CustomerDAOImpl.updateCustomerByStafferIdAndSelltype", map);
         }
 
         return true;
@@ -424,24 +421,21 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
 
         if (flag == CustomerConstant.RECLAIMSTAFFER_ALL)
         {
-            this.jdbcOperation.getIbatisDaoSupport().delete(
-                "CustomerDAOImpl.delAllCustomerByStafferId", map);
+            ibatisDaoSupport.delete("CustomerDAOImpl.delAllCustomerByStafferId", map);
         }
 
         if (flag == CustomerConstant.RECLAIMSTAFFER_EXPEND)
         {
             map.put("selltype", CustomerConstant.SELLTYPE_EXPEND);
 
-            this.jdbcOperation.getIbatisDaoSupport().delete(
-                "CustomerDAOImpl.delCustomerByStafferIdAndSelltype", map);
+            ibatisDaoSupport.delete("CustomerDAOImpl.delCustomerByStafferIdAndSelltype", map);
         }
 
         if (flag == CustomerConstant.RECLAIMSTAFFER_TER)
         {
             map.put("selltype", CustomerConstant.SELLTYPE_TER);
 
-            this.jdbcOperation.getIbatisDaoSupport().delete(
-                "CustomerDAOImpl.delCustomerByStafferIdAndSelltype", map);
+            ibatisDaoSupport.delete("CustomerDAOImpl.delCustomerByStafferIdAndSelltype", map);
         }
 
         return true;
@@ -455,8 +449,7 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
      */
     public boolean updateApplyCityCustomerToInit(String cityId)
     {
-        this.jdbcOperation.getIbatisDaoSupport().update(
-            "CustomerDAOImpl.updateApplyCityCustomerToInit", cityId);
+        ibatisDaoSupport.update("CustomerDAOImpl.updateApplyCityCustomerToInit", cityId);
 
         return true;
     }
@@ -473,8 +466,7 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
         map.put("begin", begin);
         map.put("end", end);
 
-        return this.jdbcOperation.getIbatisDaoSupport().update(
-            "CustomerDAOImpl.synCustomerNewTypeYear", map);
+        return ibatisDaoSupport.update("CustomerDAOImpl.synCustomerNewTypeYear", map);
     }
 
     /**
@@ -485,8 +477,7 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
      */
     public int updayeCustomerNewTypeInTer()
     {
-        return this.jdbcOperation.getIbatisDaoSupport().update(
-            "CustomerDAOImpl.updayeCustomerNewTypeInTer", null);
+        return ibatisDaoSupport.update("CustomerDAOImpl.updayeCustomerNewTypeInTer", null);
 
     }
 
@@ -495,5 +486,22 @@ public class CustomerDAOImpl extends BaseDAO<CustomerBean, CustomerVO> implement
         this.jdbcOperation.updateField("lever", lever, id, claz);
 
         return true;
+    }
+
+    /**
+     * @return the ibatisDaoSupport
+     */
+    public IbatisDaoSupport getIbatisDaoSupport()
+    {
+        return ibatisDaoSupport;
+    }
+
+    /**
+     * @param ibatisDaoSupport
+     *            the ibatisDaoSupport to set
+     */
+    public void setIbatisDaoSupport(IbatisDaoSupport ibatisDaoSupport)
+    {
+        this.ibatisDaoSupport = ibatisDaoSupport;
     }
 }

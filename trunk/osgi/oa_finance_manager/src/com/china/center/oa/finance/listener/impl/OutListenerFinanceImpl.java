@@ -85,8 +85,14 @@ public class OutListenerFinanceImpl implements OutListener
     public void onHadPay(User user, OutBean bean)
         throws MYException
     {
-        // 如果是库管通过，而且是先款后货的话,直接是付款结束
+        // 入库单没有回款
         if (bean.getType() != OutConstant.OUT_TYPE_OUTBILL)
+        {
+            return;
+        }
+
+        // 赠送没有金额
+        if (bean.getOutType() == OutConstant.OUTTYPE_OUT_PRESENT)
         {
             return;
         }
@@ -95,6 +101,7 @@ public class OutListenerFinanceImpl implements OutListener
         double hasPay = inBillDAO.sumByOutId(bean.getFullId());
 
         double balancePay = 0.0d;
+
         if (bean.getOutType() == OutConstant.OUTTYPE_OUT_CONSIGN)
         {
             ConditionParse condition = new ConditionParse();
@@ -115,18 +122,41 @@ public class OutListenerFinanceImpl implements OutListener
             }
         }
 
-        if (bean.getTotal() != (hasPay + bean.getBadDebts() + balancePay))
+        // 销售/零售都是可能退货的
+        ConditionParse con = new ConditionParse();
+
+        con.addWhereStr();
+
+        con.addCondition("OutBean.refOutFullId", "=", bean.getFullId());
+
+        con.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
+
+        con.addCondition("and OutBean.status in (3, 4)");
+
+        con.addIntCondition("OutBean.outType", "=", OutConstant.OUTTYPE_IN_OUTBACK);
+
+        // 退货的入库单
+        List<OutBean> refList = outDAO.queryEntityBeansByCondition(con);
+
+        double refInOutTotal = 0.0d;
+
+        for (OutBean outBean : refList)
+        {
+            refInOutTotal += outBean.getTotal();
+        }
+
+        if (bean.getTotal() != (hasPay + bean.getBadDebts() + balancePay + refInOutTotal))
         {
             if (bean.getOutType() == OutConstant.OUTTYPE_OUT_CONSIGN)
             {
-
-                throw new MYException("销售单总金额[%.2f],当前已经付款金额[%.2f],委托退货金额[%.2f],坏账金额[%.2f],没有完全付款",
-                    bean.getTotal(), hasPay, balancePay, bean.getBadDebts());
+                throw new MYException(
+                    "销售单总金额[%.2f],当前已经付款金额[%.2f],委托退货金额[%.2f],坏账金额[%.2f],退货金额[%.2f],没有完全付款", bean
+                        .getTotal(), hasPay, balancePay, bean.getBadDebts(), refInOutTotal);
             }
             else
             {
-                throw new MYException("销售单总金额[%.2f],当前已经付款金额[%.2f],坏账金额[%.2f],没有完全付款", bean
-                    .getTotal(), hasPay, bean.getBadDebts());
+                throw new MYException("销售单总金额[%.2f],当前已经付款金额[%.2f],坏账金额[%.2f],退货金额[%.2f],没有完全付款",
+                    bean.getTotal(), hasPay, bean.getBadDebts(), refInOutTotal);
             }
         }
     }

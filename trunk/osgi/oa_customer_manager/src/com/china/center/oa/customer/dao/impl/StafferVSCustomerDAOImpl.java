@@ -9,6 +9,7 @@
 package com.china.center.oa.customer.dao.impl;
 
 
+import com.china.center.jdbc.inter.IbatisDaoSupport;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.customer.dao.StafferVSCustomerDAO;
 import com.china.center.oa.customer.vo.StafferVSCustomerVO;
@@ -25,6 +26,8 @@ import com.china.center.oa.customer.vs.StafferVSCustomerBean;
  */
 public class StafferVSCustomerDAOImpl extends BaseDAO<StafferVSCustomerBean, StafferVSCustomerVO> implements StafferVSCustomerDAO
 {
+    private IbatisDaoSupport ibatisDaoSupport = null;
+
     /**
      * 修改地市下的拓展客户为新客户,请是否是新的临时变量也是0(就是新的)
      * 
@@ -33,7 +36,7 @@ public class StafferVSCustomerDAOImpl extends BaseDAO<StafferVSCustomerBean, Sta
      */
     public boolean updateNewByCityId(String cityId)
     {
-        this.jdbcOperation.getIbatisDaoSupport().delete("CustomerDAOImpl.updateNewByCityId", cityId);
+        ibatisDaoSupport.delete("CustomerDAOImpl.updateNewByCityId", cityId);
 
         return true;
     }
@@ -46,7 +49,7 @@ public class StafferVSCustomerDAOImpl extends BaseDAO<StafferVSCustomerBean, Sta
      */
     public boolean delVSByCityId(String cityId)
     {
-        this.jdbcOperation.getIbatisDaoSupport().delete("CustomerDAOImpl.delVSByCityId", cityId);
+        ibatisDaoSupport.delete("CustomerDAOImpl.delVSByCityId", cityId);
 
         return true;
     }
@@ -58,6 +61,24 @@ public class StafferVSCustomerDAOImpl extends BaseDAO<StafferVSCustomerBean, Sta
 
     public int countByStafferIdAndCustomerId(String stafferId, String customerId)
     {
-        return this.jdbcOperation.queryForInt("where stafferId = ? and customerId = ?", claz, stafferId, customerId);
+        return this.jdbcOperation.queryForInt("where stafferId = ? and customerId = ?", claz,
+            stafferId, customerId);
+    }
+
+    /**
+     * @return the ibatisDaoSupport
+     */
+    public IbatisDaoSupport getIbatisDaoSupport()
+    {
+        return ibatisDaoSupport;
+    }
+
+    /**
+     * @param ibatisDaoSupport
+     *            the ibatisDaoSupport to set
+     */
+    public void setIbatisDaoSupport(IbatisDaoSupport ibatisDaoSupport)
+    {
+        this.ibatisDaoSupport = ibatisDaoSupport;
     }
 }
