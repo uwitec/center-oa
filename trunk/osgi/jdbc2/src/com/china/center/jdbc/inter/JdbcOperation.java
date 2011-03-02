@@ -300,6 +300,7 @@ public interface JdbcOperation
 
     /**
      * delete by ids
+     * 
      * @param <T>
      * @param list
      * @param claz
@@ -311,6 +312,7 @@ public interface JdbcOperation
 
     /**
      * delete by ids,but id is form bean
+     * 
      * @param <T>
      * @param list
      * @param claz
@@ -438,5 +440,6 @@ public interface JdbcOperation
      * 
      * @return
      */
+    @Deprecated
     IbatisDaoSupport getIbatisDaoSupport();
 }
