@@ -68,4 +68,22 @@ public abstract class AbstractListenerManager<Listener extends ParentListener> i
             return values;
         }
     }
+
+    public Listener findListener(String key)
+    {
+        synchronized (g_listenerMap)
+        {
+            Collection<Listener> values = getMap().values();
+
+            for (Listener listener : values)
+            {
+                if (listener.getListenerType().equals(key))
+                {
+                    return listener;
+                }
+            }
+
+            return null;
+        }
+    }
 }
