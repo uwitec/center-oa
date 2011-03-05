@@ -12,6 +12,7 @@ package com.china.center.oa.sail.listener;
 import com.center.china.osgi.publics.ParentListener;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.publics.wrap.ResultBean;
 import com.china.center.oa.sail.bean.OutBean;
 
 
@@ -49,6 +50,14 @@ public interface OutListener extends ParentListener
      * @param bean
      * @throws MYException
      */
-    void onHadPay(User user, OutBean bean)
-        throws MYException;
+    ResultBean onHadPay(User user, OutBean bean);
+
+    /**
+     * 销售单还剩余未付款的金额(这里坏账是在内的),仅仅是普通销售的
+     * 
+     * @param user
+     * @param fullId
+     * @return
+     */
+    double outNeedPayMoney(User user, String fullId);
 }

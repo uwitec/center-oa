@@ -14,6 +14,7 @@ import java.util.Map;
 import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.publics.wrap.ResultBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.listener.OutListener;
@@ -195,6 +196,18 @@ public interface OutManager extends ListenerManager<OutListener>
         throws MYException;
 
     /**
+     * payOutWithoutTransactional(销售单付款)
+     * 
+     * @param user
+     * @param fullId
+     * @param reason
+     * @return
+     * @throws MYException
+     */
+    boolean payOutWithoutTransactional(final User user, String fullId, String reason)
+        throws MYException;
+
+    /**
      * payBaddebts
      * 
      * @param user
@@ -249,4 +262,23 @@ public interface OutManager extends ListenerManager<OutListener>
 
     String addSwatchToSail(final User user, final OutBean outBean)
         throws MYException;
+
+    /**
+     * 销售单还剩余未付款的金额(这里坏账是在内的),仅仅是普通销售的<br>
+     * 销售金额 + 退货返还金额 - 收款金额 - 坏账 - 退货实物价值
+     * 
+     * @param user
+     * @param fullId
+     * @return
+     */
+    double outNeedPayMoney(User user, String fullId);
+
+    /**
+     * 检查销售单的回款明细(如果金额溢出抛出异常)0:收支相等 -1:费用不足 1:费用超支
+     * 
+     * @param user
+     * @param out
+     * @throws MYException
+     */
+    ResultBean checkOutPayStatus(User user, OutBean out);
 }

@@ -14,11 +14,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.IbatisDaoSupport;
 import com.china.center.jdbc.inter.impl.BaseDAO;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.dao.OutDAO;
@@ -463,4 +465,29 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         this.ibatisDaoSupport = ibatisDaoSupport;
     }
 
+    public double sumOutBackValue(String fullId)
+    {
+        ConditionParse con = new ConditionParse();
+
+        con.addWhereStr();
+
+        con.addCondition("OutBean.refOutFullId", "=", fullId);
+
+        con.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
+
+        con.addCondition("and OutBean.status in (3, 4)");
+
+        con.addIntCondition("OutBean.outType", "=", OutConstant.OUTTYPE_IN_OUTBACK);
+
+        List<OutBean> refList = this.queryEntityBeansByCondition(con);
+
+        double backTotal = 0.0d;
+
+        for (OutBean outBean : refList)
+        {
+            backTotal += outBean.getTotal();
+        }
+
+        return backTotal;
+    }
 }

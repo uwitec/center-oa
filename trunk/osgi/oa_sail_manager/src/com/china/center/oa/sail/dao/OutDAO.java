@@ -170,4 +170,12 @@ public interface OutDAO extends DAO<OutBean, OutVO>
     double sumNoPayAndAvouchBusinessByManagerId(String stafferId, String beginDate, String endDate);
 
     int countCustomerInOut(String customerId);
+
+    /**
+     * 统计销售退货的实物价值
+     * 
+     * @param fullId
+     * @return
+     */
+    double sumOutBackValue(String fullId);
 }

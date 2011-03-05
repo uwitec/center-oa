@@ -313,6 +313,13 @@ function pagePrint()
                        ${bean.checks}
                        </td>
                     </tr>
+                    
+                    <tr class="content1">
+                        <td align="right">付款备注：</td>
+                        <td colspan="3">
+                       ${checkOutPayStatus.message}
+                       </td>
+                    </tr>
 
 				</table>
 				</td>
@@ -508,7 +515,8 @@ function pagePrint()
                 <td>
                 <table width="100%" border="0" cellspacing='1' id="tables">
                     <tr align="center" class="content0">
-                        <td width="10%" align="center">收款单</td>
+                        <td width="10%" align="center">收付款单</td>
+                        <td width="10%" align="center">类型</td>
                         <td width="10%" align="center">帐户</td>
                         <td width="10%" align="center">金额</td>
                         <td width="15%" align="center">时间</td>
@@ -518,6 +526,7 @@ function pagePrint()
                         <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
                             <td align="center"><a href="../finance/bill.do?method=findInBill&id=${item.id}">${item.id}</a></td>
 
+                            <td  align="center">收款单</td>
                             <td  align="center">${item.bankName}</td>
 
                             <td  align="center">${my:formatNum(item.moneys)}</td>
@@ -526,6 +535,20 @@ function pagePrint()
 
                         </tr>
                     </c:forEach>
+                    
+                    <c:forEach items="${outBillList}" var="item" varStatus="vs">
+                        <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
+                            <td align="center"><a href="../finance/bill.do?method=findOutBill&id=${item.id}">${item.id}</a></td>
+                             <td  align="center">付款单</td>
+                            <td  align="center">${item.bankName}</td>
+
+                            <td  align="center">${my:formatNum(item.moneys)}</td>
+
+                            <td  align="center">${item.logTime}</td>
+
+                        </tr>
+                    </c:forEach>
+                    
                 </table>
                 </td>
             </tr>

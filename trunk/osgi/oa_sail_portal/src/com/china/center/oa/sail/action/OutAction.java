@@ -40,7 +40,9 @@ import com.china.center.oa.customer.constant.CustomerConstant;
 import com.china.center.oa.customer.dao.CustomerDAO;
 import com.china.center.oa.customer.wrap.NotPayWrap;
 import com.china.center.oa.finance.dao.InBillDAO;
+import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.vo.InBillVO;
+import com.china.center.oa.finance.vo.OutBillVO;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.bean.ProviderBean;
@@ -83,6 +85,7 @@ import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.publics.vo.DutyVO;
 import com.china.center.oa.publics.vo.FlowLogVO;
 import com.china.center.oa.publics.vs.DutyVSInvoiceBean;
+import com.china.center.oa.publics.wrap.ResultBean;
 import com.china.center.oa.sail.bean.BaseBalanceBean;
 import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.ConsignBean;
@@ -156,6 +159,8 @@ public class OutAction extends DispatchAction
     private DepotDAO depotDAO = null;
 
     private InBillDAO inBillDAO = null;
+
+    private OutBillDAO outBillDAO = null;
 
     private ShowDAO showDAO = null;
 
@@ -1157,26 +1162,11 @@ public class OutAction extends DispatchAction
 
         String adescription = request.getParameter("adescription");
 
-        // 查询是否被关联
-        ConditionParse con = new ConditionParse();
+        ActionForward error = checkAddOutBack(mapping, request, outId);
 
-        con.addWhereStr();
-
-        con.addCondition("OutBean.refOutFullId", "=", outId);
-
-        con.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
-
-        con.addIntCondition("OutBean.status", "=", OutConstant.STATUS_SAVE);
-
-        con.addIntCondition("OutBean.outType", "=", OutConstant.OUTTYPE_IN_OUTBACK);
-
-        int count = outDAO.countByCondition(con.toString());
-
-        if (count > 0)
+        if (error != null)
         {
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "此销售单存在申请退货,请处理结束后再申请");
-
-            return mapping.findForward("error");
+            return error;
         }
 
         String[] baseItems = request.getParameterValues("baseItem");
@@ -1325,7 +1315,7 @@ public class OutAction extends DispatchAction
         {
             if (newBaseList.size() > 0)
             {
-                // CORE 个人领样退库
+                // CORE 退库
                 String fullId = outManager.coloneOutWithAffair(out, user,
                     StorageConstant.OPR_STORAGE_OUTBACK);
 
@@ -1346,6 +1336,42 @@ public class OutAction extends DispatchAction
         request.setAttribute("queryType", "8");
 
         return queryOut(mapping, form, request, reponse);
+    }
+
+    /**
+     * 检查是否可以增加销售退单
+     * 
+     * @param mapping
+     * @param request
+     * @param outId
+     * @return
+     */
+    private ActionForward checkAddOutBack(ActionMapping mapping, HttpServletRequest request,
+                                          String outId)
+    {
+        // 查询是否被关联
+        ConditionParse con = new ConditionParse();
+
+        con.addWhereStr();
+
+        con.addCondition("OutBean.refOutFullId", "=", outId);
+
+        con.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
+
+        con.addIntCondition("OutBean.status", "=", OutConstant.STATUS_SAVE);
+
+        con.addIntCondition("OutBean.outType", "=", OutConstant.OUTTYPE_IN_OUTBACK);
+
+        int count = outDAO.countByCondition(con.toString());
+
+        if (count > 0)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "此销售单存在申请退货,请处理结束后再申请");
+
+            return mapping.findForward("error");
+        }
+
+        return null;
     }
 
     /**
@@ -1727,7 +1753,6 @@ public class OutAction extends DispatchAction
                 }
 
                 outManager.submit(fullId, user, type);
-
             }
             catch (MYException e)
             {
@@ -4729,6 +4754,8 @@ public class OutAction extends DispatchAction
 
         CommonTools.saveParamers(request);
 
+        User user = Helper.getUser(request);
+
         OutVO bean = null;
         try
         {
@@ -4930,25 +4957,11 @@ public class OutAction extends DispatchAction
         {
             synchronized (S_LOCK)
             {
-                ConditionParse con = new ConditionParse();
+                ActionForward error = checkAddOutBack(mapping, request, outId);
 
-                con.addWhereStr();
-
-                con.addCondition("OutBean.refOutFullId", "=", outId);
-
-                con.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
-
-                con.addIntCondition("OutBean.status", "=", OutConstant.STATUS_SAVE);
-
-                con.addIntCondition("OutBean.outType", "=", OutConstant.OUTTYPE_IN_OUTBACK);
-
-                int count = outDAO.countByCondition(con.toString());
-
-                if (count > 0)
+                if (error != null)
                 {
-                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "此销售单存在申请退货,请处理结束后再申请");
-
-                    return mapping.findForward("error");
+                    return error;
                 }
 
                 List<OutBean> refBuyList = queryRefOut(request, outId);
@@ -4983,11 +4996,36 @@ public class OutAction extends DispatchAction
             }
         }
 
+        // 申请退款
+        if ("93".equals(fow))
+        {
+            double backTotal = outDAO.sumOutBackValue(outId);
+
+            double hadOut = outBillDAO.sumByRefId(outId);
+
+            request.setAttribute("hadOut", hadOut);
+
+            request.setAttribute("backTotal", backTotal);
+
+            if (bean.getHadPay() - backTotal - hadOut <= 0)
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "金额全部使用,无法申请退款");
+
+                return mapping.findForward("error");
+            }
+
+            return mapping.findForward("applyBackPay");
+        }
+
         if (bean.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
             List<InBillVO> billList = inBillDAO.queryEntityVOsByFK(outId);
 
             request.setAttribute("billList", billList);
+
+            List<OutBillVO> outBillList = outBillDAO.queryEntityVOsByFK(outId);
+
+            request.setAttribute("outBillList", outBillList);
 
             if (bean.getOutType() == OutConstant.OUTTYPE_OUT_CONSIGN)
             {
@@ -5021,6 +5059,10 @@ public class OutAction extends DispatchAction
             {
                 queryRefOut(request, outId);
             }
+
+            ResultBean checkOutPayStatus = outManager.checkOutPayStatus(user, bean);
+
+            request.setAttribute("checkOutPayStatus", checkOutPayStatus);
 
             return mapping.findForward("detailOut");
         }
@@ -5970,5 +6012,22 @@ public class OutAction extends DispatchAction
     public void setDutyVSInvoiceDAO(DutyVSInvoiceDAO dutyVSInvoiceDAO)
     {
         this.dutyVSInvoiceDAO = dutyVSInvoiceDAO;
+    }
+
+    /**
+     * @return the outBillDAO
+     */
+    public OutBillDAO getOutBillDAO()
+    {
+        return outBillDAO;
+    }
+
+    /**
+     * @param outBillDAO
+     *            the outBillDAO to set
+     */
+    public void setOutBillDAO(OutBillDAO outBillDAO)
+    {
+        this.outBillDAO = outBillDAO;
     }
 }

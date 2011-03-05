@@ -371,10 +371,23 @@ function outBack()
 
 function outBack2()
 {
-    //个人领样
+    //销售退货
     if ((getRadio('fullId').statuss == 3 || getRadio('fullId').statuss == 4))
     {
         $l('../sail/out.do?method=findOut&fow=92&outId=' + getRadioValue("fullId"));
+    }
+    else
+    {
+        alert('不能操作');
+    }
+}
+
+function applyBackPay()
+{
+    //申请退款
+    if (getRadio('fullId').statuss == 3 || getRadio('fullId').statuss == 4)
+    {
+        $l('../sail/out.do?method=findOut&fow=93&outId=' + getRadioValue("fullId"));
     }
     else
     {
@@ -707,6 +720,8 @@ function swatchToSail()
         <c:if test="${queryType == '8'}">
         <input type="button" class="button_class"
                 value="&nbsp;&nbsp;销售退单&nbsp;&nbsp;" onClick="outBack2()"/>&nbsp;&nbsp;
+        <input type="button" class="button_class"
+                value="&nbsp;&nbsp;申请退款&nbsp;&nbsp;" onClick="applyBackPay()"/>&nbsp;&nbsp;
         </c:if>
         
 		</div>

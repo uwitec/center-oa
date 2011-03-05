@@ -26,6 +26,7 @@
 			<forward name="queryWarnOut" path="/sail/queryWarnOut.jsp" />
 			<forward name="rptQueryOut" path="/sail/rptQueryOut.jsp" />
 			<forward name="rptQueryOutBalance" path="/sail/rptQueryOutBalance.jsp" />
+			<forward name="applyBackPay" path="/sail/applyBackPay.jsp" />
 		</action>
 		
 		<action path="/sail/transport" parameter="method"
