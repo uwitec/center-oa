@@ -181,6 +181,17 @@ public interface ProductFacade
         throws MYException;
 
     /**
+     * rollbackComposeProduct
+     * 
+     * @param userId
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean rollbackComposeProduct(String userId, String id)
+        throws MYException;
+
+    /**
      * 运营总监审批
      * 
      * @param user

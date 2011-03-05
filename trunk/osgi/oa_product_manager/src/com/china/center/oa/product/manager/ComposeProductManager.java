@@ -37,6 +37,17 @@ public interface ComposeProductManager
         throws MYException;
 
     /**
+     * 回滚合成(分解)
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean rollbackComposeProduct(User user, String id)
+        throws MYException;
+
+    /**
      * 生产部经理审批
      * 
      * @param user

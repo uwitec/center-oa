@@ -43,6 +43,9 @@ public class ProductChangeWrap implements Serializable
 
     private double price = 0.0d;
 
+    /**
+     * 一个操作的
+     */
     private String serializeId = "";
 
     private String description = "";

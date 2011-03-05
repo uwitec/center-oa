@@ -3,6 +3,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+<style type="text/css">
+.flexigrid div.fbutton .draw
+{
+    background: url(../css/flexigrid/images/get.png) no-repeat center left;
+}
+
+.flexigrid div.fbutton .odraw
+{
+    background: url(../css/flexigrid/images/oget.png) no-repeat center left;
+} 
+</style>
 <p:link title="合成管理" link="true" guid="true" cal="true" dialog="true" />
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
@@ -25,7 +36,7 @@ function load()
          title: '产品合成列表',
          url: gurl + 'query' + ukey + '&foward=${param.foward}',
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status}>', width : 40, align: 'center'},
+             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} ltype={type}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},
              {display: '产品', name : 'productName', content: '{productName}({productCode})', width : '20%'},
              {display: '数量', name : 'amount', width : '5%'},
@@ -39,6 +50,9 @@ function load()
              id : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
+             <c:if test="${param.foward == 0}">
+             {id: 'oget1', bclass: 'odraw', caption: '合成回滚', onpress : rollback, auth: '100501'},
+             </c:if>
              <c:if test="${param.foward == 1}">
          	 {id: 'pass', bclass: 'pass', caption: '生产部经理通过', onpress : passBean, auth: '100502'},
          	 </c:if>
@@ -46,7 +60,7 @@ function load()
          	 {id: 'pass1', bclass: 'pass', caption: '运营总监通过', onpress : lastPassBean, auth: '100503'},
          	 </c:if>
          	 <c:if test="${param.foward == 1 || param.foward == 2}">
-             {id: 'reject', bclass: 'reject', caption: '废弃合成', onpress : deleteBean, auth: '100502,100503'},
+             {id: 'reject', bclass: 'reject', caption: '废弃', onpress : deleteBean, auth: '100502,100503'},
              </c:if>
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
@@ -61,6 +75,18 @@ function $callBack()
     loadForm();
     
     highlights($("#mainTable").get(0), ['合成'], 'blue');
+    highlights($("#mainTable").get(0), ['分解'], 'red');
+}
+
+function rollback(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 3 && getRadio('checkb').ltype == 0)
+    {    
+        if(window.confirm('确定回滚合成?'))    
+        $ajax(gurl + 'rollbackComposeProduct&id=' + getRadioValue('checkb'), callBackFun);
+    }
+    else
+    $error('不能操作');
 }
 
 function passBean(opr, grid)

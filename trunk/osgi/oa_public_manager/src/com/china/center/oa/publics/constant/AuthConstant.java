@@ -575,6 +575,16 @@ public interface AuthConstant
     String SAIL_QUERY_SUB = "1413";
 
     /**
+     * 申请退款-结算中心审核
+     */
+    String SAIL_BACKPAY_CENTER = "1414";
+
+    /**
+     * 申请退款-出纳审核
+     */
+    String SAIL_BACKPAY_SEC = "1415";
+
+    /**
      * 提交入库单
      */
     String BUY_SUBMIT = "1501";

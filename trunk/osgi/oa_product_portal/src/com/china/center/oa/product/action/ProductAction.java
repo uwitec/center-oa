@@ -1868,6 +1868,43 @@ public class ProductAction extends DispatchAction
     }
 
     /**
+     * rollbackComposeProduct
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rollbackComposeProduct(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
+                                                HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            productFacade.rollbackComposeProduct(user.getId(), id);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
      * deleteProduct
      * 
      * @param mapping

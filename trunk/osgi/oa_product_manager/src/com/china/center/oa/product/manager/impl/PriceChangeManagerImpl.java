@@ -196,6 +196,8 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
 
         List<PriceChangeSrcItemBean> srcList = bean.getSrcList();
 
+        String nsid = commonDAO.getSquenceString();
+
         // 后增加
         for (PriceChangeSrcItemBean each : srcList)
         {
@@ -209,7 +211,7 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
             eachWrap.setDescription("产品调价回滚(后增加产品):" + bean.getId());
             eachWrap.setType(StorageConstant.OPR_DDEPOTPART_CHANGE_ROLLBACK);
             eachWrap.setSerializeId(sid);
-            eachWrap.setRefId(sid);
+            eachWrap.setRefId(nsid);
 
             storageRelationManager.changeStorageRelationWithoutTransaction(user, eachWrap, false);
         }

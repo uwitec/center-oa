@@ -31,6 +31,7 @@ import com.china.center.oa.product.wrap.ProductChangeWrap;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.ListTools;
+import com.china.center.tools.TimeTools;
 
 
 /**
@@ -79,6 +80,60 @@ public class ComposeProductManagerImpl implements ComposeProductManager
     }
 
     @Transactional(rollbackFor = MYException.class)
+    public boolean rollbackComposeProduct(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        ComposeProductBean bean = findBeanById(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if ( !bean.getStafferId().equals(user.getStafferId()))
+        {
+            throw new MYException("只能操作自己的单据,请确认操作");
+        }
+
+        if (bean.getType() != ComposeConstant.COMPOSE_TYPE_COMPOSE)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        int count = composeProductDAO.countByFK(id);
+
+        if (count > 0)
+        {
+            throw new MYException("此合成单存在回滚申请,请先结束此申请或者删除(或者分解已经成功)");
+        }
+
+        bean.setRefId(id);
+
+        bean.setType(ComposeConstant.COMPOSE_TYPE_DECOMPOSE);
+
+        bean.setLogTime(TimeTools.now());
+
+        List<ComposeFeeBean> feeList = bean.getFeeList();
+
+        if ( !ListTools.isEmptyOrNull(feeList))
+        {
+            for (ComposeFeeBean composeFeeBean : feeList)
+            {
+                composeFeeBean.setParentId(bean.getId());
+
+                // 费用是负数
+                composeFeeBean.setPrice( -composeFeeBean.getPrice());
+            }
+        }
+
+        saveInner(bean);
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
     public boolean lastPassComposeProduct(User user, String id)
         throws MYException
     {
@@ -102,6 +157,11 @@ public class ComposeProductManagerImpl implements ComposeProductManager
         if (bean.getType() == ComposeConstant.COMPOSE_TYPE_COMPOSE)
         {
             processCompose(user, bean);
+        }
+        else
+        {
+            // 分解
+            processDecompose(user, bean);
         }
 
         return true;
@@ -207,6 +267,47 @@ public class ComposeProductManagerImpl implements ComposeProductManager
             eachWrap.setChange( -composeItemBean.getAmount());
             eachWrap.setDepotpartId(composeItemBean.getDepotpartId());
             eachWrap.setDescription("合成产品移动(合成项减少):" + bean.getId());
+            eachWrap.setPrice(composeItemBean.getPrice());
+            eachWrap.setProductId(composeItemBean.getProductId());
+            eachWrap.setType(StorageConstant.OPR_STORAGE_COMPOSE);
+            eachWrap.setRelationId(eachWrap.getRelationId());
+            eachWrap.setSerializeId(sid);
+            eachWrap.setRefId(sid);
+
+            storageRelationManager.changeStorageRelationWithoutTransaction(user, eachWrap, true);
+        }
+    }
+
+    private void processDecompose(User user, ComposeProductBean bean)
+        throws MYException
+    {
+        String sid = commonDAO.getSquenceString();
+
+        ProductChangeWrap wrap = new ProductChangeWrap();
+
+        wrap.setStafferId(StorageConstant.PUBLIC_STAFFER);
+        wrap.setChange( -bean.getAmount());
+        wrap.setDepotpartId(bean.getDepotpartId());
+        wrap.setDescription("分解产品异动(分解后减少):" + bean.getId());
+        wrap.setPrice(bean.getPrice());
+        wrap.setProductId(bean.getProductId());
+        wrap.setType(StorageConstant.OPR_STORAGE_COMPOSE);
+        wrap.setSerializeId(sid);
+        wrap.setRefId(sid);
+
+        storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, false);
+
+        List<ComposeItemBean> itemList = bean.getItemList();
+
+        for (ComposeItemBean composeItemBean : itemList)
+        {
+            ProductChangeWrap eachWrap = new ProductChangeWrap();
+
+            eachWrap.setStorageId(composeItemBean.getStorageId());
+            eachWrap.setStafferId(StorageConstant.PUBLIC_STAFFER);
+            eachWrap.setChange(composeItemBean.getAmount());
+            eachWrap.setDepotpartId(composeItemBean.getDepotpartId());
+            eachWrap.setDescription("分解产品(合成项增加):" + bean.getId());
             eachWrap.setPrice(composeItemBean.getPrice());
             eachWrap.setProductId(composeItemBean.getProductId());
             eachWrap.setType(StorageConstant.OPR_STORAGE_COMPOSE);

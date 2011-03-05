@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Join;
@@ -53,6 +54,12 @@ public class ComposeProductBean implements Serializable
     private String storageId = "";
 
     private String relationId = "";
+
+    /**
+     * 分解的时候,保存合成的ID
+     */
+    @FK
+    private String refId = "";
 
     private int type = ComposeConstant.COMPOSE_TYPE_COMPOSE;
 
@@ -375,5 +382,22 @@ public class ComposeProductBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the refId
+     */
+    public String getRefId()
+    {
+        return refId;
+    }
+
+    /**
+     * @param refId
+     *            the refId to set
+     */
+    public void setRefId(String refId)
+    {
+        this.refId = refId;
     }
 }

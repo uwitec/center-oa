@@ -53,7 +53,7 @@ public interface StorageConstant
     int OPR_STORAGE_MOVE = 4;
 
     /**
-     * 合成
+     * 合成/分解
      */
     @Defined(key = "storageType", value = "合成/分解")
     int OPR_STORAGE_COMPOSE = 5;

@@ -804,6 +804,25 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
         }
     }
 
+    public boolean rollbackComposeProduct(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.PRODUCT_CD))
+        {
+            return composeProductManager.rollbackComposeProduct(user, id);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
     public boolean rejectComposeProduct(String userId, String id)
         throws MYException
     {
