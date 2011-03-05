@@ -148,6 +148,12 @@ public interface FinanceConstant
     int INBILL_STATUS_PREPAYMENTS = 1;
 
     /**
+     * 预收
+     */
+    @Defined(key = "inbillStatus", value = "预收")
+    int INBILL_STATUS_NOREF = 2;
+
+    /**
      * 未锁定
      */
     @Defined(key = "billLock", value = "未锁定")
@@ -158,12 +164,6 @@ public interface FinanceConstant
      */
     @Defined(key = "billLock", value = "锁定")
     int BILL_LOCK_YES = 1;
-
-    /**
-     * 预收
-     */
-    @Defined(key = "inbillStatus", value = "预收")
-    int INBILL_STATUS_NOREF = 2;
 
     /**
      * 现金
@@ -236,6 +236,12 @@ public interface FinanceConstant
      */
     @Defined(key = "outbillType", value = "税金")
     int OUTBILL_TYPE_DUTY = 9;
+
+    /**
+     * 销售退款
+     */
+    @Defined(key = "outbillType", value = "销售退款")
+    int OUTBILL_TYPE_OUTBACK = 10;
 
     /**
      * 其他

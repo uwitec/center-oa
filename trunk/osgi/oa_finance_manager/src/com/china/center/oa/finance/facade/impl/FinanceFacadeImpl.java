@@ -13,6 +13,7 @@ import java.util.List;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.finance.bean.BackPayApplyBean;
 import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.InvoiceinsBean;
@@ -20,6 +21,7 @@ import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.bean.PaymentApplyBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.facade.FinanceFacade;
+import com.china.center.oa.finance.manager.BackPayApplyManager;
 import com.china.center.oa.finance.manager.BankManager;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.InvoiceinsManager;
@@ -56,6 +58,8 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
 
     private StockPayApplyManager stockPayApplyManager = null;
 
+    private BackPayApplyManager backPayApplyManager = null;
+
     /**
      * 回款操作锁
      */
@@ -70,6 +74,8 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
     private static Object INVOICEINS_LOCK = new Object();
 
     private static Object STOCKPAYAPPLY_LOCK = new Object();
+
+    private static Object BACKPAYAPPLY_LOCK = new Object();
 
     /**
      * default constructor
@@ -602,6 +608,116 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
+    public boolean addBackPayApplyBean(String userId, BackPayApplyBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (BACKPAYAPPLY_LOCK)
+        {
+            if (containAuth(user, AuthConstant.SAIL_SUBMIT))
+            {
+                return backPayApplyManager.addBackPayApplyBean(user, bean);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean deleteBackPayApplyBean(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (BACKPAYAPPLY_LOCK)
+        {
+            if (containAuth(user, AuthConstant.SAIL_SUBMIT))
+            {
+                return backPayApplyManager.deleteBackPayApplyBean(user, id);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean passBackPayApplyBean(String userId, String id, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (BACKPAYAPPLY_LOCK)
+        {
+            if (containAuth(user, AuthConstant.SAIL_BACKPAY_CENTER))
+            {
+                return backPayApplyManager.passBackPayApplyBean(user, id, reason);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean rejectBackPayApplyBean(String userId, String id, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (BACKPAYAPPLY_LOCK)
+        {
+            if (containAuth(user, AuthConstant.SAIL_BACKPAY_CENTER, AuthConstant.SAIL_BACKPAY_SEC))
+            {
+                return backPayApplyManager.rejectBackPayApplyBean(user, id, reason);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean endBackPayApplyBean(String userId, String id, String reason, OutBillBean outBill)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (BACKPAYAPPLY_LOCK)
+        {
+            if (containAuth(user, AuthConstant.SAIL_BACKPAY_SEC))
+            {
+                return backPayApplyManager.endBackPayApplyBean(user, id, reason, outBill);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
     /**
      * @return the bankManager
      */
@@ -719,5 +835,22 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
     public void setStockPayApplyManager(StockPayApplyManager stockPayApplyManager)
     {
         this.stockPayApplyManager = stockPayApplyManager;
+    }
+
+    /**
+     * @return the backPayApplyManager
+     */
+    public BackPayApplyManager getBackPayApplyManager()
+    {
+        return backPayApplyManager;
+    }
+
+    /**
+     * @param backPayApplyManager
+     *            the backPayApplyManager to set
+     */
+    public void setBackPayApplyManager(BackPayApplyManager backPayApplyManager)
+    {
+        this.backPayApplyManager = backPayApplyManager;
     }
 }

@@ -20,6 +20,7 @@ public class Activator implements BundleActivator
             add("invoiceins");
             add("bill");
             add("stockapply");
+            add("backpay");
         }
     };
 

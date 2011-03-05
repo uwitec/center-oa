@@ -67,6 +67,8 @@
     
     <osgi:reference id="outDAO" interface="com.china.center.oa.sail.dao.OutDAO" />
     
+    <osgi:reference id="outManager" interface="com.china.center.oa.sail.manager.OutManager" />
+    
     <osgi:reference id="outBillDAO" interface="com.china.center.oa.finance.dao.OutBillDAO" />
     
     <osgi:reference id="outBalanceDAO" interface="com.china.center.oa.sail.dao.OutBalanceDAO" />
@@ -76,5 +78,7 @@
     <osgi:reference id="statBankManager" interface="com.china.center.oa.finance.manager.StatBankManager" />
     
     <osgi:reference id="stockPayApplyDAO" interface="com.china.center.oa.finance.dao.StockPayApplyDAO" />
+    
+    <osgi:reference id="backPayApplyDAO" interface="com.china.center.oa.finance.dao.BackPayApplyDAO" />
     
 </beans>

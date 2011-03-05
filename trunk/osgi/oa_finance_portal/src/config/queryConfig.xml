@@ -170,7 +170,7 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
-        <condtion name="customerName" filed="name" caption="客户" pfix="CustomerBean">
+        <condtion name="customerName" filed="name" caption="单位" pfix="UnitViewBean">
             <opr>like</opr>
             <type>text</type>
         </condtion>
@@ -182,7 +182,7 @@
             <opr>=</opr>
             <type>text</type>
         </condtion>
-        <condtion name="outId" caption="销售单号(A)">
+        <condtion name="outId" caption="单号(A)">
             <opr>=</opr>
             <type>text</type>
         </condtion>
@@ -229,7 +229,7 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
-        <condtion name="provideName" filed="name" caption="供应商" pfix="ProviderBean">
+        <condtion name="provideName" filed="name" caption="单位" pfix="UnitViewBean">
             <opr>like</opr>
             <type>text</type>
         </condtion>
@@ -237,7 +237,7 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
-        <condtion name="stockId" caption="采购单号(A)">
+        <condtion name="stockId" caption="单号(A)">
             <opr>=</opr>
             <type>text</type>
         </condtion>
@@ -308,5 +308,28 @@
     </item>
     
     <item name="queryCEOStockPayApply" alias="queryStockPayApply"/>
+    
+    <item name="queryBackPayApply" deaultpfix="BackPayApplyBean">
+        <condtion name="alogTime" filed="logTime" caption="申请时间从">
+            <opr>&gt;=</opr>
+            <type>datetime</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="blogTime" filed="logTime" caption="到">
+            <opr>&lt;=</opr>
+            <type>datetime</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="stafferName" filed="name" caption="所属职员" pfix="StafferBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+         <condtion name="status" caption="状态">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$backPayApplyStatus</option>
+        </condtion>
+    </item>
     
 </query>

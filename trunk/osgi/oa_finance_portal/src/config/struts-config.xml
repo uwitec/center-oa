@@ -49,6 +49,14 @@
             <forward name="detailStockPayApply" path="/stockapply/detailStockPayApply.jsp" />
             <forward name="handleStockPayApply" path="/stockapply/handleStockPayApply.jsp" />
         </action>
+        
+         <action path="/finance/backpay" parameter="method"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+            <forward name="queryBackPayApply" path="/backpay/queryBackPayApply.jsp" />
+            <forward name="handleBackPayApply" path="/backpay/handleBackPayApply.jsp" />
+            <forward name="queryOut" path="/sail/out.do?method=queryOut" />
+        </action>
 		
 	</action-mappings>
 </struts-config>

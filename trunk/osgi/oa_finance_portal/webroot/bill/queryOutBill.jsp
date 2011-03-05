@@ -32,7 +32,7 @@ function load()
              {display: '付款方式', name : 'payType', cc: 'outbillPayType', width : '8%'},
              {display: '锁定', name : 'lock', cc: 'billLock', width : '8%'},
              {display: '金额', name : 'moneys',  toFixed: 2, width : '8%'},
-             {display: '供应商', name : 'provideName', width : '10%'},
+             {display: '单位', name : 'provideName', width : '10%'},
              {display: '职员', name : 'ownerName', width : '8%'},
              {display: '发票', name : 'invoiceName', width : '8%'},
              {display: '时间', name : 'logTime', sortable : true, width : 'auto'}

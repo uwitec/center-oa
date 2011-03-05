@@ -45,6 +45,7 @@ import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.dao.BankDAO;
 import com.china.center.oa.finance.dao.InBillDAO;
+import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.dao.PaymentApplyDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.dao.PaymentVSOutDAO;
@@ -68,6 +69,7 @@ import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
+import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.MathTools;
@@ -114,6 +116,10 @@ public class FinanceAction extends DispatchAction
     private StatBankManager statBankManager = null;
 
     private StatBankDAO statBankDAO = null;
+
+    private OutBillDAO outBillDAO = null;
+
+    private OutManager outManager = null;
 
     private static final String QUERYBANK = "queryBank";
 
@@ -1120,14 +1126,17 @@ public class FinanceAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        if (out.getTotal() - out.getHadPay() - out.getBadDebts() == 0.0)
+        double lastMoney = outManager.outNeedPayMoney(user, outId);
+
+        if (lastMoney == 0.0)
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "已经全部关联预付");
 
             return mapping.findForward("error");
         }
 
-        request.setAttribute("lastMoney", out.getTotal() - out.getHadPay() - out.getBadDebts());
+        // 退货实物价值-返还金额
+        request.setAttribute("lastMoney", lastMoney);
 
         request.setAttribute("out", out);
 
@@ -1851,6 +1860,40 @@ public class FinanceAction extends DispatchAction
     public void setOutBalanceDAO(OutBalanceDAO outBalanceDAO)
     {
         this.outBalanceDAO = outBalanceDAO;
+    }
+
+    /**
+     * @return the outBillDAO
+     */
+    public OutBillDAO getOutBillDAO()
+    {
+        return outBillDAO;
+    }
+
+    /**
+     * @param outBillDAO
+     *            the outBillDAO to set
+     */
+    public void setOutBillDAO(OutBillDAO outBillDAO)
+    {
+        this.outBillDAO = outBillDAO;
+    }
+
+    /**
+     * @return the outManager
+     */
+    public OutManager getOutManager()
+    {
+        return outManager;
+    }
+
+    /**
+     * @param outManager
+     *            the outManager to set
+     */
+    public void setOutManager(OutManager outManager)
+    {
+        this.outManager = outManager;
     }
 
 }

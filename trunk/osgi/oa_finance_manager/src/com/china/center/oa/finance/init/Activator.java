@@ -8,6 +8,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.china.center.common.taglib.DefinedCommon;
+import com.china.center.oa.finance.constant.BackPayApplyConstant;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.constant.StockPayApplyConstant;
 
@@ -19,6 +20,7 @@ public class Activator implements BundleActivator
         {
             add(FinanceConstant.class);
             add(StockPayApplyConstant.class);
+            add(BackPayApplyConstant.class);
         }
     };
 

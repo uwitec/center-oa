@@ -65,7 +65,7 @@ public interface BillManager
     boolean splitInBillBean(User user, String id, double newMoney)
         throws MYException;
 
-    boolean splitInBillBeanWithoutTransactional(User user, String id, double newMoney)
+    String splitInBillBeanWithoutTransactional(User user, String id, double newMoney)
         throws MYException;
 
     /**

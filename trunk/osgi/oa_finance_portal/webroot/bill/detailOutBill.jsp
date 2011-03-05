@@ -60,7 +60,7 @@
                ${bean.invoiceName}
             </p:cell>
 			
-			<p:cell title="供应商">
+			<p:cell title="单位">
                ${bean.provideName}
             </p:cell>
 			

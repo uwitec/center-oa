@@ -39,4 +39,10 @@ public class OutBillDAOImpl extends BaseDAO<OutBillBean, OutBillVO> implements O
         return this.jdbcOperation.update("set OutBillBean.ulock = ? " + condition.toString(), claz,
             FinanceConstant.BILL_LOCK_YES);
     }
+
+    public double sumByRefId(String refId)
+    {
+        return this.jdbcOperation.queryForDouble(BeanTools.getSumHead(claz, "moneys")
+                                                 + "where OutBillBean.stockId = ?", refId);
+    }
 }

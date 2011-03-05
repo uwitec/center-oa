@@ -52,4 +52,8 @@
 
 	<osgi:service ref="stockPayApplyManager" interface="com.china.center.oa.finance.manager.StockPayApplyManager" />
 
+	<osgi:service ref="backPayApplyDAO" interface="com.china.center.oa.finance.dao.BackPayApplyDAO" />
+
+	<osgi:service ref="backPayApplyManager" interface="com.china.center.oa.finance.manager.BackPayApplyManager" />
+
 </beans>

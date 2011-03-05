@@ -12,6 +12,7 @@ package com.china.center.oa.finance.facade;
 import java.util.List;
 
 import com.china.center.common.MYException;
+import com.china.center.oa.finance.bean.BackPayApplyBean;
 import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.InvoiceinsBean;
@@ -187,5 +188,20 @@ public interface FinanceFacade
         throws MYException;
 
     boolean endStockPayBySEC(String userId, String id, String reason, OutBillBean outBill)
+        throws MYException;
+
+    boolean addBackPayApplyBean(String userId, BackPayApplyBean bean)
+        throws MYException;
+
+    boolean passBackPayApplyBean(String userId, String id, String reason)
+        throws MYException;
+
+    boolean rejectBackPayApplyBean(String userId, String id, String reason)
+        throws MYException;
+
+    boolean deleteBackPayApplyBean(String userId, String id)
+        throws MYException;
+
+    boolean endBackPayApplyBean(String userId, String id, String reason, OutBillBean outBill)
         throws MYException;
 }

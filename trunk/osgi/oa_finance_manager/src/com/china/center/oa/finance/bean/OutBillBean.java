@@ -21,9 +21,9 @@ import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.finance.constant.FinanceConstant;
-import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.sail.bean.UnitViewBean;
 
 
 /**
@@ -65,7 +65,7 @@ public class OutBillBean implements Serializable
     private String bankId = "";
 
     /**
-     * 关联stockItemId
+     * stockItemId/销售单(refId)
      */
     @FK
     private String stockId = "";
@@ -77,10 +77,10 @@ public class OutBillBean implements Serializable
     private double moneys = 0.0d;
 
     /**
-     * TODO 建议使用VIEW代替供应商/客户
+     * 建议使用VIEW代替供应商/客户
      */
-    @Html(title = "供应商", name = "provideName", readonly = true, must = true)
-    @Join(tagClass = ProviderBean.class, type = JoinType.LEFT)
+    @Html(title = "单位", name = "provideName", readonly = true, must = true)
+    @Join(tagClass = UnitViewBean.class, type = JoinType.LEFT)
     private String provideId = "";
 
     /**

@@ -20,9 +20,9 @@ import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.jdbc.annotation.enums.JoinType;
-import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.sail.bean.UnitViewBean;
 
 
 /**
@@ -71,8 +71,11 @@ public class InBillBean implements Serializable
     @Html(title = "金额", type = Element.DOUBLE, must = true)
     private double moneys = 0.0d;
 
-    @Html(title = "客户", name = "customerName", readonly = true, must = true)
-    @Join(tagClass = CustomerBean.class, type = JoinType.LEFT)
+    /**
+     * 单位
+     */
+    @Html(title = "单位", name = "customerName", readonly = true, must = true)
+    @Join(tagClass = UnitViewBean.class, type = JoinType.LEFT)
     private String customerId = "";
 
     /**

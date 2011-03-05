@@ -12,6 +12,8 @@ package com.china.center.oa.finance.manager.impl;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,11 +34,13 @@ import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
+import com.china.center.oa.publics.wrap.ResultBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
+import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
@@ -53,6 +57,8 @@ import com.china.center.tools.TimeTools;
 @Exceptional
 public class PaymentApplyManagerImpl implements PaymentApplyManager
 {
+    private final Log _logger = LogFactory.getLog(getClass());
+
     private PaymentApplyDAO paymentApplyDAO = null;
 
     private PaymentVSOutDAO paymentVSOutDAO = null;
@@ -68,6 +74,8 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
     private BillManager billManager = null;
 
     private OutDAO outDAO = null;
+
+    private OutManager outManager = null;
 
     private OutBalanceDAO outBalanceDAO = null;
 
@@ -186,7 +194,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
                     throw new MYException("数据错误,请确认操作");
                 }
 
-                lastMoney = out.getTotal() - out.getHadPay() - out.getBadDebts();
+                lastMoney = outManager.outNeedPayMoney(user, outId);
             }
             else
             {
@@ -436,49 +444,8 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
             // 生成收款单
             if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_PAYMENT)
             {
-                InBillBean inBean = new InBillBean();
-
-                inBean.setId(commonDAO.getSquenceString20());
-
-                inBean.setBankId(payment.getBankId());
-
-                inBean.setCustomerId(apply.getCustomerId());
-
-                inBean.setLocationId(user.getLocationId());
-
-                inBean.setLogTime(TimeTools.now());
-
-                inBean.setMoneys(item.getMoneys());
-
-                if (StringTools.isNullOrNone(item.getOutId()))
-                {
-                    inBean.setStatus(FinanceConstant.INBILL_STATUS_NOREF);
-
-                    inBean.setDescription("自动生成预收收款单,从回款单:" + payment.getId() + ",未关联销售单:");
-                }
-                else
-                {
-                    inBean.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
-
-                    inBean.setDescription("自动生成收款单,从回款单:" + payment.getId() + ",关联的销售单:"
-                                          + item.getOutId());
-                }
-
-                inBean.setOutId(item.getOutId());
-
-                inBean.setOutBalanceId(item.getOutBalanceId());
-
-                inBean.setOwnerId(apply.getStafferId());
-
-                inBean.setPaymentId(payment.getId());
-
-                inBean.setStafferId(user.getStafferId());
-
-                inBean.setType(FinanceConstant.INBILL_TYPE_SAILOUT);
-
-                inBillDAO.saveEntityBean(inBean);
-
-                item.setBillId(inBean.getId());
+                // 增加收款单
+                saveBillInner(user, apply, payment, item);
             }
             else
             {
@@ -508,64 +475,17 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         // 更新收款单ID到申请里面
         paymentVSOutDAO.updateAllEntityBeans(vsList);
 
-        // 这里只有一个销售单哦
+        // 销售单绑定
         if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_BING)
         {
             String outId = vsList.get(0).getOutId();
 
-            OutBean out = outDAO.find(outId);
+            String outBalanceId = vsList.get(0).getOutBalanceId();
 
-            // 看看销售单是否溢出
-            double hasPay = inBillDAO.sumByOutId(outId);
-
-            // 发现支付的金额过多
-            if (hasPay + out.getBadDebts() > out.getTotal())
-            {
-                throw new MYException("销售单[%s]的总金额[%.2f],当前已付金额[%.2f],坏账金额[%.2f],付款金额超出销售金额",
-                    outId, out.getTotal(), hasPay, out.getBadDebts());
-            }
-
-            // 有坏账的存在
-            if (apply.getBadMoney() != 0)
-            {
-                outDAO.modifyBadDebts(outId, apply.getBadMoney());
-            }
-
-            // 更新已经支付的金额
-            outDAO.updateHadPay(outId, hasPay);
-
-            // 如果全部支付就自动表示收款
-            if (out.getTotal() == (hasPay + apply.getBadMoney()))
-            {
-                outDAO.modifyPay(outId, OutConstant.PAY_YES);
-            }
-
-            if ( !StringTools.isNullOrNone(vsList.get(0).getOutBalanceId()))
-            {
-                // 更新委托清单
-                OutBalanceBean outBal = outBalanceDAO.find(vsList.get(0).getOutBalanceId());
-
-                // 看看委托代销是否溢出
-                double hasOutBalancePay = inBillDAO.sumByOutBalanceId(outBal.getId());
-
-                // 发现支付的金额过多
-                if (hasOutBalancePay > outBal.getTotal())
-                {
-                    throw new MYException("委托清单[%s]的总金额[%.2f],当前已付金额[%.2f]付款金额超出销售金额", outBal
-                        .getId(), outBal.getTotal(), hasOutBalancePay);
-                }
-
-                outBalanceDAO.updateHadPay(outBal.getId(), hasOutBalancePay);
-
-                // 如果全部支付就自动表示收款
-                if (outBal.getTotal() == hasOutBalancePay)
-                {
-                    outBalanceDAO.updateHadPay(outId, OutConstant.PAY_YES);
-                }
-            }
+            processOut(user, apply, outId, outBalanceId);
         }
 
-        // 里面存在多个销售单或者委托清单
+        // 里面存在多个销售单或者委托清单(回款转收款 )/这里没有坏账
         if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_PAYMENT)
         {
             for (PaymentVSOutBean item : vsList)
@@ -577,53 +497,155 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
 
                 String outId = item.getOutId();
 
-                OutBean out = outDAO.find(outId);
+                String outBalanceId = item.getOutBalanceId();
 
-                // 看看销售单是否溢出
-                double hasPay = inBillDAO.sumByOutId(outId);
-
-                // 发现支付的金额过多
-                if (hasPay + out.getBadDebts() > out.getTotal())
-                {
-                    throw new MYException("销售单[%s]的总金额[%.2f],当前已付金额[%.2f],坏账金额[%.2f],付款金额超出销售金额",
-                        outId, out.getTotal(), hasPay, out.getBadDebts());
-                }
-
-                // 更新已经支付的金额
-                outDAO.updateHadPay(outId, hasPay);
-
-                // 如果全部支付就自动表示收款
-                if (out.getTotal() == hasPay)
-                {
-                    outDAO.modifyPay(outId, OutConstant.PAY_YES);
-                }
-
-                if (StringTools.isNullOrNone(item.getOutBalanceId()))
-                {
-                    continue;
-                }
-
-                // 更新委托清单
-                OutBalanceBean outBal = outBalanceDAO.find(item.getOutBalanceId());
-
-                // 看看委托代销是否溢出
-                double hasOutBalancePay = inBillDAO.sumByOutBalanceId(outBal.getId());
-
-                // 发现支付的金额过多
-                if (hasOutBalancePay > outBal.getTotal())
-                {
-                    throw new MYException("委托清单[%s]的总金额[%.2f],当前已付金额[%.2f]付款金额超出销售金额", outBal
-                        .getId(), outBal.getTotal(), hasOutBalancePay);
-                }
-
-                outBalanceDAO.updateHadPay(outBal.getId(), hasOutBalancePay);
-
-                // 如果全部支付就自动表示收款
-                if (outBal.getTotal() == hasOutBalancePay)
-                {
-                    outBalanceDAO.updateHadPay(outId, OutConstant.PAY_YES);
-                }
+                processOut(user, apply, outId, outBalanceId);
             }
+        }
+    }
+
+    private void saveBillInner(User user, PaymentApplyBean apply, PaymentBean payment,
+                               PaymentVSOutBean item)
+    {
+        InBillBean inBean = new InBillBean();
+
+        inBean.setId(commonDAO.getSquenceString20());
+
+        inBean.setBankId(payment.getBankId());
+
+        inBean.setCustomerId(apply.getCustomerId());
+
+        inBean.setLocationId(user.getLocationId());
+
+        inBean.setLogTime(TimeTools.now());
+
+        inBean.setMoneys(item.getMoneys());
+
+        if (StringTools.isNullOrNone(item.getOutId()))
+        {
+            inBean.setStatus(FinanceConstant.INBILL_STATUS_NOREF);
+
+            inBean.setDescription("自动生成预收收款单,从回款单:" + payment.getId() + ",未关联销售单:");
+        }
+        else
+        {
+            inBean.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
+
+            inBean.setDescription("自动生成收款单,从回款单:" + payment.getId() + ",关联的销售单:" + item.getOutId());
+        }
+
+        inBean.setOutId(item.getOutId());
+
+        inBean.setOutBalanceId(item.getOutBalanceId());
+
+        inBean.setOwnerId(apply.getStafferId());
+
+        inBean.setPaymentId(payment.getId());
+
+        inBean.setStafferId(user.getStafferId());
+
+        inBean.setType(FinanceConstant.INBILL_TYPE_SAILOUT);
+
+        inBillDAO.saveEntityBean(inBean);
+
+        item.setBillId(inBean.getId());
+    }
+
+    /**
+     * CORE 处理销售的回款和付款绑定的核心
+     * 
+     * @param user
+     * @param apply
+     * @param outId
+     * @param outBalanceId
+     * @throws MYException
+     */
+    private void processOut(User user, PaymentApplyBean apply, String outId, String outBalanceId)
+        throws MYException
+    {
+        OutBean out = outDAO.find(outId);
+
+        // 看看销售单是否溢出
+        double hasPay = inBillDAO.sumByOutId(outId);
+
+        // 有坏账的存在
+        if (apply.getBadMoney() != 0)
+        {
+            out.setBadDebts(apply.getBadMoney());
+
+            outDAO.modifyBadDebts(outId, apply.getBadMoney());
+        }
+
+        out.setHadPay(hasPay);
+
+        // 更新已经支付的金额
+        outDAO.updateHadPay(outId, hasPay);
+
+        // 先把委托代销的全部搞定
+        if ( !StringTools.isNullOrNone(outBalanceId))
+        {
+            // 更新委托清单
+            OutBalanceBean outBal = outBalanceDAO.find(outBalanceId);
+
+            // 看看委托代销是否溢出
+            double hasOutBalancePay = inBillDAO.sumByOutBalanceId(outBal.getId());
+
+            // 发现支付的金额过多
+            if (hasOutBalancePay > outBal.getTotal())
+            {
+                throw new MYException("委托清单[%s]的总金额[%.2f],当前已付金额[%.2f]付款金额超出销售金额", outBal.getId(),
+                    outBal.getTotal(), hasOutBalancePay);
+            }
+
+            outBalanceDAO.updateHadPay(outBal.getId(), hasOutBalancePay);
+
+            // 如果全部支付就自动表示收款
+            if (outBal.getTotal() == hasOutBalancePay)
+            {
+                outBalanceDAO.updateHadPay(outId, OutConstant.PAY_YES);
+            }
+        }
+
+        tryUpdateOutPayStatus(user, out);
+    }
+
+    /**
+     * 尝试更新销售单的付款状态 *
+     * 
+     * @param user
+     * @param out
+     * @throws MYException
+     */
+    private void tryUpdateOutPayStatus(User user, OutBean out)
+        throws MYException
+    {
+        // 看看销售单是否可以结帐
+        ResultBean result = outManager.checkOutPayStatus(user, out);
+
+        // 如果全部支付就自动表示收款
+        if (result.getResult() == 0)
+        {
+            try
+            {
+                // 尝试全部付款
+                outManager.payOutWithoutTransactional(user, out.getFullId(), "付款申请通过");
+            }
+            catch (MYException e)
+            {
+                _logger.warn(e, e);
+            }
+        }
+
+        // 回款超出了限制(非法)
+        if (result.getResult() == -1)
+        {
+            throw new MYException(result.getMessage());
+        }
+
+        // 付款未完全,逻辑是正常的
+        if (result.getResult() == 1)
+        {
+            _logger.info(result.getMessage());
         }
     }
 
@@ -997,6 +1019,23 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
     public void setOutBalanceDAO(OutBalanceDAO outBalanceDAO)
     {
         this.outBalanceDAO = outBalanceDAO;
+    }
+
+    /**
+     * @return the outManager
+     */
+    public OutManager getOutManager()
+    {
+        return outManager;
+    }
+
+    /**
+     * @param outManager
+     *            the outManager to set
+     */
+    public void setOutManager(OutManager outManager)
+    {
+        this.outManager = outManager;
     }
 
 }

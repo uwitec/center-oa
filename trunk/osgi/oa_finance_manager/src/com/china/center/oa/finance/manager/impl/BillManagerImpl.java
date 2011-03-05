@@ -277,10 +277,12 @@ public class BillManagerImpl implements BillManager
     public boolean splitInBillBean(User user, String id, double newMoney)
         throws MYException
     {
-        return splitInBillBeanWithoutTransactional(user, id, newMoney);
+        splitInBillBeanWithoutTransactional(user, id, newMoney);
+
+        return true;
     }
 
-    public boolean splitInBillBeanWithoutTransactional(User user, String id, double newMoney)
+    public String splitInBillBeanWithoutTransactional(User user, String id, double newMoney)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, id);
@@ -302,16 +304,6 @@ public class BillManagerImpl implements BillManager
             throw new MYException("金额不足,无法分拆,请确认操作");
         }
 
-        if ( !user.getStafferId().equals(bill.getOwnerId()))
-        {
-            throw new MYException("不是自己的收款单,请确认操作");
-        }
-
-        if (bill.getStatus() != FinanceConstant.INBILL_STATUS_NOREF)
-        {
-            throw new MYException("只能分拆预收的收款单,请确认操作");
-        }
-
         bill.setMoneys(bill.getMoneys() - newMoney);
 
         inBillDAO.updateEntityBean(bill);
@@ -325,7 +317,7 @@ public class BillManagerImpl implements BillManager
 
         inBillDAO.saveEntityBean(bill);
 
-        return true;
+        return bill.getId();
     }
 
     /**

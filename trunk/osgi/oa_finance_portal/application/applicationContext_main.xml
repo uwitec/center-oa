@@ -42,4 +42,6 @@
     
     <bean name="/finance/stock" class="com.china.center.oa.finance.portal.action.StockPayAction" />
     
+    <bean name="/finance/backpay" class="com.china.center.oa.finance.portal.action.BackPayApplyAction" />
+    
 </beans>

@@ -53,4 +53,8 @@
 
 	<bean id="stockPayApplyManager" class="com.china.center.oa.finance.manager.impl.StockPayApplyManagerImpl" />
 
+	<bean id="backPayApplyDAO" class="com.china.center.oa.finance.dao.impl.BackPayApplyDAOImpl" />
+
+	<bean id="backPayApplyManager" class="com.china.center.oa.finance.manager.impl.BackPayApplyManagerImpl" />
+
 </beans>

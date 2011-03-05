@@ -57,14 +57,12 @@ function check()
         return false;
     }
     
-    if ((total - pu) - bad < 0)
+    if ((total - pu) - bad < 0 && bad != 0)
     {
         alert('坏账金额过多,当前最多坏账金额:' + (total - pu));
         
         return false;
     }
-    
-    $O('total').value = total;
     
     return true;
 }
@@ -78,7 +76,7 @@ function check()
 <input type="hidden" name="method" value="drawPayment3"> 
 <input type="hidden" name="customerId" value="${customerId}"> 
 <input type="hidden" name="outId" value="${outId}"> 
-<input type="hidden" name="total" value=""> 
+<input type="hidden" name="total" value="${lastMoney}"> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
