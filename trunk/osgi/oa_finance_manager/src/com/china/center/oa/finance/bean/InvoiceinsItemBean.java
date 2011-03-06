@@ -39,6 +39,16 @@ public class InvoiceinsItemBean implements Serializable
 
     private String showName = "";
 
+    /**
+     * 规格
+     */
+    private String special = "";
+
+    /**
+     * 单位
+     */
+    private String unit = "";
+
     private int amount = 0;
 
     private double price = 0.0d;
@@ -172,6 +182,40 @@ public class InvoiceinsItemBean implements Serializable
     }
 
     /**
+     * @return the special
+     */
+    public String getSpecial()
+    {
+        return special;
+    }
+
+    /**
+     * @param special
+     *            the special to set
+     */
+    public void setSpecial(String special)
+    {
+        this.special = special;
+    }
+
+    /**
+     * @return the unit
+     */
+    public String getUnit()
+    {
+        return unit;
+    }
+
+    /**
+     * @param unit
+     *            the unit to set
+     */
+    public void setUnit(String unit)
+    {
+        this.unit = unit;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -197,6 +241,12 @@ public class InvoiceinsItemBean implements Serializable
             .append(TAB)
             .append("showName = ")
             .append(this.showName)
+            .append(TAB)
+            .append("special = ")
+            .append(this.special)
+            .append(TAB)
+            .append("unit = ")
+            .append(this.unit)
             .append(TAB)
             .append("amount = ")
             .append(this.amount)

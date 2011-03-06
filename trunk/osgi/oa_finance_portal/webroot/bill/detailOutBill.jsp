@@ -56,6 +56,14 @@
                ${bean.bankName}
             </p:cell>
             
+             <p:cell title="目的帐号">
+               ${bean.destBankName}
+            </p:cell>
+            
+            <p:cell title="状态">
+               ${my:get('outbillStatus', bean.status)}
+            </p:cell>
+            
             <p:cell title="发票类型">
                ${bean.invoiceName}
             </p:cell>
@@ -80,7 +88,7 @@
                ${my:formatNum(bean.moneys)}
             </p:cell>
             
-            <p:cell title="时间">
+            <p:cell title="时间" end="true">
                ${bean.logTime}
             </p:cell>
 

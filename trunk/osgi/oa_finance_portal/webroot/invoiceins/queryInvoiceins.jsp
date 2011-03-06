@@ -14,33 +14,44 @@ var gurl = '../finance/invoiceins.do?method=';
 var addUrl = '../invoiceins/addInvoiceins.jsp';
 var ukey = 'Invoiceins';
 
-var allDef = window.top.topFrame.allDef;
+var allDef = getAllDef();
 var guidMap;
 var thisObj;
+
+var mode = '<p:value key="mode"/>';
+
 function load()
 {
      preload();
      
      guidMap = {
          title: '开票列表',
-         url: gurl + 'query' + ukey,
+         url: gurl + 'query' + ukey + '&mode=' + mode,
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
-             {display: '开票单位', name : 'unit', width : '20%'},
+             {display: '开票单位', name : 'unit', width : '12%'},
              {display: '发票类型', name : 'invoiceName', cc: 'bankType', width : '15%'},
+             {display: '状态', name : 'status', cc: 'invoiceinsStatus', width : '10%'},
              {display: '纳税实体', name : 'dutyName', width : '10%'},
-             {display: '客户', name : 'customerName', width : '10%'},
+             {display: '客户', name : 'customerName', width : '15%'},
              {display: '金额', name : 'moneys', width : '10%', toFixed: 2},
-             {display: '开票人', name : 'stafferName', width : '10%'},
+             {display: '开票人', name : 'stafferName', width : '8%'},
              {display: '时间', name : 'logTime', width : 'auto', sortable : true}
              ],
          extAtt: {
-             unit : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
+             unit : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}&mode=' + mode + '>', end : '</a>'}
          },
          buttons : [
-             {id: 'add', bclass: 'add', onpress : addBean, auth: '1604'},
-             //{id: 'update', bclass: 'update', onpress : updateBean, auth: '1601'},
+             <c:if test="${mode == 0}">
+             {id: 'add', bclass: 'add', caption: '申请开票', onpress : addBean, auth: '1401'},
+             </c:if>
+             <c:if test="${mode == 1}">
+             {id: 'pass', bclass: 'pass', caption: '处理', onpress : doProcess, auth: '1604'},
+             </c:if>
+             <c:if test="${mode == 2}">
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1605'},
+             </c:if>
+             
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -57,7 +68,7 @@ function $callBack()
 
 function addBean(opr, grid)
 {
-    $l(gurl + 'preForAdd' + ukey);
+    $l(gurl + 'preForAdd' + ukey + '&mode=' + mode);
     //$l(addUrl);
 }
 
@@ -67,6 +78,16 @@ function delBean(opr, grid)
     {    
         if(window.confirm('确定删除?'))    
         $ajax(gurl + 'delete' + ukey + '&id=' + getRadioValue('checkb'), callBackFun);
+    }
+    else
+    $error('不能操作');
+}
+
+function doProcess()
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {   
+        $l(gurl + 'find' + ukey + '&update=1&id=' + getRadioValue('checkb') + '&mode=' + mode);
     }
     else
     $error('不能操作');

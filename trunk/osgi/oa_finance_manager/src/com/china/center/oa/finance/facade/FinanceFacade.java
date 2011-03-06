@@ -204,4 +204,32 @@ public interface FinanceFacade
 
     boolean endBackPayApplyBean(String userId, String id, String reason, OutBillBean outBill)
         throws MYException;
+
+    /**
+     * 通过转账
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean passTransferOutBillBean(String userId, String id)
+        throws MYException;
+
+    /**
+     * 驳回转账
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean rejectTransferOutBillBean(String userId, String id)
+        throws MYException;
+
+    boolean passInvoiceinsBean(String userId, String id)
+        throws MYException;
+
+    boolean rejectInvoiceinsBean(String userId, String id)
+        throws MYException;
 }

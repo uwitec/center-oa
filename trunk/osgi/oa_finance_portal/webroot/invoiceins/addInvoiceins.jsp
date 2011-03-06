@@ -11,10 +11,22 @@
 <script language="javascript">
 
 var showJSON = JSON.parse('${showJSON}');
+var invoicesJSON = JSON.parse('${invoicesJSON}');
+var vsJSON = JSON.parse('${vsJSON}');
+
+var invMap = {};
+var invFullMap = {};
+<c:forEach items="${invoiceList}" var="item">
+  invFullMap['${item.id}'] = '${item.fullName}';
+</c:forEach>
+
+<c:forEach items="${dutyList}" var="item">
+  invMap['${item.id}'] = '${item.type}';
+</c:forEach>
 
 function addBean()
 {
-	submit('确定增加发票?', null, check);
+	submit('确定申请增加发票?', null, check);
 }
 
 function check()
@@ -22,6 +34,9 @@ function check()
     var showArr = document.getElementsByName('showId');
     var amountArr = document.getElementsByName('amount');
     var priceArr = document.getElementsByName('price');
+    var priceArr = document.getElementsByName('price');
+    var specialArr = document.getElementsByName('special');
+    var unitArr = document.getElementsByName('sunit');
     
     var index = -1;
     
@@ -67,6 +82,24 @@ function check()
 	            return false;
 	        }
 	        
+	        if (isNoneInCommon(specialArr[i].value))
+            {
+                alert('请填写规格');
+                
+                $f(specialArr[i]);
+                
+                return false;
+            }
+            
+            if (isNoneInCommon(unitArr[i].value))
+            {
+                alert('请填写单位');
+                
+                $f(unitArr[i]);
+                
+                return false;
+            }
+	        
 	        totals += parseInt(amountArr[i].value, 10) * parseFloat(priceArr[i].value);
         }
     }
@@ -75,7 +108,7 @@ function check()
     
     if (totals > parseFloat($$('mayMoney')))
     {
-        alert('开票金额不能大于单据的销售金额');
+        alert('开票金额不能大于单据的可开票金额');
         
         return false;
     }
@@ -107,6 +140,29 @@ function loadShow()
             {
                 setOption(each, item.id, item.name);
             }
+        }
+    }
+    
+    var vsjson = vsJSON;
+    
+    var dutyObj = $O('dutyId');
+    
+    var invObj = $O('invoiceId');
+    
+    removeAllItem(invObj);
+    
+    if (invMap[dutyObj.value] == '3')
+    {
+        setOption(invObj, '', '没有发票');
+    }
+    
+    for (var i = 0; i < vsjson.length; i++)
+    {
+        var item = vsjson[i];
+        
+        if (item.dutyType == invMap[dutyObj.value])
+        {
+            setOption(invObj, item.invoiceId, invFullMap[item.invoiceId]);
         }
     }
     
@@ -171,13 +227,29 @@ function clears()
 
 function selectCus()
 {
-    window.common.modal('../customer/customer.do?method=rptQueryAllCustomer&load=1');
+    window.common.modal('../customer/customer.do?method=rptQuerySelfCustomer&stafferId=${user.stafferId}&load=1');
 }
 
 function getCustomer(obj)
 {
     $O('customerId').value = obj.value;
     $O('cname').value = obj.pname;
+}
+
+function cc(obj, index)
+{
+    var am = $$('amount_' + index);
+    
+    var pr = $$('price_' + index);
+    
+    if (am == '' || pr == '')
+    {
+        $O('e_total_' + index).value = '0.0';
+    }
+    else
+    {
+        $O('e_total_' + index).value = parseFloat(pr) * parseInt(am, 10);
+    }
 }
 </script>
 
@@ -186,10 +258,11 @@ function getCustomer(obj)
 <form name="formEntry" action="../finance/invoiceins.do" method="post">
 <input type="hidden" name="method" value="addInvoiceins"> 
 <input type="hidden" name="customerId" value=""> 
+<input type="hidden" name="mode" value="${mode}"> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javascript:history.go(-1)">发票管理</span> &gt;&gt; 开发票</td>
+		onclick="javascript:history.go(-1)">发票管理</span> &gt;&gt; 开票申请</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -210,17 +283,17 @@ function getCustomer(obj)
 			<p:pro field="invoiceDate"/>
 			
 			<p:pro field="unit" innerString="size=60" />
+			
+			<p:pro field="dutyId" innerString="onchange=loadShow()">
+                <p:option type="dutyList" />
+            </p:pro>
 
-			<p:pro field="invoiceId" innerString="style='WIDTH: 340px;' onchange=loadShow()">
+			<p:pro field="invoiceId" innerString="style='WIDTH: 340px;'">
 			    <c:forEach items="${invoiceList}" var="item">
 			    <option value="${item.id}">${item.fullName}</option>
 			    </c:forEach>
 			</p:pro>
 
-			<p:pro field="dutyId" innerString="onchange=loadShow()">
-				<p:option type="dutyList" />
-			</p:pro>
-			
 			<p:cell title="开票客户" end="true">
                 <input type="text" size="60" readonly="readonly" name="cname" oncheck="notNone;"> 
                 <font color="red">*</font>
@@ -243,6 +316,10 @@ function getCustomer(obj)
                 &nbsp;&nbsp;
                 当前开票金额：<input type="text" size="20" readonly="readonly" name="hasMoney" value="0.0"> 
             </p:cell>
+            
+            <p:pro field="processer">
+                <p:option type="stafferList" empty="true"/>
+            </p:pro>
 
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
 
@@ -258,16 +335,23 @@ function getCustomer(obj)
 		<p:table cells="1">
 
 			<tr align="center" class="content0">
-				<td width="40%" align="center">品名</td>
-				<td width="30%" align="center">数量</td>
-				<td width="30%" align="center">单价</td>
+				<td width="20%" align="center">品名</td>
+				<td width="30%" align="center">规格</td>
+				<td width="10%" align="center">单位</td>
+				<td width="10%" align="center">数量</td>
+				<td width="10%" align="center">单价</td>
+				<td width="20%" align="center">合计</td>
 			</tr>
 			
-			<c:forEach begin="1" end="15">
+			<c:forEach begin="1" end="15" var="vs">
 			<tr align="center" class="content0">
                 <td align="center"><select name="showId" style="WIDTH: 100%;" quick=true ></td>
-                <td align="center"><input type="text" name="amount" style="width: 100%" oncheck="isNumber"></td>
-                <td align="center"><input type="text" name="price" style="width: 100%" oncheck="isFloat2"></td>
+                <td align="center"><input type="text" name="special" style="width: 100%" ></td>
+                <td align="center"><input type="text" name="sunit" style="width: 100%"></td>
+                <td align="center"><input type="text" name="amount" id="amount_${vs}" style="width: 100%" oncheck="isNumber" onkeyup="cc(this, ${vs})"></td>
+                <td align="center"><input type="text" name="price" id="price_${vs}" style="width: 100%" oncheck="isFloat2" onkeyup="cc(this, ${vs})"></td>
+                <td align="center">
+                <input type="text" name="e_total" id="e_total_${vs}" style="width: 100%" readonly="readonly" value="0.0"></td>
             </tr>
             </c:forEach>
 

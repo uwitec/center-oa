@@ -10,7 +10,29 @@
 <script language="javascript">
 function addBean()
 {
-	submit('确定增加付款单?');
+	submit('确定增加付款单?', null, check);
+}
+
+function check()
+{
+    if ($$('type') == 98)
+    {
+        if ($$('bankId') == $$('destBankId'))
+        {
+            alert('转账申请中原帐户不能等于目的帐户');
+            
+            return false;
+        }
+        
+        if ($$('destBankId') == '')
+        {
+            alert('转账申请中目的帐户不能为空');
+            
+            return false;
+        }
+    }
+    
+    return true;
 }
 
 function selectCus()
@@ -77,7 +99,22 @@ function changeAll()
     {
     	$O('moneys').readOnly = false;
     }
+    
+    //转账
+    if ($$('type') == 98)
+    {
+        $v('destBankId_TR', true);
+        $v('invoiceId_TR', false);
+        $v('provideId_TR', false);
+        $v('ownerId_TR', false);
+    }
+    else
+    {
+        $v('destBankId_TR', false);
+    }
 }
+
+//destBankId_TR
 </script>
 
 </head>
@@ -120,6 +157,11 @@ function changeAll()
 			<p:pro field="type" innerString="onchange=changeAll()">
 				<p:option type="outbillType"/>
 			</p:pro>
+			
+			<p:pro field="destBankId" innerString="style='width: 300px'">
+                <option value="">--</option> 
+                <p:option type="bankList"/>
+            </p:pro>
 			
 			<p:pro field="invoiceId" innerString="style='width: 300px'">
 			    <option value="">--</option>

@@ -34,6 +34,9 @@ public class InvoiceinsVO extends InvoiceinsBean
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
 
+    @Relationship(relationField = "processer")
+    private String processName = "";
+
     @Relationship(relationField = "customerId")
     private String customerName = "";
 
@@ -113,6 +116,23 @@ public class InvoiceinsVO extends InvoiceinsBean
     }
 
     /**
+     * @return the processName
+     */
+    public String getProcessName()
+    {
+        return processName;
+    }
+
+    /**
+     * @param processName
+     *            the processName to set
+     */
+    public void setProcessName(String processName)
+    {
+        this.processName = processName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -135,6 +155,9 @@ public class InvoiceinsVO extends InvoiceinsBean
             .append(TAB)
             .append("stafferName = ")
             .append(this.stafferName)
+            .append(TAB)
+            .append("processName = ")
+            .append(this.processName)
             .append(TAB)
             .append("customerName = ")
             .append(this.customerName)

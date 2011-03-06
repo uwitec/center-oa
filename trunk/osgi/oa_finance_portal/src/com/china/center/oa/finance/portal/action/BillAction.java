@@ -1,7 +1,9 @@
 package com.china.center.oa.finance.portal.action;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +39,8 @@ import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.MathTools;
+import com.china.center.tools.StringTools;
+import com.china.center.tools.TimeTools;
 
 
 /**
@@ -77,8 +81,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryInBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward queryInBill(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -87,15 +91,48 @@ public class BillAction extends DispatchAction
 
         condtion.addWhereStr();
 
-        ActionTools.processJSONQueryCondition(QUERYINBILL, request, condtion);
+        Map<String, String> initMap = initLogTime(request, condtion, "InBillBean");
+
+        ActionTools.processJSONQueryCondition(QUERYINBILL, request, condtion, initMap);
 
         condtion.addCondition("InBillBean.locationId", "=", user.getLocationId());
 
-        condtion.addCondition("order by InBillBean.logTime desc");
+        condtion.addCondition("order by InBillBean.id desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYINBILL, request, condtion, this.inBillDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYINBILL, request, condtion,
+            this.inBillDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * initLogTime
+     * 
+     * @param request
+     * @param condtion
+     * @return
+     */
+    private Map<String, String> initLogTime(HttpServletRequest request, ConditionParse condtion,
+                                            String pfix)
+    {
+        Map<String, String> changeMap = new HashMap<String, String>();
+
+        String alogTime = request.getParameter("alogTime");
+
+        String blogTime = request.getParameter("blogTime");
+
+        if (StringTools.isNullOrNone(alogTime) && StringTools.isNullOrNone(blogTime))
+        {
+            changeMap.put("alogTime", TimeTools.now_short( -30));
+
+            changeMap.put("blogTime", TimeTools.now_short(1));
+
+            condtion.addCondition(pfix + ".logTime", ">=", TimeTools.now_short( -30));
+
+            condtion.addCondition(pfix + ".logTime", "<=", TimeTools.now_short(1));
+        }
+
+        return changeMap;
     }
 
     /**
@@ -108,8 +145,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryOutBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward queryOutBill(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -118,13 +155,49 @@ public class BillAction extends DispatchAction
 
         condtion.addWhereStr();
 
-        ActionTools.processJSONQueryCondition(QUERYOUTBILL, request, condtion);
+        Map<String, String> initMap = initLogTime(request, condtion, "OutBillBean");
+
+        ActionTools.processJSONQueryCondition(QUERYOUTBILL, request, condtion, initMap);
 
         condtion.addCondition("OutBillBean.locationId", "=", user.getLocationId());
 
         condtion.addCondition("order by OutBillBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYOUTBILL, request, condtion, this.outBillDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYOUTBILL, request, condtion,
+            this.outBillDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryTransferOutBill
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryTransferOutBill(ActionMapping mapping, ActionForm form,
+                                              HttpServletRequest request,
+                                              HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        ActionTools.processJSONQueryCondition(QUERYOUTBILL, request, condtion);
+
+        condtion.addIntCondition("OutBillBean.type", "=", FinanceConstant.OUTBILL_TYPE_TRANSFER);
+
+        condtion.addIntCondition("OutBillBean.status", "=", FinanceConstant.OUTBILL_STATUS_SUBMIT);
+
+        condtion.addCondition("order by OutBillBean.id desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYOUTBILL, request, condtion,
+            this.outBillDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -139,8 +212,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddInBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward preForAddInBill(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         List<BankBean> banlList = bankDAO.listEntityBeans("order by BankBean.name");
@@ -160,8 +233,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddOutBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward preForAddOutBill(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         List<BankBean> banlList = bankDAO.listEntityBeans("order by BankBean.name");
@@ -185,8 +258,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addInBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                   HttpServletResponse response)
+    public ActionForward addInBill(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         InBillBean bean = new InBillBean();
@@ -231,8 +304,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addOutBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse response)
+    public ActionForward addOutBill(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         OutBillBean bean = new OutBillBean();
@@ -275,8 +348,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteInBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward deleteInBill(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -311,8 +384,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteOutBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward deleteOutBill(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -338,6 +411,80 @@ public class BillAction extends DispatchAction
     }
 
     /**
+     * 接收转账
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward passTransferOutBill(ActionMapping mapping, ActionForm form,
+                                             HttpServletRequest request,
+                                             HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            User user = Helper.getUser(request);
+
+            financeFacade.passTransferOutBillBean(user.getId(), id);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * 驳回
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rejectTransferOutBill(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
+                                               HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            User user = Helper.getUser(request);
+
+            financeFacade.rejectTransferOutBillBean(user.getId(), id);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
      * querySelfInBill
      * 
      * @param mapping
@@ -347,8 +494,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward querySelfInBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward querySelfInBill(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -365,7 +512,8 @@ public class BillAction extends DispatchAction
 
         condtion.addCondition("order by InBillBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFINBILL, request, condtion, this.inBillDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFINBILL, request, condtion,
+            this.inBillDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -381,7 +529,8 @@ public class BillAction extends DispatchAction
      * @throws ServletException
      */
     public ActionForward preForBingInBillByCustomerId(ActionMapping mapping, ActionForm form,
-                                                      HttpServletRequest request, HttpServletResponse response)
+                                                      HttpServletRequest request,
+                                                      HttpServletResponse response)
         throws ServletException
     {
         String customerId = request.getParameter("customerId");
@@ -417,8 +566,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findInBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse response)
+    public ActionForward findInBill(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -445,8 +594,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findOutBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward findOutBill(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -473,8 +622,8 @@ public class BillAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward splitInBill(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward splitInBill(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();

@@ -29,11 +29,15 @@
     
     <osgi:reference id="authManager" interface="com.china.center.oa.publics.manager.AuthManager" />
     
+    <osgi:reference id="stafferManager" interface="com.china.center.oa.publics.manager.StafferManager" />
+    
     <osgi:reference id="parameterDAO" interface="com.china.center.oa.publics.dao.ParameterDAO" />
     
     <osgi:reference id="showDAO" interface="com.china.center.oa.publics.dao.ShowDAO" />
     
     <osgi:reference id="flowLogDAO" interface="com.china.center.oa.publics.dao.FlowLogDAO" />
+    
+    <osgi:reference id="dutyVSInvoiceDAO" interface="com.china.center.oa.publics.dao.DutyVSInvoiceDAO" />
 	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	

@@ -101,7 +101,7 @@ public class BackPayApplyAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYBACKPAYAPPLY, request, condtion);
 
-        String mode = request.getParameter("mode");
+        String mode = RequestTools.getValueFromRequest(request, "mode");
 
         User user = Helper.getUser(request);
 

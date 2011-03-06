@@ -20,11 +20,12 @@ import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.jdbc.annotation.enums.JoinType;
-import com.china.center.oa.customer.bean.CustomerBean;
+import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.vs.InsVSOutBean;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.sail.bean.UnitViewBean;
 
 
 /**
@@ -49,10 +50,12 @@ public class InvoiceinsBean implements Serializable
     @Join(tagClass = InvoiceBean.class)
     private String invoiceId = "";
 
+    private int status = FinanceConstant.INVOICEINS_STATUS_INIT;
+
     /**
      * 纳税实例
      */
-    @Html(title = "纳税实体", type = Element.SELECT)
+    @Html(title = "纳税实体", must = true, type = Element.SELECT)
     @Join(tagClass = DutyBean.class)
     private String dutyId = "";
 
@@ -69,7 +72,7 @@ public class InvoiceinsBean implements Serializable
 
     private String locationId = "";
 
-    @Join(tagClass = CustomerBean.class, type = JoinType.LEFT)
+    @Join(tagClass = UnitViewBean.class, type = JoinType.LEFT)
     private String customerId = "";
 
     /**
@@ -83,6 +86,13 @@ public class InvoiceinsBean implements Serializable
 
     @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
     private String stafferId = "";
+
+    /**
+     * 审批人
+     */
+    @Join(tagClass = StafferBean.class, type = JoinType.LEFT, alias = "StafferBean2")
+    @Html(title = "会计审核人", must = true, type = Element.SELECT)
+    private String processer = "";
 
     private String logTime = "";
 
@@ -343,29 +353,6 @@ public class InvoiceinsBean implements Serializable
     }
 
     /**
-     * Constructs a <code>String</code> with all attributes in name = value format.
-     * 
-     * @return a <code>String</code> representation of this object.
-     */
-    public String toString()
-    {
-        final String TAB = ",";
-
-        StringBuilder retValue = new StringBuilder();
-
-        retValue.append("InvoiceinsBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("invoiceId = ").append(this.invoiceId).append(TAB).append("dutyId = ").append(this.dutyId).append(
-            TAB).append("unit = ").append(this.unit).append(TAB).append("reveive = ").append(this.reveive).append(TAB).append(
-            "locationId = ").append(this.locationId).append(TAB).append("customerId = ").append(this.customerId).append(
-            TAB).append("moneys = ").append(this.moneys).append(TAB).append("invoiceDate = ").append(this.invoiceDate).append(
-            TAB).append("stafferId = ").append(this.stafferId).append(TAB).append("logTime = ").append(this.logTime).append(
-            TAB).append("description = ").append(this.description).append(TAB).append("itemList = ").append(
-            this.itemList).append(TAB).append("vsList = ").append(this.vsList).append(TAB).append(" )");
-
-        return retValue.toString();
-    }
-
-    /**
      * @return the refIds
      */
     public String getRefIds()
@@ -380,6 +367,111 @@ public class InvoiceinsBean implements Serializable
     public void setRefIds(String refIds)
     {
         this.refIds = refIds;
+    }
+
+    /**
+     * @return the status
+     */
+    public int getStatus()
+    {
+        return status;
+    }
+
+    /**
+     * @param status
+     *            the status to set
+     */
+    public void setStatus(int status)
+    {
+        this.status = status;
+    }
+
+    /**
+     * @return the processer
+     */
+    public String getProcesser()
+    {
+        return processer;
+    }
+
+    /**
+     * @param processer
+     *            the processer to set
+     */
+    public void setProcesser(String processer)
+    {
+        this.processer = processer;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("InvoiceinsBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("invoiceId = ")
+            .append(this.invoiceId)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("dutyId = ")
+            .append(this.dutyId)
+            .append(TAB)
+            .append("unit = ")
+            .append(this.unit)
+            .append(TAB)
+            .append("reveive = ")
+            .append(this.reveive)
+            .append(TAB)
+            .append("locationId = ")
+            .append(this.locationId)
+            .append(TAB)
+            .append("customerId = ")
+            .append(this.customerId)
+            .append(TAB)
+            .append("moneys = ")
+            .append(this.moneys)
+            .append(TAB)
+            .append("invoiceDate = ")
+            .append(this.invoiceDate)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("processer = ")
+            .append(this.processer)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("refIds = ")
+            .append(this.refIds)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("itemList = ")
+            .append(this.itemList)
+            .append(TAB)
+            .append("vsList = ")
+            .append(this.vsList)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 
 }

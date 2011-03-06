@@ -28,6 +28,9 @@ public class OutBillVO extends OutBillBean
     @Relationship(relationField = "bankId")
     private String bankName = "";
 
+    @Relationship(relationField = "destBankId")
+    private String destBankName = "";
+
     @Relationship(relationField = "provideId")
     private String provideName = "";
 
@@ -133,6 +136,23 @@ public class OutBillVO extends OutBillBean
     }
 
     /**
+     * @return the destBankName
+     */
+    public String getDestBankName()
+    {
+        return destBankName;
+    }
+
+    /**
+     * @param destBankName
+     *            the destBankName to set
+     */
+    public void setDestBankName(String destBankName)
+    {
+        this.destBankName = destBankName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -149,6 +169,9 @@ public class OutBillVO extends OutBillBean
             .append(TAB)
             .append("bankName = ")
             .append(this.bankName)
+            .append(TAB)
+            .append("destBankName = ")
+            .append(this.destBankName)
             .append(TAB)
             .append("provideName = ")
             .append(this.provideName)

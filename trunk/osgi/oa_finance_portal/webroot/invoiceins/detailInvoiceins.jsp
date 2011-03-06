@@ -10,13 +10,29 @@
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="javascript">
 
+function passBean()
+{
+    $O('method').value = 'passInvoiceins';
+    
+    submit('确定通过?', null, null);
+}
+
+function rejectBean()
+{
+    $O('method').value = 'rejectInvoiceins';
+    
+    submit('确定驳回?', null, null);
+}
 
 </script>
 
 </head>
 <body class="body_class">
 <form name="formEntry" action="../finance/invoiceins.do" method="post">
-<input type="hidden" name="method" value=""> <p:navigation
+<input type="hidden" name="method" value=""> 
+<input type="hidden" name="id" value="${bean.id}"> 
+<input type="hidden" name="mode" value="${mode}"> 
+<p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
 		onclick="javascript:history.go(-1)">发票管理</span> &gt;&gt; 发票明细</td>
@@ -87,16 +103,22 @@
 		<p:table cells="1">
 
 			<tr align="center" class="content0">
-				<td width="40%" align="center">品名</td>
-				<td width="30%" align="center">数量</td>
-				<td width="30%" align="center">单价</td>
+				<td width="30%" align="center">品名</td>
+				<td width="30%" align="center">规格</td>
+                <td width="10%" align="center">单位</td>
+				<td width="10%" align="center">数量</td>
+				<td width="10%" align="center">单价</td>
+				<td width="10%" align="center">合计</td>
 			</tr>
 			
 			<c:forEach items="${bean.itemList}" var="item">
 			<tr align="center" class="content0">
                 <td align="center">${item.showName}</td>
+                <td align="center">${item.special}</td>
+                <td align="center">${item.unit}</td>
                 <td align="center">${item.amount}</td>
                 <td align="center">${my:formatNum(item.price)}</td>
+                <td align="center">${my:formatNum(item.price * item.amount)}</td>
             </tr>
             </c:forEach>
 
@@ -119,7 +141,14 @@
 			<c:forEach items="${bean.vsList}" var="item">
 			<tr align="center" class="content0">
                 <td align="center">${my:get('invsoutType', item.type)}</td>
-                <td align="center">${item.outId}</td>
+                <td align="center">
+                <c:if test="${item.type == 0}">
+                <a href="../sail/out.do?method=findOut&outId=${item.outId}">${item.outId}</a>
+                </c:if>
+                <c:if test="${item.type == 1}">
+                <a href="../sail/out.do?method=findOutBalance&id=${item.outId}">${item.outId}</a>
+                </c:if>
+                </td>
                 <td align="center">${my:formatNum(item.moneys)}</td>
             </tr>
             </c:forEach>
@@ -131,7 +160,18 @@
 	<p:line flag="1" />
 
 	<p:button leftWidth="100%" rightWidth="0%">
-		<div align="right"><input
+		<div align="right">
+		
+		<c:if test="${bean.status == 1 && mode == 1}">
+                <input type="button" class="button_class"
+                    id="ok_p" style="cursor: pointer" value="&nbsp;&nbsp;通 过&nbsp;&nbsp;"
+                    onclick="passBean()">&nbsp;&nbsp;
+                <input type="button" class="button_class"
+                id="re_b" style="cursor: pointer" value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;"
+                onclick="rejectBean()">&nbsp;&nbsp;
+         </c:if>
+            
+		<input
             type="button" name="ba" class="button_class"
             onclick="javascript:history.go(-1)"
             value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>

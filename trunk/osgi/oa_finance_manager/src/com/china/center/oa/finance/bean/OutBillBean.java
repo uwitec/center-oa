@@ -48,10 +48,10 @@ public class OutBillBean implements Serializable
     private int payType = FinanceConstant.OUTBILL_PAYTYPE_MONEY;
 
     /**
-     * 付款单没有太多意义
+     * 转账状态
      */
     @Html(title = "状态", type = Element.SELECT)
-    private int status = FinanceConstant.INBILL_STATUS_PAYMENTS;
+    private int status = FinanceConstant.OUTBILL_STATUS_INIT;
 
     /**
      * 是否被统计锁定
@@ -79,7 +79,7 @@ public class OutBillBean implements Serializable
     /**
      * 建议使用VIEW代替供应商/客户
      */
-    @Html(title = "单位", name = "provideName", readonly = true, must = true)
+    @Html(title = "单位", name = "provideName", readonly = true)
     @Join(tagClass = UnitViewBean.class, type = JoinType.LEFT)
     private String provideId = "";
 
@@ -102,6 +102,8 @@ public class OutBillBean implements Serializable
 
     private String locationId = "";
 
+    @Html(title = "目的帐户", type = Element.SELECT)
+    @Join(tagClass = BankBean.class, type = JoinType.LEFT, alias = "BankBean2")
     private String destBankId = "";
 
     private String refBillId = "";

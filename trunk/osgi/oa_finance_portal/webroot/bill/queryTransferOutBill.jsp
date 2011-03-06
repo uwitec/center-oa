@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="付款单管理" link="true" guid="true" cal="true" dialog="true" />
+<p:link title="转账管理" link="true" guid="true" cal="true" dialog="true" />
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
@@ -22,18 +22,17 @@ function load()
      preload();
      
      guidMap = {
-         title: '付款单列表',
-         url: gurl + 'query' + ukey,
+         title: '转账列表',
+         url: gurl + 'queryTransfer' + ukey,
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} llock={lock}>', width : 40, align: 'center'},
+             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} llock={lock} ltype={type}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},
-             {display: '帐号', name : 'bankName', sortable : true, cname: 'bankId', width : '10%'},
+             {display: '源帐户', name : 'bankName',  width : '10%'},
+             {display: '目的帐户', name : 'destBankName', width : '10%'},
              {display: '类型', name : 'type', cc: 'outbillType', width : '8%'},
              {display: '付款方式', name : 'payType', cc: 'outbillPayType', width : '8%'},
-             {display: '锁定', name : 'lock', cc: 'billLock', width : '8%'},
              {display: '金额', name : 'moneys',  toFixed: 2, width : '8%'},
-             {display: '单位', name : 'provideName', width : '10%'},
-             {display: '职员', name : 'ownerName', width : '8%'},
+             {display: '申请人', name : 'stafferName', width : '8%'},
              {display: '状态', name : 'status', cc: 'outbillStatus', width : '8%'},
              {display: '时间', name : 'logTime', sortable : true, width : 'auto'}
              ],
@@ -41,8 +40,8 @@ function load()
              id : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
-             {id: 'add', bclass: 'add', onpress : addBean, auth: '1607'},
-             {id: 'del', bclass: 'delete', auth: '1607', onpress : delBean},
+             {id: 'pass', bclass: 'pass', caption: '接收',  onpress : passBean, auth: '1603'},
+             {id: 'reject', bclass: 'reject', caption: '拒绝', auth: '1603', onpress : rejectBean},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -57,18 +56,23 @@ function $callBack()
     
 }
 
-function addBean(opr, grid)
+function passBean(opr, grid)
 {
-    $l(gurl + 'preForAdd' + ukey);
-    //$l(addUrl);
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 1)
+    {    
+        if(window.confirm('确定接收转账?'))    
+        $ajax(gurl + 'passTransfer' + ukey + '&id=' + getRadioValue('checkb'), callBackFun);
+    }
+    else
+    $error('不能操作');
 }
 
-function delBean(opr, grid)
+function rejectBean(opr, grid)
 {
-    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').llock == 0)
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 1)
     {    
-        if(window.confirm('确定删除?'))    
-        $ajax(gurl + 'delete' + ukey + '&id=' + getRadioValue('checkb'), callBackFun);
+        if(window.confirm('确定驳回转账?'))    
+        $ajax(gurl + 'rejectTransfer' + ukey + '&id=' + getRadioValue('checkb'), callBackFun);
     }
     else
     $error('不能操作');
@@ -76,7 +80,7 @@ function delBean(opr, grid)
 
 function doSearch()
 {
-    $modalQuery('../admin/query.do?method=popCommonQuery2&key=query' + ukey);
+    $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryTransfer' + ukey);
 }
 
 </script>

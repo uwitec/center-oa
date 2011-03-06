@@ -74,6 +74,8 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
 
         bean.setId(commonDAO.getSquenceString20());
 
+        bean.setStatus(FinanceConstant.INVOICEINS_STATUS_SUBMIT);
+
         bean.setLogTime(TimeTools.now());
 
         invoiceinsDAO.saveEntityBean(bean);
@@ -98,74 +100,86 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
                 insVSOutBean.setId(commonDAO.getSquenceString20());
 
                 insVSOutBean.setInsId(bean.getId());
-
-                if (insVSOutBean.getType() == FinanceConstant.INSVSOUT_TYPE_OUT)
-                {
-                    // 销售单
-                    OutBean out = outDAO.find(insVSOutBean.getOutId());
-
-                    if (out == null)
-                    {
-                        throw new MYException("数据错误,请确认操作");
-                    }
-
-                    if (insVSOutBean.getMoneys() + out.getInvoiceMoney() > out.getTotal())
-                    {
-                        // TEMPLATE 数字格式化显示
-                        throw new MYException("单据[%s]开票溢出,开票金额[%.2f],销售金额[%.2f]", out.getFullId(),
-                            (insVSOutBean.getMoneys() + out.getInvoiceMoney()), out.getTotal());
-                    }
-
-                    if (insVSOutBean.getMoneys() + out.getInvoiceMoney() == out.getTotal())
-                    {
-                        // 更新开票状态-结束
-                        outDAO.updateInvoiceStatus(out.getFullId(), out.getTotal(), OutConstant.INVOICESTATUS_END);
-                    }
-
-                    if (insVSOutBean.getMoneys() + out.getInvoiceMoney() < out.getTotal())
-                    {
-                        // 更新开票状态-过程
-                        outDAO.updateInvoiceStatus(out.getFullId(), (insVSOutBean.getMoneys() + out.getInvoiceMoney()),
-                            OutConstant.INVOICESTATUS_INIT);
-                    }
-                }
-                else
-                {
-                    // 结算清单
-                    OutBalanceBean balance = outBalanceDAO.find(insVSOutBean.getOutId());
-
-                    if (balance == null)
-                    {
-                        throw new MYException("数据错误,请确认操作");
-                    }
-
-                    if (insVSOutBean.getMoneys() + balance.getInvoiceMoney() > balance.getTotal())
-                    {
-                        // TEMPLATE 数字格式化显示
-                        throw new MYException("委托结算单[%s]开票溢出,开票金额[%.2f],销售金额[%.2f]", balance.getId(),
-                            (insVSOutBean.getMoneys() + balance.getInvoiceMoney()), balance.getTotal());
-                    }
-
-                    if (insVSOutBean.getMoneys() + balance.getInvoiceMoney() == balance.getTotal())
-                    {
-                        // 更新开票状态-结束
-                        outBalanceDAO.updateInvoiceStatus(balance.getId(), balance.getTotal(),
-                            OutConstant.INVOICESTATUS_END);
-                    }
-
-                    if (insVSOutBean.getMoneys() + balance.getInvoiceMoney() < balance.getTotal())
-                    {
-                        // 更新开票状态-过程
-                        outBalanceDAO.updateInvoiceStatus(balance.getId(),
-                            (insVSOutBean.getMoneys() + balance.getInvoiceMoney()), OutConstant.INVOICESTATUS_INIT);
-                    }
-                }
             }
 
             insVSOutDAO.saveAllEntityBeans(vsList);
         }
 
         return true;
+    }
+
+    /**
+     * 处理单据和发票实例
+     * 
+     * @param insVSOutBean
+     * @throws MYException
+     */
+    private void handlerEachInAdd(InsVSOutBean insVSOutBean)
+        throws MYException
+    {
+        if (insVSOutBean.getType() == FinanceConstant.INSVSOUT_TYPE_OUT)
+        {
+            // 销售单
+            OutBean out = outDAO.find(insVSOutBean.getOutId());
+
+            if (out == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            if (insVSOutBean.getMoneys() + out.getInvoiceMoney() > out.getTotal())
+            {
+                // TEMPLATE 数字格式化显示
+                throw new MYException("单据[%s]开票溢出,开票金额[%.2f],销售金额[%.2f]", out.getFullId(),
+                    (insVSOutBean.getMoneys() + out.getInvoiceMoney()), out.getTotal());
+            }
+
+            if (insVSOutBean.getMoneys() + out.getInvoiceMoney() == out.getTotal())
+            {
+                // 更新开票状态-结束
+                outDAO.updateInvoiceStatus(out.getFullId(), out.getTotal(),
+                    OutConstant.INVOICESTATUS_END);
+            }
+
+            if (insVSOutBean.getMoneys() + out.getInvoiceMoney() < out.getTotal())
+            {
+                // 更新开票状态-过程
+                outDAO.updateInvoiceStatus(out.getFullId(), (insVSOutBean.getMoneys() + out
+                    .getInvoiceMoney()), OutConstant.INVOICESTATUS_INIT);
+            }
+        }
+        else
+        {
+            // 结算清单
+            OutBalanceBean balance = outBalanceDAO.find(insVSOutBean.getOutId());
+
+            if (balance == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            if (insVSOutBean.getMoneys() + balance.getInvoiceMoney() > balance.getTotal())
+            {
+                // TEMPLATE 数字格式化显示
+                throw new MYException("委托结算单[%s]开票溢出,开票金额[%.2f],销售金额[%.2f]", balance.getId(),
+                    (insVSOutBean.getMoneys() + balance.getInvoiceMoney()), balance.getTotal());
+            }
+
+            if (insVSOutBean.getMoneys() + balance.getInvoiceMoney() == balance.getTotal())
+            {
+                // 更新开票状态-结束
+                outBalanceDAO.updateInvoiceStatus(balance.getId(), balance.getTotal(),
+                    OutConstant.INVOICESTATUS_END);
+            }
+
+            if (insVSOutBean.getMoneys() + balance.getInvoiceMoney() < balance.getTotal())
+            {
+                // 更新开票状态-过程
+                outBalanceDAO.updateInvoiceStatus(balance.getId(),
+                    (insVSOutBean.getMoneys() + balance.getInvoiceMoney()),
+                    OutConstant.INVOICESTATUS_INIT);
+            }
+        }
     }
 
     /*
@@ -180,11 +194,142 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
     {
         JudgeTools.judgeParameterIsNull(user, id);
 
+        InvoiceinsBean bean = invoiceinsDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if ( !bean.getStafferId().equals(user.getStafferId())
+            && !bean.getProcesser().equals(user.getStafferId()))
+        {
+            throw new MYException("只能删除自己的发票或者是自己审批的,请确认操作");
+        }
+
+        List<InsVSOutBean> vsList = insVSOutDAO.queryEntityBeansByFK(id, AnoConstant.FK_FIRST);
+
+        realDelete(id);
+
+        if (bean.getStatus() != FinanceConstant.INVOICEINS_STATUS_END)
+        {
+            return true;
+        }
+
+        if (ListTools.isEmptyOrNull(vsList))
+        {
+            return true;
+        }
+
+        // 倒回开票状态
+        for (InsVSOutBean insVSOutBean : vsList)
+        {
+            if (insVSOutBean.getType() == FinanceConstant.INSVSOUT_TYPE_OUT)
+            {
+                // 销售单
+                OutBean out = outDAO.find(insVSOutBean.getOutId());
+
+                if (out == null)
+                {
+                    continue;
+                }
+
+                double im = Math.max(0.0, out.getInvoiceMoney() - insVSOutBean.getMoneys());
+
+                // 更新单据的开票金额
+                outDAO.updateInvoiceStatus(out.getFullId(), im, OutConstant.INVOICESTATUS_INIT);
+            }
+            else
+            {
+                // 结算清单
+                OutBalanceBean balance = outBalanceDAO.find(insVSOutBean.getOutId());
+
+                if (balance == null)
+                {
+                    throw new MYException("数据错误,请确认操作");
+                }
+
+                double im = Math.max(0.0, balance.getInvoiceMoney() - insVSOutBean.getMoneys());
+
+                // 更新开票状态-过程
+                outBalanceDAO.updateInvoiceStatus(balance.getId(), im,
+                    OutConstant.INVOICESTATUS_INIT);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * 清除发票
+     * 
+     * @param id
+     */
+    private void realDelete(String id)
+    {
         invoiceinsDAO.deleteEntityBean(id);
 
         invoiceinsItemDAO.deleteEntityBeansByFK(id);
 
         insVSOutDAO.deleteEntityBeansByFK(id, AnoConstant.FK_FIRST);
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean passInvoiceinsBean(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        InvoiceinsBean bean = invoiceinsDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bean.getStatus() != FinanceConstant.INVOICEINS_STATUS_SUBMIT)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 开票成功
+        bean.setStatus(FinanceConstant.INVOICEINS_STATUS_END);
+
+        invoiceinsDAO.updateEntityBean(bean);
+
+        List<InsVSOutBean> vsList = insVSOutDAO.queryEntityBeansByFK(id, AnoConstant.FK_FIRST);
+
+        // 单据的开票状态需要更新
+        if ( !ListTools.isEmptyOrNull(vsList))
+        {
+            for (InsVSOutBean insVSOutBean : vsList)
+            {
+                handlerEachInAdd(insVSOutBean);
+            }
+        }
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean rejectInvoiceinsBean(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        InvoiceinsBean bean = invoiceinsDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bean.getStatus() != FinanceConstant.INVOICEINS_STATUS_SUBMIT)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        realDelete(id);
 
         return true;
     }

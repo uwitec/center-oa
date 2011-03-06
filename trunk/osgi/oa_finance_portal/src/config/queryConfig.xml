@@ -110,7 +110,7 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
-        <condtion name="customerName" filed="name" caption="客户" pfix="CustomerBean">
+        <condtion name="customerName" filed="name" caption="客户" pfix="UnitViewBean">
             <opr>like</opr>
             <type>text</type>
         </condtion>
@@ -329,6 +329,41 @@
             <datatype>1</datatype>
             <type>select</type>
             <option>$backPayApplyStatus</option>
+        </condtion>
+    </item>
+    
+    <item name="queryTransferOutBill" deaultpfix="OutBillBean">
+        <condtion name="alogTime" filed="logTime" caption="开始时间">
+            <opr>&gt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="blogTime" filed="logTime" caption="结束时间">
+            <opr>&lt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="id" caption="标识">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="bankId" caption="源帐户">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$bankList</option>
+        </condtion>
+         <condtion name="destBankId" caption="目的帐户">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$bankList</option>
+        </condtion>
+        <condtion name="payType" caption="付款方式">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$outbillPayType</option>
         </condtion>
     </item>
     

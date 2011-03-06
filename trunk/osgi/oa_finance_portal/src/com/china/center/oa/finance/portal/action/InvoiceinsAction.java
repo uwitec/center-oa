@@ -10,6 +10,7 @@ package com.china.center.oa.finance.portal.action;
 
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -45,10 +46,15 @@ import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.ShowBean;
+import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.InvoiceConstant;
 import com.china.center.oa.publics.dao.DutyDAO;
+import com.china.center.oa.publics.dao.DutyVSInvoiceDAO;
 import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.ShowDAO;
+import com.china.center.oa.publics.manager.StafferManager;
+import com.china.center.oa.publics.vs.DutyVSInvoiceBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.dao.OutBalanceDAO;
@@ -57,6 +63,7 @@ import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
+import com.china.center.tools.RequestTools;
 import com.china.center.tools.StringTools;
 
 
@@ -84,6 +91,8 @@ public class InvoiceinsAction extends DispatchAction
 
     private ShowDAO showDAO = null;
 
+    private StafferManager stafferManager = null;
+
     private OutDAO outDAO = null;
 
     private InvoiceDAO invoiceDAO = null;
@@ -91,6 +100,8 @@ public class InvoiceinsAction extends DispatchAction
     private OutBalanceDAO outBalanceDAO = null;
 
     private InvoiceinsManager invoiceinsManager = null;
+
+    private DutyVSInvoiceDAO dutyVSInvoiceDAO = null;
 
     private static final String QUERYINVOICEINS = "queryInvoiceins";
 
@@ -111,10 +122,13 @@ public class InvoiceinsAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddInvoiceins(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward preForAddInvoiceins(ActionMapping mapping, ActionForm form,
+                                             HttpServletRequest request,
                                              HttpServletResponse response)
         throws ServletException
     {
+        CommonTools.saveParamers(request);
+
         prepare(request);
 
         // 查询开单品名
@@ -123,6 +137,12 @@ public class InvoiceinsAction extends DispatchAction
         JSONArray shows = new JSONArray(showList, true);
 
         request.setAttribute("showJSON", shows.toString());
+
+        // 获得财务审批的权限人(1604)
+        List<StafferBean> stafferList = stafferManager
+            .queryStafferByAuthId(AuthConstant.INVOICEINS_OPR);
+
+        request.setAttribute("stafferList", stafferList);
 
         return mapping.findForward("addInvoiceins");
     }
@@ -142,6 +162,43 @@ public class InvoiceinsAction extends DispatchAction
         List<InvoiceBean> invoiceList = invoiceDAO.queryEntityBeansByCondition(condition);
 
         request.setAttribute("invoiceList", invoiceList);
+
+        List<DutyVSInvoiceBean> vsList = dutyVSInvoiceDAO.listEntityBeans();
+
+        // 过滤
+        fiterVS(invoiceList, vsList);
+
+        JSONArray vsJSON = new JSONArray(vsList, true);
+
+        request.setAttribute("vsJSON", vsJSON.toString());
+
+        JSONArray invoices = new JSONArray(invoiceList, true);
+
+        request.setAttribute("invoicesJSON", invoices.toString());
+    }
+
+    private void fiterVS(List<InvoiceBean> invoiceList, List<DutyVSInvoiceBean> vsList)
+    {
+        for (Iterator iterator = vsList.iterator(); iterator.hasNext();)
+        {
+            DutyVSInvoiceBean dutyVSInvoiceBean = (DutyVSInvoiceBean)iterator.next();
+
+            boolean delete = true;
+
+            for (InvoiceBean invoiceBean : invoiceList)
+            {
+                if (dutyVSInvoiceBean.getInvoiceId().equals(invoiceBean.getId()))
+                {
+                    delete = false;
+                    break;
+                }
+            }
+
+            if (delete)
+            {
+                iterator.remove();
+            }
+        }
     }
 
     /**
@@ -154,10 +211,12 @@ public class InvoiceinsAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findInvoiceins(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward findInvoiceins(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
+        CommonTools.saveParamers(request);
+
         String id = request.getParameter("id");
 
         InvoiceinsVO bean = invoiceinsManager.findVO(id);
@@ -186,8 +245,8 @@ public class InvoiceinsAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryInvoiceins(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward queryInvoiceins(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -198,11 +257,35 @@ public class InvoiceinsAction extends DispatchAction
 
         User user = Helper.getUser(request);
 
-        condtion.addCommonCondition("InvoiceinsBean.locationId", "=", user.getLocationId());
+        String mode = RequestTools.getValueFromRequest(request, "mode");
 
-        condtion.addCondition("order by InvoiceinsBean.logTime desc");
+        // 自己的
+        if ("0".equals(mode))
+        {
+            condtion.addCondition("InvoiceinsBean.stafferId", "=", user.getStafferId());
+        }
+        // 出纳审核
+        else if ("1".equals(mode))
+        {
+            condtion.addCondition("InvoiceinsBean.processer", "=", user.getStafferId());
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYINVOICEINS, request, condtion, this.invoiceinsDAO);
+            condtion.addIntCondition("InvoiceinsBean.status", "=",
+                FinanceConstant.INVOICEINS_STATUS_SUBMIT);
+        }
+        // 出纳查询
+        else if ("2".equals(mode))
+        {
+            // condtion.addCondition("InvoiceinsBean.locationId", "=", user.getLocationId());
+        }
+        else
+        {
+            condtion.addFlaseCondition();
+        }
+
+        condtion.addCondition("order by InvoiceinsBean.id desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYINVOICEINS, request, condtion,
+            this.invoiceinsDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -217,10 +300,12 @@ public class InvoiceinsAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addInvoiceins(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward addInvoiceins(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
+        String mode = request.getParameter("mode");
+
         try
         {
             InvoiceinsBean bean = createIns(request);
@@ -239,6 +324,10 @@ public class InvoiceinsAction extends DispatchAction
         }
 
         CommonTools.removeParamers(request);
+
+        request.setAttribute("mode", mode);
+
+        RequestTools.menuInitQuery(request);
 
         return mapping.findForward("queryInvoiceins");
     }
@@ -259,6 +348,8 @@ public class InvoiceinsAction extends DispatchAction
         String[] showIds = request.getParameterValues("showId");
         String[] amounts = request.getParameterValues("amount");
         String[] prices = request.getParameterValues("price");
+        String[] specials = request.getParameterValues("special");
+        String[] units = request.getParameterValues("sunit");
 
         List<InvoiceinsItemBean> itemList = new ArrayList<InvoiceinsItemBean>();
 
@@ -275,6 +366,8 @@ public class InvoiceinsAction extends DispatchAction
             item.setShowName(showDAO.find(showIds[i]).getName());
             item.setAmount(MathTools.parseInt(amounts[i]));
             item.setPrice(MathTools.parseDouble(prices[i]));
+            item.setSpecial(specials[i].trim());
+            item.setUnit(units[i].trim());
 
             itemList.add(item);
         }
@@ -417,8 +510,8 @@ public class InvoiceinsAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteInvoiceins(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward deleteInvoiceins(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -441,6 +534,86 @@ public class InvoiceinsAction extends DispatchAction
         }
 
         return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * passInvoiceins
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward passInvoiceins(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        String mode = request.getParameter("mode");
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            financeFacade.passInvoiceinsBean(user.getId(), id);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        request.setAttribute("mode", mode);
+
+        return mapping.findForward("queryInvoiceins");
+    }
+
+    /**
+     * rejectInvoiceins
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rejectInvoiceins(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        String mode = request.getParameter("mode");
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            financeFacade.rejectInvoiceinsBean(user.getId(), id);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        request.setAttribute("mode", mode);
+
+        return mapping.findForward("queryInvoiceins");
     }
 
     /**
@@ -611,5 +784,39 @@ public class InvoiceinsAction extends DispatchAction
     public void setOutBalanceDAO(OutBalanceDAO outBalanceDAO)
     {
         this.outBalanceDAO = outBalanceDAO;
+    }
+
+    /**
+     * @return the dutyVSInvoiceDAO
+     */
+    public DutyVSInvoiceDAO getDutyVSInvoiceDAO()
+    {
+        return dutyVSInvoiceDAO;
+    }
+
+    /**
+     * @param dutyVSInvoiceDAO
+     *            the dutyVSInvoiceDAO to set
+     */
+    public void setDutyVSInvoiceDAO(DutyVSInvoiceDAO dutyVSInvoiceDAO)
+    {
+        this.dutyVSInvoiceDAO = dutyVSInvoiceDAO;
+    }
+
+    /**
+     * @return the stafferManager
+     */
+    public StafferManager getStafferManager()
+    {
+        return stafferManager;
+    }
+
+    /**
+     * @param stafferManager
+     *            the stafferManager to set
+     */
+    public void setStafferManager(StafferManager stafferManager)
+    {
+        this.stafferManager = stafferManager;
     }
 }

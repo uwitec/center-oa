@@ -145,6 +145,14 @@ public class BillManagerImpl implements BillManager
             throw new MYException("单据已经和回款绑定,只能通过退领删除收款,请确认操作", bill.getOutId());
         }
 
+        // 帐户余额
+        double total = statBankManager.findTotalByBankId(bill.getBankId());
+
+        if (total - bill.getMoneys() < 0)
+        {
+            throw new MYException("帐户剩余[%.2f],当前删除总金额[%.2f],帐户金额不足", total, bill.getMoneys());
+        }
+
         inBillDAO.deleteEntityBean(id);
 
         // 更新回款单的状态
@@ -200,6 +208,11 @@ public class BillManagerImpl implements BillManager
         bean.setId(commonDAO.getSquenceString20());
 
         bean.setLogTime(TimeTools.now());
+
+        if (bean.getType() == FinanceConstant.OUTBILL_TYPE_TRANSFER)
+        {
+            bean.setStatus(FinanceConstant.OUTBILL_STATUS_SUBMIT);
+        }
 
         // 处理采购付款
         handleStockItem(user, bean);
@@ -278,6 +291,159 @@ public class BillManagerImpl implements BillManager
         throws MYException
     {
         splitInBillBeanWithoutTransactional(user, id, newMoney);
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean passTransferOutBillBean(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        OutBillBean bean = outBillDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bean.getType() != FinanceConstant.OUTBILL_TYPE_TRANSFER)
+        {
+            throw new MYException("不是转账付款,请确认操作");
+        }
+
+        if (bean.getStatus() != FinanceConstant.OUTBILL_STATUS_SUBMIT)
+        {
+            throw new MYException("转账付款已经成功,请确认操作");
+        }
+
+        InBillBean inbill = saveInBill(user, id, bean);
+
+        bean.setStatus(FinanceConstant.OUTBILL_STATUS_END);
+
+        bean.setLock(FinanceConstant.BILL_LOCK_YES);
+
+        bean.setRefBillId(inbill.getId());
+
+        outBillDAO.updateEntityBean(bean);
+
+        return true;
+    }
+
+    /**
+     * 生成收款单(同时锁定)
+     * 
+     * @param user
+     * @param id
+     * @param bean
+     * @return
+     */
+    private InBillBean saveInBill(User user, String id, OutBillBean bean)
+    {
+        // 生成收款单
+        InBillBean inbill = new InBillBean();
+
+        inbill.setId(commonDAO.getSquenceString20());
+
+        inbill.setBankId(bean.getDestBankId());
+
+        inbill.setDescription("自动接收转账:" + id);
+
+        inbill.setDestBankId(bean.getBankId());
+
+        inbill.setLocationId(user.getLocationId());
+
+        inbill.setLock(FinanceConstant.BILL_LOCK_YES);
+
+        inbill.setLogTime(TimeTools.now());
+
+        inbill.setMoneys(bean.getMoneys());
+
+        inbill.setRefBillId(id);
+
+        inbill.setStafferId(user.getStafferId());
+
+        inbill.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
+
+        inbill.setType(FinanceConstant.INBILL_TYPE_TRANSFER);
+
+        inBillDAO.saveEntityBean(inbill);
+
+        return inbill;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean rejectTransferOutBillBean(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        OutBillBean bean = outBillDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bean.getType() != FinanceConstant.OUTBILL_TYPE_TRANSFER)
+        {
+            throw new MYException("不是转账付款,请确认操作");
+        }
+
+        if (bean.getStatus() != FinanceConstant.OUTBILL_STATUS_SUBMIT)
+        {
+            throw new MYException("转账付款已经成功,请确认操作");
+        }
+
+        // 驳回有两种,如果没有锁定直接删除(这里要要是删除付款对于帐户来说是增加钱)
+        if (bean.getLock() == FinanceConstant.BILL_LOCK_NO)
+        {
+            outBillDAO.deleteEntityBean(id);
+        }
+        else
+        {
+            // 锁定了生成一个自己的收款单
+            InBillBean inbill = new InBillBean();
+
+            inbill.setId(commonDAO.getSquenceString20());
+
+            inbill.setBankId(bean.getBankId());
+
+            inbill.setDescription("驳回自动生成收款单(转账):" + id);
+
+            inbill.setDestBankId(bean.getBankId());
+
+            inbill.setLocationId(user.getLocationId());
+
+            inbill.setLock(FinanceConstant.BILL_LOCK_YES);
+
+            inbill.setLogTime(TimeTools.now());
+
+            inbill.setMoneys(bean.getMoneys());
+
+            inbill.setRefBillId(id);
+
+            inbill.setStafferId(bean.getStafferId());
+
+            inbill.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
+
+            inbill.setType(FinanceConstant.INBILL_TYPE_TRANSFER);
+
+            inBillDAO.saveEntityBean(inbill);
+
+            // 更新源单状态
+            bean.setStatus(FinanceConstant.OUTBILL_STATUS_END);
+
+            bean.setLock(FinanceConstant.BILL_LOCK_YES);
+
+            bean.setRefBillId(inbill.getId());
+
+            bean.setDescription(bean.getDescription() + "" + "此单被驳回,由于锁定自动生成了同样金额的收款单:"
+                                + inbill.getId());
+
+            outBillDAO.updateEntityBean(bean);
+        }
 
         return true;
     }
@@ -455,5 +621,4 @@ public class BillManagerImpl implements BillManager
     {
         this.stockItemDAO = stockItemDAO;
     }
-
 }

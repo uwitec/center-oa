@@ -28,6 +28,12 @@ public interface InvoiceinsManager
     boolean addInvoiceinsBean(User user, InvoiceinsBean bean)
         throws MYException;
 
+    boolean passInvoiceinsBean(User user, String id)
+        throws MYException;
+
+    boolean rejectInvoiceinsBean(User user, String id)
+        throws MYException;
+
     boolean deleteInvoiceinsBean(User user, String id)
         throws MYException;
 

@@ -77,6 +77,8 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
 
     private static Object BACKPAYAPPLY_LOCK = new Object();
 
+    private static Object BILLAPPLY_LOCK = new Object();
+
     /**
      * default constructor
      */
@@ -323,6 +325,50 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
             if (containAuth(user, AuthConstant.INVOICEINS_DEL))
             {
                 return invoiceinsManager.deleteInvoiceinsBean(user, id);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean passInvoiceinsBean(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (INVOICEINS_LOCK)
+        {
+            if (containAuth(user, AuthConstant.INVOICEINS_OPR))
+            {
+                return invoiceinsManager.passInvoiceinsBean(user, id);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean rejectInvoiceinsBean(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (INVOICEINS_LOCK)
+        {
+            if (containAuth(user, AuthConstant.INVOICEINS_OPR))
+            {
+                return invoiceinsManager.rejectInvoiceinsBean(user, id);
             }
             else
             {
@@ -710,6 +756,50 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
             if (containAuth(user, AuthConstant.SAIL_BACKPAY_SEC))
             {
                 return backPayApplyManager.endBackPayApplyBean(user, id, reason, outBill);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean passTransferOutBillBean(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (BILLAPPLY_LOCK)
+        {
+            if (containAuth(user, AuthConstant.INBILL_OPR))
+            {
+                return billManager.passTransferOutBillBean(user, id);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean rejectTransferOutBillBean(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (BILLAPPLY_LOCK)
+        {
+            if (containAuth(user, AuthConstant.INBILL_OPR))
+            {
+                return billManager.rejectTransferOutBillBean(user, id);
             }
             else
             {

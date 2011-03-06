@@ -54,6 +54,28 @@ public interface BillManager
         throws MYException;
 
     /**
+     * 通过转账
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean passTransferOutBillBean(User user, String id)
+        throws MYException;
+
+    /**
+     * 驳回转账
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean rejectTransferOutBillBean(User user, String id)
+        throws MYException;
+
+    /**
      * 分拆
      * 
      * @param user

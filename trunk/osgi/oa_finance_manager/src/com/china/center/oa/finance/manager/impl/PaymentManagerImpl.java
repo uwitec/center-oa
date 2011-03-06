@@ -26,6 +26,7 @@ import com.china.center.oa.finance.dao.PaymentApplyDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.dao.PaymentVSOutDAO;
 import com.china.center.oa.finance.manager.PaymentManager;
+import com.china.center.oa.finance.manager.StatBankManager;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.tools.JudgeTools;
@@ -55,6 +56,8 @@ public class PaymentManagerImpl implements PaymentManager
     private PaymentVSOutDAO paymentVSOutDAO = null;
 
     private FlowLogDAO flowLogDAO = null;
+
+    private StatBankManager statBankManager = null;
 
     /**
      * default constructor
@@ -104,7 +107,12 @@ public class PaymentManagerImpl implements PaymentManager
             throw new MYException("回款已经被人认领,不能删除");
         }
 
-        // TODO 如果自动生成的收款单已经被统计锁定是不能删除的
+        double total = statBankManager.findTotalByBankId(pay.getBankId());
+
+        if (total - pay.getMoney() < 0)
+        {
+            throw new MYException("帐户剩余[%.2f],当前删除回款总金额[%.2f],帐户金额不足", total, pay.getMoney());
+        }
 
         return paymentDAO.deleteEntityBean(id);
     }
@@ -130,12 +138,23 @@ public class PaymentManagerImpl implements PaymentManager
 
         List<PaymentBean> payList = paymentDAO.queryEntityBeansByCondition(con);
 
+        double total = statBankManager.findTotalByBankId(pay.getBankId());
+
+        double deletTotal = 0.0d;
+
         for (PaymentBean paymentBean : payList)
         {
             if (paymentBean.getStatus() != FinanceConstant.PAYMENT_STATUS_INIT)
             {
                 throw new MYException("回款已经被人认领,不能删除");
             }
+
+            deletTotal += paymentBean.getMoney();
+        }
+
+        if (total - deletTotal < 0)
+        {
+            throw new MYException("帐户剩余[%.2f],当前删除回款总金额[%.2f],帐户金额不足", total, deletTotal);
         }
 
         paymentDAO.deleteEntityBeansByCondition(con);
@@ -340,5 +359,22 @@ public class PaymentManagerImpl implements PaymentManager
     public void setFlowLogDAO(FlowLogDAO flowLogDAO)
     {
         this.flowLogDAO = flowLogDAO;
+    }
+
+    /**
+     * @return the statBankManager
+     */
+    public StatBankManager getStatBankManager()
+    {
+        return statBankManager;
+    }
+
+    /**
+     * @param statBankManager
+     *            the statBankManager to set
+     */
+    public void setStatBankManager(StatBankManager statBankManager)
+    {
+        this.statBankManager = statBankManager;
     }
 }

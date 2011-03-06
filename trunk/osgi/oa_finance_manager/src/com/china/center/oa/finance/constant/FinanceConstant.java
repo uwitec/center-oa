@@ -83,6 +83,12 @@ public interface FinanceConstant
     int INBILL_TYPE_INTEREST = 3;
 
     /**
+     * 转账
+     */
+    @Defined(key = "inbillType", value = "转账")
+    int INBILL_TYPE_TRANSFER = 98;
+
+    /**
      * 其他
      */
     @Defined(key = "inbillType", value = "其他")
@@ -134,6 +140,24 @@ public interface FinanceConstant
      * 临时
      */
     int PAYAPPLY_TYPE_TEMP = 2;
+
+    /**
+     * 正常
+     */
+    @Defined(key = "outbillStatus", value = "正常")
+    int OUTBILL_STATUS_INIT = 0;
+
+    /**
+     * 转账中
+     */
+    @Defined(key = "outbillStatus", value = "转账中")
+    int OUTBILL_STATUS_SUBMIT = 1;
+
+    /**
+     * 转账结束
+     */
+    @Defined(key = "outbillStatus", value = "转账结束")
+    int OUTBILL_STATUS_END = 2;
 
     /**
      * 已收
@@ -244,6 +268,12 @@ public interface FinanceConstant
     int OUTBILL_TYPE_OUTBACK = 10;
 
     /**
+     * 转账
+     */
+    @Defined(key = "outbillType", value = "转账")
+    int OUTBILL_TYPE_TRANSFER = 98;
+
+    /**
      * 其他
      */
     @Defined(key = "outbillType", value = "其他")
@@ -260,5 +290,23 @@ public interface FinanceConstant
      */
     @Defined(key = "invsoutType", value = "委托结算")
     int INSVSOUT_TYPE_BALANCE = 1;
+
+    /**
+     * 初始
+     */
+    @Defined(key = "invoiceinsStatus", value = "初始")
+    int INVOICEINS_STATUS_INIT = 0;
+
+    /**
+     * 待财务审核
+     */
+    @Defined(key = "invoiceinsStatus", value = "待财务审核")
+    int INVOICEINS_STATUS_SUBMIT = 1;
+
+    /**
+     * 结束
+     */
+    @Defined(key = "invoiceinsStatus", value = "结束")
+    int INVOICEINS_STATUS_END = 99;
 
 }
