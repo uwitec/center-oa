@@ -61,6 +61,9 @@ public class PageValue extends BodyTagCenterSupport
         {
             buffer.append(attribute);
 
+            // save to request
+            request.setAttribute(this.key, attribute);
+
             return;
         }
 

@@ -26,6 +26,8 @@ public class PageSelectOption extends BodyTagCenterSupport
 {
     private String type = "101";
 
+    private boolean empty = false;
+
     public static Map<String, List<MapBean>> optionMap = new HashMap<String, List<MapBean>>();
 
     /**
@@ -50,6 +52,11 @@ public class PageSelectOption extends BodyTagCenterSupport
     private void writeDiv(StringBuffer buffer)
     {
         String line = "\r\n";
+
+        if (this.empty)
+        {
+            buffer.append("<option value=''>--</option>").append(line);
+        }
 
         if (type.startsWith("[") && type.endsWith("]"))
         {
@@ -144,6 +151,23 @@ public class PageSelectOption extends BodyTagCenterSupport
     public void setType(String type)
     {
         this.type = type;
+    }
+
+    /**
+     * @return the empty
+     */
+    public boolean isEmpty()
+    {
+        return empty;
+    }
+
+    /**
+     * @param empty
+     *            the empty to set
+     */
+    public void setEmpty(boolean empty)
+    {
+        this.empty = empty;
     }
 
 }
