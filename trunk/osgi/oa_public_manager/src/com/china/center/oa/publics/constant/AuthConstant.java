@@ -625,7 +625,7 @@ public interface AuthConstant
     String INBILL_OPR = "1603";
 
     /**
-     * 开发票操作
+     * 开发票操作(发票审核)
      */
     String INVOICEINS_OPR = "1604";
 
