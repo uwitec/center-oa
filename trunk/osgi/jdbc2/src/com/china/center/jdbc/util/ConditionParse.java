@@ -142,6 +142,7 @@ public class ConditionParse implements Serializable
             dbValueString(oper)).append(conditionValue);
     }
 
+    @Deprecated
     public void addCommonCondition(String fieldName, String oper, String conditionValue)
     {
         if ( ! (conditionValue == null || "".equals(conditionValue)))
