@@ -25,6 +25,7 @@
             type="org.springframework.web.struts.DelegatingActionProxy"
             validate="false">
             <forward name="addInvoiceins" path="/invoiceins/addInvoiceins.jsp" />
+            <forward name="addInvoiceins2" path="/invoiceins/addInvoiceins2.jsp" />
             <forward name="queryInvoiceins" path="/invoiceins/queryInvoiceins.jsp" />
             <forward name="detailInvoiceins" path="/invoiceins/detailInvoiceins.jsp" />
         </action>

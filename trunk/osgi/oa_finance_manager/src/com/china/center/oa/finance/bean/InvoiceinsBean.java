@@ -53,6 +53,11 @@ public class InvoiceinsBean implements Serializable
     private int status = FinanceConstant.INVOICEINS_STATUS_INIT;
 
     /**
+     * 类型
+     */
+    private int type = FinanceConstant.INVOICEINS_TYPE_COMMON;
+
+    /**
      * 纳税实例
      */
     @Html(title = "纳税实体", must = true, type = Element.SELECT)
@@ -404,6 +409,23 @@ public class InvoiceinsBean implements Serializable
     }
 
     /**
+     * @return the type
+     */
+    public int getType()
+    {
+        return type;
+    }
+
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(int type)
+    {
+        this.type = type;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -426,6 +448,9 @@ public class InvoiceinsBean implements Serializable
             .append(TAB)
             .append("status = ")
             .append(this.status)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
             .append(TAB)
             .append("dutyId = ")
             .append(this.dutyId)

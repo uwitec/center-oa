@@ -98,6 +98,12 @@
             <type>select</type>
             <option>$invoiceList</option>
         </condtion>
+        <condtion name="type" caption="开票类型">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$invoiceinsType</option>
+        </condtion>
         <condtion name="unit" caption="开票单位">
             <opr>like</opr>
             <type>text</type>

@@ -9,6 +9,8 @@
 package com.china.center.oa.finance.portal.action;
 
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +18,13 @@ import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import jxl.Workbook;
+import jxl.write.Label;
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,10 +37,12 @@ import com.center.china.osgi.publics.User;
 import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
+import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.actionhelper.jsonimpl.JSONArray;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.finance.bean.InvoiceinsBean;
 import com.china.center.oa.finance.bean.InvoiceinsItemBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
@@ -65,6 +76,7 @@ import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
 import com.china.center.tools.RequestTools;
 import com.china.center.tools.StringTools;
+import com.china.center.tools.TimeTools;
 
 
 /**
@@ -145,6 +157,35 @@ public class InvoiceinsAction extends DispatchAction
         request.setAttribute("stafferList", stafferList);
 
         return mapping.findForward("addInvoiceins");
+    }
+
+    /**
+     * preForAddInvoiceins2
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward preForAddInvoiceins2(ActionMapping mapping, ActionForm form,
+                                              HttpServletRequest request,
+                                              HttpServletResponse response)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        prepare(request);
+
+        // 查询开单品名
+        List<ShowBean> showList = showDAO.listEntityBeans();
+
+        JSONArray shows = new JSONArray(showList, true);
+
+        request.setAttribute("showJSON", shows.toString());
+
+        return mapping.findForward("addInvoiceins2");
     }
 
     private void prepare(HttpServletRequest request)
@@ -288,6 +329,158 @@ public class InvoiceinsAction extends DispatchAction
             this.invoiceinsDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * exportInvoiceins
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportInvoiceins(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        PageSeparate pageSeparate = PageSeparateTools.getPageSeparate(request, QUERYINVOICEINS);
+
+        ConditionParse condition = PageSeparateTools.getCondition(request, QUERYINVOICEINS);
+
+        if (pageSeparate.getRowCount() > 1500)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "导出的记录数不能超过1500");
+
+            return mapping.findForward("error");
+        }
+
+        if (pageSeparate.getRowCount() == 0)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "导出的记录数为0");
+
+            return mapping.findForward("error");
+        }
+
+        // 查询的单据
+        List<InvoiceinsVO> beanList = invoiceinsDAO.queryEntityVOsByCondition(condition);
+
+        OutputStream out = null;
+
+        String filenName = null;
+
+        filenName = "Invoiceins_" + TimeTools.now("MMddHHmmss") + ".xls";
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WritableWorkbook wwb = null;
+
+        WritableSheet ws = null;
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            // create a excel
+            wwb = Workbook.createWorkbook(out);
+
+            ws = wwb.createSheet("Invoiceins", 0);
+
+            int i = 0, j = 0;
+
+            InvoiceinsVO element = null;
+
+            WritableFont font = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD, false,
+                jxl.format.UnderlineStyle.NO_UNDERLINE, jxl.format.Colour.BLUE);
+
+            WritableFont font2 = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD, false,
+                jxl.format.UnderlineStyle.NO_UNDERLINE, jxl.format.Colour.BLACK);
+
+            WritableCellFormat format = new WritableCellFormat(font);
+
+            WritableCellFormat format2 = new WritableCellFormat(font2);
+
+            ws.addCell(new Label(j++ , i, "时间", format));
+            ws.addCell(new Label(j++ , i, "发票标识", format));
+            ws.addCell(new Label(j++ , i, "纳税实体", format));
+            ws.addCell(new Label(j++ , i, "客户", format));
+            ws.addCell(new Label(j++ , i, "发票类型", format));
+            ws.addCell(new Label(j++ , i, "开票品名", format));
+            ws.addCell(new Label(j++ , i, "规格", format));
+            ws.addCell(new Label(j++ , i, "单位", format));
+            ws.addCell(new Label(j++ , i, "数量", format));
+            ws.addCell(new Label(j++ , i, "单价", format));
+            ws.addCell(new Label(j++ , i, "合计", format));
+
+            for (Iterator iter = beanList.iterator(); iter.hasNext();)
+            {
+                element = (InvoiceinsVO)iter.next();
+
+                List<InvoiceinsItemBean> itemList = invoiceinsItemDAO.queryEntityBeansByFK(element
+                    .getId());
+
+                for (InvoiceinsItemBean invoiceinsItemBean : itemList)
+                {
+                    j = 0;
+                    i++ ;
+
+                    ws.addCell(new Label(j++ , i, element.getLogTime()));
+                    ws.addCell(new Label(j++ , i, element.getId()));
+                    ws.addCell(new Label(j++ , i, element.getDutyName()));
+                    ws.addCell(new Label(j++ , i, element.getCustomerName()));
+                    ws.addCell(new Label(j++ , i, element.getInvoiceName()));
+
+                    // 子项
+                    ws.addCell(new Label(j++ , i, invoiceinsItemBean.getShowName()));
+                    ws.addCell(new Label(j++ , i, invoiceinsItemBean.getSpecial()));
+                    ws.addCell(new Label(j++ , i, invoiceinsItemBean.getUnit()));
+                    ws.addCell(new jxl.write.Number(j++ , i, invoiceinsItemBean.getAmount(),
+                        format2));
+                    ws
+                        .addCell(new jxl.write.Number(j++ , i, invoiceinsItemBean.getPrice(),
+                            format2));
+                    ws.addCell(new jxl.write.Number(j++ , i,
+                        (invoiceinsItemBean.getAmount() * invoiceinsItemBean.getPrice()), format2));
+
+                }
+
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+
+            return null;
+        }
+        finally
+        {
+            if (wwb != null)
+            {
+                try
+                {
+                    wwb.write();
+                    wwb.close();
+                }
+                catch (Exception e1)
+                {
+                }
+            }
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -484,18 +677,16 @@ public class InvoiceinsAction extends DispatchAction
             }
 
             bean.setVsList(vsList);
+
+            StringBuffer buffer = new StringBuffer();
+
+            for (InsVSOutBean insVSOutBean : vsList)
+            {
+                buffer.append(insVSOutBean.getOutId()).append(';');
+            }
+
+            bean.setRefIds(buffer.toString());
         }
-
-        List<InsVSOutBean> vsList = bean.getVsList();
-
-        StringBuffer buffer = new StringBuffer();
-
-        for (InsVSOutBean insVSOutBean : vsList)
-        {
-            buffer.append(insVSOutBean.getOutId()).append(';');
-        }
-
-        bean.setRefIds(buffer.toString());
 
         return bean;
     }

@@ -26,11 +26,28 @@ var invFullMap = {};
 
 function addBean()
 {
-	submit('确定申请增加发票?', null, check);
+	submit('确定增加对分公司的开票?', null, check);
 }
+
 
 function check()
 {
+    if ($$('dutyId') == $$('customerId'))
+    {
+        alert('纳税实体和分公司不能相同');
+            
+        return false;
+    }
+    
+    var dest = '90000000000000000003';
+    
+    if ($$('invoiceId') != dest)
+    {
+        alert('发票只能是:增值专用发票(一般纳税人)[可抵扣](17.00%)');
+            
+        return false;
+    }
+    
     var showArr = document.getElementsByName('showId');
     var amountArr = document.getElementsByName('amount');
     var priceArr = document.getElementsByName('price');
@@ -106,13 +123,6 @@ function check()
     
     $O('hasMoney').value = totals;
     
-    if (totals > parseFloat($$('mayMoney')))
-    {
-        alert('开票金额不能大于单据的可开票金额');
-        
-        return false;
-    }
-    
     return true;
 }
 
@@ -165,75 +175,13 @@ function loadShow()
             setOption(invObj, item.invoiceId, invFullMap[item.invoiceId]);
         }
     }
-    
-    $O('outId').value = '';
-    $O('mayMoney').value = '0.0';
 }
 
-function opens()
-{
-    if ($O('customerId').value == '')
-    {
-        alert('请选择客户');
-        return false;
-    }
-    window.common.modal('../sail/out.do?method=rptQueryOut&mode=1&selectMode=1&invoiceStatus=0&load=1&invoiceId=' + $$('invoiceId') + '&dutyId=' + $$('dutyId') + '&customerId=' + $$('customerId'));
-}
-
-function openBalance()
-{
-    if ($O('customerId').value == '')
-    {
-        alert('请选择客户');
-        return false;
-    }
-    window.common.modal('../sail/out.do?method=rptQueryOutBalance&mode=1&type=0&selectMode=1&invoiceStatus=0&load=1&invoiceId=' + $$('invoiceId') + '&dutyId=' + $$('dutyId') + '&customerId=' + $$('customerId'));
-}
-
-
-function getOut(oos)
-{
-    var outId = $$('outId');
-    
-    var oldm = parseFloat($$('mayMoney'));
-    
-    for (var i = 0 ; i < oos.length; i++)
-    {
-        var oo = oos[i];
-        
-        if (outId.indexOf(oo.value) == -1)
-        {
-            outId += oo.value + ";";
-            
-             oldm += parseFloat(oo.pinvoicemoney);
-        }
-    }
-    
-    $O('outId').value = outId;
-    
-    $O('mayMoney').value = oldm;
-}
-
-function getOutBalance(oos)
-{
-	return getOut(oos);
-}
 
 function clears()
 {
     $O('outId').value = '';
     $O('mayMoney').value = '0.0';
-}
-
-function selectCus()
-{
-    window.common.modal('../customer/customer.do?method=rptQuerySelfCustomer&stafferId=${user.stafferId}&load=1');
-}
-
-function getCustomer(obj)
-{
-    $O('customerId').value = obj.value;
-    $O('cname').value = obj.pname;
 }
 
 function cc(obj, index)
@@ -257,20 +205,19 @@ function cc(obj, index)
 <body class="body_class" onload="loadShow()">
 <form name="formEntry" action="../finance/invoiceins.do" method="post">
 <input type="hidden" name="method" value="addInvoiceins"> 
-<input type="hidden" name="customerId" value=""> 
-<input type="hidden" name="type" value="0"> 
-<input type="hidden" name="mode" value="${mode}"> 
+<input type="hidden" name="type" value="1"> 
+<input type="hidden" name="mode" value="2"> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javascript:history.go(-1)">发票管理</span> &gt;&gt; 开票申请</td>
+		onclick="javascript:history.go(-1)">发票管理</span> &gt;&gt; 对分公司开票</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
 <p:body width="98%">
 
 	<p:title>
-		<td class="caption"><strong>发票基本信息：(关联多个单据默认依次填充单据的可开票金额)</strong></td>
+		<td class="caption"><strong>发票基本信息：</strong></td>
 	</p:title>
 
 	<p:line flag="0" />
@@ -295,32 +242,15 @@ function cc(obj, index)
 			    </c:forEach>
 			</p:pro>
 
-			<p:cell title="开票客户" end="true">
-                <input type="text" size="60" readonly="readonly" name="cname" oncheck="notNone;"> 
-                <font color="red">*</font>
-                <input type="button" value="&nbsp;选 择&nbsp;" name="qout1" id="qout1"
-                    class="button_class" onclick="selectCus()">
+			<p:cell title="目的分公司" end="true">
+                <select name="customerId" style='WIDTH: 340px;' oncheck="notNone">
+                    <p:option type="dutyList" empty="true"/>
+                </select>
             </p:cell>
 			
-			<p:cell title="关联单据" end="true">
-			    <input type="text" size="60" readonly="readonly" name="outId"> 
-                <input type="button" value="&nbsp;销售单&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="opens()">&nbsp;
-                 <input type="button" value="&nbsp;委托清单&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="openBalance()">&nbsp;
-                <input type="button" value="&nbsp;清 空&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="clears()">&nbsp;&nbsp;
-            </p:cell>
-            
             <p:cell title="金额">
-                可开票金额：<input type="text" size="20" readonly="readonly" name="mayMoney" value="0.0"> 
-                &nbsp;&nbsp;
                 当前开票金额：<input type="text" size="20" readonly="readonly" name="hasMoney" value="0.0"> 
             </p:cell>
-            
-            <p:pro field="processer">
-                <p:option type="stafferList" empty="true"/>
-            </p:pro>
 
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
 

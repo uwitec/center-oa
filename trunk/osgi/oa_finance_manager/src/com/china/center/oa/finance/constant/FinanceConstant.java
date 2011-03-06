@@ -309,4 +309,16 @@ public interface FinanceConstant
     @Defined(key = "invoiceinsStatus", value = "结束")
     int INVOICEINS_STATUS_END = 99;
 
+    /**
+     * 普通
+     */
+    @Defined(key = "invoiceinsType", value = "普通")
+    int INVOICEINS_TYPE_COMMON = 0;
+
+    /**
+     * 对分公司
+     */
+    @Defined(key = "invoiceinsType", value = "对分公司")
+    int INVOICEINS_TYPE_DUTY = 1;
+
 }

@@ -74,9 +74,22 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
 
         bean.setId(commonDAO.getSquenceString20());
 
-        bean.setStatus(FinanceConstant.INVOICEINS_STATUS_SUBMIT);
-
         bean.setLogTime(TimeTools.now());
+
+        // 对分公司的直接OK
+        if (bean.getType() == FinanceConstant.INVOICEINS_TYPE_DUTY)
+        {
+            bean.setStatus(FinanceConstant.INVOICEINS_STATUS_END);
+
+            if ( !bean.getInvoiceId().equals("90000000000000000003"))
+            {
+                throw new MYException("发票只能是:增值专用发票(一般纳税人)[可抵扣](17.00%)");
+            }
+        }
+        else
+        {
+            bean.setStatus(FinanceConstant.INVOICEINS_STATUS_SUBMIT);
+        }
 
         invoiceinsDAO.saveEntityBean(bean);
 

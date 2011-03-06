@@ -52,6 +52,9 @@ function rejectBean()
 		<p:class value="com.china.center.oa.finance.bean.InvoiceinsBean" opr="2"/>
 
 		<p:table cells="1">
+		    <p:cell title="标识">
+               ${bean.id}
+            </p:cell>
 
 			<p:pro field="invoiceDate"/>
 			
@@ -67,7 +70,7 @@ function rejectBean()
 				<p:option type="dutyList" />
 			</p:pro>
 			
-			 <p:cell title="开票客户">
+			<p:cell title="客户/分公司">
                ${bean.customerName}
             </p:cell>
 			
