@@ -2761,6 +2761,13 @@ public class OutAction extends DispatchAction
             condtion.addCondition("OutBalanceBean.outId", "like", outId.trim());
         }
 
+        String id = request.getParameter("qid");
+
+        if ( !StringTools.isNullOrNone(id))
+        {
+            condtion.addCondition("OutBalanceBean.id", "like", id.trim());
+        }
+
         String status = request.getParameter("status");
 
         if ( !StringTools.isNullOrNone(status))

@@ -98,6 +98,7 @@ function query()
 function res()
 {
 	$O("outId").value = '';
+	$O("qid").value = '';
 	
 	setSelectIndex($O('status'), 0);
 	
@@ -248,8 +249,8 @@ function refBill()
                         </select>
                         </td>
                         
-                        <td width="15%" align="center"></td>
-                        <td align="center"></td>
+                        <td width="15%" align="center">标识</td>
+                        <td align="center"><input type="text" name="qid" value="${qid}"></td>
                     </tr>
 
 					<tr class="content2">

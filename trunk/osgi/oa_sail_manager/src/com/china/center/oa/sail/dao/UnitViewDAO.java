@@ -9,6 +9,8 @@
 package com.china.center.oa.sail.dao;
 
 
+import java.io.Serializable;
+
 import com.china.center.jdbc.inter.DAO;
 import com.china.center.oa.sail.bean.UnitViewBean;
 
@@ -23,5 +25,7 @@ import com.china.center.oa.sail.bean.UnitViewBean;
  */
 public interface UnitViewDAO extends DAO<UnitViewBean, UnitViewBean>
 {
+    UnitViewBean find(Serializable id);
 
+    void syn();
 }

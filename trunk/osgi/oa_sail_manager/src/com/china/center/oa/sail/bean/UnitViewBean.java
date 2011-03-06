@@ -25,7 +25,7 @@ import com.china.center.jdbc.annotation.Table;
  * @since 3.0
  */
 @Entity
-@Table(name = "V_CENTER_UNIT")
+@Table(name = "T_CENTER_UNIT")
 public class UnitViewBean implements Serializable
 {
     @Id

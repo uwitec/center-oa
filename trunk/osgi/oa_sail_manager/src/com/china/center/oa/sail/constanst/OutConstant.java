@@ -260,7 +260,7 @@ public interface OutConstant
     int STATUS_TEMP = 99;
 
     /**
-     * 没有开票
+     * 可开票
      */
     @Defined(key = "invoiceStatus", value = "可开票")
     int INVOICESTATUS_INIT = 0;
