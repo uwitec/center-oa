@@ -123,4 +123,14 @@ public class StorageRelationDAOImpl extends BaseDAO<StorageRelationBean, Storage
             return jdbcOperation.queryForListBySql(sql, StorageRelationVO.class);
         }
     }
+
+    public int updateStorageRelationAmount(String id, int change)
+    {
+        // 这里可以防止脏数据的读取
+        String sql = BeanTools.getUpdateHead(claz) + "set amount = amount + ? where id = ?";
+
+        jdbcOperation.update(sql, change, id);
+
+        return change;
+    }
 }

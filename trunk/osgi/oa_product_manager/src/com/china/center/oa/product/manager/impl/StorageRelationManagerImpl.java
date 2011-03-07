@@ -281,19 +281,29 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
         int preAmount22 = storageRelationDAO.sumProductInLocationIdAndPriceKey(bean.getProductId(),
             depotBean.getId(), priceKey);
 
-        int newAmount = relation.getAmount() + bean.getChange();
+        // int newAmount = relation.getAmount() + bean.getChange();
+
+        // CORE 更新库存数量变动
+        storageRelationDAO.updateStorageRelationAmount(relation.getId(), bean.getChange());
+
+        // 从数据库读出
+        StorageRelationBean updateNew = storageRelationDAO.find(relation.getId());
 
         // 库存数量符合
-        relation.setAmount(newAmount);
+        relation.setAmount(updateNew.getAmount());
 
-        if (relation.getAmount() == 0 && deleteZeroRelation)
+        if (updateNew.getAmount() == 0 && deleteZeroRelation)
         {
             // 变动后产品数量为0，清除在储位的关系
             storageRelationDAO.deleteEntityBean(relation.getId());
         }
-        else
+
+        // 如果脏读有小于0的数据异常抛出
+        if (updateNew.getAmount() < 0)
         {
-            storageRelationDAO.updateEntityBean(relation);
+            throw new MYException("仓库[%s]下仓区[%s]下储位[%s]的产品[%s]库存不够,当前库存为[%d],需要使用[%d]", depotBean
+                .getName(), depotpartBean.getName(), storageBean.getName(), productBean.getName(),
+                relation.getAmount(), -bean.getChange());
         }
 
         // 之后储位内产品的数量
