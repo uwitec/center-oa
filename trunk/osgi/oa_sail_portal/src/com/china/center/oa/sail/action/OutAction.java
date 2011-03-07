@@ -666,7 +666,7 @@ public class OutAction extends DispatchAction
                 {
                     baseList = baseDAO.queryEntityBeansByFK(element.getFullId());
 
-                    consignBean = consignDAO.findConsignById(element.getFullId());
+                    consignBean = consignDAO.findDefaultConsignByFullId(element.getFullId());
 
                     if (consignBean != null)
                     {
@@ -1849,7 +1849,7 @@ public class OutAction extends DispatchAction
 
         for (OutBean outBean : list)
         {
-            temp = consignDAO.findConsignById(outBean.getFullId());
+            temp = consignDAO.findDefaultConsignByFullId(outBean.getFullId());
 
             if (temp != null)
             {
@@ -2248,7 +2248,7 @@ public class OutAction extends DispatchAction
 
         for (OutBean outBean : list)
         {
-            temp = consignDAO.findConsignById(outBean.getFullId());
+            temp = consignDAO.findDefaultConsignByFullId(outBean.getFullId());
 
             if (temp != null)
             {
@@ -2452,7 +2452,7 @@ public class OutAction extends DispatchAction
 
         for (OutBean outBean : list)
         {
-            temp = consignDAO.findConsignById(outBean.getFullId());
+            temp = consignDAO.findDefaultConsignByFullId(outBean.getFullId());
 
             if (temp != null)
             {

@@ -10,13 +10,14 @@ package com.china.center.oa.sail.bean;
 
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.oa.sail.constanst.SailConstant;
 
 
 /**
- * 发货单
+ * 发货单(一个销售单存在多个发货单)
  * 
  * @author ZHUZHU
  * @version 2008-1-14
@@ -28,6 +29,9 @@ import com.china.center.oa.sail.constanst.SailConstant;
 public class ConsignBean extends OutBean
 {
     @Id
+    private String gid = "";
+
+    @FK
     private String fullId = "";
 
     private String transport = "";
@@ -458,6 +462,23 @@ public class ConsignBean extends OutBean
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the gid
+     */
+    public String getGid()
+    {
+        return gid;
+    }
+
+    /**
+     * @param gid
+     *            the gid to set
+     */
+    public void setGid(String gid)
+    {
+        this.gid = gid;
     }
 
 }

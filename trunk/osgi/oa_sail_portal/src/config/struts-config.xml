@@ -39,6 +39,7 @@
             <forward name="queryConsign" path="/transport/queryConsign.jsp" />
             <forward name="print1" path="/transport/print1.jsp" />
             <forward name="detailOut5" path="/transport/handleConsign.jsp" />
+            <forward name="detailAllConsign" path="/transport/detailAllConsign.jsp" />
             <forward name="queryOut" path="/sail/queryOut.jsp" />
             <forward name="queryTodayConsign" path="/transport/queryTodayConsign.jsp" />
         </action>

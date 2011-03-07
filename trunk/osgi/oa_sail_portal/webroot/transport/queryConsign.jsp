@@ -16,7 +16,7 @@ function process()
 		return;
 	}
 	
-	$l('../sail/transport.do?method=findConsign&fullId=' + getRadioValue('consigns'));
+	$l('../sail/transport.do?method=findConsign&fullId=' + getRadioValue('consigns') + '&gid=' + getRadio('consigns').pgid);
 }
 
 function load()
@@ -125,6 +125,7 @@ function exports()
 		<table width="100%" align="center" cellspacing='1' class="table0">
 			<tr align=center class="content0">
 				<td align="center" class="td_class">选择</td>
+				<td align="center" class="td_class" onclick="tableSort(this)"><strong>标识</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"><strong>单据时间</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"><strong>单据</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"><strong>货单状态</strong></td>
@@ -137,12 +138,17 @@ function exports()
                 varStatus="vs">
                 <tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
                     <td align="center"><input type="radio" name="consigns"
-                        statuss="${item.currentStatus}" value="${item.fullId}"
+                        statuss="${item.currentStatus}" 
+                        value="${item.fullId}"
+                        pgid="${item.gid}"
                         ${vs.index== 0 ? "checked" : ""}/></td>
+                    <td align="center" onclick="hrefAndSelect(this)">
+                    <a
+                        href="../sail/transport.do?method=findConsign&fullId=${item.fullId}&gid=${item.gid}"
+                        >
+                    ${item.gid}</a></td>
                     <td align="center" onclick="hrefAndSelect(this)">${item.outTime}</td>
-                    <td align="center" onclick="hrefAndSelect(this)"><a
-                        href="../sail/transport.do?method=findConsign&fullId=${item.fullId}"
-                        >${item.fullId}</a></td>
+                    <td align="center" onclick="hrefAndSelect(this)">${item.fullId}</td>
                     <td align="center" onclick="hrefAndSelect(this)">${my:get('consignStatus', item.currentStatus)}</td>
                     
                     <td align="center" onclick="hrefAndSelect(this)">${my:get('consignReprotType', item.reprotType)}</td>

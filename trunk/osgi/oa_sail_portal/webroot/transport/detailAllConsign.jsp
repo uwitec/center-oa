@@ -50,10 +50,12 @@ function load()
     change();
     loadForm();
     
+    <c:forEach items="${beanList}" var="consignBean" varStatus="vs">
     <c:if test="${consignBean.reprotType > 0 || readonly}">
-    setAllReadOnly($O('showTable'));
-    $detail($O('showTable'), ['transport1', 'transport']);
+    setAllReadOnly($O('showTable_${vs.index}'));
+    $detail($O('showTable_${vs.index}'), ['transport1', 'transport']);
     </c:if>
+    </c:forEach>
 }
 
 var jmap = new Object();
@@ -113,8 +115,9 @@ function change()
 
 	<p:line flag="0" />
 
+	<c:forEach items="${beanList}" var="consignBean" varStatus="vs">
 	<p:subBody width="98%">
-		<p:table cells="1" id="showTable">
+		<p:table cells="1" id="showTable_${vs.index}">
 			        <tr class="content1">
                         <td width="15%">标识：</td>
                         <td colspan="3">${consignBean.gid}</td>
@@ -243,22 +246,10 @@ function change()
 	</p:subBody>
 
 	<p:line flag="1" />
+	</c:forEach>
 
 	<p:button leftWidth="100%" rightWidth="0%">
 		<div align="right" id="pr">
-		    <c:if test="${!readonly}">
-			    <c:if test="${init}">
-	            <input type="button" class="button_class" onclick="sub()"
-	                value="&nbsp;&nbsp;审核通过&nbsp;&nbsp;">&nbsp;&nbsp;
-	            </c:if>
-	            
-	            <c:if test="${consignBean.reprotType == 0 && consignBean.currentStatus >= 2}">
-	            <input type="button" class="button_class" onclick="sub1()"
-	                value="&nbsp;&nbsp;修改发货信息&nbsp;&nbsp;">&nbsp;&nbsp;
-	            <input type="button" class="button_class" onclick="sub2()"
-                    value="&nbsp;&nbsp;增加新发货单&nbsp;&nbsp;">&nbsp;&nbsp;
-	            </c:if> 
-            </c:if> 
             <input type="button" class="button_class"
             onclick="javascript:history.go(-1)"
             value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>

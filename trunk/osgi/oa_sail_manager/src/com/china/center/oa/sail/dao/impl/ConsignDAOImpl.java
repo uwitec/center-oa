@@ -65,7 +65,9 @@ public class ConsignDAOImpl implements ConsignDAO
 
     public boolean delConsign(String id)
     {
-        return jdbcOperation.delete(id, ConsignBean.class) > 0;
+        jdbcOperation.delete("where fullid = ?", ConsignBean.class, id);
+
+        return true;
     }
 
     public boolean delTransport(String id)
@@ -83,7 +85,7 @@ public class ConsignDAOImpl implements ConsignDAO
         condition.removeWhereStr();
 
         return jdbcOperation.queryObjectsBySql(
-            "select * from T_CENTER_OUTPRODUCT t1, t_center_out t2 where t1.fullId = t2.fullId "
+            "select * from T_CENTER_OUTPRODUCT t1, t_center_out t2 where t1.fullId = t2.fullId"
                 + condition).setMaxResults(1000).list(ConsignBean.class);
     }
 
@@ -93,14 +95,14 @@ public class ConsignDAOImpl implements ConsignDAO
             "select count(1) from T_CENTER_OUTPRODUCT where transport = ?", transportId);
     }
 
-    public ConsignBean findConsignById(String id)
+    public ConsignBean findDefaultConsignByFullId(String id)
     {
         List<ConsignBean> list = jdbcOperation
             .queryForListBySql(
-                "select * from T_CENTER_OUTPRODUCT t1, t_center_out t2 where t1.fullId = ? and t1.fullId = t2.fullId",
+                "select * from T_CENTER_OUTPRODUCT t1, t_center_out t2 where t1.fullId = ? and t1.fullId = t2.fullId order by t1.gid asc",
                 ConsignBean.class, id);
 
-        if (list.size() != 1)
+        if (list.size() == 0)
         {
             return null;
         }
@@ -152,5 +154,30 @@ public class ConsignDAOImpl implements ConsignDAO
     public void setJdbcOperation(JdbcOperation jdbcOperation)
     {
         this.jdbcOperation = jdbcOperation;
+    }
+
+    public ConsignBean findById(String gid)
+    {
+        List<ConsignBean> list = jdbcOperation
+            .queryForListBySql(
+                "select * from T_CENTER_OUTPRODUCT t1, t_center_out t2 where t1.gid = ? and t1.fullId = t2.fullId",
+                ConsignBean.class, gid);
+
+        if (list.size() != 1)
+        {
+            return null;
+        }
+
+        return list.get(0);
+    }
+
+    public List<ConsignBean> queryConsignByFullId(String fullId)
+    {
+        List<ConsignBean> list = jdbcOperation
+            .queryForListBySql(
+                "select * from T_CENTER_OUTPRODUCT t1, t_center_out t2 where t1.fullId = ? and t1.fullId = t2.fullId order by t1.gid asc",
+                ConsignBean.class, fullId);
+
+        return list;
     }
 }

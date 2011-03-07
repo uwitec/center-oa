@@ -366,6 +366,8 @@ public class ConsignAction extends DispatchAction
     {
         String outId = request.getParameter("fullId");
 
+        String gid = request.getParameter("gid");
+
         String forward = request.getParameter("forward");
 
         CommonTools.saveParamers(request);
@@ -408,13 +410,29 @@ public class ConsignAction extends DispatchAction
 
             request.setAttribute("baseList", list);
 
-            ConsignBean cb = consignDAO.findConsignById(outId);
+            ConsignBean cb = null;
 
-            if (cb == null)
+            if ( !StringTools.isNullOrNone(gid))
             {
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "请重新操作");
+                cb = consignDAO.findById(gid);
 
-                return mapping.findForward("error");
+                if (cb == null)
+                {
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "请重新操作");
+
+                    return mapping.findForward("error");
+                }
+            }
+            else
+            {
+                cb = consignDAO.findDefaultConsignByFullId(outId);
+
+                if (cb == null)
+                {
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "请重新操作");
+
+                    return mapping.findForward("error");
+                }
             }
 
             if (cb.getCurrentStatus() == SailConstant.CONSIGN_PASS)
@@ -482,6 +500,18 @@ public class ConsignAction extends DispatchAction
         {
             request.setAttribute("readonly", true);
         }
+        else if ("3".equals(forward))
+        {
+            request.setAttribute("readonly", true);
+
+            List<ConsignBean> beanList = consignDAO.queryConsignByFullId(outId);
+
+            request.removeAttribute("consignBean");
+
+            request.setAttribute("beanList", beanList);
+
+            return mapping.findForward("detailAllConsign");
+        }
         else
         {
             request.setAttribute("readonly", false);
@@ -510,7 +540,7 @@ public class ConsignAction extends DispatchAction
 
         bean.setCurrentStatus(SailConstant.CONSIGN_PASS);
 
-        ConsignBean cc = consignDAO.findConsignById(bean.getFullId());
+        ConsignBean cc = consignDAO.findDefaultConsignByFullId(bean.getFullId());
 
         if (cc == null || cc.getCurrentStatus() == SailConstant.CONSIGN_PASS)
         {
@@ -584,7 +614,7 @@ public class ConsignAction extends DispatchAction
 
         BeanUtil.getBean(bean, request);
 
-        ConsignBean cc = consignDAO.findConsignById(bean.getFullId());
+        ConsignBean cc = consignDAO.findDefaultConsignByFullId(bean.getFullId());
 
         if (cc == null || cc.getReprotType() != SailConstant.CONSIGN_REPORT_INIT)
         {
@@ -601,14 +631,54 @@ public class ConsignAction extends DispatchAction
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "请重新操作");
 
-            return queryTransport(mapping, form, request, reponse);
+            return mapping.findForward("error");
         }
 
         request.setAttribute(KeyConstant.MESSAGE, "成功确认发货单收货");
 
         CommonTools.removeParamers(request);
 
-        request.setAttribute("init", "1");
+        request.setAttribute("load", "1");
+
+        return queryConsign(mapping, form, request, reponse);
+    }
+
+    public ActionForward readdConsign(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        String outId = request.getParameter("fullId");
+
+        String arriveDate = request.getParameter("arriveDate");
+
+        ConsignBean bean = new ConsignBean();
+
+        bean.setCurrentStatus(SailConstant.CONSIGN_INIT);
+
+        bean.setCurrentStatus(SailConstant.CONSIGN_PASS);
+
+        bean.setGid(commonDAO.getSquenceString20());
+
+        bean.setFullId(outId);
+
+        bean.setArriveDate(arriveDate);
+
+        try
+        {
+            consignManager.addConsign(bean);
+        }
+        catch (MYException e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "请重新操作");
+
+            return mapping.findForward("error");
+        }
+
+        request.setAttribute(KeyConstant.MESSAGE, "成功新增发货单:" + bean.getGid());
+
+        CommonTools.removeParamers(request);
+
+        request.setAttribute("load", "1");
 
         return queryConsign(mapping, form, request, reponse);
     }

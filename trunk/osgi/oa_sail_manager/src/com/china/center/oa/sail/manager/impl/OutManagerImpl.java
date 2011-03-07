@@ -1382,7 +1382,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                     // 如果销售单，需要删除发货单(当库管驳回的时候才触发)
                     if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                     {
-                        ConsignBean beans = consignDAO.findConsignById(fullId);
+                        ConsignBean beans = consignDAO.findDefaultConsignByFullId(fullId);
 
                         if (beans != null)
                         {
@@ -1584,7 +1584,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         if (nextStatus == OutConstant.STATUS_FLOW_PASS
             && depot.getType() == DepotConstant.DEPOT_TYPE_CENTER)
         {
-            ConsignBean consignBean = consignDAO.findConsignById(outBean.getFullId());
+            ConsignBean consignBean = consignDAO.findDefaultConsignByFullId(outBean.getFullId());
 
             if (consignBean == null)
             {
@@ -3121,6 +3121,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             ConsignBean bean = new ConsignBean();
 
             bean.setCurrentStatus(SailConstant.CONSIGN_INIT);
+
+            bean.setGid(commonDAO.getSquenceString20());
 
             bean.setFullId(outBean.getFullId());
 

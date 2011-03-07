@@ -543,7 +543,7 @@ function load()
 							<td align="center" onclick="hrefAndSelect(this)">${item.depotName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">
                             <a
-                            href="../sail/transport.do?method=findConsign&forward=2&fullId=${item.fullId}"
+                            href="../sail/transport.do?method=findConsign&forward=3&fullId=${item.fullId}"
                             >
                             ${my:get('consignStatus', item.consign)}
                             </a>

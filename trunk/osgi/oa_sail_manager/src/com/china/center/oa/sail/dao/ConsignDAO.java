@@ -46,7 +46,17 @@ public interface ConsignDAO
 
     int countTransport(String transportId);
 
-    ConsignBean findConsignById(String id);
+    /**
+     * 查询第一个发货单(默认的)
+     * 
+     * @param id
+     * @return
+     */
+    ConsignBean findDefaultConsignByFullId(String fullId);
+
+    List<ConsignBean> queryConsignByFullId(String fullId);
+
+    ConsignBean findById(String gid);
 
     List<TransportBean> queryTransportByType(int type);
 
