@@ -39,7 +39,6 @@ public class DutyVO extends DutyBean
      */
     public DutyVO()
     {
-        // TODO Auto-generated constructor stub
     }
 
     /**

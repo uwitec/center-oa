@@ -200,4 +200,16 @@ public interface PublicConstant
      */
     String DEFAULR_DUTY_ID = "90201008080000000001";
 
+    /**
+     * 未核对
+     */
+    @Defined(key = "pubCheckStatus", value = "未核对")
+    int CHECK_STATUS_INIT = 0;
+
+    /**
+     * 已核对
+     */
+    @Defined(key = "pubCheckStatus", value = "已核对")
+    int CHECK_STATUS_END = 1;
+
 }

@@ -21,10 +21,11 @@ import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.product.constant.ComposeConstant;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.PublicConstant;
 
 
 /**
- * ComposeProductBean(产品合成)
+ * CHECK ComposeProductBean(产品合成)
  * 
  * @author ZHUZHU
  * @version 2010-10-2
@@ -70,6 +71,13 @@ public class ComposeProductBean implements Serializable
     private double price = 0.0d;
 
     private String logTime = "";
+
+    /**
+     * 总部核对信息
+     */
+    private String checks = "";
+
+    private int checkStatus = PublicConstant.CHECK_STATUS_INIT;
 
     @Ignore
     private List<ComposeItemBean> itemList = null;
@@ -323,6 +331,57 @@ public class ComposeProductBean implements Serializable
     }
 
     /**
+     * @return the refId
+     */
+    public String getRefId()
+    {
+        return refId;
+    }
+
+    /**
+     * @param refId
+     *            the refId to set
+     */
+    public void setRefId(String refId)
+    {
+        this.refId = refId;
+    }
+
+    /**
+     * @return the checks
+     */
+    public String getChecks()
+    {
+        return checks;
+    }
+
+    /**
+     * @param checks
+     *            the checks to set
+     */
+    public void setChecks(String checks)
+    {
+        this.checks = checks;
+    }
+
+    /**
+     * @return the checkStatus
+     */
+    public int getCheckStatus()
+    {
+        return checkStatus;
+    }
+
+    /**
+     * @param checkStatus
+     *            the checkStatus to set
+     */
+    public void setCheckStatus(int checkStatus)
+    {
+        this.checkStatus = checkStatus;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -358,6 +417,9 @@ public class ComposeProductBean implements Serializable
             .append("relationId = ")
             .append(this.relationId)
             .append(TAB)
+            .append("refId = ")
+            .append(this.refId)
+            .append(TAB)
             .append("type = ")
             .append(this.type)
             .append(TAB)
@@ -373,6 +435,12 @@ public class ComposeProductBean implements Serializable
             .append("logTime = ")
             .append(this.logTime)
             .append(TAB)
+            .append("checks = ")
+            .append(this.checks)
+            .append(TAB)
+            .append("checkStatus = ")
+            .append(this.checkStatus)
+            .append(TAB)
             .append("itemList = ")
             .append(this.itemList)
             .append(TAB)
@@ -382,22 +450,5 @@ public class ComposeProductBean implements Serializable
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the refId
-     */
-    public String getRefId()
-    {
-        return refId;
-    }
-
-    /**
-     * @param refId
-     *            the refId to set
-     */
-    public void setRefId(String refId)
-    {
-        this.refId = refId;
     }
 }

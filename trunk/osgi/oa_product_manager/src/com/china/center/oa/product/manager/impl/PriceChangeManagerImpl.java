@@ -96,7 +96,7 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
 
             saveInner(bean);
 
-            // TODO 生成调价凭证
+            // TODO_OSGI 生成调价凭证
         }
         finally
         {
@@ -150,7 +150,7 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
             // 设置成回滚
             priceChangeDAO.updateStatus(id, PriceChangeConstant.STATUS_ROLLBACK);
 
-            // TODO 生成调价凭证(回滚凭证)
+            // TODO_OSGI 生成调价凭证(回滚凭证)
         }
         finally
         {

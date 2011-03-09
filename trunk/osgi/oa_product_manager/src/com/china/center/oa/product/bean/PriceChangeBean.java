@@ -21,10 +21,11 @@ import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.oa.product.constant.PriceChangeConstant;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.PublicConstant;
 
 
 /**
- * PriceChangeBean
+ * CHECK PriceChangeBean
  * 
  * @author ZHUZHU
  * @version 2010-10-4
@@ -50,6 +51,13 @@ public class PriceChangeBean implements Serializable
 
     @Html(title = "调价原因", type = Element.TEXTAREA, maxLength = 200)
     private String description = "";
+
+    /**
+     * 总部核对信息
+     */
+    private String checks = "";
+
+    private int checkStatus = PublicConstant.CHECK_STATUS_INIT;
 
     @Ignore
     private List<PriceChangeSrcItemBean> srcList = null;
@@ -167,25 +175,6 @@ public class PriceChangeBean implements Serializable
     }
 
     /**
-     * Constructs a <code>String</code> with all attributes in name = value format.
-     * 
-     * @return a <code>String</code> representation of this object.
-     */
-    public String toString()
-    {
-        final String TAB = ",";
-
-        StringBuffer retValue = new StringBuffer();
-
-        retValue.append("PriceChangeBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("stafferId = ").append(this.stafferId).append(TAB).append("logTime = ").append(this.logTime).append(
-            TAB).append("description = ").append(this.description).append(TAB).append("srcList = ").append(this.srcList).append(
-            TAB).append("newList = ").append(this.newList).append(TAB).append(" )");
-
-        return retValue.toString();
-    }
-
-    /**
      * @return the status
      */
     public int getStatus()
@@ -200,6 +189,87 @@ public class PriceChangeBean implements Serializable
     public void setStatus(int status)
     {
         this.status = status;
+    }
+
+    /**
+     * @return the checks
+     */
+    public String getChecks()
+    {
+        return checks;
+    }
+
+    /**
+     * @param checks
+     *            the checks to set
+     */
+    public void setChecks(String checks)
+    {
+        this.checks = checks;
+    }
+
+    /**
+     * @return the checkStatus
+     */
+    public int getCheckStatus()
+    {
+        return checkStatus;
+    }
+
+    /**
+     * @param checkStatus
+     *            the checkStatus to set
+     */
+    public void setCheckStatus(int checkStatus)
+    {
+        this.checkStatus = checkStatus;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("PriceChangeBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("checks = ")
+            .append(this.checks)
+            .append(TAB)
+            .append("checkStatus = ")
+            .append(this.checkStatus)
+            .append(TAB)
+            .append("srcList = ")
+            .append(this.srcList)
+            .append(TAB)
+            .append("newList = ")
+            .append(this.newList)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 
 }
