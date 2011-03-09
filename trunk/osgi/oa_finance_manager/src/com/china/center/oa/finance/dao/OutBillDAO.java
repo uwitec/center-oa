@@ -30,4 +30,6 @@ public interface OutBillDAO extends DAO<OutBillBean, OutBillVO>
     int lockByCondition(ConditionParse condition);
 
     double sumByRefId(String refId);
+
+    int countUnitInBill(String id);
 }

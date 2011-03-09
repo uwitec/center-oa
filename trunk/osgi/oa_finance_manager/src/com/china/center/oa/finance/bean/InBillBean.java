@@ -22,11 +22,12 @@ import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.sail.bean.UnitViewBean;
 
 
 /**
- * BillBean
+ * CHECK InBillBean
  * 
  * @author ZHUZHU
  * @version 2010-12-25
@@ -103,6 +104,13 @@ public class InBillBean implements Serializable
 
     @Html(title = "备注", maxLength = 200, type = Element.TEXTAREA)
     private String description = "";
+
+    /**
+     * 总部核对信息
+     */
+    private String checks = "";
+
+    private int checkStatus = PublicConstant.CHECK_STATUS_INIT;
 
     /**
      * default constructor
@@ -401,6 +409,40 @@ public class InBillBean implements Serializable
     }
 
     /**
+     * @return the checks
+     */
+    public String getChecks()
+    {
+        return checks;
+    }
+
+    /**
+     * @param checks
+     *            the checks to set
+     */
+    public void setChecks(String checks)
+    {
+        this.checks = checks;
+    }
+
+    /**
+     * @return the checkStatus
+     */
+    public int getCheckStatus()
+    {
+        return checkStatus;
+    }
+
+    /**
+     * @param checkStatus
+     *            the checkStatus to set
+     */
+    public void setCheckStatus(int checkStatus)
+    {
+        this.checkStatus = checkStatus;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -465,6 +507,12 @@ public class InBillBean implements Serializable
             .append(TAB)
             .append("description = ")
             .append(this.description)
+            .append(TAB)
+            .append("checks = ")
+            .append(this.checks)
+            .append(TAB)
+            .append("checkStatus = ")
+            .append(this.checkStatus)
             .append(TAB)
             .append(" )");
 

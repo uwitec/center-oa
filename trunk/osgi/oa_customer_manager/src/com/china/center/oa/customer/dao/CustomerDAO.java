@@ -37,8 +37,6 @@ public interface CustomerDAO extends DAO<CustomerBean, CustomerVO>
 
     CustomerBean findCustomerByCode(String code);
 
-    int countCustomerInBill(String id);
-
     boolean updateCustomerLocation(String srcLocationId, String dirLocationId);
 
     boolean updateCustomerstatus(String id, int status);

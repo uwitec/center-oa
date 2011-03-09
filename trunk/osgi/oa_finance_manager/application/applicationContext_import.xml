@@ -56,5 +56,7 @@
     <osgi:reference id="stockManager" interface="com.china.center.oa.stock.manager.StockManager" />
     
     <osgi:reference id="stockItemDAO" interface="com.china.center.oa.stock.dao.StockItemDAO" />
+    
+    <osgi:reference id="customerManager" interface="com.china.center.oa.customer.manager.CustomerManager" />
 	
 </beans>

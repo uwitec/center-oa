@@ -46,4 +46,6 @@ public interface InBillDAO extends DAO<InBillBean, InBillVO>
     double sumByCondition(ConditionParse condition);
 
     int lockByCondition(ConditionParse condition);
+
+    int countUnitInBill(String id);
 }

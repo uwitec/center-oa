@@ -58,4 +58,10 @@ public class InBillDAOImpl extends BaseDAO<InBillBean, InBillVO> implements InBi
                                                  + "where InBillBean.outBalanceId = ?",
             outBalanceId);
     }
+
+    public int countUnitInBill(String id)
+    {
+        return this.jdbcOperation.queryForInt(
+            BeanTools.getCountHead(claz) + "where customerId = ?", id);
+    }
 }

@@ -61,4 +61,17 @@
         </property>
     </bean>
     
+    <bean id="customerListenerFinanceImpl" class="com.china.center.oa.finance.listener.impl.CustomerListenerFinanceImpl" />
+    
+    <bean id="customerLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="customerManager"/>
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="customerListenerFinanceImpl" />
+            </list>
+        </property>
+    </bean>
+    
 </beans>

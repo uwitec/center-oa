@@ -332,13 +332,6 @@ public class CustomerManagerImpl extends AbstractListenerManager<CustomerListene
         {
             customerListener.onDelete(oldBean);
         }
-
-        // TODO_OSGI 这里应该是OSGi实现的,当前暂时不动
-        if (customerDAO.countCustomerInBill(bean.getId()) > 0)
-        {
-            throw new MYException("客户[%s]已经被使用,不能删除", bean.getName());
-        }
-
     }
 
     /**

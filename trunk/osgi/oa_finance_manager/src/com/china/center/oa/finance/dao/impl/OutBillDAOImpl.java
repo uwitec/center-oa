@@ -45,4 +45,10 @@ public class OutBillDAOImpl extends BaseDAO<OutBillBean, OutBillVO> implements O
         return this.jdbcOperation.queryForDouble(BeanTools.getSumHead(claz, "moneys")
                                                  + "where OutBillBean.stockId = ?", refId);
     }
+
+    public int countUnitInBill(String id)
+    {
+        return this.jdbcOperation.queryForInt(BeanTools.getCountHead(claz) + "where provideId = ?",
+            id);
+    }
 }
