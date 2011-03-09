@@ -27,4 +27,6 @@
 
 	<osgi:service ref="unitDAO" interface="com.china.center.oa.tax.dao.UnitDAO" />
 
+	<osgi:service ref="checkViewDAO" interface="com.china.center.oa.tax.dao.CheckViewDAO" />
+
 </beans>

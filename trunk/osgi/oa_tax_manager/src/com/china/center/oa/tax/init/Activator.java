@@ -8,6 +8,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.china.center.common.taglib.DefinedCommon;
+import com.china.center.oa.tax.constanst.CheckConstant;
 import com.china.center.oa.tax.constanst.TaxConstanst;
 
 
@@ -17,6 +18,7 @@ public class Activator implements BundleActivator
     {
         {
             add(TaxConstanst.class);
+            add(CheckConstant.class);
         }
     };
 

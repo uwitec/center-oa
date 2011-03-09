@@ -32,6 +32,7 @@ import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.actionhelper.jsonimpl.JSONArray;
+import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
@@ -43,11 +44,13 @@ import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.tax.bean.CheckViewBean;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.FinanceItemBean;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.bean.UnitBean;
 import com.china.center.oa.tax.constanst.TaxConstanst;
+import com.china.center.oa.tax.dao.CheckViewDAO;
 import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.oa.tax.dao.FinanceItemDAO;
 import com.china.center.oa.tax.dao.TaxDAO;
@@ -89,9 +92,13 @@ public class FinaAction extends DispatchAction
 
     private FinanceDAO financeDAO = null;
 
+    private CheckViewDAO checkViewDAO = null;
+
     private FinanceItemDAO financeItemDAO = null;
 
     private static final String QUERYFINANCE = "queryFinance";
+
+    private static final String QUERYCHECKVIEW = "queryCheckView";
 
     private static String RPTQUERYUNIT = "rptQueryUnit";
 
@@ -122,12 +129,51 @@ public class FinaAction extends DispatchAction
 
         Map<String, String> initMap = initLogTime(request, condtion);
 
-        ActionTools.processJSONQueryCondition(QUERYFINANCE, request, condtion, initMap);
+        ActionTools.processJSONQueryCondition(QUERYCHECKVIEW, request, condtion, initMap);
 
         condtion.addCondition("order by FinanceBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCE, request, condtion,
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKVIEW, request, condtion,
             this.financeDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryCheck
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryCheckView(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        ActionTools.processJSONQueryCondition(QUERYFINANCE, request, condtion);
+
+        condtion.addCondition("order by CheckViewBean.logTime desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCE, request, condtion,
+            this.checkViewDAO, new HandleResult<CheckViewBean>()
+            {
+                public void handle(CheckViewBean obj)
+                {
+                    StafferBean sb = stafferDAO.find(obj.getStafferId());
+
+                    if (sb != null)
+                    {
+                        obj.setStafferId(sb.getName());
+                    }
+                }
+            });
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -674,6 +720,23 @@ public class FinaAction extends DispatchAction
     public void setUnitDAO(UnitDAO unitDAO)
     {
         this.unitDAO = unitDAO;
+    }
+
+    /**
+     * @return the checkViewDAO
+     */
+    public CheckViewDAO getCheckViewDAO()
+    {
+        return checkViewDAO;
+    }
+
+    /**
+     * @param checkViewDAO
+     *            the checkViewDAO to set
+     */
+    public void setCheckViewDAO(CheckViewDAO checkViewDAO)
+    {
+        this.checkViewDAO = checkViewDAO;
     }
 
 }
