@@ -17,6 +17,7 @@ import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.LocationBean;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.sail.constanst.OutConstant;
 
 
@@ -140,6 +141,8 @@ public class OutBean implements Serializable
      * 总部核对信息
      */
     private String checks = "";
+
+    private int checkStatus = PublicConstant.CHECK_STATUS_INIT;
 
     private int reday = 0;
 
@@ -1304,6 +1307,23 @@ public class OutBean implements Serializable
     }
 
     /**
+     * @return the checkStatus
+     */
+    public int getCheckStatus()
+    {
+        return checkStatus;
+    }
+
+    /**
+     * @param checkStatus
+     *            the checkStatus to set
+     */
+    public void setCheckStatus(int checkStatus)
+    {
+        this.checkStatus = checkStatus;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -1401,6 +1421,9 @@ public class OutBean implements Serializable
             .append(TAB)
             .append("checks = ")
             .append(this.checks)
+            .append(TAB)
+            .append("checkStatus = ")
+            .append(this.checkStatus)
             .append(TAB)
             .append("reday = ")
             .append(this.reday)

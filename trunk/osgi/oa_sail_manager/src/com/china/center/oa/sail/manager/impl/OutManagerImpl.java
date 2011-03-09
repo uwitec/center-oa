@@ -3111,7 +3111,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                 throw new RuntimeException(e.getErrorContent());
             }
 
-            // TODO 销售单是发货后产生管理凭证
+            // TODO_OSGI 销售单是发货后产生管理凭证
         }
 
         // 结算中心审核通过后/总裁通过，中心仓库的销售单转到物流管理员，同时自动生成发货单
@@ -3178,7 +3178,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
             if (outBean.getOutType() == OutConstant.OUTTYPE_IN_DROP)
             {
-                // TODO 入库且是报废后是发货后产生管理凭证
+                // TODO_OSGI 入库且是报废后是发货后产生管理凭证
             }
         }
     }

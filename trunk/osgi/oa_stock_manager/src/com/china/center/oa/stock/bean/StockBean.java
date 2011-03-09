@@ -20,12 +20,13 @@ import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.bean.UserBean;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.stock.constant.PriceConstant;
 import com.china.center.oa.stock.constant.StockConstant;
 
 
 /**
- * StockBean
+ * CHECK StockBean
  * 
  * @author ZHUZHU
  * @version 2011-2-1
@@ -135,6 +136,13 @@ public class StockBean implements Serializable
 
     @Html(title = "备注", type = Element.TEXTAREA, maxLength = 100)
     private String description = "";
+
+    /**
+     * 总部核对信息
+     */
+    private String checks = "";
+
+    private int checkStatus = PublicConstant.CHECK_STATUS_INIT;
 
     @Ignore
     private List<StockItemBean> item = null;
@@ -589,6 +597,57 @@ public class StockBean implements Serializable
     }
 
     /**
+     * @return the industryId
+     */
+    public String getIndustryId()
+    {
+        return industryId;
+    }
+
+    /**
+     * @param industryId
+     *            the industryId to set
+     */
+    public void setIndustryId(String industryId)
+    {
+        this.industryId = industryId;
+    }
+
+    /**
+     * @return the checks
+     */
+    public String getChecks()
+    {
+        return checks;
+    }
+
+    /**
+     * @param checks
+     *            the checks to set
+     */
+    public void setChecks(String checks)
+    {
+        this.checks = checks;
+    }
+
+    /**
+     * @return the checkStatus
+     */
+    public int getCheckStatus()
+    {
+        return checkStatus;
+    }
+
+    /**
+     * @param checkStatus
+     *            the checkStatus to set
+     */
+    public void setCheckStatus(int checkStatus)
+    {
+        this.checkStatus = checkStatus;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -597,7 +656,7 @@ public class StockBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
         retValue
             .append("StockBean ( ")
@@ -620,6 +679,9 @@ public class StockBean implements Serializable
             .append(TAB)
             .append("locationId = ")
             .append(this.locationId)
+            .append(TAB)
+            .append("industryId = ")
+            .append(this.industryId)
             .append(TAB)
             .append("status = ")
             .append(this.status)
@@ -672,28 +734,17 @@ public class StockBean implements Serializable
             .append("description = ")
             .append(this.description)
             .append(TAB)
+            .append("checks = ")
+            .append(this.checks)
+            .append(TAB)
+            .append("checkStatus = ")
+            .append(this.checkStatus)
+            .append(TAB)
             .append("item = ")
             .append(this.item)
             .append(TAB)
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the industryId
-     */
-    public String getIndustryId()
-    {
-        return industryId;
-    }
-
-    /**
-     * @param industryId
-     *            the industryId to set
-     */
-    public void setIndustryId(String industryId)
-    {
-        this.industryId = industryId;
     }
 }

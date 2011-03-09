@@ -21,6 +21,7 @@ import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.IbatisDaoSupport;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.dao.OutDAO;
@@ -56,9 +57,11 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
 
     public boolean modifyChecks(String fullId, String checks)
     {
-        int i = jdbcOperation.updateField("checks", checks, fullId, this.claz);
+        String sql = "update t_center_out set checks = ?, checkStatus = ? where fullid = ?";
 
-        return i != 0;
+        jdbcOperation.update(sql, checks, PublicConstant.CHECK_STATUS_END, fullId);
+
+        return true;
     }
 
     public boolean modifyData(String fullId, String date)
