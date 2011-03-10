@@ -10,6 +10,7 @@ package com.china.center.oa.tax.dao.impl;
 
 
 import com.china.center.jdbc.inter.impl.BaseDAO;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.tax.bean.CheckViewBean;
 import com.china.center.oa.tax.dao.CheckViewDAO;
 
@@ -24,4 +25,12 @@ import com.china.center.oa.tax.dao.CheckViewDAO;
  */
 public class CheckViewDAOImpl extends BaseDAO<CheckViewBean, CheckViewBean> implements CheckViewDAO
 {
+    public boolean updateCheck(String tableName, String id, String reason)
+    {
+        String sql = "update " + tableName + " set checkStatus = ?, checks = ? where id = ?";
+
+        this.jdbcOperation.update(sql, PublicConstant.CHECK_STATUS_END, reason, id);
+
+        return true;
+    }
 }

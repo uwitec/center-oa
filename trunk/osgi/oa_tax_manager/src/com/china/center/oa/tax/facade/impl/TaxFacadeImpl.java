@@ -40,6 +40,8 @@ public class TaxFacadeImpl extends AbstarctFacade implements TaxFacade
 
     private static Object FINANCE_LOCK = new Object();
 
+    private static Object CHECK_LOCK = new Object();
+
     /**
      * default constructor
      */
@@ -156,6 +158,28 @@ public class TaxFacadeImpl extends AbstarctFacade implements TaxFacade
             if (containAuth(user, AuthConstant.FINANCE_OPR))
             {
                 return financeManager.deleteFinanceBean(user, id);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean checks(String userId, String id, String reason)
+        throws MYException
+    {
+        synchronized (CHECK_LOCK)
+        {
+            JudgeTools.judgeParameterIsNull(userId, id);
+
+            User user = userManager.findUser(userId);
+
+            checkUser(user);
+
+            if (containAuth(user, AuthConstant.FINANCE_CHECK))
+            {
+                return financeManager.checks(user, id, reason);
             }
             else
             {

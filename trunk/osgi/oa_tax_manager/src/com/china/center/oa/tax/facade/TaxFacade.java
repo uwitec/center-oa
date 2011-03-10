@@ -38,4 +38,7 @@ public interface TaxFacade
 
     boolean deleteFinanceBean(String userId, String id)
         throws MYException;
+
+    boolean checks(String userId, String id, String reason)
+        throws MYException;
 }

@@ -81,4 +81,31 @@
 		</condtion>
 	</item>
 	
+	<item name="queryCheckView" deaultpfix="CheckViewBean">
+        <condtion name="alogTime" filed="logTime" caption="时间从">
+            <opr>&gt;=</opr>
+            <type>datetime</type>
+        </condtion>
+        <condtion name="blogTime" filed="logTime" caption="到">
+            <opr>&lt;=</opr>
+            <type>datetime</type>
+        </condtion>
+        <condtion name="id" caption="标识(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="type" caption="类型">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$checkType</option>
+        </condtion>
+         <condtion name="checkStatus" caption="状态">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$pubCheckStatus</option>
+        </condtion>
+    </item>
+	
 </query>

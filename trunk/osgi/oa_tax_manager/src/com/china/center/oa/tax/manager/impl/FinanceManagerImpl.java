@@ -20,9 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.tax.bean.CheckViewBean;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.FinanceItemBean;
+import com.china.center.oa.tax.constanst.CheckConstant;
 import com.china.center.oa.tax.constanst.TaxConstanst;
+import com.china.center.oa.tax.dao.CheckViewDAO;
 import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.oa.tax.dao.FinanceItemDAO;
 import com.china.center.oa.tax.manager.FinanceManager;
@@ -43,6 +46,8 @@ public class FinanceManagerImpl implements FinanceManager
     private FinanceDAO financeDAO = null;
 
     private CommonDAO commonDAO = null;
+
+    private CheckViewDAO checkViewDAO = null;
 
     private FinanceItemDAO financeItemDAO = null;
 
@@ -172,6 +177,51 @@ public class FinanceManagerImpl implements FinanceManager
         return true;
     }
 
+    @Transactional(rollbackFor = MYException.class)
+    public boolean checks(User user, String id, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        CheckViewBean bean = checkViewDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        String tableName = "";
+
+        if (bean.getType() == CheckConstant.CHECK_TYPE_COMPSE)
+        {
+            tableName = "T_CENTER_COMPOSE";
+        }
+        else if (bean.getType() == CheckConstant.CHECK_TYPE_CHANGE)
+        {
+            tableName = "T_CENTER_PRICE_CHANGE";
+        }
+        else if (bean.getType() == CheckConstant.CHECK_TYPE_INBILL)
+        {
+            tableName = "T_CENTER_INBILL";
+        }
+        else if (bean.getType() == CheckConstant.CHECK_TYPE_OUTBILL)
+        {
+            tableName = "T_CENTER_OUTBILL";
+        }
+        else if (bean.getType() == CheckConstant.CHECK_TYPE_STOCK)
+        {
+            tableName = "T_CENTER_STOCK";
+        }
+        else
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        checkViewDAO.updateCheck(tableName, id, reason);
+
+        return true;
+    }
+
     /**
      * @return the financeDAO
      */
@@ -223,4 +273,20 @@ public class FinanceManagerImpl implements FinanceManager
         this.commonDAO = commonDAO;
     }
 
+    /**
+     * @return the checkViewDAO
+     */
+    public CheckViewDAO getCheckViewDAO()
+    {
+        return checkViewDAO;
+    }
+
+    /**
+     * @param checkViewDAO
+     *            the checkViewDAO to set
+     */
+    public void setCheckViewDAO(CheckViewDAO checkViewDAO)
+    {
+        this.checkViewDAO = checkViewDAO;
+    }
 }

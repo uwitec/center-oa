@@ -129,11 +129,11 @@ public class FinaAction extends DispatchAction
 
         Map<String, String> initMap = initLogTime(request, condtion);
 
-        ActionTools.processJSONQueryCondition(QUERYCHECKVIEW, request, condtion, initMap);
+        ActionTools.processJSONQueryCondition(QUERYFINANCE, request, condtion, initMap);
 
         condtion.addCondition("order by FinanceBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKVIEW, request, condtion,
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCE, request, condtion,
             this.financeDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
@@ -157,11 +157,13 @@ public class FinaAction extends DispatchAction
 
         condtion.addWhereStr();
 
-        ActionTools.processJSONQueryCondition(QUERYFINANCE, request, condtion);
+        Map<String, String> initMap = initCheck(request, condtion);
+
+        ActionTools.processJSONQueryCondition(QUERYCHECKVIEW, request, condtion, initMap);
 
         condtion.addCondition("order by CheckViewBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCE, request, condtion,
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKVIEW, request, condtion,
             this.checkViewDAO, new HandleResult<CheckViewBean>()
             {
                 public void handle(CheckViewBean obj)
@@ -202,6 +204,23 @@ public class FinaAction extends DispatchAction
             condtion.addCondition("FinanceBean.logTime", ">=", TimeTools.now( -90));
 
             condtion.addCondition("FinanceBean.logTime", "<=", TimeTools.now(1));
+        }
+
+        return changeMap;
+    }
+
+    private Map<String, String> initCheck(HttpServletRequest request, ConditionParse condtion)
+    {
+        Map<String, String> changeMap = new HashMap<String, String>();
+
+        String checkStatus = request.getParameter("checkStatus");
+
+        if (StringTools.isNullOrNone(checkStatus))
+        {
+            changeMap.put("checkStatus", String.valueOf(PublicConstant.CHECK_STATUS_INIT));
+
+            condtion.addIntCondition("CheckViewBean.checkStatus", "=",
+                PublicConstant.CHECK_STATUS_INIT);
         }
 
         return changeMap;
@@ -270,6 +289,44 @@ public class FinaAction extends DispatchAction
             User user = Helper.getUser(request);
 
             taxFacade.deleteFinanceBean(user.getId(), id);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * checks
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward checks(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            String reason = request.getParameter("reason");
+
+            User user = Helper.getUser(request);
+
+            taxFacade.checks(user.getId(), id, reason);
 
             ajax.setSuccess("成功操作");
         }

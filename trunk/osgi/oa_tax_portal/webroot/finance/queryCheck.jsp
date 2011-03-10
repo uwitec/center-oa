@@ -25,21 +25,19 @@ function load()
          title: '资金校验列表',
          url: gurl + 'query' + ukey,
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
+             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={checkStatus}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '20%'},
              {display: '类型', name : 'type', cc: 'checkType', width : '10%'},
-             {display: '状态', name : 'status',  cc: 'pubCheckStatus', width : '10%'},
+             {display: '状态', name : 'checkStatus',  cc: 'pubCheckStatus', width : '10%'},
              {display: '职员', name : 'stafferId', width : '10%'},
              {display: '校验', name : 'checks', width : '20%'},
              {display: '时间', name : 'logTime',  sortable : true, width : 'auto'}
              ],
          extAtt: {
-             id : {begin : '<a title=点击查看明细 href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
+             id : {begin : '<a title=点击查看明细 href="javaScript:openDetail(\'{id}\', {type})">', end : '</a>'}
          },
          buttons : [
-             //{id: 'add', bclass: 'add', onpress : addBean, auth: '1802'},
-             {id: 'update', bclass: 'update', onpress : updateBean, auth: '1601'},
-             {id: 'del', bclass: 'del',  onpress : delBean, auth: '1802'},
+             {id: 'pass', bclass: 'pass', caption: '总部核对', onpress : checkBean, auth: '1803'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -47,16 +45,38 @@ function load()
      
      $("#mainTable").flexigrid(guidMap, thisObj);
 }
- 
+
 function $callBack()
 {
     loadForm();
 }
 
-function addBean(opr, grid)
+function openDetail(id, type)
 {
-    $l(gurl + 'preForAdd' + ukey);
-    //$l(addUrl);
+    if (type == 1)
+    {
+        $l('../product/product.do?method=findCompose&id=' + id);
+    }
+    
+    if (type == 2)
+    {
+        $l('../product/product.do?method=findPriceChange&id=' + id);
+    }
+    
+    if (type == 3)
+    {
+        $l('../finance/bill.do?method=findInBill&id=' + id);
+    }
+    
+    if (type == 4)
+    {
+        $l('../finance/bill.do?method=findOutBill&id=' + id);
+    }
+    
+    if (type == 5)
+    {
+        $l('../stock/stock.do?method=findStock&id=' + id);
+    }
 }
 
 function delBean(opr, grid)
@@ -70,11 +90,17 @@ function delBean(opr, grid)
     $error('不能操作');
 }
 
-function updateBean()
+function checkBean()
 {
-	if (getRadio('checkb') && getRadioValue('checkb'))
+	if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 0)
 	{	
-		$l(gurl + 'find' + ukey + '&update=1&id=' + getRadioValue('checkb'));
+		$.messager.prompt('总部核对', '请核对说明', '', function(msg){
+                if (msg)
+                {
+                    $ajax(gurl + 'checks&id=' + getRadioValue('checkb') + '&reason=' + ajaxPararmter(msg), callBackFun);
+                }
+               
+            }, 2);
 	}
 	else
 	$error('不能操作');

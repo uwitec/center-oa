@@ -29,4 +29,7 @@ public interface FinanceManager
 
     boolean deleteFinanceBean(User user, String id)
         throws MYException;
+
+    boolean checks(User user, String id, String reason)
+        throws MYException;
 }
