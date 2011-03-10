@@ -19,7 +19,8 @@ public class PageCache extends BodyTagCenterSupport
      * 默认构建器
      */
     public PageCache()
-    {}
+    {
+    }
 
     public int doStartTag()
         throws JspException
@@ -42,8 +43,9 @@ public class PageCache extends BodyTagCenterSupport
         // <input type=hidden name=cacheEle id=cacheEle value=''/>
         // <input type=hidden name=cacheFlag id=cacheFlag value="0"/>
 
-        buffer.append("<input type=hidden name=cacheEle id=cacheEle value=''/>").append(line);
-        buffer.append("<input type=hidden name=cacheFlag id=cacheFlag value=0/>").append(line);
+        buffer.append("<input type=hidden name=cacheEle id=cacheEle value=''>").append(line);
+        buffer.append("<input type=hidden name=cacheEle id=cacheRadio value=''>").append(line);
+        buffer.append("<input type=hidden name=cacheFlag id=cacheFlag value='0'>").append(line);
     }
 
     public int doEndTag()

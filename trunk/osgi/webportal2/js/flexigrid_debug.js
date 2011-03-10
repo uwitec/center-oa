@@ -87,9 +87,11 @@ var gobal_guid;
           
           if (p.height == 'page')
           {
-          	  // zhuzhu 
+              // zhuzhu 
               p.height = ((document.documentElement.clientHeight==0)?document.body.clientHeight:document.documentElement.clientHeight) - 24 * 7;
           }
+          
+          initRadioOnclick();
           
           // carry now
           if (p.callBack)
@@ -126,7 +128,7 @@ var gobal_guid;
             // zhuzhu
             if (currentHeight < realHeigth && currentHeight != 'auto')
             {
-            	isScroll = true;
+                isScroll = true;
             }
             
             var totalTh = 0;
@@ -134,7 +136,7 @@ var gobal_guid;
             (
                 function ()
                 {
-                	totalTh++;
+                    totalTh++;
                 }
             );
             
@@ -150,7 +152,7 @@ var gobal_guid;
                     
                     if (eachIndex == totalTh -1 && isScroll && cdpos > 18)
                     {
-                    	cdpos = cdpos - 18;
+                        cdpos = cdpos - 18;
                     }
                     
                     var ppos = cdpos;
@@ -520,7 +522,7 @@ var gobal_guid;
                 
                 if (p.dataType=='json')
                 {
-                	p.currentRows = data.rows.length;
+                    p.currentRows = data.rows.length;
                     $.each
                     (
                      data.rows,
@@ -699,6 +701,10 @@ var gobal_guid;
                 
                 this.hDiv.scrollLeft = this.bDiv.scrollLeft;
                 if ($.browser.opera) $(t).css('visibility','visible');
+                
+                initRadioOnclick();
+                
+                initRadio();
                 
                 if (p.callBack)
                 {
@@ -886,30 +892,30 @@ var gobal_guid;
             },
             addCellProp: function ()
             {
-            	    var currentHeight = p.height;
+                    var currentHeight = p.height;
             
-		            var currentRows = p.currentRows;
-		            
-		            var realHeigth = (currentRows + 4) * 24;
-		            
-		            var isScroll = false;
-		            
-		            // zhuzhu addCellProp
-		            if (currentHeight < realHeigth && currentHeight != 'auto')
-		            {
-		                //isScroll = true;
-		            }
-		            
-		            var totalTh = 0;
-		            $('thead tr:first th:visible',this.hDiv).each
-		            (
-		                function ()
-		                {
-		                    totalTh++;
-		                }
-		            );
-		            
-		            totalTh = totalTh -1;
+                    var currentRows = p.currentRows;
+                    
+                    var realHeigth = (currentRows + 4) * 24;
+                    
+                    var isScroll = false;
+                    
+                    // zhuzhu addCellProp
+                    if (currentHeight < realHeigth && currentHeight != 'auto')
+                    {
+                        //isScroll = true;
+                    }
+                    
+                    var totalTh = 0;
+                    $('thead tr:first th:visible',this.hDiv).each
+                    (
+                        function ()
+                        {
+                            totalTh++;
+                        }
+                    );
+                    
+                    totalTh = totalTh -1;
                 
                      // zhuzhu dispaly data rows   
                      var rowsIndex = 0;
@@ -923,38 +929,38 @@ var gobal_guid;
             
                                     if (pth!=null)
                                     {
-	                                    if (p.sortname==$(pth).attr('abbr')&&p.sortname) 
+                                        if (p.sortname==$(pth).attr('abbr')&&p.sortname) 
                                         {
                                             this.className = 'sorted';
                                         }
                                         
-	                                    var lastWidth = $('div:first',pth)[0].style.width;
-	                                    
-	                                    if (isScroll && rowsIndex == totalTh)
-	                                    {
-	                                        var realNum = 0;
-	                                        if (lastWidth.indexOf('px') != -1)
-	                                        {
-	                                       	    realNum = parseInt(lastWidth.substring(0, lastWidth.length - 2));
-	                                        }
-	                                        else
-	                                        {
-	                                        	realNum = parseInt(lastWidth + '');
-	                                        }
-	                                        
-	                                        realNum = realNum -18;
-	                                        
-	                                        if (lastWidth.indexOf('px') != -1)
-	                                        lastWidth = realNum + 'px';
-	                                        else
-	                                        lastWidth = realNum;
-	                                        
-	                                        rowsIndex = -1;
-	                                    }
-	                                    
-	                                    $(tdDiv).css({textAlign:pth.align,width: lastWidth});
-	                                     
-	                                     if (pth.hide) $(this).css('display','none');
+                                        var lastWidth = $('div:first',pth)[0].style.width;
+                                        
+                                        if (isScroll && rowsIndex == totalTh)
+                                        {
+                                            var realNum = 0;
+                                            if (lastWidth.indexOf('px') != -1)
+                                            {
+                                                realNum = parseInt(lastWidth.substring(0, lastWidth.length - 2));
+                                            }
+                                            else
+                                            {
+                                                realNum = parseInt(lastWidth + '');
+                                            }
+                                            
+                                            realNum = realNum -18;
+                                            
+                                            if (lastWidth.indexOf('px') != -1)
+                                            lastWidth = realNum + 'px';
+                                            else
+                                            lastWidth = realNum;
+                                            
+                                            rowsIndex = -1;
+                                        }
+                                        
+                                        $(tdDiv).css({textAlign:pth.align,width: lastWidth});
+                                         
+                                         if (pth.hide) $(this).css('display','none');
                                      }
                                      
                                      if (p.nowrap==false) $(tdDiv).css('white-space','normal');
@@ -2021,9 +2027,9 @@ function $ajax(urls, successFun, errorFun)
 
 function $ajax2(urls, datas, successFun, errorFun)
 {
-	var param = [];
-	
-	for(var att in datas)
+    var param = [];
+    
+    for(var att in datas)
     {
         var mmaps = {};
         
@@ -2056,14 +2062,14 @@ function commonQuery(par)
 //ajax中post的escape对有些特殊字符无法转换，例如：+ % & ? # /号，因此需要对其进行转义。
 function ajaxPararmter(str)
 {
-	str = str.replace(/\+/g, "%2B"); 
-	str = str.replace(/\%/g, "%25"); 
-	str = str.replace(/\&/g, "%26");
-	str = str.replace(/\?/g, "%3F");
-	str = str.replace(/\#/g, "%23");
-	str = str.replace(/\//g, "%2F");
-	
-	return str;
+    str = str.replace(/\+/g, "%2B"); 
+    str = str.replace(/\%/g, "%25"); 
+    str = str.replace(/\&/g, "%26");
+    str = str.replace(/\?/g, "%3F");
+    str = str.replace(/\#/g, "%23");
+    str = str.replace(/\//g, "%2F");
+    
+    return str;
 }
 
 function checkAll(obj)
@@ -2092,6 +2098,84 @@ function initCheckAll()
         if (tem[i].type.toLowerCase() == 'checkbox' && tem[i].id == 'flexi_Check')
         {
             tem[i].checked = false;
+        }
+    }
+}
+
+/**
+ * radio点击触发的动作
+ */
+function fl_radio()
+{
+    var obj = arguments[0].srcElement?arguments[0].srcElement:arguments[0].target;
+    
+    var cahceRadio = document.getElementById('cacheRadio');
+    
+    if (cahceRadio)
+    {
+        cahceRadio.value = obj.value;
+    }
+}
+
+/**
+ * chrome下没有效果,主要是chrome不支持input缓存
+ */
+function initRadio()
+{
+    var cahceRadio = document.getElementById('cacheRadio');
+    
+    var cacheFlag = document.getElementById('cacheFlag');
+    
+    if (cahceRadio && cacheFlag && cacheFlag.value == '1')
+    {
+        var tem = document.getElementsByName('checkb');
+        
+        for (var i = 0; i < tem.length; i++)
+        {
+            if (tem[i].value == cahceRadio.value)
+            {
+                tem[i].checked = true;
+                
+                break;
+            }
+        }
+    }
+}
+
+function addEventCommon(el, evname, func)
+{
+    if (el.attachEvent)
+    {
+        // IE
+        el.attachEvent("on" + evname, func);
+    }
+    else if (el.addEventListener)
+    {
+        // Gecko / W3C
+        el.addEventListener(evname, func, true);
+    }
+    else
+    {
+        el["on" + evname] = func;
+    }
+}
+
+function initRadioOnclick()
+{
+    var cahceRadio = document.getElementById('cacheRadio');
+    
+    var cacheFlag = document.getElementById('cacheFlag');
+    
+    if (cahceRadio && cacheFlag)
+    {
+        var tem = document.getElementsByName('checkb');
+        
+        for (var i = 0; i < tem.length; i++)
+        {
+            if (tem[i].type.toLowerCase() == 'radio' && tem[i].onclick == null)
+            {
+                addEventCommon(tem[i], 'click', fl_radio);
+            }
         }
     }
 }
