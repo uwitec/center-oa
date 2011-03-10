@@ -654,4 +654,9 @@ public interface AuthConstant
      */
     String FINANCE_OPR = "1802";
 
+    /**
+     * 总部核对
+     */
+    String FINANCE_CHECK = "1803";
+
 }
