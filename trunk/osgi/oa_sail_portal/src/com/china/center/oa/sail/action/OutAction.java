@@ -90,6 +90,7 @@ import com.china.center.oa.publics.manager.StafferManager;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.publics.vo.DutyVO;
 import com.china.center.oa.publics.vo.FlowLogVO;
+import com.china.center.oa.publics.vo.InvoiceCreditVO;
 import com.china.center.oa.publics.vs.DutyVSInvoiceBean;
 import com.china.center.oa.publics.wrap.ResultBean;
 import com.china.center.oa.sail.bean.BaseBalanceBean;
@@ -3913,6 +3914,17 @@ public class OutAction extends DispatchAction
 
         double total = staffer.getCredit() * staffer.getLever();
 
+        StringBuffer buffer = new StringBuffer();
+
+        List<InvoiceCreditVO> vsList = invoiceCreditDAO.queryEntityVOsByFK(staffer.getId());
+
+        for (InvoiceCreditVO invoiceCreditVO : vsList)
+        {
+            buffer.append(invoiceCreditVO.getInvoiceName()).append("下的信用额度:").append(
+                MathTools.formatNum(invoiceCreditVO.getCredit() * staffer.getLever())).append(
+                "<br>");
+        }
+
         String msg0 = "总信用额度:" + MathTools.formatNum(total) + "<br>";
         String msg00 = "原始信用:" + MathTools.formatNum(staffer.getCredit()) + "<br>";
         String msg01 = "信用杠杆:" + staffer.getLever() + "<br>";
@@ -3920,7 +3932,7 @@ public class OutAction extends DispatchAction
         String msg2 = "担保使用额度:" + MathTools.formatNum(mt) + "<br>";
         String msg3 = "剩余额度:" + MathTools.formatNum(total - st - mt);
 
-        ajax.setSuccess(msg0 + msg00 + msg01 + msg1 + msg2 + msg3);
+        ajax.setSuccess(msg0 + msg00 + msg01 + buffer + msg1 + msg2 + msg3);
 
         return JSONTools.writeResponse(response, ajax);
     }
