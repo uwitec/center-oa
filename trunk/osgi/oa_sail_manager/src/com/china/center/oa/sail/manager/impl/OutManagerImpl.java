@@ -51,6 +51,7 @@ import com.china.center.oa.product.helper.StorageRelationHelper;
 import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
 import com.china.center.oa.publics.bean.FlowLogBean;
+import com.china.center.oa.publics.bean.InvoiceCreditBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.NotifyBean;
 import com.china.center.oa.publics.bean.StafferBean;
@@ -60,6 +61,7 @@ import com.china.center.oa.publics.constant.PublicLock;
 import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
+import com.china.center.oa.publics.dao.InvoiceCreditDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
@@ -120,6 +122,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     private UserDAO userDAO = null;
 
     private StafferDAO stafferDAO = null;
+
+    private InvoiceCreditDAO invoiceCreditDAO = null;
 
     private OutDAO outDAO = null;
 
@@ -928,7 +932,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                     throw new MYException("不支持此类型,请重新操作");
                 }
 
-                // 使用业务员的信用额度(或者是分公司经理的)
+                // 使用业务员的信用额度(或者是事业部经理的)
                 if (outCredit
                     && (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_CREDIT_AND_CUR || outBean
                         .getReserve3() == OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER))
@@ -950,9 +954,10 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                     double noPayBusinessInCur = outDAO.sumNoPayBusiness(outBean.getCustomerId(),
                         YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
 
-                    // 自己担保的+替人担保的
+                    // 自己担保的+替人担保的(这里应该区分不同的事业部)
                     double noPayBusiness = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(outBean
-                        .getStafferId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
+                        .getStafferId(), outBean.getIndustryId(), YYTools.getStatBeginDate(),
+                        YYTools.getStatEndDate());
 
                     double remainInCur = clevel.getMoney() - noPayBusinessInCur;
 
@@ -3034,7 +3039,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             {
                 // 加入审批人的信用(是自己使用的信用+担保的信用)
                 double noPayBusinessByManager = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(user
-                    .getStafferId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
+                    .getStafferId(), outBean.getIndustryId(), YYTools.getStatBeginDate(), YYTools
+                    .getStatEndDate());
 
                 StafferBean staffer = stafferDAO.find(user.getStafferId());
 
@@ -3044,8 +3050,13 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                     throw new RuntimeException("事业部经理担保中,自己不能给自己担保");
                 }
 
+                // 事业部经理的信用
+                double industryIdCredit = getIndustryIdCredit(outBean.getIndustryId(), staffer
+                    .getId())
+                                          * staffer.getLever();
+
                 // 这里分公司总经理的信用已经使用结束了,此时直接抛出异常
-                if (noPayBusinessByManager > staffer.getCredit())
+                if (noPayBusinessByManager > industryIdCredit)
                 {
                     throw new RuntimeException("您的信用额度已经全部占用[使用了"
                                                + MathTools.formatNum(noPayBusinessByManager)
@@ -3056,13 +3067,10 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                 double lastCredit = outBean.getTotal() - outBean.getStaffcredit()
                                     - outBean.getCurcredit();
 
-                // 职员杠杆后的信用
-                double staffCredit = staffer.getCredit() * staffer.getLever();
-
-                if ( (lastCredit + noPayBusinessByManager) > staffCredit)
+                if ( (lastCredit + noPayBusinessByManager) > industryIdCredit)
                 {
-                    throw new RuntimeException("您杠杆后的信用额度是[" + MathTools.formatNum(staffCredit)
-                                               + "],已经使用了["
+                    throw new RuntimeException("您杠杆后的信用额度是["
+                                               + MathTools.formatNum(industryIdCredit) + "],已经使用了["
                                                + MathTools.formatNum(noPayBusinessByManager)
                                                + "],本单需要您担保的额度是[" + MathTools.formatNum(lastCredit)
                                                + "],加上本单已经超出您的最大额度,不能再担保业务员的销售");
@@ -3267,6 +3275,38 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         }
 
         return true;
+    }
+
+    private double getIndustryIdCredit(String industryId, String managerStafferId)
+    {
+        List<InvoiceCreditBean> inList = invoiceCreditDAO.queryEntityBeansByFK(managerStafferId);
+
+        for (InvoiceCreditBean invoiceCreditBean : inList)
+        {
+            if (invoiceCreditBean.getInvoiceId().equals(industryId))
+            {
+                return invoiceCreditBean.getCredit();
+            }
+        }
+
+        return 0.0d;
+    }
+
+    /**
+     * @return the invoiceCreditDAO
+     */
+    public InvoiceCreditDAO getInvoiceCreditDAO()
+    {
+        return invoiceCreditDAO;
+    }
+
+    /**
+     * @param invoiceCreditDAO
+     *            the invoiceCreditDAO to set
+     */
+    public void setInvoiceCreditDAO(InvoiceCreditDAO invoiceCreditDAO)
+    {
+        this.invoiceCreditDAO = invoiceCreditDAO;
     }
 
 }

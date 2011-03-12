@@ -26,6 +26,7 @@ import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.vo.OutVO;
+import com.china.center.oa.sail.wrap.CreditWrap;
 import com.china.center.tools.TimeTools;
 
 
@@ -122,13 +123,22 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         return true;
     }
 
-    public double sumNoPayAndAvouchBusinessByStafferId(String stafferId, String beginDate,
-                                                       String endDate)
+    /**
+     * 自己开单占用
+     * 
+     * @param stafferId
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    public double sumNoPayAndAvouchBusinessByStafferId(String stafferId, String industryId,
+                                                       String beginDate, String endDate)
     {
         Map<String, String> paramterMap = new HashMap();
 
         paramterMap.put("stafferId", stafferId);
         paramterMap.put("beginDate", beginDate);
+        paramterMap.put("industryId", industryId);
         paramterMap.put("endDate", endDate);
 
         Object max = getIbatisDaoSupport().queryForObject(
@@ -142,15 +152,82 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         return (Double)max;
     }
 
-    public double sumAllNoPayAndAvouchBusinessByStafferId(String stafferId, String beginDate,
-                                                          String endDate)
+    public List<CreditWrap> queryNoPayAndAvouchBusinessByStafferId(String stafferId,
+                                                                   String industryId,
+                                                                   String beginDate, String endDate)
     {
-        return sumNoPayAndAvouchBusinessByStafferId(stafferId, beginDate, endDate)
-               + sumNoPayAndAvouchBusinessByManagerId(stafferId, beginDate, endDate);
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("stafferId", stafferId);
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("industryId", industryId);
+        paramterMap.put("endDate", endDate);
+
+        List<CreditWrap> result = getIbatisDaoSupport().queryForList(
+            "OutDAO.queryNoPayAndAvouchBusinessByStafferId", paramterMap);
+
+        return result;
     }
 
-    public double sumNoPayAndAvouchBusinessByManagerId(String stafferId, String beginDate,
-                                                       String endDate)
+    public List<CreditWrap> queryNoPayAndAvouchBusinessByManagerId(String stafferId,
+                                                                   String industryId,
+                                                                   String beginDate, String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("stafferId", stafferId);
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("industryId", industryId);
+        paramterMap.put("endDate", endDate);
+
+        List<CreditWrap> result = getIbatisDaoSupport().queryForList(
+            "OutDAO.queryNoPayAndAvouchBusinessByManagerId", paramterMap);
+
+        return result;
+    }
+
+    public List<CreditWrap> queryAllNoPay(String stafferId, String industryId, String beginDate,
+                                          String endDate)
+    {
+        List<CreditWrap> list = queryNoPayAndAvouchBusinessByStafferId(stafferId, industryId,
+            beginDate, endDate);
+
+        list.addAll(queryNoPayAndAvouchBusinessByManagerId(stafferId, industryId, beginDate,
+            endDate));
+
+        return list;
+    }
+
+    public double sumAllNoPayAndAvouchBusinessByStafferId(String stafferId, String industryId,
+                                                          String beginDate, String endDate)
+    {
+        return sumNoPayAndAvouchBusinessByStafferId(stafferId, industryId, beginDate, endDate)
+               + sumNoPayAndAvouchBusinessByManagerId(stafferId, industryId, beginDate, endDate);
+    }
+
+    public double sumNoPayAndAvouchBusinessByManagerId(String stafferId, String industryId,
+                                                       String beginDate, String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("stafferId", stafferId);
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("industryId", industryId);
+        paramterMap.put("endDate", endDate);
+
+        Object max = getIbatisDaoSupport().queryForObject(
+            "OutDAO.sumNoPayAndAvouchBusinessByManagerId", paramterMap);
+
+        if (max == null)
+        {
+            return 0.0d;
+        }
+
+        return (Double)max;
+    }
+
+    public double sumNoPayAndAvouchBusinessByManagerId2(String stafferId, String beginDate,
+                                                        String endDate)
     {
         Map<String, String> paramterMap = new HashMap();
 
@@ -159,7 +236,7 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         paramterMap.put("endDate", endDate);
 
         Object max = getIbatisDaoSupport().queryForObject(
-            "OutDAO.sumNoPayAndAvouchBusinessByManagerId", paramterMap);
+            "OutDAO.sumNoPayAndAvouchBusinessByManagerId2", paramterMap);
 
         if (max == null)
         {

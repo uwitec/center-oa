@@ -80,5 +80,7 @@
 	<osgi:reference id="storageRelationManager" interface="com.china.center.oa.product.manager.StorageRelationManager" />
 	
 	<osgi:reference id="priceChangeManager" interface="com.china.center.oa.product.manager.PriceChangeManager" />
+	
+	<osgi:reference id="invoiceCreditDAO" interface="com.china.center.oa.publics.dao.InvoiceCreditDAO" />
 
 </beans>

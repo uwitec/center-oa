@@ -29,9 +29,11 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
 import com.center.china.osgi.publics.User;
+import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.OldPageSeparateTools;
 import com.china.center.actionhelper.common.PageSeparateTools;
+import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.actionhelper.jsonimpl.JSONArray;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
@@ -60,6 +62,8 @@ import com.china.center.oa.publics.bean.DepartmentBean;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
+import com.china.center.oa.publics.bean.InvoiceCreditBean;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.ShowBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.AuthConstant;
@@ -72,9 +76,11 @@ import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.DutyVSInvoiceDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
+import com.china.center.oa.publics.dao.InvoiceCreditDAO;
 import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
+import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.ShowDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
@@ -105,6 +111,7 @@ import com.china.center.oa.sail.helper.YYTools;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.sail.vo.OutBalanceVO;
 import com.china.center.oa.sail.vo.OutVO;
+import com.china.center.oa.sail.wrap.CreditWrap;
 import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -140,9 +147,13 @@ public class OutAction extends DispatchAction
 
     private ProductDAO productDAO = null;
 
+    private InvoiceCreditDAO invoiceCreditDAO = null;
+
     private CustomerDAO customerDAO = null;
 
     private ProviderDAO providerDAO = null;
+
+    private PrincipalshipDAO principalshipDAO = null;
 
     private StafferDAO stafferDAO = null;
 
@@ -2949,7 +2960,7 @@ public class OutAction extends DispatchAction
         // 这里是过滤
         String queryType = RequestTools.getValueFromRequest(request, "queryType");
 
-        // 分公司经理查询
+        // 事业部经理查询
         if ("1".equals(queryType))
         {
             if (OldPageSeparateTools.isMenuLoad(request))
@@ -2960,7 +2971,7 @@ public class OutAction extends DispatchAction
                 request.setAttribute("status", OutConstant.STATUS_LOCATION_MANAGER_CHECK);
             }
 
-            condtion.addCondition("OutBean.industryId", "=", staffer.getIndustryId());
+            condtion.addCondition("and OutBean.industryId in " + getAllIndustryId(staffer));
         }
         // 结算中心查询
         else if ("2".equals(queryType))
@@ -3082,6 +3093,53 @@ public class OutAction extends DispatchAction
         }
 
         return condtion;
+    }
+
+    /**
+     * getIndustryIdCredit
+     * 
+     * @param industryId
+     * @param managerStafferId
+     * @return double
+     */
+    private double getIndustryIdCredit(String industryId, String managerStafferId)
+    {
+        List<InvoiceCreditBean> inList = invoiceCreditDAO.queryEntityBeansByFK(managerStafferId);
+
+        for (InvoiceCreditBean invoiceCreditBean : inList)
+        {
+            if (invoiceCreditBean.getInvoiceId().equals(industryId))
+            {
+                return invoiceCreditBean.getCredit();
+            }
+        }
+
+        return 0.0d;
+    }
+
+    private String getAllIndustryId(StafferBean sb)
+    {
+        List<InvoiceCreditBean> inList = invoiceCreditDAO.queryEntityBeansByFK(sb.getId());
+
+        if (inList.size() == 1)
+        {
+            return "('" + sb.getIndustryId() + "')";
+        }
+
+        StringBuffer buffer = new StringBuffer();
+
+        buffer.append("(");
+
+        for (InvoiceCreditBean invoiceCreditBean : inList)
+        {
+            buffer.append("'").append(invoiceCreditBean.getInvoiceId()).append("'").append(",");
+        }
+
+        buffer.deleteCharAt(buffer.length() - 1);
+
+        buffer.append(")");
+
+        return buffer.toString();
     }
 
     /**
@@ -3784,6 +3842,87 @@ public class OutAction extends DispatchAction
         request.setAttribute("queryType", "4");
 
         return queryBuy(mapping, form, request, reponse);
+    }
+
+    /**
+     * querySelfCredit
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward querySelfCredit(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        StafferBean staffer = Helper.getStaffer(request);
+
+        List<CreditWrap> allWrap = outDAO.queryAllNoPay(staffer.getId(), staffer.getIndustryId(),
+            YYTools.getStatBeginDate(), YYTools.getStatEndDate());
+
+        for (CreditWrap creditWrap : allWrap)
+        {
+            PrincipalshipBean pri = principalshipDAO.find(creditWrap.getIndustryId());
+
+            if (pri != null)
+            {
+                creditWrap.setIndustryId(pri.getName());
+            }
+
+            StafferBean sb = stafferDAO.find(creditWrap.getStafferId());
+
+            if (sb != null)
+            {
+                creditWrap.setStafferId(sb.getName());
+            }
+        }
+
+        String jsonstr = JSONTools.getJSONString(allWrap);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * findCreditDetail
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward findCreditDetail(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        StafferBean staffer = Helper.getStaffer(request);
+
+        // 查询是否
+        double mt = outDAO.sumNoPayAndAvouchBusinessByManagerId2(staffer.getId(), YYTools
+            .getStatBeginDate(), YYTools.getStatEndDate());
+
+        // 这个不应该
+        double st = outDAO.sumNoPayAndAvouchBusinessByStafferId(staffer.getId(), staffer
+            .getIndustryId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
+
+        double total = staffer.getCredit() * staffer.getLever();
+
+        String msg0 = "总信用额度:" + MathTools.formatNum(total) + "<br>";
+        String msg00 = "原始信用:" + MathTools.formatNum(staffer.getCredit()) + "<br>";
+        String msg01 = "信用杠杆:" + staffer.getLever() + "<br>";
+        String msg1 = "开单使用额度:" + MathTools.formatNum(st) + "<br>";
+        String msg2 = "担保使用额度:" + MathTools.formatNum(mt) + "<br>";
+        String msg3 = "剩余额度:" + MathTools.formatNum(total - st - mt);
+
+        ajax.setSuccess(msg0 + msg00 + msg01 + msg1 + msg2 + msg3);
+
+        return JSONTools.writeResponse(response, ajax);
     }
 
     /**
@@ -5071,6 +5210,8 @@ public class OutAction extends DispatchAction
 
             request.setAttribute("checkOutPayStatus", checkOutPayStatus);
 
+            // 显示行业
+
             return mapping.findForward("detailOut");
         }
 
@@ -5442,10 +5583,10 @@ public class OutAction extends DispatchAction
      */
     private void showLastCredit(HttpServletRequest request, User user, String flag)
     {
-        double noPayBusiness = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(user.getStafferId(),
-            YYTools.getStatBeginDate(), YYTools.getStatEndDate());
-
         StafferBean sb2 = stafferDAO.find(user.getStafferId());
+
+        double noPayBusiness = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(user.getStafferId(),
+            sb2.getIndustryId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
 
         if (sb2 != null)
         {
@@ -5456,26 +5597,32 @@ public class OutAction extends DispatchAction
 
         if ( !"1".equals(flag))
         {
-            // 分公司经理的额度
+            // 事业部经理的额度
             List<StafferBean> managerList = stafferManager.queryStafferByAuthIdAndIndustryId(
                 AuthConstant.SAIL_LOCATION_MANAGER, sb2.getIndustryId());
+
+            PrincipalshipBean pri = principalshipDAO.find(sb2.getIndustryId());
 
             List<String> mList = new ArrayList<String>();
 
             for (StafferBean stafferBean : managerList)
             {
-                double noPayBusinessInM = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(
-                    stafferBean.getId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
-
-                StafferBean manager = stafferDAO.find(user.getStafferId());
+                // 查询经理担保的金额
+                double noPayBusinessInM = outDAO.sumNoPayAndAvouchBusinessByManagerId(stafferBean
+                    .getId(), sb2.getIndustryId(), YYTools.getStatBeginDate(), YYTools
+                    .getStatEndDate());
 
                 mList.add(stafferBean.getName()
-                          + "的信用额度剩余:"
-                          + ElTools.formatNum(manager.getCredit() * manager.getLever()
-                                              - noPayBusinessInM));
+                          + "的信用额度("
+                          + pri.getName()
+                          + ")剩余:"
+                          + ElTools.formatNum(getIndustryIdCredit(sb2.getIndustryId(), stafferBean
+                              .getId())
+                                              * stafferBean.getLever() - noPayBusinessInM));
 
-                request.setAttribute("mList", mList);
             }
+
+            request.setAttribute("mList", mList);
         }
     }
 
@@ -6036,5 +6183,39 @@ public class OutAction extends DispatchAction
     public void setOutBillDAO(OutBillDAO outBillDAO)
     {
         this.outBillDAO = outBillDAO;
+    }
+
+    /**
+     * @return the invoiceCreditDAO
+     */
+    public InvoiceCreditDAO getInvoiceCreditDAO()
+    {
+        return invoiceCreditDAO;
+    }
+
+    /**
+     * @param invoiceCreditDAO
+     *            the invoiceCreditDAO to set
+     */
+    public void setInvoiceCreditDAO(InvoiceCreditDAO invoiceCreditDAO)
+    {
+        this.invoiceCreditDAO = invoiceCreditDAO;
+    }
+
+    /**
+     * @return the principalshipDAO
+     */
+    public PrincipalshipDAO getPrincipalshipDAO()
+    {
+        return principalshipDAO;
+    }
+
+    /**
+     * @param principalshipDAO
+     *            the principalshipDAO to set
+     */
+    public void setPrincipalshipDAO(PrincipalshipDAO principalshipDAO)
+    {
+        this.principalshipDAO = principalshipDAO;
     }
 }

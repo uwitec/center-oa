@@ -90,8 +90,8 @@ function load()
 										<option value="${item.id}">${item.name}</option>
 									</c:forEach>
 								</select>
-								分公司经理信用：
-								<select style="width: 240px">
+								事业部经理信用：
+								<select style="width: 300px">
                                     <c:forEach items='${mList}' var="item">
                                         <option>${item}</option>
                                     </c:forEach>

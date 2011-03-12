@@ -48,6 +48,10 @@
 	
 	<osgi:reference id="showDAO" interface="com.china.center.oa.publics.dao.ShowDAO" />
 	
+	<osgi:reference id="principalshipDAO" interface="com.china.center.oa.publics.dao.PrincipalshipDAO" />
+	
+	<osgi:reference id="invoiceCreditDAO" interface="com.china.center.oa.publics.dao.InvoiceCreditDAO" />
+	
 	<osgi:reference id="dutyVSInvoiceDAO" interface="com.china.center.oa.publics.dao.DutyVSInvoiceDAO" />
 	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->

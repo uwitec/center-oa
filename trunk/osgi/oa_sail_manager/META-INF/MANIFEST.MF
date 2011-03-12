@@ -11,6 +11,7 @@ Export-Package:
  com.china.center.oa.sail.listener;version="1.0.0",
  com.china.center.oa.sail.helper;version="1.0.0",
  com.china.center.oa.sail.manager;version="1.0.0",
+ com.china.center.oa.sail.wrap;version="1.0.0",
  com.china.center.oa.sail.vo;version="1.0.0"
 Require-Bundle: 
  com.china.center.oa.product.manager;bundle-version="1.0.0",

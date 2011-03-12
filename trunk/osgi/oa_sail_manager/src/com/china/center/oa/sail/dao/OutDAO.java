@@ -9,11 +9,13 @@
 package com.china.center.oa.sail.dao;
 
 
+import java.util.List;
 import java.util.Map;
 
 import com.china.center.jdbc.inter.DAO;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.vo.OutVO;
+import com.china.center.oa.sail.wrap.CreditWrap;
 
 
 /**
@@ -110,12 +112,14 @@ public interface OutDAO extends DAO<OutBean, OutVO>
      * 查询职员整个销售体系里面的信用使用(包括开单占用和自己担保他人的)
      * 
      * @param stafferId
+     * @param industryId
+     *            行业
      * @param beginDate
      * @param endDate
      * @return
      */
-    double sumAllNoPayAndAvouchBusinessByStafferId(String stafferId, String beginDate,
-                                                   String endDate);
+    double sumAllNoPayAndAvouchBusinessByStafferId(String stafferId, String industryId,
+                                                   String beginDate, String endDate);
 
     /**
      * 统计一个产品在系统的销售单没有发货单据数量
@@ -160,14 +164,29 @@ public interface OutDAO extends DAO<OutBean, OutVO>
     Integer countNotEndProductInIn(String productId, String beginDate, String endDate);
 
     /**
-     * sumNoPayAndAvouchBusinessByStafferId(分公司经理信用)
+     * sumNoPayAndAvouchBusinessByStafferId(事业部经理信用)
      * 
      * @param stafferId
      * @param beginDate
      * @param endDate
      * @return
      */
-    double sumNoPayAndAvouchBusinessByManagerId(String stafferId, String beginDate, String endDate);
+    double sumNoPayAndAvouchBusinessByManagerId(String stafferId, String industryId,
+                                                String beginDate, String endDate);
+
+    /**
+     * sumNoPayAndAvouchBusinessByManagerId2(不区分事业部)
+     * 
+     * @param stafferId
+     * @param industryId
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    double sumNoPayAndAvouchBusinessByManagerId2(String stafferId, String beginDate, String endDate);
+
+    double sumNoPayAndAvouchBusinessByStafferId(String stafferId, String industryId,
+                                                String beginDate, String endDate);
 
     int countCustomerInOut(String customerId);
 
@@ -178,4 +197,16 @@ public interface OutDAO extends DAO<OutBean, OutVO>
      * @return
      */
     double sumOutBackValue(String fullId);
+
+    /**
+     * queryAllNoPay
+     * 
+     * @param stafferId
+     * @param industryId
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    List<CreditWrap> queryAllNoPay(String stafferId, String industryId, String beginDate,
+                                   String endDate);
 }
