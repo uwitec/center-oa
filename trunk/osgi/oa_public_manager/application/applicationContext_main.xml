@@ -129,4 +129,6 @@
 
 	<bean id="dutyVSInvoiceDAO" class="com.china.center.oa.publics.dao.impl.DutyVSInvoiceDAOImpl" />
 
+	<bean id="invoiceCreditDAO" class="com.china.center.oa.publics.dao.impl.InvoiceCreditDAOImpl" />
+
 </beans>

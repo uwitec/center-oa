@@ -174,6 +174,25 @@ public class PublicFacadeImpl extends AbstarctFacade implements PublicFacade
         }
     }
 
+    public boolean updateCredit(String userId, String id, double credit)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.STAFFER_OPR))
+        {
+            return stafferManager.updateCredit(user, id, credit);
+        }
+        else
+        {
+            throw new MYException("没有权限");
+        }
+    }
+
     /**
      * updateStafferBean
      * 

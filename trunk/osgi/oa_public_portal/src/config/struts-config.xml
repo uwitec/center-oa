@@ -19,6 +19,7 @@
 			<forward name="queryStaffer" path="/admin/queryStaffer.jsp" />
 			<forward name="addStaffer" path="/admin/addStaffer.jsp" />
 			<forward name="updatePwkey" path="/admin/updatePwkey.jsp" />
+			<forward name="queryInvoiceCredit" path="/admin/queryInvoiceCredit.jsp" />
 			<forward name="updateStaffer"
 				path="/admin/updateStaffer.jsp" />
 			<forward name="detailStaffer"

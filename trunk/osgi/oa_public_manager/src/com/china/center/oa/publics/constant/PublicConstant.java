@@ -212,4 +212,9 @@ public interface PublicConstant
     @Defined(key = "pubCheckStatus", value = "已核对")
     int CHECK_STATUS_END = 1;
 
+    /**
+     * 事业部经理
+     */
+    String POST_SHI_MANAGER = "16";
+
 }

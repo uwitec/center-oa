@@ -45,6 +45,9 @@ public interface StafferManager extends ListenerManager<StafferListener>
     boolean delBean(User user, String stafferId)
         throws MYException;
 
+    boolean updateCredit(User user, String id, double credit)
+        throws MYException;
+
     /**
      * 获得本职员的上级
      * 

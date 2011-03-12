@@ -145,4 +145,7 @@ public interface PublicFacade
     boolean deleteShowBean(String userId, String id)
         throws MYException;
 
+    boolean updateCredit(String userId, String id, double credit)
+        throws MYException;
+
 }

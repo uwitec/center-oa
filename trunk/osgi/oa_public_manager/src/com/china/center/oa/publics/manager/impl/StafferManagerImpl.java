@@ -21,11 +21,14 @@ import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.annosql.constant.AnoConstant;
+import com.china.center.oa.publics.bean.InvoiceCreditBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.OrgConstant;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.constant.StafferConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.publics.dao.InvoiceCreditDAO;
 import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.StafferVSIndustryDAO;
@@ -62,6 +65,8 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
     private StafferVSIndustryDAO stafferVSIndustryDAO = null;
 
     private PrincipalshipDAO principalshipDAO = null;
+
+    private InvoiceCreditDAO invoiceCreditDAO = null;
 
     private OrgManager orgManager = null;
 
@@ -136,19 +141,146 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
             }
         }
 
-        if (set.size() > 1)
-        {
-            throw new MYException("职员只能在一个事业部下面");
-        }
+        handlerOne(bean, set, null);
 
-        if (set.size() == 1)
-        {
-            bean.setIndustryId(industryId);
-        }
+        // 这里只保存第一个
+        bean.setIndustryId(industryId);
 
         stafferDAO.saveEntityBean(bean);
 
         stafferVSPriDAO.saveAllEntityBeans(priList);
+
+        return true;
+    }
+
+    /**
+     * equal
+     * 
+     * @param set
+     * @param oldVS
+     * @return
+     */
+    private boolean equal(Set<String> set, List<InvoiceCreditBean> oldVS)
+    {
+        if (oldVS == null)
+        {
+            return false;
+        }
+
+        if (set.size() != oldVS.size())
+        {
+            return false;
+        }
+
+        for (InvoiceCreditBean invoiceCreditBean : oldVS)
+        {
+            boolean eq = false;
+
+            for (String id : set)
+            {
+                if (id.equals(invoiceCreditBean.getInvoiceId()))
+                {
+                    eq = true;
+
+                    break;
+                }
+            }
+
+            if ( !eq)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * handlerOne
+     * 
+     * @param bean
+     * @param set
+     * @throws MYException
+     */
+    private void handlerOne(StafferBean bean, Set<String> set, List<InvoiceCreditBean> oldVS)
+        throws MYException
+    {
+        if (set.size() > 1)
+        {
+            // 如果是事业部经理就不能这么处理了
+            if ( !bean.getPostId().equals(PublicConstant.POST_SHI_MANAGER))
+            {
+                if (set.size() > 1)
+                {
+                    throw new MYException("职员只能在一个事业部下面,除非是事业部经理");
+                }
+            }
+        }
+
+        if ( !equal(set, oldVS))
+        {
+            // 事业部信用
+            invoiceCreditDAO.deleteEntityBeansByFK(bean.getId());
+
+            // 总额度
+            double credit = bean.getCredit();
+
+            double each = credit / set.size();
+
+            // 保存对应关系
+            for (String invoiceId : set)
+            {
+                InvoiceCreditBean vs = new InvoiceCreditBean();
+
+                vs.setId(commonDAO.getSquenceString20());
+
+                vs.setCredit(each);
+
+                vs.setInvoiceId(invoiceId);
+
+                vs.setStafferId(bean.getId());
+
+                invoiceCreditDAO.saveEntityBean(vs);
+            }
+        }
+    }
+
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean updateCredit(User user, String id, double credit)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        InvoiceCreditBean bean = invoiceCreditDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        bean.setCredit(credit);
+
+        invoiceCreditDAO.updateEntityBean(bean);
+
+        List<InvoiceCreditBean> inList = invoiceCreditDAO.queryEntityBeansByFK(bean.getStafferId());
+
+        double total = 0.0d;
+
+        for (InvoiceCreditBean invoiceCreditBean : inList)
+        {
+            total += invoiceCreditBean.getCredit();
+        }
+
+        StafferBean sb = stafferDAO.find(bean.getStafferId());
+
+        if (sb == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        sb.setCredit(total);
+
+        stafferDAO.updateEntityBean(sb);
 
         return true;
     }
@@ -233,12 +365,11 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
             }
         }
 
-        if (set.size() > 1)
-        {
-            throw new MYException("职员只能在一个事业部下面");
-        }
+        List<InvoiceCreditBean> oldVS = invoiceCreditDAO.queryEntityBeansByFK(bean.getId());
 
-        if (set.size() == 1)
+        handlerOne(bean, set, oldVS);
+
+        if (set.size() > 0)
         {
             bean.setIndustryId(industryId);
         }
@@ -531,5 +662,22 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
     public void setOrgManager(OrgManager orgManager)
     {
         this.orgManager = orgManager;
+    }
+
+    /**
+     * @return the invoiceCreditDAO
+     */
+    public InvoiceCreditDAO getInvoiceCreditDAO()
+    {
+        return invoiceCreditDAO;
+    }
+
+    /**
+     * @param invoiceCreditDAO
+     *            the invoiceCreditDAO to set
+     */
+    public void setInvoiceCreditDAO(InvoiceCreditDAO invoiceCreditDAO)
+    {
+        this.invoiceCreditDAO = invoiceCreditDAO;
     }
 }

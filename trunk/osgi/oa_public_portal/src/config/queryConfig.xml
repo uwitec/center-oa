@@ -142,5 +142,12 @@
             <type>text</type>
         </condtion>
     </item>
+    
+    <item name="queryInvoiceCredit" deaultpfix="InvoiceCreditBean">
+        <condtion name="name" filed="name" caption="职员" pfix="StafferBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+    </item>
 
 </query>

@@ -29,6 +29,7 @@ import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.OrgConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.publics.dao.InvoiceCreditDAO;
 import com.china.center.oa.publics.dao.OrgDAO;
 import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
@@ -60,6 +61,8 @@ public class OrgManagerImpl extends AbstractListenerManager<OrgListener> impleme
     private StafferDAO stafferDAO = null;
 
     private CommonDAO commonDAO = null;
+
+    private InvoiceCreditDAO invoiceCreditDAO = null;
 
     private StafferVSPriDAO stafferVSPriDAO = null;
 
@@ -299,6 +302,11 @@ public class OrgManagerImpl extends AbstractListenerManager<OrgListener> impleme
 
         // 组织上没有人员
         if (stafferVSPriDAO.countByFK(id, AnoConstant.FK_FIRST) > 0)
+        {
+            throw new MYException("组织上有人员挂靠,不能删除");
+        }
+
+        if (invoiceCreditDAO.countByFK(id, AnoConstant.FK_FIRST) > 0)
         {
             throw new MYException("组织上有人员挂靠,不能删除");
         }
@@ -650,5 +658,22 @@ public class OrgManagerImpl extends AbstractListenerManager<OrgListener> impleme
     public void setStafferVSPriDAO(StafferVSPriDAO stafferVSPriDAO)
     {
         this.stafferVSPriDAO = stafferVSPriDAO;
+    }
+
+    /**
+     * @return the invoiceCreditDAO
+     */
+    public InvoiceCreditDAO getInvoiceCreditDAO()
+    {
+        return invoiceCreditDAO;
+    }
+
+    /**
+     * @param invoiceCreditDAO
+     *            the invoiceCreditDAO to set
+     */
+    public void setInvoiceCreditDAO(InvoiceCreditDAO invoiceCreditDAO)
+    {
+        this.invoiceCreditDAO = invoiceCreditDAO;
     }
 }

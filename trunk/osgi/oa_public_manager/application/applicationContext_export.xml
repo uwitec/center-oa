@@ -112,4 +112,6 @@
 
 	<osgi:service ref="dutyVSInvoiceDAO" interface="com.china.center.oa.publics.dao.DutyVSInvoiceDAO" />
 
+	<osgi:service ref="invoiceCreditDAO" interface="com.china.center.oa.publics.dao.InvoiceCreditDAO" />
+
 </beans>

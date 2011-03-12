@@ -16,7 +16,8 @@
 	
 	<select id="queryStafferByAuthIdAndIndustryId"
         parameterClass="java.util.Map" resultClass="com.china.center.oa.publics.bean.StafferBean">
-        select x.* from t_center_oastaffer x where x.status = 0 and x.industryId = #industryId# 
+        select x.* from t_center_oastaffer x, t_center_postcredit y
+        where x.status = 0 and x.id = y.stafferId and y.invoiceID = #industryId# 
         and x.id in
         (
             select DISTINCT(tt.STAFFERID) from t_center_oauser tt where 

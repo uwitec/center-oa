@@ -29,6 +29,7 @@ import com.center.china.osgi.publics.User;
 import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
+import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.actionhelper.jsonimpl.JSONArray;
 import com.china.center.actionhelper.jsonimpl.JSONObject;
 import com.china.center.actionhelper.query.HandleResult;
@@ -46,6 +47,7 @@ import com.china.center.oa.publics.bean.PostBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.dao.DepartmentDAO;
+import com.china.center.oa.publics.dao.InvoiceCreditDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.OrgDAO;
 import com.china.center.oa.publics.dao.PostDAO;
@@ -55,12 +57,14 @@ import com.china.center.oa.publics.dao.StafferVSPriDAO;
 import com.china.center.oa.publics.facade.PublicFacade;
 import com.china.center.oa.publics.helper.StafferHelper;
 import com.china.center.oa.publics.manager.LocationManager;
+import com.china.center.oa.publics.vo.InvoiceCreditVO;
 import com.china.center.oa.publics.vo.OrgVO;
 import com.china.center.oa.publics.vo.StafferVO;
 import com.china.center.oa.publics.vs.StafferVSPriBean;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.DecSecurity;
+import com.china.center.tools.MathTools;
 import com.china.center.tools.RandomTools;
 import com.china.center.tools.Security;
 import com.china.center.tools.StringTools;
@@ -91,6 +95,8 @@ public class StafferAction extends DispatchAction
 
     private PostDAO postDAO = null;
 
+    private InvoiceCreditDAO invoiceCreditDAO = null;
+
     private OrgDAO orgDAO = null;
 
     private StafferVSPriDAO stafferVSPriDAO = null;
@@ -100,6 +106,8 @@ public class StafferAction extends DispatchAction
     private PublicFacade publicFacade = null;
 
     private static String QUERYSTAFFER = "queryStaffer";
+
+    private static String QUERYINVOICECREDIT = "queryInvoiceCredit";
 
     /**
      * default constructor
@@ -150,6 +158,42 @@ public class StafferAction extends DispatchAction
                     {
                         vo.setEnc("未设置");
                     }
+                }
+            });
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryInvoiceCredit
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryInvoiceCredit(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        ActionTools.processJSONQueryCondition(QUERYINVOICECREDIT, request, condtion);
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYINVOICECREDIT, request,
+            condtion, this.invoiceCreditDAO, new HandleResult<InvoiceCreditVO>()
+            {
+                public void handle(InvoiceCreditVO obj)
+                {
+                    PrincipalshipBean pb = principalshipDAO.find(obj.getInvoiceId());
+
+                    PrincipalshipBean parent = principalshipDAO.find(pb.getParentId());
+
+                    obj.setInvoiceName(parent.getName() + "-->" + obj.getInvoiceName());
                 }
             });
 
@@ -478,6 +522,44 @@ public class StafferAction extends DispatchAction
     }
 
     /**
+     * updateCredit
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward updateCredit(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            String credit = request.getParameter("credit");
+
+            User user = Helper.getUser(request);
+
+            publicFacade.updateCredit(user.getId(), id, MathTools.parseDouble(credit));
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
      * updateStaffer
      * 
      * @param mapping
@@ -721,5 +803,22 @@ public class StafferAction extends DispatchAction
     public void setStafferVSPriDAO(StafferVSPriDAO stafferVSPriDAO)
     {
         this.stafferVSPriDAO = stafferVSPriDAO;
+    }
+
+    /**
+     * @return the invoiceCreditDAO
+     */
+    public InvoiceCreditDAO getInvoiceCreditDAO()
+    {
+        return invoiceCreditDAO;
+    }
+
+    /**
+     * @param invoiceCreditDAO
+     *            the invoiceCreditDAO to set
+     */
+    public void setInvoiceCreditDAO(InvoiceCreditDAO invoiceCreditDAO)
+    {
+        this.invoiceCreditDAO = invoiceCreditDAO;
     }
 }
