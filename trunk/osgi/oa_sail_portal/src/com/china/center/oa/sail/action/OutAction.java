@@ -5165,12 +5165,16 @@ public class OutAction extends DispatchAction
 
             request.setAttribute("backTotal", backTotal);
 
-            if (bean.getHadPay() - backTotal - hadOut <= 0)
+            ResultBean check = outManager.checkOutPayStatus(user, bean);
+
+            if (check.getResult() != -1)
             {
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "金额全部使用,无法申请退款");
 
                 return mapping.findForward("error");
             }
+
+            request.setAttribute("check", check);
 
             return mapping.findForward("applyBackPay");
         }
