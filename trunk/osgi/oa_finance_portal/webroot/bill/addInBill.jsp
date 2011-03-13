@@ -89,6 +89,10 @@ function getStaffers(oo)
             
             -->
             
+            <p:cell title="销售单号(4月前)">
+                <input type="text" name="outId" size="50">
+            </p:cell>
+            
             <p:pro field="moneys"/>
 
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />

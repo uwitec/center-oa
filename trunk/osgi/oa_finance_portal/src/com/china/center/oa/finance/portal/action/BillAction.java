@@ -36,6 +36,8 @@ import com.china.center.oa.finance.vo.OutBillVO;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.dao.InvoiceDAO;
+import com.china.center.oa.sail.bean.OutBean;
+import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.MathTools;
@@ -60,6 +62,8 @@ public class BillAction extends DispatchAction
     private BankDAO bankDAO = null;
 
     private OutBillDAO outBillDAO = null;
+
+    private OutDAO outDAO = null;
 
     private FinanceFacade financeFacade = null;
 
@@ -97,7 +101,7 @@ public class BillAction extends DispatchAction
 
         condtion.addCondition("InBillBean.locationId", "=", user.getLocationId());
 
-        condtion.addCondition("order by InBillBean.id desc");
+        condtion.addCondition("order by InBillBean.logTime desc");
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYINBILL, request, condtion,
             this.inBillDAO);
@@ -277,6 +281,22 @@ public class BillAction extends DispatchAction
             bean.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
 
             bean.setLock(FinanceConstant.BILL_LOCK_NO);
+
+            // TEMPIMPL 收款单在增加关联单据，给4月前的单据入库使用
+            if ( !StringTools.isNullOrNone(bean.getOutId()))
+            {
+                OutBean out = outDAO.find(bean.getOutId());
+
+                if (out == null)
+                {
+                    throw new MYException("销售单不存在,请确认操作");
+                }
+
+                if ("2011-04-01".compareTo(out.getOutTime()) < 0)
+                {
+                    throw new MYException("销售单必须在(2011-04-01),请确认操作");
+                }
+            }
 
             financeFacade.addInBillBean(user.getId(), bean);
 
@@ -733,5 +753,22 @@ public class BillAction extends DispatchAction
     public void setInvoiceDAO(InvoiceDAO invoiceDAO)
     {
         this.invoiceDAO = invoiceDAO;
+    }
+
+    /**
+     * @return the outDAO
+     */
+    public OutDAO getOutDAO()
+    {
+        return outDAO;
+    }
+
+    /**
+     * @param outDAO
+     *            the outDAO to set
+     */
+    public void setOutDAO(OutDAO outDAO)
+    {
+        this.outDAO = outDAO;
     }
 }

@@ -22,11 +22,16 @@ import java.io.Serializable;
  */
 public class ResultBean implements Serializable
 {
+    /**
+     * 0:收支相等 -1:费用不足 1:费用超支
+     */
     private int result = 0;
 
     private String message = "";
 
     private String refId = "";
+
+    private double value = 0.0d;
 
     /**
      * default constructor
@@ -93,6 +98,23 @@ public class ResultBean implements Serializable
     }
 
     /**
+     * @return the value
+     */
+    public double getValue()
+    {
+        return value;
+    }
+
+    /**
+     * @param value
+     *            the value to set
+     */
+    public void setValue(double value)
+    {
+        this.value = value;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -115,6 +137,9 @@ public class ResultBean implements Serializable
             .append(TAB)
             .append("refId = ")
             .append(this.refId)
+            .append(TAB)
+            .append("value = ")
+            .append(this.value)
             .append(TAB)
             .append(" )");
 

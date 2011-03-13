@@ -154,8 +154,10 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
 
         double hasdOut = outBillDAO.sumByRefId(bean.getOutId());
 
+        double max = -outManager.outNeedPayMoney(user, out.getFullId());
+
         // 付款金额-退货金额-已经退款金额
-        double max = hasdIn - backTotal - hasdOut;
+        // double max = out.getTotal() - hasdIn + backTotal - hasdOut;
 
         if (bean.getBackPay() + bean.getChangePayment() != max)
         {
@@ -223,7 +225,7 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
         int preStatus = bean.getStatus();
 
         if (bean.getStatus() != BackPayApplyConstant.STATUS_SUBMIT
-            || bean.getStatus() != BackPayApplyConstant.STATUS_SEC)
+            && bean.getStatus() != BackPayApplyConstant.STATUS_SEC)
         {
             throw new MYException("数据错误,请确认操作");
         }

@@ -207,6 +207,10 @@ public class OutListenerFinanceImpl implements OutListener
                 .toString();
         }
 
+        // 差距值
+        result.setValue(bean.getTotal()
+                        - ( (hasPay + bean.getBadDebts() + balancePay + refInOutTotal - hasdOut)));
+
         result.setMessage(message);
 
         return result;

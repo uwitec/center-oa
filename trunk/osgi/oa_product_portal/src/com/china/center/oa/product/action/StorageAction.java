@@ -1038,7 +1038,7 @@ public class StorageAction extends DispatchAction
 
         int total = storageRelationDAO.countVOByCondition(condtion.toString());
 
-        PageSeparate page = new PageSeparate(total, 100);
+        PageSeparate page = new PageSeparate(total, 50);
 
         PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYSTORAGERELATIONINDEPOT);
 
