@@ -161,7 +161,10 @@ public abstract class JSONTools
     {
         PageSeparate page = new PageSeparate();
 
-        page.setPageSize(list.size());
+        if (list.size() > 0)
+        {
+            page.setPageSize(list.size());
+        }
 
         page.setRowCount(list.size());
 
