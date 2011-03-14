@@ -25,5 +25,5 @@
 	<entry key="internal">300000</entry>
 	<entry key="exNumber">6000324</entry>
 	<entry key="sendSMSURL">http://221.226.19.218:88/ISendSMS.jsp?MobilePhones=%s&amp;Content=%s&amp;MessageFlag=%s&amp;ModuleName=WebSms&amp;pwdpwd=yyoaCC&amp;ExNumber=%s</entry>
-	<entry key="version">V2.14.20100509</entry>
+	<entry key="version">V3.10.20110315</entry>
 </properties>
