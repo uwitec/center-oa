@@ -192,7 +192,7 @@ function again(obj)
     obj.src = 'image.jsp?randomNum=' + ltime;
 }
 
-var isUseActive = false;
+var isUseActive = true;
 
 function load()
 {
