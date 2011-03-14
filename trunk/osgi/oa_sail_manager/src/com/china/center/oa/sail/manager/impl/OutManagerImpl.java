@@ -1932,6 +1932,49 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         return payOutWithoutTransactional(user, fullId, reason);
     }
 
+    /**
+     * 强制通过付款(对于4月之前的单据使用)
+     */
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean fourcePayOut(User user, String fullId, String reason)
+        throws MYException
+    {
+        // 需要增加是否超期 flowId
+        OutBean out = outDAO.find(fullId);
+
+        if (out == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if ("2011-04-01".compareTo(out.getOutTime()) < 0)
+        {
+            throw new MYException("销售单必须在(2011-04-01),请确认操作");
+        }
+
+        // 如果getRedate为空说明已经超前回款了
+        if ( !StringTools.isNullOrNone(out.getRedate()))
+        {
+            int delay = TimeTools.cdate(TimeTools.now(), out.getRedate());
+
+            if (delay > 0)
+            {
+                outDAO.modifyTempType(fullId, delay);
+            }
+            else
+            {
+                outDAO.modifyTempType(fullId, 0);
+            }
+        }
+
+        addOutLog(fullId, user, out, reason, SailConstant.OPR_OUT_PASS, out.getStatus());
+
+        notifyOut(out, user, 2);
+
+        // 修改付款标识
+        return outDAO.modifyPay(fullId, OutConstant.PAY_YES);
+    }
+
     public boolean payOutWithoutTransactional(final User user, String fullId, String reason)
         throws MYException
     {

@@ -176,6 +176,25 @@ function payOut2()
     }
 }
 
+function fourcePayOut()
+{
+    if (getRadio('fullId').statuss == 3 && getRadio('fullId').paytype != 1)
+    {
+        if (window.confirm("确定此销售单已经全部回款(仅仅适用于2011-04-01之前的销售单)?"))
+        {
+            getObj('method').value = 'fourcePayOut';
+            
+            getObj('outId').value = getRadioValue("fullId");
+            
+            adminForm.submit();
+        }
+    }
+    else
+    {
+        alert('不能操作');
+    }
+}
+
 function payOut3()
 {
     if (getRadio('fullId').statuss == 3 && getRadio('fullId').paytype != 1 && getRadio('fullId').outtype != 1)
@@ -698,6 +717,8 @@ function swatchToSail()
 		<c:if test="${queryType == '5'}">
 		<input type="button" class="button_class"
                 value="&nbsp;&nbsp;确认回款&nbsp;&nbsp;" onClick="payOut2()"/>&nbsp;&nbsp;
+        <input type="button" class="button_class"
+                value="&nbsp;&nbsp;强制回款&nbsp;&nbsp;" onClick="fourcePayOut()"/>&nbsp;&nbsp;
         <!--  
         <input type="button" class="button_class"
                 value="&nbsp;&nbsp;确认坏账&nbsp;&nbsp;" onClick="payOut3()"/>&nbsp;&nbsp;-->

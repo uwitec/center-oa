@@ -4191,6 +4191,69 @@ public class OutAction extends DispatchAction
     }
 
     /**
+     * TEMPIMPL 强制通过付款
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward fourcePayOut(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        String fullId = request.getParameter("outId");
+
+        OutBean out = outDAO.find(fullId);
+
+        User user = (User)request.getSession().getAttribute("user");
+
+        if (out == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+
+            return mapping.findForward("error");
+        }
+
+        if (out.getStatus() != OutConstant.STATUS_PASS)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+
+            return mapping.findForward("error");
+        }
+
+        if (out.getPay() == OutConstant.PAY_YES)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "已经付款");
+
+            return mapping.findForward("error");
+        }
+
+        try
+        {
+            outManager.fourcePayOut(user, fullId, "财务确认收款");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理错误:" + e.getErrorContent());
+
+            return mapping.findForward("error");
+        }
+
+        request.setAttribute(KeyConstant.MESSAGE, "成功核对单据:" + fullId);
+
+        CommonTools.saveParamers(request);
+
+        RequestTools.actionInitQuery(request);
+
+        return queryOut(mapping, form, request, reponse);
+    }
+
+    /**
      * 付款(财务收款心--往来核对)
      * 
      * @param mapping

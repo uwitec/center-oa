@@ -196,6 +196,18 @@ public interface OutManager extends ListenerManager<OutListener>
         throws MYException;
 
     /**
+     * fourcePayOut
+     * 
+     * @param user
+     * @param fullId
+     * @param reason
+     * @return
+     * @throws MYException
+     */
+    boolean fourcePayOut(final User user, String fullId, String reason)
+        throws MYException;
+
+    /**
      * payOutWithoutTransactional(销售单付款)
      * 
      * @param user

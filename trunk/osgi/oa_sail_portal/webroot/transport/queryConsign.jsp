@@ -32,7 +32,7 @@ function pagePrint()
 		return;
 	}
 	
-	window.open('../sail/transport.do?method=findConsign&forward=1&fullId=' + getRadioValue("consigns"));
+	window.open('../sail/transport.do?method=findConsign&forward=1&fullId=' + getRadioValue("consigns") + '&CENTER_COMMON_CENTER_COMMON=' + new Date().getTime());
 }
 
 function exports()
