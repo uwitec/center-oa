@@ -13,9 +13,9 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -25,12 +25,13 @@ import org.apache.log4j.Logger;
 
 import com.china.center.jdbc.inter.Convert;
 
+
 /**
  * <描述>
  * 
  * @author ZHUZHU
  * @version 2007-9-30
- * @see 
+ * @see
  * @since
  */
 public class ConvertEncode implements Convert
@@ -61,7 +62,6 @@ public class ConvertEncode implements Convert
     }
 
     /**
-     * 
      * @param originStr
      * @return
      */
@@ -92,7 +92,6 @@ public class ConvertEncode implements Convert
     }
 
     /**
-     * 
      * @param originStr
      * @return
      */
@@ -123,14 +122,13 @@ public class ConvertEncode implements Convert
     }
 
     /**
-     * 
      * @param List
      * @return List
      */
     @SuppressWarnings("unchecked")
     public List decodeMapInList(List list)
     {
-        List templist = new ArrayList();
+        List templist = new LinkedList();
 
         if (list == null || list.size() == 0)
         {
@@ -155,7 +153,6 @@ public class ConvertEncode implements Convert
     }
 
     /**
-     * 
      * @param Map
      * @return Map
      */

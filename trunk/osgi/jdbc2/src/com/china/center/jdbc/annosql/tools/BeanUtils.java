@@ -11,8 +11,8 @@ package com.china.center.jdbc.annosql.tools;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -144,7 +144,7 @@ public abstract class BeanUtils extends org.apache.commons.beanutils.BeanUtils
     {
         List<InnerBean> columns = BeanTools.getAllClassFieldsInner(claz);
 
-        List<T> result = new ArrayList<T>(mapList.size());
+        List<T> result = new LinkedList<T>();
 
         for (Map<?, ?> map : mapList)
         {

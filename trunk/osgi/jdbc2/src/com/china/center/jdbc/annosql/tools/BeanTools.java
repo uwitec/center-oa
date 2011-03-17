@@ -16,6 +16,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -145,7 +146,8 @@ public abstract class BeanTools
 
     public static String getSumHead(Class<?> claz, String sumField)
     {
-        return "select sum(" + sumField + ") from " + getTableName(claz) + " " + getClassName(claz) + " ";
+        return "select sum(" + sumField + ") from " + getTableName(claz) + " " + getClassName(claz)
+               + " ";
     }
 
     /**
@@ -468,9 +470,10 @@ public abstract class BeanTools
      * @throws MYSqlException
      */
     public static <T> List<T> getBeans(List<Map> list, Class<T> claz)
-        throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException
+        throws InstantiationException, IllegalAccessException, InvocationTargetException,
+        NoSuchMethodException
     {
-        List<T> result = new ArrayList<T>(list.size());
+        List<T> result = new LinkedList<T>();
 
         if (BaseType.isBaseType(claz))
         {
@@ -498,8 +501,8 @@ public abstract class BeanTools
     }
 
     public static <T> T getBean(Map map, Class<T> claz)
-        throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException,
-        MYSqlException
+        throws InstantiationException, IllegalAccessException, InvocationTargetException,
+        NoSuchMethodException, MYSqlException
     {
         T obj = claz.newInstance();
 
@@ -555,22 +558,22 @@ public abstract class BeanTools
         catch (InstantiationException e)
         {
             _logger.warn(e, e);
-            return new ArrayList<T>();
+            return new LinkedList<T>();
         }
         catch (IllegalAccessException e)
         {
             _logger.warn(e, e);
-            return new ArrayList<T>();
+            return new LinkedList<T>();
         }
         catch (InvocationTargetException e)
         {
             _logger.warn(e, e);
-            return new ArrayList<T>();
+            return new LinkedList<T>();
         }
         catch (NoSuchMethodException e)
         {
             _logger.warn(e, e);
-            return new ArrayList<T>();
+            return new LinkedList<T>();
         }
     }
 
