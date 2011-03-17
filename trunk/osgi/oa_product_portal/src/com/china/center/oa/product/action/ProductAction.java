@@ -13,10 +13,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -941,6 +944,11 @@ public class ProductAction extends DispatchAction
         List<PriceChangeNewItemBean> newList = new ArrayList<PriceChangeNewItemBean>();
         bean.setNewList(newList);
 
+        if (relations == null)
+        {
+            throw new MYException("没有调价的产品,请重新操作");
+        }
+
         for (int i = 0; i < relations.length; i++ )
         {
             // 没有修改价格
@@ -1112,65 +1120,91 @@ public class ProductAction extends DispatchAction
             return ActionTools.toError("库存未锁定,请先锁定库存再调价", "queryPriceChange", mapping, request);
         }
 
-        ConditionParse condition = new ConditionParse();
+        String products = request.getParameter("products");
 
-        // 可以调价的产品
-        condition.addIntCondition("ProductBean.adjustPrice", "=", ProductConstant.ADJUSTPRICE_YES);
+        String[] split = products.split("\r\n");
 
-        // 数量大于0的库存
-        condition.addIntCondition("StorageRelationBean.amount", ">", 0);
-
-        // 良品仓的
-        condition.addIntCondition("DepotpartBean.type", "=", DepotConstant.DEPOTPART_TYPE_OK);
-
-        // 公共的库存
-        condition.addCondition("StorageRelationBean.stafferId", "=", "0");
-
-        // 根据产品ID排序
-        condition.addCondition("order by StorageRelationBean.productId");
-
-        List<StorageRelationVO> relationList = storageRelationDAO
-            .queryEntityVOsByCondition(condition);
-
-        Map<String, Boolean> cacheMap = new HashMap<String, Boolean>();
-
-        for (Iterator iterator = relationList.iterator(); iterator.hasNext();)
+        if (split.length > 100)
         {
-            StorageRelationVO vo = (StorageRelationVO)iterator.next();
+            return ActionTools.toError("不能超过100个产品", "queryPriceChange", mapping, request);
+        }
 
-            ProductBean product = productDAO.find(vo.getProductId());
+        Set<String> set = new HashSet<String>();
+
+        for (String string : split)
+        {
+            if ( !StringTools.isNullOrNone(string))
+            {
+                set.add(string.trim());
+            }
+        }
+
+        StringBuffer error = new StringBuffer();
+
+        List<StorageRelationVO> relationList = new LinkedList<StorageRelationVO>();
+
+        for (String each : set)
+        {
+            if (StringTools.isNullOrNone(each))
+            {
+                continue;
+            }
+
+            ProductBean product = productDAO.findByUnique(each.trim());
 
             // 忽略
             if (product == null)
             {
-                iterator.remove();
-
+                error.append("产品[" + each.trim() + "]不存在").append("<br>");
                 continue;
             }
 
-            Boolean bol = cacheMap.get(product.getId());
-
-            if (bol == null)
+            // 可以调价
+            if (product.getAdjustPrice() != ProductConstant.ADJUSTPRICE_YES)
             {
-                // 获取产品是否已经在销售途中(在销售的模块里面实现)
-                bol = !productFacade.onPriceChange(user.getId(), product);
-
-                cacheMap.put(product.getId(), bol);
+                error.append("产品[" + product.getCode() + "]不支持调价").append("<br>");
+                continue;
             }
 
+            boolean bol = !productFacade.onPriceChange(user.getId(), product);
+
+            // 在途
             if (bol)
             {
-                iterator.remove();
+                error.append("产品[" + product.getCode() + "]存在销售未审批,不能调价").append("<br>");
+
                 continue;
             }
 
-            if (StringTools.isNullOrNone(vo.getStafferName()))
+            ConditionParse condition = new ConditionParse();
+
+            // 数量大于0的库存
+            condition.addIntCondition("StorageRelationBean.amount", ">", 0);
+
+            // 良品仓的
+            condition.addIntCondition("DepotpartBean.type", "=", DepotConstant.DEPOTPART_TYPE_OK);
+
+            // 公共的库存
+            condition.addCondition("StorageRelationBean.stafferId", "=", "0");
+
+            condition.addCondition("StorageRelationBean.productId", "=", product.getId());
+
+            List<StorageRelationVO> eachList = storageRelationDAO
+                .queryEntityVOsByCondition(condition);
+
+            for (Iterator iterator = eachList.iterator(); iterator.hasNext();)
             {
+                StorageRelationVO vo = (StorageRelationVO)iterator.next();
+
                 vo.setStafferName("公共");
             }
+
+            relationList.addAll(eachList);
         }
 
         request.setAttribute("relationList", relationList);
+
+        request.setAttribute(KeyConstant.ERROR_MESSAGE, error.toString());
 
         return mapping.findForward("priceChange");
     }

@@ -115,4 +115,11 @@ public interface StorageRelationManager extends ListenerManager<StorageRelationL
      * @return
      */
     int sumPreassignByStorageRelation(StorageRelationBean bean);
+
+    /**
+     * initPriceKey
+     * 
+     * @return
+     */
+    int initPriceKey();
 }

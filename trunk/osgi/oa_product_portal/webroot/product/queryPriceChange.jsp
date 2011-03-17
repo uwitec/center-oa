@@ -48,7 +48,7 @@ function load()
          },
          buttons : [
          	 {id: 'update1', bclass: 'edit', caption: '锁定库存', onpress : lock, auth: '1006'},
-         	 {id: 'add', bclass: 'add', caption: '产品调价', onpress : addBean, auth: '1006'},
+         	 {id: 'add', bclass: 'add', caption: '产品调价', onpress : openImport, auth: '1006'},
          	 {id: 'del', bclass: 'odraw',  caption: '调价回滚', onpress : rollback, auth: '1006'},
          	 {id: 'update2', bclass: 'edit',  caption: '解锁库存', onpress : unlock, auth: '1006'},
              {id: 'search', bclass: 'search', onpress : doSearch}
@@ -57,11 +57,31 @@ function load()
      };
      
      $("#mainTable").flexigrid(guidMap, thisObj);
+     
+     $('#dlg').dialog({
+                modal:true,
+                closed:true,
+                buttons:{
+                    '确 认':function(){
+                        addBean();
+                    },
+                    '取 消':function(){
+                        $('#dlg').dialog({closed:true});
+                    }
+                }
+     });
+     
+     $ESC('dlg');
 }
 
 function addBean(opr, grid)
 {
-    $l(gurl + 'preForAdd' + ukey);
+    document.forms[0].submit();
+}
+
+function openImport()
+{
+    $('#dlg').dialog({closed:false});
 }
 
 function $callBack()
@@ -118,10 +138,15 @@ function rollback(opr, grid)
 </script>
 </head>
 <body onload="load()" class="body_class">
-<form name="mainForm" method="post">
+<form id="mainForm" method="post" action="../product/product.do?method=preForAddPriceChange">
 <p:cache></p:cache>
-</form>
-<p:message></p:message>
+<p:message/>
 <table id="mainTable" style="display: none"></table>
+<div id="dlg" title="输入调价产品编码(最多100)" style="width:320px;">
+    <div style="padding:20px;height:300px;" id="dia_inner" title="">
+    <textarea name="products" cols="30" rows="20"></textarea>
+   </div>
+</div>
 <p:query/>
+</form>
 </body>

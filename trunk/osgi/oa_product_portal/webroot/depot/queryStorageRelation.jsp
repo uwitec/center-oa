@@ -40,7 +40,8 @@ function load()
              //name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
-             {id: 'del', bclass: 'del',  onpress : delBean, auth: '1106'},
+             {id: 'del', bclass: 'del',  onpress : delBean, auth: '1107'},
+             {id: 'update', bclass: 'update', caption: '更新库存KEY', onpress : initPriceKey, auth: '1107'},
              {id: 'search', bclass: 'search', onpress : doSearch},
              {id: 'search1', bclass: 'search', caption: '仓区下异动历史', onpress : depotpartLog},
              {id: 'search2', bclass: 'search', caption: '仓区下异动(价格)', onpress : depotpartLog2},
@@ -68,6 +69,12 @@ function delBean(opr, grid)
     }
     else
     $error('不能操作,只能删除数量为0的库存');
+}
+
+function initPriceKey(opr, grid)
+{
+    if(window.confirm('只有在库存存在BUG下才使用此功能,确定更新库存KEY?'))    
+        $ajax(gurl + 'initPriceKey', callBackFun);
 }
 
 function depotpartLog(opr, grid)

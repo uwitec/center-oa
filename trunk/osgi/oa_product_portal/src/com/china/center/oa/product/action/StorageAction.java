@@ -762,6 +762,29 @@ public class StorageAction extends DispatchAction
     }
 
     /**
+     * initPriceKey
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward initPriceKey(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        int initPriceKey = storageRelationManager.initPriceKey();
+
+        ajax.setSuccess("成功初始化库存KEY:" + initPriceKey);
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
      * findDepot
      * 
      * @param mapping

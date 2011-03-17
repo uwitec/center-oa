@@ -438,6 +438,51 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
         }
     }
 
+    public int initPriceKey()
+    {
+        // LOCK 产品库存priceKey初始化,单独提供事务
+        synchronized (PublicLock.PRODUCT_CORE)
+        {
+            int result = 0;
+
+            final List<StorageRelationBean> allList = storageRelationDAO.listEntityBeans();
+
+            for (final StorageRelationBean each : allList)
+            {
+                String priceKey = StorageRelationHelper.getPriceKey(each.getPrice());
+
+                if ( !priceKey.equals(each.getPriceKey()))
+                {
+                    each.setPriceKey(priceKey);
+
+                    try
+                    {
+                        // 增加管理员操作在数据库事务中完成
+                        TransactionTemplate tran = new TransactionTemplate(transactionManager);
+
+                        tran.execute(new TransactionCallback()
+                        {
+                            public Object doInTransaction(TransactionStatus arg0)
+                            {
+                                storageRelationDAO.updateEntityBean(each);
+
+                                return Boolean.TRUE;
+                            }
+                        });
+
+                        result++ ;
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.error(e, e);
+                    }
+                }
+            }
+
+            return result;
+        }
+    }
+
     /*
      * (non-Javadoc)
      * 
