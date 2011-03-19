@@ -35,7 +35,10 @@ import com.china.center.oa.finance.vo.InBillVO;
 import com.china.center.oa.finance.vo.OutBillVO;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.InvoiceBean;
+import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.dao.InvoiceDAO;
+import com.china.center.oa.publics.manager.AuthManager;
+import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.tools.BeanUtil;
@@ -64,6 +67,10 @@ public class BillAction extends DispatchAction
     private OutBillDAO outBillDAO = null;
 
     private OutDAO outDAO = null;
+
+    private AuthManager authManager = null;
+
+    private UserManager userManager = null;
 
     private FinanceFacade financeFacade = null;
 
@@ -99,7 +106,10 @@ public class BillAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYINBILL, request, condtion, initMap);
 
-        condtion.addCondition("InBillBean.locationId", "=", user.getLocationId());
+        if ( !userManager.containAuth(user.getId(), AuthConstant.BILL_QUERY_ALL))
+        {
+            condtion.addCondition("InBillBean.locationId", "=", user.getLocationId());
+        }
 
         condtion.addCondition("order by InBillBean.logTime desc");
 
@@ -163,7 +173,10 @@ public class BillAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYOUTBILL, request, condtion, initMap);
 
-        condtion.addCondition("OutBillBean.locationId", "=", user.getLocationId());
+        if ( !userManager.containAuth(user.getId(), AuthConstant.BILL_QUERY_ALL))
+        {
+            condtion.addCondition("OutBillBean.locationId", "=", user.getLocationId());
+        }
 
         condtion.addCondition("order by OutBillBean.logTime desc");
 
@@ -770,5 +783,39 @@ public class BillAction extends DispatchAction
     public void setOutDAO(OutDAO outDAO)
     {
         this.outDAO = outDAO;
+    }
+
+    /**
+     * @return the authManager
+     */
+    public AuthManager getAuthManager()
+    {
+        return authManager;
+    }
+
+    /**
+     * @param authManager
+     *            the authManager to set
+     */
+    public void setAuthManager(AuthManager authManager)
+    {
+        this.authManager = authManager;
+    }
+
+    /**
+     * @return the userManager
+     */
+    public UserManager getUserManager()
+    {
+        return userManager;
+    }
+
+    /**
+     * @param userManager
+     *            the userManager to set
+     */
+    public void setUserManager(UserManager userManager)
+    {
+        this.userManager = userManager;
     }
 }
