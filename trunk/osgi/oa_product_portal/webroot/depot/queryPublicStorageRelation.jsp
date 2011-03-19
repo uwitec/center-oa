@@ -27,9 +27,9 @@ function load()
              {display: '选择', name : 'check', content : 
              '<input type=radio name=checkb value={id} lamount={amount} ldepotpartId={depotpartId} lproductId={productId} llocationId={locationId} lpriceKey={priceKey}>', 
              		width : 40, align: 'center'},
-             {display: '产品', name : 'productName', width : '15%', cname: 'StorageRelationBean.productId', sortable : true},
-             {display: '编码', name : 'productCode', width : '15%'},
-             {display: '数量', name : 'amount', width : '10%', sortable : true},
+             {display: '产品', name : 'productName', width : '25%', cname: 'StorageRelationBean.productId', sortable : true},
+             {display: '编码', name : 'productCode', width : '10%'},
+             {display: '数量', name : 'amount', width : '5%', sortable : true},
              {display: '价格', name : 'price', toFixed: 2, sortable : true, width : '10%'},
              {display: '储位', name : 'storageName', width : '10%'},
              {display: '仓区', name : 'depotpartName', width : '10%'},

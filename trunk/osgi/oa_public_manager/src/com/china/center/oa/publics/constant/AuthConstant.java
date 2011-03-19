@@ -645,6 +645,11 @@ public interface AuthConstant
     String OUTBILL_OPR = "1607";
 
     /**
+     * 查看所有收付款单
+     */
+    String BILL_QUERY_ALL = "1608";
+
+    /**
      * 科目操作
      */
     String TAX_OPR = "1801";
