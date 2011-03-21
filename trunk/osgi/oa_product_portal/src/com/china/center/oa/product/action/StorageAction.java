@@ -1169,7 +1169,7 @@ public class StorageAction extends DispatchAction
 
                     if (list.size() >= 50)
                     {
-                        break;
+                        return;
                     }
                 }
             }
