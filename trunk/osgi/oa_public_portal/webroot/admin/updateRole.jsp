@@ -144,6 +144,25 @@ function setAuth()
     }
 }
 
+function getUsers(oos)
+{
+    myAuth = JSON.parse(oos[0].pauth);
+    
+    //展开后才能全部赋值
+    tv.expandAll();
+    
+    gAuth = [];
+    
+    for(var i = 0; i < myAuth.length; i++)
+    {
+        gAuth[i] = myAuth[i].authId;
+    }
+    
+    setAuth();
+    
+    tv.collapseAll();
+}
+
 function allSelect(check)
 {
     if (check)
@@ -154,6 +173,11 @@ function allSelect(check)
     {
         tv.collapseAll();
     }
+}
+
+function copyAuth()
+{
+    window.common.modal('../admin/pop.do?method=rptQueryUser&load=1&selectMode=1');
 }
 </script>
 
@@ -183,6 +207,7 @@ function allSelect(check)
 		<p:table cells="1">
 			<p:cell title="权限">
 				<br>
+				 <span style="cursor: pointer;" onclick="copyAuth()">拷贝他人权限</span> | 
 				<span style="cursor: pointer;" onclick="allSelect(true)">全部展开</span> | <span
 					style="cursor: pointer;" onclick="allSelect(false)">全部收起</span>  | <span
                     style="cursor: pointer;" onclick="setAuth()">初始权限</span>
