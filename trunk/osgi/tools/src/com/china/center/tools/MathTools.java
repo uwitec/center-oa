@@ -56,6 +56,22 @@ public abstract class MathTools
         return 0.0d;
     }
 
+    /**
+     * equal(解决java里面浮点数的问题)
+     * 
+     * @param a
+     * @param b
+     * @return
+     */
+    public static boolean equal(double a, double b)
+    {
+        String astr = formatNum(a);
+
+        String bstr = formatNum(b);
+
+        return parseDouble(astr) - parseDouble(bstr) == 0;
+    }
+
     public static String formatNum(double d)
     {
         DecimalFormat df = new DecimalFormat("####0.00");

@@ -212,12 +212,18 @@ public class FinanceManagerImpl implements FinanceManager
         {
             tableName = "T_CENTER_STOCK";
         }
+        else if (bean.getType() == CheckConstant.CHECK_TYPE_BUY)
+        {
+            tableName = "T_CENTER_OUT";
+        }
         else
         {
             throw new MYException("数据错误,请确认操作");
         }
 
         checkViewDAO.updateCheck(tableName, id, reason);
+
+        checkViewDAO.deleteEntityBean(id);
 
         return true;
     }

@@ -27,7 +27,7 @@ import com.china.center.oa.tax.constanst.CheckConstant;
  * @since 3.0
  */
 @Entity
-@Table(name = "V_CENTER_CHECK")
+@Table(name = "T_CENTER_CHECK")
 public class CheckViewBean implements Serializable
 {
     @Id

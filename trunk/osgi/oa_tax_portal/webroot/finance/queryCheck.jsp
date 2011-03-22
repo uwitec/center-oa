@@ -77,6 +77,11 @@ function openDetail(id, type)
     {
         $l('../stock/stock.do?method=findStock&id=' + id);
     }
+    
+    if (type == 6)
+    {
+        $l('../sail/out.do?method=findOut&fow=99&outId=' + id);
+    }
 }
 
 function delBean(opr, grid)

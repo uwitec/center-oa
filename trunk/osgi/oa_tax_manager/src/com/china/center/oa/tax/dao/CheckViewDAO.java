@@ -24,4 +24,6 @@ import com.china.center.oa.tax.bean.CheckViewBean;
 public interface CheckViewDAO extends DAO<CheckViewBean, CheckViewBean>
 {
     boolean updateCheck(String tableName, String id, String reason);
+
+    void syn();
 }
