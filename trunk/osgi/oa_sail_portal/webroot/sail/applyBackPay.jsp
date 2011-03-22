@@ -13,7 +13,7 @@ function addBean()
 	submit('确定申请退款?', null, check);
 }
 
-var maxBack = -parseFloat('${check.value}');
+var maxBack = -parseFloat('${my:formatNum(check.value)}');
 
 function check()
 {

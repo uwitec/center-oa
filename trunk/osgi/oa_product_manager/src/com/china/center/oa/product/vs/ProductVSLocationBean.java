@@ -17,6 +17,7 @@ import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.clone.DataClone;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.publics.bean.LocationBean;
 
@@ -29,9 +30,9 @@ import com.china.center.oa.publics.bean.LocationBean;
  * @see ProductVSLocationBean
  * @since 1.0
  */
-@Entity
+@Entity(cache = true)
 @Table(name = "T_CENTER_VS_PRODUCTLOCATION")
-public class ProductVSLocationBean implements Serializable
+public class ProductVSLocationBean implements DataClone<ProductVSLocationBean>, Serializable
 {
     @Id(autoIncrement = true)
     private String id = "";
@@ -43,6 +44,19 @@ public class ProductVSLocationBean implements Serializable
     @FK(index = AnoConstant.FK_FIRST)
     @Join(tagClass = LocationBean.class)
     private String locationId = "";
+
+    /**
+     * Copy Constructor
+     * 
+     * @param productVSLocationBean
+     *            a <code>ProductVSLocationBean</code> object
+     */
+    public ProductVSLocationBean(ProductVSLocationBean productVSLocationBean)
+    {
+        this.id = productVSLocationBean.id;
+        this.productId = productVSLocationBean.productId;
+        this.locationId = productVSLocationBean.locationId;
+    }
 
     /**
      * default constructor
@@ -129,6 +143,11 @@ public class ProductVSLocationBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    public ProductVSLocationBean clones()
+    {
+        return new ProductVSLocationBean(this);
     }
 
 }

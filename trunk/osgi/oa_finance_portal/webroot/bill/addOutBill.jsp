@@ -37,7 +37,7 @@ function check()
 
 function selectCus()
 {
-    window.common.modal('../provider/provider.do?method=rptQueryProvider&load=1');
+    window.common.modal('../finance/finance.do?method=rptQueryUnit&load=1');
 }
 
 function selectStockItem()
@@ -51,7 +51,7 @@ function selectStockItem()
 	
 	if ($O('provideId').value == '')
     {
-        alert('请选择供应商');
+        alert('请选择单位');
         
         return false;
     }
@@ -59,10 +59,10 @@ function selectStockItem()
     window.common.modal('../stock/stock.do?method=rptQueryStockItem&load=1&providerId=' + $$('provideId'));
 }
 
-function getProvider(id, name)
+function getUnit(oo)
 {
-    $O('provideId').value = id;
-    $O('provideName').value = name;
+    $O('provideId').value = oo.value;
+    $O('provideName').value = oo.pname;
 }
 
 function selectStaffer()

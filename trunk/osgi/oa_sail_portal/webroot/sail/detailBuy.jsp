@@ -243,8 +243,12 @@ function pagePrint()
                     
                      <tr class="content1">
                         <td align="right">分公司：</td>
-                        <td colspan="3">
+                        <td colspan="1">
                        ${bean.locationName}
+                       </td>
+                        <td align="right">关联单据：</td>
+                        <td colspan="1">
+                       <a href="../sail/out.do?method=findOut&fow=99&outId=${bean.refOutFullId}">${bean.refOutFullId}</a>
                        </td>
                     </tr>
 

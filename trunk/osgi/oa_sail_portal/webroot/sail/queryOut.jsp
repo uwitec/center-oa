@@ -157,9 +157,14 @@ function payOut()
     }
 }
 
+function isEnd()
+{
+    return getRadio('fullId').statuss == 3 || getRadio('fullId').statuss == 4;
+}
+
 function payOut2()
 {
-    if (getRadio('fullId').statuss == 3 && getRadio('fullId').paytype != 1)
+    if (isEnd() && getRadio('fullId').paytype != 1)
     {
         if (window.confirm("确定此销售单已经全部回款?"))
         {
@@ -178,7 +183,7 @@ function payOut2()
 
 function fourcePayOut()
 {
-    if (getRadio('fullId').statuss == 3 && getRadio('fullId').paytype != 1)
+    if (isEnd() && getRadio('fullId').paytype != 1)
     {
         if (window.confirm("确定此销售单已经全部回款(仅仅适用于2011-04-01之前的销售单)?"))
         {
@@ -197,7 +202,7 @@ function fourcePayOut()
 
 function payOut3()
 {
-    if (getRadio('fullId').statuss == 3 && getRadio('fullId').paytype != 1 && getRadio('fullId').outtype != 1)
+    if (isEnd() && getRadio('fullId').paytype != 1 && getRadio('fullId').outtype != 1)
     {
         $.messager.prompt('销售单坏账', '请输入销售单坏账金额', getRadio('fullId').baddebts, function(value, isOk){
                 if (isOk)
@@ -232,7 +237,7 @@ function payOut3()
 
 function payOut4()
 {
-    if (getRadio('fullId').statuss == 4 && getRadio('fullId').paytype == 1 && parseFloat(getRadio('fullId').baddebts) > 0.0 && getRadio('fullId').outtype != 1)
+    if (isEnd() && getRadio('fullId').paytype == 1 && parseFloat(getRadio('fullId').baddebts) > 0.0 && getRadio('fullId').outtype != 1)
     {
         if (window.confirm("确定取消坏账?"))
         {
@@ -251,7 +256,7 @@ function payOut4()
 
 function centerCheck()
 {
-    if (getRadio('fullId').statuss == 3 && getRadio('fullId').paytype == 1)
+    if (isEnd())
     {
         $.messager.prompt('总部核对', '请核对说明', '', function(r){
                 if (r)
@@ -719,9 +724,9 @@ function swatchToSail()
                 value="&nbsp;&nbsp;确认回款&nbsp;&nbsp;" onClick="payOut2()"/>&nbsp;&nbsp;
         <input type="button" class="button_class"
                 value="&nbsp;&nbsp;强制回款&nbsp;&nbsp;" onClick="fourcePayOut()"/>&nbsp;&nbsp;
-        <!--  
+        
         <input type="button" class="button_class"
-                value="&nbsp;&nbsp;确认坏账&nbsp;&nbsp;" onClick="payOut3()"/>&nbsp;&nbsp;-->
+                value="&nbsp;&nbsp;确认坏账&nbsp;&nbsp;" onClick="payOut3()"/>&nbsp;&nbsp;
         <input type="button" class="button_class"
                 value="&nbsp;&nbsp;坏账取消&nbsp;&nbsp;" onClick="payOut4()"/>&nbsp;&nbsp;
 		</c:if>

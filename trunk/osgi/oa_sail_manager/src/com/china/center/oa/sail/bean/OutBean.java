@@ -101,13 +101,13 @@ public class OutBean implements Serializable
     /**
      * 库单所在区域
      */
-    @Join(tagClass = LocationBean.class)
+    @Join(tagClass = LocationBean.class, type = JoinType.LEFT)
     private String locationId = "";
 
     /**
      * 进出产品所在的仓库
      */
-    @Join(tagClass = DepotBean.class)
+    @Join(tagClass = DepotBean.class, type = JoinType.LEFT)
     private String location = "";
 
     /**

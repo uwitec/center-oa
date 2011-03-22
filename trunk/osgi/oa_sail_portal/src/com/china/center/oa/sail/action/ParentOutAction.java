@@ -1263,9 +1263,9 @@ public class ParentOutAction extends DispatchAction
 
         out.setDepartment(oldOut.getDepartment());
 
-        out.setCustomerId("99");
+        out.setCustomerId(oldOut.getCustomerId());
 
-        out.setCustomerName("系统内置供应商");
+        out.setCustomerName(oldOut.getCustomerName());
 
         // 所在区域
         out.setLocationId(user.getLocationId());
@@ -3063,11 +3063,9 @@ public class ParentOutAction extends DispatchAction
         {
             if (OldPageSeparateTools.isMenuLoad(request))
             {
-                condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_PASS);
-
-                request.setAttribute("status", OutConstant.STATUS_PASS);
-
                 condtion.addIntCondition("OutBean.pay", "=", OutConstant.PAY_NOT);
+
+                condtion.addCondition("and OutBean.status in (3, 4)");
 
                 request.setAttribute("pay", OutConstant.PAY_NOT);
             }
@@ -3082,12 +3080,7 @@ public class ParentOutAction extends DispatchAction
                 condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_PASS);
 
                 request.setAttribute("status", OutConstant.STATUS_PASS);
-
-                condtion.addIntCondition("OutBean.pay", "=", OutConstant.PAY_YES);
-
-                request.setAttribute("pay", OutConstant.PAY_YES);
             }
-
         }
         // 总裁审批赠送
         else if ("7".equals(queryType))

@@ -29,6 +29,7 @@ import com.china.center.oa.sail.dao.BaseDAO;
 import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.listener.OutListener;
+import com.china.center.tools.MathTools;
 
 
 /**
@@ -181,7 +182,8 @@ public class OutListenerFinanceImpl implements OutListener
 
         String message = "";
 
-        if (bean.getTotal() != (hasPay + bean.getBadDebts() + balancePay + refInOutTotal - hasdOut))
+        if ( !MathTools.equal(bean.getTotal(), (hasPay + bean.getBadDebts() + balancePay
+                                                + refInOutTotal - hasdOut)))
         {
             if (bean.getOutType() == OutConstant.OUTTYPE_OUT_CONSIGN)
             {

@@ -36,6 +36,7 @@ import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.MathTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -159,7 +160,7 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
         // 付款金额-退货金额-已经退款金额
         // double max = out.getTotal() - hasdIn + backTotal - hasdOut;
 
-        if (bean.getBackPay() + bean.getChangePayment() != max)
+        if ( !MathTools.equal(bean.getBackPay() + bean.getChangePayment(), max))
         {
             throw new MYException(
                 "销售单支付金额[%.2f],退货实物价值[%.2f],退货返还金额[%.2f],申请退货返还金额[%.2f],申请转预收金额[%.2f],申请金额必须等于[%.2f]",

@@ -88,6 +88,14 @@ function closesd()
 				<td align="center"><input type="text" name="code" onkeypress="press()"
 					value="${code}"></td>
 			</tr>
+			
+			<tr class="content2">
+                <td width="15%" align="center">储位</td>
+                <td align="center"><input type="text" name="storageName" onkeypress="press()"
+                    value="${storageName}"></td>
+                <td width="15%" align="center"></td>
+                <td align="center"></td>
+            </tr>
 
 			<tr class="content1">
 				<td colspan="4" align="right"><input type="button"
