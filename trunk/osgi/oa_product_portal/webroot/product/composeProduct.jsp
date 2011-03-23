@@ -86,6 +86,10 @@ function getProductRelation(oos)
     var reobj = getEle(eles, "srcRelation");
     
     reobj.value = oo.value;
+    
+    var srcDe = getEle(tr.getElementsByTagName('select'), "srcDepotpart");
+    
+    setSelect(srcDe, oo.pdepotpart);
 }
 
 function selectDepotpartProduct(obj)
@@ -100,7 +104,7 @@ function selectDepotpartProduct(obj)
         return;
     }
     
-   window.common.modal('../depot/storage.do?method=rptQueryProductInDepotpart&load=1&stafferId=0&selectMode=1&depotpartId='+ pobj.value);
+   window.common.modal('../depot/storage.do?method=rptQueryProductInDepot&load=1&stafferId=0&selectMode=1&locationId='+ $$('srcDepot'));
 }
 
 function getProduct(oos)

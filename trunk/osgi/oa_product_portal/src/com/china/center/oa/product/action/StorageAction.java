@@ -41,6 +41,7 @@ import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.StorageApplyBean;
 import com.china.center.oa.product.bean.StorageBean;
+import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.DepotpartDAO;
@@ -113,6 +114,8 @@ public class StorageAction extends DispatchAction
     private static final String QUERYSELFSTORAGERELATION = "querySelfStorageRelation";
 
     private static final String RPTQUERYPRODUCTINDEPOTPART = "rptQueryProductInDepotpart";
+
+    private static final String RPTQUERYPRODUCTINDEPOT = "rptQueryProductInDepot";
 
     private static final String QUERYSTORAGEAPPLY = "queryStorageApply";
 
@@ -981,7 +984,7 @@ public class StorageAction extends DispatchAction
     }
 
     /**
-     * rptQueryProductInDepotpart
+     * rptQueryProductInDepotpart(仓区内)
      * 
      * @param mapping
      * @param form
@@ -1031,6 +1034,59 @@ public class StorageAction extends DispatchAction
         request.setAttribute("beanList", list);
 
         return mapping.findForward("rptQueryProductInDepotpart");
+    }
+
+    /**
+     * 仓库内查询(合成产品,只能是良品仓区)
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryProductInDepot(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
+                                                HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        List<StorageRelationVO> list = null;
+
+        if (PageSeparateTools.isFirstLoad(request))
+        {
+            ConditionParse condtion = setRptQueryProductCondition3(request);
+
+            int total = storageRelationDAO.countVOByCondition(condtion.toString());
+
+            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+
+            PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYPRODUCTINDEPOT);
+
+            list = storageRelationDAO.queryEntityVOsByCondition(condtion, page);
+        }
+        else
+        {
+            PageSeparateTools.processSeparate(request, RPTQUERYPRODUCTINDEPOT);
+
+            list = storageRelationDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(
+                request, RPTQUERYPRODUCTINDEPOT), PageSeparateTools.getPageSeparate(request,
+                RPTQUERYPRODUCTINDEPOT));
+        }
+
+        for (StorageRelationVO vo : list)
+        {
+            if (StringTools.isNullOrNone(vo.getStafferName()))
+            {
+                vo.setStafferName("公共");
+            }
+        }
+
+        request.setAttribute("beanList", list);
+
+        return mapping.findForward("rptQueryProductInDepot");
     }
 
     /**
@@ -1251,6 +1307,71 @@ public class StorageAction extends DispatchAction
     }
 
     /**
+     * setRptQueryProductCondition3
+     * 
+     * @param request
+     * @return
+     */
+    private ConditionParse setRptQueryProductCondition3(HttpServletRequest request)
+    {
+        String name = request.getParameter("name");
+
+        String code = request.getParameter("code");
+
+        String stafferId = request.getParameter("stafferId");
+
+        String storageName = request.getParameter("storageName");
+
+        String depotpartName = request.getParameter("depotpartName");
+
+        String depotpartId = request.getParameter("depotpartId");
+
+        String locationId = request.getParameter("locationId");
+
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        if ( !StringTools.isNullOrNone(name))
+        {
+            condtion.addCondition("ProductBean.name", "like", name);
+        }
+
+        if ( !StringTools.isNullOrNone(code))
+        {
+            condtion.addCondition("ProductBean.code", "like", code);
+        }
+
+        // storageName
+        if ( !StringTools.isNullOrNone(storageName))
+        {
+            condtion.addCondition("StorageBean.name", "like", storageName);
+        }
+
+        if ( !StringTools.isNullOrNone(depotpartName))
+        {
+            condtion.addCondition("DepotpartBean.name", "like", depotpartName);
+        }
+
+        if ( !StringTools.isNullOrNone(depotpartId))
+        {
+            condtion.addCondition("StorageRelationBean.depotpartId", "=", depotpartId);
+        }
+
+        if ( !StringTools.isNullOrNone(stafferId))
+        {
+            condtion.addCondition("StorageRelationBean.stafferId", "=", stafferId);
+        }
+
+        // 只能是OK仓区
+        condtion.addIntCondition("DepotpartBean.type", "=", DepotConstant.DEPOTPART_TYPE_OK);
+
+        condtion.addCondition("StorageRelationBean.locationId", "=", locationId);
+
+        return condtion;
+    }
+
+    /**
      * 查询仓库下的可用库存
      * 
      * @param request
@@ -1276,6 +1397,9 @@ public class StorageAction extends DispatchAction
         condtion.addWhereStr();
 
         condtion.addCondition("StorageRelationBean.locationId", "=", depotId);
+
+        // 只能是OK仓区
+        condtion.addIntCondition("DepotpartBean.type", "=", DepotConstant.DEPOTPART_TYPE_OK);
 
         if ( !StringTools.isNullOrNone(name))
         {

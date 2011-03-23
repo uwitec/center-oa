@@ -66,7 +66,7 @@ public class OutBillBean implements Serializable
     private String bankId = "";
 
     /**
-     * stockItemId/销售单(refId)
+     * stockItemId/销售单(refId)/回款单
      */
     @FK
     private String stockId = "";

@@ -87,6 +87,15 @@ public interface BillManager
     boolean splitInBillBean(User user, String id, double newMoney)
         throws MYException;
 
+    /**
+     * 返回newMoney的ID
+     * 
+     * @param user
+     * @param id
+     * @param newMoney
+     * @return
+     * @throws MYException
+     */
     String splitInBillBeanWithoutTransactional(User user, String id, double newMoney)
         throws MYException;
 

@@ -453,6 +453,12 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
         // 如果是采购代销的采购主管通过直接到
         if (nextStatus == StockConstant.STOCK_STATUS_STOCKMANAGERPASS)
         {
+            // 这里先校验是否已经配置
+            if (StringTools.isNullOrNone(sb.getDutyId()))
+            {
+                throw new MYException("请先配置税务属性");
+            }
+
             // 代销采购
             if (sb.getStype() == StockConstant.STOCK_STYPE_ISAIL)
             {
@@ -1024,6 +1030,12 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
         if (sb == null)
         {
             throw new MYException("采购单不存在");
+        }
+
+        // TEMPIMPL 采购防止用户ID为空
+        if (StringTools.isNullOrNone(sb.getStafferId()))
+        {
+            sb.setStafferId(user.getStafferId());
         }
 
         sb.setNearlyPayDate(nearlyPayDate);

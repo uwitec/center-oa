@@ -23,9 +23,11 @@ import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.oa.finance.bean.BackPayApplyBean;
 import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.OutBillBean;
+import com.china.center.oa.finance.constant.BackPayApplyConstant;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.dao.BankDAO;
 import com.china.center.oa.finance.dao.InBillDAO;
@@ -663,13 +665,36 @@ public class BillAction extends DispatchAction
 
         try
         {
+            User user = Helper.getUser(request);
+
             String id = request.getParameter("id");
+
+            InBillBean inBill = inBillDAO.find(id);
+
+            if (inBill == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
 
             String newMoney = request.getParameter("newMoney");
 
-            User user = Helper.getUser(request);
+            BackPayApplyBean bean = new BackPayApplyBean();
 
-            financeFacade.splitInBillBean(user.getId(), id, MathTools.parseDouble(newMoney));
+            bean.setType(BackPayApplyConstant.TYPE_BILL);
+
+            bean.setBackPay(MathTools.parseDouble(newMoney));
+
+            bean.setBillId(id);
+
+            bean.setChangePayment(0.0d);
+
+            bean.setCustomerId(inBill.getCustomerId());
+
+            bean.setDescription("业务员申请预收退款");
+
+            bean.setStafferId(user.getStafferId());
+
+            financeFacade.addBackPayApplyBean(user.getId(), bean);
 
             ajax.setSuccess("成功操作");
         }

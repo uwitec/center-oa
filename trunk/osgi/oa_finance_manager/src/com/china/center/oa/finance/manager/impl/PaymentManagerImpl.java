@@ -22,6 +22,7 @@ import com.china.center.oa.finance.bean.PaymentApplyBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.dao.InBillDAO;
+import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.dao.PaymentApplyDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.dao.PaymentVSOutDAO;
@@ -48,6 +49,8 @@ public class PaymentManagerImpl implements PaymentManager
     private PaymentDAO paymentDAO = null;
 
     private InBillDAO inBillDAO = null;
+
+    private OutBillDAO outBillDAO = null;
 
     private PaymentApplyDAO paymentApplyDAO = null;
 
@@ -234,6 +237,13 @@ public class PaymentManagerImpl implements PaymentManager
             }
         }
 
+        int outCount = outBillDAO.countByFK(id);
+
+        if (outCount > 0)
+        {
+            throw new MYException("回款单存在付款单据,无法退领,请确认操作");
+        }
+
         List<PaymentApplyBean> applyList = paymentApplyDAO.queryEntityBeansByFK(id);
 
         // 清除驳回的申请
@@ -376,5 +386,22 @@ public class PaymentManagerImpl implements PaymentManager
     public void setStatBankManager(StatBankManager statBankManager)
     {
         this.statBankManager = statBankManager;
+    }
+
+    /**
+     * @return the outBillDAO
+     */
+    public OutBillDAO getOutBillDAO()
+    {
+        return outBillDAO;
+    }
+
+    /**
+     * @param outBillDAO
+     *            the outBillDAO to set
+     */
+    public void setOutBillDAO(OutBillDAO outBillDAO)
+    {
+        this.outBillDAO = outBillDAO;
     }
 }

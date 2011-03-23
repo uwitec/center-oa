@@ -57,6 +57,16 @@ function passTO()
         formEntry.submit();
     }
 }
+
+function update2()
+{
+    $O('method').value = 'findStock';
+    $O('id').value = '${bean.id}';
+    $O('stockAskChange').value = '';
+    $O('process').value = '';
+    $O('update').value = '2';
+    formEntry.submit();
+}
 </script>
 
 </head>
@@ -67,6 +77,9 @@ function passTO()
 <input type="hidden" name="pass" value="1">
 <input type="hidden" name="nearlyPayDate" value="">
 <input type="hidden" name="reject" value="">
+<input type="hidden" name="update" value="">
+<input type="hidden" name="process" value="">
+<input type="hidden" name="stockAskChange" value="">
 <p:navigation height="22">
 	<td width="550" class="navigation">采购单明细</td>
 	<td width="85"></td>
@@ -207,7 +220,7 @@ function passTO()
 	<p:button leftWidth="100%" rightWidth="0%">
 		<div align="right"><input type="button" class="button_class"
 			name="sub1" style="cursor: pointer"
-			value="&nbsp;&nbsp;通 过&nbsp;&nbsp;" onclick="passTO()">
+			value="&nbsp;&nbsp;采购税务配置&nbsp;&nbsp;" onclick="update2()">
 			&nbsp;&nbsp;
 			<input type="button" class="button_class"
 			onclick="javascript:history.go(-1)"

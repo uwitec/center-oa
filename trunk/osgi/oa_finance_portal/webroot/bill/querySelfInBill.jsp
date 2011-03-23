@@ -39,7 +39,7 @@ function load()
              id : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
-             {id: 'update', bclass: 'update', caption: '分拆预收', onpress : splitInBill},
+             {id: 'update', bclass: 'update', caption: '申请预收退款', onpress : splitInBill},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -58,7 +58,7 @@ function splitInBill(opr, grid)
 {
     if (getRadio('checkb') && getRadioValue('checkb'))
     {    
-        $.messager.prompt('分拆预收', '请输入分拆金额(只能是数字)', 0.0,
+        $.messager.prompt('申请预收退款', '请输入预收退款金额(只能是数字)', 0.0,
             function(value, isOk)
             {
                 if (isOk)

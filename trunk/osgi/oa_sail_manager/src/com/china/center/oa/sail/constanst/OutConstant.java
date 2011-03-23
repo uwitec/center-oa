@@ -313,4 +313,64 @@ public interface OutConstant
     @Defined(key = "moveOut", value = "调入")
     int MOVEOUT_IN = 1;
 
+    /**
+     * 保存
+     */
+    @Defined(key = "buyStatus", value = "保存")
+    int BUY_STATUS_SAVE = 0;
+
+    /**
+     * 待库管处理
+     */
+    @Defined(key = "buyStatus", value = "待库管处理")
+    int BUY_STATUS_SUBMIT = 1;
+
+    /**
+     * 驳回
+     */
+    @Defined(key = "buyStatus", value = "驳回")
+    int BUY_STATUS_REJECT = 2;
+
+    /**
+     * 待回款(这里的销售单库存就变动了)(一般此通过即是销售单已经OK status in (3, 4))
+     */
+    @Defined(key = "buyStatus", value = "待回款")
+    int BUY_STATUS_PASS = 3;
+
+    /**
+     * 财务核对(单据结束)
+     */
+    @Defined(key = "buyStatus", value = "结束")
+    int BUY_STATUS_SEC_PASS = 4;
+
+    /**
+     * 结算中心通过
+     */
+    @Defined(key = "buyStatus", value = "待物流审批")
+    int BUY_STATUS_MANAGER_PASS = 6;
+
+    /**
+     * 物流管理员通过
+     */
+    @Defined(key = "buyStatus", value = "待库管审批")
+    int BUY_STATUS_FLOW_PASS = 7;
+
+    /**
+     * 分公司总经理审批
+     */
+    @Defined(key = "buyStatus", value = "待事业部经理审批")
+    int BUY_STATUS_LOCATION_MANAGER_CHECK = 8;
+
+    /**
+     * 待总裁审批
+     */
+    @Defined(key = "buyStatus", value = "待总裁审批")
+    int BUY_STATUS_CEO_CHECK = 9;
+
+    /**
+     * 待董事长审批(入库单专用)
+     */
+    @Defined(key = "buyStatus", value = "待董事长审批")
+    int BUY_STATUS_CHAIRMA_CHECK = 10;
+
 }

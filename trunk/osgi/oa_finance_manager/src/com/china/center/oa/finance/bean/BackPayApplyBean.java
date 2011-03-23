@@ -16,13 +16,13 @@ import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.JoinType;
-import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.finance.constant.BackPayApplyConstant;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.sail.bean.UnitViewBean;
 
 
 /**
- * BackPayApplyBean
+ * BackPayApplyBean(包含销售退款和预收退款)
  * 
  * @author ZHUZHU
  * @version 2011-3-3
@@ -38,7 +38,17 @@ public class BackPayApplyBean implements Serializable
 
     private String outId = "";
 
+    /**
+     * 收款单
+     */
+    private String billId = "";
+
     private int status = BackPayApplyConstant.STATUS_INIT;
+
+    /**
+     * 销售退款和预收退款
+     */
+    private int type = BackPayApplyConstant.TYPE_OUT;
 
     private double backPay = 0.0d;
 
@@ -47,7 +57,7 @@ public class BackPayApplyBean implements Serializable
     @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
     private String stafferId = "";
 
-    @Join(tagClass = CustomerBean.class, type = JoinType.LEFT)
+    @Join(tagClass = UnitViewBean.class, type = JoinType.LEFT)
     private String customerId = "";
 
     private String logTime = "";
@@ -215,6 +225,40 @@ public class BackPayApplyBean implements Serializable
     }
 
     /**
+     * @return the type
+     */
+    public int getType()
+    {
+        return type;
+    }
+
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(int type)
+    {
+        this.type = type;
+    }
+
+    /**
+     * @return the billId
+     */
+    public String getBillId()
+    {
+        return billId;
+    }
+
+    /**
+     * @param billId
+     *            the billId to set
+     */
+    public void setBillId(String billId)
+    {
+        this.billId = billId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -235,8 +279,14 @@ public class BackPayApplyBean implements Serializable
             .append("outId = ")
             .append(this.outId)
             .append(TAB)
+            .append("billId = ")
+            .append(this.billId)
+            .append(TAB)
             .append("status = ")
             .append(this.status)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
             .append(TAB)
             .append("backPay = ")
             .append(this.backPay)

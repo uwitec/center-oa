@@ -229,13 +229,16 @@ public class BackPayApplyAction extends DispatchAction
 
         request.setAttribute("loglist", loglist);
 
-        OutBean out = outDAO.find(bean.getOutId());
+        if (bean.getType() == BackPayApplyConstant.TYPE_OUT)
+        {
+            OutBean out = outDAO.find(bean.getOutId());
 
-        request.setAttribute("out", out);
+            request.setAttribute("out", out);
 
-        double backTotal = outDAO.sumOutBackValue(bean.getOutId());
+            double backTotal = outDAO.sumOutBackValue(bean.getOutId());
 
-        request.setAttribute("backTotal", backTotal);
+            request.setAttribute("backTotal", backTotal);
+        }
 
         List<BankBean> bankList = bankDAO.listEntityBeans();
 
@@ -267,6 +270,8 @@ public class BackPayApplyAction extends DispatchAction
             User user = Helper.getUser(request);
 
             bean.setStafferId(user.getStafferId());
+
+            bean.setType(BackPayApplyConstant.TYPE_OUT);
 
             financeFacade.addBackPayApplyBean(user.getId(), bean);
 

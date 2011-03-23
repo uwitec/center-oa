@@ -264,7 +264,7 @@ public interface FinanceConstant
     /**
      * 销售退款
      */
-    @Defined(key = "outbillType", value = "销售退款")
+    @Defined(key = "outbillType", value = "销售/预收退款")
     int OUTBILL_TYPE_OUTBACK = 10;
 
     /**

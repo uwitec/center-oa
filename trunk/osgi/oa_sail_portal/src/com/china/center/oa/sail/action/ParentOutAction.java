@@ -2875,8 +2875,10 @@ public class ParentOutAction extends DispatchAction
      * @param request
      * @param user
      * @return
+     * @throws MYException
      */
     protected ConditionParse getQueryCondition(HttpServletRequest request, User user)
+        throws MYException
     {
         ConditionParse condtion = new ConditionParse();
 
@@ -3165,12 +3167,18 @@ public class ParentOutAction extends DispatchAction
     }
 
     protected String getAllIndustryId(StafferBean sb)
+        throws MYException
     {
         List<InvoiceCreditBean> inList = invoiceCreditDAO.queryEntityBeansByFK(sb.getId());
 
         if (inList.size() == 1)
         {
             return "('" + sb.getIndustryId() + "')";
+        }
+
+        if (inList.size() == 0)
+        {
+            throw new MYException("职员[%s]没有事业部属性", sb.getName());
         }
 
         StringBuffer buffer = new StringBuffer();

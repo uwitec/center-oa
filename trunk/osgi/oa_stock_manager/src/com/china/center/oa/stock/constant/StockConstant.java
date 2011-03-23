@@ -31,37 +31,37 @@ public interface StockConstant
     int STOCK_STATUS_REJECT = 2;
 
     /**
-     * 区域经理通过
+     * 待询价员询价
      */
     @Defined(key = "stockStatus", value = "待询价员询价")
     int STOCK_STATUS_MANAGERPASS = 3;
 
     /**
-     * 询价员通过(外网询价员通过)
+     * 待采购主管审核
      */
     @Defined(key = "stockStatus", value = "待采购主管审核")
     int STOCK_STATUS_PRICEPASS = 4;
 
     /**
-     * 采购主管通过
+     * 待董事长审核
      */
     @Defined(key = "stockStatus", value = "待董事长审核")
     int STOCK_STATUS_STOCKPASS = 5;
 
     /**
-     * 采购经理通过
+     * 待采购拿货
      */
     @Defined(key = "stockStatus", value = "待采购拿货")
     int STOCK_STATUS_STOCKMANAGERPASS = 6;
 
     /**
-     * 采购审批完毕
+     * 待结束采购
      */
     @Defined(key = "stockStatus", value = "待结束采购")
     int STOCK_STATUS_END = 7;
 
     /**
-     * 采购结束(到货)
+     * 采购到货(结束)
      */
     @Defined(key = "stockStatus", value = "采购到货(结束)")
     int STOCK_STATUS_LASTEND = 8;

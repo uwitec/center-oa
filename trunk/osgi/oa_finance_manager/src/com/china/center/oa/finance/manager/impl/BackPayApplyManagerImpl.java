@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.finance.bean.BackPayApplyBean;
 import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.OutBillBean;
@@ -84,9 +85,16 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
     public boolean addBackPayApplyBean(User user, BackPayApplyBean bean)
         throws MYException
     {
-        JudgeTools.judgeParameterIsNull(user, bean, bean.getOutId());
+        JudgeTools.judgeParameterIsNull(user, bean);
 
-        checkPay(user, bean);
+        if (bean.getType() == BackPayApplyConstant.TYPE_OUT)
+        {
+            checkPay(user, bean);
+        }
+        else
+        {
+            checkBillPay(bean);
+        }
 
         bean.setId(commonDAO.getSquenceString20());
 
@@ -94,11 +102,62 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
 
         bean.setStafferId(user.getStafferId());
 
-        bean.setStatus(BackPayApplyConstant.STATUS_SUBMIT);
+        if (bean.getType() == BackPayApplyConstant.TYPE_OUT)
+        {
+            bean.setStatus(BackPayApplyConstant.STATUS_SUBMIT);
+        }
+        else
+        {
+            bean.setStatus(BackPayApplyConstant.STATUS_SEC);
+        }
 
         saveFlowLog(user, BackPayApplyConstant.STATUS_INIT, bean, "提交", PublicConstant.OPRMODE_PASS);
 
         return backPayApplyDAO.saveEntityBean(bean);
+    }
+
+    /**
+     * checkBillPay
+     * 
+     * @param bean
+     * @throws MYException
+     */
+    private void checkBillPay(BackPayApplyBean bean)
+        throws MYException
+    {
+        InBillBean inBill = inBillDAO.find(bean.getBillId());
+
+        if (inBill == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bean.getBackPay() <= 0.0d)
+        {
+            throw new MYException("退款金额错误,请确认操作");
+        }
+
+        if (inBill.getMoneys() < bean.getBackPay())
+        {
+            throw new MYException("退款金额溢出,请确认操作");
+        }
+
+        // 一个单子只能存在一个申请
+        ConditionParse condition = new ConditionParse();
+
+        condition.addWhereStr();
+
+        condition.addCondition("BackPayApplyBean.billId", "=", bean.getBillId());
+
+        condition.addIntCondition("BackPayApplyBean.status", "<",
+            BackPayApplyConstant.STATUS_REJECT);
+
+        int countByCondition = backPayApplyDAO.countByCondition(condition.toString());
+
+        if (countByCondition > 0)
+        {
+            throw new MYException("此预收存在未结束的退款申请,请确认操作");
+        }
     }
 
     /**
@@ -259,7 +318,10 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        checkPay(user, bean);
+        if (bean.getType() == BackPayApplyConstant.TYPE_OUT)
+        {
+            checkPay(user, bean);
+        }
 
         int next = 0;
 
@@ -297,9 +359,64 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
         BackPayApplyBean bean = backPayApplyDAO.find(id);
 
         // 付款
-        createOutBill(user, outBill, bean);
+        String outBillId = createOutBill(user, outBill, bean);
 
-        // 转预收
+        if (bean.getType() == BackPayApplyConstant.TYPE_OUT)
+        {
+            // 处理销售退款
+            handleOut(user, bean);
+        }
+        else
+        {
+            // 处理预收退款
+            InBillBean inBill = inBillDAO.find(bean.getBillId());
+
+            if (inBill == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            if (inBill.getStatus() != FinanceConstant.INBILL_STATUS_NOREF)
+            {
+                throw new MYException("收款单已经不在预收状态,请确认操作");
+            }
+
+            // 直接把预收拆分成两个单据
+            String newId = billManager.splitInBillBeanWithoutTransactional(user, inBill.getId(),
+                bean.getBackPay());
+
+            // 预收
+            InBillBean newInBill = inBillDAO.find(newId);
+
+            if (newInBill == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 取消关联了
+            newInBill.setOutId("");
+            newInBill.setOutBalanceId("");
+            newInBill.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
+            newInBill.setLock(FinanceConstant.BILL_LOCK_YES);
+            newInBill.setRefBillId(outBillId);
+            newInBill.setDescription(newInBill.getDescription() + ";自动关联退款的付款单:" + outBillId);
+
+            inBillDAO.updateEntityBean(newInBill);
+        }
+
+        return true;
+    }
+
+    /**
+     * 处理销售退款
+     * 
+     * @param user
+     * @param bean
+     * @throws MYException
+     */
+    private void handleOut(User user, BackPayApplyBean bean)
+        throws MYException
+    {
         if (bean.getChangePayment() > 0)
         {
             // 找出预收,然后自动拆分
@@ -366,15 +483,33 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
             // 这里不更新单子的状态,只更新付款金额
             outDAO.updateHadPay(bean.getOutId(), newPay);
         }
-
-        return false;
     }
 
-    private void createOutBill(User user, OutBillBean outBill, BackPayApplyBean apply)
+    private String createOutBill(User user, OutBillBean outBill, BackPayApplyBean apply)
         throws MYException
     {
-        // 自动生成付款单
-        outBill.setDescription("销售退货付款:" + apply.getOutId());
+        if (apply.getType() == BackPayApplyConstant.TYPE_OUT)
+        {
+            // 自动生成付款单
+            outBill.setDescription("销售退货付款:" + apply.getOutId());
+
+            outBill.setStockId(apply.getOutId());
+        }
+        else
+        {
+            InBillBean inBill = inBillDAO.find(apply.getBillId());
+
+            if (inBill == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            outBill.setDescription("预收退款:" + apply.getBillId());
+
+            outBill.setStockId(inBill.getPaymentId());
+
+            outBill.setRefBillId(apply.getBillId());
+        }
 
         outBill.setLocationId(user.getLocationId());
 
@@ -390,9 +525,11 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
 
         outBill.setProvideId(apply.getCustomerId());
 
-        outBill.setStockId(apply.getOutId());
+        outBill.setLock(FinanceConstant.BILL_LOCK_YES);
 
         billManager.addOutBillBeanWithoutTransaction(user, outBill);
+
+        return outBill.getId();
     }
 
     /**

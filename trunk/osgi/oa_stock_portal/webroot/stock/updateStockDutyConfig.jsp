@@ -77,7 +77,7 @@ function lverify()
                 return false;
             }
 
-            if (imap[$O('productId_' + i).value] == $O('productId_' + i).value)
+            if (false && imap[$O('productId_' + i).value] == $O('productId_' + i).value)
             {
                 alert('选择的产品不能重复');
                 return false;

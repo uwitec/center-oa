@@ -51,4 +51,16 @@ public interface BackPayApplyConstant
      */
     @Defined(key = "backPayApplyStatus", value = "结束")
     int STATUS_END = 99;
+
+    /**
+     * 销售退款
+     */
+    @Defined(key = "backPayApplyType", value = "销售退款")
+    int TYPE_OUT = 0;
+
+    /**
+     * 预收退款
+     */
+    @Defined(key = "backPayApplyType", value = "预收退款")
+    int TYPE_BILL = 1;
 }

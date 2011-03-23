@@ -161,19 +161,19 @@ public class OutListenerFinanceImpl implements OutListener
         double right = hasPay + bean.getBadDebts() + balancePay + refInOutTotal;
 
         // 金额不足
-        if (left > right)
+        if ( !MathTools.equal(left, right) && left > right)
         {
             result.setResult(1);
         }
 
         // 正好
-        if (left == right)
+        if (MathTools.equal(left, right))
         {
             result.setResult(0);
         }
 
         // 溢出
-        if (left < right)
+        if ( !MathTools.equal(left, right) && left < right)
         {
             result.setResult( -1);
         }

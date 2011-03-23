@@ -1073,7 +1073,8 @@ public class ProductAction extends DispatchAction
 
         for (DepotBean depotBean : list)
         {
-            List<DepotpartBean> depotList = depotpartDAO.queryEntityBeansByFK(depotBean.getId());
+            // 只查询OK仓区的
+            List<DepotpartBean> depotList = depotpartDAO.queryOkDepotpartInDepot(depotBean.getId());
 
             for (DepotpartBean depotpartBean : depotList)
             {

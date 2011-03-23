@@ -330,11 +330,17 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
-         <condtion name="status" caption="状态">
+        <condtion name="status" caption="状态">
             <opr>=</opr>
             <datatype>1</datatype>
             <type>select</type>
             <option>$backPayApplyStatus</option>
+        </condtion>
+        <condtion name="type" caption="类型">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$backPayApplyType</option>
         </condtion>
     </item>
     

@@ -220,7 +220,7 @@ function trChange(index)
                         oaddress="${item.locationName} -- ${item.depotpartName}"
                         ovalue="${my:formatNum(item.price)}" id="p_${vs.index}" pid="${item.productId}"
                         style="width: 100%" ondblclick="copyLast(${vs.index})" onkeyup="trChange(${vs.index}, this)"></td>
-                        <td align="center">${item.locationName} --> ${item.depotpartName}</td>
+                        <td align="center">${item.locationName} --> ${item.depotpartName} --> ${item.storageName}</td>
                         <td align="center">${item.stafferName}</td>
                     </tr>
                     </c:forEach>

@@ -62,6 +62,7 @@ function endBean()
 
 		<p:table cells="2">
 
+            <c:if test="${bean.type == 0}">
 			<p:cell title="销售标识">
                 <a href="../sail/out.do?method=findOut&outId=${out.fullId}">${out.fullId}</a>
             </p:cell>
@@ -82,10 +83,6 @@ function endBean()
                 ${my:formatNum(backTotal)}
             </p:cell>
             
-            <p:cell title="客户">
-                ${out.customerName}
-            </p:cell>
-            
             <p:cell title="申请退款金额">
                 ${my:formatNum(bean.backPay)}
             </p:cell>
@@ -93,7 +90,26 @@ function endBean()
             <p:cell title="转预收">
                 ${my:formatNum(bean.changePayment)}
             </p:cell>
+            </c:if>
     
+            <c:if test="${bean.type == 1}">
+	            <p:cell title="预收标识">
+	                <a href="../finance/bill.do?method=findInBill&id=${bean.billId}">${bean.billId}</a>
+	            </p:cell>
+	
+	            <p:cell title="申请退款金额">
+	                ${my:formatNum(bean.backPay)}
+	            </p:cell>
+            </c:if>
+            
+            <p:cell title="客户">
+                 ${bean.customerName}
+            </p:cell>
+            
+            <p:cell title="申请人">
+                 ${bean.stafferName}
+            </p:cell>
+            
             <p:cell title="备注" end="true">
                ${bean.description}
             </p:cell>
@@ -102,7 +118,7 @@ function endBean()
                ${bean.logTime}
             </p:cell>
 
-            <c:if test="${bean.status == 2}">
+            <c:if test="${bean.status == 2 && mode != 0}">
 	            <p:cell title="申请退款金额" end="true">
 	                <input type="text" oncheck="notNone;isFloat;" readonly="readonly" name="backPay" value="${my:formatNum(bean.backPay)}">
 	                <font color="red">*</font>
@@ -110,7 +126,6 @@ function endBean()
 	            
 	            <p:cell title="银行帐户" end="true">
 	                <select name="bankId" style="width: 400px" class="select_class" oncheck="notNone">
-	                <option value="">--</option>
 	                <p:option type="bankList"></p:option>
 	                </select>
 	                <font color="red">*</font>
@@ -125,9 +140,9 @@ function endBean()
 	            
             </c:if>         
             
-            <c:if test="${bean.status != 0 && bean.status != 98 && bean.status != 99}">
+            <c:if test="${bean.status != 0 && bean.status != 98 && bean.status != 99 && mode != 0}">
 				<p:cell title="审批意见" end="true">
-					<textarea rows=3 cols=55 oncheck="notNone;maxLength(200);" name="reason"></textarea>
+					<textarea rows="3" cols="55" oncheck="notNone;maxLength(200);" name="reason"></textarea>
 					<font color="red">*</font>
 				</p:cell>
 			</c:if>
@@ -173,7 +188,7 @@ function endBean()
 	<p:button leftWidth="100%" rightWidth="0%">
 		<div align="right">
 			
-			<c:if test="${bean.status == 1}">
+			<c:if test="${bean.status == 1 && mode != 0}">
 	            <input type="button" class="button_class"
 	                id="ok_p" style="cursor: pointer" value="&nbsp;&nbsp;通 过&nbsp;&nbsp;"
 	                onclick="passBean()">&nbsp;&nbsp;
@@ -182,7 +197,7 @@ function endBean()
 	            onclick="rejectBean()">&nbsp;&nbsp;
             </c:if>
             
-            <c:if test="${bean.status == 2}">
+            <c:if test="${bean.status == 2 && mode != 0}">
 	            <input type="button" class="button_class"
 	                id="ok_p2" style="cursor: pointer" value="&nbsp;&nbsp;付 款&nbsp;&nbsp;"
 	                onclick="endBean()">&nbsp;&nbsp;

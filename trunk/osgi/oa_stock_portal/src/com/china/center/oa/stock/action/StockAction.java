@@ -953,12 +953,6 @@ public class StockAction extends DispatchAction
 
         if ("1".equals(process))
         {
-            // 这里先校验是否已经配置
-            if (StringTools.isNullOrNone(vo.getDutyId()))
-            {
-                return ActionTools.toError("请先配置税务属性", mapping, request);
-            }
-
             return mapping.findForward("processStock");
         }
 
