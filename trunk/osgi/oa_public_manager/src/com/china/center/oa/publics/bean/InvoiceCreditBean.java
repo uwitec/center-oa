@@ -20,7 +20,7 @@ import com.china.center.jdbc.annotation.Table;
 
 
 /**
- * InvoiceCreditBean
+ * 事业部和信用的对应关系
  * 
  * @author ZHUZHU
  * @version 2011-3-12
