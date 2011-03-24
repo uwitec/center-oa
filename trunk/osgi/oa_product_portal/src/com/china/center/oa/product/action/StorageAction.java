@@ -9,6 +9,8 @@
 package com.china.center.oa.product.action;
 
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,6 +29,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
 import com.center.china.osgi.publics.User;
+import com.center.china.osgi.publics.file.writer.WriteFile;
+import com.center.china.osgi.publics.file.writer.WriteFileFactory;
 import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
@@ -64,6 +68,7 @@ import com.china.center.oa.publics.dao.StafferVSIndustryDAO;
 import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
+import com.china.center.tools.MathTools;
 import com.china.center.tools.RequestTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
@@ -1166,6 +1171,111 @@ public class StorageAction extends DispatchAction
         request.setAttribute("depotparList", depotparList);
 
         return mapping.findForward("rptQueryStorageRelationInDepot");
+    }
+
+    /**
+     * exportStorageRelation
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportStorageRelation(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
+                                               HttpServletResponse reponse)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        String filenName = "Product_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            ConditionParse condtion = new ConditionParse();
+
+            List<DepotBean> lList = depotDAO.listEntityBeans();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            write.writeLine("日期,仓库,仓区,储位,产品名称,产品编码,产品数量,产品价格");
+
+            String now = TimeTools.now("yyyy-MM-dd");
+
+            for (DepotBean locationBean : lList)
+            {
+                condtion.clear();
+
+                condtion.addCondition("StorageRelationBean.locationId", "=", locationBean.getId());
+
+                condtion.addIntCondition("StorageRelationBean.amount", ">", 0);
+
+                List<StorageRelationVO> list = storageRelationDAO
+                    .queryEntityVOsByCondition(condtion);
+
+                for (StorageRelationVO each : list)
+                {
+                    if (each.getAmount() > 0)
+                    {
+                        write.writeLine(now + ',' + locationBean.getName() + ','
+                                        + each.getDepotpartName() + ',' + each.getStorageName()
+                                        + ',' + each.getProductName().replaceAll(",", " ") + ','
+                                        + each.getProductCode() + ','
+                                        + String.valueOf(each.getAmount()) + ','
+                                        + MathTools.formatNum(each.getPrice()));
+                    }
+                }
+
+            }
+
+            write.close();
+
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
     }
 
     /**

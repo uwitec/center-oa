@@ -253,7 +253,7 @@ function load()
 						<c:if test="${!ff}">
 						<select name="status" class="select_class" values="${status}">
 							<option value="">--</option>
-							<p:option type="outStatus"/>
+							<p:option type="buyStatus"/>
 						</select>
 						</c:if>
 
@@ -386,7 +386,7 @@ function load()
 							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}">
 							${item.fullId}</a></td>
 							<td align="center">${item.customerName}</td>
-							<td align="center">${my:get('outStatus', item.status)}</td>
+							<td align="center">${my:get('buyStatus', item.status)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('outType_in', item.outType)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.outTime}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>

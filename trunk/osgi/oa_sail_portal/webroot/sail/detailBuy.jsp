@@ -232,7 +232,7 @@ function pagePrint()
                         <td align="right">状态：</td>
                         <td colspan="1">
                         <select name="status" class="select_class"  values="${bean.status}">
-                           <p:option type="outStatus"></p:option>
+                           <p:option type="buyStatus"></p:option>
                         </select>
                         </td>
                         <td align="right">申请人：</td>
@@ -480,9 +480,9 @@ function pagePrint()
 
                             <td  align="center">${item.oprModeName}</td>
 
-                            <td  align="center">${item.preStatusName}</td>
+                            <td  align="center">${my:get('buyStatus', item.preStatus)}</td>
 
-                            <td  align="center">${item.afterStatusName}</td>
+                            <td  align="center">${my:get('buyStatus', item.afterStatus)}</td>
 
                             <td  align="center">${item.description}</td>
 

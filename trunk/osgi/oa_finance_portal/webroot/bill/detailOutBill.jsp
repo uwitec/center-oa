@@ -93,6 +93,14 @@
             </p:cell>
 
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
+			
+			<p:cell title="核对状态" end="true">
+               ${my:get('pubCheckStatus', bean.checkStatus)}
+            </p:cell>
+            
+            <p:cell title="核对信息" end="true">
+               ${bean.checks}
+            </p:cell>
 
 		</p:table>
 

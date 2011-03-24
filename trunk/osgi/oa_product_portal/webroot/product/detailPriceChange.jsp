@@ -40,6 +40,13 @@ function load()
 			<p:cell title="调价人">${bean.stafferName}</p:cell>
 			<p:cell title="状态" end="true">${my:get('priceChangeStatus', bean.status)}</p:cell>
 			<p:cell title="调价原因" end="true">${bean.description}</p:cell>
+			<p:cell title="核对状态" end="true">
+               ${my:get('pubCheckStatus', bean.checkStatus)}
+            </p:cell>
+            
+            <p:cell title="核对信息" end="true">
+               ${bean.checks}
+            </p:cell>
 		</p:table>
 	</p:subBody>
 	

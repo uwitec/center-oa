@@ -892,7 +892,7 @@ function rejects()
 
                             <td  align="center">${item.preStatusName}</td>
 
-                            <td  align="center">${item.afterStatusName}</td>
+                             <td  align="center">${my:get('buyStatus', item.afterStatus)}</td>
 
                             <td  align="center">${item.description}</td>
 

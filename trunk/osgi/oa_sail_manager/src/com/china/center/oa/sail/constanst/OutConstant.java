@@ -334,7 +334,7 @@ public interface OutConstant
     /**
      * 待回款(这里的销售单库存就变动了)(一般此通过即是销售单已经OK status in (3, 4))
      */
-    @Defined(key = "buyStatus", value = "待回款")
+    @Defined(key = "buyStatus", value = "待核对")
     int BUY_STATUS_PASS = 3;
 
     /**

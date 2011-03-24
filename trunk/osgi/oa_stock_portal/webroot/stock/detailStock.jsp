@@ -133,6 +133,15 @@ function showDiv(id)
 			<p:cells celspan="2" title="发货说明">
 			${bean.consign}
 			</p:cells>
+			
+			<p:cell title="核对状态" end="true">
+               ${my:get('pubCheckStatus', bean.checkStatus)}
+            </p:cell>
+            
+            <p:cells celspan="2" title="核对">
+            ${bean.checks}
+            </p:cells>
+
 		</p:table>
 	</p:subBody>
 

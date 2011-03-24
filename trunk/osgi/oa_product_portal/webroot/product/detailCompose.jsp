@@ -47,6 +47,14 @@ function load()
 			<p:cell title="类型">${my:get('composeType', bean.type)}</p:cell>
 			<p:cell title="时间" end="true">${bean.logTime}</p:cell>
 			
+			<p:cell title="核对状态" end="true">
+               ${my:get('pubCheckStatus', bean.checkStatus)}
+            </p:cell>
+            
+            <p:cell title="核对信息" end="true">
+               ${bean.checks}
+            </p:cell>
+			
 		</p:table>
 	</p:subBody>
 	

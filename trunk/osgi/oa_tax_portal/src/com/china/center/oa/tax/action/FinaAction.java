@@ -44,6 +44,7 @@ import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.tax.bean.CheckViewBean;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.FinanceItemBean;
@@ -85,6 +86,8 @@ public class FinaAction extends DispatchAction
     private DutyDAO dutyDAO = null;
 
     private UnitDAO unitDAO = null;
+
+    private OutManager outManager = null;
 
     private DepartmentDAO departmentDAO = null;
 
@@ -322,11 +325,20 @@ public class FinaAction extends DispatchAction
         {
             String id = request.getParameter("id");
 
+            int type = MathTools.parseInt(request.getParameter("type"));
+
             String reason = request.getParameter("reason");
 
             User user = Helper.getUser(request);
 
-            taxFacade.checks(user.getId(), id, reason);
+            if (type != 6)
+            {
+                taxFacade.checks(user.getId(), id, "[" + user.getStafferName() + "]" + reason);
+            }
+            else
+            {
+                outManager.check(id, user, reason);
+            }
 
             ajax.setSuccess("成功操作");
         }
@@ -794,6 +806,23 @@ public class FinaAction extends DispatchAction
     public void setCheckViewDAO(CheckViewDAO checkViewDAO)
     {
         this.checkViewDAO = checkViewDAO;
+    }
+
+    /**
+     * @return the outManager
+     */
+    public OutManager getOutManager()
+    {
+        return outManager;
+    }
+
+    /**
+     * @param outManager
+     *            the outManager to set
+     */
+    public void setOutManager(OutManager outManager)
+    {
+        this.outManager = outManager;
     }
 
 }

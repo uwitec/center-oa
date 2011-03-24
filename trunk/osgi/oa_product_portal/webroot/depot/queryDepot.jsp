@@ -3,6 +3,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+<style type="text/css">
+.flexigrid div.fbutton .draw
+{
+    background: url(../css/flexigrid/images/get.png) no-repeat center left;
+}
+
+.flexigrid div.fbutton .odraw
+{
+    background: url(../css/flexigrid/images/oget.png) no-repeat center left;
+} 
+</style>
 <p:link title="仓库管理" link="true" guid="true" cal="true" dialog="true" />
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
@@ -37,6 +48,7 @@ function load()
              {id: 'update', bclass: 'update', onpress : updateBean, auth: '1102'},
              {id: 'update1', bclass: 'update', caption: '仓区转移', onpress : preForMoveDepotpart, auth: '1104'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1102'},
+             {id: 'export', bclass: 'odraw',  caption: '导出所有库存', onpress : exports},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
          <p:conf/>
@@ -85,6 +97,11 @@ function preForMoveDepotpart()
 	}
 	else
 	$error('不能操作');
+}
+
+function exports()
+{
+    document.location.href = '../depot/storage.do?method=exportStorageRelation';
 }
 
 function doSearch()

@@ -25,7 +25,7 @@ function load()
          title: '资金校验列表',
          url: gurl + 'query' + ukey,
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={checkStatus}>', width : 40, align: 'center'},
+             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={checkStatus} ltype={type}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '20%'},
              {display: '类型', name : 'type', cc: 'checkType', width : '10%'},
              {display: '状态', name : 'checkStatus',  cc: 'pubCheckStatus', width : '10%'},
@@ -102,7 +102,8 @@ function checkBean()
 		$.messager.prompt('总部核对', '请核对说明', '', function(msg){
                 if (msg)
                 {
-                    $ajax(gurl + 'checks&id=' + getRadioValue('checkb') + '&reason=' + ajaxPararmter(msg), callBackFun);
+                    $ajax(gurl + 'checks&id=' + getRadioValue('checkb') + '&reason=' + ajaxPararmter(msg) + '&type=' + getRadio('checkb').ltype , 
+                        callBackFun);
                 }
                
             }, 2);

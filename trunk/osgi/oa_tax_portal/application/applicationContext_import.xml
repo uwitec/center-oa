@@ -68,4 +68,6 @@
 	
 	<osgi:reference id="checkViewDAO" interface="com.china.center.oa.tax.dao.CheckViewDAO" />
 	
+	<osgi:reference id="outManager" interface="com.china.center.oa.sail.manager.OutManager" />
+	
 </beans>
