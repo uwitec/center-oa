@@ -228,6 +228,14 @@ public class FinanceManagerImpl implements FinanceManager
         return true;
     }
 
+    @Transactional(rollbackFor = MYException.class)
+    public boolean deleteChecks(User user, String id)
+        throws MYException
+    {
+        checkViewDAO.deleteEntityBean(id);
+        return true;
+    }
+
     /**
      * @return the financeDAO
      */
@@ -295,4 +303,5 @@ public class FinanceManagerImpl implements FinanceManager
     {
         this.checkViewDAO = checkViewDAO;
     }
+
 }

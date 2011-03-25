@@ -232,4 +232,10 @@ public interface FinanceFacade
 
     boolean rejectInvoiceinsBean(String userId, String id)
         throws MYException;
+
+    boolean updateInBillBeanChecks(String userId, String id, String checks)
+        throws MYException;
+
+    boolean updateOutBillBeanChecks(String userId, String id, String checks)
+        throws MYException;
 }

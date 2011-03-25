@@ -282,7 +282,7 @@ function sub()
 function managerChange()
 {
     //调拨
-    if ($$('outType') == 2 || $$('outType') == 3)
+    if ($$('outType') == 2 || $$('outType') == 3 || $$('outType') == 6)
     {
         showTr('dir_tr', false);
     }
@@ -305,6 +305,16 @@ function managerChange()
          showTr('duty_tr', false);
          showTr('invoice_tr', false);
     }
+    
+    if ($$('outType') == 6)
+    {
+        showTr('pro_tr', true);
+        showTr('duty_tr', true);
+    }
+    else
+    {
+        showTr('pro_tr', false);
+    }
 }
 
 function showTr(id, show)
@@ -312,4 +322,17 @@ function showTr(id, show)
     $v(id, show);
     $d(id, !show);
 }
+
+function selectCustomer()
+{
+    window.common.modal('../finance/finance.do?method=rptQueryUnit&load=1');
+}
+
+function getUnit(oo)
+{
+    $O('customerId').value = oo.value;
+    $O('customerName').value = oo.pname;
+}
+
+
 

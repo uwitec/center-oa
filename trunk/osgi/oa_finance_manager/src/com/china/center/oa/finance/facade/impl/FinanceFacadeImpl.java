@@ -775,7 +775,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
 
         synchronized (BILLAPPLY_LOCK)
         {
-            if (containAuth(user, AuthConstant.INBILL_OPR))
+            if (containAuth(user, AuthConstant.OUTBILL_OPR))
             {
                 return billManager.passTransferOutBillBean(user, id);
             }
@@ -797,7 +797,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
 
         synchronized (BILLAPPLY_LOCK)
         {
-            if (containAuth(user, AuthConstant.INBILL_OPR))
+            if (containAuth(user, AuthConstant.OUTBILL_OPR))
             {
                 return billManager.rejectTransferOutBillBean(user, id);
             }
@@ -805,6 +805,44 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
             {
                 throw noAuth();
             }
+        }
+    }
+
+    public boolean updateInBillBeanChecks(String userId, String id, String checks)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.INBILL_OPR))
+        {
+            return billManager.updateInBillBeanChecks(user, id, checks);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    public boolean updateOutBillBeanChecks(String userId, String id, String checks)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.OUTBILL_OPR))
+        {
+            return billManager.updateOutBillBeanChecks(user, id, checks);
+        }
+        else
+        {
+            throw noAuth();
         }
     }
 

@@ -24,6 +24,7 @@ import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.StatBankManager;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.dao.OutDAO;
@@ -484,6 +485,50 @@ public class BillManagerImpl implements BillManager
         inBillDAO.saveEntityBean(bill);
 
         return bill.getId();
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean updateInBillBeanChecks(User user, String id, String checks)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        InBillBean inBill = inBillDAO.find(id);
+
+        if (inBill == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        inBill.setChecks("[" + user.getStafferName() + "]" + checks);
+
+        inBill.setCheckStatus(PublicConstant.CHECK_STATUS_END);
+
+        inBillDAO.updateEntityBean(inBill);
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean updateOutBillBeanChecks(User user, String id, String checks)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        OutBillBean bill = outBillDAO.find(id);
+
+        if (bill == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        bill.setChecks("[" + user.getStafferName() + "]" + checks);
+
+        bill.setCheckStatus(PublicConstant.CHECK_STATUS_END);
+
+        outBillDAO.updateEntityBean(bill);
+
+        return true;
     }
 
     /**

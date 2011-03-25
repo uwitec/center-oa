@@ -50,6 +50,12 @@ public interface BillManager
     boolean updateInBillBean(User user, InBillBean bean)
         throws MYException;
 
+    boolean updateInBillBeanChecks(User user, String id, String checks)
+        throws MYException;
+
+    boolean updateOutBillBeanChecks(User user, String id, String checks)
+        throws MYException;
+
     boolean deleteInBillBean(User user, String id)
         throws MYException;
 

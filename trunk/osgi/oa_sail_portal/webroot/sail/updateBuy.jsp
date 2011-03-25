@@ -35,7 +35,7 @@ function opens(obj)
 	type=hidden name="unitList" /> <input type=hidden name="amontList" />
 <input type=hidden name="priceList" /> <input type=hidden
 	name="totalList" /> <input type=hidden name="totalss" /> <input
-	type=hidden name="customerId" /> 
+	type=hidden name="customerId" value="${bean.customerId}"/> 
 <input type=hidden name="type" value='1' /> 
 <input type=hidden name="saves" value="" />
 <input type=hidden name="desList" value="" />
@@ -46,7 +46,7 @@ function opens(obj)
 <input type=hidden name="id" value="" />
 <p:navigation
 	height="22">
-	<td width="550" class="navigation">库单管理 &gt;&gt; 填写入库单</td>
+	<td width="550" class="navigation">库单管理 &gt;&gt; 填写入库单(入库单都是正数增加库存,负数减少库存)</td>
 				<td width="85"></td>
 </p:navigation> <br>
 
@@ -132,6 +132,15 @@ function opens(obj)
                                 </select>
 						<font color="#FF0000">*</font></td>
 					</tr>
+					
+					<tr class="content2" id="pro_tr">
+                        <td align="right" id="outd">供应商：</td>
+                        <td colspan="3">
+                        <input type="text" name="customerName" maxlength="14" value="${bean.customerName}" size="60"
+                            onclick="selectCustomer()" style="cursor: pointer;"
+                            readonly="readonly">
+                        </td>
+                    </tr>
 
 					<tr class="content2" id="duty_tr">
 					    <td align="right">纳税实体：</td>

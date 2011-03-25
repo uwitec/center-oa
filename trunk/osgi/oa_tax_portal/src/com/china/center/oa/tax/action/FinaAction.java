@@ -57,6 +57,7 @@ import com.china.center.oa.tax.dao.FinanceItemDAO;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.dao.UnitDAO;
 import com.china.center.oa.tax.facade.TaxFacade;
+import com.china.center.oa.tax.manager.FinanceManager;
 import com.china.center.oa.tax.vo.FinanceItemVO;
 import com.china.center.oa.tax.vo.FinanceVO;
 import com.china.center.tools.BeanUtil;
@@ -88,6 +89,8 @@ public class FinaAction extends DispatchAction
     private UnitDAO unitDAO = null;
 
     private OutManager outManager = null;
+
+    private FinanceManager financeManager = null;
 
     private DepartmentDAO departmentDAO = null;
 
@@ -338,6 +341,8 @@ public class FinaAction extends DispatchAction
             else
             {
                 outManager.check(id, user, reason);
+
+                financeManager.deleteChecks(user, id);
             }
 
             ajax.setSuccess("成功操作");
@@ -823,6 +828,23 @@ public class FinaAction extends DispatchAction
     public void setOutManager(OutManager outManager)
     {
         this.outManager = outManager;
+    }
+
+    /**
+     * @return the financeManager
+     */
+    public FinanceManager getFinanceManager()
+    {
+        return financeManager;
+    }
+
+    /**
+     * @param financeManager
+     *            the financeManager to set
+     */
+    public void setFinanceManager(FinanceManager financeManager)
+    {
+        this.financeManager = financeManager;
     }
 
 }

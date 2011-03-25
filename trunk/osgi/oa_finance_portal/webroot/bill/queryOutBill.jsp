@@ -42,6 +42,7 @@ function load()
          },
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1607'},
+             {id: 'update', bclass: 'update', caption: '更新核对', auth: '1607', onpress : updateOutBillBeanChecks},
              {id: 'del', bclass: 'delete', auth: '1607', onpress : delBean},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
@@ -73,6 +74,25 @@ function delBean(opr, grid)
     else
     $error('不能操作');
 }
+
+function updateOutBillBeanChecks()
+{
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 0)
+    {   
+        $.messager.prompt('总部核对', '请输入核对说明', '', function(msg){
+                if (msg)
+                {
+                    $ajax('../finance/bill.do?method=updateOutBillBeanChecks&id=' 
+                        + getRadioValue('checkb') + '&checks=' + ajaxPararmter(msg) , 
+                        callBackFun);
+                }
+               
+            }, 2);
+    }
+    else
+    $error('不能操作');
+}
+
 
 function doSearch()
 {

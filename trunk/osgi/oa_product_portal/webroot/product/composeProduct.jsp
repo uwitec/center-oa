@@ -238,7 +238,7 @@ function load()
 			onclick="selectProduct(this)">
          <input type="hidden" name="dirProductId" value="">
          合成数量：<input type="text" style="width: 10%"
-                    name="dirAmount" value="" oncheck="notNone;isNumber">
+                    name="dirAmount" value="" oncheck="notNone;isNumber;range(1)">
 			</p:tr>
 		</p:table>
 	</p:subBody>

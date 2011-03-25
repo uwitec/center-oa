@@ -216,6 +216,12 @@
             <type>select</type>
             <option>$billLock</option>
         </condtion>
+        <condtion name="checkStatus" caption="核对">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$pubCheckStatus</option>
+        </condtion>
     </item>
     
     <item name="querySelfInBill" alias="queryInBill"/>
@@ -270,6 +276,12 @@
             <datatype>1</datatype>
             <type>select</type>
             <option>$billLock</option>
+        </condtion>
+        <condtion name="checkStatus" caption="核对">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$pubCheckStatus</option>
         </condtion>
     </item>
     

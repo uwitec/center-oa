@@ -1106,7 +1106,7 @@ public class OutAction extends ParentOutAction
             }
 
             // 进入待总裁审批
-            if (statuss == OutConstant.STATUS_CEO_CHECK)
+            if (statuss == OutConstant.BUY_STATUS_CEO_CHECK)
             {
                 try
                 {
@@ -1124,7 +1124,7 @@ public class OutAction extends ParentOutAction
             }
 
             // 进入待董事长审批
-            if (statuss == OutConstant.STATUS_CHAIRMA_CHECK)
+            if (statuss == OutConstant.BUY_STATUS_CHAIRMA_CHECK)
             {
                 try
                 {
@@ -1142,7 +1142,7 @@ public class OutAction extends ParentOutAction
             }
 
             // 进入库管发货(结束了)
-            if (statuss == OutConstant.STATUS_PASS)
+            if (statuss == OutConstant.BUY_STATUS_PASS)
             {
                 try
                 {
@@ -1160,7 +1160,7 @@ public class OutAction extends ParentOutAction
             }
 
             // 驳回
-            if (statuss == OutConstant.STATUS_REJECT)
+            if (statuss == OutConstant.BUY_STATUS_REJECT)
             {
                 try
                 {

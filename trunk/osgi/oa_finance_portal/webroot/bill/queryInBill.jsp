@@ -41,7 +41,8 @@ function load()
          },
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1603'},
-             {id: 'update', bclass: 'update', caption: '分拆预收', auth: '1603', onpress : splitInBill},
+             //{id: 'update', bclass: 'update', caption: '分拆预收', auth: '1603', onpress : splitInBill},
+             {id: 'update2', bclass: 'update', caption: '更新核对', auth: '1603', onpress : updateInBillBeanChecks},
              {id: 'del', bclass: 'delete', auth: '1603', onpress : delBean},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
@@ -87,6 +88,24 @@ function splitInBill(opr, grid)
                 else
                 $error('只能输入数字');           
             });
+    }
+    else
+    $error('不能操作');
+}
+
+function updateInBillBeanChecks()
+{
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 0)
+    {   
+        $.messager.prompt('总部核对', '请输入核对说明', '', function(msg){
+                if (msg)
+                {
+                    $ajax('../finance/bill.do?method=updateInBillBeanChecks&id=' 
+                        + getRadioValue('checkb') + '&checks=' + ajaxPararmter(msg) , 
+                        callBackFun);
+                }
+               
+            }, 2);
     }
     else
     $error('不能操作');

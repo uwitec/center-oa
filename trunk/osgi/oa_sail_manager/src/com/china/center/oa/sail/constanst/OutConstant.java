@@ -232,6 +232,12 @@ public interface OutConstant
     /**
      * 采购退货
      */
+    @Defined(key = "outType_in", value = "采购退货")
+    int OUTTYPE_IN_STOCK = 6;
+
+    /**
+     * 采购退货
+     */
     int OUTTYPE_IN_RECEDE = 7;
 
     /**

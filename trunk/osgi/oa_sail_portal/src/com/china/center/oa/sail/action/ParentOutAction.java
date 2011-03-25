@@ -1596,8 +1596,13 @@ public class ParentOutAction extends DispatchAction
             // 默认很多属性
             outBean.setStafferId(user.getStafferId());
             outBean.setStafferName(user.getStafferName());
-            outBean.setCustomerId(CustomerConstant.PUBLIC_CUSTOMER_ID);
-            outBean.setCustomerName(CustomerConstant.PUBLIC_CUSTOMER_NAME);
+
+            if (StringTools.isNullOrNone(outBean.getCustomerId()))
+            {
+                outBean.setCustomerId(CustomerConstant.PUBLIC_CUSTOMER_ID);
+                outBean.setCustomerName(CustomerConstant.PUBLIC_CUSTOMER_NAME);
+            }
+
             outBean.setDepartment("公共部门");
             outBean.setArriveDate(TimeTools.now_short(10));
 
