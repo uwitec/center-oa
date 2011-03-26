@@ -118,7 +118,10 @@ public class Activator implements BundleActivator
     public void stop(BundleContext arg0)
         throws Exception
     {
-        scanResource.setCarry(false);
+        if (scanResource != null)
+        {
+            scanResource.setCarry(false);
+        }
     }
 
     class ScanResource extends Thread
