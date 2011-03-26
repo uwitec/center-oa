@@ -53,7 +53,7 @@ function stat()
 
 </head>
 <body class="body_class" onload="load()">
-<form name="bankList" action="../product/reports.do"><input
+<form name="formEntry" action="../product/reports.do"><input
 	type="hidden" name="method" value="statReports"> <p:navigation
 	height="22">
 	<td width="550" class="navigation">盘点管理 &gt;&gt; 盘点列表</td>

@@ -12,12 +12,26 @@ function addBean()
 {
 	submit('确定增加回款?');
 }
+
+function selectBank()
+{
+    //单选
+    window.common.modal('../finance/bank.do?method=rptQueryBank&load=1');
+}
+
+function getBank(obj)
+{
+    $O('bankName').value = obj.pname;
+    
+    $O('bankId').value = obj.value;
+}
 </script>
 
 </head>
 <body class="body_class">
 <form name="formEntry" action="../finance/bank.do" method="post"><input
 	type="hidden" name="method" value="addPayment">
+<input type="hidden" name="bankId" value="">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
@@ -37,10 +51,13 @@ function addBean()
 		<p:class value="com.china.center.oa.finance.bean.PaymentBean" />
 
 		<p:table cells="1">
-			<p:pro field="bankId" innerString="style='width: 400px'">
-			    <option value="">--</option> 
-				<p:option type="bankList"/>
-			</p:pro>
+			<p:cell title="选择帐户">
+                <input name="bankName" type="text" readonly="readonly" size="60" oncheck="notNone">
+                 <font color="red">*</font>
+                <input type="button"
+                    value="&nbsp;...&nbsp;" name="qout" class="button_class"
+                    onclick="selectBank()">
+            </p:cell>
 			
 			<p:pro field="fromer" innerString="size=60"/>
 			

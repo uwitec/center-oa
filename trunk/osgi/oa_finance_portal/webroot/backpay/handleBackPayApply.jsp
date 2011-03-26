@@ -31,6 +31,19 @@ function endBean()
     submit('确定付款给客户?(自动生成付款单)付款金额:' + $$('backPay'), null, null);
 }
 
+function selectBank()
+{
+    //单选
+    window.common.modal('../finance/bank.do?method=rptQueryBank&load=1');
+}
+
+function getBank(obj)
+{
+    $O('bankName').value = obj.pname;
+    
+    $O('bankId').value = obj.value;
+}
+
 </script>
 
 </head>
@@ -39,6 +52,7 @@ function endBean()
 <input type="hidden" name="method" value=""> 
 <input type="hidden" name="id" value="${bean.id}"> 
 <input type="hidden" name="mode" value="${mode}"> 
+<input type="hidden" name="bankId" value=""> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">
@@ -124,12 +138,13 @@ function endBean()
 	                <font color="red">*</font>
 	            </p:cell> 
 	            
-	            <p:cell title="银行帐户" end="true">
-	                <select name="bankId" style="width: 400px" class="select_class" oncheck="notNone">
-	                <p:option type="bankList"></p:option>
-	                </select>
+	            <p:cell title="选择帐户" end="true">
+	                <input name="bankName" type="text" readonly="readonly" size="60" oncheck="notNone">
 	                <font color="red">*</font>
-	            </p:cell> 
+	                <input type="button"
+	                    value="&nbsp;...&nbsp;" name="qout" class="button_class"
+	                    onclick="selectBank()">
+                </p:cell>
 	            
 	            <p:cell title="付款方式" end="true">
 	                <select name="payType" style="width: 400px" class="select_class" oncheck="notNone">

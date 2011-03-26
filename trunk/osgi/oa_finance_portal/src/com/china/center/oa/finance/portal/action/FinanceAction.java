@@ -411,6 +411,13 @@ public class FinanceAction extends DispatchAction
                 RPTQUERYBANK), PageSeparateTools.getPageSeparate(request, RPTQUERYBANK));
         }
 
+        for (BankVO bankVO : list)
+        {
+            double total = statBankManager.findTotalByBankId(bankVO.getId());
+
+            bankVO.setTotal(total);
+        }
+
         List<DutyBean> dutyList = dutyDAO.listEntityBeans();
 
         request.setAttribute("dutyList", dutyList);

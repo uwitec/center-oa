@@ -59,7 +59,8 @@ public class ResourceLoad
 
                 if (USER_FLODER.contains(webPluginName.toLowerCase()))
                 {
-                    LOGGER.warn("webPluginName[" + webPluginName + "] in " + USER_FLODER + ".So stop init.");
+                    LOGGER.warn("webPluginName[" + webPluginName + "] in " + USER_FLODER
+                                + ".So stop init.");
 
                     return;
                 }
@@ -136,7 +137,8 @@ public class ResourceLoad
 
     private static void search(String pnane, Bundle bundle, String pattern, RegisterWebPlugin server)
     {
-        OsgiBundleResourcePatternResolver patternResolver = new OsgiBundleResourcePatternResolver(bundle);
+        OsgiBundleResourcePatternResolver patternResolver = new OsgiBundleResourcePatternResolver(
+            bundle);
 
         try
         {
@@ -178,7 +180,8 @@ public class ResourceLoad
                     {
                         in = resource.getInputStream();
 
-                        server.registerWebResource(pnane, getPath(resource.getURI().toString()), in);
+                        server
+                            .registerWebResource(pnane, getPath(resource.getURI().toString()), in);
                     }
                 }
                 catch (Exception e)
@@ -220,7 +223,8 @@ public class ResourceLoad
     {
         if (USER_FLODER.contains(webPluginName.toLowerCase()))
         {
-            LOGGER.warn("webPluginName[" + webPluginName + "] in " + USER_FLODER + ".So stop destory.");
+            LOGGER.warn("webPluginName[" + webPluginName + "] in " + USER_FLODER
+                        + ".So stop destory.");
 
             return;
         }
@@ -247,6 +251,7 @@ public class ResourceLoad
 
         server.removeWebResource(webPluginName);
 
-        LOGGER.info("****************DESTORY AND REMOVE-OUT[" + webPluginName + "]*****************");
+        LOGGER.info("****************DESTORY AND REMOVE-OUT[" + webPluginName
+                    + "]*****************");
     }
 }

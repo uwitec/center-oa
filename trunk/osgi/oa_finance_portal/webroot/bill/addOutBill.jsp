@@ -103,18 +103,42 @@ function changeAll()
     //转账
     if ($$('type') == 98)
     {
-        $v('destBankId_TR', true);
+        $v('tr_destBankId', true);
         $v('invoiceId_TR', false);
         $v('provideId_TR', false);
         $v('ownerId_TR', false);
     }
     else
     {
-        $v('destBankId_TR', false);
+        $v('tr_destBankId', false);
     }
 }
 
-//destBankId_TR
+var g_flag = 0;
+
+function selectBank(flag)
+{
+    g_flag = flag;
+    
+    //单选
+    window.common.modal('../finance/bank.do?method=rptQueryBank&load=1');
+}
+
+function getBank(obj)
+{
+    if (g_flag == 0)
+    {
+	    $O('bankName').value = obj.pname;
+	    
+	    $O('bankId').value = obj.value;
+    }
+    else
+    {
+        $O('destBankName').value = obj.pname;
+        
+        $O('destBankId').value = obj.value;
+    }
+}
 </script>
 
 </head>
@@ -124,6 +148,8 @@ function changeAll()
 <input type="hidden" name="provideId" value="">
 <input type="hidden" name="ownerId" value="">
 <input type="hidden" name="stockId" value="">
+<input type="hidden" name="bankId" value="">
+<input type="hidden" name="destBankId" value="">
 
 <p:navigation
 	height="22">
@@ -145,10 +171,13 @@ function changeAll()
 
 		<p:table cells="1">
 
-			<p:pro field="bankId" innerString="style='width: 300px'">
-			    <option value="">--</option> 
-                <p:option type="bankList"/>
-            </p:pro>
+			<p:cell title="选择帐户">
+                <input name="bankName" type="text" readonly="readonly" size="60" oncheck="notNone">
+                 <font color="red">*</font>
+                <input type="button"
+                    value="&nbsp;...&nbsp;" name="qout" class="button_class"
+                    onclick="selectBank(0)">
+            </p:cell>
             
             <p:pro field="payType">
                 <p:option type="outbillPayType"/>
@@ -158,10 +187,13 @@ function changeAll()
 				<p:option type="outbillType"/>
 			</p:pro>
 			
-			<p:pro field="destBankId" innerString="style='width: 300px'">
-                <option value="">--</option> 
-                <p:option type="bankList"/>
-            </p:pro>
+			<p:cell title="选择目的帐户" id="destBankId">
+                <input name="destBankName" type="text" readonly="readonly" size="60" oncheck="notNone">
+                 <font color="red">*</font>
+                <input type="button"
+                    value="&nbsp;...&nbsp;" name="qout" class="button_class"
+                    onclick="selectBank(1)">
+            </p:cell>
 			
 			<p:pro field="invoiceId" innerString="style='width: 300px'">
 			    <option value="">--</option>

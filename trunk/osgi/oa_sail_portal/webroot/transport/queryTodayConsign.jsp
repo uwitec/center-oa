@@ -18,7 +18,7 @@ function load()
 
 </head>
 <body class="body_class" onload="load()">
-<form name="bankList" action="../sail/transport.do"><input
+<form name="formEntry" action="../sail/transport.do"><input
 	type="hidden" name="method" value="queryConsign">
 
 <p:body width="100%">

@@ -44,7 +44,7 @@ function exports()
 
 </head>
 <body class="body_class" onload="load()">
-<form name="bankList" action="../sail/transport.do"><input
+<form name="formEntry" action="../sail/transport.do"><input
 	type="hidden" name="method" value="queryConsign"> <p:navigation
 	height="22">
 	<td width="550" class="navigation">发货单管理 &gt;&gt; 发货单列表</td>

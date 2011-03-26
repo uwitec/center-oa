@@ -29,12 +29,26 @@ function selectStaffer()
     window.common.modal('../admin/pop.do?method=rptQueryStaffer&load=1&selectMode=1');
 }
 
+
 function getStaffers(oo)
 {
     var obj = oo[0];
     
     $O('ownerId').value = obj.value;
     $O('ownerName').value = obj.pname;
+}
+
+function selectBank()
+{
+    //单选
+    window.common.modal('../finance/bank.do?method=rptQueryBank&load=1');
+}
+
+function getBank(obj)
+{
+    $O('bankName').value = obj.pname;
+    
+    $O('bankId').value = obj.value;
 }
 </script>
 
@@ -44,6 +58,7 @@ function getStaffers(oo)
 <input type="hidden" name="method" value="addInBill">
 <input type="hidden" name="customerId" value="">
 <input type="hidden" name="ownerId" value="">
+<input type="hidden" name="bankId" value="">
 
 <p:navigation
 	height="22">
@@ -64,11 +79,14 @@ function getStaffers(oo)
 		<p:class value="com.china.center.oa.finance.bean.InBillBean" />
 
 		<p:table cells="1">
-
-			<p:pro field="bankId" innerString="style='width: 300px'">
-			    <option value="">--</option> 
-                <p:option type="bankList"/>
-            </p:pro>
+		
+		    <p:cell title="选择帐户">
+                <input name="bankName" type="text" readonly="readonly" size="60" oncheck="notNone">
+                 <font color="red">*</font>
+                <input type="button"
+                    value="&nbsp;...&nbsp;" name="qout" class="button_class"
+                    onclick="selectBank()">
+            </p:cell>
 			
 			<p:pro field="type">
 				<p:option type="inbillType"/>

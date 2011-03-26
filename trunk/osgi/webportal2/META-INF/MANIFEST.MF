@@ -8,6 +8,7 @@ Export-Package:
  com.china.center.webportal.listener;version="1.0.0",
  com.china.center.webportal.filter;version="1.0.0"
 Bundle-Vendor: PUBLIC
+Bundle-Activator: com.china.center.webplugin.init.Activator
 Bundle-ClassPath: .,
  WEB-INF/classes/,
  WEB-INF/lib/buffalo-2.0-osgi.jar,

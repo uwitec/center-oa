@@ -98,6 +98,7 @@ function press()
 			<tr align=center class="content0">
 				<td align="center" width="5%">选择</td>
 				<td align="center" width="20%"><strong>名称</strong></td>
+				<td align="center" width="20%"><strong>余额</strong></td>
 				<td align="center" width="20%"><strong>类型</strong></td>
 				<td align="center" width="20%"><strong>纳税实体</strong></td>
 			</tr>
@@ -109,6 +110,7 @@ function press()
 					    pname="${item.name}"
 						value="${item.id}" ${vs.index== 0 ? "checked" : ""}/></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.name}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('bankType', item.type)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.dutyName}</td>
 				</tr>
