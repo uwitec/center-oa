@@ -9,6 +9,7 @@
 package com.china.center.oa.finance.portal.action;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.constant.StockPayApplyConstant;
 import com.china.center.oa.finance.dao.BankDAO;
+import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.dao.StockPayApplyDAO;
 import com.china.center.oa.finance.facade.FinanceFacade;
 import com.china.center.oa.finance.vo.StockPayApplyVO;
@@ -64,6 +66,8 @@ public class StockPayAction extends DispatchAction
     private FlowLogDAO flowLogDAO = null;
 
     private BankDAO bankDAO = null;
+
+    private OutBillDAO outBillDAO = null;
 
     private FinanceFacade financeFacade = null;
 
@@ -249,6 +253,30 @@ public class StockPayAction extends DispatchAction
             }
         }
 
+        String inBillId = bean.getInBillId();
+
+        if ( !StringTools.isNullOrNone(inBillId))
+        {
+            List<OutBillBean> outList = new ArrayList<OutBillBean>();
+
+            String[] split = inBillId.split(";");
+
+            for (String each : split)
+            {
+                if ( !StringTools.isNullOrNone(each))
+                {
+                    OutBillBean outBill = outBillDAO.findVO(each);
+
+                    if (outBill != null)
+                    {
+                        outList.add(outBill);
+                    }
+                }
+            }
+
+            request.setAttribute("outList", outList);
+        }
+
         return mapping.findForward("detailStockPayApply");
     }
 
@@ -352,20 +380,36 @@ public class StockPayAction extends DispatchAction
         String id = request.getParameter("id");
 
         String reason = request.getParameter("reason");
-        String bankId = request.getParameter("bankId");
-        String payType = request.getParameter("payType");
 
-        OutBillBean outBill = new OutBillBean();
+        String[] bankIds = request.getParameterValues("bankId");
+        String[] payTypes = request.getParameterValues("payType");
+        String[] moneys = request.getParameterValues("money");
+
+        List<OutBillBean> outBillList = new ArrayList<OutBillBean>();
+
+        for (int i = 0; i < bankIds.length; i++ )
+        {
+            if (StringTools.isNullOrNone(bankIds[i]))
+            {
+                continue;
+            }
+
+            OutBillBean outBill = new OutBillBean();
+
+            outBill.setBankId(bankIds[i]);
+
+            outBill.setPayType(MathTools.parseInt(payTypes[i]));
+
+            outBill.setMoneys(MathTools.parseDouble(moneys[i]));
+
+            outBillList.add(outBill);
+        }
 
         try
         {
             User user = Helper.getUser(request);
 
-            outBill.setBankId(bankId);
-
-            outBill.setPayType(MathTools.parseInt(payType));
-
-            financeFacade.endStockPayBySEC(user.getId(), id, reason, outBill);
+            financeFacade.endStockPayBySEC(user.getId(), id, reason, outBillList);
 
             request.setAttribute(KeyConstant.MESSAGE, "成功操作");
         }
@@ -488,5 +532,22 @@ public class StockPayAction extends DispatchAction
     public void setBankDAO(BankDAO bankDAO)
     {
         this.bankDAO = bankDAO;
+    }
+
+    /**
+     * @return the outBillDAO
+     */
+    public OutBillDAO getOutBillDAO()
+    {
+        return outBillDAO;
+    }
+
+    /**
+     * @param outBillDAO
+     *            the outBillDAO to set
+     */
+    public void setOutBillDAO(OutBillDAO outBillDAO)
+    {
+        this.outBillDAO = outBillDAO;
     }
 }

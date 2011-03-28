@@ -13,6 +13,7 @@ import com.center.china.osgi.publics.ParentListener;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.product.bean.ProductBean;
+import com.china.center.oa.product.vs.StorageRelationBean;
 
 
 /**
@@ -34,4 +35,13 @@ public interface PriceChangeListener extends ParentListener
      */
     void onPriceChange(User user, ProductBean bean)
         throws MYException;
+
+    /**
+     * onPriceChange
+     * 
+     * @param user
+     * @param relation
+     * @throws MYException
+     */
+    int onPriceChange2(User user, StorageRelationBean relation);
 }

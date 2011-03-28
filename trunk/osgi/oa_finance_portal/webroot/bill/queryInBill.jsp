@@ -95,7 +95,7 @@ function splitInBill(opr, grid)
 
 function updateInBillBeanChecks()
 {
-    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 0)
+    if (getRadio('checkb') && getRadioValue('checkb'))
     {   
         $.messager.prompt('总部核对', '请输入核对说明', '', function(msg){
                 if (msg)

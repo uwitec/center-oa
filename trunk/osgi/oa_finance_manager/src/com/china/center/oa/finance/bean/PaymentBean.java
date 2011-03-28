@@ -81,6 +81,9 @@ public class PaymentBean implements Serializable
     @Html(title = "金额", must = true, type = Element.DOUBLE)
     private double money = 0.0d;
 
+    @Html(title = "手续费", must = true, type = Element.DOUBLE)
+    private double handling = 0.0d;
+
     /**
      * 回款日期
      */
@@ -357,6 +360,40 @@ public class PaymentBean implements Serializable
     }
 
     /**
+     * @return the refId
+     */
+    public String getRefId()
+    {
+        return refId;
+    }
+
+    /**
+     * @param refId
+     *            the refId to set
+     */
+    public void setRefId(String refId)
+    {
+        this.refId = refId;
+    }
+
+    /**
+     * @return the handling
+     */
+    public double getHandling()
+    {
+        return handling;
+    }
+
+    /**
+     * @param handling
+     *            the handling to set
+     */
+    public void setHandling(double handling)
+    {
+        this.handling = handling;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -389,6 +426,9 @@ public class PaymentBean implements Serializable
             .append("customerId = ")
             .append(this.customerId)
             .append(TAB)
+            .append("refId = ")
+            .append(this.refId)
+            .append(TAB)
             .append("batchId = ")
             .append(this.batchId)
             .append(TAB)
@@ -407,6 +447,9 @@ public class PaymentBean implements Serializable
             .append("money = ")
             .append(this.money)
             .append(TAB)
+            .append("handling = ")
+            .append(this.handling)
+            .append(TAB)
             .append("receiveTime = ")
             .append(this.receiveTime)
             .append(TAB)
@@ -419,23 +462,6 @@ public class PaymentBean implements Serializable
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the refId
-     */
-    public String getRefId()
-    {
-        return refId;
-    }
-
-    /**
-     * @param refId
-     *            the refId to set
-     */
-    public void setRefId(String refId)
-    {
-        this.refId = refId;
     }
 
 }

@@ -1320,7 +1320,7 @@ public class FinanceAction extends DispatchAction
                     // 序号 回款来源 回款金额 回款日期 备注
                     int currentNumber = reader.getCurrentLineNumber();
 
-                    if (obj.length >= 5)
+                    if (obj.length >= 6)
                     {
                         try
                         {
@@ -1443,12 +1443,13 @@ public class FinanceAction extends DispatchAction
         bean.setBankId(bankId);
         bean.setFromer(obj[2]);
         bean.setMoney(MathTools.parseDouble(obj[3]));
-        bean.setReceiveTime(obj[4]);
+        bean.setHandling(MathTools.parseDouble(obj[4]));
+        bean.setReceiveTime(obj[5]);
         bean.setBatchId(batchId);
 
-        if (obj.length == 6)
+        if (obj.length == 7)
         {
-            bean.setDescription(obj[5]);
+            bean.setDescription(obj[6]);
         }
 
         PaymentBean oldPay = paymentDAO.findByUnique(bean.getBankId(), bean.getRefId());

@@ -125,7 +125,7 @@ public interface FinanceConstant
     int PAYAPPLY_STATUS_REJECT = 2;
 
     /**
-     * 回款转收款
+     * 回款转收款(就是回款落地)
      */
     @Defined(key = "payApplyType", value = "回款转收款")
     int PAYAPPLY_TYPE_PAYMENT = 0;
@@ -266,6 +266,12 @@ public interface FinanceConstant
      */
     @Defined(key = "outbillType", value = "销售/预收退款")
     int OUTBILL_TYPE_OUTBACK = 10;
+
+    /**
+     * 手续费
+     */
+    @Defined(key = "outbillType", value = "手续费")
+    int OUTBILL_TYPE_HANDLING = 11;
 
     /**
      * 转账

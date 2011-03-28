@@ -20,6 +20,7 @@ import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.tax.bean.CheckViewBean;
 import com.china.center.oa.tax.dao.CheckViewDAO;
+import com.china.center.oa.tax.vo.CheckViewVO;
 
 
 /**
@@ -30,7 +31,7 @@ import com.china.center.oa.tax.dao.CheckViewDAO;
  * @see CheckViewDAOImpl
  * @since 3.0
  */
-public class CheckViewDAOImpl extends BaseDAO<CheckViewBean, CheckViewBean> implements CheckViewDAO
+public class CheckViewDAOImpl extends BaseDAO<CheckViewBean, CheckViewVO> implements CheckViewDAO
 {
     private final Log triggerLog = LogFactory.getLog("trigger");
 

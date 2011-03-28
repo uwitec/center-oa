@@ -18,6 +18,7 @@ import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.finance.bean.InBillBean;
+import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.bean.PaymentApplyBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
@@ -26,8 +27,10 @@ import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.dao.PaymentApplyDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.dao.PaymentVSOutDAO;
+import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.PaymentManager;
 import com.china.center.oa.finance.manager.StatBankManager;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.tools.JudgeTools;
@@ -55,6 +58,8 @@ public class PaymentManagerImpl implements PaymentManager
     private PaymentApplyDAO paymentApplyDAO = null;
 
     private CommonDAO commonDAO = null;
+
+    private BillManager billManager = null;
 
     private PaymentVSOutDAO paymentVSOutDAO = null;
 
@@ -237,11 +242,14 @@ public class PaymentManagerImpl implements PaymentManager
             }
         }
 
-        int outCount = outBillDAO.countByFK(id);
+        List<OutBillBean> outList = outBillDAO.queryEntityBeansByFK(id);
 
-        if (outCount > 0)
+        for (OutBillBean outBillBean : outList)
         {
-            throw new MYException("回款单存在付款单据,无法退领,请确认操作");
+            if (outBillBean.getType() != FinanceConstant.OUTBILL_TYPE_HANDLING)
+            {
+                throw new MYException("回款单存在付款单据,无法退领,请确认操作");
+            }
         }
 
         List<PaymentApplyBean> applyList = paymentApplyDAO.queryEntityBeansByFK(id);
@@ -255,7 +263,56 @@ public class PaymentManagerImpl implements PaymentManager
 
             flowLogDAO.deleteEntityBeansByFK(paymentApplyBean.getId());
 
-            inBillDAO.deleteEntityBeansByCondition(condition);
+            List<InBillBean> inBillList = inBillDAO.queryEntityBeansByCondition(condition);
+
+            for (InBillBean innerEach : inBillList)
+            {
+                if (innerEach.getCheckStatus() == PublicConstant.CHECK_STATUS_INIT)
+                {
+                    inBillDAO.deleteEntityBean(innerEach.getId());
+                }
+                else
+                {
+                    innerEach.setPaymentId("");
+                    innerEach.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
+                    innerEach.setOutId("");
+                    innerEach.setOutBalanceId("");
+
+                    // 重置为普通的单据
+                    inBillDAO.updateEntityBean(innerEach);
+
+                    // 生成一个对冲的单据
+                    innerEach.setMoneys( -innerEach.getMoneys());
+                    innerEach.setDescription("退领生成对冲的单据:" + innerEach.getId());
+                    innerEach.setRefBillId(innerEach.getId());
+                    billManager.addInBillBeanWithoutTransaction(user, innerEach);
+                }
+            }
+
+            List<OutBillBean> outBillList = outBillDAO.queryEntityBeansByFK(id);
+
+            for (OutBillBean outEach : outBillList)
+            {
+                if (outEach.getCheckStatus() == PublicConstant.CHECK_STATUS_INIT)
+                {
+                    outBillDAO.deleteEntityBean(outEach.getId());
+                }
+                else
+                {
+                    outEach.setStockId("");
+                    outEach.setStockItemId("");
+                    outEach.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
+
+                    // 重置为普通的单据
+                    outBillDAO.updateEntityBean(outEach);
+
+                    // 生成一个对冲的单据
+                    outEach.setMoneys( -outEach.getMoneys());
+                    outEach.setDescription("退领生成对冲的单据:" + outEach.getId());
+                    outEach.setRefBillId(outEach.getId());
+                    billManager.addOutBillBeanWithoutTransaction(user, outEach);
+                }
+            }
         }
 
         pay.setStafferId("");
@@ -403,5 +460,22 @@ public class PaymentManagerImpl implements PaymentManager
     public void setOutBillDAO(OutBillDAO outBillDAO)
     {
         this.outBillDAO = outBillDAO;
+    }
+
+    /**
+     * @return the billManager
+     */
+    public BillManager getBillManager()
+    {
+        return billManager;
+    }
+
+    /**
+     * @param billManager
+     *            the billManager to set
+     */
+    public void setBillManager(BillManager billManager)
+    {
+        this.billManager = billManager;
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.InBillBean;
+import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.bean.PaymentApplyBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
@@ -32,8 +33,10 @@ import com.china.center.oa.finance.manager.PaymentApplyManager;
 import com.china.center.oa.finance.vs.PaymentVSOutBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.constant.PublicConstant;
+import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
+import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.wrap.ResultBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
@@ -72,6 +75,8 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
     private InBillDAO inBillDAO = null;
 
     private BillManager billManager = null;
+
+    private ParameterDAO parameterDAO = null;
 
     private OutDAO outDAO = null;
 
@@ -488,6 +493,36 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         // 里面存在多个销售单或者委托清单(回款转收款 )/这里没有坏账
         if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_PAYMENT)
         {
+            int maxFee = parameterDAO.getInt(SysConfigConstant.MAX_RECVIVE_FEE);
+
+            // 如果存在手续费先付款
+            if (payment.getHandling() > 0)
+            {
+                OutBillBean out = new OutBillBean();
+
+                out.setBankId(payment.getBankId());
+                out.setDescription("回款转收款自动生成手续费:" + payment.getId());
+                out.setLocationId(user.getLocationId());
+                out.setMoneys(payment.getHandling());
+
+                if (payment.getHandling() < maxFee)
+                {
+                    // 个人承担这个费用
+                    out.setOwnerId(apply.getStafferId());
+                }
+
+                out.setType(FinanceConstant.OUTBILL_TYPE_HANDLING);
+
+                out.setProvideId(payment.getCustomerId());
+
+                out.setStafferId(user.getStafferId());
+
+                // REF
+                out.setStockId(payment.getId());
+
+                billManager.addOutBillBeanWithoutTransaction(user, out);
+            }
+
             for (PaymentVSOutBean item : vsList)
             {
                 if (StringTools.isNullOrNone(item.getOutId()))
@@ -781,6 +816,23 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
             }
         }
 
+        // 这里驳回需要单据复原
+        if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_PAYMENT)
+        {
+            PaymentBean pay = paymentDAO.find(apply.getPaymentId());
+
+            if (pay != null)
+            {
+                pay.setStafferId("");
+
+                pay.setCustomerId("");
+
+                pay.setStatus(FinanceConstant.PAYMENT_STATUS_INIT);
+
+                paymentDAO.updateEntityBean(pay);
+            }
+        }
+
         saveRejectLog(user, apply, reason);
 
         return true;
@@ -1036,6 +1088,23 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
     public void setOutManager(OutManager outManager)
     {
         this.outManager = outManager;
+    }
+
+    /**
+     * @return the parameterDAO
+     */
+    public ParameterDAO getParameterDAO()
+    {
+        return parameterDAO;
+    }
+
+    /**
+     * @param parameterDAO
+     *            the parameterDAO to set
+     */
+    public void setParameterDAO(ParameterDAO parameterDAO)
+    {
+        this.parameterDAO = parameterDAO;
     }
 
 }

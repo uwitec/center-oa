@@ -252,6 +252,20 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
         return true;
     }
 
+    public int onPriceChange2(User user, StorageRelationBean bean)
+    {
+        Collection<PriceChangeListener> listenerList = this.listenerMapValues();
+
+        int total = 0;
+
+        for (PriceChangeListener priceChangeListener : listenerList)
+        {
+            total += priceChangeListener.onPriceChange2(user, bean);
+        }
+
+        return total;
+    }
+
     /**
      * processStorageRelation
      * 

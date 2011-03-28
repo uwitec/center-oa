@@ -4,10 +4,12 @@
 <html>
 <head>
 <p:link title="付款申请" />
-<script language="JavaScript" src="../js/JCheck.js"></script>
+<script language="JavaScript" src="../js/JCheck_debug.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
+<script language="JavaScript" src="../js/key.js"></script>
+<script language="JavaScript" src="../stockapply_js/detailStockPayApply.js"></script>
 <script language="javascript">
 
 function passBean()
@@ -39,41 +41,100 @@ function checkValue()
 
 function rejectBean()
 {
-    $O('method').value = 'rejectStockPayApply';
+    //$O('method').value = 'rejectStockPayApply';
     
-    submit('确定驳回付款申请?', null, null);
+    if (window.confirm('确定驳回付款申请?'))
+    {
+        $l('../finance/stock.do?method=rejectStockPayApply&id=' + $$('id') + '&reason=' + ajaxPararmter($$('reason')));
+    }
+}
+
+function ajaxPararmter(str)
+{
+    str = str.replace(/\+/g, "%2B"); 
+    str = str.replace(/\%/g, "%25"); 
+    str = str.replace(/\&/g, "%26");
+    
+    return str;
 }
 
 function endBean()
 {
     $O('method').value = 'endStockPayBySEC';
     
-    submit('确定付款给供应商?付款金额:${my:formatNum(bean.moneys)}', null, null);
+    submit('确定付款给供应商?付款金额:${my:formatNum(bean.moneys)}', null, checkMoney);
 }
 
-function selectBank()
+function checkMoney()
 {
+    var total = parseFloat('${my:formatNum(bean.moneys)}');
+    
+    var mels = document.getElementsByName('money');
+    
+    var addMoney = 0.0;
+    
+    for (var i = 0; i < mels.length; i++)
+    {
+        if (mels[i].value != '')
+        {
+            addMoney += parseFloat(mels[i].value);
+        }
+    }
+    
+    if (addMoney != total)
+    {
+        alert('付款金额必须是${my:formatNum(bean.moneys)}');
+        
+        return false;
+    }
+    
+    return true;
+}
+
+var g_obj;
+function selectBank(obj)
+{
+    g_obj = obj;
+    
     //单选
     window.common.modal('../finance/bank.do?method=rptQueryBank&load=1');
 }
 
 function getBank(obj)
 {
-    $O('bankName').value = obj.pname;
+    g_obj.value = obj.pname;
     
-    $O('bankId').value = obj.value;
+    var hobj = getNextInput(g_obj.nextSibling);
+    
+    hobj.value = obj.value;
 }
 
+function load()
+{
+    <c:if test="${bean.status == 3}">
+    addTr();
+    </c:if>
+}
 
+function getNextInput(el)
+{
+    if (el.tagName && el.tagName.toLowerCase() == 'input')
+    {
+        return el;
+    }
+    else
+    {
+        return getNextInput(el.nextSibling);
+    }
+}
 </script>
 
 </head>
-<body class="body_class">
+<body class="body_class" onload="load()">
 <form name="formEntry" action="../finance/stock.do" method="post">
 <input type="hidden" name="method" value="submitStockPay"> 
 <input type="hidden" name="id" value="${bean.id}"> 
 <input type="hidden" name="mode" value="${mode}"> 
-<input type="hidden" name="bankId" value=""> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">
@@ -143,23 +204,6 @@ function getBank(obj)
                 <font color="red">*</font>
             </p:cell> 
             </c:if>       
-            
-            <c:if test="${bean.status == 3}">
-            <p:cell title="选择帐户" end="true">
-                    <input name="bankName" type="text" readonly="readonly" size="60" oncheck="notNone">
-                    <font color="red">*</font>
-                    <input type="button"
-                        value="&nbsp;...&nbsp;" name="qout" class="button_class"
-                        onclick="selectBank()">
-                </p:cell>
-            
-            <p:cell title="付款方式" end="true">
-                <select name="payType" style="width: 400px" class="select_class" oncheck="notNone">
-                <p:option type="outbillPayType"></p:option>
-                </select>
-                <font color="red">*</font>
-            </p:cell> 
-            </c:if>         
 
 			<p:cell title="审批意见" end="true">
 				<textarea rows=3 cols=55 oncheck="notNone;maxLength(200);" name="reason"></textarea>
@@ -171,9 +215,35 @@ function getBank(obj)
 	</p:subBody>
 	
 	<p:line flag="0" />
+	
+	<c:if test="${bean.status == 3}">
+	<tr>
+        <td colspan='2' align='center'>
+        <table width="100%" border="0" cellpadding="0" cellspacing="0"
+            class="border" id="inner_table">
+            <tr>
+                <td>
+                <table width="100%" border="0" cellspacing='1' id="tables">
+                    <tr align="center" class="content0">
+                        <td width="30%" align="center">银行</td>
+                        <td width="30%" align="center">付款类型</td>
+                        <td width="15%" align="center">金额</td>
+                        <td width="5%" align="left"><input type="button" accesskey="A"
+                            value="增加" class="button_class" onclick="addTr()"></td>
+                    </tr>
+                </table>
+                </td>
+            </tr>
+        </table>
+
+        </td>
+    </tr>
+    
+    <p:line flag="1" />
+	</c:if>
 
 	<p:subBody width="100%">
-		<table width="100%" border="0" cellspacing='1' id="tables">
+		<table width="100%" border="0" cellspacing='1'>
 			<tr align="center" class="content0">
 				<td width="10%" align="center">审批人</td>
 				<td width="10%" align="center">审批动作</td>
@@ -238,7 +308,27 @@ function getBank(obj)
 	</p:button>
 
 	<p:message2 />
-</p:body></form>
+</p:body>
+</form>
+<table>
+    <tr class="content1" id="trCopy" style="display: none;">
+         <td width="50%" align="center">
+         <input name="bankName" type="text" readonly="readonly" style="width: 100%;cursor: pointer;" oncheck="notNone" onclick="selectBank(this)">
+         <input type="hidden" name="bankId" value=""> 
+         </td>
+         <td width="25%" align="center">
+         <select name="payType" style="width: 100%" class="select_class" oncheck="notNone">
+                <p:option type="outbillPayType"></p:option>
+                </select>
+         </td>
+         <td width="20%" align="center"><input type="text" style="width: 100%"
+                    name="money" value="" oncheck="notNone;isFloat">
+         </td>
+         <td width="5%" align="center"><input type=button
+            value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
+    </tr>
+</table>
+
 </body>
 </html>
 

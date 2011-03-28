@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.china.center.jdbc.inter.DAO;
+import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.vo.OutVO;
 import com.china.center.oa.sail.wrap.CreditWrap;
@@ -132,6 +133,16 @@ public interface OutDAO extends DAO<OutBean, OutVO>
     Integer countNotEndProductInOut(String productId, String beginDate, String endDate);
 
     /**
+     * countNotEndProductInOut2
+     * 
+     * @param relation
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    Integer sumNotEndProductInOut2(StorageRelationBean relation, String beginDate, String endDate);
+
+    /**
      * 统计一个具体库存的产品被单据占据多少配额(销售单里面)
      * 
      * @param stafferId
@@ -162,6 +173,16 @@ public interface OutDAO extends DAO<OutBean, OutVO>
      * @return
      */
     Integer countNotEndProductInIn(String productId, String beginDate, String endDate);
+
+    /**
+     * countNotEndProductInIn2
+     * 
+     * @param relation
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    Integer sumNotEndProductInIn2(StorageRelationBean relation, String beginDate, String endDate);
 
     /**
      * sumNoPayAndAvouchBusinessByStafferId(事业部经理信用)

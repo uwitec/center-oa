@@ -45,7 +45,6 @@ import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.sail.manager.OutManager;
-import com.china.center.oa.tax.bean.CheckViewBean;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.FinanceItemBean;
 import com.china.center.oa.tax.bean.TaxBean;
@@ -58,6 +57,7 @@ import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.dao.UnitDAO;
 import com.china.center.oa.tax.facade.TaxFacade;
 import com.china.center.oa.tax.manager.FinanceManager;
+import com.china.center.oa.tax.vo.CheckViewVO;
 import com.china.center.oa.tax.vo.FinanceItemVO;
 import com.china.center.oa.tax.vo.FinanceVO;
 import com.china.center.tools.BeanUtil;
@@ -170,9 +170,9 @@ public class FinaAction extends DispatchAction
         condtion.addCondition("order by CheckViewBean.logTime desc");
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKVIEW, request, condtion,
-            this.checkViewDAO, new HandleResult<CheckViewBean>()
+            this.checkViewDAO, new HandleResult<CheckViewVO>()
             {
-                public void handle(CheckViewBean obj)
+                public void handle(CheckViewVO obj)
                 {
                     StafferBean sb = stafferDAO.find(obj.getStafferId());
 

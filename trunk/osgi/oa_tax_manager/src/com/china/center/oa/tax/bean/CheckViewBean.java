@@ -13,7 +13,10 @@ import java.io.Serializable;
 
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Id;
+import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.annotation.enums.JoinType;
+import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.tax.constanst.CheckConstant;
 
@@ -39,7 +42,13 @@ public class CheckViewBean implements Serializable
 
     private String logTime = "";
 
+    @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
     private String stafferId = "";
+
+    @Join(tagClass = UnitBean.class, type = JoinType.LEFT)
+    private String unitId = "";
+
+    private String refId = "";
 
     private int type = CheckConstant.CHECK_TYPE_COMPSE;
 
@@ -153,6 +162,40 @@ public class CheckViewBean implements Serializable
     }
 
     /**
+     * @return the unitId
+     */
+    public String getUnitId()
+    {
+        return unitId;
+    }
+
+    /**
+     * @param unitId
+     *            the unitId to set
+     */
+    public void setUnitId(String unitId)
+    {
+        this.unitId = unitId;
+    }
+
+    /**
+     * @return the refId
+     */
+    public String getRefId()
+    {
+        return refId;
+    }
+
+    /**
+     * @param refId
+     *            the refId to set
+     */
+    public void setRefId(String refId)
+    {
+        this.refId = refId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -181,6 +224,12 @@ public class CheckViewBean implements Serializable
             .append(TAB)
             .append("stafferId = ")
             .append(this.stafferId)
+            .append(TAB)
+            .append("unitId = ")
+            .append(this.unitId)
+            .append(TAB)
+            .append("refId = ")
+            .append(this.refId)
             .append(TAB)
             .append("type = ")
             .append(this.type)

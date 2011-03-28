@@ -35,6 +35,7 @@ import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.vo.ComposeProductVO;
 import com.china.center.oa.product.vo.PriceChangeVO;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
+import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.PublicLock;
 import com.china.center.oa.publics.facade.AbstarctFacade;
@@ -717,6 +718,24 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
             return false;
         }
 
+    }
+
+    public int onPriceChange2(String userId, StorageRelationBean bean)
+    {
+        try
+        {
+            JudgeTools.judgeParameterIsNull(userId, bean);
+
+            User user = userManager.findUser(userId);
+
+            checkUser(user);
+
+            return priceChangeManager.onPriceChange2(user, bean);
+        }
+        catch (MYException e)
+        {
+            return 0;
+        }
     }
 
     public boolean isStorageRelationLock()

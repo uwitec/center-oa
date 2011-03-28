@@ -187,7 +187,7 @@ public interface FinanceFacade
     boolean passStockPayByCEO(String userId, String id, String reason)
         throws MYException;
 
-    boolean endStockPayBySEC(String userId, String id, String reason, OutBillBean outBill)
+    boolean endStockPayBySEC(String userId, String id, String reason, List<OutBillBean> outBillList)
         throws MYException;
 
     boolean addBackPayApplyBean(String userId, BackPayApplyBean bean)

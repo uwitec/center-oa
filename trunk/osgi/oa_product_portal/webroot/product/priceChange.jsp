@@ -202,6 +202,7 @@ function trChange(index)
                         <td width="5%" align="center">调价数量</td>
                         <td align="center">原价</td>
                         <td align="center">新价</td>
+                        <td align="center">在途</td>
                         <td align="center">位置</td>
                         <td align="center">职员</td>
                     </tr>
@@ -220,6 +221,7 @@ function trChange(index)
                         oaddress="${item.locationName} -- ${item.depotpartName}"
                         ovalue="${my:formatNum(item.price)}" id="p_${vs.index}" pid="${item.productId}"
                         style="width: 100%" ondblclick="copyLast(${vs.index})" onkeyup="trChange(${vs.index}, this)"></td>
+                        <td align="center">${item.errorAmount}</td>
                         <td align="center">${item.locationName} --> ${item.depotpartName} --> ${item.storageName}</td>
                         <td align="center">${item.stafferName}</td>
                     </tr>

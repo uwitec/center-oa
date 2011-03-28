@@ -135,6 +135,11 @@ public class BillManagerImpl implements BillManager
             throw new MYException("单据已经被统计固化,请确认操作");
         }
 
+        if (bill.getCheckStatus() == PublicConstant.CHECK_STATUS_END)
+        {
+            throw new MYException("单据已经被核对,请确认操作");
+        }
+
         if ( !StringTools.isNullOrNone(bill.getOutId())
             || !StringTools.isNullOrNone(bill.getOutBalanceId()))
         {
@@ -269,6 +274,11 @@ public class BillManagerImpl implements BillManager
         if (bill == null)
         {
             throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bill.getCheckStatus() == PublicConstant.CHECK_STATUS_END)
+        {
+            throw new MYException("单据已经被核对,请确认操作");
         }
 
         if ( !StringTools.isNullOrNone(bill.getStockId())

@@ -1167,16 +1167,6 @@ public class ProductAction extends DispatchAction
                 continue;
             }
 
-            boolean bol = !productFacade.onPriceChange(user.getId(), product);
-
-            // 在途
-            if (bol)
-            {
-                error.append("产品[" + product.getCode() + "]存在销售未审批,不能调价").append("<br>");
-
-                continue;
-            }
-
             ConditionParse condition = new ConditionParse();
 
             // 数量大于0的库存
@@ -1198,6 +1188,20 @@ public class ProductAction extends DispatchAction
                 StorageRelationVO vo = (StorageRelationVO)iterator.next();
 
                 vo.setStafferName("公共");
+
+                // 过滤在途的
+                int inWay = productFacade.onPriceChange2(user.getId(), vo);
+
+                if (vo.getAmount() > inWay)
+                {
+                    vo.setAmount(vo.getAmount() - inWay);
+
+                    vo.setErrorAmount(inWay);
+                }
+                else
+                {
+                    iterator.remove();
+                }
             }
 
             relationList.addAll(eachList);

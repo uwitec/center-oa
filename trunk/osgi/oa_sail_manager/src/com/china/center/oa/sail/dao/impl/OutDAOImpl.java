@@ -21,6 +21,7 @@ import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.IbatisDaoSupport;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
@@ -287,6 +288,54 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         paramterMap.put("endDate", endDate);
 
         Object count = getIbatisDaoSupport().queryForObject("OutDAO.countNotEndProductInIn",
+            paramterMap);
+
+        if (count == null)
+        {
+            return 0;
+        }
+
+        return (Integer)count;
+    }
+
+    public Integer sumNotEndProductInIn2(StorageRelationBean relation, String beginDate,
+                                         String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("productId", relation.getProductId());
+        paramterMap.put("depotpartId", relation.getDepotpartId());
+        paramterMap.put("costPriceKey", relation.getPriceKey());
+        paramterMap.put("owner", relation.getStafferId());
+
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("endDate", endDate);
+
+        Object count = getIbatisDaoSupport().queryForObject("OutDAO.sumNotEndProductInIn2",
+            paramterMap);
+
+        if (count == null)
+        {
+            return 0;
+        }
+
+        return (Integer)count;
+    }
+
+    public Integer sumNotEndProductInOut2(StorageRelationBean relation, String beginDate,
+                                          String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("productId", relation.getProductId());
+        paramterMap.put("depotpartId", relation.getDepotpartId());
+        paramterMap.put("costPriceKey", relation.getPriceKey());
+        paramterMap.put("owner", relation.getStafferId());
+
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("endDate", endDate);
+
+        Object count = getIbatisDaoSupport().queryForObject("OutDAO.sumNotEndProductInOut2",
             paramterMap);
 
         if (count == null)

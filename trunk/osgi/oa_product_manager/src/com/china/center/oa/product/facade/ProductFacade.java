@@ -24,6 +24,7 @@ import com.china.center.oa.product.bean.StorageBean;
 import com.china.center.oa.product.vo.ComposeProductVO;
 import com.china.center.oa.product.vo.PriceChangeVO;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
+import com.china.center.oa.product.vs.StorageRelationBean;
 
 
 /**
@@ -160,6 +161,8 @@ public interface ProductFacade
      * @throws MYException
      */
     boolean onPriceChange(String userId, ProductBean bean);
+
+    int onPriceChange2(String userId, StorageRelationBean bean);
 
     void lockStorageRelation(String userId)
         throws MYException;;

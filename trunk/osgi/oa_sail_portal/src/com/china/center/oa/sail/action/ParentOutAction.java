@@ -50,6 +50,7 @@ import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.ProviderBean;
+import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.DepotpartDAO;
@@ -375,6 +376,16 @@ public class ParentOutAction extends DispatchAction
         request.setAttribute("current", TimeTools.now("yyyy-MM-dd"));
 
         List<DepotBean> locationList = depotDAO.listEntityBeans();
+
+        for (Iterator iterator = locationList.iterator(); iterator.hasNext();)
+        {
+            DepotBean depotBean = (DepotBean)iterator.next();
+
+            if (depotBean.getId().equals(DepotConstant.MAKE_DEPOT_ID))
+            {
+                iterator.remove();
+            }
+        }
 
         request.setAttribute("locationList", locationList);
 
@@ -3115,7 +3126,7 @@ public class ParentOutAction extends DispatchAction
         {
             condtion.addIntCondition("OutBean.outType", "=", OutConstant.OUTTYPE_OUT_SWATCH);
 
-            condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_PASS);
+            condtion.addCondition("and OutBean.status in (3, 4)");
 
             condtion.addCondition("OutBean.stafferId", "=", user.getStafferId());
 

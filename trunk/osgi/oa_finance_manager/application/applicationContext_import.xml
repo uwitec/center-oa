@@ -42,6 +42,8 @@
     <osgi:reference id="showManager" interface="com.china.center.oa.publics.manager.ShowManager" />
     
     <osgi:reference id="flowLogDAO" interface="com.china.center.oa.publics.dao.FlowLogDAO" />
+    
+    <osgi:reference id="parameterDAO" interface="com.china.center.oa.publics.dao.ParameterDAO" />
 	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	

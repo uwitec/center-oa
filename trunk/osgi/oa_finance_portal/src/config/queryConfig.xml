@@ -31,7 +31,7 @@
             <type>date</type>
             <inner></inner>
         </condtion>
-        <condtion name="bankId" caption="帐户">
+        <condtion name="bankId" caption="帐户" inner="style='width:400px'">
             <opr>=</opr>
             <datatype>0</datatype>
             <type>select</type>

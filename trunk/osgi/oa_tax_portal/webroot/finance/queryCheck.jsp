@@ -26,11 +26,12 @@ function load()
          url: gurl + 'query' + ukey,
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={checkStatus} ltype={type}>', width : 40, align: 'center'},
-             {display: '标识', name : 'id', width : '20%'},
+             {display: '标识', name : 'id', width : '15%'},
              {display: '类型', name : 'type', cc: 'checkType', width : '10%'},
              {display: '状态', name : 'checkStatus',  cc: 'pubCheckStatus', width : '10%'},
-             {display: '职员', name : 'stafferId', width : '10%'},
-             {display: '校验', name : 'checks', width : '20%'},
+             {display: '职员', name : 'stafferName', width : '10%'},
+             {display: '单位', name : 'unitName', width : '18%'},
+             {display: '关联单据', name : 'refId', width : '18%'},
              {display: '时间', name : 'logTime',  sortable : true, width : 'auto'}
              ],
          extAtt: {

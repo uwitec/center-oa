@@ -42,10 +42,10 @@ function load()
              {display: '类型', name : 'type', cc: 'paymentType', width : '5%'},
              {display: '状态', name : 'status', cc: 'paymentStatus', width : '5%'},
              //{display: '金额使用', name : 'useall', cc: 'paymentUseall', width : '8%'},
-             {display: '认领人', name : 'stafferName',  width : '8%'},
-             {display: '客户', name : 'customerName',  width : '8%'},
+             {display: '认领人', name : 'stafferName',  width : '5%'},
+             {display: '客户', name : 'customerName',  width : '10%'},
              {display: '回款来源', name : 'fromer', width : '8%'},
-             {display: '回款金额', name : 'money', width : '8%', toFixed: 2},
+             {display: '回款/手续费', name : 'money', content: '{money}/{handling}', width : '8%', toFixed: 2},
              {display: '回款日期', name : 'receiveTime', width : '8%', sortable : true},
              {display: '标识', name : 'refId', sortable : true, width : '12%'},
              {display: '备注', name : 'description', width : 'auto'}

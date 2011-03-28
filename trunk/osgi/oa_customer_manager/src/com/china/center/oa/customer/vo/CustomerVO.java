@@ -40,6 +40,9 @@ public class CustomerVO extends CustomerBean
     @Relationship(relationField = "hlocal")
     private String hlocalName = "";
 
+    @Relationship(tagField = "name", relationField = "areaId")
+    private String areaName = "";
+
     /**
      * default constructor
      */
@@ -143,11 +146,29 @@ public class CustomerVO extends CustomerBean
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue.append("CustomerVO ( ").append(super.toString()).append(TAB).append("provinceName = ").append(
-            this.provinceName).append(TAB).append("cityName = ").append(this.cityName).append(TAB).append(
-            "locationName = ").append(this.locationName).append(TAB).append("creditLevelName = ").append(
-            this.creditLevelName).append(TAB).append("hlocalName = ").append(this.hlocalName).append(TAB).append(" )");
+        retValue.append("CustomerVO ( ").append(super.toString()).append(TAB).append(
+            "provinceName = ").append(this.provinceName).append(TAB).append("cityName = ").append(
+            this.cityName).append(TAB).append("locationName = ").append(this.locationName).append(
+            TAB).append("creditLevelName = ").append(this.creditLevelName).append(TAB).append(
+            "hlocalName = ").append(this.hlocalName).append(TAB).append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the areaName
+     */
+    public String getAreaName()
+    {
+        return areaName;
+    }
+
+    /**
+     * @param areaName
+     *            the areaName to set
+     */
+    public void setAreaName(String areaName)
+    {
+        this.areaName = areaName;
     }
 }

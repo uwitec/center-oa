@@ -9,6 +9,8 @@
 package com.china.center.oa.finance.manager.impl;
 
 
+import java.util.List;
+
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.MathTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -267,19 +270,36 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
     }
 
     @Transactional(rollbackFor = MYException.class)
-    public boolean endStockPayBySEC(User user, String id, String reason, OutBillBean outBill)
+    public boolean endStockPayBySEC(User user, String id, String reason,
+                                    List<OutBillBean> outBillList)
         throws MYException
     {
-        JudgeTools.judgeParameterIsNull(user, id, outBill.getBankId());
+        JudgeTools.judgeParameterIsNull(user, id, outBillList);
 
         StockPayApplyBean apply = checkEndPass(id);
 
-        // 生成付款
-        createOutBill(user, outBill, apply);
+        StringBuffer sb = new StringBuffer();
+
+        double totla = 0.0d;
+        // 可以生成多个
+        for (OutBillBean outBill : outBillList)
+        {
+            // 生成付款
+            createOutBill(user, outBill, apply);
+
+            sb.append(outBill.getId()).append(';');
+
+            totla += outBill.getMoneys();
+        }
+
+        if ( !MathTools.equal(apply.getMoneys(), totla))
+        {
+            throw new MYException("付款金额不正确,应该付款[%.2f],会计填写金额[[%.2f]]", apply.getMoneys(), totla);
+        }
 
         apply.setStatus(StockPayApplyConstant.APPLY_STATUS_END);
 
-        apply.setInBillId(outBill.getId());
+        apply.setInBillId(sb.toString());
 
         // 结束申请流程
         stockPayApplyDAO.updateEntityBean(apply);
@@ -311,8 +331,6 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
         outBill.setLogTime(TimeTools.now());
 
         outBill.setType(FinanceConstant.OUTBILL_TYPE_STOCK);
-
-        outBill.setMoneys(apply.getMoneys());
 
         outBill.setOwnerId(apply.getStafferId());
 

@@ -116,4 +116,9 @@ public interface SysConfigConstant
 
     String MAIL_RECEIVE = "MAIL_RECEIVE";
 
+    /**
+     * 回款手续费临界点
+     */
+    String MAX_RECVIVE_FEE = "MAX_RECVIVE_FEE";
+
 }

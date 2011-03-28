@@ -147,6 +147,10 @@ function selectPublic()
                ${my:formatNum(bean.money)}
             </p:cell>
             
+            <p:cell title="手续费">
+               ${my:formatNum(bean.handling)}
+            </p:cell>
+            
             <p:cell title="回款来源">
                ${bean.fromer}
             </p:cell>

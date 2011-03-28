@@ -100,11 +100,19 @@
             <type>select</type>
             <option>$checkType</option>
         </condtion>
-         <condtion name="checkStatus" caption="状态">
+        <condtion name="checkStatus" caption="状态">
             <opr>=</opr>
             <datatype>1</datatype>
             <type>select</type>
             <option>$pubCheckStatus</option>
+        </condtion>
+        <condtion name="refId" caption="关联单据(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="unitName" caption="单位" filed="name" pfix="UnitBean">
+            <opr>like</opr>
+            <type>text</type>
         </condtion>
     </item>
 	

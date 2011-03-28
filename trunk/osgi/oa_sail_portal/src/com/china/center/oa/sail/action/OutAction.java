@@ -1354,7 +1354,8 @@ public class OutAction extends ParentOutAction
                 if (outManager.isSwatchToSail(outBean.getFullId()) && !OutHelper.isSailEnd(outBean))
                 {
                     // 异常不能增加,只能有一个当前的
-                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "领样转销售只能存在一个未审批结束的,请重新操作");
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "领样转销售只能存在一个未审批结束的,未审批单据:"
+                                                                    + outBean.getFullId());
 
                     return mapping.findForward("error");
                 }

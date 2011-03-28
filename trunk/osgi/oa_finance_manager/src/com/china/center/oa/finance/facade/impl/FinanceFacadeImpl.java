@@ -632,7 +632,8 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
-    public boolean endStockPayBySEC(String userId, String id, String reason, OutBillBean outBill)
+    public boolean endStockPayBySEC(String userId, String id, String reason,
+                                    List<OutBillBean> outBillList)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(userId, id);
@@ -645,7 +646,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         {
             if (containAuth(user, AuthConstant.STOCK_PAY_SEC))
             {
-                return stockPayApplyManager.endStockPayBySEC(user, id, reason, outBill);
+                return stockPayApplyManager.endStockPayBySEC(user, id, reason, outBillList);
             }
             else
             {

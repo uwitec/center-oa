@@ -19,6 +19,8 @@ function passBean()
 
 function rejectBean()
 {
+    $O('bankName').value = 'NA';
+    
     $O('method').value = 'rejectBackPayApply';
     
     submit('确定驳回退款申请?', null, null);

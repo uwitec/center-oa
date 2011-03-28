@@ -66,4 +66,9 @@ public interface DepotConstant
      * 采购储位
      */
     String STOCK_STORAGE_ID = "11000000000000000003";
+
+    /**
+     * 生产库(销售是不可见的)
+     */
+    String MAKE_DEPOT_ID = "99000000000000000099";
 }

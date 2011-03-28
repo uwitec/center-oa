@@ -11,6 +11,7 @@ package com.china.center.oa.tax.dao;
 
 import com.china.center.jdbc.inter.DAO;
 import com.china.center.oa.tax.bean.CheckViewBean;
+import com.china.center.oa.tax.vo.CheckViewVO;
 
 
 /**
@@ -21,7 +22,7 @@ import com.china.center.oa.tax.bean.CheckViewBean;
  * @see CheckViewDAO
  * @since 3.0
  */
-public interface CheckViewDAO extends DAO<CheckViewBean, CheckViewBean>
+public interface CheckViewDAO extends DAO<CheckViewBean, CheckViewVO>
 {
     boolean updateCheck(String tableName, String id, String reason);
 

@@ -16,6 +16,7 @@ import com.china.center.oa.product.bean.PriceChangeBean;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.listener.PriceChangeListener;
 import com.china.center.oa.product.vo.PriceChangeVO;
+import com.china.center.oa.product.vs.StorageRelationBean;
 
 
 /**
@@ -66,4 +67,6 @@ public interface PriceChangeManager extends ListenerManager<PriceChangeListener>
      * @throws MYException
      */
     boolean onPriceChange(User user, ProductBean bean);
+
+    int onPriceChange2(User user, StorageRelationBean bean);
 }

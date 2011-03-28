@@ -67,6 +67,8 @@ function getBank(obj)
 
 			<p:pro field="money"/>
 			
+			<p:pro field="handling"/>
+			
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
 
 		</p:table>

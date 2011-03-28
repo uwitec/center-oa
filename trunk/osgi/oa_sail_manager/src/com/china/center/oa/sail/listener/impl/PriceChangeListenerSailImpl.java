@@ -13,6 +13,7 @@ import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.listener.PriceChangeListener;
+import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.helper.YYTools;
 
@@ -64,6 +65,21 @@ public class PriceChangeListenerSailImpl implements PriceChangeListener
         }
     }
 
+    public int onPriceChange2(User user, StorageRelationBean relation)
+    {
+        // 指定情况下的仓区位置(仓区、产品、价格、公共)
+        // 一个是销售产品是否存在(还没有结束的)
+        Integer count1 = outDAO.sumNotEndProductInOut2(relation, YYTools.getFinanceBeginDate(),
+            YYTools.getFinanceEndDate());
+
+        // 是否存在调拨途中的产品
+        Integer count2 = outDAO.sumNotEndProductInIn2(relation, YYTools.getFinanceBeginDate(),
+            YYTools.getFinanceEndDate());
+
+        return count1 + count2;
+
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -90,5 +106,4 @@ public class PriceChangeListenerSailImpl implements PriceChangeListener
     {
         this.outDAO = outDAO;
     }
-
 }

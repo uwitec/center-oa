@@ -9,6 +9,17 @@
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="javascript">
+function pagePrint()
+{
+    $O('pr').style.display = 'none';
+    $O('ba').style.display = 'none';
+    $O('tables').style.display = 'none';
+    window.print();
+
+    $O('pr').style.display = 'inline';
+    $O('ba').style.display = 'inline';
+    $O('tables').style.display = 'block';
+}
 
 
 </script>
@@ -70,12 +81,8 @@
                <a href="../stock/stock.do?method=findStock&id=${bean.stockId}">${bean.stockId}</a>/${bean.stockItemId}
             </p:cell>
 
-			<p:cell title="时间">
+			<p:cell title="时间" end="true">
                ${bean.logTime}
-            </p:cell>
-            
-            <p:cell title="付款单">
-               <a href="../finance/bill.do?method=findOutBill&id=${bean.inBillId}">${bean.inBillId}</a>
             </p:cell>
             
             <p:cell title="备注" end="true">
@@ -85,6 +92,33 @@
 		</p:table>
 
 	</p:subBody>
+	
+	<c:if test="${my:length(outList) > 0}">
+	
+	<p:line flag="0" />
+
+    <p:subBody width="100%">
+        <table width="100%" border="0" cellspacing='1' id="tables1">
+            <tr align="center" class="content0">
+                <td align="center">付款单</td>
+                <td align="center">金额</td>
+                <td align="center">银行</td>
+            </tr>
+
+            <c:forEach items="${outList}" var="item" varStatus="vs">
+                <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
+                    <td align="center">${item.id}</td>
+
+                    <td align="center">${my:formatNum(item.moneys)}</td>
+
+                    <td align="center">${item.bankName}</td>
+
+                </tr>
+            </c:forEach>
+        </table>
+    </p:subBody>
+    
+	</c:if>
 	
 	<p:line flag="0" />
 
@@ -122,6 +156,9 @@
 
 	<p:button leftWidth="100%" rightWidth="0%">
 		<div align="right">
+		<input type="button" name="pr"
+            class="button_class" onclick="pagePrint()"
+            value="&nbsp;&nbsp;打 印&nbsp;&nbsp;">&nbsp;&nbsp;
             <input
             type="button" name="ba" class="button_class"
             onclick="javascript:history.go(-1)"

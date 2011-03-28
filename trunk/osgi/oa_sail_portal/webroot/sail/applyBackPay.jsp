@@ -83,6 +83,10 @@ function check()
                 ${my:formatNum(hadOut)}
             </p:cell>
             
+            <p:cell title="本次最大退货金额">
+                ${my:formatNum(-check.value)}
+            </p:cell>
+            
             <p:cell title="客户">
                 ${bean.customerName}
             </p:cell>

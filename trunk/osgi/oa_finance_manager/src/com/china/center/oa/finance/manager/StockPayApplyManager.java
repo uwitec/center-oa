@@ -9,6 +9,8 @@
 package com.china.center.oa.finance.manager;
 
 
+import java.util.List;
+
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.OutBillBean;
@@ -54,7 +56,7 @@ public interface StockPayApplyManager
      * @return
      * @throws MYException
      */
-    boolean endStockPayBySEC(User user, String id, String reason, OutBillBean outBill)
+    boolean endStockPayBySEC(User user, String id, String reason, List<OutBillBean> outBillList)
         throws MYException;
 
     /**
