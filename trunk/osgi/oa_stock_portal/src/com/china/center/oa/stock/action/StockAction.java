@@ -1770,13 +1770,6 @@ public class StockAction extends DispatchAction
             condtion.addIntCondition("StockBean.pay", "=", pay);
         }
 
-        String stype = request.getParameter("type");
-
-        if ( !StringTools.isNullOrNone(stype))
-        {
-            condtion.addIntCondition("StockBean.type", "=", stype);
-        }
-
         String stockType = request.getParameter("stype");
 
         if ( !StringTools.isNullOrNone(stockType))

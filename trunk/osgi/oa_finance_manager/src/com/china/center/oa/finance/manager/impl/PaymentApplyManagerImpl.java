@@ -505,7 +505,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
                 out.setLocationId(user.getLocationId());
                 out.setMoneys(payment.getHandling());
 
-                if (payment.getHandling() < maxFee)
+                if (payment.getMoney() < maxFee)
                 {
                     // 个人承担这个费用
                     out.setOwnerId(apply.getStafferId());

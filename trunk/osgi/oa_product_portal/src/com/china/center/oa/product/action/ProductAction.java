@@ -1190,7 +1190,7 @@ public class ProductAction extends DispatchAction
                 vo.setStafferName("公共");
 
                 // 过滤在途的
-                int inWay = productFacade.onPriceChange2(user.getId(), vo);
+                int inWay = Math.abs(productFacade.onPriceChange2(user.getId(), vo));
 
                 if (vo.getAmount() > inWay)
                 {
