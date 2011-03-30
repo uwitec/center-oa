@@ -237,6 +237,7 @@ function change()
     
 	<input type="hidden" name="id" value="${bean.id}"> 
 	<input type="hidden" name="owerId" value="${bean.owerId}"> 
+	<input type="hidden" name="mode" value="${bean.type}">
 	<p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: hand"

@@ -27,6 +27,7 @@ import com.china.center.oa.finance.manager.StatBankManager;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.sail.bean.OutBean;
+import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.stock.bean.StockItemBean;
 import com.china.center.oa.stock.dao.StockItemDAO;
@@ -94,9 +95,15 @@ public class BillManagerImpl implements BillManager
             }
 
             // 验证销售单绑定策略
-            if ( !StringTools.isNullOrNone(bean.getOutId()))
+            if ( !StringTools.isNullOrNone(bean.getOutId())
+                && bean.getType() != FinanceConstant.INBILL_TYPE_BADOUT)
             {
                 OutBean out = outDAO.find(bean.getOutId());
+
+                if (out == null)
+                {
+                    throw new MYException("数据错误,请确认操作");
+                }
 
                 // 已经支付的
                 double hasPay = inBillDAO.sumByOutId(bean.getOutId());
@@ -110,6 +117,25 @@ public class BillManagerImpl implements BillManager
 
                 // 更新已经支付的金额
                 outDAO.updateHadPay(bean.getOutId(), hasPay + bean.getMoneys());
+            }
+
+            // 更新坏账状态
+            if ( !StringTools.isNullOrNone(bean.getOutId())
+                && bean.getType() == FinanceConstant.INBILL_TYPE_BADOUT)
+            {
+                OutBean out = outDAO.find(bean.getOutId());
+
+                if (out == null)
+                {
+                    throw new MYException("数据错误,请确认操作");
+                }
+
+                bean.setCustomerId(out.getCustomerId());
+
+                bean.setOwnerId(out.getStafferId());
+
+                outDAO.updataBadDebtsCheckStatus(bean.getOutId(),
+                    OutConstant.BADDEBTSCHECKSTATUS_YES);
             }
 
             return inBillDAO.saveEntityBean(bean);

@@ -358,6 +358,29 @@ public class FinaAction extends DispatchAction
     }
 
     /**
+     * synCheckView
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward synCheckView(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        checkViewDAO.syn();
+
+        ajax.setSuccess("成功操作");
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
      * findFinance
      * 
      * @param mapping

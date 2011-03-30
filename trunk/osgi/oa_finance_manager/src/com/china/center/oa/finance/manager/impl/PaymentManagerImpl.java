@@ -283,8 +283,11 @@ public class PaymentManagerImpl implements PaymentManager
 
                     // 生成一个对冲的单据
                     innerEach.setMoneys( -innerEach.getMoneys());
-                    innerEach.setDescription("退领生成对冲的单据:" + innerEach.getId());
+                    innerEach.setDescription("退领[" + pay.getRefId() + "]生成对冲的单据:"
+                                             + innerEach.getId());
                     innerEach.setRefBillId(innerEach.getId());
+                    innerEach.setCheckStatus(PublicConstant.CHECK_STATUS_INIT);
+                    innerEach.setChecks("");
                     billManager.addInBillBeanWithoutTransaction(user, innerEach);
                 }
             }
@@ -308,8 +311,10 @@ public class PaymentManagerImpl implements PaymentManager
 
                     // 生成一个对冲的单据
                     outEach.setMoneys( -outEach.getMoneys());
-                    outEach.setDescription("退领生成对冲的单据:" + outEach.getId());
+                    outEach.setDescription("退领[" + pay.getRefId() + "]生成对冲的单据:" + outEach.getId());
                     outEach.setRefBillId(outEach.getId());
+                    outEach.setCheckStatus(PublicConstant.CHECK_STATUS_INIT);
+                    outEach.setChecks("");
                     billManager.addOutBillBeanWithoutTransaction(user, outEach);
                 }
             }

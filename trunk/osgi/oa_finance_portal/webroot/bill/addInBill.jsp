@@ -29,6 +29,16 @@ function selectStaffer()
     window.common.modal('../admin/pop.do?method=rptQueryStaffer&load=1&selectMode=1');
 }
 
+function selectOut()
+{
+    window.common.modal('../sail/out.do?method=rptQueryOut&selectMode=0&mode=0&load=1&bad=1');
+}
+
+function getOut(oos)
+{
+    $O('c_outId').value = oos[0].value;
+    $O('moneys').value = oos[0].pbad;
+}
 
 function getStaffers(oo)
 {
@@ -50,10 +60,33 @@ function getBank(obj)
     
     $O('bankId').value = obj.value;
 }
+
+function clears()
+{
+    $O('c_outId').value = '';
+}
+
+function typeManager()
+{
+    clears();
+    
+    if ($$('type') == 4)
+    {
+        $v('tr_b_out', false);
+        $v('tr_c_out', true);
+        $r('moneys', true);
+    }
+    else
+    {
+        $v('tr_b_out', true);
+        $v('tr_c_out', false);
+        $r('moneys', false);
+    }
+}
 </script>
 
 </head>
-<body class="body_class">
+<body class="body_class" onload="typeManager()">
 <form name="formEntry" action="../finance/bill.do" method="post">
 <input type="hidden" name="method" value="addInBill">
 <input type="hidden" name="customerId" value="">
@@ -88,7 +121,7 @@ function getBank(obj)
                     onclick="selectBank()">
             </p:cell>
 			
-			<p:pro field="type">
+			<p:pro field="type" innerString="onchange=typeManager()">
 				<p:option type="inbillType"/>
 			</p:pro>
             
@@ -107,8 +140,16 @@ function getBank(obj)
             
             -->
             
-            <p:cell title="销售单号(4月前)">
+            <p:cell title="销售单号(4月前)" id="b_out">
                 <input type="text" name="outId" size="50">
+            </p:cell>
+            
+            <p:cell title="坏账销售单" id="c_out">
+                <input type="text" name="c_outId" size="50" readonly="readonly">
+                 <input type="button" value="&nbsp;选 择&nbsp;" name="qout2" id="qout2"
+                    class="button_class" onclick="selectOut()">&nbsp;
+                <input type="button" value="&nbsp;清 空&nbsp;" name="qout3" id="qout3"
+                        class="button_class" onclick="clears()">&nbsp;
             </p:cell>
             
             <p:pro field="moneys"/>

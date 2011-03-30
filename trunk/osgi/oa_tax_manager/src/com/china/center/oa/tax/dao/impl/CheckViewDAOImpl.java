@@ -54,7 +54,7 @@ public class CheckViewDAOImpl extends BaseDAO<CheckViewBean, CheckViewVO> implem
         return true;
     }
 
-    public void syn()
+    public synchronized void syn()
     {
         jdbcOperation.update("TRUNCATE TABLE T_CENTER_CHECK");
 

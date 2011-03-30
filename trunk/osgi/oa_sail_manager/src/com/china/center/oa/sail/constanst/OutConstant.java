@@ -379,4 +379,14 @@ public interface OutConstant
     @Defined(key = "buyStatus", value = "待董事长审批")
     int BUY_STATUS_CHAIRMA_CHECK = 10;
 
+    /**
+     * 坏账状态-NO
+     */
+    int BADDEBTSCHECKSTATUS_NO = 0;
+
+    /**
+     * 坏账状态-YES
+     */
+    int BADDEBTSCHECKSTATUS_YES = 1;
+
 }

@@ -292,6 +292,7 @@ function exports()
 <input type="hidden" value="" name="pass">
 <input type="hidden" value="${ltype}" name="ltype">
 <input type="hidden" value="" name="nearlyPayDate">
+<input type="hidden" value="${type}" name="type">
 <input type="hidden" value="" name="payStatus"> <input
 	type="hidden" value="" name="reject"> <input type="hidden"
 	value="" name="reason"> <input type="hidden" value=""
@@ -393,6 +394,8 @@ function exports()
 				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="5%"><strong>采购类型</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
+                    width="5%"><strong>采购模式</strong></td>
+				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="10%"><strong>更新时间</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"
 					width="8%"><strong>操作</strong></td>
@@ -418,6 +421,7 @@ function exports()
 					</c:if>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('stockStype', item.stype)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:get('stockMode', item.mode)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.logTime}</td>
 					
 					<td align="center" onclick="hrefAndSelect(this)">

@@ -252,6 +252,7 @@ function clearValues()
     
 	<input type="hidden" name="stafferId" value="">
 	<input type="hidden" name="oprMode" value="">
+	<input type="hidden" name="mode" value="${type}">
 	<input
 	type="hidden" name="id" value="${bean.id}"> <p:navigation
 	height="22">

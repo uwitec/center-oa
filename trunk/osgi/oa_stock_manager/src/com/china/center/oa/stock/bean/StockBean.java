@@ -88,10 +88,13 @@ public class StockBean implements Serializable
     private String nearlyPayDate = "";
 
     /**
-     * V5版本已经废弃
+     * 采购类型 0:销售采购 1:生产采购
      */
     @Html(title = "询价方式", type = Element.SELECT, must = true)
     private int type = PriceConstant.PRICE_ASK_TYPE_NET;
+
+    @Html(title = "采购模式", type = Element.SELECT, must = true)
+    private int mode = StockConstant.STOCK_MODE_SAIL;
 
     /**
      * 采购类型
@@ -648,6 +651,23 @@ public class StockBean implements Serializable
     }
 
     /**
+     * @return the mode
+     */
+    public int getMode()
+    {
+        return mode;
+    }
+
+    /**
+     * @param mode
+     *            the mode to set
+     */
+    public void setMode(int mode)
+    {
+        this.mode = mode;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -700,6 +720,9 @@ public class StockBean implements Serializable
             .append(TAB)
             .append("type = ")
             .append(this.type)
+            .append(TAB)
+            .append("mode = ")
+            .append(this.mode)
             .append(TAB)
             .append("stype = ")
             .append(this.stype)

@@ -41,6 +41,10 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
+        <condtion name="refId" caption="标识(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
         <condtion name="type" caption="类型">
             <opr>=</opr>
             <datatype>1</datatype>

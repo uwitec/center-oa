@@ -45,6 +45,16 @@ public interface OutListener extends ParentListener
         throws MYException;
 
     /**
+     * 取消坏账
+     * 
+     * @param user
+     * @param bean
+     * @throws MYException
+     */
+    void onCancleBadDebts(User user, OutBean bean)
+        throws MYException;
+
+    /**
      * 确认收款
      * 
      * @param bean

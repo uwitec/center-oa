@@ -223,4 +223,16 @@ public interface StockConstant
      */
     @Defined(key = "stockItemFech", value = "已拿货")
     int STOCK_ITEM_FECH_YES = 1;
+
+    /**
+     * 销售采购
+     */
+    @Defined(key = "stockMode", value = "销售采购")
+    int STOCK_MODE_SAIL = 0;
+
+    /**
+     * 生产采购
+     */
+    @Defined(key = "stockMode", value = "生产采购")
+    int STOCK_MODE_MAKE = 1;
 }

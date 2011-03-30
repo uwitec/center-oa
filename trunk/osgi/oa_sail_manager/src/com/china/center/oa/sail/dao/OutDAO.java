@@ -87,6 +87,8 @@ public interface OutDAO extends DAO<OutBean, OutVO>
 
     boolean updataInWay(String fullId, int inway);
 
+    boolean updataBadDebtsCheckStatus(String fullId, int badDebtsCheckStatus);
+
     boolean modifyOutHadPay(String fullId, double hadPay);
 
     boolean modifyBadDebts(String fullId, double badDebts);

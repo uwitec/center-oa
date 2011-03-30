@@ -36,8 +36,10 @@ public class InBillDAOImpl extends BaseDAO<InBillBean, InBillVO> implements InBi
 
     public double sumByOutId(String outId)
     {
-        return this.jdbcOperation.queryForDouble(BeanTools.getSumHead(claz, "moneys")
-                                                 + "where InBillBean.outId = ?", outId);
+        return this.jdbcOperation.queryForDouble(
+            BeanTools.getSumHead(claz, "moneys")
+                + "where InBillBean.outId = ? and InBillBean.type = ?", outId,
+            FinanceConstant.INBILL_TYPE_SAILOUT);
     }
 
     public double sumByCondition(ConditionParse condition)

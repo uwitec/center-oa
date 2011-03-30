@@ -419,6 +419,13 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         return true;
     }
 
+    public boolean updataBadDebtsCheckStatus(String fullId, int badDebtsCheckStatus)
+    {
+        jdbcOperation.updateField("badDebtsCheckStatus", badDebtsCheckStatus, fullId, this.claz);
+
+        return true;
+    }
+
     public boolean updateCurcredit(String fullId, double curcredit)
     {
         jdbcOperation.updateField("curcredit", curcredit, fullId, this.claz);

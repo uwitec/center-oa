@@ -119,7 +119,11 @@ function showDiv(id)
               外网/卢工/马甸询价
             </p:cells>
             
-            <p:pro field="willDate" cell="2"/>
+            <p:pro field="willDate" cell="1"/>
+            
+            <p:pro field="mode" cell="1">
+            <p:option type="stockMode"></p:option>
+            </p:pro>
             
             
             <p:cells celspan="2" title="纳税实体">

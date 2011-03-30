@@ -139,11 +139,11 @@ public class BillAction extends DispatchAction
 
         if (StringTools.isNullOrNone(alogTime) && StringTools.isNullOrNone(blogTime))
         {
-            changeMap.put("alogTime", TimeTools.now_short( -30));
+            changeMap.put("alogTime", TimeTools.now_short( -15));
 
             changeMap.put("blogTime", TimeTools.now_short(1));
 
-            condtion.addCondition(pfix + ".logTime", ">=", TimeTools.now_short( -30));
+            condtion.addCondition(pfix + ".logTime", ">=", TimeTools.now_short( -15));
 
             condtion.addCondition(pfix + ".logTime", "<=", TimeTools.now_short(1));
         }
@@ -311,6 +311,12 @@ public class BillAction extends DispatchAction
                 {
                     throw new MYException("销售单必须在(2011-04-01),请确认操作");
                 }
+            }
+
+            // 坏账
+            if (bean.getType() == FinanceConstant.INBILL_TYPE_BADOUT)
+            {
+                bean.setOutId(request.getParameter("c_outId"));
             }
 
             financeFacade.addInBillBean(user.getId(), bean);

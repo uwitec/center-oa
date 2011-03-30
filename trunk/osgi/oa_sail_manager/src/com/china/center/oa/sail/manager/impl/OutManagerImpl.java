@@ -2127,7 +2127,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             return false;
         }
 
-        if (out.getStatus() != OutConstant.STATUS_SEC_PASS)
+        if ( !OutHelper.isSailEnd(out))
         {
             throw new MYException("数据错误,请确认操作");
         }
@@ -2142,6 +2142,17 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         addOutLog(fullId, user, out, "坏账消除", SailConstant.OPR_OUT_REJECT, OutConstant.STATUS_PASS);
 
         outDAO.modifyBadDebts(fullId, 0.0d);
+
+        // 关联状态取消
+        outDAO.updataBadDebtsCheckStatus(fullId, OutConstant.BADDEBTSCHECKSTATUS_NO);
+
+        Collection<OutListener> listenerMapValues = this.listenerMapValues();
+
+        // 通知其他的模块
+        for (OutListener outListener : listenerMapValues)
+        {
+            outListener.onCancleBadDebts(user, out);
+        }
 
         // 修改付款标识
         return outDAO.modifyPay(fullId, OutConstant.PAY_NOT);

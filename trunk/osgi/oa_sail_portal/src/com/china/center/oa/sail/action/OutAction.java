@@ -969,7 +969,7 @@ public class OutAction extends ParentOutAction
             return mapping.findForward("error");
         }
 
-        if (out.getStatus() != OutConstant.STATUS_SEC_PASS)
+        if ( !OutHelper.isSailEnd(out))
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
 
@@ -1963,6 +1963,8 @@ public class OutAction extends ParentOutAction
 
         String invoiceStatus = request.getParameter("invoiceStatus");
 
+        String bad = request.getParameter("bad");
+
         if ( !StringTools.isNullOrNone(invoiceId))
         {
             condtion.addCondition("OutBean.invoiceId", "=", invoiceId);
@@ -2004,6 +2006,16 @@ public class OutAction extends ParentOutAction
 
             // 过滤委托代销
             condtion.addIntCondition("OutBean.outType", "<>", OutConstant.OUTTYPE_OUT_CONSIGN);
+        }
+
+        if ("1".equals(bad))
+        {
+            condtion.addCondition(" and OutBean.status in (3, 4)");
+
+            condtion.addIntCondition("OutBean.badDebts", ">", 0);
+
+            condtion.addIntCondition("OutBean.badDebtsCheckStatus", "=",
+                OutConstant.BADDEBTSCHECKSTATUS_NO);
         }
 
         condtion.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_OUTBILL);

@@ -1042,6 +1042,8 @@ public class StockAction extends DispatchAction
 
     private void prepare(HttpServletRequest request)
     {
+        CommonTools.saveParamers(request);
+
         List<DepartmentBean> departementList = departmentDAO.listEntityBeans();
 
         request.setAttribute("departementList", departementList);
@@ -1653,6 +1655,14 @@ public class StockAction extends DispatchAction
             }
 
             condtion.addCondition("StockBean.industryId", "=", sb.getIndustryId());
+        }
+
+        // 采购主管(区分不同类型的)
+        if (type == 2)
+        {
+            String typeStr = request.getParameter("type");
+
+            condtion.addIntCondition("StockBean.mode", "=", typeStr);
         }
 
         // 暂时没有

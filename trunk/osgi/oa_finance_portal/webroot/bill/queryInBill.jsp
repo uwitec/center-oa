@@ -27,13 +27,13 @@ function load()
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} llock={lock}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},
-             {display: '帐号', name : 'bankName', width : '10%'},
+             {display: '帐号', name : 'bankName', width : '20%'},
              {display: '类型', name : 'type', cc: 'inbillType', width : '8%'},
-             {display: '状态', name : 'status', cc: 'inbillStatus', width : '8%'},
-             {display: '锁定', name : 'lock', cc: 'billLock', width : '8%'},
+             {display: '状态', name : 'status', cc: 'inbillStatus', width : '5%'},
+             {display: '锁定', name : 'lock', cc: 'billLock', width : '5%'},
              {display: '金额', name : 'moneys',  toFixed: 2, width : '8%'},
              {display: '客户', name : 'customerName', width : '12%'},
-             {display: '职员', name : 'ownerName', width : '8%'},
+             {display: '职员', name : 'ownerName', width : '5%'},
              {display: '时间', name : 'logTime', sortable : true, width : 'auto'}
              ],
          extAtt: {

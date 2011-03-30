@@ -54,6 +54,7 @@ function press()
 <form name="formEntry" action="../sail/out.do" method="post"><input
 	type="hidden" name="method" value="rptQueryOut">
 <input type="hidden" value="1" name="load"> 
+<input type="hidden" value="${bad}" name="bad"> 
 <input type="hidden" value="${stafferId}" name="stafferId"> 
 <input type="hidden" value="${dutyId}" name="dutyId"> 
 <input type="hidden" value="${invoiceId}" name="invoiceId"> 
@@ -125,6 +126,7 @@ function press()
 					ptotal="${my:formatNum(item.total)}"
 					pinvoicemoney="${my:formatNum(item.total - item.invoiceMoney)}"
 					plast="${my:formatNum(item.total -item.hadPay - item.badDebts)}"
+					pbad="${my:formatNum(item.badDebts)}"
 					></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.fullId}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.customerName}</td>

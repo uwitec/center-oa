@@ -39,6 +39,7 @@ function load()
          },
          buttons : [
              {id: 'pass', bclass: 'pass', caption: '总部核对', onpress : checkBean, auth: '1803'},
+             {id: 'update', bclass: 'update', caption: '同步核对单据', onpress : synBean, auth: '1803'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -94,6 +95,12 @@ function delBean(opr, grid)
     }
     else
     $error('不能操作');
+}
+
+function synBean(opr, grid)
+{
+    if(window.confirm('同步核对单据?'))    
+        $ajax(gurl + 'syn' + ukey, callBackFun);
 }
 
 function checkBean()

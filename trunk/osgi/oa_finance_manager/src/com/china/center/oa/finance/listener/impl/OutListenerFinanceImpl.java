@@ -20,6 +20,8 @@ import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.publics.constant.PluginNameConstant;
+import com.china.center.oa.publics.constant.PublicConstant;
+import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.wrap.ResultBean;
 import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
@@ -30,6 +32,7 @@ import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.listener.OutListener;
 import com.china.center.tools.MathTools;
+import com.china.center.tools.TimeTools;
 
 
 /**
@@ -45,6 +48,8 @@ public class OutListenerFinanceImpl implements OutListener
     private InBillDAO inBillDAO = null;
 
     private OutBillDAO outBillDAO = null;
+
+    private CommonDAO commonDAO = null;
 
     private OutDAO outDAO = null;
 
@@ -388,6 +393,45 @@ public class OutListenerFinanceImpl implements OutListener
         return refList;
     }
 
+    public void onCancleBadDebts(User user, OutBean bean)
+        throws MYException
+    {
+        // 取消坏账是这样的查询坏账的冲单,然后生成对冲的单据
+        ConditionParse condition = new ConditionParse();
+
+        condition.addWhereStr();
+
+        condition.addCondition("InBillBean.outId", "=", bean.getFullId());
+
+        condition.addIntCondition("InBillBean.type", "=", FinanceConstant.INBILL_TYPE_BADOUT);
+
+        List<InBillBean> inList = inBillDAO.queryEntityBeansByCondition(condition);
+
+        for (InBillBean inBillBean : inList)
+        {
+            if (inBillBean.getCheckStatus() == PublicConstant.CHECK_STATUS_INIT
+                && inBillBean.getLock() == FinanceConstant.BILL_LOCK_NO)
+            {
+                inBillDAO.deleteEntityBean(inBillBean.getId());
+            }
+            else
+            {
+                String id = inBillBean.getId();
+
+                // 后生成对冲的单据(且必须是)
+                inBillBean.setId(commonDAO.getSquenceString20());
+                inBillBean.setMoneys( -inBillBean.getMoneys());
+                inBillBean.setCheckStatus(PublicConstant.CHECK_STATUS_INIT);
+                inBillBean.setChecks("");
+                inBillBean.setDescription("取消坏账生成的对冲单据");
+                inBillBean.setRefBillId(id);
+                inBillBean.setLock(FinanceConstant.BILL_LOCK_NO);
+                inBillBean.setLogTime(TimeTools.now());
+                inBillDAO.saveEntityBean(inBillBean);
+            }
+        }
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -481,5 +525,22 @@ public class OutListenerFinanceImpl implements OutListener
     public void setBaseDAO(BaseDAO baseDAO)
     {
         this.baseDAO = baseDAO;
+    }
+
+    /**
+     * @return the commonDAO
+     */
+    public CommonDAO getCommonDAO()
+    {
+        return commonDAO;
+    }
+
+    /**
+     * @param commonDAO
+     *            the commonDAO to set
+     */
+    public void setCommonDAO(CommonDAO commonDAO)
+    {
+        this.commonDAO = commonDAO;
     }
 }

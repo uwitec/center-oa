@@ -192,6 +192,11 @@ public class OutBean implements Serializable
     private double badDebts = 0.0d;
 
     /**
+     * 坏账和付款关联
+     */
+    private int badDebtsCheckStatus = OutConstant.BADDEBTSCHECKSTATUS_NO;
+
+    /**
      * 到货日期
      */
     private String arriveDate = "";
@@ -1324,6 +1329,23 @@ public class OutBean implements Serializable
     }
 
     /**
+     * @return the badDebtsCheckStatus
+     */
+    public int getBadDebtsCheckStatus()
+    {
+        return badDebtsCheckStatus;
+    }
+
+    /**
+     * @param badDebtsCheckStatus
+     *            the badDebtsCheckStatus to set
+     */
+    public void setBadDebtsCheckStatus(int badDebtsCheckStatus)
+    {
+        this.badDebtsCheckStatus = badDebtsCheckStatus;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -1457,6 +1479,9 @@ public class OutBean implements Serializable
             .append(TAB)
             .append("badDebts = ")
             .append(this.badDebts)
+            .append(TAB)
+            .append("badDebtsCheckStatus = ")
+            .append(this.badDebtsCheckStatus)
             .append(TAB)
             .append("arriveDate = ")
             .append(this.arriveDate)

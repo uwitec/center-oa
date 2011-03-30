@@ -307,7 +307,7 @@ public class FinanceAction extends DispatchAction
 
         condtion.addWhereStr();
 
-        Map<String, String> changeMap = initLogTime(request, condtion);
+        Map<String, String> changeMap = initLogTime(request, condtion, false);
 
         ActionTools.processJSONQueryCondition(QUERYPAYMENT, request, condtion, changeMap);
 
@@ -328,7 +328,7 @@ public class FinanceAction extends DispatchAction
         condtion.addWhereStr();
 
         // TEMPLATE 在action里面默认查询条件
-        Map<String, String> initMap = initLogTime(request, condtion);
+        Map<String, String> initMap = initLogTime(request, condtion, true);
 
         ActionTools.processJSONQueryCondition(QUERYSELFPAYMENT, request, condtion, initMap);
 
@@ -347,7 +347,8 @@ public class FinanceAction extends DispatchAction
      * @param condtion
      * @return
      */
-    private Map<String, String> initLogTime(HttpServletRequest request, ConditionParse condtion)
+    private Map<String, String> initLogTime(HttpServletRequest request, ConditionParse condtion,
+                                            boolean initStatus)
     {
         Map<String, String> changeMap = new HashMap<String, String>();
 
@@ -360,6 +361,14 @@ public class FinanceAction extends DispatchAction
             changeMap.put("alogTime", TimeTools.now_short( -30));
 
             changeMap.put("blogTime", TimeTools.now_short(1));
+
+            if (initStatus)
+            {
+                changeMap.put("status", String.valueOf(FinanceConstant.PAYMENT_STATUS_INIT));
+
+                condtion.addIntCondition("PaymentBean.status", "=",
+                    FinanceConstant.PAYMENT_STATUS_INIT);
+            }
 
             condtion.addCondition("PaymentBean.logTime", ">=", TimeTools.now_short( -30));
 

@@ -83,6 +83,12 @@ public interface FinanceConstant
     int INBILL_TYPE_INTEREST = 3;
 
     /**
+     * 坏账
+     */
+    @Defined(key = "inbillType", value = "销售坏账")
+    int INBILL_TYPE_BADOUT = 4;
+
+    /**
      * 转账
      */
     @Defined(key = "inbillType", value = "转账")
