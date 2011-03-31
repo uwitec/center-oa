@@ -4,11 +4,10 @@
 <html>
 <head>
 <style type="text/css">
-contentNN {
-	color: red;
+.contentNN {
 	font-size: 12px;
 	height: 20px;
-	background-color: red;
+	background-color: #00FF7F;
 }
 </style>
 <p:link title="产品调价" />
@@ -86,7 +85,7 @@ function copyLast(index)
 	}
 }
 
-function copyNext(index)
+function copyNext(index, value)
 {
 	var cur = $O('p_' + index);
 	
@@ -97,6 +96,8 @@ function copyNext(index)
 	
 	var next = $O('p_' + (index + 1));
 	
+	var checkIn = $O('check_' + (index + 1));
+	
 	if (next == null)
 	{
 		return;
@@ -104,11 +105,14 @@ function copyNext(index)
 	
 	if (next.pid == cur.pid)
 	{
-		next.value = cur.value;
+	    if (checkIn.checked)
+	    {
+			next.value = value;
+			
+			trChange(index + 1);
+		}
 		
-		trChange(index + 1);
-		
-		copyNext(index + 1);
+		copyNext(index + 1, value);
 	}
 }
 
@@ -158,7 +162,7 @@ function trChange(index)
 	if (isFristProduct(index))
 	{
 		//下面的产品价格需要拷贝
-		copyNext(index);
+		copyNext(index, pc.value);
 	}
 }
 
@@ -202,6 +206,7 @@ function trChange(index)
                         <td width="5%" align="center">调价数量</td>
                         <td align="center">原价</td>
                         <td align="center">新价</td>
+                        <td align="center">选择</td>
                         <td align="center">在途</td>
                         <td align="center">位置</td>
                         <td align="center">职员</td>
@@ -221,6 +226,7 @@ function trChange(index)
                         oaddress="${item.locationName} -- ${item.depotpartName}"
                         ovalue="${my:formatNum(item.price)}" id="p_${vs.index}" pid="${item.productId}"
                         style="width: 100%" ondblclick="copyLast(${vs.index})" onkeyup="trChange(${vs.index}, this)"></td>
+                        <td align="center"><input type="checkbox" id="check_${vs.index}" pid="${item.productId}" checked="checked"></td>
                         <td align="center">${item.errorAmount}</td>
                         <td align="center">${item.locationName} --> ${item.depotpartName} --> ${item.storageName}</td>
                         <td align="center">${item.stafferName}</td>

@@ -43,6 +43,8 @@ public class BackPayApplyBean implements Serializable
      */
     private String billId = "";
 
+    private String locationId = "";
+
     private int status = BackPayApplyConstant.STATUS_INIT;
 
     /**
@@ -309,6 +311,23 @@ public class BackPayApplyBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the locationId
+     */
+    public String getLocationId()
+    {
+        return locationId;
+    }
+
+    /**
+     * @param locationId
+     *            the locationId to set
+     */
+    public void setLocationId(String locationId)
+    {
+        this.locationId = locationId;
     }
 
 }

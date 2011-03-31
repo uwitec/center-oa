@@ -1378,7 +1378,8 @@ public class StockAction extends DispatchAction
     private void checkQueryAuth(User user, String queryType)
         throws MYException
     {
-        if ("0".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.STOCK_ADD))
+        if ("0".equals(queryType)
+            && !userManager.containAuth(user, AuthConstant.STOCK_ADD, AuthConstant.STOCK_MAKE_ADD))
         {
             throw new MYException("用户没有此操作的权限");
         }
@@ -1390,7 +1391,8 @@ public class StockAction extends DispatchAction
         }
 
         if ("2".equals(queryType)
-            && !userManager.containAuth(user.getId(), AuthConstant.STOCK_NET_STOCK_PASS))
+            && !userManager.containAuth(user, AuthConstant.STOCK_NET_STOCK_PASS,
+                AuthConstant.STOCK_MAKE_PASS))
         {
             throw new MYException("用户没有此操作的权限");
         }

@@ -239,6 +239,8 @@ public class FinanceAction extends DispatchAction
                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
+        User user = Helper.getUser(request);
+
         ConditionParse condtion = new ConditionParse();
 
         condtion.addWhereStr();
@@ -247,6 +249,11 @@ public class FinanceAction extends DispatchAction
 
         condtion.addIntCondition("PaymentApplyBean.status", "=",
             FinanceConstant.PAYAPPLY_STATUS_INIT);
+
+        if ( !userManager.containAuth(user.getId(), AuthConstant.BILL_QUERY_ALL))
+        {
+            condtion.addCondition("PaymentApplyBean.locationId", "=", user.getLocationId());
+        }
 
         condtion.addCondition("order by PaymentApplyBean.logTime desc");
 

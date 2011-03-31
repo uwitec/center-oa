@@ -102,6 +102,8 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
 
         bean.setStafferId(user.getStafferId());
 
+        bean.setLocationId(user.getLocationId());
+
         if (bean.getType() == BackPayApplyConstant.TYPE_OUT)
         {
             bean.setStatus(BackPayApplyConstant.STATUS_SUBMIT);

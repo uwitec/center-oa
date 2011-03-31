@@ -32,4 +32,6 @@ public interface StorageManager
 
     boolean deleteBean(User user, final String id)
         throws MYException;
+
+    void exportAllStorageRelation();
 }

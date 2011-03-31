@@ -455,27 +455,27 @@ public interface AuthConstant
     String STOCK_ADD = "1301";
 
     /**
-     * 区域经理审批(区域总经理)
+     * 事业部经理
      */
     String STOCK_MANAGER_PASS = "1302";
 
     /**
-     * 内网采购主管审批(内网采购主管)
+     * DROP 内网采购主管审批(内网采购主管)
      */
     String STOCK_INNER_STOCK_PASS = "1303";
 
     /**
-     * 外网采购主管审批(外网采购主管)
+     * 销售采购主管审批
      */
     String STOCK_NET_STOCK_PASS = "1304";
 
     /**
-     * 异常采购最终确认(采购经理)
+     * DROP 异常采购最终确认(采购经理)
      */
     String STOCK_STOCK_MANAGER_PASS = "1305";
 
     /**
-     * 内网采购询价(询价员)
+     * DROP 内网采购询价(询价员)
      */
     String STOCK_PRICE_PASS = "1306";
 
@@ -508,6 +508,16 @@ public interface AuthConstant
      * 采购付款-财务审批
      */
     String STOCK_PAY_SEC = "1312";
+
+    /**
+     * 增加生产采购
+     */
+    String STOCK_MAKE_ADD = "1313";
+
+    /**
+     * 生产采购主管审批
+     */
+    String STOCK_MAKE_PASS = "1314";
 
     /**
      * 提交库单(业务员)
@@ -645,7 +655,7 @@ public interface AuthConstant
     String OUTBILL_OPR = "1607";
 
     /**
-     * 查看所有收付款单
+     * 总部会计
      */
     String BILL_QUERY_ALL = "1608";
 

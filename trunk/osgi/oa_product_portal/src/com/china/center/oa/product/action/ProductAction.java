@@ -12,6 +12,8 @@ package com.china.center.oa.product.action;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1206,6 +1208,15 @@ public class ProductAction extends DispatchAction
 
             relationList.addAll(eachList);
         }
+
+        Collections.sort(relationList, new Comparator<StorageRelationVO>()
+        {
+
+            public int compare(StorageRelationVO o1, StorageRelationVO o2)
+            {
+                return o1.getLocationId().compareTo(o2.getLocationId());
+            }
+        });
 
         request.setAttribute("relationList", relationList);
 

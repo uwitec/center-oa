@@ -41,7 +41,9 @@ import com.china.center.oa.finance.facade.FinanceFacade;
 import com.china.center.oa.finance.vo.StockPayApplyVO;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.FlowLogBean;
+import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.dao.FlowLogDAO;
+import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.MathTools;
 import com.china.center.tools.RequestTools;
@@ -68,6 +70,8 @@ public class StockPayAction extends DispatchAction
     private BankDAO bankDAO = null;
 
     private OutBillDAO outBillDAO = null;
+
+    private UserManager userManager = null;
 
     private FinanceFacade financeFacade = null;
 
@@ -153,6 +157,13 @@ public class StockPayAction extends DispatchAction
         }
         else
         {
+            User user = Helper.getUser(request);
+
+            if ( !userManager.containAuth(user.getId(), AuthConstant.BILL_QUERY_ALL))
+            {
+                condtion.addCondition("StockPayApplyBean.locationId", "=", user.getLocationId());
+            }
+
             condtion.addIntCondition("StockPayApplyBean.status", "=",
                 StockPayApplyConstant.APPLY_STATUS_SEC);
         }
@@ -549,5 +560,22 @@ public class StockPayAction extends DispatchAction
     public void setOutBillDAO(OutBillDAO outBillDAO)
     {
         this.outBillDAO = outBillDAO;
+    }
+
+    /**
+     * @return the userManager
+     */
+    public UserManager getUserManager()
+    {
+        return userManager;
+    }
+
+    /**
+     * @param userManager
+     *            the userManager to set
+     */
+    public void setUserManager(UserManager userManager)
+    {
+        this.userManager = userManager;
     }
 }

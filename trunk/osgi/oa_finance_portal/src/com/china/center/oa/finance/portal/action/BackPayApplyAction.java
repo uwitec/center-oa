@@ -126,6 +126,11 @@ public class BackPayApplyAction extends DispatchAction
         // 出纳
         else if ("2".equals(mode))
         {
+            if ( !userManager.containAuth(user.getId(), AuthConstant.BILL_QUERY_ALL))
+            {
+                condtion.addCondition("BackPayApplyBean.locationId", "=", user.getLocationId());
+            }
+
             condtion.addIntCondition("BackPayApplyBean.status", "=",
                 BackPayApplyConstant.STATUS_SEC);
         }

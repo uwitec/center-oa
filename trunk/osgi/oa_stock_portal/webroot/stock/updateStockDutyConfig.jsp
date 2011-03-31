@@ -167,12 +167,7 @@ function selectProduct(index)
 
 function getProduct(oos)
 {
-    var oo = oos[0];
-    if (cindex != -1)
-    {
-        $O("productName_" + cindex).value = oo.pname;
-        $O("productId_" + cindex).value = oo.value;
-    }
+    
 }
 
 function getPriceAskProvider(oo)
@@ -280,7 +275,7 @@ function change()
                     <tr>
                         <td>
                             <input type="checkbox" name="check_init" value="0" onclick="init()" style="display: none;">产品一：<input type="button"
-                                value="&nbsp;选 择&nbsp;" name="qout_0" class="button_class"
+                                value="&nbsp;选 择&nbsp;" name="qout_0" class="button_class" 
                                 onclick="selectProduct(0)">&nbsp;
                             产品:<input
                             type="text" name="productName_0" value="${bean.itemVO[0].productName}" size="20" readonly="readonly">&nbsp;
