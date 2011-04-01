@@ -176,7 +176,6 @@ function updatePass(id)
 
 <p:body width="100%">
 
-    <c:if test="${user.role != 'NETASK'}">
 	<p:subBody width="98%">
 		<table width="100%" align="center" cellspacing='1' class="table0">
 			<tr align=center class="content0">
@@ -246,7 +245,6 @@ function updatePass(id)
 		</table>
 
 	</p:subBody>
-	</c:if>
 
 
 	<p:title>
@@ -288,7 +286,7 @@ function updatePass(id)
 					<td align="center" onclick="hrefAndSelect(this)"
 					onMouseOver="showDiv('${item.id}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"
 					>
-					<a onclick="hrefAndSelect(this)" href="../stock/ask.do?method=findPriceAsk&id=${item.id}&self=1">
+					<a onclick="hrefAndSelect(this)" href="../stock/ask.do?method=findPriceAsk&id=${item.id}&self=1&owner=1">
 					${item.id}
 					</a></td>
 					<td align="center" onclick="hrefAndSelect(this)">

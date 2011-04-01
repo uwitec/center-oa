@@ -84,6 +84,11 @@ function openDetail(id, type)
     {
         $l('../sail/out.do?method=findOut&fow=99&outId=' + id);
     }
+    
+     if (type == 7)
+    {
+        $l('../customer/customer.do?method=findCustomer&update=99&id=' + id);
+    }
 }
 
 function delBean(opr, grid)
@@ -99,7 +104,7 @@ function delBean(opr, grid)
 
 function synBean(opr, grid)
 {
-    if(window.confirm('同步核对单据?'))    
+    if(window.confirm('同步需要十几秒,确认同步核对单据?'))    
         $ajax(gurl + 'syn' + ukey, callBackFun);
 }
 

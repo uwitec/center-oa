@@ -9,6 +9,7 @@
 package com.china.center.oa.publics.dao.impl;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.china.center.jdbc.inter.impl.BaseDAO;
@@ -36,6 +37,23 @@ public class PrincipalshipDAOImpl extends BaseDAO<PrincipalshipBean, Principalsh
 
     public List<PrincipalshipBean> listSYBSubPrincipalship()
     {
-        return queryEntityBeansByFK(OrgConstant.ORG_BIG_DEPARTMENT);
+        List<PrincipalshipBean> result = new ArrayList<PrincipalshipBean>();
+
+        List<PrincipalshipBean> sybParent = queryEntityBeansByFK(OrgConstant.ORG_BIG_DEPARTMENT);
+
+        for (PrincipalshipBean principalshipBean : sybParent)
+        {
+            List<PrincipalshipBean> subList = queryEntityBeansByFK(principalshipBean.getId());
+
+            for (PrincipalshipBean principalshipBean2 : subList)
+            {
+                principalshipBean2.setName(principalshipBean.getName() + "-->"
+                                           + principalshipBean2.getName());
+            }
+
+            result.addAll(subList);
+        }
+
+        return result;
     }
 }

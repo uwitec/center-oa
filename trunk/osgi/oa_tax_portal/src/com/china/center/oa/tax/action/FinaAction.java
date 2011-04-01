@@ -44,6 +44,7 @@ import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.sail.dao.UnitViewDAO;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.FinanceItemBean;
@@ -97,6 +98,8 @@ public class FinaAction extends DispatchAction
     private StafferDAO stafferDAO = null;
 
     private FinanceDAO financeDAO = null;
+
+    private UnitViewDAO unitViewDAO = null;
 
     private CheckViewDAO checkViewDAO = null;
 
@@ -374,6 +377,8 @@ public class FinaAction extends DispatchAction
         AjaxResult ajax = new AjaxResult();
 
         checkViewDAO.syn();
+
+        unitViewDAO.syn();
 
         ajax.setSuccess("成功操作");
 
@@ -868,6 +873,23 @@ public class FinaAction extends DispatchAction
     public void setFinanceManager(FinanceManager financeManager)
     {
         this.financeManager = financeManager;
+    }
+
+    /**
+     * @return the unitViewDAO
+     */
+    public UnitViewDAO getUnitViewDAO()
+    {
+        return unitViewDAO;
+    }
+
+    /**
+     * @param unitViewDAO
+     *            the unitViewDAO to set
+     */
+    public void setUnitViewDAO(UnitViewDAO unitViewDAO)
+    {
+        this.unitViewDAO = unitViewDAO;
     }
 
 }

@@ -132,7 +132,7 @@ public class DBJob implements CommonJob
      */
     public String getDb_bak()
     {
-        return ConfigLoader.getProperty("db_bak");
+        return ConfigLoader.getProperty("db_bak", "d:/oa_db_bak");
     }
 
     /**
@@ -140,7 +140,8 @@ public class DBJob implements CommonJob
      */
     public String getMysql_root()
     {
-        return ConfigLoader.getProperty("mysql_root");
+        return ConfigLoader
+            .getProperty("mysql_root", "D:/Program Files/MySQL/MySQL Server 5.5/bin");
     }
 
     /**
@@ -148,7 +149,7 @@ public class DBJob implements CommonJob
      */
     public String getUser()
     {
-        return ConfigLoader.getProperty("user");
+        return ConfigLoader.getProperty("user", "uportal");
     }
 
     /**
@@ -156,7 +157,7 @@ public class DBJob implements CommonJob
      */
     public String getPassword()
     {
-        return ConfigLoader.getProperty("password");
+        return ConfigLoader.getProperty("password", "Qwerty123789");
     }
 
     /**
@@ -164,6 +165,6 @@ public class DBJob implements CommonJob
      */
     public String getDb_name()
     {
-        return ConfigLoader.getProperty("db_name");
+        return ConfigLoader.getProperty("db_name", "uportal");
     }
 }

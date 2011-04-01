@@ -21,8 +21,8 @@ function load()
      preload();
      
 	 guidMap = {
-		 title: '客户列表',
-		 url: '../customer/customer.do?method=querySelfCustomer',
+		 title: '分公司客户列表',
+		 url: '../customer/customer.do?method=queryLocationCustomer',
 		 colModel : [
 		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lname={name}>', width : 40, sortable : false, align: 'center'},
 		     {display: '客户', name : 'name', width : '20%', sortable : true, align: 'left', cname: 'id'},
@@ -37,13 +37,10 @@ function load()
 		     name : {begin : '<a href=../customer/customer.do?method=findCustomer&id={id}&update=0>', end : '</a>'}
 		 },
 		 buttons : [
-		     {id: 'update', bclass: 'update', onpress : updateBean, auth: '0202'},
-		     {id: 'del', bclass: 'delete', onpress : delBean, auth: '0202'},
 		     {id: 'queryHis', caption: '客户修改历史', bclass: 'history', onpress : queryHis, auth: '0206'},
 		     {id: 'table', caption: '客户分布', bclass: 'table', onpress : queryCustomerDistribute, auth: '0209'},
 		     {id: 'table1', caption: '所有职员客户分布', bclass: 'table', onpress : queryAllStafferCustomerDistribute, auth: '0209'},
 		     {id: 'syn', caption: '客户分公司同步', bclass: 'table', onpress : synAll, auth: '0210'},
-		     {id: 'configCredit', caption: '配置客户信用', bclass: 'update', onpress : configCredit},
 		     {id: 'queryCreditLog', caption: '信用变更日志', bclass: 'search', onpress : queryCreditLog},
 		     {id: 'queryCredit', caption: '信用明细', bclass: 'search', onpress : queryCredit},
 		     {id: 'queryVistor', caption: '拜访记录', bclass: 'search', onpress : queryVistor},
@@ -57,7 +54,7 @@ function load()
  
 function doSearch()
 {
-    $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryCustomer');
+    $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryLocationCustomer');
 }
 
 function queryCustomerDistribute()

@@ -32,7 +32,27 @@ public class PublicTriggerHander
      * default constructor
      */
     public PublicTriggerHander()
-    {}
+    {
+    }
+
+    public void init()
+    {
+        if (dayJobList != null)
+        {
+            for (CommonJob each : dayJobList)
+            {
+                publicTrigger.putDayCommonJob(each);
+            }
+        }
+
+        if (hourJobList != null)
+        {
+            for (CommonJob each : hourJobList)
+            {
+                publicTrigger.putHourCommonJob(each);
+            }
+        }
+    }
 
     public void destory()
     {

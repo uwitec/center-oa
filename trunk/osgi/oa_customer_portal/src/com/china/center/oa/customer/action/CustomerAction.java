@@ -139,7 +139,7 @@ public class CustomerAction extends DispatchAction
 
     private PrincipalshipDAO principalshipDAO = null;
 
-    private static String QUERYCUSTOMER = "queryCustomer";
+    private static String QUERYCUSTOMER = "querySelfCustomer";
 
     private static String QUERYAPPLYCUSTOMER = "queryApplyCustomer";
 
@@ -160,6 +160,8 @@ public class CustomerAction extends DispatchAction
     private static String QUERYAPPLYCUSTOMERFORCREDIT = "queryApplyCustomerForCredit";
 
     private static String QUERYAPPLYCUSTOMERFORLEVER = "queryApplyCustomerForLever";
+
+    private static String QUERYLOCATIONCUSTOMER = "queryLocationCustomer";
 
     private static String RPTQUERYALLCUSTOMER = "rptQueryAllCustomer";
 
@@ -194,52 +196,79 @@ public class CustomerAction extends DispatchAction
 
         String jsonstr = "";
 
+        final String stafferId = user.getStafferId();
+
+        ActionTools.processJSONQueryCondition(QUERYCUSTOMER, request, condtion);
+
+        condtion.addCondition("order by CustomerBean.loginTime desc");
+
+        jsonstr = ActionTools.querySelfBeanByJSONAndToString(QUERYCUSTOMER, request, condtion,
+            new CommonQuery()
+            {
+                public int getCount(String key, HttpServletRequest request, ConditionParse condition)
+                {
+                    return customerDAO.countSelfCustomerByConstion(stafferId, condition);
+                }
+
+                public String getOrderPfix(String key, HttpServletRequest request)
+                {
+                    return "CustomerBean";
+                }
+
+                public List queryResult(String key, HttpServletRequest request,
+                                        ConditionParse queryCondition)
+                {
+                    return customerDAO.querySelfCustomerByConstion(stafferId, PageSeparateTools
+                        .getCondition(request, key), PageSeparateTools
+                        .getPageSeparate(request, key));
+                }
+
+                public String getSortname(HttpServletRequest request)
+                {
+                    return request.getParameter(ActionTools.SORTNAME);
+                }
+            });
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryLocationCustomer
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryLocationCustomer(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
+                                               HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        User user = Helper.getUser(request);
+
+        String jsonstr = "";
+
         if (userManager.containAuth(user, AuthConstant.CUSTOMER_QUERY_LOCATION))
         {
             // 看到区域下所有的客户
             condtion.addCondition("CustomerBean.locationId", "=", user.getLocationId());
-
-            ActionTools.processJSONQueryCondition(QUERYCUSTOMER, request, condtion);
-
-            jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCUSTOMER, request, condtion,
-                this.customerDAO);
         }
         else
         {
-            final String stafferId = user.getStafferId();
-
-            ActionTools.processJSONQueryCondition(QUERYCUSTOMER, request, condtion);
-
-            condtion.addCondition("order by CustomerBean.loginTime desc");
-
-            jsonstr = ActionTools.querySelfBeanByJSONAndToString(QUERYCUSTOMER, request, condtion,
-                new CommonQuery()
-                {
-                    public int getCount(String key, HttpServletRequest request,
-                                        ConditionParse condition)
-                    {
-                        return customerDAO.countSelfCustomerByConstion(stafferId, condition);
-                    }
-
-                    public String getOrderPfix(String key, HttpServletRequest request)
-                    {
-                        return "CustomerBean";
-                    }
-
-                    public List queryResult(String key, HttpServletRequest request,
-                                            ConditionParse queryCondition)
-                    {
-                        return customerDAO.querySelfCustomerByConstion(stafferId, PageSeparateTools
-                            .getCondition(request, key), PageSeparateTools.getPageSeparate(request,
-                            key));
-                    }
-
-                    public String getSortname(HttpServletRequest request)
-                    {
-                        return request.getParameter(ActionTools.SORTNAME);
-                    }
-                });
+            condtion.addFlaseCondition();
         }
+
+        ActionTools.processJSONQueryCondition(QUERYLOCATIONCUSTOMER, request, condtion);
+
+        jsonstr = ActionTools.queryVOByJSONAndToString(QUERYLOCATIONCUSTOMER, request, condtion,
+            this.customerDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -1544,7 +1573,8 @@ public class CustomerAction extends DispatchAction
             }
             else if ("0".equals(update))
             {
-                if (userManager.containAuth(user, AuthConstant.CUSTOMER_OQUERY))
+                if (userManager.containAuth(user, AuthConstant.CUSTOMER_OQUERY)
+                    || customerManager.hasCustomerAuth(user.getStafferId(), id))
                 {
                     CustomerHelper.decryptCustomer(vo);
                 }

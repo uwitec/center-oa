@@ -64,4 +64,10 @@ public interface CheckConstant
     @Defined(key = "checkType", value = "入库单")
     int CHECK_TYPE_BUY = 6;
 
+    /**
+     * 新增客户
+     */
+    @Defined(key = "checkType", value = "新增客户")
+    int CHECK_TYPE_CUSTOMER = 7;
+
 }

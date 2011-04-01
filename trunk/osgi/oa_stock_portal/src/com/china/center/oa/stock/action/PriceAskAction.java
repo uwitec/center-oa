@@ -290,9 +290,13 @@ public class PriceAskAction extends DispatchAction
                                       HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
+        CommonTools.saveParamers(request);
+
         String id = request.getParameter("id");
 
         String self = request.getParameter("self");
+
+        String owner = request.getParameter("owner");
 
         int srcType = CommonTools.parseInt(request.getParameter("srcType"));
 
@@ -324,6 +328,14 @@ public class PriceAskAction extends DispatchAction
                 {
                     // 只能看到自己
                     filterItem(user, items, 1, srcType);
+                }
+
+                if ("1".equals(owner))
+                {
+                    for (int i = items.size() - 1; i >= 0; i-- )
+                    {
+                        // items.get(i).setProviderName("");
+                    }
                 }
             }
 
@@ -735,7 +747,7 @@ public class PriceAskAction extends DispatchAction
     }
 
     /**
-     * 查询询价
+     * 查询询价(自己查询)
      * 
      * @param mapping
      * @param form
@@ -790,7 +802,7 @@ public class PriceAskAction extends DispatchAction
 
                     if (items.size() > 0)
                     {
-                        map.put(priceAskBeanVO.getId(), PriceAskHelper.createTable(items, user, 1));
+                        map.put(priceAskBeanVO.getId(), PriceAskHelper.createTable(items, user, 0));
                     }
                 }
             }

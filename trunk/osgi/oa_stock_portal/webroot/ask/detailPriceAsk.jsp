@@ -65,9 +65,7 @@
 			</p:cells>
 			
 			<p:cell title="最终价格">
-			<c:if test="${user.role != 'NETASK'}">
 			${bean.price}
-			</c:if>
 			</p:cell>
 			
 			<p:cells title="来源" celspan="1">
@@ -93,10 +91,10 @@
 	<p:subBody width="98%">
 		<table width="100%" border="0" cellspacing='1' id="tables">
 			<tr align="center" class="content0">
-				<c:if test="${user.role != 'PRICE'}">
+				<c:if test="${owner != '1'}">
 				<td width="10%" align="center">供应商</td>
 				</c:if>
-				<c:if test="${user.role == 'PRICE'}">
+				<c:if test="${owner == '1'}">
 				<td width="10%" align="center">报价员</td>
 				</c:if>
 				<td width="10%" align="center" onclick="tableSort(this, true)" class="td_class">价格</td>
@@ -110,10 +108,10 @@
 
 			<c:forEach items="${bean.itemVO}" var="item" varStatus="vs">
 				<tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
-					<c:if test="${user.role != 'PRICE'}">
+					<c:if test="${owner != '1'}">
 					<td align="center">${item.providerName}</td>
 					</c:if>
-					<c:if test="${user.role == 'PRICE'}">
+					<c:if test="${owner == '1'}">
 					<td align="center">${item.userName}</td>
 					</c:if>
 

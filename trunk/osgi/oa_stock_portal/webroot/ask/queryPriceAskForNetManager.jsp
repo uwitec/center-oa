@@ -172,7 +172,6 @@ function updatePass(id)
 
 <p:body width="100%">
 
-    <c:if test="${user.role != 'NETASK'}">
 	<p:subBody width="98%">
 		<table width="100%" align="center" cellspacing='1' class="table0">
 			<tr align=center class="content0">
@@ -242,7 +241,6 @@ function updatePass(id)
 		</table>
 
 	</p:subBody>
-	</c:if>
 
 
 	<p:title>

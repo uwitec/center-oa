@@ -229,6 +229,13 @@ public abstract class AbstractBean implements Serializable
      */
     private int creditUpdateTime = 0;
 
+    /**
+     * 总部核对信息
+     */
+    private String checks = "";
+
+    private int checkStatus = PublicConstant.CHECK_STATUS_INIT;
+
     @Html(title = "预留1")
     private String reserve1 = "";
 
@@ -1190,6 +1197,59 @@ public abstract class AbstractBean implements Serializable
     }
 
     /**
+     * @return the lever
+     */
+    @Deprecated
+    public int getLever()
+    {
+        return lever;
+    }
+
+    /**
+     * @param lever
+     *            the lever to set
+     */
+    @Deprecated
+    public void setLever(int lever)
+    {
+        this.lever = lever;
+    }
+
+    /**
+     * @return the checks
+     */
+    public String getChecks()
+    {
+        return checks;
+    }
+
+    /**
+     * @param checks
+     *            the checks to set
+     */
+    public void setChecks(String checks)
+    {
+        this.checks = checks;
+    }
+
+    /**
+     * @return the checkStatus
+     */
+    public int getCheckStatus()
+    {
+        return checkStatus;
+    }
+
+    /**
+     * @param checkStatus
+     *            the checkStatus to set
+     */
+    public void setCheckStatus(int checkStatus)
+    {
+        this.checkStatus = checkStatus;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -1282,6 +1342,9 @@ public abstract class AbstractBean implements Serializable
             .append("formtype = ")
             .append(this.formtype)
             .append(TAB)
+            .append("lever = ")
+            .append(this.lever)
+            .append(TAB)
             .append("status = ")
             .append(this.status)
             .append(TAB)
@@ -1351,6 +1414,12 @@ public abstract class AbstractBean implements Serializable
             .append("creditUpdateTime = ")
             .append(this.creditUpdateTime)
             .append(TAB)
+            .append("checks = ")
+            .append(this.checks)
+            .append(TAB)
+            .append("checkStatus = ")
+            .append(this.checkStatus)
+            .append(TAB)
             .append("reserve1 = ")
             .append(this.reserve1)
             .append(TAB)
@@ -1372,24 +1441,5 @@ public abstract class AbstractBean implements Serializable
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the lever
-     */
-    @Deprecated
-    public int getLever()
-    {
-        return lever;
-    }
-
-    /**
-     * @param lever
-     *            the lever to set
-     */
-    @Deprecated
-    public void setLever(int lever)
-    {
-        this.lever = lever;
     }
 }

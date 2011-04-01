@@ -66,6 +66,8 @@
 	
 	<osgi:reference id="unitDAO" interface="com.china.center.oa.tax.dao.UnitDAO" />
 	
+	<osgi:reference id="unitViewDAO" interface="com.china.center.oa.sail.dao.UnitViewDAO" />
+	
 	<osgi:reference id="checkViewDAO" interface="com.china.center.oa.tax.dao.CheckViewDAO" />
 	
 	<osgi:reference id="financeManager" interface="com.china.center.oa.tax.manager.FinanceManager" />

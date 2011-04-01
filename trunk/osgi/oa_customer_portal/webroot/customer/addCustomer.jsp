@@ -158,7 +158,7 @@ function changeArea()
                 <p:option type="card"></p:option>
             </p:pro>
             
-            <p:pro field="hlocal" cell="2">
+            <p:pro field="hlocal" cell="2" innerString="style='width:300px'">
                 <option value="">--</option>
                 <c:forEach items="${sybList}" var="item">
                 <option value="${item.id}">${item.name}</option>

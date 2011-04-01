@@ -216,6 +216,10 @@ public class FinanceManagerImpl implements FinanceManager
         {
             tableName = "T_CENTER_OUT";
         }
+        else if (bean.getType() == CheckConstant.CHECK_TYPE_CUSTOMER)
+        {
+            tableName = "T_CENTER_CUSTOMER_NOW";
+        }
         else
         {
             throw new MYException("数据错误,请确认操作");

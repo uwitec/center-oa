@@ -34,6 +34,8 @@
 			<option>$108</option>
 		</condtion>
 	</item>
+	
+	<item name="queryLocationCustomer" alias="queryCustomer"/>
 
 	<item name="queryCanAssignCustomer" deaultpfix="CustomerBean">
 		<condtion name="name" caption="客户名称">

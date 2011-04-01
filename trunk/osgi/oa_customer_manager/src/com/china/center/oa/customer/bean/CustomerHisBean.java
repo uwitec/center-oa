@@ -16,7 +16,6 @@ import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.JoinType;
-import com.china.center.oa.customer.constant.CustomerConstant;
 import com.china.center.oa.publics.bean.StafferBean;
 
 
@@ -43,8 +42,6 @@ public class CustomerHisBean extends AbstractBean
 
     @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
     private String updaterId = "";
-
-    private int checkStatus = CustomerConstant.HIS_CHECK_NO;
 
     /**
      * default constructor
@@ -119,22 +116,5 @@ public class CustomerHisBean extends AbstractBean
     public void setUpdaterId(String updaterId)
     {
         this.updaterId = updaterId;
-    }
-
-    /**
-     * @return the checkStatus
-     */
-    public int getCheckStatus()
-    {
-        return checkStatus;
-    }
-
-    /**
-     * @param checkStatus
-     *            the checkStatus to set
-     */
-    public void setCheckStatus(int checkStatus)
-    {
-        this.checkStatus = checkStatus;
     }
 }
