@@ -97,6 +97,21 @@
 	<session-config>
 		<session-timeout>30</session-timeout>
 	</session-config>
+	
+	<error-page>
+        <error-code>404</error-code>
+        <location>/error.jsp</location>
+    </error-page>
+    
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error.jsp</location>
+    </error-page>
+    
+    <error-page>
+        <error-code>505</error-code>
+        <location>/error.jsp</location>
+    </error-page>
 
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
