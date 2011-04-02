@@ -342,8 +342,9 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
         // 如果是结束需要验证是否是外网询价
         checkEndStock(sb, nextStatus, itemList);
 
-        // 询价处理 需要全部的item都询价结束
-        if (nextStatus == StockConstant.STOCK_STATUS_PRICEPASS)
+        // 待采购拿货 需要全部的item都询价结束
+        if (nextStatus == StockConstant.STOCK_STATUS_STOCKMANAGERPASS
+            || nextStatus == StockConstant.STOCK_STATUS_STOCKPASS)
         {
             for (StockItemBean stockItemBean : itemList)
             {
@@ -553,6 +554,8 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
         bean.setAskDate(TimeTools.getDateString(1, "yyyyMMdd"));
 
         bean.setSrcamount(bean.getAmount());
+
+        bean.setStockMode(stock.getMode());
 
         return bean;
     }

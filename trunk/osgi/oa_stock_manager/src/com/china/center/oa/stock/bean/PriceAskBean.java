@@ -21,6 +21,7 @@ import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.UserBean;
 import com.china.center.oa.stock.constant.PriceConstant;
+import com.china.center.oa.stock.constant.StockConstant;
 
 
 /**
@@ -103,6 +104,11 @@ public class PriceAskBean implements Serializable
      * 询价产品类型
      */
     private int productType = 0;
+
+    /**
+     * 采购询价类型
+     */
+    private int stockMode = StockConstant.STOCK_MODE_SAIL;
 
     private int overTime = PriceConstant.OVERTIME_NO;
 
@@ -582,6 +588,23 @@ public class PriceAskBean implements Serializable
     }
 
     /**
+     * @return the stockMode
+     */
+    public int getStockMode()
+    {
+        return stockMode;
+    }
+
+    /**
+     * @param stockMode
+     *            the stockMode to set
+     */
+    public void setStockMode(int stockMode)
+    {
+        this.stockMode = stockMode;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -590,22 +613,94 @@ public class PriceAskBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("PriceAskBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("productId = ").append(this.productId).append(TAB).append("amount = ").append(this.amount).append(
-            TAB).append("srcamount = ").append(this.srcamount).append(TAB).append("price = ").append(this.price).append(
-            TAB).append("logTime = ").append(this.logTime).append(TAB).append("processTime = ").append(this.processTime).append(
-            TAB).append("endTime = ").append(this.endTime).append(TAB).append("userId = ").append(this.userId).append(
-            TAB).append("areaId = ").append(this.areaId).append(TAB).append("refStock = ").append(this.refStock).append(
-            TAB).append("puserId = ").append(this.puserId).append(TAB).append("instancy = ").append(this.instancy).append(
-            TAB).append("status = ").append(this.status).append(TAB).append("type = ").append(this.type).append(TAB).append(
-            "src = ").append(this.src).append(TAB).append("amountStatus = ").append(this.amountStatus).append(TAB).append(
-            "productType = ").append(this.productType).append(TAB).append("overTime = ").append(this.overTime).append(
-            TAB).append("locationId = ").append(this.locationId).append(TAB).append("description = ").append(
-            this.description).append(TAB).append("reason = ").append(this.reason).append(TAB).append("askDate = ").append(
-            this.askDate).append(TAB).append("parentAsk = ").append(this.parentAsk).append(TAB).append("saveType = ").append(
-            this.saveType).append(TAB).append("item = ").append(this.item).append(TAB).append(" )");
+        retValue
+            .append("PriceAskBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("productId = ")
+            .append(this.productId)
+            .append(TAB)
+            .append("amount = ")
+            .append(this.amount)
+            .append(TAB)
+            .append("srcamount = ")
+            .append(this.srcamount)
+            .append(TAB)
+            .append("price = ")
+            .append(this.price)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("processTime = ")
+            .append(this.processTime)
+            .append(TAB)
+            .append("endTime = ")
+            .append(this.endTime)
+            .append(TAB)
+            .append("userId = ")
+            .append(this.userId)
+            .append(TAB)
+            .append("areaId = ")
+            .append(this.areaId)
+            .append(TAB)
+            .append("refStock = ")
+            .append(this.refStock)
+            .append(TAB)
+            .append("puserId = ")
+            .append(this.puserId)
+            .append(TAB)
+            .append("instancy = ")
+            .append(this.instancy)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("src = ")
+            .append(this.src)
+            .append(TAB)
+            .append("amountStatus = ")
+            .append(this.amountStatus)
+            .append(TAB)
+            .append("productType = ")
+            .append(this.productType)
+            .append(TAB)
+            .append("stockMode = ")
+            .append(this.stockMode)
+            .append(TAB)
+            .append("overTime = ")
+            .append(this.overTime)
+            .append(TAB)
+            .append("locationId = ")
+            .append(this.locationId)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("reason = ")
+            .append(this.reason)
+            .append(TAB)
+            .append("askDate = ")
+            .append(this.askDate)
+            .append(TAB)
+            .append("parentAsk = ")
+            .append(this.parentAsk)
+            .append(TAB)
+            .append("saveType = ")
+            .append(this.saveType)
+            .append(TAB)
+            .append("item = ")
+            .append(this.item)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

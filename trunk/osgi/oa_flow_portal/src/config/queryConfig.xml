@@ -77,20 +77,24 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
+        <condtion name="id" caption="标识(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
     </item>
     
-    <item name="queryFlowInstance1" deaultpfix="FlowInstanceBean">
-        <condtion name="alogTime" filed="logTime" caption="开始时间">
+    <item name="queryFlowInstance1" deaultpfix="FlowBelongBean">
+        <condtion name="alogTime" filed="logTime" caption="开始时间" pfix="FlowInstanceBean">
             <opr>&gt;=</opr>
             <type>date</type>
             <inner></inner>
         </condtion>
-        <condtion name="blogTime" filed="logTime" caption="结束时间">
+        <condtion name="blogTime" filed="logTime" caption="结束时间" pfix="FlowInstanceBean">
             <opr>&lt;=</opr>
             <type>date</type>
             <inner></inner>
         </condtion>
-        <condtion name="stafferId" caption="提交人">
+        <condtion name="stafferId" caption="提交人" pfix="FlowInstanceBean">
             <opr>=</opr>
             <datatype>0</datatype>
             <type>select</type>
@@ -100,8 +104,12 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
-        <condtion name="title" caption="主题">
+        <condtion name="title" caption="主题" pfix="FlowInstanceBean">
             <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="instanceId" caption="标识(A)">
+            <opr>=</opr>
             <type>text</type>
         </condtion>
     </item>
@@ -131,6 +139,10 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
+        <condtion name="id" caption="标识(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
     </item>
     
     <item name="queryFlowInstance3" deaultpfix="FlowInstanceBean">
@@ -156,6 +168,10 @@
         </condtion>
         <condtion name="title" caption="主题">
             <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="id" caption="标识(A)">
+            <opr>=</opr>
             <type>text</type>
         </condtion>
     </item>

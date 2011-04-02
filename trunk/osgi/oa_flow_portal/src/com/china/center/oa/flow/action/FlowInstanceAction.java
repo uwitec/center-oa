@@ -150,8 +150,8 @@ public class FlowInstanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryFlowInstance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse response)
+    public ActionForward queryFlowInstance(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         final ConditionParse condtion = new ConditionParse();
@@ -169,13 +169,15 @@ public class FlowInstanceAction extends DispatchAction
         {
             condtion.addCondition("FlowInstanceBean.stafferId", "=", user.getStafferId());
 
-            condtion.addIntCondition("FlowInstanceBean.type", "=", FlowConstant.FLOW_PARENTTYPE_ROOT);
+            condtion.addIntCondition("FlowInstanceBean.type", "=",
+                FlowConstant.FLOW_PARENTTYPE_ROOT);
 
             ActionTools.processJSONQueryCondition(QUERYFLOWINSTANCE0, request, condtion);
 
             condtion.addCondition("order by FlowInstanceBean.logTime desc");
 
-            jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFLOWINSTANCE0, request, condtion, this.flowInstanceDAO);
+            jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFLOWINSTANCE0, request, condtion,
+                this.flowInstanceDAO);
         }
 
         // query instance which need you handle
@@ -183,13 +185,15 @@ public class FlowInstanceAction extends DispatchAction
         {
             condtion.addCondition("FlowBelongBean.stafferId", "=", user.getStafferId());
 
-            condtion.addIntCondition("FlowDefineBean.parentType", "=", FlowConstant.FLOW_PARENTTYPE_ROOT);
-
-            condtion.addCondition("order by FlowBelongBean.logTime desc");
+            condtion.addIntCondition("FlowDefineBean.parentType", "=",
+                FlowConstant.FLOW_PARENTTYPE_ROOT);
 
             ActionTools.processJSONQueryCondition(QUERYFLOWINSTANCE1, request, condtion);
 
-            jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFLOWINSTANCE1, request, condtion, this.flowBelongDAO);
+            condtion.addCondition("order by FlowBelongBean.logTime desc");
+
+            jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFLOWINSTANCE1, request, condtion,
+                this.flowBelongDAO);
         }
 
         // query instance which i can view
@@ -238,7 +242,8 @@ public class FlowInstanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddFlowInstance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward preForAddFlowInstance(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
                                                HttpServletResponse response)
         throws ServletException
     {
@@ -294,12 +299,12 @@ public class FlowInstanceAction extends DispatchAction
                 TemplateFileBean eacItem = templateFileDAO.find(flowVSTemplateBean.getTemplateId());
 
                 // readonly attachment
-                createTemplateFile(id, instanceId, templates, eacItem, this.getInstanceReadonlyAttachmentRoot(),
-                    FlowConstant.TEMPLATE_READONLY_YES);
+                createTemplateFile(id, instanceId, templates, eacItem, this
+                    .getInstanceReadonlyAttachmentRoot(), FlowConstant.TEMPLATE_READONLY_YES);
 
                 // edit attachment
-                createTemplateFile(id, instanceId, templates, eacItem, this.getInstanceAttachmentRoot(),
-                    FlowConstant.TEMPLATE_READONLY_NO);
+                createTemplateFile(id, instanceId, templates, eacItem, this
+                    .getInstanceAttachmentRoot(), FlowConstant.TEMPLATE_READONLY_NO);
             }
 
             User user = Helper.getUser(request);
@@ -326,7 +331,10 @@ public class FlowInstanceAction extends DispatchAction
                 }
             }
 
-            List<TokenVSTemplateVO> tvos = tokenVSTemplateDAO.queryEntityVOsByFK(bean.getTokens().get(0).getId());
+            List<TokenVSTemplateVO> tvos = tokenVSTemplateDAO.queryEntityVOsByFK(bean
+                .getTokens()
+                .get(0)
+                .getId());
 
             addItemToResult(templates, result, tvos);
 
@@ -345,8 +353,8 @@ public class FlowInstanceAction extends DispatchAction
      * @param result
      * @param tvos
      */
-    private void addItemToResult(List<InstanceTemplateBean> templates, List<InstanceTemplateBean> result,
-                                 List<TokenVSTemplateVO> tvos)
+    private void addItemToResult(List<InstanceTemplateBean> templates,
+                                 List<InstanceTemplateBean> result, List<TokenVSTemplateVO> tvos)
     {
         for (InstanceTemplateBean instanceTemplateBean : templates)
         {
@@ -380,8 +388,8 @@ public class FlowInstanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward comeIntoSub(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward comeIntoSub(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String tokenId = request.getParameter("tokenId");
@@ -399,7 +407,8 @@ public class FlowInstanceAction extends DispatchAction
             return ActionTools.toError("数据错误", "queryFlowDefine2", mapping, request);
         }
 
-        FlowInstanceBean subInstance = flowInstanceDAO.findByParentIdAndTokenId(instanceId, tokenId);
+        FlowInstanceBean subInstance = flowInstanceDAO
+            .findByParentIdAndTokenId(instanceId, tokenId);
 
         if (subInstance == null)
         {
@@ -423,8 +432,8 @@ public class FlowInstanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findFlowInstance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward findFlowInstance(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String instanceId = request.getParameter("id");
@@ -529,7 +538,8 @@ public class FlowInstanceAction extends DispatchAction
             }
 
             // instanceId
-            FlowInstanceLogVO lastLog = flowInstanceLogDAO.findLastLogVO(instanceId, flowTokenVO.getId());
+            FlowInstanceLogVO lastLog = flowInstanceLogDAO.findLastLogVO(instanceId, flowTokenVO
+                .getId());
 
             lastLogList.add(lastLog);
         }
@@ -572,8 +582,8 @@ public class FlowInstanceAction extends DispatchAction
      * @param currentToken
      * @param user
      */
-    private void processTemplateView(HttpServletRequest request, String instanceId, FlowTokenBean currentToken,
-                                     User user)
+    private void processTemplateView(HttpServletRequest request, String instanceId,
+                                     FlowTokenBean currentToken, User user)
     {
         List<InstanceTemplateBean> itList = instanceTemplateDAO.queryEntityBeansByFK(instanceId);
 
@@ -583,7 +593,8 @@ public class FlowInstanceAction extends DispatchAction
 
         if (flowInstanceManager.hasOwenInstance(user, instanceId))
         {
-            List<TokenVSTemplateVO> tvos = tokenVSTemplateDAO.queryEntityVOsByFK(currentToken.getId());
+            List<TokenVSTemplateVO> tvos = tokenVSTemplateDAO.queryEntityVOsByFK(currentToken
+                .getId());
 
             for (InstanceTemplateBean instanceTemplateBean : itList)
             {
@@ -624,13 +635,13 @@ public class FlowInstanceAction extends DispatchAction
      */
     private void setUrl(HttpServletRequest request)
     {
-        String eurl = HTTPTools.getHTTPURL(request) + this.getEditServerName() + "/" + request.getSession().getId()
-                      + "/instance";
+        String eurl = HTTPTools.getHTTPURL(request) + this.getEditServerName() + "/"
+                      + request.getSession().getId() + "/instance";
 
         request.setAttribute("eurl", eurl);
 
-        String rurl = HTTPTools.getHTTPURL(request) + this.getReadonlyServerName() + "/" + request.getSession().getId()
-                      + "/instance";
+        String rurl = HTTPTools.getHTTPURL(request) + this.getReadonlyServerName() + "/"
+                      + request.getSession().getId() + "/instance";
 
         request.setAttribute("rurl", rurl);
     }
@@ -641,8 +652,9 @@ public class FlowInstanceAction extends DispatchAction
      * @param templates
      * @param eacItem
      */
-    private void createTemplateFile(String id, String instanceId, List<InstanceTemplateBean> templates,
-                                    TemplateFileBean eacItem, String root, int readMode)
+    private void createTemplateFile(String id, String instanceId,
+                                    List<InstanceTemplateBean> templates, TemplateFileBean eacItem,
+                                    String root, int readMode)
     {
         InstanceTemplateBean it = new InstanceTemplateBean();
 
@@ -687,8 +699,8 @@ public class FlowInstanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addFlowInstance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward addFlowInstance(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         FlowInstanceBean bean = new FlowInstanceBean();
@@ -769,8 +781,9 @@ public class FlowInstanceAction extends DispatchAction
 
             process.add(processId);
 
-            flowInstanceManager.addFlowInstance(user, bean, CommonTools.parseInt(rds.getParmterMap().get("operation")),
-                process);
+            flowInstanceManager.addFlowInstance(user, bean, CommonTools.parseInt(rds
+                .getParmterMap()
+                .get("operation")), process);
 
             request.setAttribute(KeyConstant.MESSAGE, "成功保存流程实例");
         }
@@ -794,8 +807,8 @@ public class FlowInstanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateTemplateFile(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward updateTemplateFile(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         TemplateFileBean bean = new TemplateFileBean();
@@ -830,8 +843,8 @@ public class FlowInstanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteFlowInstance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward deleteFlowInstance(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -866,8 +879,8 @@ public class FlowInstanceAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward handleFlowInstance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward handleFlowInstance(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String cmd = request.getParameter("cmd");
@@ -934,7 +947,8 @@ public class FlowInstanceAction extends DispatchAction
      * @throws ServletException
      * @throws IOException
      */
-    public ActionForward downFlowInstanceAttachment(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward downFlowInstanceAttachment(ActionMapping mapping, ActionForm form,
+                                                    HttpServletRequest request,
                                                     HttpServletResponse response)
         throws ServletException, IOException
     {
@@ -958,8 +972,8 @@ public class FlowInstanceAction extends DispatchAction
         response.setContentLength((int)file.length());
 
         response.setHeader("Content-Disposition", "attachment; filename="
-                                                  + StringTools.getStringBySet(attachment.getFileName(), "GBK",
-                                                      "ISO8859-1"));
+                                                  + StringTools.getStringBySet(attachment
+                                                      .getFileName(), "GBK", "ISO8859-1"));
 
         UtilStream us = new UtilStream(new FileInputStream(file), out);
 
@@ -976,8 +990,8 @@ public class FlowInstanceAction extends DispatchAction
      * @param rds
      * @param bean
      */
-    private ActionForward parserAttachment(ActionMapping mapping, HttpServletRequest request, RequestDataStream rds,
-                                           FlowInstanceBean bean)
+    private ActionForward parserAttachment(ActionMapping mapping, HttpServletRequest request,
+                                           RequestDataStream rds, FlowInstanceBean bean)
     {
         // parser attachment
         if (rds.haveStream())
@@ -997,9 +1011,8 @@ public class FlowInstanceAction extends DispatchAction
                                   + '/'
                                   + fileAlais
                                   + "."
-                                  + FileTools
-                                      .getFilePostfix(FileTools.getFileName(rds.getUniqueFileName()))
-                                      .toLowerCase();
+                                  + FileTools.getFilePostfix(
+                                      FileTools.getFileName(rds.getUniqueFileName())).toLowerCase();
 
                 String filePath = this.getFlowAtt() + '/' + rabsPath;
 

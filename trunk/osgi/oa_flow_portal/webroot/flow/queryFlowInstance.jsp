@@ -52,14 +52,15 @@ function load()
 		 url: '../flow/instance.do?method=queryFlowInstance&operationMode=${param.operation}',
 		 colModel : [
 		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={instanceId} sstatus={status}>', width : 40, align: 'center'},
+		     {display: '标识', name : 'instanceId', width : '15%'},
 		     {display: '主题', name : 'title', width : '30%'},
-		     {display: sMap['${param.operation}'], name : 'stafferName', sortable : false, width : '10%'},
-		     {display: '当前环节', name : 'tokenName', width : '15%'},
+		     {display: sMap['${param.operation}'], name : 'stafferName', sortable : false, width : '8%'},
+		     {display: '当前环节', name : 'tokenName', width : '10%'},
 		     {display: '流程定义', name : 'flowName', sortable : true, cname: 'FlowDefineBean.name', width : '15%'},
 		     {display: '更新时间', name : 'logTime', sortable : true, width : 'auto'}
 		     ],
 		 extAtt: {
-		     title : {begin : '<a href=../flow/instance.do?method=findFlowInstance&id={instanceId} title=查看流程实例>', end : '</a>'}
+		     id : {begin : '<a href=../flow/instance.do?method=findFlowInstance&id={instanceId} title=查看流程实例>', end : '</a>'}
 		 },
 		 buttons : buttonsMap['${param.operation}'],
 		 <p:conf/>

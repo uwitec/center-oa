@@ -188,7 +188,7 @@ function getBank(obj)
 			</p:pro>
 			
 			<p:cell title="选择目的帐户" id="destBankId">
-                <input name="destBankName" type="text" readonly="readonly" size="60" oncheck="notNone">
+                <input name="destBankName" type="text" readonly="readonly" size="60">
                  <font color="red">*</font>
                 <input type="button"
                     value="&nbsp;...&nbsp;" name="qout" class="button_class"
