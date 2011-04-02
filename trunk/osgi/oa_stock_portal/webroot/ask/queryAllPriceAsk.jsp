@@ -316,7 +316,7 @@ function updatePass(id)
 			</c:forEach>
 		</table>
 
-		<p:formTurning form="formEntry" method="queryPriceAsk"></p:formTurning>
+		<p:formTurning form="formEntry" method="queryAllPriceAsk"></p:formTurning>
 	</p:subBody>
 
 	<p:line flag="1" />
