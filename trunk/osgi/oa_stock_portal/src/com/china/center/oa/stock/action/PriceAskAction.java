@@ -824,6 +824,65 @@ public class PriceAskAction extends DispatchAction
     }
 
     /**
+     * 采购主管可以看到全部的询价(分为销售采购和生产采购)
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryAllPriceAsk(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        ConditionParse condtion = new ConditionParse();
+
+        List<PriceAskBeanVO> list = new ArrayList<PriceAskBeanVO>();;
+        try
+        {
+            if (OldPageSeparateTools.isFirstLoad(request))
+            {
+                setConditionForAsk(request, condtion, 9);
+            }
+
+            QueryTools.commonQueryVO("queryAllPriceAsk", request, list, condtion, this.priceAskDAO);
+
+            Map<String, String> map = new HashMap<String, String>();
+
+            for (PriceAskBeanVO priceAskBeanVO : list)
+            {
+                User user = Helper.getUser(request);
+
+                List<PriceAskProviderBeanVO> items = priceAskProviderDAO
+                    .queryEntityVOsByFK(priceAskBeanVO.getId());
+
+                if (items.size() > 0)
+                {
+                    map.put(priceAskBeanVO.getId(), PriceAskHelper.createTable(items, user, 1));
+                }
+            }
+
+            request.setAttribute("list", list);
+
+            request.setAttribute("map", map);
+        }
+        catch (Exception e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "查询询价失败:" + e.getMessage());
+
+            _logger.error(e, e);
+
+            return mapping.findForward("error");
+        }
+
+        return mapping.findForward("queryAllPriceAsk");
+    }
+
+    /**
      * queryPriceAskForProcess(内网询价处理)(包括内部询价、内外询价)
      * 
      * @param mapping
@@ -1358,6 +1417,13 @@ public class PriceAskAction extends DispatchAction
                 .getInt(SysConfigConstant.ASK_PRODUCT_AMOUNT_MAX));
 
             condtion.addCondition("AND PriceAskBean.status in (0, 1)");
+        }
+
+        // 采购主管看全部的
+        if (conditionType == 9)
+        {
+            condtion.addIntCondition("PriceAskBean.saveType", "=",
+                PriceConstant.PRICE_ASK_SAVE_TYPE_COMMON);
         }
 
         String productId = request.getParameter("productId");

@@ -5,6 +5,7 @@
             type="org.springframework.web.struts.DelegatingActionProxy"
             validate="false">
             <forward name="queryPriceAsk"/>
+            <forward name="queryAllPriceAsk"/>
             <forward name="queryPriceAskForProcess"/>
             <forward name="processAskPrice"/>
             <forward name="queryPriceAskForNetProcess"/>
