@@ -298,7 +298,7 @@ function updatePass(id)
 					<a href="../product/product.do?method=findProduct&id=${item.productId}&detail=1">${item.productName}</a></td>
 					<td align="center" onclick="hrefAndSelect(this, true)">${item.amount}</td>
 
-					<td align="center" onclick="hrefAndSelect(this, true)">${item.price}</td>
+					<td align="center" onclick="hrefAndSelect(this, true)">${my:formatNum(item.price)}</td>
 					
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskStatus', item.status)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('priceAskType', item.type)}</td>
