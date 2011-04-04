@@ -60,7 +60,7 @@ function load()
 		     {display: '更新时间', name : 'logTime', sortable : true, width : 'auto'}
 		     ],
 		 extAtt: {
-		     id : {begin : '<a href=../flow/instance.do?method=findFlowInstance&id={instanceId} title=查看流程实例>', end : '</a>'}
+		     instanceId : {begin : '<a href=../flow/instance.do?method=findFlowInstance&id={instanceId} title=查看流程实例>', end : '</a>'}
 		 },
 		 buttons : buttonsMap['${param.operation}'],
 		 <p:conf/>
