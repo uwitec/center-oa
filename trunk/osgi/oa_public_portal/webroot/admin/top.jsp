@@ -98,17 +98,19 @@ function checkLock()
         faileCount = 0;
     }
     
-    //检查是否超时
-    gbuffalo.remoteCall("checkuser.checkSession",[], function(reply) {
-               var result = reply.getResult();
-              
-              //超时  
-              if (result)
-              {
-                  window.top.location.href = '../admin/lock.jsp';
-              }
-        });
-    
+    if (false)
+    {
+	    //检查是否超时
+	    gbuffalo.remoteCall("checkuser.checkSession",[], function(reply) {
+	               var result = reply.getResult();
+	              
+	              //超时  
+	              if (result)
+	              {
+	                  window.top.location.href = '../admin/lock.jsp';
+	              }
+	        });
+     }
     
     setTimeout("checkLock()", 30000);
 }
