@@ -3,18 +3,13 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="客户明细" />
+<p:link title="客户明细" guid="true" dialog="true"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/cnchina.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
-<script language="JavaScript" src="../js/prototype.js"></script>
-<script language="JavaScript" src="../js/buffalo.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="javascript">
-var END_POINT="${pageContext.request.contextPath}/bfapp";
-
-var buffalo = new Buffalo(END_POINT);
 
 var cmap = window.top.topFrame.cmap;
 
@@ -57,32 +52,6 @@ function changes(obj)
     }
 }
 
-function changeArea()
-{
-    var id = $$('cityId');
-    
-    if (id == "")
-    {
-        return;
-    }
-    
-    buffalo.remoteCall("commonManager.queryAreaByParentId",[id], function(reply) {
-                var result = reply.getResult();
-                
-                var sList = result;
-                
-                removeAllItem($O('areaId'));
-                
-                setOption($O('areaId'), "", "--");
-                
-                for (var i = 0; i < sList.length; i++)
-                {
-                    setOption($O('areaId'), sList[i].id,  sList[i].name);
-                }
-                
-                loadForm();
-        });
-}
 
 function subCode()
 {
@@ -115,6 +84,17 @@ function testclip()
   }  
    
   setTimeout("testclip()", 50)   
+}
+
+function checkBean()
+{
+    $.messager.prompt('总部核对', '请核对说明', '', function(msg){
+                if (msg)
+                {
+                    $l('../finance/finance.do?method=checks2&id=${bean.id}&reason=' + ajaxPararmter(msg) + '&type=${ltype}');
+                }
+               
+            }, 2);
 }
 </script>
 
@@ -248,6 +228,13 @@ function testclip()
 	
 	<p:button leftWidth="100%" rightWidth="0%">
         <div align="right">
+        <c:if test="${check == 1}">
+        <input
+            type="button" name="ba" class="button_class"
+            onclick="checkBean()"
+            value="&nbsp;&nbsp;总部核对&nbsp;&nbsp;">&nbsp;&nbsp;
+        </c:if>
+        
         <input type="button" class="button_class"
             style="cursor: pointer" value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"
             onclick="javascript:history.go(-1)"></div>

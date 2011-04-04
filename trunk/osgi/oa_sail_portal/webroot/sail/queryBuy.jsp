@@ -512,9 +512,6 @@ function reject()
                 onclick="check()" />&nbsp;&nbsp;<input type="button" name="bu2"
                 class="button_class" value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;"
                 onclick="reject()" />&nbsp;&nbsp;
-		<input
-			type="button" class="button_class"
-			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;
 		</c:if>	
 		
 		<c:if test="${queryType == '4'}">
@@ -528,6 +525,10 @@ function reject()
         <input type="button" class="button_class"
                 value="&nbsp;&nbsp;驳回退库&nbsp;&nbsp;" onClick="rejectBack()"/>&nbsp;&nbsp;
         </c:if>
+        
+        <input
+            type="button" class="button_class"
+            value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;
         
 		</div>
 		</td>

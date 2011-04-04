@@ -27,14 +27,13 @@ function load()
          url: gurl + 'query' + ukey,
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lbatchPrice={batchPrice} lsailPrice={sailPrice} lcost={cost}>', width : 40, align: 'center'},
-             {display: '名称', name : 'name', width : '15%'},
+             {display: '名称', name : 'name', width : '25%'},
              {display: '编码', name : 'code', width : '10%'},
              {display: '状态', name : 'status', cc : 'productStatus', width : '8%'},
              {display: '类型', name : 'type', cc : 'productType', width : '8%'},
              {display: '虚拟', name : 'abstractType', cc : 'productAbstractType', width : '8%'},
              {display: '库存模型', name : 'stockType', cc : 'productStockType', width : '10%'},
-             {display: '批发/零售', name : 'price', content : '{batchPrice}/{sailPrice}', toFixed: 2, width : '10%'},
-             {display: '时间', name : 'logTime', sortable : true, width : 'auto'}
+             {display: '批发/零售', name : 'price', content : '{batchPrice}/{sailPrice}', toFixed: 2, width : 'auto'}
              ],
          extAtt: {
              name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}

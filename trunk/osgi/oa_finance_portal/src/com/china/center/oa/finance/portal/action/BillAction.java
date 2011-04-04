@@ -689,6 +689,8 @@ public class BillAction extends DispatchAction
                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
+        CommonTools.saveParamers(request);
+
         String id = request.getParameter("id");
 
         InBillVO bean = inBillDAO.findVO(id);
@@ -717,6 +719,8 @@ public class BillAction extends DispatchAction
                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
+        CommonTools.saveParamers(request);
+
         String id = request.getParameter("id");
 
         OutBillVO bean = outBillDAO.findVO(id);

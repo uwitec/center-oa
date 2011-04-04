@@ -352,8 +352,6 @@ public class CurOutManagerImpl implements CurOutManager
             try
             {
                 customerCreditManager.configCustomerCredit(user, cid, ccList);
-
-                triggerLog.info("系统自动修正客户的静态指标:" + cid);
             }
             catch (MYException e)
             {
@@ -365,8 +363,6 @@ public class CurOutManagerImpl implements CurOutManager
             try
             {
                 customerCreditManager.updateCustomerCredit(cid);
-
-                triggerLog.info("系统自动修正客户的静态指标2:" + cid);
             }
             catch (MYException e)
             {
@@ -600,8 +596,6 @@ public class CurOutManagerImpl implements CurOutManager
                         _logger.warn(e, e);
                         throw new RuntimeException(e.getErrorContent());
                     }
-
-                    triggerLog.info("handle sum Total stat[" + cid + "]:" + amount);
 
                     // 记入日志
                     saveCore(cid, amount, false);

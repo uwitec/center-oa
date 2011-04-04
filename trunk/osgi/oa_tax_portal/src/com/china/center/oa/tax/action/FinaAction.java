@@ -361,6 +361,54 @@ public class FinaAction extends DispatchAction
     }
 
     /**
+     * checks2
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward checks2(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            int type = MathTools.parseInt(request.getParameter("type"));
+
+            String reason = request.getParameter("reason");
+
+            User user = Helper.getUser(request);
+
+            if (type != 6)
+            {
+                taxFacade.checks(user.getId(), id, "[" + user.getStafferName() + "]" + reason);
+            }
+            else
+            {
+                outManager.check(id, user, reason);
+
+                financeManager.deleteChecks(user, id);
+            }
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        return mapping.findForward(QUERYCHECKVIEW);
+    }
+
+    /**
      * synCheckView
      * 
      * @param mapping

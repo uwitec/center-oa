@@ -1439,6 +1439,8 @@ public class ProductAction extends DispatchAction
                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
+        CommonTools.saveParamers(request);
+
         String id = request.getParameter("id");
 
         ComposeProductVO bean = productFacade.findComposeById(id);
@@ -1467,6 +1469,8 @@ public class ProductAction extends DispatchAction
                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
+        CommonTools.saveParamers(request);
+
         String id = request.getParameter("id");
 
         PriceChangeVO bean = productFacade.findPriceChangeById(id);

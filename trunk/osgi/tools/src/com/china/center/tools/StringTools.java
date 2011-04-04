@@ -77,7 +77,7 @@ public class StringTools
      */
     public static String formatString20(String name)
     {
-        return "10" + TimeTools.now("yyyyMMdd") + formatString(name);
+        return "A1" + TimeTools.now("yyyyMMdd") + formatString(name);
     }
 
     /**

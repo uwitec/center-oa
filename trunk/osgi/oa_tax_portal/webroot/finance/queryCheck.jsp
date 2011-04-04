@@ -55,40 +55,44 @@ function $callBack()
 
 function openDetail(id, type)
 {
+    var link = '';
+    
     if (type == 1)
     {
-        $l('../product/product.do?method=findCompose&id=' + id);
+        link = '../product/product.do?method=findCompose&id=' + id + '&check=1';
     }
     
     if (type == 2)
     {
-        $l('../product/product.do?method=findPriceChange&id=' + id);
+        link = '../product/product.do?method=findPriceChange&id=' + id + '&check=1';
     }
     
     if (type == 3)
     {
-        $l('../finance/bill.do?method=findInBill&id=' + id);
+        link = '../finance/bill.do?method=findInBill&id=' + id + '&check=1';
     }
     
     if (type == 4)
     {
-        $l('../finance/bill.do?method=findOutBill&id=' + id);
+        link = '../finance/bill.do?method=findOutBill&id=' + id + '&check=1';
     }
     
     if (type == 5)
     {
-        $l('../stock/stock.do?method=findStock&id=' + id);
+        link = '../stock/stock.do?method=findStock&id=' + id + '&check=1';
     }
     
     if (type == 6)
     {
-        $l('../sail/out.do?method=findOut&fow=99&outId=' + id);
+        link = '../sail/out.do?method=findOut&fow=99&outId=' + id + '&check=1';
     }
     
      if (type == 7)
     {
-        $l('../customer/customer.do?method=findCustomer&update=99&id=' + id);
+        link = '../customer/customer.do?method=findCustomer&update=99&id=' + id + '&check=1';
     }
+    
+    $l(link + '&ltype=' + type);
 }
 
 function delBean(opr, grid)
