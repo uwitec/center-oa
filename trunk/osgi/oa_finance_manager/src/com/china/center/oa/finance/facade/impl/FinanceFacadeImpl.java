@@ -300,7 +300,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
 
         synchronized (INVOICEINS_LOCK)
         {
-            if (containAuth(user, AuthConstant.INVOICEINS_OPR))
+            if (containAuth(user, AuthConstant.SAIL_SUBMIT))
             {
                 return invoiceinsManager.addInvoiceinsBean(user, bean);
             }
@@ -322,7 +322,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
 
         synchronized (INVOICEINS_LOCK)
         {
-            if (containAuth(user, AuthConstant.INVOICEINS_DEL))
+            if (containAuth(user, AuthConstant.INVOICEINS_DEL, AuthConstant.SAIL_SUBMIT))
             {
                 return invoiceinsManager.deleteInvoiceinsBean(user, id);
             }
@@ -632,8 +632,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
-    public boolean endStockPayBySEC(String userId, String id, String reason,
-                                    List<OutBillBean> outBillList)
+    public boolean endStockPayBySEC(String userId, String id, String reason, List<OutBillBean> outBillList)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(userId, id);
