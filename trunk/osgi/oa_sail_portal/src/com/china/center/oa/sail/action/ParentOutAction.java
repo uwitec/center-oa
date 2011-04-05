@@ -377,18 +377,33 @@ public class ParentOutAction extends DispatchAction
 
         List<DepotBean> locationList = depotDAO.listEntityBeans();
 
-        for (Iterator iterator = locationList.iterator(); iterator.hasNext();)
+        if ("0".equals(flag))
         {
-            DepotBean depotBean = (DepotBean)iterator.next();
-
-            if (depotBean.getId().equals(DepotConstant.MAKE_DEPOT_ID))
+            for (Iterator iterator = locationList.iterator(); iterator.hasNext();)
             {
-                iterator.remove();
-            }
+                DepotBean depotBean = (DepotBean)iterator.next();
 
-            if (depotBean.getId().equals(DepotConstant.STOCK_DEPOT_ID))
-            {
-                iterator.remove();
+                if (depotBean.getId().equals(DepotConstant.MAKE_DEPOT_ID))
+                {
+                    iterator.remove();
+
+                    continue;
+                }
+
+                if (depotBean.getId().equals(DepotConstant.STOCK_DEPOT_ID))
+                {
+                    iterator.remove();
+
+                    continue;
+                }
+
+                // 人为规定
+                if (depotBean.getName().indexOf("不可发") != -1)
+                {
+                    iterator.remove();
+
+                    continue;
+                }
             }
         }
 
@@ -2204,6 +2219,12 @@ public class ParentOutAction extends DispatchAction
         {
             throw new MYException("用户没有此操作的权限");
         }
+
+        // 业务员查询自己的退货单
+        if ("7".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.SAIL_SUBMIT))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
     }
 
     /**
@@ -3346,6 +3367,13 @@ public class ParentOutAction extends DispatchAction
         else if ("6".equals(queryType))
         {
             // 可以查询所有
+        }
+        // 业务员查询自己的销售退库
+        else if ("7".equals(queryType))
+        {
+            condtion.addCondition("OutBean.stafferId", "=", user.getStafferId());
+
+            condtion.addCondition("and OutBean.outType in (4, 5)");
         }
         // 未知的则什么都没有
         else
