@@ -1356,6 +1356,13 @@ public class ParentOutAction extends DispatchAction
                         baseBean.setOwnerName(each.getOwnerName());
                         baseBean.setDepotpartId(each.getDepotpartId());
 
+                        if (StringTools.isNullOrNone(each.getDepotpartId()))
+                        {
+                            request.setAttribute(KeyConstant.ERROR_MESSAGE, "可能是四月之前的单据,没有仓区所以不能退库");
+
+                            return mapping.findForward("error");
+                        }
+
                         baseBean.setDepotpartName(each.getDepotpartName());
 
                         // 成本
@@ -3052,7 +3059,10 @@ public class ParentOutAction extends DispatchAction
                 request.setAttribute("pay", OutConstant.PAY_NOT);
             }
 
-            condtion.addCondition("OutBean.locationId", "=", user.getLocationId());
+            if ( !userManager.containAuth(user.getId(), AuthConstant.BILL_QUERY_ALL))
+            {
+                condtion.addCondition("OutBean.locationId", "=", user.getLocationId());
+            }
         }
         // 总部核对(已经付款的销售单)
         else if ("6".equals(queryType))
