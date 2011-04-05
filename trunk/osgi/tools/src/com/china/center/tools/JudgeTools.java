@@ -90,28 +90,28 @@ public class JudgeTools
     {
         if (oo == null)
         {
-            throw new MYException("", "参数为空");
+            throw new MYException("参数为空");
         }
 
         for (int i = 0; i < oo.length; i++ )
         {
             if (oo[i] == null)
             {
-                throw new MYException("", "参数为空");
+                throw new MYException("参数为空");
             }
 
             if (oo[i] instanceof String)
             {
                 if (StringTools.isNullOrNone((String)oo[i]))
                 {
-                    throw new MYException("", "参数为空");
+                    throw new MYException("参数为空");
                 }
 
                 if (regularNum)
                 {
                     if ( !RegularExpress.isGuid((String)oo[i]))
                     {
-                        throw new MYException("", "不是全数字");
+                        throw new MYException("不是全数字");
                     }
                 }
             }
@@ -122,7 +122,7 @@ public class JudgeTools
 
                 if (coll.size() == 0)
                 {
-                    throw new MYException("", "参数为空");
+                    throw new MYException("参数为空");
                 }
             }
 
@@ -132,7 +132,7 @@ public class JudgeTools
 
                 if (coll.size() == 0)
                 {
-                    throw new MYException("", "参数为空");
+                    throw new MYException("参数为空");
                 }
             }
         }
@@ -156,26 +156,26 @@ public class JudgeTools
     {
         if (oo == null)
         {
-            throw new MYException("", "参数为空");
+            throw new MYException("参数为空");
         }
 
         for (int i = 0; i < oo.length; i++ )
         {
             if (oo[i] == null)
             {
-                throw new MYException("", "参数为空");
+                throw new MYException("参数为空");
             }
 
             if (oo[i] instanceof String)
             {
                 if (StringTools.isNullOrNone((String)oo[i]))
                 {
-                    throw new MYException("", "参数为空");
+                    throw new MYException("参数为空");
                 }
 
                 if ( !RegularExpress.isNumberOrLetter((String)oo[i]))
                 {
-                    throw new MYException("", "参数必须是数字或者字母");
+                    throw new MYException("参数必须是数字或者字母");
                 }
             }
         }
