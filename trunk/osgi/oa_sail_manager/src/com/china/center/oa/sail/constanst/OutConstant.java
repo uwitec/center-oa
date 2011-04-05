@@ -224,9 +224,9 @@ public interface OutConstant
     int OUTTYPE_IN_SWATCH = 4;
 
     /**
-     * 销售退单
+     * 销售退库
      */
-    @Defined(key = "outType_in", value = "销售退单")
+    @Defined(key = "outType_in", value = "销售退库")
     int OUTTYPE_IN_OUTBACK = 5;
 
     /**
