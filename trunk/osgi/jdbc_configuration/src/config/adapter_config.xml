@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<comment>JDBC的配置</comment>
+	<comment>JDBC</comment>
 	<entry key="adapter.className">com.china.center.jdbc.inter.adapter.MySqlDBAdapter</entry>
 	<entry key="jdbc.driverClassName">com.mysql.jdbc.Driver</entry>
 	<entry key="jdbc.url">jdbc:mysql://127.0.0.1:3306/uportal?useUnicode=true&amp;characterEncoding=utf8</entry>
