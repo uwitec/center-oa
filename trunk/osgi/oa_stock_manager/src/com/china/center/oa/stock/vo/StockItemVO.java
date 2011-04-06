@@ -30,6 +30,9 @@ public class StockItemVO extends StockItemBean
     @Relationship(relationField = "stockId", tagField = "logTime")
     private String stockTime = "";
 
+    @Relationship(relationField = "stafferId")
+    private String stafferName = "";
+
     @Ignore
     private List<PriceAskProviderBeanVO> asksVo = null;
 
@@ -126,6 +129,23 @@ public class StockItemVO extends StockItemBean
     }
 
     /**
+     * @return the stafferName
+     */
+    public String getStafferName()
+    {
+        return stafferName;
+    }
+
+    /**
+     * @param stafferName
+     *            the stafferName to set
+     */
+    public void setStafferName(String stafferName)
+    {
+        this.stafferName = stafferName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -134,12 +154,31 @@ public class StockItemVO extends StockItemBean
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("StockItemVO ( ").append(super.toString()).append(TAB).append("productName = ").append(
-            this.productName).append(TAB).append("productCode = ").append(this.productCode).append(TAB).append(
-            "providerName = ").append(this.providerName).append(TAB).append("stockTime = ").append(this.stockTime).append(
-            TAB).append("asksVo = ").append(this.asksVo).append(TAB).append(" )");
+        retValue
+            .append("StockItemVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("productName = ")
+            .append(this.productName)
+            .append(TAB)
+            .append("productCode = ")
+            .append(this.productCode)
+            .append(TAB)
+            .append("providerName = ")
+            .append(this.providerName)
+            .append(TAB)
+            .append("stockTime = ")
+            .append(this.stockTime)
+            .append(TAB)
+            .append("stafferName = ")
+            .append(this.stafferName)
+            .append(TAB)
+            .append("asksVo = ")
+            .append(this.asksVo)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

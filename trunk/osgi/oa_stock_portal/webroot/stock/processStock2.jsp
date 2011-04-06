@@ -153,8 +153,8 @@ function updatePrice()
 	<p:subBody width="100%">
 		<table width="100%" border="0" cellspacing='1' id="tables">
 			<tr align="center" class="content0">
-				<td width="15%" align="center">采购产品</td>
-				<td width="10%" align="center">采购数量</td>
+				<td width="10%" align="center">采购产品</td>
+				<td width="5%" align="center">采量</td>
 				<td width="10%" align="center">当前数量</td>
 				<td width="10%" align="center">是否询价</td>
 				<td width="10%" align="center">参考/实际价格</td>
@@ -162,10 +162,12 @@ function updatePrice()
 				<td width="15%" align="center">供应商</td>
 				<td width="5%" align="center">合计金额</td>
 				<td width="10%" align="center">描述</td>
+				<td width="10%" align="center">拿货人</td>
 				<td width="10%" align="center">拿 货</td>
 			</tr>
 
 			<c:forEach items="${bean.itemVO}" var="item" varStatus="vs">
+			    <c:if test="${bean.stafferId == user.stafferId || item.stafferId == user.stafferId}">
 				<tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
 					<td align="center">${item.productName}</td>
 
@@ -184,6 +186,8 @@ function updatePrice()
 					<td align="center">${my:formatNum(item.total)}</td>
 					
 					<td align="center">${item.description}</td>
+					
+					<td align="center">${item.stafferName}</td>
 
 					<td align="center">
 					<c:if test="${item.fechProduct == 0 && item.stafferId == user.stafferId}">
@@ -193,6 +197,7 @@ function updatePrice()
 					</c:if>
 					</td>
 				</tr>
+				</c:if>
 			</c:forEach>
 		</table>
 	</p:subBody>

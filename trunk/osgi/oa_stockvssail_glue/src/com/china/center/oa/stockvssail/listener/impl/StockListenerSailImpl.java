@@ -136,7 +136,9 @@ public class StockListenerSailImpl implements StockListener
 
             baseBean.setProductId(item.getProductId());
             baseBean.setCostPriceKey(StorageRelationHelper.getPriceKey(item.getPrice()));
-            baseBean.setOwner(bean.getOwerId());
+
+            // 这里记住哦
+            baseBean.setOwner(bean.getStafferId());
 
             String on = ((StockVO)bean).getOwerName();
 

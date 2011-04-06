@@ -308,9 +308,9 @@ function checkBean()
 						<td width="20%" align="center">品名</td>
 						<td width="5%" align="center">单位</td>
 						<td width="5%" align="center">数量</td>
-						<td width="10%" align="center">入库价</td>
+						<td width="10%" align="center">价格</td>
 						<td width="10%" align="center">金额<span id="total"></span></td>
-						<td width="10%" align="center">成本</td>
+						<td width="10%" align="center">入库成本</td>
 						<td width="25%" align="center">类型</td>
 						<td width="15%" align="center">开发票品名</td>
 					</tr>

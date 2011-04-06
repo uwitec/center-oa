@@ -79,7 +79,7 @@ function viewFile(path)
 
 </head>
 <body class="body_class" onload="load()">
-<form name="formEntry" action="../admin/pop.do" method="post"><input
+<form name="formEntry" action="../flow/template.do" method="post"><input
 	type="hidden" name="method" value="rptQueryTemplateFile"><input
 	type="hidden" value="1" name="load"> <p:navigation
 	height="22">

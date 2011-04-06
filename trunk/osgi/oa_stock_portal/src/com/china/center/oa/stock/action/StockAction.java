@@ -188,7 +188,7 @@ public class StockAction extends DispatchAction
             }
             else
             {
-                // 否则就是选择的人
+                // 否则提交人
                 bean.setOwerId(user.getStafferId());
             }
 
@@ -1442,6 +1442,21 @@ public class StockAction extends DispatchAction
         }
     }
 
+    private void checkQueryTypeAuth(User user, String type)
+        throws MYException
+    {
+        if ("0".equals(type) && !userManager.containAuth(user, AuthConstant.STOCK_NET_STOCK_PASS))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+
+        if ("1".equals(type)
+            && !userManager.containAuth(user.getId(), AuthConstant.STOCK_MAKE_PASS))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+    }
+
     /**
      * 查询采购单(自己的)
      * 
@@ -1464,10 +1479,15 @@ public class StockAction extends DispatchAction
 
         String ltype = getLType(request);
 
+        String type = getL2Type(request);
+
         // 鉴权
         try
         {
             checkQueryAuth(user, ltype);
+
+            // 生产和销售采购的区别
+            checkQueryTypeAuth(user, type);
         }
         catch (MYException e)
         {
@@ -1566,6 +1586,13 @@ public class StockAction extends DispatchAction
             // 放到session里面
             request.getSession().setAttribute("g_ltype", ltype);
         }
+
+        return ltype;
+    }
+
+    private String getL2Type(HttpServletRequest request)
+    {
+        String ltype = request.getParameter("type");
 
         return ltype;
     }

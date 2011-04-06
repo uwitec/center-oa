@@ -35,7 +35,7 @@ function opens(obj)
 {
 	oo = obj;
 	
-	window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&showAbs=1&load=1&depotId='+ $$('location') + '&name=' + encodeURIComponent(obj.value));
+	//window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&showAbs=1&load=1&depotId='+ $$('location') + '&name=' + encodeURIComponent(obj.value));
 }
 
 function selectCustomer()

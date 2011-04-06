@@ -92,6 +92,7 @@ function queryAbs()
 <input type="hidden" value="${selectMode}" name="selectMode">
 <input type="hidden" value="${showAbs}" name="showAbs">
 <input type="hidden" value="${sailLocation}" name="sailLocation">
+<input type="hidden" value="${queryType}" name="queryType">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">产品库存管理(最多返回前100个)</td>

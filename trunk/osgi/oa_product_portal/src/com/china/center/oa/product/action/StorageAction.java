@@ -1502,6 +1502,9 @@ public class StorageAction extends DispatchAction
 
         String depotId = request.getParameter("depotId");
 
+        // 0/null:销售单 1:入库单
+        String queryType = request.getParameter("queryType");
+
         ConditionParse condtion = new ConditionParse();
 
         condtion.addWhereStr();
@@ -1526,15 +1529,18 @@ public class StorageAction extends DispatchAction
             condtion.addCondition("StorageRelationBean.depotpartId", "=", depotpartId);
         }
 
-        if (StringTools.isNullOrNone(stafferId))
+        if ( !"1".equals(queryType))
         {
-            condtion
-                .addCondition("and (StorageRelationBean.stafferId = '0' or StorageRelationBean.stafferId = '"
-                              + user.getStafferId() + "')");
-        }
-        else
-        {
-            condtion.addCondition("StorageRelationBean.stafferId", "=", stafferId);
+            if (StringTools.isNullOrNone(stafferId))
+            {
+                condtion
+                    .addCondition("and (StorageRelationBean.stafferId = '0' or StorageRelationBean.stafferId = '"
+                                  + user.getStafferId() + "')");
+            }
+            else
+            {
+                condtion.addCondition("StorageRelationBean.stafferId", "=", stafferId);
+            }
         }
 
         return condtion;

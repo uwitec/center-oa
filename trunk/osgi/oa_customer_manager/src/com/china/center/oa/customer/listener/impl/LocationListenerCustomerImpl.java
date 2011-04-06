@@ -92,7 +92,7 @@ public class LocationListenerCustomerImpl implements LocationListener
             // customerDAO.updateCityCustomerToInit(each.getCityId());
 
             // 更新客户的新旧属性为新客户,因为关系剥离后客户的新旧属性肯定是新的
-            stafferVSCustomerDAO.updateNewByCityId(each.getCityId());
+            // stafferVSCustomerDAO.updateNewByCityId(each.getCityId());
 
             // 删除存在的客户关系
             // stafferVSCustomerDAO.delVSByCityId(each.getCityId());

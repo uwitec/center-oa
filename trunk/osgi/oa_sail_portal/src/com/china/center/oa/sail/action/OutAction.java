@@ -783,7 +783,7 @@ public class OutAction extends ParentOutAction
             return mapping.findForward("error");
         }
 
-        if (out.getStatus() != OutConstant.STATUS_PASS)
+        if ( !OutHelper.isSailEnd(out))
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
 
@@ -848,7 +848,7 @@ public class OutAction extends ParentOutAction
             return mapping.findForward("error");
         }
 
-        if (out.getStatus() != OutConstant.STATUS_PASS)
+        if ( !OutHelper.isSailEnd(out))
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
 

@@ -44,13 +44,13 @@ public class StockBean implements Serializable
     private String userId = "";
 
     /**
-     * 询价人(如果是替人开单则是被替人)
+     * 产品拥有者
      */
     @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
     private String stafferId = "";
 
     /**
-     * 产品拥有属性
+     * 开单人
      */
     @Join(tagClass = StafferBean.class, type = JoinType.LEFT, alias = "owe")
     private String owerId = "";

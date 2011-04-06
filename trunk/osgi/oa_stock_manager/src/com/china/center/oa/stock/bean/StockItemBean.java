@@ -16,6 +16,7 @@ import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.ProviderBean;
+import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.stock.constant.StockConstant;
 
 
@@ -55,6 +56,7 @@ public class StockItemBean implements Serializable
     /**
      * 采用谁的询价
      */
+    @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
     private String stafferId = "";
 
     /**
