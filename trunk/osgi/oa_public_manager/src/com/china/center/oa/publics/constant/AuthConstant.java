@@ -450,7 +450,7 @@ public interface AuthConstant
     String PRICE_ASK_REPRICE = "1207";
 
     /**
-     * 增加询价(业务员)
+     * 增加采购(业务员)
      */
     String STOCK_ADD = "1301";
 
