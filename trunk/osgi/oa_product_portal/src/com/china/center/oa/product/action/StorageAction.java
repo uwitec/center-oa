@@ -1139,8 +1139,10 @@ public class StorageAction extends DispatchAction
             createList(list, condtion, sailLocation, page, queryList, request);
         }
 
-        for (StorageRelationVO vo : list)
+        for (Iterator iterator = list.iterator(); iterator.hasNext();)
         {
+            StorageRelationVO vo = (StorageRelationVO)iterator.next();
+
             if (StringTools.isNullOrNone(vo.getStafferName()))
             {
                 vo.setStafferName("公共");
@@ -1150,6 +1152,14 @@ public class StorageAction extends DispatchAction
 
             // 可发数量
             vo.setMayAmount(vo.getAmount() - preassign);
+
+            // 不显示低于0的数量
+            if (vo.getMayAmount() <= 0)
+            {
+                iterator.remove();
+
+                continue;
+            }
 
             // 预支数量
             vo.setPreassignAmount(preassign);
@@ -1513,6 +1523,8 @@ public class StorageAction extends DispatchAction
 
         // 只能是OK仓区
         condtion.addIntCondition("DepotpartBean.type", "=", DepotConstant.DEPOTPART_TYPE_OK);
+
+        condtion.addIntCondition("StorageRelationBean.amount", ">", 0);
 
         if ( !StringTools.isNullOrNone(name))
         {
