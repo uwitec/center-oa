@@ -232,12 +232,21 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         final String[] unitList = request.getParameter("unitList").split("~");
         final String[] amontList = request.getParameter("amontList").split("~");
         final String[] priceList = request.getParameter("priceList").split("~");
-        final String[] totalList = request.getParameter("totalList").split("~");
-        final String[] desList = (" " + request.getParameter("desList") + " ").split("~");
+        // final String[] totalList = request.getParameter("totalList").split("~");
+        final String[] desList = request.getParameter("desList").split("~");
         final String[] otherList = request.getParameter("otherList").split("~");
+
+        _logger.info(fullId + "/totalList/" + request.getParameter("totalList"));
+
+        _logger.info(fullId + "/price/" + request.getParameter("priceList"));
+
+        _logger.info(fullId + "/desList/" + request.getParameter("desList"));
+
+        _logger.info(fullId + "/otherList/" + request.getParameter("otherList"));
 
         // 组织BaseBean
         double ttatol = 0.0d;
+
         for (int i = 0; i < nameList.length; i++ )
         {
             ttatol += (Double.parseDouble(priceList[i]) * Integer.parseInt(amontList[i]));
@@ -295,6 +304,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                     // 组织BaseBean
                     boolean addSub = false;
+
                     for (int i = 0; i < nameList.length; i++ )
                     {
                         BaseBean base = new BaseBean();
@@ -318,15 +328,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             throw new RuntimeException("产品ID为空,数据不完备");
                         }
 
-                        // ele.productid + '-' + ele.price + '-' + ele.stafferid + '-' + ele.depotpartid
-                        String[] coreList = otherList[i].split("-");
-
-                        if (coreList.length != 4)
-                        {
-                            throw new RuntimeException("数据不完备");
-                        }
-
                         base.setProductName(nameList[i]);
+
                         base.setUnit(unitList[i]);
 
                         // 赠送的价格为0
@@ -340,7 +343,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             base.setPrice(MathTools.parseDouble(priceList[i]));
                         }
 
-                        base.setValue(MathTools.parseDouble(totalList[i]));
+                        // 销售价格动态获取的
+                        base.setValue(base.getAmount() * base.getPrice());
 
                         // 入库单是没有showId的
                         if (showNameList != null && showNameList.length >= (i + 1))
@@ -349,12 +353,58 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             base.setShowName(showNameList[i]);
                         }
 
-                        // 寻找具体的产品价格位置
-                        base.setCostPrice(MathTools.parseDouble(coreList[1]));
-                        base
-                            .setCostPriceKey(StorageRelationHelper.getPriceKey(base.getCostPrice()));
+                        // 这里需要处理99的其他入库,因为其他入库是没有完成的otherList
+                        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+                            && outBean.getOutType() == OutConstant.OUTTYPE_IN_OTHER)
+                        {
+                            base.setCostPrice(MathTools.parseDouble(desList[i]));
+                            base.setCostPriceKey(StorageRelationHelper.getPriceKey(base
+                                .getCostPrice()));
 
-                        base.setOwner(coreList[2]);
+                            base.setOwner("0");
+
+                            // 默认仓区
+                            DepotpartBean defaultOKDepotpart = depotpartDAO
+                                .findDefaultOKDepotpart(outBean.getLocation());
+
+                            if (defaultOKDepotpart == null)
+                            {
+                                throw new RuntimeException("没有默认的良品仓,请确认操作");
+                            }
+
+                            base.setDepotpartId(defaultOKDepotpart.getId());
+                        }
+                        else
+                        {
+                            // ele.productid + '-' + ele.price + '-' + ele.stafferid + '-' + ele.depotpartid
+                            String[] coreList = otherList[i].split("-");
+
+                            if (coreList.length != 4)
+                            {
+                                throw new RuntimeException("数据不完备");
+                            }
+
+                            // 寻找具体的产品价格位置
+                            base.setCostPrice(MathTools.parseDouble(coreList[1]));
+
+                            base.setCostPriceKey(StorageRelationHelper.getPriceKey(base
+                                .getCostPrice()));
+
+                            base.setOwner(coreList[2]);
+
+                            base.setDepotpartId(coreList[3]);
+                        }
+
+                        // 这里需要核对价格 调拨
+                        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+                            && (outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT || outBean
+                                .getOutType() == OutConstant.OUTTYPE_IN_DROP))
+                        {
+                            if ( !MathTools.equal(base.getPrice(), base.getCostPrice()))
+                            {
+                                throw new RuntimeException("调拨/报废的时候价格必须相等");
+                            }
+                        }
 
                         if (StringTools.isNullOrNone(base.getOwner()))
                         {
@@ -375,8 +425,6 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             }
                         }
 
-                        base.setDepotpartId(coreList[3]);
-
                         DepotpartBean deport = depotpartDAO.find(base.getDepotpartId());
 
                         if (deport != null)
@@ -386,6 +434,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                         base.setLocationId(outBean.getLocation());
 
+                        // 其实也是成本
                         base.setDescription(desList[i].trim());
 
                         // 增加单个产品到base表
@@ -3239,7 +3288,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     }
 
     /**
-     * 处理入库单的流程
+     * CORE 处理入库单的流程
      * 
      * @param fullId
      * @param user

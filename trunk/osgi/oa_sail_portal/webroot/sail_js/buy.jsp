@@ -279,10 +279,16 @@ function sub()
     }
 }
 
+var modifyPage = ('${bean.fullId}' != '');
+
+var g_url_query = 0;
+
 function managerChange()
 {
+    g_url_query = 0;
+    
     //调拨
-    if ($$('outType') == 2 || $$('outType') == 3 || $$('outType') == 6)
+    if ($$('outType') == 2 || $$('outType') == 3 || $$('outType') == 6 || $$('outType') == 99)
     {
         showTr('dir_tr', false);
     }
@@ -300,7 +306,7 @@ function managerChange()
         showTr('invoice_tr', false);
     }
     
-    if ($$('outType') == 1 || $$('outType') == 3)
+    if ($$('outType') == 1 || $$('outType') == 3 || $$('outType') == 99)
     {
          showTr('duty_tr', false);
          showTr('invoice_tr', false);
@@ -314,6 +320,53 @@ function managerChange()
     else
     {
         showTr('pro_tr', false);
+    }
+    
+    if ($$('outType') == 99)
+    {
+        var nameList = document.getElementsByName("price");
+        
+        for (var i = 0; i < nameList.length; i++)
+        {
+            nameList[i].readOnly = false;
+        }
+        
+        //desciprt
+        nameList = document.getElementsByName("desciprt");
+        
+        for (var i = 0; i < nameList.length; i++)
+        {
+            nameList[i].readOnly = false;
+        }
+        
+        g_url_query = 1;
+    }
+    else
+    {
+        var nameList = document.getElementsByName("price");
+        
+        for (var i = 0; i < nameList.length; i++)
+        {
+            nameList[i].readOnly = true;
+            
+            if (!modifyPage)
+            {
+                nameList[i].value = '0.0';
+                cc(nameList[i]);
+            }
+        }
+        
+        nameList = document.getElementsByName("desciprt");
+        
+        for (var i = 0; i < nameList.length; i++)
+        {
+            nameList[i].readOnly = true;
+            
+            if (!modifyPage)
+            {
+                nameList[i].value = '0.0';
+            }
+        }
     }
 }
 

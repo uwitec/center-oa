@@ -91,7 +91,7 @@
 			<type>select</type>
 			<option>$101</option>
 		</condtion>
-		<condtion name="stafferId" caption="职员" pfix="t2">
+		<condtion name="stafferId2" filed="stafferId" caption="职员" pfix="t2">
 			<opr>=</opr>
 			<datatype>0</datatype>
 			<type>select</type>

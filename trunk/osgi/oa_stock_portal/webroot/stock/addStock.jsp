@@ -103,6 +103,25 @@ function load()
 	change();
 	
 	loadForm();
+	
+	if ($$('mode') == 0)
+	{
+	   removeOption();
+	}
+}
+
+function removeOption()
+{
+    var os = $O('stype').options;
+
+    for (var j = 0; j < os.length; j++)
+    {
+        if (os[j].value == 2)
+        {
+            os.remove(j);
+            return true;
+        }
+    }
 }
 
 function init()

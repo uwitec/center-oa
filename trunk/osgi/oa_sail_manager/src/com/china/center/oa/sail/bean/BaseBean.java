@@ -93,6 +93,9 @@ public class BaseBean implements Serializable
      */
     private double value = 0.0d;
 
+    /**
+     * 成本
+     */
     private String description = "";
 
     /**

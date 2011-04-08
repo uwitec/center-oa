@@ -312,6 +312,14 @@ function getProductAbs(ox)
     }
 }
 
+function getProduct(oos)
+{
+	var obj = oos[0];
+	
+    oo.value = obj.pname;   
+    oo.productid = obj.value;    
+}
+
 function setObj(src, dest)
 {
 	src.value = dest.pname;

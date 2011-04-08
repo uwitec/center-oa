@@ -179,7 +179,7 @@ public class LocationManagerImpl extends AbstractListenerManager<LocationListene
     public boolean addLocationVSCity(User user, String locationId, List<LocationVSCityBean> list)
         throws MYException
     {
-        JudgeTools.judgeParameterIsNull(user, list);
+        JudgeTools.judgeParameterIsNull(user);
 
         List<LocationVSCityBean> oldList = locationVSCityDAO.queryEntityBeansByFK(locationId);
 
@@ -199,7 +199,8 @@ public class LocationManagerImpl extends AbstractListenerManager<LocationListene
                 continue;
             }
 
-            int count = locationVSCityDAO.countByFK(locationVSCityBean.getCityId(), AnoConstant.FK_FIRST);
+            int count = locationVSCityDAO.countByFK(locationVSCityBean.getCityId(),
+                AnoConstant.FK_FIRST);
 
             CityBean city = cityDAO.find(locationVSCityBean.getCityId());
 
@@ -245,7 +246,8 @@ public class LocationManagerImpl extends AbstractListenerManager<LocationListene
      * @param newlist
      * @return
      */
-    private List<LocationVSCityBean> analyseDelCity(List<LocationVSCityBean> oldList, List<LocationVSCityBean> newlist)
+    private List<LocationVSCityBean> analyseDelCity(List<LocationVSCityBean> oldList,
+                                                    List<LocationVSCityBean> newlist)
     {
         List<LocationVSCityBean> result = new ArrayList<LocationVSCityBean>();
 

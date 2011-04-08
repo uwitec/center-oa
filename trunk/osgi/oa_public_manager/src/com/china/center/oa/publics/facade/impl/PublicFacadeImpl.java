@@ -742,7 +742,7 @@ public class PublicFacadeImpl extends AbstarctFacade implements PublicFacade
     public boolean addLocationVSCity(User user, String locationId, List<LocationVSCityBean> list)
         throws MYException
     {
-        JudgeTools.judgeParameterIsNull(user, locationId, list);
+        JudgeTools.judgeParameterIsNull(user, locationId);
 
         if (containAuth(user, AuthConstant.LOCATION_OPR))
         {

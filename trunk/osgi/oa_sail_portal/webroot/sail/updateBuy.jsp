@@ -23,7 +23,10 @@ function opens(obj)
 {
     oo = obj;
     
+    if (g_url_query == 0)
     window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&queryType=1&showAbs=1&load=1&depotId='+ $$('location') + '&code=' + obj.productcode);
+    else
+    window.common.modal('../product/product.do?method=rptQueryProduct&load=1&selectMode=1&abstractType=0&status=0');
 }
 
 </script>
@@ -44,6 +47,7 @@ function opens(obj)
 <input type=hidden name="showNameList" value="" />
 <input type=hidden name="customercreditlevel" value="" />
 <input type=hidden name="id" value="" />
+<input type=hidden name="fullId" value="${bean.fullId}" />
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">库单管理 &gt;&gt; 填写入库单(入库单都是正数增加库存,负数减少库存)</td>
@@ -277,13 +281,13 @@ function opens(obj)
                         <td align="center"><input type="text" style="width: 100%" id="unAmount" value="${fristBase.amount}"
                             maxlength="6" onkeyup="cc(this)" name="amount"></td>
 
-                        <td align="center"><input type="text" style="width: 100%" id="unPrice" readonly="readonly" value="${fristBase.price}" 
+                        <td align="center"><input type="text" style="width: 100%" id="unPrice" readonly="readonly" value="${my:formatNum(fristBase.price)}" 
                             maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
 
                         <td align="center"><input type="text" value="${fristBase.value}"
                             value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
-                        <td align="center"><input type="text" id="unDesciprt" readonly="readonly" value="${fristBase.description}"
+                        <td align="center"><input type="text" id="unDesciprt" readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
                             style="width: 100%" name="desciprt"></td>
                             
                         <td align="center"><input type="text" id="unRstafferName" readonly="readonly" value="${fristBase.depotpartName}-->${fristBase.ownerName}"
@@ -315,13 +319,13 @@ function opens(obj)
                         <td align="center"><input type="text" style="width: 100%"  value="${fristBase.amount}"
                             maxlength="6" onkeyup="cc(this)" name="amount"></td>
 
-                        <td align="center"><input type="text" style="width: 100%"  readonly="readonly" value="${fristBase.price}"
+                        <td align="center"><input type="text" style="width: 100%"  readonly="readonly" value="${my:formatNum(fristBase.price)}"
                             maxlength="11" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
 
                         <td align="center"><input type="text" value="${fristBase.value}"
                             value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
-                        <td align="center"><input type="text"  readonly="readonly" value="${fristBase.description}"
+                        <td align="center"><input type="text"  readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
                             style="width: 100%" name="desciprt"></td>
                             
                         <td align="center"><input type="text" readonly="readonly" value="${fristBase.depotpartName}-->${fristBase.ownerName}"

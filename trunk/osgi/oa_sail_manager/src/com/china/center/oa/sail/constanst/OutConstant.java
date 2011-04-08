@@ -236,9 +236,10 @@ public interface OutConstant
     int OUTTYPE_IN_STOCK = 6;
 
     /**
-     * 采购退货
+     * 其他入库
      */
-    int OUTTYPE_IN_RECEDE = 7;
+    @Defined(key = "outType_in", value = "其他入库")
+    int OUTTYPE_IN_OTHER = 99;
 
     /**
      * 不需要发票

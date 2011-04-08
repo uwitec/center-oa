@@ -201,6 +201,9 @@ public class StockAction extends DispatchAction
 
             bean.setExceptStatus(StockConstant.EXCEPTSTATUS_COMMON);
 
+            // 权限
+            checkAddTypeAuth(user, String.valueOf(bean.getMode()));
+
             stockManager.addStockBean(user, bean);
 
             if ("1".equals(oprMode))
@@ -1452,6 +1455,27 @@ public class StockAction extends DispatchAction
 
         if ("1".equals(type)
             && !userManager.containAuth(user.getId(), AuthConstant.STOCK_MAKE_PASS))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+    }
+
+    /**
+     * checkAddTypeAuth
+     * 
+     * @param user
+     * @param type
+     * @throws MYException
+     */
+    private void checkAddTypeAuth(User user, String type)
+        throws MYException
+    {
+        if ("0".equals(type) && !userManager.containAuth(user, AuthConstant.STOCK_ADD))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+
+        if ("1".equals(type) && !userManager.containAuth(user.getId(), AuthConstant.STOCK_MAKE_ADD))
         {
             throw new MYException("用户没有此操作的权限");
         }

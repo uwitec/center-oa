@@ -16,7 +16,6 @@ import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.tools.MathTools;
-import com.china.center.tools.StringTools;
 
 
 /**
@@ -37,8 +36,8 @@ public abstract class OutHelper
         buffer.append("<td width='5%' align='center'>单位</td>");
         buffer.append("<td width='10%' align='center'>数量</td>");
         buffer.append("<td width='15%' align='center'>单价</td>");
-        buffer.append("<td width='20%' align='left'>金额(总计:<span id='total'>" + MathTools.formatNum(tatol)
-                      + "</span>)</td>");
+        buffer.append("<td width='20%' align='left'>金额(总计:<span id='total'>"
+                      + MathTools.formatNum(tatol) + "</span>)</td>");
         buffer.append("<td width='25%' align='center'>成本</td></tr>");
 
         int index = 0;
@@ -59,9 +58,12 @@ public abstract class OutHelper
             buffer.append("<td width='20%' align='center'>" + bean.getProductName() + "</td>");
             buffer.append("<td width='5%' align='center'>" + bean.getUnit() + "</td>");
             buffer.append("<td width='10%' align='center'>" + bean.getAmount() + "</td>");
-            buffer.append(" <td width='15%' align='center'>" + MathTools.formatNum(bean.getPrice()) + "</td>");
-            buffer.append("<td width='15%' align='center'>" + MathTools.formatNum(bean.getValue()) + "</td>");
-            buffer.append("<td width='25%' align='center'>" + StringTools.print(bean.getDescription()) + "</td>");
+            buffer.append(" <td width='15%' align='center'>" + MathTools.formatNum(bean.getPrice())
+                          + "</td>");
+            buffer.append("<td width='15%' align='center'>" + MathTools.formatNum(bean.getValue())
+                          + "</td>");
+            buffer.append("<td width='25%' align='center'>"
+                          + MathTools.formatNum(bean.getCostPrice()) + "</td>");
             index++ ;
         }
 
@@ -117,7 +119,8 @@ public abstract class OutHelper
 
     public static boolean canSubmit(OutBean outBean)
     {
-        if (outBean.getStatus() != OutConstant.STATUS_SAVE && outBean.getStatus() != OutConstant.STATUS_REJECT
+        if (outBean.getStatus() != OutConstant.STATUS_SAVE
+            && outBean.getStatus() != OutConstant.STATUS_REJECT
             && outBean.getStatus() != OutConstant.STATUS_LOCATION_MANAGER_CHECK)
         {
             return false;
@@ -162,7 +165,8 @@ public abstract class OutHelper
 
             // 调动分为两个单据 一个是源头的调出入库单 一个是目的的调入入库单
             // 源头调出后状态处于提交态,此时可以驳回的
-            if (outBean.getStatus() == OutConstant.STATUS_SUBMIT && outBean.getType() == OutConstant.OUTTYPE_IN_MOVEOUT)
+            if (outBean.getStatus() == OutConstant.STATUS_SUBMIT
+                && outBean.getType() == OutConstant.OUTTYPE_IN_MOVEOUT)
             {
                 return true;
             }
@@ -183,13 +187,30 @@ public abstract class OutHelper
      */
     public static boolean isMoveIn(OutBean outBean)
     {
-        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT
             && outBean.getReserve1() == OutConstant.MOVEOUT_IN)
         {
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * getOutType
+     * 
+     * @param outBean
+     * @return
+     */
+    public static String getOutType(OutBean outBean)
+    {
+        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+        {
+            return DefinedCommon.getValue("outType_out", outBean.getOutType());
+        }
+
+        return DefinedCommon.getValue("outType_in", outBean.getOutType());
     }
 
     /**
@@ -200,7 +221,8 @@ public abstract class OutHelper
      */
     public static boolean isMoveOut(OutBean outBean)
     {
-        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT
             && outBean.getReserve1() == OutConstant.MOVEOUT_OUT)
         {
             return true;

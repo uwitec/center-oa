@@ -23,7 +23,10 @@ function opens(obj)
 {
     oo = obj;
     
+    if (g_url_query == 0)
     window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&queryType=1&showAbs=1&load=1&depotId='+ $$('location') + '&code=' + obj.productcode);
+    else
+    window.common.modal('../product/product.do?method=rptQueryProduct&load=1&selectMode=1&abstractType=0&status=0');
 }
 
 </script>

@@ -77,15 +77,16 @@ public class LocationAction extends DispatchAction
     {
     }
 
-    public ActionForward queryLocation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward queryLocation(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
 
         condtion.addWhereStr();
 
-        String jsonstr = ActionTools.queryBeanByJSONAndToString("queryLocation", request, condtion, this.locationDAO);
+        String jsonstr = ActionTools.queryBeanByJSONAndToString("queryLocation", request, condtion,
+            this.locationDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -100,8 +101,8 @@ public class LocationAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addLocation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward addLocation(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         LocationBean bean = new LocationBean();
@@ -138,8 +139,8 @@ public class LocationAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addLocationVSCity(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse response)
+    public ActionForward addLocationVSCity(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String locationId = request.getParameter("locationId");
@@ -174,7 +175,7 @@ public class LocationAction extends DispatchAction
         }
         catch (MYException e)
         {
-            _logger.warn(e);
+            _logger.warn(e, e);
 
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
         }
@@ -194,8 +195,8 @@ public class LocationAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward delLocation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward delLocation(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         try
@@ -230,8 +231,8 @@ public class LocationAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findLocation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward findLocation(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String locationId = request.getParameter("locationId");
@@ -283,7 +284,8 @@ public class LocationAction extends DispatchAction
 
             for (ProvinceBean provinceBean : allProvinceList)
             {
-                List<CityBean> cityList = cityDAO.queryCanAssignCity(provinceBean.getId(), locationId);
+                List<CityBean> cityList = cityDAO.queryCanAssignCity(provinceBean.getId(),
+                    locationId);
 
                 if (cityList.size() > 0)
                 {
@@ -320,8 +322,8 @@ public class LocationAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward listLocation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward listLocation(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();

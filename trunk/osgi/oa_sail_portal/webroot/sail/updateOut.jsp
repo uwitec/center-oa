@@ -378,13 +378,13 @@ function load()
 						<td align="center"><input type="text" style="width: 100%" id="unAmount" value="${fristBase.amount}"
 							maxlength="6" onkeyup="cc(this)" name="amount"></td>
 
-						<td align="center"><input type="text" style="width: 100%" id="unPrice" value="${fristBase.price}"
+						<td align="center"><input type="text" style="width: 100%" id="unPrice" value="${my:formatNum(fristBase.price)}"
 							maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
 
 						<td align="center"><input type="text" value="${fristBase.value}"
 							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
-						<td align="center"><input type="text" id="unDesciprt" readonly="readonly" value="${fristBase.description}"
+						<td align="center"><input type="text" id="unDesciprt" readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
 							style="width: 100%" name="desciprt"></td>
 							
 						<td align="center"><input type="text" id="unRstafferName" readonly="readonly" value="${fristBase.depotpartName}-->${fristBase.ownerName}"
@@ -421,13 +421,13 @@ function load()
                         <td align="center"><input type="text" style="width: 100%"  value="${fristBase.amount}"
                             maxlength="6" onkeyup="cc(this)" name="amount"></td>
 
-                        <td align="center"><input type="text" style="width: 100%"  value="${fristBase.price}"
+                        <td align="center"><input type="text" style="width: 100%"  value="${my:formatNum(fristBase.price)}"
                             maxlength="11" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
 
                         <td align="center"><input type="text" value="${fristBase.value}"
                             value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
-                        <td align="center"><input type="text"  readonly="readonly" value="${fristBase.description}"
+                        <td align="center"><input type="text"  readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
                             style="width: 100%" name="desciprt"></td>
                             
                         <td align="center"><input type="text" readonly="readonly" value="${fristBase.depotpartName}-->${fristBase.ownerName}"

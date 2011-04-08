@@ -707,6 +707,7 @@ public class ParentOutAction extends DispatchAction
             element = (OutVO)outList.get(0);
 
             String ffs = null;
+
             if (element.getType() == 0)
             {
                 ffs = "出";
@@ -722,10 +723,12 @@ public class ParentOutAction extends DispatchAction
             ws.addCell(new Label(j++ , i, "联系人", format));
             ws.addCell(new Label(j++ , i, "联系电话", format));
             ws.addCell(new Label(j++ , i, "单据号码", format));
+            ws.addCell(new Label(j++ , i, "类型", format));
             ws.addCell(new Label(j++ , i, "回款日期", format));
             ws.addCell(new Label(j++ , i, "状态", format));
             ws.addCell(new Label(j++ , i, "经办人", format));
             ws.addCell(new Label(j++ , i, "仓库", format));
+            ws.addCell(new Label(j++ , i, "目的库", format));
             ws.addCell(new Label(j++ , i, "描述", format));
 
             ws.addCell(new Label(j++ , i, "品名", format));
@@ -784,6 +787,8 @@ public class ParentOutAction extends DispatchAction
 
                     ws.addCell(new Label(j++ , i, element.getFullId()));
 
+                    ws.addCell(new Label(j++ , i, OutHelper.getOutType(element)));
+
                     ws.addCell(new Label(j++ , i, element.getRedate()));
 
                     ws.addCell(new Label(j++ , i, OutHelper.getStatus(element.getStatus(), false)));
@@ -791,6 +796,8 @@ public class ParentOutAction extends DispatchAction
                     ws.addCell(new Label(j++ , i, element.getStafferName()));
 
                     ws.addCell(new Label(j++ , i, element.getDepotName()));
+
+                    ws.addCell(new Label(j++ , i, element.getDestinationName()));
 
                     ws.addCell(new Label(j++ , i, element.getDescription()));
 
@@ -802,7 +809,7 @@ public class ParentOutAction extends DispatchAction
                     ws.addCell(new Label(j++ , i, String.valueOf(base.getAmount())));
                     ws.addCell(new Label(j++ , i, String.valueOf(base.getPrice())));
                     ws.addCell(new Label(j++ , i, String.valueOf(base.getValue())));
-                    ws.addCell(new Label(j++ , i, base.getDescription()));
+                    ws.addCell(new Label(j++ , i, MathTools.formatNum(base.getCostPrice())));
 
                     if ( !iterator.hasNext())
                     {
@@ -1173,15 +1180,17 @@ public class ParentOutAction extends DispatchAction
                         // 增加base
                         BaseBean baseBean = new BaseBean();
 
-                        baseBean.setValue(each.getCostPrice() * back);
                         baseBean.setLocationId(out.getLocation());
                         baseBean.setAmount(back);
                         baseBean.setProductName(each.getProductName());
                         baseBean.setUnit("套");
-                        baseBean.setPrice(each.getCostPrice());
                         baseBean.setShowId(each.getShowId());
-                        baseBean.setCostPrice(each.getCostPrice());
                         baseBean.setProductId(each.getProductId());
+
+                        // 领样退库的金额是销售的金额,否则无法回款
+                        baseBean.setPrice(each.getPrice());
+                        baseBean.setCostPrice(each.getCostPrice());
+
                         baseBean.setCostPriceKey(StorageRelationHelper.getPriceKey(each
                             .getCostPrice()));
                         baseBean.setOwner(each.getOwner());
@@ -1189,8 +1198,9 @@ public class ParentOutAction extends DispatchAction
                         baseBean.setDepotpartId(each.getDepotpartId());
 
                         baseBean.setDepotpartName(each.getDepotpartName());
-                        // 成本
-                        baseBean.setDescription(String.valueOf(each.getPrice()));
+                        baseBean.setDescription(String.valueOf(each.getCostPrice()));
+
+                        baseBean.setValue(each.getPrice() * back);
 
                         newBaseList.add(baseBean);
 
@@ -1367,20 +1377,23 @@ public class ParentOutAction extends DispatchAction
                         BaseBean baseBean = new BaseBean();
 
                         // 卖出价 * 数量
-                        baseBean.setValue(each.getPrice() * back);
                         baseBean.setLocationId(out.getLocation());
                         baseBean.setAmount(back);
                         baseBean.setProductName(each.getProductName());
                         baseBean.setUnit("套");
-                        baseBean.setPrice(each.getPrice());
                         baseBean.setShowId(each.getShowId());
-                        baseBean.setCostPrice(each.getCostPrice());
                         baseBean.setProductId(each.getProductId());
+
+                        baseBean.setPrice(each.getPrice());
+                        baseBean.setCostPrice(each.getCostPrice());
                         baseBean.setCostPriceKey(StorageRelationHelper.getPriceKey(each
                             .getCostPrice()));
+
                         baseBean.setOwner(each.getOwner());
                         baseBean.setOwnerName(each.getOwnerName());
                         baseBean.setDepotpartId(each.getDepotpartId());
+
+                        baseBean.setValue(each.getPrice() * back);
 
                         if (StringTools.isNullOrNone(each.getDepotpartId()))
                         {
