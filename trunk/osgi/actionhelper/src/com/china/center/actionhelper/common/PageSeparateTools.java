@@ -197,6 +197,7 @@ public abstract class PageSeparateTools extends AbstractPage
      */
     public static boolean isMenuLoad(HttpServletRequest request)
     {
+        // f_menu
         String menu = request.getParameter(MENU);
 
         if ( !StringTools.isNullOrNone(menu))
@@ -207,6 +208,13 @@ public abstract class PageSeparateTools extends AbstractPage
         Object o1 = request.getAttribute(MENU);
 
         if (o1 != null)
+        {
+            return true;
+        }
+
+        Object o2 = request.getSession().getAttribute(GMENU);
+
+        if (o2 != null)
         {
             return true;
         }

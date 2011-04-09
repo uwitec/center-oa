@@ -42,7 +42,9 @@ public interface PageConstant
 
     String PAGE = "page";
 
-    String MENU = "f_menu";
+    String GMENU = "f_menu";
+
+    String MENU = "menu";
 
     String PARAMETER_MAP = "pmap";
 

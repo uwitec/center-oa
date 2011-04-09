@@ -202,6 +202,12 @@
             <type>select</type>
             <option>$bankList</option>
         </condtion>
+        <condtion name="checkStatus" caption="核对">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$pubCheckStatus</option>
+        </condtion>
         <condtion name="type" caption="类型">
             <opr>=</opr>
             <datatype>1</datatype>
@@ -219,12 +225,6 @@
             <datatype>1</datatype>
             <type>select</type>
             <option>$billLock</option>
-        </condtion>
-        <condtion name="checkStatus" caption="核对">
-            <opr>=</opr>
-            <datatype>1</datatype>
-            <type>select</type>
-            <option>$pubCheckStatus</option>
         </condtion>
     </item>
     
@@ -263,6 +263,12 @@
             <type>select</type>
             <option>$bankList</option>
         </condtion>
+        <condtion name="checkStatus" caption="核对">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$pubCheckStatus</option>
+        </condtion>
         <condtion name="type" caption="类型">
             <opr>=</opr>
             <datatype>1</datatype>
@@ -280,12 +286,6 @@
             <datatype>1</datatype>
             <type>select</type>
             <option>$billLock</option>
-        </condtion>
-        <condtion name="checkStatus" caption="核对">
-            <opr>=</opr>
-            <datatype>1</datatype>
-            <type>select</type>
-            <option>$pubCheckStatus</option>
         </condtion>
     </item>
     

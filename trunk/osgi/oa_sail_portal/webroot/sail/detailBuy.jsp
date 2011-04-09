@@ -63,7 +63,7 @@ function checkBean()
     $.messager.prompt('总部核对', '请核对说明', '', function(msg){
                 if (msg)
                 {
-                    $l('../finance/finance.do?method=checks2&id=${bean.fullId}&reason=' + ajaxPararmter(msg) + '&type=${ltype}');
+                    $l('../sail/out.do?method=checks&outId=${bean.fullId}&reason=' + ajaxPararmter(msg) + '&type=6');
                 }
                
             }, 2);
@@ -216,8 +216,12 @@ function checkBean()
                     
                     <tr class="content2">
                         <td align="right">源仓库：</td>
-                        <td colspan="3">
-                       ${bean.depotName}
+                        <td colspan="1">
+                        ${bean.depotName}
+                       </td>
+                       <td align="right">在途：</td>
+                        <td colspan="1">
+                        ${my:get('inway', bean.inway)}
                        </td>
                     </tr>
                     

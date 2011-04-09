@@ -77,7 +77,7 @@ function updateBean()
 
 function doProcess()
 {
-    if (getRadio('checkb') && getRadioValue('checkb'))
+    if (getRadio('checkb') && getRadio('checkb').lstatus == 0)
     {   
         $l(gurl + 'find' + ukey + '&update=1&id=' + getRadioValue('checkb'));
     }

@@ -175,8 +175,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward queryProduct(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         final ConditionParse condtion = new ConditionParse();
@@ -191,7 +191,8 @@ public class ProductAction extends DispatchAction
         // 默认虚拟产品在前面
         condtion.addCondition("order by ProductBean.abstractType desc, ProductBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPRODUCT, request, condtion, this.productDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPRODUCT, request, condtion,
+            this.productDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -206,8 +207,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryPriceChange(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward queryPriceChange(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         final ConditionParse condtion = new ConditionParse();
@@ -218,7 +219,8 @@ public class ProductAction extends DispatchAction
 
         condtion.addCondition("order by PriceChangeBean.id desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPRICECHANGE, request, condtion, this.priceChangeDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPRICECHANGE, request, condtion,
+            this.priceChangeDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -233,7 +235,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward lockStorageRelation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward lockStorageRelation(ActionMapping mapping, ActionForm form,
+                                             HttpServletRequest request,
                                              HttpServletResponse response)
         throws ServletException
     {
@@ -267,7 +270,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findStorageRelationStatus(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward findStorageRelationStatus(ActionMapping mapping, ActionForm form,
+                                                   HttpServletRequest request,
                                                    HttpServletResponse response)
         throws ServletException
     {
@@ -295,7 +299,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward unlockStorageRelation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward unlockStorageRelation(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
                                                HttpServletResponse response)
         throws ServletException
     {
@@ -329,8 +334,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryCompose(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward queryCompose(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String foward = request.getParameter("foward");
@@ -341,19 +346,28 @@ public class ProductAction extends DispatchAction
 
         if ("1".equals(foward))
         {
-            condtion.addIntCondition("ComposeProductBean.status", "=", ComposeConstant.STATUS_SUBMIT);
+            condtion.addIntCondition("ComposeProductBean.status", "=",
+                ComposeConstant.STATUS_SUBMIT);
         }
 
         if ("2".equals(foward))
         {
-            condtion.addIntCondition("ComposeProductBean.status", "=", ComposeConstant.STATUS_MANAGER_PASS);
+            condtion.addIntCondition("ComposeProductBean.status", "=",
+                ComposeConstant.STATUS_MANAGER_PASS);
+        }
+
+        if ("3".equals(foward))
+        {
+            condtion.addIntCondition("ComposeProductBean.status", "=",
+                ComposeConstant.STATUS_CRO_PASS);
         }
 
         ActionTools.processJSONQueryCondition(QUERYCOMPOSE, request, condtion);
 
         condtion.addCondition("order by ComposeProductBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCOMPOSE, request, condtion, this.composeProductDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCOMPOSE, request, condtion,
+            this.composeProductDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -368,8 +382,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryApplyProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse response)
+    public ActionForward queryApplyProduct(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -384,7 +398,8 @@ public class ProductAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYAPPLYPRODUCT, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYAPPLYPRODUCT, request, condtion, this.productDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYAPPLYPRODUCT, request, condtion,
+            this.productDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -399,8 +414,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryCheckProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse response)
+    public ActionForward queryCheckProduct(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         final ConditionParse condtion = new ConditionParse();
@@ -411,7 +426,8 @@ public class ProductAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYCHECKPRODUCT, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKPRODUCT, request, condtion, this.productDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKPRODUCT, request, condtion,
+            this.productDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -426,8 +442,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse reponse)
+    public ActionForward rptQueryProduct(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -454,8 +470,8 @@ public class ProductAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYPRODUCT);
 
-            list = productDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, RPTQUERYPRODUCT),
-                PageSeparateTools.getPageSeparate(request, RPTQUERYPRODUCT));
+            list = productDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                RPTQUERYPRODUCT), PageSeparateTools.getPageSeparate(request, RPTQUERYPRODUCT));
         }
 
         request.setAttribute("beanList", list);
@@ -479,8 +495,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryAbsProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse reponse)
+    public ActionForward rptQueryAbsProduct(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -507,8 +523,10 @@ public class ProductAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYPRODUCT);
 
-            list = productDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, RPTQUERYABSPRODUCT),
-                PageSeparateTools.getPageSeparate(request, RPTQUERYABSPRODUCT));
+            list = productDAO
+                .queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                    RPTQUERYABSPRODUCT), PageSeparateTools.getPageSeparate(request,
+                    RPTQUERYABSPRODUCT));
         }
 
         Map<String, List<ProductBean>> map = new HashMap();
@@ -516,7 +534,8 @@ public class ProductAction extends DispatchAction
         for (ProductVO productVO : list)
         {
             // 获取组合方式
-            List<ProductCombinationVO> comVOList = productCombinationDAO.queryEntityVOsByFK(productVO.getId());
+            List<ProductCombinationVO> comVOList = productCombinationDAO
+                .queryEntityVOsByFK(productVO.getId());
 
             List<ProductBean> eachList = new ArrayList<ProductBean>();
 
@@ -612,7 +631,8 @@ public class ProductAction extends DispatchAction
             condtion.addCondition("ProductBean.code", "like", code);
         }
 
-        condtion.addIntCondition("ProductBean.abstractType", "=", ProductConstant.ABSTRACT_TYPE_YES);
+        condtion
+            .addIntCondition("ProductBean.abstractType", "=", ProductConstant.ABSTRACT_TYPE_YES);
 
     }
 
@@ -626,8 +646,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse response)
+    public ActionForward addProduct(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ProductBean bean = new ProductBean();
@@ -703,8 +723,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addAbstractProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward addAbstractProduct(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ProductBean bean = new ProductBean();
@@ -751,8 +771,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward composeProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward composeProduct(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ComposeProductBean bean = new ComposeProductBean();
@@ -771,7 +791,8 @@ public class ProductAction extends DispatchAction
 
             productFacade.addComposeProduct(user.getId(), bean);
 
-            request.setAttribute(KeyConstant.MESSAGE, "成功合成产品,合成后均价:" + MathTools.formatNum(bean.getPrice()));
+            request.setAttribute(KeyConstant.MESSAGE, "成功合成产品,合成后均价:"
+                                                      + MathTools.formatNum(bean.getPrice()));
         }
         catch (MYException e)
         {
@@ -793,8 +814,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward priceChange(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward priceChange(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         PriceChangeBean bean = new PriceChangeBean();
@@ -1050,8 +1071,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForCompose(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward preForCompose(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         List<DepotBean> list = depotDAO.listEntityBeans();
@@ -1096,7 +1117,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddPriceChange(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward preForAddPriceChange(ActionMapping mapping, ActionForm form,
+                                              HttpServletRequest request,
                                               HttpServletResponse response)
         throws ServletException
     {
@@ -1166,7 +1188,8 @@ public class ProductAction extends DispatchAction
 
             condition.addCondition("StorageRelationBean.productId", "=", product.getId());
 
-            List<StorageRelationVO> eachList = storageRelationDAO.queryEntityVOsByCondition(condition);
+            List<StorageRelationVO> eachList = storageRelationDAO
+                .queryEntityVOsByCondition(condition);
 
             for (Iterator iterator = eachList.iterator(); iterator.hasNext();)
             {
@@ -1174,7 +1197,7 @@ public class ProductAction extends DispatchAction
 
                 vo.setStafferName("公共");
 
-                // 过滤在途的
+                // 过滤预占的
                 int inWay = Math.abs(productFacade.onPriceChange2(user.getId(), vo));
 
                 if (vo.getAmount() > inWay)
@@ -1224,8 +1247,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward updateProduct(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         // 模板最多10M
@@ -1292,8 +1315,8 @@ public class ProductAction extends DispatchAction
         return mapping.findForward("queryProduct");
     }
 
-    private ActionForward parserAttachment(ActionMapping mapping, HttpServletRequest request, RequestDataStream rds,
-                                           ProductBean bean)
+    private ActionForward parserAttachment(ActionMapping mapping, HttpServletRequest request,
+                                           RequestDataStream rds, ProductBean bean)
     {
         if ( !rds.haveStream())
         {
@@ -1306,8 +1329,11 @@ public class ProductAction extends DispatchAction
 
         try
         {
-            String rabsPath = '/' + bean.getId() + "."
-                              + FileTools.getFilePostfix(FileTools.getFileName(rds.getUniqueFileName())).toLowerCase();
+            String rabsPath = '/'
+                              + bean.getId()
+                              + "."
+                              + FileTools.getFilePostfix(
+                                  FileTools.getFileName(rds.getUniqueFileName())).toLowerCase();
 
             String filePath = this.getPicPath() + '/' + rabsPath;
 
@@ -1355,8 +1381,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward findProduct(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1421,8 +1447,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findCompose(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward findCompose(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -1451,8 +1477,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findPriceChange(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward findPriceChange(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -1564,7 +1590,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward configProductVSLocation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward configProductVSLocation(ActionMapping mapping, ActionForm form,
+                                                 HttpServletRequest request,
                                                  HttpServletResponse response)
         throws ServletException
     {
@@ -1619,8 +1646,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward configPrice(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward configPrice(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1685,7 +1712,8 @@ public class ProductAction extends DispatchAction
      * @throws ServletException
      */
     public ActionForward preForConfigProductVSLocation(ActionMapping mapping, ActionForm form,
-                                                       HttpServletRequest request, HttpServletResponse response)
+                                                       HttpServletRequest request,
+                                                       HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -1727,7 +1755,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rollbackPriceChange(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward rollbackPriceChange(ActionMapping mapping, ActionForm form,
+                                             HttpServletRequest request,
                                              HttpServletResponse response)
         throws ServletException
     {
@@ -1770,8 +1799,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward deleteProduct(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1806,8 +1835,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward passCompose(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward passCompose(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1842,8 +1871,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward lastPassCompose(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward lastPassCompose(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1878,8 +1907,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteCompose(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward deleteCompose(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1914,7 +1943,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rollbackComposeProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward rollbackComposeProduct(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
                                                 HttpServletResponse response)
         throws ServletException
     {
@@ -1950,8 +1980,8 @@ public class ProductAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward passApplyProduct(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward passApplyProduct(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");

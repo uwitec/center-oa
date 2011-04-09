@@ -118,8 +118,25 @@ function titleChange()
 }
 
 
-function check()
+function check(isAdd)
 {
+    var amountList = document.getElementsByName('amount');
+    
+    if (isAdd)
+    {
+        for (var i = 0; i < amountList.length; i++)
+        {
+            amountList[i].ignorecheck = 'true';
+        }
+    }
+    else
+    {
+         for (var i = 0; i < amountList.length; i++)
+        {
+            amountList[i].ignorecheck = 'false';
+        }
+    }
+    
     if (!formCheck())
     {
         return false;
@@ -362,7 +379,7 @@ function checkTotal()
 function save()
 {
     $O('saves').value = 'save';
-    if (check())
+    if (check(true))
     {
         checkTotal();
     }
@@ -371,7 +388,7 @@ function save()
 function sub()
 {
     $O('saves').value = 'submit';
-    if (check())
+    if (check(false))
     {
         checkTotal();
     }

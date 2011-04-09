@@ -29,7 +29,7 @@ function load()
              {display: '标识', name : 'id', width : '15%'},
              {display: '帐号', name : 'bankName', sortable : true, cname: 'bankId', width : '20%'},
              {display: '类型', name : 'type', cc: 'outbillType', width : '8%'},
-             {display: '付款方式', name : 'payType', cc: 'outbillPayType', width : '5%'},
+             {display: '核对', name : 'checkStatus', cc: 'pubCheckStatus', width : '5%'},
              //{display: '锁定', name : 'lock', cc: 'billLock', width : '8%'},
              {display: '金额', name : 'moneys',  toFixed: 2, width : '8%'},
              {display: '单位', name : 'provideName', width : '10%'},
@@ -42,7 +42,7 @@ function load()
          },
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1607'},
-             {id: 'update', bclass: 'update', caption: '更新核对', auth: '1607', onpress : updateOutBillBeanChecks},
+             {id: 'update', bclass: 'update', caption: '总部核对', auth: '1803', onpress : updateOutBillBeanChecks},
              {id: 'del', bclass: 'delete', auth: '1607', onpress : delBean},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
@@ -56,6 +56,7 @@ function $callBack()
 {
     loadForm();
     
+    highlights($("#mainTable").get(0), ['未核对'], 'red');
 }
 
 function addBean(opr, grid)
@@ -76,6 +77,14 @@ function delBean(opr, grid)
 }
 
 function updateOutBillBeanChecks()
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    $l(gurl + 'find' + ukey + '&id=' + getRadioValue('checkb') + '&check=1');
+    else
+    $error('不能操作');
+}
+
+function updateOutBillBeanChecks2()
 {
     if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 0)
     {   

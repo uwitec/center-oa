@@ -311,6 +311,11 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
 
         vo.setItemVO(itemVO);
 
+        if (StringTools.isNullOrNone(vo.getOwerName()))
+        {
+            vo.setOwerName("公共");
+        }
+
         return vo;
     }
 

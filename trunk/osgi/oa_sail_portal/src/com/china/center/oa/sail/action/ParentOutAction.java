@@ -1633,6 +1633,7 @@ public class ParentOutAction extends DispatchAction
 
         ActionForward action = null;
 
+        // 销售单
         if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
             // 强制设置成OUT_SAIL_TYPE_MONEY
@@ -1665,8 +1666,14 @@ public class ParentOutAction extends DispatchAction
 
                 if ("提交".equals(saves))
                 {
-                    outManager.submit(outBean.getFullId(), user,
-                        StorageConstant.OPR_STORAGE_INOTHER);
+                    int ttype = StorageConstant.OPR_STORAGE_INOTHER;
+
+                    if (outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT)
+                    {
+                        ttype = StorageConstant.OPR_STORAGE_REDEPLOY;
+                    }
+
+                    outManager.submit(outBean.getFullId(), user, ttype);
                 }
             }
             catch (MYException e)
@@ -2055,15 +2062,6 @@ public class ParentOutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        for (OutVO outVO : list)
-        {
-            if (outVO.getStatus() == OutConstant.STATUS_PASS)
-            {
-                // 标识为结束
-                outVO.setStatus(OutConstant.STATUS_SEC_PASS);
-            }
-        }
-
         request.setAttribute("listOut1", list);
 
         List<DepotBean> depotList = depotDAO.listEntityBeans();
@@ -2274,6 +2272,12 @@ public class ParentOutAction extends DispatchAction
         {
             throw new MYException("用户没有此操作的权限");
         }
+
+        if ("8".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.BILL_QUERY_ALL))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
     }
 
     /**
@@ -2428,6 +2432,8 @@ public class ParentOutAction extends DispatchAction
     {
         User user = (User)request.getSession().getAttribute("user");
 
+        saveQueryType(request);
+
         try
         {
             checkQueryBuyAuth(request);
@@ -2478,15 +2484,6 @@ public class ParentOutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        for (OutVO outVO : list)
-        {
-            if (outVO.getStatus() == OutConstant.STATUS_PASS)
-            {
-                // 标识为结束
-                outVO.setStatus(OutConstant.STATUS_SEC_PASS);
-            }
-        }
-
         request.setAttribute("listOut1", list);
 
         List<DepotBean> depotList = depotDAO.listEntityBeans();
@@ -2507,6 +2504,30 @@ public class ParentOutAction extends DispatchAction
         getDivs(request, list);
 
         return mapping.findForward("queryBuy");
+    }
+
+    /**
+     * saveQueryType
+     * 
+     * @param request
+     */
+    private void saveQueryType(HttpServletRequest request)
+    {
+        String queryType = request.getParameter("queryType");
+
+        if ( !StringTools.isNullOrNone(queryType))
+        {
+            request.getSession().setAttribute("queryType", queryType);
+
+            return;
+        }
+
+        Object attribute = request.getAttribute("queryType");
+
+        if (attribute != null)
+        {
+            request.getSession().setAttribute("queryType", attribute);
+        }
     }
 
     /**
@@ -2673,7 +2694,14 @@ public class ParentOutAction extends DispatchAction
 
         if ( !StringTools.isNullOrNone(status))
         {
-            condtion.addIntCondition("OutBean.status", "=", status);
+            if ("99".equals(status))
+            {
+                condtion.addCondition(" and OutBean.status in (3, 4)");
+            }
+            else
+            {
+                condtion.addIntCondition("OutBean.status", "=", status);
+            }
         }
         else
         {
@@ -2797,7 +2825,14 @@ public class ParentOutAction extends DispatchAction
 
         if ( !StringTools.isNullOrNone(status))
         {
-            condtion.addIntCondition("OutBean.status", "=", status);
+            if ("99".equals(status))
+            {
+                condtion.addCondition(" and OutBean.status in (3, 4)");
+            }
+            else
+            {
+                condtion.addIntCondition("OutBean.status", "=", status);
+            }
         }
         else
         {
@@ -2987,7 +3022,14 @@ public class ParentOutAction extends DispatchAction
 
         if ( !StringTools.isNullOrNone(status))
         {
-            condtion.addIntCondition("OutBean.status", "=", status);
+            if ("99".equals(status))
+            {
+                condtion.addCondition(" and OutBean.status in (3, 4)");
+            }
+            else
+            {
+                condtion.addIntCondition("OutBean.status", "=", status);
+            }
         }
 
         String customerId = request.getParameter("customerId");
@@ -3316,7 +3358,14 @@ public class ParentOutAction extends DispatchAction
 
         if ( !StringTools.isNullOrNone(status))
         {
-            condtion.addIntCondition("OutBean.status", "=", status);
+            if ("99".equals(status))
+            {
+                condtion.addCondition(" and OutBean.status in (3, 4)");
+            }
+            else
+            {
+                condtion.addIntCondition("OutBean.status", "=", status);
+            }
         }
 
         String customerId = request.getParameter("customerId");
@@ -3395,9 +3444,9 @@ public class ParentOutAction extends DispatchAction
         {
             if (OldPageSeparateTools.isMenuLoad(request))
             {
-                condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_SUBMIT);
+                condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_PASS);
 
-                request.setAttribute("status", OutConstant.STATUS_SUBMIT);
+                request.setAttribute("status", OutConstant.STATUS_PASS);
 
                 condtion.addIntCondition("OutBean.inway", "=", OutConstant.IN_WAY);
 
@@ -3431,6 +3480,16 @@ public class ParentOutAction extends DispatchAction
             condtion.addCondition("OutBean.stafferId", "=", user.getStafferId());
 
             condtion.addCondition("and OutBean.outType in (4, 5)");
+        }
+        // 会计总部核对
+        else if ("8".equals(queryType))
+        {
+            if (OldPageSeparateTools.isMenuLoad(request))
+            {
+                condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_PASS);
+
+                request.setAttribute("status", OutConstant.STATUS_PASS);
+            }
         }
         // 未知的则什么都没有
         else

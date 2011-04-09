@@ -184,6 +184,8 @@ public class OutAction extends ParentOutAction
 
         String flag = request.getParameter("flag");
 
+        String depotpartId = request.getParameter("depotpartId");
+
         User user = (User)request.getSession().getAttribute("user");
 
         if (StringTools.isNullOrNone(fullId))
@@ -193,23 +195,23 @@ public class OutAction extends ParentOutAction
             return mapping.findForward("error");
         }
 
-        OutBean bean = outDAO.find(fullId);
+        OutBean outBean = outDAO.find(fullId);
 
-        if (bean == null)
+        if (outBean == null)
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不存在，请重新操作");
 
             return mapping.findForward("error");
         }
 
-        if ( ! (bean.getType() == OutConstant.OUT_TYPE_INBILL && bean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT))
+        if ( ! (outBean.getType() == OutConstant.OUT_TYPE_INBILL && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT))
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不能转调，请核实");
 
             return mapping.findForward("error");
         }
 
-        if (bean.getInway() != OutConstant.IN_WAY)
+        if (outBean.getInway() != OutConstant.IN_WAY)
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不在在途中，不能处理");
 
@@ -219,14 +221,14 @@ public class OutAction extends ParentOutAction
         // 直接接受自动生成一个调入的库单
         if ("1".equals(flag))
         {
-            OutBean newOut = new OutBean(bean);
+            OutBean newOut = new OutBean(outBean);
 
             newOut.setStatus(0);
 
             newOut.setLocationId(user.getLocationId());
 
             // 仓库就是调出的目的仓区
-            newOut.setLocation(bean.getDestinationId());
+            newOut.setLocation(outBean.getDestinationId());
 
             newOut.setOutType(OutConstant.OUTTYPE_IN_MOVEOUT);
 
@@ -234,7 +236,7 @@ public class OutAction extends ParentOutAction
 
             newOut.setRefOutFullId(fullId);
 
-            newOut.setDestinationId(bean.getLocation());
+            newOut.setDestinationId(outBean.getLocation());
 
             newOut.setDescription("自动接收调拨单:" + fullId + ".生成的调入单据");
 
@@ -251,10 +253,24 @@ public class OutAction extends ParentOutAction
 
             List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(fullId);
 
-            DepotpartBean defaultOKDepotpart = depotpartDAO.findDefaultOKDepotpart(bean
-                .getDestinationId());
+            if (StringTools.isNullOrNone(depotpartId))
+            {
+                DepotpartBean defaultOKDepotpart = depotpartDAO.findDefaultOKDepotpart(outBean
+                    .getDestinationId());
 
-            if (defaultOKDepotpart == null)
+                if (defaultOKDepotpart == null)
+                {
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "仓库下没有良品仓，请核实");
+
+                    return mapping.findForward("error");
+                }
+
+                depotpartId = defaultOKDepotpart.getId();
+            }
+
+            DepotpartBean depotpart = depotpartDAO.find(depotpartId);
+
+            if (depotpart == null)
             {
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "仓库下没有良品仓，请核实");
 
@@ -264,13 +280,16 @@ public class OutAction extends ParentOutAction
             for (BaseBean baseBean : baseList)
             {
                 // 获得仓库默认的仓区
-                baseBean.setDepotpartId(defaultOKDepotpart.getId());
+                baseBean.setDepotpartId(depotpartId);
                 baseBean.setValue( -baseBean.getValue());
-                baseBean.setLocationId(bean.getDestinationId());
+                baseBean.setLocationId(outBean.getDestinationId());
                 baseBean.setAmount( -baseBean.getAmount());
+                baseBean.setDepotpartName(depotpart.getName());
             }
 
-            newOut.setBaseList(baseList);
+            List<BaseBean> lastList = OutHelper.trimBaseList(baseList);
+
+            newOut.setBaseList(lastList);
 
             try
             {
@@ -296,18 +315,18 @@ public class OutAction extends ParentOutAction
         {
             String changeLocationId = request.getParameter("changeLocationId");
 
-            if (bean.getLocation().equals(changeLocationId))
+            if (outBean.getLocation().equals(changeLocationId))
             {
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "转调区域不能是产品调出区域，请核实");
 
                 return mapping.findForward("error");
             }
 
-            bean.setDestinationId(changeLocationId);
+            outBean.setDestinationId(changeLocationId);
 
             try
             {
-                outManager.updateOut(bean);
+                outManager.updateOut(outBean);
             }
             catch (MYException e)
             {
@@ -597,6 +616,15 @@ public class OutAction extends ParentOutAction
     {
         String fullId = request.getParameter("outId");
 
+        OutBean outBean = outDAO.find(fullId);
+
+        if (outBean == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误,请确认操作");
+
+            return mapping.findForward("error");
+        }
+
         String checks = request.getParameter("reason");
 
         User user = (User)request.getSession().getAttribute("user");
@@ -620,7 +648,14 @@ public class OutAction extends ParentOutAction
 
         RequestTools.actionInitQuery(request);
 
-        return queryOut(mapping, form, request, reponse);
+        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+        {
+            return queryOut(mapping, form, request, reponse);
+        }
+        else
+        {
+            return queryBuy(mapping, form, request, reponse);
+        }
     }
 
     /**
@@ -1006,7 +1041,7 @@ public class OutAction extends ParentOutAction
     }
 
     /**
-     * 修改库单的状态
+     * CORE 修改库单的状态(销售单的流程)
      * 
      * @param mapping
      * @param form
@@ -1176,6 +1211,7 @@ public class OutAction extends ParentOutAction
                 }
             }
         }
+        // 销售单的审批流程
         else
         {
             // 业务员提交销售单
@@ -1564,6 +1600,12 @@ public class OutAction extends ParentOutAction
 
                 return mapping.findForward("error");
             }
+
+            // 查询目的库的良品仓区
+            List<DepotpartBean> depotpartList = depotpartDAO.queryOkDepotpartInDepot(bean
+                .getDestinationId());
+
+            request.setAttribute("depotpartList", depotpartList);
 
             return mapping.findForward("handerInvokeBuy");
         }

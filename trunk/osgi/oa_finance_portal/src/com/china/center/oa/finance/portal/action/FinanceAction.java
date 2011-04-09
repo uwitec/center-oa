@@ -247,8 +247,12 @@ public class FinanceAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYPAYMENTAPPLY, request, condtion);
 
-        condtion.addIntCondition("PaymentApplyBean.status", "=",
-            FinanceConstant.PAYAPPLY_STATUS_INIT);
+        if (PageSeparateTools.isMenuLoad(request)
+            || StringTools.isNullOrNone(request.getParameter("status")))
+        {
+            condtion.addIntCondition("PaymentApplyBean.status", "=",
+                FinanceConstant.PAYAPPLY_STATUS_INIT);
+        }
 
         if ( !userManager.containAuth(user.getId(), AuthConstant.BILL_QUERY_ALL))
         {
@@ -1580,6 +1584,11 @@ public class FinanceAction extends DispatchAction
         }
 
         request.setAttribute("vsList", vsList);
+
+        if (bean.getStatus() != FinanceConstant.PAYAPPLY_STATUS_INIT)
+        {
+            return mapping.findForward("detailPaymentApply");
+        }
 
         if ("1".equals(update))
         {

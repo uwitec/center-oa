@@ -54,15 +54,6 @@ public class PriceChangeListenerSailImpl implements PriceChangeListener
         {
             throw new MYException(bean.getName() + "已经在销售途中,不能调价");
         }
-
-        // 是否存在调拨途中的产品
-        count = outDAO.countNotEndProductInIn(bean.getId(), YYTools.getFinanceBeginDate(), YYTools
-            .getFinanceEndDate());
-
-        if (count > 0)
-        {
-            throw new MYException(bean.getName() + "已经在调拨途中,不能调价");
-        }
     }
 
     public int onPriceChange2(User user, StorageRelationBean relation)
@@ -72,12 +63,18 @@ public class PriceChangeListenerSailImpl implements PriceChangeListener
         Integer count1 = outDAO.sumNotEndProductInOut2(relation, YYTools.getFinanceBeginDate(),
             YYTools.getFinanceEndDate());
 
-        // 是否存在调拨途中的产品
-        Integer count2 = outDAO.sumNotEndProductInIn2(relation, YYTools.getFinanceBeginDate(),
+        // 是否存在调拨途中的产品(修改后在途的产品直接是异动库存,但是状态在3)
+        Integer count2 = -outDAO.sumNotEndProductInIn2(relation, YYTools.getFinanceBeginDate(),
             YYTools.getFinanceEndDate());
 
-        return count1 + count2;
+        int result = count1 + count2;
 
+        if (result < 0)
+        {
+            return 0;
+        }
+
+        return result;
     }
 
     /*
@@ -105,5 +102,14 @@ public class PriceChangeListenerSailImpl implements PriceChangeListener
     public void setOutDAO(OutDAO outDAO)
     {
         this.outDAO = outDAO;
+    }
+
+    public int onPriceChange3(User user, StorageRelationBean relation)
+    {
+        // 是否存在调拨途中的产品(修改后在途的产品直接是异动库存,但是状态在3)
+        Integer sum = -outDAO.sumInwayProductInBuy(relation, YYTools.getFinanceBeginDate(), YYTools
+            .getFinanceEndDate());
+
+        return sum;
     }
 }

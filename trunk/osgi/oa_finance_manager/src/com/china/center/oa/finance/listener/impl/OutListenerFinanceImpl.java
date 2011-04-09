@@ -67,7 +67,7 @@ public class OutListenerFinanceImpl implements OutListener
     public void onPass(User user, OutBean bean)
         throws MYException
     {
-        // 如果是库管通过，而且是先款后货的话,直接是付款结束
+        // 只监听销售行为哦
         if (bean.getType() != OutConstant.OUT_TYPE_OUTBILL)
         {
             return;
@@ -391,6 +391,24 @@ public class OutListenerFinanceImpl implements OutListener
         List<OutBean> refList = outDAO.queryEntityBeansByCondition(con);
 
         return refList;
+    }
+
+    public void onDelete(User user, OutBean bean)
+        throws MYException
+    {
+        List<InBillBean> list = inBillDAO.queryEntityBeansByFK(bean.getFullId());
+
+        if (list.size() > 0)
+        {
+            for (InBillBean inBillBean : list)
+            {
+                inBillBean.setOutId("");
+
+                inBillBean.setStatus(FinanceConstant.INBILL_STATUS_NOREF);
+            }
+
+            inBillDAO.updateAllEntityBeans(list);
+        }
     }
 
     public void onCancleBadDebts(User user, OutBean bean)

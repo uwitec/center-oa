@@ -29,7 +29,7 @@ function load()
              		width : 40, align: 'center'},
              {display: '产品', name : 'productName', width : '15%', cname: 'StorageRelationBean.productId', sortable : true},
              {display: '编码', name : 'productCode', width : '15%'},
-             {display: '数量', name : 'amount', width : '10%', sortable : true},
+             {display: '实际/预占/在途', name : 'amount', width : '15%', content: '{amount}/{preassignAmount}/{inwayAmount}', sortable : true},
              {display: '价格', name : 'price', toFixed: 2, sortable : true, width : '10%'},
              {display: '储位', name : 'storageName', width : '10%'},
              {display: '仓区', name : 'depotpartName', width : '10%'},
@@ -75,7 +75,7 @@ function delBean(opr, grid)
     if (getRadio('checkb') && getRadioValue('checkb') &&getRadio('checkb').lamount == 0)
     {    
         if(window.confirm('确定删除?'))    
-        $ajax(gurl + 'delete' + ukey + '&id=' + getRadioValue('checkb'), callBackFun);
+        $ajax(gurl + 'deleteStorageRelation&id=' + getRadioValue('checkb'), callBackFun);
     }
     else
     $error('不能操作,只能删除数量为0的库存');

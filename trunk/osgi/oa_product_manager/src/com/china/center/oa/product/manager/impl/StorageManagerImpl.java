@@ -24,6 +24,7 @@ import com.center.china.osgi.publics.User;
 import com.center.china.osgi.publics.file.writer.WriteFile;
 import com.center.china.osgi.publics.file.writer.WriteFileFactory;
 import com.china.center.common.MYException;
+import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.jdbc.expression.Expression;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.product.bean.DepotBean;
@@ -181,7 +182,7 @@ public class StorageManagerImpl implements StorageManager
 
             write.openFile(out);
 
-            write.writeLine("日期,仓库,仓区,储位,产品名称,产品编码,产品数量,产品价格");
+            write.writeLine("日期,仓库,仓区,仓区属性,储位,产品名称,产品编码,产品数量,产品价格");
 
             String now = TimeTools.now("yyyy-MM-dd");
 
@@ -200,10 +201,21 @@ public class StorageManagerImpl implements StorageManager
                 {
                     if (each.getAmount() > 0)
                     {
-                        write.writeLine(now + ',' + locationBean.getName() + ','
-                                        + each.getDepotpartName() + ',' + each.getStorageName()
-                                        + ',' + each.getProductName().replaceAll(",", " ") + ','
-                                        + each.getProductCode() + ','
+                        String typeName = DefinedCommon.getValue("depotpartType", each
+                            .getDepotpartType());
+
+                        write.writeLine(now
+                                        + ','
+                                        + locationBean.getName()
+                                        + ','
+                                        + each.getDepotpartName()
+                                        + ','
+                                        + typeName
+                                        + ','
+                                        + each.getStorageName()
+                                        + ','
+                                        + each.getProductName().replaceAll(",", " ").replaceAll(
+                                            "\r\n", "") + ',' + each.getProductCode() + ','
                                         + String.valueOf(each.getAmount()) + ','
                                         + MathTools.formatNum(each.getPrice()));
                     }

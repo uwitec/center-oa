@@ -254,6 +254,7 @@ function load()
 						<select name="status" class="select_class" values="${status}">
 							<option value="">--</option>
 							<p:option type="buyStatus"/>
+							<option value="99">发货态</option>
 						</select>
 						</c:if>
 

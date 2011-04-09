@@ -37,11 +37,20 @@ public interface PriceChangeListener extends ParentListener
         throws MYException;
 
     /**
-     * onPriceChange
+     * onPriceChange(预占的库存,单据在审批中,但是没有发货呢)
      * 
      * @param user
      * @param relation
      * @throws MYException
      */
     int onPriceChange2(User user, StorageRelationBean relation);
+
+    /**
+     * 在途的产品(库存已经减去)
+     * 
+     * @param user
+     * @param relation
+     * @throws MYException
+     */
+    int onPriceChange3(User user, StorageRelationBean relation);
 }

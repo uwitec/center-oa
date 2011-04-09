@@ -30,7 +30,7 @@ function load()
              {display: '帐号', name : 'bankName', width : '20%'},
              {display: '类型', name : 'type', cc: 'inbillType', width : '8%'},
              {display: '状态', name : 'status', cc: 'inbillStatus', width : '5%'},
-             {display: '锁定', name : 'lock', cc: 'billLock', width : '5%'},
+             {display: '核对', name : 'checkStatus', cc: 'pubCheckStatus', width : '5%'},
              {display: '金额', name : 'moneys',  toFixed: 2, width : '8%'},
              {display: '客户', name : 'customerName', width : '12%'},
              {display: '职员', name : 'ownerName', width : '5%'},
@@ -42,7 +42,7 @@ function load()
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1603'},
              //{id: 'update', bclass: 'update', caption: '分拆预收', auth: '1603', onpress : splitInBill},
-             {id: 'update2', bclass: 'update', caption: '更新核对', auth: '1603', onpress : updateInBillBeanChecks},
+             {id: 'update2', bclass: 'update', caption: '总部核对', auth: '1803', onpress : updateInBillBeanChecks},
              {id: 'del', bclass: 'delete', auth: '1603', onpress : delBean},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
@@ -56,6 +56,7 @@ function $callBack()
 {
     loadForm();
     
+    highlights($("#mainTable").get(0), ['未核对'], 'red');
 }
 
 function addBean(opr, grid)
@@ -94,6 +95,14 @@ function splitInBill(opr, grid)
 }
 
 function updateInBillBeanChecks()
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    $l(gurl + 'find' + ukey + '&id=' + getRadioValue('checkb') + '&check=1');
+    else
+    $error('不能操作');
+}
+
+function updateInBillBeanChecks2()
 {
     if (getRadio('checkb') && getRadioValue('checkb'))
     {   

@@ -167,7 +167,7 @@ function rejectBack()
 
 function centerCheck()
 {
-    if (getRadio('fullId').statuss == 3 && getRadio('fullId').paytype == 1)
+    if (getRadio('fullId').statuss == 3)
     {
         $.messager.prompt('总部核对', '请核对说明', '', function(r){
                 if (r)
@@ -333,6 +333,7 @@ function reject()
 						<select name="status" class="select_class" values="${status}">
 							<option value="">--</option>
 							<p:option type="buyStatus"/>
+							<option value="99">发货态</option>
 						</select>
 
 						</td>
@@ -452,8 +453,14 @@ function reject()
 						<td align="center" onclick="tableSort(this)" class="td_class">目的仓库</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">源仓库</td>
 					</tr>
-
+					
 					<c:forEach items="${listOut1}" var="item" varStatus="vs">
+					    <c:if test="${queryType == '8' && item.status == 3}">
+                        <c:set var="pcheck" value="&check=1"></c:set>
+	                    </c:if>
+	                    <c:if test="${queryType != '8' || item.status != 3}">
+                        <c:set var="pcheck" value=""></c:set>
+                        </c:if>
 						<tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'
 						>
 							<td align="center"><input type="radio" name="fullId" 
@@ -468,7 +475,7 @@ function reject()
 							   statuss='${item.status}' 
 							   value="${item.fullId}"/></td>
 							<td align="center"
-							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}">
+							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}${pcheck}">
 							${item.fullId}</a></td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.customerName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('buyStatus', item.status)}</td>
@@ -506,7 +513,7 @@ function reject()
 	<tr>
 		<td width="100%">
 		<div align="right">
-		<c:if test="${queryType != '4' && queryType != '5' && queryType != '6' && queryType != '7'}">
+		<c:if test="${queryType != '4' && queryType != '5' && queryType != '6' && queryType != '7' && queryType != '8'}">
         <input name="bu1"
                 type="button" class="button_class" value="&nbsp;审核通过&nbsp;"
                 onclick="check()" />&nbsp;&nbsp;<input type="button" name="bu2"
@@ -524,6 +531,11 @@ function reject()
                 value="&nbsp;&nbsp;确认退库&nbsp;&nbsp;" onClick="sureBack()"/>&nbsp;&nbsp;
         <input type="button" class="button_class"
                 value="&nbsp;&nbsp;驳回退库&nbsp;&nbsp;" onClick="rejectBack()"/>&nbsp;&nbsp;
+        </c:if>
+        
+        <c:if test="${queryType == '8'}">
+         <input type="button" class="button_class"
+                value="&nbsp;&nbsp;总部核对&nbsp;&nbsp;" onClick="centerCheck()"/>&nbsp;&nbsp;
         </c:if>
         
         <input

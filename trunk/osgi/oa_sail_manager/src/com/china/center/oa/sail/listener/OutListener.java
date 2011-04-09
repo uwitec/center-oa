@@ -36,6 +36,15 @@ public interface OutListener extends ParentListener
         throws MYException;
 
     /**
+     * 删除监听
+     * 
+     * @param bean
+     * @throws MYException
+     */
+    void onDelete(User user, OutBean bean)
+        throws MYException;
+
+    /**
      * 通过监听
      * 
      * @param bean

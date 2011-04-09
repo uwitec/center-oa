@@ -10,6 +10,7 @@ package com.china.center.oa.product.listener;
 
 
 import com.center.china.osgi.publics.ParentListener;
+import com.china.center.common.MYException;
 import com.china.center.oa.product.vs.StorageRelationBean;
 
 
@@ -31,4 +32,13 @@ public interface StorageRelationListener extends ParentListener
      * @return
      */
     int onFindPreassignByStorageRelation(StorageRelationBean bean);
+
+    /**
+     * 在途的产品(库存已经减去)
+     * 
+     * @param user
+     * @param relation
+     * @throws MYException
+     */
+    int onFindInwayByStorageRelation(StorageRelationBean relation);
 }

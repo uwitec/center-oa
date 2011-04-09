@@ -311,7 +311,31 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         paramterMap.put("beginDate", beginDate);
         paramterMap.put("endDate", endDate);
 
-        Object count = getIbatisDaoSupport().queryForObject("OutDAO.sumNotEndProductInIn2",
+        Object count = getIbatisDaoSupport().queryForObject(
+            "OutDAO.sumNotEndProductInInByStorageRelation", paramterMap);
+
+        if (count == null)
+        {
+            return 0;
+        }
+
+        return (Integer)count;
+    }
+
+    public Integer sumInwayProductInBuy(StorageRelationBean relation, String beginDate,
+                                        String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("productId", relation.getProductId());
+        paramterMap.put("depotpartId", relation.getDepotpartId());
+        paramterMap.put("costPriceKey", relation.getPriceKey());
+        paramterMap.put("owner", relation.getStafferId());
+
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("endDate", endDate);
+
+        Object count = getIbatisDaoSupport().queryForObject("OutDAO.sumInwayProductInBuy",
             paramterMap);
 
         if (count == null)
@@ -335,8 +359,8 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         paramterMap.put("beginDate", beginDate);
         paramterMap.put("endDate", endDate);
 
-        Object count = getIbatisDaoSupport().queryForObject("OutDAO.sumNotEndProductInOut2",
-            paramterMap);
+        Object count = getIbatisDaoSupport().queryForObject(
+            "OutDAO.sumNotEndProductInOutByStorageRelation", paramterMap);
 
         if (count == null)
         {
@@ -626,4 +650,5 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
 
         return backTotal;
     }
+
 }

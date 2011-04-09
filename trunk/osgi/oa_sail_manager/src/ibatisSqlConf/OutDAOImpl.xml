@@ -117,21 +117,6 @@
         ]]>
 	</select>
 	
-	<select id="sumNotEndProductInOut2" parameterClass="java.util.Map" resultClass="java.lang.Integer">
-        <![CDATA[
-            select sum(t2.amount) from t_center_out t1, t_center_base t2 
-            where t1.fullid = t2.outid 
-            and t1.type = 0 
-            and t2.depotpartId = #depotpartId# 
-            and t2.productId = #productId# 
-            and t2.costPriceKey = #costPriceKey# 
-            and t2.owner = #owner# 
-            and t1.outtime >= #beginDate# 
-            AND t1.outtime <= #endDate# 
-            AND t1.status in (1, 6, 7, 8, 9)
-        ]]>
-    </select>
-	
 	<!-- 入库产品在途的,主要是调价需要剔除 -->
 	<select id="countNotEndProductInIn" parameterClass="java.util.Map" resultClass="java.lang.Integer">
 		<![CDATA[
@@ -146,30 +131,13 @@
         ]]>
 	</select>
 	
-	<select id="sumNotEndProductInIn2" parameterClass="java.util.Map" resultClass="java.lang.Integer">
-        <![CDATA[
-            select sum(t2.amount) from t_center_out t1, t_center_base t2 
-            where t1.fullid = t2.outid 
-            and t1.type = 1 
-            and t1.inway = 1 
-            and t2.depotpartId = #depotpartId# 
-            and t2.productId = #productId# 
-            and t2.costPriceKey = #costPriceKey# 
-            and t2.owner = #owner# 
-            and t1.outtime >= #beginDate# 
-            AND t1.outtime <= #endDate# 
-            AND t1.status in (1, 6, 7, 8, 9, 10)
-        ]]>
-    </select>
-	
-	<!-- 销售产品在途的,主要是显示库存页面需要 -->
+	<!-- 销售产品预占的,主要是显示库存页面需要 -->
 	<select id="sumNotEndProductInOutByStorageRelation" parameterClass="java.util.Map" resultClass="java.lang.Integer">
         <![CDATA[
             select sum(t2.amount) from t_center_out t1, t_center_base t2 
             where t1.fullid = t2.outid 
             and t1.type = 0 
             and t2.productId = #productId# 
-            and t2.depotpartId = #depotpartId# 
             and t2.depotpartId = #depotpartId# 
             and t2.costPriceKey = #costPriceKey# 
             and t2.owner = #owner# 
@@ -179,20 +147,37 @@
         ]]>
     </select>
     
-    <!-- 入库产品在途的,主要是显示库存页面需要 -->
+    <!-- 入库产品预占的,主要是显示库存页面需要 -->
     <select id="sumNotEndProductInInByStorageRelation" parameterClass="java.util.Map" resultClass="java.lang.Integer">
         <![CDATA[
             select sum(t2.amount) from t_center_out t1, t_center_base t2 
             where t1.fullid = t2.outid 
             and t1.type = 1 
+            and t2.amount < 0
             and t2.productId = #productId# 
-            and t2.depotpartId = #depotpartId# 
             and t2.depotpartId = #depotpartId# 
             and t2.costPriceKey = #costPriceKey# 
             and t2.owner = #owner# 
             and t1.outtime >= #beginDate# 
             AND t1.outtime <= #endDate# 
-            AND t1.status in (1, 6, 7, 8, 9)
+            AND t1.status in (1, 6, 7, 8, 9, 10)
+        ]]>
+    </select>
+    
+    <select id="sumInwayProductInBuy" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+        <![CDATA[
+            select sum(t2.amount) from t_center_out t1, t_center_base t2 
+            where t1.fullid = t2.outid 
+            and t1.type = 1 
+            and t1.outType = 1 
+            and t1.inway = 1 
+            and t2.depotpartId = #depotpartId# 
+            and t2.productId = #productId# 
+            and t2.costPriceKey = #costPriceKey# 
+            and t2.owner = #owner# 
+            and t1.outtime >= #beginDate# 
+            AND t1.outtime <= #endDate# 
+            AND t1.status in (3, 4)
         ]]>
     </select>
 

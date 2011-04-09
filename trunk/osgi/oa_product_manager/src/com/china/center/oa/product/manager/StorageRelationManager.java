@@ -54,13 +54,13 @@ public interface StorageRelationManager extends ListenerManager<StorageRelationL
         throws MYException;
 
     /**
-     * 检查库存是否满足要求(这里的relationId不启用)
+     * 检查库存是否满足要求(这里的relationId不启用,且会使用在途库存进行合计)
      * 
      * @param bean
      * @return
      * @throws MYException
      */
-    boolean checkStorageRelation(ProductChangeWrap bean)
+    boolean checkStorageRelation(ProductChangeWrap bean, boolean includeSelf)
         throws MYException;
 
     /**
@@ -115,6 +115,14 @@ public interface StorageRelationManager extends ListenerManager<StorageRelationL
      * @return
      */
     int sumPreassignByStorageRelation(StorageRelationBean bean);
+
+    /**
+     * 合计已经在预占的库存
+     * 
+     * @param bean
+     * @return
+     */
+    int sumInwayByStorageRelation(StorageRelationBean bean);
 
     /**
      * initPriceKey

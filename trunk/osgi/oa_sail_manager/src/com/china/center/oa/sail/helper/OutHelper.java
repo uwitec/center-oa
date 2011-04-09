@@ -9,7 +9,11 @@
 package com.china.center.oa.sail.helper;
 
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.oa.sail.bean.BaseBean;
@@ -165,7 +169,7 @@ public abstract class OutHelper
 
             // 调动分为两个单据 一个是源头的调出入库单 一个是目的的调入入库单
             // 源头调出后状态处于提交态,此时可以驳回的
-            if (outBean.getStatus() == OutConstant.STATUS_SUBMIT
+            if (outBean.getStatus() == OutConstant.STATUS_PASS
                 && outBean.getType() == OutConstant.OUTTYPE_IN_MOVEOUT)
             {
                 return true;
@@ -190,6 +194,24 @@ public abstract class OutHelper
         if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
             && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT
             && outBean.getReserve1() == OutConstant.MOVEOUT_IN)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 调出回滚
+     * 
+     * @param outBean
+     * @return
+     */
+    public static boolean isMoveRollBack(OutBean outBean)
+    {
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT
+            && outBean.getReserve1() == OutConstant.MOVEOUT_ROLLBACK)
         {
             return true;
         }
@@ -229,5 +251,44 @@ public abstract class OutHelper
         }
 
         return false;
+    }
+
+    /**
+     * 归类重复的base
+     * 
+     * @param baseList
+     * @return
+     */
+    public static List<BaseBean> trimBaseList(List<BaseBean> baseList)
+    {
+        // 由于是默认仓,所以存在重复产品的行为,这里需要合并重复的
+        Map<String, BaseBean> mapBean = new HashMap<String, BaseBean>();
+
+        for (BaseBean each : baseList)
+        {
+            String key = each.getProductId() + "-" + each.getCostPriceKey() + "-" + each.getOwner()
+                         + "-" + each.getDepotpartId();
+
+            BaseBean baseBean = mapBean.get(key);
+
+            if (baseBean == null)
+            {
+                mapBean.put(key, each);
+            }
+            else
+            {
+                baseBean.setAmount(each.getAmount() + baseBean.getAmount());
+            }
+        }
+
+        Collection<BaseBean> values = mapBean.values();
+
+        List<BaseBean> lastList = new ArrayList<BaseBean>();
+
+        for (BaseBean baseBean : values)
+        {
+            lastList.add(baseBean);
+        }
+        return lastList;
     }
 }

@@ -64,6 +64,8 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
 
     private final Log monitorLog = LogFactory.getLog("bill");
 
+    private final Log badLog = LogFactory.getLog("bad");
+
     private PlatformTransactionManager transactionManager = null;
 
     private StorageLogDAO storageLogDAO = null;
@@ -91,7 +93,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
     {
     }
 
-    public boolean checkStorageRelation(ProductChangeWrap bean)
+    public boolean checkStorageRelation(ProductChangeWrap bean, boolean includeSelf)
         throws MYException
     {
         if (StorageRelationManagerImpl.storageRelationLock)
@@ -118,9 +120,38 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
             .findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(bean.getDepotpartId(), bean
                 .getProductId(), priceKey, bean.getStafferId());
 
-        if (relation == null || relation.getAmount() + bean.getChange() < 0)
+        if (relation == null)
         {
-            throw new MYException("产品[%s]库存不足", productBean.getName());
+            throw new MYException("产品[%s]可发库存不足", productBean.getName());
+        }
+
+        int zaitu = sumPreassignByStorageRelation(relation);
+
+        relation.setAmount(relation.getAmount() - zaitu);
+
+        if (relation.getAmount() < 0)
+        {
+            badLog.error("产品[" + productBean.getName() + "]可发库存为负数:" + relation.getAmount());
+
+            relation.setAmount(0);
+        }
+
+        if ( !includeSelf)
+        {
+            // 自身不再在途中
+            if (relation.getAmount() + bean.getChange() < 0)
+            {
+                throw new MYException("产品[%s]可发库存不足,当前可发:[%d]", productBean.getName(), relation
+                    .getAmount());
+            }
+        }
+        else
+        {
+            if (relation.getAmount() < 0)
+            {
+                throw new MYException("产品[%s]可发库存不足,当前可发:[%d]", productBean.getName(), relation
+                    .getAmount());
+            }
         }
 
         return true;
@@ -632,11 +663,6 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
             throw new MYException("源仓区下产品数量不足[%d],请确认操作", srb.getAmount());
         }
 
-        if ( !StorageConstant.PUBLIC_STAFFER.equals(srb.getStafferId()))
-        {
-            throw new RuntimeException("只能操作公共储位,请重新操作");
-        }
-
         final DepotpartBean oldDepotpart = depotpartDAO.find(srb.getDepotpartId());
 
         if (oldDepotpart == null)
@@ -654,7 +680,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
         // 自动找寻仓区下产品的位置
         final StorageRelationBean newRelationBean = storageRelationDAO
             .findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(dirDepotpartId, srb
-                .getProductId(), srb.getPriceKey(), StorageConstant.PUBLIC_STAFFER);
+                .getProductId(), srb.getPriceKey(), srb.getStafferId());
 
         final List<StorageBean> sbs = new ArrayList();
 
@@ -677,7 +703,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
         // 检查转移的产品是否存在销售未通过的(防止库存是负数的情况)
         int count = this.sumPreassignByStorageRelation(srb);
 
-        if (count > 0)
+        if (srb.getAmount() - count - amount < 0)
         {
             throw new MYException("转移的产品存在[%d]个未发货(在销售单中),不能仓区间转移,请确认操作", count);
         }
@@ -709,6 +735,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
                         deleteWrap.setSerializeId(sid);
                         deleteWrap.setDepotpartId(srb.getDepotpartId());
                         deleteWrap.setRefId(sid);
+                        deleteWrap.setStafferId(srb.getStafferId());
 
                         ProductChangeWrap addWrap = new ProductChangeWrap();
 
@@ -730,6 +757,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
                         addWrap.setSerializeId(sid);
                         addWrap.setDepotpartId(dirDepotpartId);
                         addWrap.setRefId(sid);
+                        addWrap.setStafferId(srb.getStafferId());
 
                         try
                         {
@@ -740,7 +768,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
                         }
                         catch (MYException e)
                         {
-                            throw new RuntimeException(e.getErrorContent());
+                            throw new RuntimeException(e);
                         }
 
                         return Boolean.TRUE;
@@ -819,6 +847,20 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
         for (StorageRelationListener storageRelationListener : listenerMapValues)
         {
             sum += storageRelationListener.onFindPreassignByStorageRelation(bean);
+        }
+
+        return sum;
+    }
+
+    public int sumInwayByStorageRelation(StorageRelationBean bean)
+    {
+        Collection<StorageRelationListener> listenerMapValues = this.listenerMapValues();
+
+        int sum = 0;
+
+        for (StorageRelationListener storageRelationListener : listenerMapValues)
+        {
+            sum += storageRelationListener.onFindInwayByStorageRelation(bean);
         }
 
         return sum;
@@ -991,4 +1033,5 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
     {
         this.priceHistoryDAO = priceHistoryDAO;
     }
+
 }

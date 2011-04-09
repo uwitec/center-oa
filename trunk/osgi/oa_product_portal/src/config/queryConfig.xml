@@ -231,6 +231,12 @@
 			<type>select</type>
 			<option>$composeType</option>
 		</condtion>
+		<condtion name="checkStatus" caption="核对">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$pubCheckStatus</option>
+        </condtion>
 	</item>
 	
 	<item name="queryPriceChange" deaultpfix="PriceChangeBean">
@@ -254,6 +260,12 @@
 			<type>select</type>
 			<option>$priceChangeStatus</option>
 		</condtion>
+		<condtion name="checkStatus" caption="核对">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$pubCheckStatus</option>
+        </condtion>
 		<condtion name="stafferId" caption="调价人">
 			<opr>=</opr>
 			<datatype>0</datatype>

@@ -483,6 +483,7 @@ function swatchToSail()
 						<select name="status" class="select_class" values="${status}">
 							<option value="">--</option>
 							<p:option type="outStatus"/>
+							<option value="99">发货态</option>
 						</select>
 
 						</td>

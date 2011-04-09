@@ -14,7 +14,7 @@ function checkBean()
     $.messager.prompt('总部核对', '请核对说明', '', function(msg){
         if (msg)
         {
-            $l('../finance/finance.do?method=checks2&id=${bean.id}&reason=' + ajaxPararmter(msg) + '&type=${ltype}');
+            $l('../finance/finance.do?method=checks2&type=4&id=${bean.id}&reason=' + ajaxPararmter(msg) + '&type=${ltype}');
         }
     }, 2);
 }

@@ -119,6 +119,12 @@ public interface StorageConstant
     int OPR_STORAGE_OUTBACK = 13;
 
     /**
+     * 调拨回滚
+     */
+    @Defined(key = "storageType", value = "调拨回滚")
+    int OPR_STORAGE_REDEPLOY_ROLLBACK = 14;
+
+    /**
      * 公共的职员
      */
     String PUBLIC_STAFFER = "0";

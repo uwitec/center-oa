@@ -25,6 +25,15 @@ var gurl = '../product/product.do?method=';
 var addUrl = '../product/addProduct.jsp';
 var ukey = 'Compose';
 
+var checkStr = '';
+
+<c:if test="${param.foward == 3}">
+if (containInList($auth(), '1803'))
+{
+    checkStr = '&check=1';
+}
+</c:if>
+
 var allDef = window.top.topFrame.allDef;
 var guidMap;
 var thisObj;
@@ -38,16 +47,17 @@ function load()
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} ltype={type}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},
-             {display: '产品', name : 'productName', content: '{productName}({productCode})', width : '20%'},
+             {display: '产品', name : 'productName', content: '{productName}({productCode})', width : '15%'},
              {display: '数量', name : 'amount', width : '5%'},
              {display: '价格', name : 'price', width : '8%', toFixed: 2},
+             {display: '核对', name : 'checkStatus', cc: 'pubCheckStatus', width : '8%'},
              {display: '类型', name : 'type', cc : 'composeType', width : '8%'},
              {display: '状态', name : 'status', cc : 'composeStatus', width : '15%'},
              {display: '合成人', name : 'stafferName', width : '8%'},
              {display: '时间', name : 'logTime', content: '{logTime}' ,cname: 'logTime',  sortable : true, width : 'auto'}
              ],
          extAtt: {
-             id : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
+             id : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}' + checkStr + '>', end : '</a>'}
          },
          buttons : [
              <c:if test="${param.foward == 0}">
@@ -62,6 +72,9 @@ function load()
          	 <c:if test="${param.foward == 1 || param.foward == 2}">
              {id: 'reject', bclass: 'reject', caption: '废弃', onpress : deleteBean, auth: '100502,100503'},
              </c:if>
+             <c:if test="${param.foward == 3}">
+             {id: 'passCheck', bclass: 'pass', caption: '总部核对', onpress : checkBean, auth: '1803'},
+             </c:if>
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
          <p:conf/>
@@ -75,7 +88,18 @@ function $callBack()
     loadForm();
     
     highlights($("#mainTable").get(0), ['合成'], 'blue');
-    highlights($("#mainTable").get(0), ['分解'], 'red');
+    
+    highlights($("#mainTable").get(0), ['分解', '未核对'], 'red');
+}
+
+function checkBean()
+{
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 3)
+    {   
+        $l('../product/product.do?method=findPriceChange&id=' + getRadioValue('checkb') + '&check=1');
+    }
+    else
+    $error('不能操作');
 }
 
 function rollback(opr, grid)

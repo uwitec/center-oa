@@ -317,6 +317,7 @@ function showDiv(id)
 function load()
 {
 	loadForm();
+	
 	tooltip.init();
 	
 	highlights($("#mainTable").get(0), ['驳回'], 'red');
@@ -391,6 +392,7 @@ function load()
 						<select name="status" class="select_class" values="${status}">
 							<option value="">--</option>
 							<p:option type="outStatus"/>
+							<option value="99">发货态</option>
 						</select>
 						</c:if>
 

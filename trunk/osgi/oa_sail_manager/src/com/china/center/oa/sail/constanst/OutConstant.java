@@ -321,6 +321,12 @@ public interface OutConstant
     int MOVEOUT_IN = 1;
 
     /**
+     * 调出回滚
+     */
+    @Defined(key = "moveOut", value = "调出回滚")
+    int MOVEOUT_ROLLBACK = 2;
+
+    /**
      * 保存
      */
     @Defined(key = "buyStatus", value = "保存")

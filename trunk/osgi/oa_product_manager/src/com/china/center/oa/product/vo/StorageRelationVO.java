@@ -38,6 +38,9 @@ public class StorageRelationVO extends StorageRelationBean
     @Relationship(relationField = "depotpartId")
     private String depotpartName = "";
 
+    @Relationship(relationField = "depotpartId", tagField = "type")
+    private int depotpartType = 0;
+
     @Relationship(relationField = "locationId")
     private String locationName = "";
 
@@ -46,6 +49,9 @@ public class StorageRelationVO extends StorageRelationBean
 
     @Ignore
     private int mayAmount = 0;
+
+    @Ignore
+    private int inwayAmount = 0;
 
     /**
      * 预先分配的,即销售单未审批的
@@ -240,6 +246,40 @@ public class StorageRelationVO extends StorageRelationBean
     }
 
     /**
+     * @return the depotpartType
+     */
+    public int getDepotpartType()
+    {
+        return depotpartType;
+    }
+
+    /**
+     * @param depotpartType
+     *            the depotpartType to set
+     */
+    public void setDepotpartType(int depotpartType)
+    {
+        this.depotpartType = depotpartType;
+    }
+
+    /**
+     * @return the inwayAmount
+     */
+    public int getInwayAmount()
+    {
+        return inwayAmount;
+    }
+
+    /**
+     * @param inwayAmount
+     *            the inwayAmount to set
+     */
+    public void setInwayAmount(int inwayAmount)
+    {
+        this.inwayAmount = inwayAmount;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -266,6 +306,9 @@ public class StorageRelationVO extends StorageRelationBean
             .append("depotpartName = ")
             .append(this.depotpartName)
             .append(TAB)
+            .append("depotpartType = ")
+            .append(this.depotpartType)
+            .append(TAB)
             .append("locationName = ")
             .append(this.locationName)
             .append(TAB)
@@ -274,6 +317,9 @@ public class StorageRelationVO extends StorageRelationBean
             .append(TAB)
             .append("mayAmount = ")
             .append(this.mayAmount)
+            .append(TAB)
+            .append("inwayAmount = ")
+            .append(this.inwayAmount)
             .append(TAB)
             .append("preassignAmount = ")
             .append(this.preassignAmount)

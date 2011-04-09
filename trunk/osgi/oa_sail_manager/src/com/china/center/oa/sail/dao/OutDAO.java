@@ -145,6 +145,16 @@ public interface OutDAO extends DAO<OutBean, OutVO>
     Integer sumNotEndProductInOut2(StorageRelationBean relation, String beginDate, String endDate);
 
     /**
+     * 查询在途的库存(总计)
+     * 
+     * @param relation
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    Integer sumInwayProductInBuy(StorageRelationBean relation, String beginDate, String endDate);
+
+    /**
      * 统计一个具体库存的产品被单据占据多少配额(销售单里面)
      * 
      * @param stafferId
@@ -177,7 +187,7 @@ public interface OutDAO extends DAO<OutBean, OutVO>
     Integer countNotEndProductInIn(String productId, String beginDate, String endDate);
 
     /**
-     * countNotEndProductInIn2
+     * countNotEndProductInIn2(小于0的才统计,因为小于0的是减少库存的)
      * 
      * @param relation
      * @param beginDate

@@ -12,6 +12,7 @@ package com.china.center.oa.sail.listener.impl;
 import com.china.center.oa.product.listener.StorageRelationListener;
 import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.sail.dao.OutDAO;
+import com.china.center.tools.TimeTools;
 
 
 /**
@@ -41,14 +42,31 @@ public class StorageRelationListenerSailImpl implements StorageRelationListener
     public int onFindPreassignByStorageRelation(StorageRelationBean bean)
     {
         // 销售单库管未通过是预占库存的
-        // 出库单提交后也是预占库存的
         int sumInOut = outDAO.sumNotEndProductInOutByStorageRelation(bean.getProductId(), bean
             .getDepotpartId(), bean.getPriceKey(), bean.getStafferId());
 
-        int sumInIn = outDAO.sumNotEndProductInInByStorageRelation(bean.getProductId(), bean
+        // 出库单提交后也是预占库存的(因为正数需要踢出,防止开单抵消单据)
+        int sumInIn = -outDAO.sumNotEndProductInInByStorageRelation(bean.getProductId(), bean
             .getDepotpartId(), bean.getPriceKey(), bean.getStafferId());
 
-        return sumInOut + sumInIn;
+        // 返回一定大于0
+        int result = sumInOut + sumInIn;
+
+        if (result < 0)
+        {
+            return 0;
+        }
+
+        return result;
+    }
+
+    public int onFindInwayByStorageRelation(StorageRelationBean relation)
+    {
+        // 修改后在途的产品直接是异动库存,但是状态在3,4
+        Integer sum = -outDAO.sumInwayProductInBuy(relation, TimeTools.getDateShortString( -365),
+            TimeTools.now_short());
+
+        return sum;
     }
 
     /*
@@ -77,5 +95,4 @@ public class StorageRelationListenerSailImpl implements StorageRelationListener
     {
         this.outDAO = outDAO;
     }
-
 }

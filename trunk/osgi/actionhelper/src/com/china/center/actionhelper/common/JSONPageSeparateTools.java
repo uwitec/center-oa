@@ -143,7 +143,7 @@ public abstract class JSONPageSeparateTools extends AbstractPage
         // load 最优先
         String load = request.getParameter(LOAD);
 
-        Object menu = request.getSession().getAttribute(MENU);
+        Object menu = request.getSession().getAttribute(GMENU);
 
         if ( !StringTools.isNullOrNone(load))
         {
@@ -156,7 +156,7 @@ public abstract class JSONPageSeparateTools extends AbstractPage
         }
 
         // 使用一次就删除
-        request.getSession().removeAttribute(MENU);
+        request.getSession().removeAttribute(GMENU);
 
         String oprAction = request.getParameter(JSON_OPRACTION);
 

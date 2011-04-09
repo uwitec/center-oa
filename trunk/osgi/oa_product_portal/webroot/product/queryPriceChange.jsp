@@ -25,6 +25,13 @@ var gurl = '../product/product.do?method=';
 var addUrl = '../product/addProduct.jsp';
 var ukey = 'PriceChange';
 
+var checkStr = '';
+
+if (containInList($auth(), '1803'))
+{
+    checkStr = '&check=1';
+}
+
 var allDef = window.top.topFrame.allDef;
 var guidMap;
 var thisObj;
@@ -39,18 +46,20 @@ function load()
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},
              {display: '状态', name : 'status', cc : 'priceChangeStatus', width : '10%'},
+             {display: '核对', name : 'checkStatus', cc: 'pubCheckStatus', width : '8%'},
              {display: '调价人', name : 'stafferName', width : '10%'},
-             {display: '原因', name : 'description', width : '30%'},
+             {display: '原因', name : 'description', width : '20%'},
              {display: '时间', name : 'logTime', content: '{logTime}' ,cname: 'logTime',  sortable : true, width : 'auto'}
              ],
          extAtt: {
-             id : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
+             id : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}' + checkStr + '>', end : '</a>'}
          },
          buttons : [
-         	 {id: 'update1', bclass: 'edit', caption: '锁定库存', onpress : lock, auth: '1006'},
-         	 {id: 'add', bclass: 'add', caption: '产品调价', onpress : openImport, auth: '1006'},
-         	 {id: 'del', bclass: 'odraw',  caption: '调价回滚', onpress : rollback, auth: '1006'},
-         	 {id: 'update2', bclass: 'edit',  caption: '解锁库存', onpress : unlock, auth: '1006'},
+             {id: 'update1', bclass: 'edit', caption: '锁定库存', onpress : lock, auth: '1006'},
+             {id: 'add', bclass: 'add', caption: '产品调价', onpress : openImport, auth: '1006'},
+             {id: 'del', bclass: 'odraw',  caption: '调价回滚', onpress : rollback, auth: '1006'},
+             {id: 'update2', bclass: 'edit',  caption: '解锁库存', onpress : unlock, auth: '1006'},
+             {id: 'pass', bclass: 'pass', caption: '总部核对', onpress : checkBean, auth: '1803'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
          <p:conf/>
@@ -84,24 +93,34 @@ function openImport()
     $('#dlg').dialog({closed:false});
 }
 
+function checkBean()
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {   
+        $l('../product/product.do?method=findPriceChange&id=' + getRadioValue('checkb') + '&check=1');
+    }
+    else
+    $error('不能操作');
+}
+
 function $callBack()
 {
     loadForm();
     
-    highlights($("#mainTable").get(0), ['回滚'], 'red');
+    highlights($("#mainTable").get(0), ['回滚', '未核对'], 'red');
     
     $ajax(gurl + 'findStorageRelationStatus', callBackFunRelatio);
 }
 
 function lock(opr, grid)
 {
-	if(window.confirm('确定锁定库存,锁定库存期间任何采购销售都不能进行,请确认?'))
+    if(window.confirm('确定锁定库存,锁定库存期间任何采购销售都不能进行,请确认?'))
     $ajax(gurl + 'lockStorageRelation', callBackFunReal);
 }
 
 function unlock(opr, grid)
 {
-	if(window.confirm('确定解锁库存,解锁库存可以恢复采购销售,请确认?'))
+    if(window.confirm('确定解锁库存,解锁库存可以恢复采购销售,请确认?'))
     $ajax(gurl + 'unlockStorageRelation', callBackFunReal);
 }
 
@@ -112,16 +131,16 @@ function doSearch()
 
 function callBackFunRelatio(data)
 {
-	if (data.ret == 0)
-	$O('tt_title').innerHTML = '调价列表 (库存状态: ' + data.msg + ')';
-	
+    if (data.ret == 0)
+    $O('tt_title').innerHTML = '调价列表 (库存状态: ' + data.msg + ')';
+    
 }
 
 function callBackFunReal(data)
 {
-	callBackFun(data);
-	
-	$ajax(gurl + 'findStorageRelationStatus', callBackFunRelatio);
+    callBackFun(data);
+    
+    $ajax(gurl + 'findStorageRelationStatus', callBackFunRelatio);
 }
 
 function rollback(opr, grid)
@@ -147,6 +166,6 @@ function rollback(opr, grid)
     <textarea name="products" cols="30" rows="20"></textarea>
    </div>
 </div>
-<p:query/>
 </form>
+<p:query/>
 </body>
