@@ -50,7 +50,7 @@ public class CheckViewBean implements Serializable
 
     private String refId = "";
 
-    private int type = CheckConstant.CHECK_TYPE_COMPSE;
+    private int type = CheckConstant.CHECK_TYPE_COMPOSE;
 
     /**
      * default constructor

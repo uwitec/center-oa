@@ -178,45 +178,38 @@ public class FinanceManagerImpl implements FinanceManager
     }
 
     @Transactional(rollbackFor = MYException.class)
-    public boolean checks(User user, String id, String reason)
+    public boolean checks2(User user, String id, int type, String reason)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, id);
 
-        CheckViewBean bean = checkViewDAO.find(id);
-
-        if (bean == null)
-        {
-            throw new MYException("数据错误,请确认操作");
-        }
-
         String tableName = "";
 
-        if (bean.getType() == CheckConstant.CHECK_TYPE_COMPSE)
+        if (type == CheckConstant.CHECK_TYPE_COMPOSE)
         {
             tableName = "T_CENTER_COMPOSE";
         }
-        else if (bean.getType() == CheckConstant.CHECK_TYPE_CHANGE)
+        else if (type == CheckConstant.CHECK_TYPE_CHANGE)
         {
             tableName = "T_CENTER_PRICE_CHANGE";
         }
-        else if (bean.getType() == CheckConstant.CHECK_TYPE_INBILL)
+        else if (type == CheckConstant.CHECK_TYPE_INBILL)
         {
             tableName = "T_CENTER_INBILL";
         }
-        else if (bean.getType() == CheckConstant.CHECK_TYPE_OUTBILL)
+        else if (type == CheckConstant.CHECK_TYPE_OUTBILL)
         {
             tableName = "T_CENTER_OUTBILL";
         }
-        else if (bean.getType() == CheckConstant.CHECK_TYPE_STOCK)
+        else if (type == CheckConstant.CHECK_TYPE_STOCK)
         {
             tableName = "T_CENTER_STOCK";
         }
-        else if (bean.getType() == CheckConstant.CHECK_TYPE_BUY)
+        else if (type == CheckConstant.CHECK_TYPE_BUY)
         {
             tableName = "T_CENTER_OUT";
         }
-        else if (bean.getType() == CheckConstant.CHECK_TYPE_CUSTOMER)
+        else if (type == CheckConstant.CHECK_TYPE_CUSTOMER)
         {
             tableName = "T_CENTER_CUSTOMER_NOW";
         }
@@ -230,6 +223,22 @@ public class FinanceManagerImpl implements FinanceManager
         checkViewDAO.deleteEntityBean(id);
 
         return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean checks(User user, String id, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        CheckViewBean bean = checkViewDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        return checks2(user, id, bean.getType(), reason);
     }
 
     @Transactional(rollbackFor = MYException.class)

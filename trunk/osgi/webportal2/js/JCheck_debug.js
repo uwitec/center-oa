@@ -854,6 +854,13 @@ function eCheck()
         {
             continue;
         }
+        
+        var ignore = getAttribute(oo, 'ignorecheck');
+        
+        if (ignore == 'true')
+        {
+            continue;
+        }
 
         attr = getAttribute(oo, 'oncheck');
 

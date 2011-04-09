@@ -50,6 +50,7 @@ import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.FinanceItemBean;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.bean.UnitBean;
+import com.china.center.oa.tax.constanst.CheckConstant;
 import com.china.center.oa.tax.constanst.TaxConstanst;
 import com.china.center.oa.tax.dao.CheckViewDAO;
 import com.china.center.oa.tax.dao.FinanceDAO;
@@ -374,12 +375,11 @@ public class FinaAction extends DispatchAction
                                  HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
+        int type = MathTools.parseInt(request.getParameter("type"));
 
         try
         {
             String id = request.getParameter("id");
-
-            int type = MathTools.parseInt(request.getParameter("type"));
 
             String reason = request.getParameter("reason");
 
@@ -387,7 +387,8 @@ public class FinaAction extends DispatchAction
 
             if (type != 6)
             {
-                taxFacade.checks(user.getId(), id, "[" + user.getStafferName() + "]" + reason);
+                taxFacade.checks2(user.getId(), id, type, "[" + user.getStafferName() + "]"
+                                                          + reason);
             }
             else
             {
@@ -405,7 +406,38 @@ public class FinaAction extends DispatchAction
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
         }
 
-        return mapping.findForward(QUERYCHECKVIEW);
+        String forward = "error";
+
+        if (type == CheckConstant.CHECK_TYPE_COMPOSE)
+        {
+            forward = "queryCompose";
+        }
+        else if (type == CheckConstant.CHECK_TYPE_CHANGE)
+        {
+            forward = "queryPriceChange";
+        }
+        else if (type == CheckConstant.CHECK_TYPE_INBILL)
+        {
+            forward = "queryInBill";
+        }
+        else if (type == CheckConstant.CHECK_TYPE_OUTBILL)
+        {
+            forward = "queryOutBill";
+        }
+        else if (type == CheckConstant.CHECK_TYPE_STOCK)
+        {
+            return mapping.findForward(QUERYCHECKVIEW);
+        }
+        else if (type == CheckConstant.CHECK_TYPE_BUY)
+        {
+            return mapping.findForward(QUERYCHECKVIEW);
+        }
+        else if (type == CheckConstant.CHECK_TYPE_CUSTOMER)
+        {
+            return mapping.findForward(QUERYCHECKVIEW);
+        }
+
+        return mapping.findForward(forward);
     }
 
     /**

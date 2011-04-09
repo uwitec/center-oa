@@ -188,6 +188,28 @@ public class TaxFacadeImpl extends AbstarctFacade implements TaxFacade
         }
     }
 
+    public boolean checks2(String userId, String id, int type, String reason)
+        throws MYException
+    {
+        synchronized (CHECK_LOCK)
+        {
+            JudgeTools.judgeParameterIsNull(userId, id);
+
+            User user = userManager.findUser(userId);
+
+            checkUser(user);
+
+            if (containAuth(user, AuthConstant.FINANCE_CHECK))
+            {
+                return financeManager.checks2(user, id, type, reason);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
     /**
      * @return the taxManager
      */

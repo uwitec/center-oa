@@ -30,7 +30,6 @@ import com.china.center.oa.stock.dao.StockItemDAO;
 import com.china.center.oa.stock.listener.StockListener;
 import com.china.center.oa.stock.vo.StockItemVO;
 import com.china.center.oa.stock.vo.StockVO;
-import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -138,17 +137,18 @@ public class StockListenerSailImpl implements StockListener
             baseBean.setCostPriceKey(StorageRelationHelper.getPriceKey(item.getPrice()));
 
             // 这里记住哦
-            baseBean.setOwner(bean.getStafferId());
-
             String on = ((StockVO)bean).getOwerName();
 
-            if (StringTools.isNullOrNone(on))
+            if (bean.getStockType() == StockConstant.STOCK_SAILTYPE_PUBLIC)
             {
                 baseBean.setOwnerName("公共");
+                baseBean.setOwner("0");
             }
             else
             {
                 baseBean.setOwnerName(on);
+
+                baseBean.setOwner(bean.getOwerId());
             }
 
             // 来源于入库的仓区

@@ -33,6 +33,9 @@ public interface FinanceManager
     boolean checks(User user, String id, String reason)
         throws MYException;
 
+    boolean checks2(User user, String id, int type, String reason)
+        throws MYException;
+
     boolean deleteChecks(User user, String id)
         throws MYException;
 }

@@ -82,12 +82,25 @@ public class PageFlexigrid extends BodyTagCenterSupport
             }
         }
 
+        Object pageSize = request.getSession().getAttribute("g_page");
+
+        String pzise = rp;
+
+        if (pageSize == null || isNullOrNone(pageSize.toString()))
+        {
+            pzise = rp;
+        }
+        else
+        {
+            pzise = pageSize.toString().trim();
+        }
+
         buffer.append("usepager: true,").append(line);
         buffer.append("useRp: true,").append(line);
         buffer.append("queryMode: " + queryMode + ",").append(line);
         buffer.append("cache: " + cache + ",").append(line);
         buffer.append("height: " + height + ",").append(line);
-        buffer.append("rp: " + rp + ",").append(line);
+        buffer.append("rp: " + pzise + ",").append(line);
         buffer.append("showTableToggleBtn: " + showTableToggleBtn + ",").append(line);
         buffer.append("auth: " + auth + ",").append(line);
         buffer.append("def: " + def + ",").append(line);

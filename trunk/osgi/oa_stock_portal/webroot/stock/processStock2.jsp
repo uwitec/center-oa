@@ -79,12 +79,16 @@ function updatePrice()
 			<p:class value="com.china.center.oa.stock.bean.StockBean" opr="2"/>
 			
 			<p:cell title="单号">
-			${bean.id}
-			</p:cell>
+            ${bean.id}
+            </p:cell>
 
-			<p:cell title="采购人">
-			${bean.userName}
-			</p:cell>
+            <p:cell title="采购人">
+            ${bean.userName}
+            </p:cell>
+            
+            <p:cell title="库存人">
+            ${bean.owerName}
+            </p:cell>
 
 			<p:cell title="区域">
 			${bean.locationName}
@@ -135,7 +139,7 @@ function updatePrice()
             ${my:get('priceAskType', bean.type)}
             </p:cells>
             
-            <p:pro field="willDate"/>
+            <p:pro field="willDate" cell="2"/>
             
              <p:cells celspan="2" title="纳税实体">
             ${bean.dutyName}

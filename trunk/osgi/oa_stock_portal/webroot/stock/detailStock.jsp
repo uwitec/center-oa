@@ -61,7 +61,7 @@ function showDiv(id)
 			${bean.userName}
 			</p:cell>
 			
-			<p:cell title="提交人">
+			<p:cell title="库存人">
 			${bean.owerName}
 			</p:cell>
 

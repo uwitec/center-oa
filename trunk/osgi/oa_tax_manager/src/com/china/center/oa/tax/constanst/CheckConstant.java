@@ -32,7 +32,7 @@ public interface CheckConstant
      * 产品合成
      */
     @Defined(key = "checkType", value = "产品合成")
-    int CHECK_TYPE_COMPSE = 1;
+    int CHECK_TYPE_COMPOSE = 1;
 
     /**
      * 产品调价

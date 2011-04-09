@@ -185,18 +185,13 @@ public class StockAction extends DispatchAction
             {
                 // 公共
                 bean.setOwerId("0");
+                bean.setStafferId(user.getStafferId());
             }
             else
             {
-                // 否则提交人
-                bean.setOwerId(user.getStafferId());
-            }
-
-            // 如果页面没有指定人则是自己(否则就是页面选的人)
-            if (StringTools.isNullOrNone(bean.getStafferId()))
-            {
-                // 自己的
-                bean.setStafferId(user.getStafferId());
+                // 私人
+                bean.setOwerId(request.getParameter("stafferId"));
+                bean.setStafferId(request.getParameter("stafferId"));
             }
 
             bean.setExceptStatus(StockConstant.EXCEPTSTATUS_COMMON);
