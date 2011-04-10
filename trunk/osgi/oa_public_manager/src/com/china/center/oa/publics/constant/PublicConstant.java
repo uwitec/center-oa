@@ -196,6 +196,12 @@ public interface PublicConstant
     int OPRMODE_SUBMIT = 2;
 
     /**
+     * 异常处理
+     */
+    @Defined(key = "oprMode", value = "异常处理")
+    int OPRMODE_EXCEPTION = 3;
+
+    /**
      * 默认纳税实体
      */
     String DEFAULR_DUTY_ID = "90201008080000000001";

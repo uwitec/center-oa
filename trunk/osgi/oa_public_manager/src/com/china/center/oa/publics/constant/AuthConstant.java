@@ -595,6 +595,11 @@ public interface AuthConstant
     String SAIL_BACKPAY_SEC = "1415";
 
     /**
+     * 查询事业部的销售单
+     */
+    String SAIL_QUERY_INDUSTY = "1416";
+
+    /**
      * 提交入库单
      */
     String BUY_SUBMIT = "1501";
