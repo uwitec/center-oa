@@ -25,6 +25,26 @@ function getBank(obj)
     
     $O('bankId').value = obj.value;
 }
+
+function selectStaffer()
+{
+    window.common.modal('../admin/pop.do?method=rptQueryStaffer&load=1&selectMode=1');
+}
+
+function getStaffers(oos)
+{
+    var oo = oos[0];
+    
+    $O('owerName').value = oo.pname;
+    $O('destStafferId').value = oo.value;
+}
+
+function clearValues()
+{
+    $O('owerName').value = '';
+    $O('destStafferId').value = '';
+}
+
 </script>
 
 </head>
@@ -32,6 +52,7 @@ function getBank(obj)
 <form name="formEntry" action="../finance/bank.do" method="post"><input
 	type="hidden" name="method" value="addPayment">
 <input type="hidden" name="bankId" value="">
+<input type="hidden" name="destStafferId" value="">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
@@ -64,6 +85,14 @@ function getBank(obj)
 			<p:pro field="type">
                 <p:option type="paymentType"/>
             </p:pro>
+            
+            <p:cell title="指定职员">
+            <input type="text" readonly="readonly" name="owerName" style="width: 240px"/>
+            <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectStaffer()">&nbsp;&nbsp;
+            <input type="button" value="&nbsp;清 空&nbsp;" name="qout1" id="qout1"
+                    class="button_class" onclick="clearValues()">
+            </p:cell>
 
 			<p:pro field="money"/>
 			

@@ -82,6 +82,12 @@ public class PaymentManagerImpl implements PaymentManager
 
         bean.setLogTime(TimeTools.now());
 
+        if (StringTools.isNullOrNone(bean.getDestStafferId()))
+        {
+            // 公共的职员
+            bean.setDestStafferId("0");
+        }
+
         return paymentDAO.saveEntityBean(bean);
     }
 

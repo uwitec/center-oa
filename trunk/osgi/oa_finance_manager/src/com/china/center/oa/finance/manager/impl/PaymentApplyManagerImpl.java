@@ -154,6 +154,23 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         // 界面上直接回款绑定销售和预收
         if (oldType == FinanceConstant.PAYAPPLY_TYPE_PAYMENT)
         {
+            PaymentBean payment = paymentDAO.find(bean.getPaymentId());
+
+            if (payment == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 指定认领的操作检查
+            if ( !"0".equals(payment.getDestStafferId())
+                && !StringTools.isNullOrNone(payment.getDestStafferId()))
+            {
+                if ( !user.getStafferId().equals(payment.getDestStafferId()))
+                {
+                    throw new MYException("此回款只能[%s]认领,请确认操作", user.getStafferName());
+                }
+            }
+
             for (PaymentVSOutBean vsItem : vsList)
             {
                 if ( !StringTools.isNullOrNone(vsItem.getOutId()))
@@ -519,6 +536,16 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         // 里面存在多个销售单或者委托清单(回款转收款 )/这里没有坏账
         if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_PAYMENT)
         {
+            // 指定认领的操作检查
+            if ( !"0".equals(payment.getDestStafferId())
+                && !StringTools.isNullOrNone(payment.getDestStafferId()))
+            {
+                if ( !apply.getStafferId().equals(payment.getDestStafferId()))
+                {
+                    throw new MYException("此回款只能[%s]认领,请确认操作", user.getStafferName());
+                }
+            }
+
             int maxFee = parameterDAO.getInt(SysConfigConstant.MAX_RECVIVE_FEE);
 
             // 如果存在手续费先付款

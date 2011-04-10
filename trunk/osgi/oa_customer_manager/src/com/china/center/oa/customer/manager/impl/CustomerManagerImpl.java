@@ -65,7 +65,7 @@ import com.china.center.tools.TimeTools;
 @Exceptional
 public class CustomerManagerImpl extends AbstractListenerManager<CustomerListener> implements CustomerManager
 {
-    private final Log _logger = LogFactory.getLog(getClass());
+    private final Log triggerLog = LogFactory.getLog("trigger");
 
     private CustomerApplyDAO customerApplyDAO = null;
 
@@ -1033,6 +1033,8 @@ public class CustomerManagerImpl extends AbstractListenerManager<CustomerListene
     @Transactional(rollbackFor = MYException.class)
     public void synchronizationAllCustomerLocation()
     {
+        triggerLog.info("synchronizationAllCustomerLocation begin...");
+
         try
         {
             List<LocationVSCityBean> list = locationVSCityDAO.listEntityBeans();
@@ -1047,8 +1049,10 @@ public class CustomerManagerImpl extends AbstractListenerManager<CustomerListene
         }
         catch (Exception e)
         {
-            _logger.error(e, e);
+            triggerLog.error(e, e);
         }
+
+        triggerLog.info("synchronizationAllCustomerLocation end...");
     }
 
     @Transactional(rollbackFor = MYException.class)

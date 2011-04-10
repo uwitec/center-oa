@@ -69,4 +69,16 @@ public interface StockPayApplyManager
      */
     boolean rejectStockPayApply(User user, String id, String reason)
         throws MYException;
+
+    /**
+     * 强制关闭
+     * 
+     * @param user
+     * @param id
+     * @param reason
+     * @return
+     * @throws MYException
+     */
+    boolean closeStockPayApply(User user, String id, String reason)
+        throws MYException;
 }

@@ -150,7 +150,7 @@ function callBackFunLocation(data)
     
     var logs = data.msg;
     
-    var htm = '';
+    var htm = '<input type=checkbox name=checkAll onclick=call(this)>全选<br>';
     
     for(var i = 0; i < logs.length; i++)
     {
@@ -167,9 +167,20 @@ function callBackFunLocation(data)
         
         htm += llog;
     }
+    
     $O('dia_inner').innerHTML = htm;
     
     $('#dlg').dialog({closed:false});
+}
+
+function call(obj)
+{
+	var list = $N('locationCheck');
+	
+	for(var i = 0; i < list.length; i++)
+	{
+	    list[i].checked = obj.checked;
+	}
 }
 
 function updateLocation()
@@ -231,7 +242,7 @@ function doSearch()
 </form>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
-<div id="dlg" title="选择销售范围" style="width:320px;">
+<div id="dlg" title="选择销售范围" style="width:320px;height:400px">
     <div style="padding:20px;height:200px;" id="dia_inner" title="">
    </div>
 </div>

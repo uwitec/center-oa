@@ -184,6 +184,18 @@ public interface FinanceFacade
     boolean rejectStockPayApply(String userId, String id, String reason)
         throws MYException;
 
+    /**
+     * 强制关闭
+     * 
+     * @param userId
+     * @param id
+     * @param reason
+     * @return
+     * @throws MYException
+     */
+    boolean closeStockPayApply(String userId, String id, String reason)
+        throws MYException;
+
     boolean passStockPayByCEO(String userId, String id, String reason)
         throws MYException;
 

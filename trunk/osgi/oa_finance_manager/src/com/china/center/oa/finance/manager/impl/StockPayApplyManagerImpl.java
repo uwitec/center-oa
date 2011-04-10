@@ -270,6 +270,25 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
     }
 
     @Transactional(rollbackFor = MYException.class)
+    public boolean closeStockPayApply(User user, String id, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        StockPayApplyBean apply = checkReject(id);
+
+        int preStatus = apply.getStatus();
+
+        apply.setStatus(StockPayApplyConstant.APPLY_STATUS_END);
+
+        stockPayApplyDAO.updateEntityBean(apply);
+
+        saveFlowLog(user, preStatus, apply, reason, PublicConstant.OPRMODE_EXCEPTION);
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
     public boolean endStockPayBySEC(User user, String id, String reason,
                                     List<OutBillBean> outBillList)
         throws MYException

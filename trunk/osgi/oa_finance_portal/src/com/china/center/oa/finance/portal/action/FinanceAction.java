@@ -342,6 +342,9 @@ public class FinanceAction extends DispatchAction
         // TEMPLATE 在action里面默认查询条件
         Map<String, String> initMap = initLogTime(request, condtion, true);
 
+        condtion.addCondition("and PaymentBean.destStafferId in ('0', '"
+                              + Helper.getUser(request).getStafferId() + "')");
+
         ActionTools.processJSONQueryCondition(QUERYSELFPAYMENT, request, condtion, initMap);
 
         condtion.addCondition("order by PaymentBean.id desc");

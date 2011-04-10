@@ -512,6 +512,7 @@ function swatchToSail()
 							<option value="">--</option>
 							<option value="1">是</option>
 							<option value="0">否</option>
+							<option value="2">超期</option>
 						</select></td>
 						
 						<td width="15%" align="center">仓库</td>
@@ -716,7 +717,8 @@ function swatchToSail()
 		<td width="100%">
 		<div align="right">
 		
-		<c:if test="${queryType != '5' && queryType != '6' && queryType != '8' && queryType != '9' && queryType != '10'}">
+		<c:if test="${queryType != '5' && queryType != '6' 
+		  && queryType != '8' && queryType != '9' && queryType != '10' && queryType != '11'}">
 		
 			<c:if test="${queryType == '2'}">
 				<input type="button" class="button_class" style="display: none;"

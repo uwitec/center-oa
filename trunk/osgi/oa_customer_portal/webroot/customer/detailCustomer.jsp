@@ -140,7 +140,9 @@ function checkBean()
                 
             <p:cell title="地市">${bean.cityName}</p:cell>
             
-            <p:cell title="县区" end="true">${bean.areaName}</p:cell>
+            <p:cell title="县区">${bean.areaName}</p:cell>
+            
+            <p:cell title="分公司">${bean.locationName}</p:cell>
                 
             <p:pro field="selltype" innerString="quick=true">
                 <p:option type="101"></p:option>

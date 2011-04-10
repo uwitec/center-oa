@@ -57,6 +57,11 @@ public class PaymentBean implements Serializable
     private String stafferId = "";
 
     /**
+     * 指定人员
+     */
+    private String destStafferId = "0";
+
+    /**
      * customerId
      */
     @Join(tagClass = CustomerBean.class, type = JoinType.LEFT)
@@ -462,6 +467,23 @@ public class PaymentBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the destStafferId
+     */
+    public String getDestStafferId()
+    {
+        return destStafferId;
+    }
+
+    /**
+     * @param destStafferId
+     *            the destStafferId to set
+     */
+    public void setDestStafferId(String destStafferId)
+    {
+        this.destStafferId = destStafferId;
     }
 
 }

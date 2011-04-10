@@ -10,6 +10,28 @@
 	  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 	  http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
 	  http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"
-	default-autowire="byName" default-init-method="init" default-destroy-method="destroy">
+	default-destroy-method="destroy">
+	
+	 <bean id="synchronizationAllCustomerLocationJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="customerManager" />
+        <property name="targetMethod" value="synchronizationAllCustomerLocation" />
+        <property name="concurrent" value="false" />
+    </bean>
+    
+    <bean id="synchronizationAllCustomerLocationTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="synchronizationAllCustomerLocationJob" />
+        <property name="cronExpression" value="0 45 0 * * ?" />
+    </bean>
+    
+    <bean
+        class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="synchronizationAllCustomerLocationTrigger" />
+            </list>
+        </property>
+    </bean>
    
 </beans>

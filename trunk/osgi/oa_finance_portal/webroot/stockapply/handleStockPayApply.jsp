@@ -26,6 +26,13 @@ function submitBean()
     submit('确定提交付款申请?', null, checkValue);
 }
 
+function closeBean()
+{
+    $O('method').value = 'closeStockPay';
+    
+    submit('确定强制关闭付款申请?', null, checkValue);
+}
+
 function checkValue()
 {
     var max = ${my:formatNum(bean.moneys)};
@@ -279,7 +286,10 @@ function getNextInput(el)
 			<c:if test="${bean.status == 0 || bean.status == 1}">
 			<input type="button" class="button_class"
 				id="ok_b" style="cursor: pointer" value="&nbsp;&nbsp;提 交&nbsp;&nbsp;"
-				onclick="submitBean()">&nbsp;&nbsp;
+				onclick="submitBean()">&nbsp;&nbsp;.
+		    <input type="button" class="button_class"
+                id="ok_b" style="cursor: pointer" value="&nbsp;&nbsp;强制关闭&nbsp;&nbsp;"
+                onclick="closeBean()">&nbsp;&nbsp;
 			</c:if>
 			
 			<c:if test="${bean.status == 2}">

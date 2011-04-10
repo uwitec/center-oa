@@ -18,6 +18,16 @@ function checkBean()
         }
     }, 2);
 }
+
+function pagePrint()
+{
+    var old = $O('b_div').style.display;
+    
+    $O('b_div').style.display = 'none';
+    window.print();
+
+    $O('b_div').style.display = old;
+}
 </script>
 
 </head>
@@ -115,14 +125,16 @@ function checkBean()
 	<p:line flag="1" />
 
 	<p:button leftWidth="100%" rightWidth="0%">
-		<div align="right">
+		<div align="right" id="b_div">
 		<c:if test="${check == 1}">
 		<input
             type="button" name="ba" class="button_class"
             onclick="checkBean()"
             value="&nbsp;&nbsp;总部核对&nbsp;&nbsp;">&nbsp;&nbsp;
 		</c:if>
-		
+		<input type="button" name="pr"
+            class="button_class" onclick="pagePrint()"
+            value="&nbsp;&nbsp;打 印&nbsp;&nbsp;">&nbsp;&nbsp;
 		<input
             type="button" name="ba" class="button_class"
             onclick="javascript:history.go(-1)"

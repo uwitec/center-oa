@@ -2228,6 +2228,12 @@ public class ParentOutAction extends DispatchAction
         {
             throw new MYException("用户没有此操作的权限");
         }
+
+        if ("11".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.SAIL_QUERY_INDUSTY))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
     }
 
     /**
@@ -3254,6 +3260,18 @@ public class ParentOutAction extends DispatchAction
             else
             {
                 condtion.addCondition("OutBean.industryId2", "=", staffer.getIndustryId2());
+            }
+        }
+        // 查询事业部的销售单
+        else if ("11".equals(queryType))
+        {
+            if (StringTools.isNullOrNone(staffer.getIndustryId()))
+            {
+                condtion.addCondition("OutBean.stafferId", "=", user.getStafferId());
+            }
+            else
+            {
+                condtion.addCondition("OutBean.industryId", "=", staffer.getIndustryId());
             }
         }
         // 未知的则什么都没有

@@ -425,6 +425,7 @@ function load()
 							<option value="">--</option>
 							<option value="1">是</option>
 							<option value="0">否</option>
+							<option value="2">超期</option>
 						</select></td>
 						
 						<td width="15%" align="center">仓库</td>
