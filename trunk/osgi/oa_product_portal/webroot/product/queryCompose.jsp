@@ -96,7 +96,7 @@ function checkBean()
 {
     if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 3)
     {   
-        $l('../product/product.do?method=findPriceChange&id=' + getRadioValue('checkb') + '&check=1');
+        $l('../product/product.do?method=findCompose&id=' + getRadioValue('checkb') + '&check=1');
     }
     else
     $error('不能操作');

@@ -542,7 +542,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
 
         if ( !source.getDepotpartId().equals(dir.getDepotpartId()))
         {
-            throw new MYException("不能跨仓区移动,请确认操作");
+            throw new MYException("不能跨仓区移动储位,请确认操作");
         }
 
         // LOCK 储位产品转移,只能是公共的库存
@@ -575,11 +575,6 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
                                 throw new RuntimeException("储位不对,请重新操作");
                             }
 
-                            if ( !StorageConstant.PUBLIC_STAFFER.equals(srb.getStafferId()))
-                            {
-                                throw new RuntimeException("只能操作公共库存,请重新操作");
-                            }
-
                             ProductChangeWrap addWrap = new ProductChangeWrap();
 
                             addWrap.setType(StorageConstant.OPR_STORAGE_MOVE);
@@ -589,6 +584,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
                             addWrap.setPrice(srb.getPrice());
                             addWrap.setProductId(srb.getProductId());
                             addWrap.setStorageId(dirStorageId);
+                            addWrap.setStafferId(srb.getStafferId());
                             addWrap.setSerializeId(sid);
                             addWrap.setDepotpartId(srb.getDepotpartId());
                             addWrap.setRefId(commonDAO.getSquenceString());
@@ -601,6 +597,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
                             deleteWrap.setPrice(srb.getPrice());
                             deleteWrap.setProductId(srb.getProductId());
                             deleteWrap.setStorageId(sourceStorageId);
+                            deleteWrap.setStafferId(srb.getStafferId());
                             deleteWrap.setSerializeId(sid);
                             deleteWrap.setDepotpartId(srb.getDepotpartId());
                             deleteWrap.setRefId(commonDAO.getSquenceString());
@@ -641,7 +638,8 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
      */
     public String transferStorageRelationInDepotpart(final User user,
                                                      final String sourceRelationId,
-                                                     final String dirDepotpartId, final int amount)
+                                                     final String dirDepotpartId, final int amount,
+                                                     final String apply)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, sourceRelationId, dirDepotpartId);
@@ -705,7 +703,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
 
         if (srb.getAmount() - count - amount < 0)
         {
-            throw new MYException("转移的产品存在[%d]个未发货(在销售单中),不能仓区间转移,请确认操作", count);
+            throw new MYException("转移的产品存在[%d]个未发货(在销售/入库中),不能仓区间转移,请确认操作", count);
         }
 
         // LOCK 仓区产品转移
@@ -722,7 +720,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
                     {
                         // 首先是源仓区减去产品数量
                         String des = "从仓区[" + oldDepotpart.getName() + "]转移到["
-                                     + newDepotpart.getName() + "]";
+                                     + newDepotpart.getName() + "],申请人:" + apply;
 
                         ProductChangeWrap deleteWrap = new ProductChangeWrap();
 

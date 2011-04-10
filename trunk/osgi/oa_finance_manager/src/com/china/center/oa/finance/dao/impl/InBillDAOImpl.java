@@ -66,4 +66,9 @@ public class InBillDAOImpl extends BaseDAO<InBillBean, InBillVO> implements InBi
         return this.jdbcOperation.queryForInt(
             BeanTools.getCountHead(claz) + "where customerId = ?", id);
     }
+
+    public boolean updateSrcMoneys(String id, double srcMoneys)
+    {
+        return this.jdbcOperation.updateField("srcMoneys", srcMoneys, id, claz) > 0;
+    }
 }

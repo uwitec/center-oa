@@ -96,11 +96,17 @@ function checkBean()
                ${my:formatNum(bean.moneys)}
             </p:cell>
             
+             <p:cell title="原始金额">
+               ${my:formatNum(bean.srcMoneys)}
+            </p:cell>
+            
             <p:cell title="时间" end="true">
                ${bean.logTime}
             </p:cell>
 
-			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
+			<p:cell title="备注" end="true">
+               ${bean.description}
+            </p:cell>
 			
 			<p:cell title="核对状态" end="true">
                ${my:get('pubCheckStatus', bean.checkStatus)}

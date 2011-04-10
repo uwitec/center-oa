@@ -119,7 +119,8 @@ function closesd()
 				<td align="center"><strong>仓区</strong></td>
 				<td align="center"><strong>储位</strong></td>
 				<td align="center"><strong>产品</strong></td>
-				<td align="center"><strong>数量</strong></td>
+				<td align="center"><strong>可转数量</strong></td>
+				<td align="center"><strong>预占数量</strong></td>
 				<td align="center"><strong>价格</strong></td>
 				<td align="center"><strong>职员</strong></td>
 			</tr>
@@ -132,6 +133,7 @@ function closesd()
 					<td align="center" onclick="hrefAndSelect(this)">${item.storageName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.productName}(${item.productCode})</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.amount}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.mayAmount}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.price)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
 				</tr>

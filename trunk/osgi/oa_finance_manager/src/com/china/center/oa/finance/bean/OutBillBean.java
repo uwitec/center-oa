@@ -78,6 +78,12 @@ public class OutBillBean implements Serializable
     private double moneys = 0.0d;
 
     /**
+     * 原始金额
+     */
+    @Html(title = "原始金额", type = Element.DOUBLE, must = true)
+    private double srcMoneys = 0.0d;
+
+    /**
      * 建议使用VIEW代替供应商/客户
      */
     @Html(title = "单位", name = "provideName", readonly = true)
@@ -546,6 +552,23 @@ public class OutBillBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the srcMoneys
+     */
+    public double getSrcMoneys()
+    {
+        return srcMoneys;
+    }
+
+    /**
+     * @param srcMoneys
+     *            the srcMoneys to set
+     */
+    public void setSrcMoneys(double srcMoneys)
+    {
+        this.srcMoneys = srcMoneys;
     }
 
 }

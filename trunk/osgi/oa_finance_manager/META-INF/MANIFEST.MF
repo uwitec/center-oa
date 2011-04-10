@@ -9,6 +9,7 @@ Export-Package:
  com.china.center.oa.finance.constant;version="1.0.0",
  com.china.center.oa.finance.dao;version="1.0.0",
  com.china.center.oa.finance.facade;version="1.0.0",
+ com.china.center.oa.finance.helper;version="1.0.0",
  com.china.center.oa.finance.listener;version="1.0.0",
  com.china.center.oa.finance.manager;version="1.0.0",
  com.china.center.oa.finance.vs;version="1.0.0",

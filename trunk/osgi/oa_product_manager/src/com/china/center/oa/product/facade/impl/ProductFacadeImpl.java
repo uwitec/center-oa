@@ -605,7 +605,7 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
     }
 
     public String transferStorageRelationInDepotpart(String userId, String sourceRelationId,
-                                                     String dirDepotpartId, int amount)
+                                                     String dirDepotpartId, int amount, String apply)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(userId, sourceRelationId, dirDepotpartId);
@@ -617,7 +617,7 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
         if (containAuth(user, AuthConstant.DEPOTPART_OPR))
         {
             return storageRelationManager.transferStorageRelationInDepotpart(user,
-                sourceRelationId, dirDepotpartId, amount);
+                sourceRelationId, dirDepotpartId, amount, apply);
         }
         else
         {

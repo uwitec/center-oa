@@ -612,7 +612,12 @@ function swatchToSail()
 						<td align="center" onclick="tableSort(this)" class="td_class">状态</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">${fg}类型</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">${fg}时间</td>
-						<td align="center" onclick="tableSort(this)" class="td_class">结算通过</td>
+						<c:if test="${queryType == '5' || queryType == '6'}">
+						<td align="center" onclick="tableSort(this)" class="td_class">库管通过</td>
+						</c:if>
+						<c:if test="${queryType != '5' && queryType != '6'}">
+                        <td align="center" onclick="tableSort(this)" class="td_class">结算通过</td>
+                        </c:if>
 						<td align="center" onclick="tableSort(this)" class="td_class">回款日期</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">超期(天)</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">金额</td>
@@ -623,6 +628,12 @@ function swatchToSail()
 					</tr>
 
 					<c:forEach items="${listOut1}" var="item" varStatus="vs">
+					    <c:if test="${queryType == '6' && item.status == 3}">
+                        <c:set var="pcheck" value="&check=1"></c:set>
+                        </c:if>
+                        <c:if test="${queryType != '6' || item.status != 3}">
+                        <c:set var="pcheck" value=""></c:set>
+                        </c:if>
 						<tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'
 						>
 							<td align="center"><input type="radio" name="fullId" 
@@ -637,13 +648,20 @@ function swatchToSail()
 							   baddebts='${my:formatNum(item.total - item.hadPay)}' 
 							   value="${item.fullId}"/></td>
 							<td align="center"
-							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}">
+							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}${pcheck}">
 							${item.fullId}</a></td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.customerName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('outStatus', item.status)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('outType_out', item.outType)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.outTime}</td>
+							
+							<c:if test="${queryType != '5' && queryType != '6'}">
 							<td align="center" onclick="hrefAndSelect(this)">${item.managerTime}</td>
+							</c:if>
+							<c:if test="${queryType == '5' || queryType == '6'}">
+	                        <td align="center" onclick="hrefAndSelect(this)">${item.changeTime}</td>
+	                        </c:if>
+                        
 							<c:if test="${item.pay == 0}">
 							<td align="center" onclick="hrefAndSelect(this)"><font color=red>${item.redate}</font></td>
 							</c:if>

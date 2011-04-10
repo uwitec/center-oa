@@ -43,8 +43,9 @@ function load()
              {id: 'search', bclass: 'search', onpress : doSearch},
              {id: 'search1', bclass: 'search', caption: '仓区下异动历史', onpress : depotpartLog},
              {id: 'search2', bclass: 'search', caption: '仓区下异动(价格)', onpress : depotpartLog2},
-             {id: 'search2', bclass: 'search', caption: '仓库下异动历史', onpress : depotLog},
-             {id: 'search2', bclass: 'search', caption: '仓库下异动(价格)', onpress : depotLog2},
+             {id: 'search3', bclass: 'search', caption: '仓库下异动历史', onpress : depotLog},
+             {id: 'search4', bclass: 'search', caption: '仓库下异动(价格)', onpress : depotLog2},
+             {id: 'search5', bclass: 'search', caption: '产品当天进出明细', onpress : currentDetail},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1106'}
              ],
          // 预留的标签实例
@@ -79,6 +80,11 @@ function delBean(opr, grid)
     }
     else
     $error('不能操作,只能删除数量为0的库存');
+}
+
+function currentDetail()
+{
+    $l('../depot/storage.do?method=queryProductInOut&depotId=${param.depotId}');
 }
 
 function depotpartLog(opr, grid)

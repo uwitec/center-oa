@@ -84,7 +84,7 @@ function load()
 			</p:cell>
 
 			<p:cell title="移动产品">
-				<input type="text" name="productName" oncheck="notNone;">&nbsp;&nbsp;
+				<input type="text" name="productName" oncheck="notNone;" style="width: 300px">&nbsp;&nbsp;
 				<input type="button" value="&nbsp;选择产品&nbsp;"
 					class="button_class" onclick="selectProducts()">
 			</p:cell>
@@ -103,6 +103,11 @@ function load()
 				<input type="text" name="amount" oncheck="notNone;isInt;range(0)">
 				<font color="#FF0000">*</font>
 			</p:cell>
+			
+			<p:cell title="申请人">
+                <input type="text" name="apply" oncheck="notNone;">
+                <font color="#FF0000">*</font>
+            </p:cell>
 
 		</p:table>
 	</p:subBody>

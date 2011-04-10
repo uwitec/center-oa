@@ -237,7 +237,8 @@ function balance()
 
 function refBill()
 {
-    if (getRadio('fullId').statuss != '2' && getRadio('fullId').outtype != 1 && getRadio('fullId').outtype != 3)
+    if (getRadio('fullId').statuss != '2' && getRadio('fullId').statuss != '0' 
+        && getRadio('fullId').outtype != 1 && getRadio('fullId').outtype != 3)
     {
         document.location.href = '../finance/bank.do?method=preForRefBill&outId=' + getRadioValue("fullId") + '&customerId=' + getRadio('fullId').pcustomerid;
     }

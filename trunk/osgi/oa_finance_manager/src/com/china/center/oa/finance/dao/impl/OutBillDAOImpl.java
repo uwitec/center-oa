@@ -53,4 +53,9 @@ public class OutBillDAOImpl extends BaseDAO<OutBillBean, OutBillVO> implements O
         return this.jdbcOperation.queryForInt(BeanTools.getCountHead(claz) + "where provideId = ?",
             id);
     }
+
+    public boolean updateSrcMoneys(String id, double srcMoneys)
+    {
+        return this.jdbcOperation.updateField("srcMoneys", srcMoneys, id, claz) > 0;
+    }
 }

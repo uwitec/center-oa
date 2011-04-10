@@ -32,4 +32,6 @@ public interface OutBillDAO extends DAO<OutBillBean, OutBillVO>
     double sumByRefId(String refId);
 
     int countUnitInBill(String id);
+
+    boolean updateSrcMoneys(String id, double srcMoneys);
 }

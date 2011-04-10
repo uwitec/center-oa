@@ -48,7 +48,8 @@ function load()
              {id: 'update', bclass: 'update', onpress : updateBean, auth: '1102'},
              {id: 'update1', bclass: 'update', caption: '仓区转移', onpress : preForMoveDepotpart, auth: '1104'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1102'},
-             {id: 'export', bclass: 'odraw',  caption: '导出所有库存', onpress : exports},
+             {id: 'export', bclass: 'odraw',  caption: '导出所有库存(含价格)', onpress : exports},
+             {id: 'export2', bclass: 'odraw',  caption: '导出所有库存(不含价格)', onpress : exports2},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
          <p:conf/>
@@ -102,6 +103,11 @@ function preForMoveDepotpart()
 function exports()
 {
     document.location.href = '../depot/storage.do?method=exportStorageRelation';
+}
+
+function exports2()
+{
+    document.location.href = '../depot/storage.do?method=exportStorageRelation2';
 }
 
 function doSearch()

@@ -80,6 +80,13 @@ function load()
             each.value = 0.0;
         }
     }
+    
+    if ($$('reserve3') == 1)
+    {
+        removeAllItem($O('reserve3'));
+        
+        setOption($O('reserve3'), '1', '款到发货(黑名单客户/零售)');   
+    }
 }
 
 </script>

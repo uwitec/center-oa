@@ -100,7 +100,7 @@ function query()
             </p:cell>
 
 			<p:cell title="库存产品">
-				<select multiple="multiple" size=12 style='width: 420px' name="productName">
+				<select multiple="multiple" size=12 style='width: 720px' name="productName">
 				<c:forEach items="${relations}" var="item">
 					<option value="${item.id}" amount="${item.amount}">${item.productName}</option>
 				</c:forEach>

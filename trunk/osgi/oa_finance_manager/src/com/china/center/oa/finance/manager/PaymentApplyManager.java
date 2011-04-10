@@ -24,6 +24,14 @@ import com.china.center.oa.finance.bean.PaymentApplyBean;
  */
 public interface PaymentApplyManager
 {
+    /**
+     * 申请付款
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
     boolean addPaymentApply(User user, PaymentApplyBean bean)
         throws MYException;
 

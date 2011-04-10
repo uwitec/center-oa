@@ -55,6 +55,7 @@
             <forward name="rptQueryProductInDepotpart" path="/depot/rptQueryProductInDepotpart.jsp" />
             <forward name="rptQueryProductInDepot" path="/depot/rptQueryProductInDepot.jsp" />
             <forward name="rptQueryStorageRelationInDepot" path="/depot/rptQueryStorageRelationInDepot.jsp" />
+            <forward name="queryProductInOut" path="/depot/queryProductInOut.jsp" />
         </action>
         
         <action path="/product/reports" parameter="method"

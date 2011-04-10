@@ -48,4 +48,6 @@ public interface InBillDAO extends DAO<InBillBean, InBillVO>
     int lockByCondition(ConditionParse condition);
 
     int countUnitInBill(String id);
+
+    boolean updateSrcMoneys(String id, double srcMoneys);
 }

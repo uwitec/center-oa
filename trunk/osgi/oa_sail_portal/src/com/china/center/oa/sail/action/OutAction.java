@@ -625,6 +625,13 @@ public class OutAction extends ParentOutAction
             return mapping.findForward("error");
         }
 
+        if ( !OutHelper.isSailEnd(outBean))
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误,请确认操作");
+
+            return mapping.findForward("error");
+        }
+
         String checks = request.getParameter("reason");
 
         User user = (User)request.getSession().getAttribute("user");
@@ -654,6 +661,8 @@ public class OutAction extends ParentOutAction
         }
         else
         {
+            RequestTools.menuInitQuery(request);
+
             return queryBuy(mapping, form, request, reponse);
         }
     }

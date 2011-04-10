@@ -54,6 +54,12 @@ public class StorageRelationVO extends StorageRelationBean
     private int inwayAmount = 0;
 
     /**
+     * 合计量
+     */
+    @Ignore
+    private int total = 0;
+
+    /**
      * 预先分配的,即销售单未审批的
      */
     @Ignore
@@ -280,6 +286,23 @@ public class StorageRelationVO extends StorageRelationBean
     }
 
     /**
+     * @return the total
+     */
+    public int getTotal()
+    {
+        return total;
+    }
+
+    /**
+     * @param total
+     *            the total to set
+     */
+    public void setTotal(int total)
+    {
+        this.total = total;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -320,6 +343,9 @@ public class StorageRelationVO extends StorageRelationBean
             .append(TAB)
             .append("inwayAmount = ")
             .append(this.inwayAmount)
+            .append(TAB)
+            .append("total = ")
+            .append(this.total)
             .append(TAB)
             .append("preassignAmount = ")
             .append(this.preassignAmount)

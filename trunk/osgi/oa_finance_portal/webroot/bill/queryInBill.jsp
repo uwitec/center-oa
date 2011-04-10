@@ -14,6 +14,13 @@ var gurl = '../finance/bill.do?method=';
 var addUrl = '../finance/addInBill.jsp';
 var ukey = 'InBill';
 
+var checkStr = '';
+
+if (containInList($auth(), '1803'))
+{
+    checkStr = '&check=1';
+}
+
 var allDef = window.top.topFrame.allDef;
 var guidMap;
 var thisObj;
@@ -37,7 +44,7 @@ function load()
              {display: '时间', name : 'logTime', sortable : true, width : 'auto'}
              ],
          extAtt: {
-             id : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
+             id : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}' + checkStr + '>', end : '</a>'}
          },
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1603'},

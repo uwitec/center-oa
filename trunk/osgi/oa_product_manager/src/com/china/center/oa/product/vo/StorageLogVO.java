@@ -35,6 +35,9 @@ public class StorageLogVO extends StorageLogBean
     @Relationship(relationField = "productId")
     private String productName = "";
 
+    @Relationship(relationField = "productId", tagField = "code")
+    private String productCode = "";
+
     @Relationship(relationField = "locationId")
     private String locationName = "";
 
@@ -166,5 +169,22 @@ public class StorageLogVO extends StorageLogBean
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the productCode
+     */
+    public String getProductCode()
+    {
+        return productCode;
+    }
+
+    /**
+     * @param productCode
+     *            the productCode to set
+     */
+    public void setProductCode(String productCode)
+    {
+        this.productCode = productCode;
     }
 }

@@ -319,7 +319,7 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
             return 0;
         }
 
-        return (Integer)count;
+        return -(Integer)count;
     }
 
     public Integer sumInwayProductInBuy(StorageRelationBean relation, String beginDate,
@@ -398,7 +398,7 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         paramterMap.put("depotpartId", depotpartId);
         paramterMap.put("costPriceKey", priceKey);
         paramterMap.put("owner", ower);
-        paramterMap.put("beginDate", TimeTools.getDateShortString( -365));
+        paramterMap.put("beginDate", TimeTools.getDateShortString( -180));
         paramterMap.put("endDate", TimeTools.now_short());
 
         Object count = getIbatisDaoSupport().queryForObject(
@@ -422,7 +422,7 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         paramterMap.put("depotpartId", depotpartId);
         paramterMap.put("costPriceKey", priceKey);
         paramterMap.put("owner", ower);
-        paramterMap.put("beginDate", TimeTools.getDateShortString( -365));
+        paramterMap.put("beginDate", TimeTools.getDateShortString( -180));
         paramterMap.put("endDate", TimeTools.now_short());
 
         Object count = getIbatisDaoSupport().queryForObject(
@@ -467,6 +467,13 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
     public boolean updateHadPay(String fullId, double hadPay)
     {
         jdbcOperation.updateField("hadPay", hadPay, fullId, this.claz);
+
+        return true;
+    }
+
+    public boolean updateChangeTime(String fullId, String changeTime)
+    {
+        jdbcOperation.updateField("changeTime", changeTime, fullId, this.claz);
 
         return true;
     }
@@ -650,5 +657,4 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
 
         return backTotal;
     }
-
 }

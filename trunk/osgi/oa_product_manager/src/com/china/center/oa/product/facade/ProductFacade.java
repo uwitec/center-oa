@@ -109,7 +109,7 @@ public interface ProductFacade
         throws MYException;
 
     String transferStorageRelationInDepotpart(String userId, String sourceRelationId,
-                                              String dirDepotpartId, int amount)
+                                              String dirDepotpartId, int amount, String apply)
         throws MYException;
 
     /**

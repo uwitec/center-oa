@@ -12,10 +12,13 @@ package com.china.center.oa.product.action;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -392,6 +395,239 @@ public class StorageAction extends DispatchAction
 
         // 仓库下
         return mapping.findForward("listStorageLog1");
+    }
+
+    /**
+     * 当天仓库的异动明细
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryProductInOut(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        String depotId = request.getParameter("depotId");
+
+        String now = request.getParameter("now");
+        String name = request.getParameter("name");
+        String code = request.getParameter("code");
+
+        ConditionParse condition = new ConditionParse();
+
+        condition.addWhereStr();
+
+        // 默认是当天的
+        if (StringTools.isNullOrNone(now))
+        {
+            now = TimeTools.now_short();
+        }
+
+        condition.addCondition("StorageLogBean.logTime", ">=", now + " 00:00:00");
+
+        condition.addCondition("StorageLogBean.logTime", "<=", now + " 23:59:59");
+
+        condition.addCondition("StorageLogBean.locationid", "=", depotId);
+
+        List<StorageLogVO> list = storageLogDAO.queryEntityVOsByCondition(condition);
+
+        Collections.sort(list, new Comparator<StorageLogVO>()
+        {
+            public int compare(StorageLogVO o1, StorageLogVO o2)
+            {
+                return o1.getProductId().compareTo(o2.getProductId());
+            }
+        });
+
+        DepotBean depot = depotDAO.find(depotId);
+
+        request.getSession().setAttribute("queryProductInOut_depot", depot);
+
+        request.getSession().setAttribute("queryProductInOut_now", now);
+
+        // 统计进出数量
+        Map<String, StorageLogVO> result = new HashMap<String, StorageLogVO>();
+
+        for (StorageLogVO storageLogVO : list)
+        {
+            StorageLogVO vo = result.get(storageLogVO.getProductId());
+
+            if (vo == null)
+            {
+                vo = new StorageLogVO();
+
+                vo.setProductId(storageLogVO.getProductId());
+
+                vo.setProductName(storageLogVO.getProductName());
+
+                vo.setProductCode(storageLogVO.getProductCode());
+
+                result.put(storageLogVO.getProductId(), vo);
+            }
+
+            if (storageLogVO.getChangeAmount() >= 0)
+            {
+                // 入库数量
+                vo.setPreAmount(vo.getPreAmount() + storageLogVO.getChangeAmount());
+            }
+            else
+            {
+                // 出库数量
+                vo.setAfterAmount(vo.getAfterAmount() + storageLogVO.getChangeAmount());
+            }
+        }
+
+        Collection<StorageLogVO> values = result.values();
+
+        for (StorageLogVO vo : values)
+        {
+            vo.setAfterAmount( -vo.getAfterAmount());
+
+            // 获得当前的实际库存
+            int current = storageRelationDAO.sumProductInLocationId(vo.getProductId(), depotId);
+
+            // 仓库内所有的产品数量
+            vo.setAfterAmount1(current);
+
+            int okSum = storageRelationDAO.sumProductInOKLocationId(vo.getProductId(), depotId);
+
+            // 良品仓数量
+            vo.setAfterAmount2(okSum);
+
+            // 异动数量
+            vo.setChangeAmount(vo.getPreAmount() - vo.getAfterAmount());
+        }
+
+        List<StorageLogVO> showList = new ArrayList<StorageLogVO>();
+
+        showList.addAll(values);
+
+        for (Iterator iterator = showList.iterator(); iterator.hasNext();)
+        {
+            StorageLogVO storageLogVO2 = (StorageLogVO)iterator.next();
+
+            if ( !StringTools.isNullOrNone(name))
+            {
+                if (storageLogVO2.getProductName().indexOf(name) == -1)
+                {
+                    iterator.remove();
+
+                    continue;
+                }
+            }
+
+            if ( !StringTools.isNullOrNone(code))
+            {
+                if (storageLogVO2.getProductCode().indexOf(code) == -1)
+                {
+                    iterator.remove();
+                    continue;
+                }
+            }
+
+        }
+
+        request.setAttribute("showList", showList);
+
+        request.getSession().setAttribute("g_queryProductInOut_resultList", result.values());
+
+        // 仓库下
+        return mapping.findForward("queryProductInOut");
+    }
+
+    /**
+     * 导出
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportProductInOut(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        Collection<StorageLogVO> values = (Collection<StorageLogVO>)request
+            .getSession()
+            .getAttribute("g_queryProductInOut_resultList");
+
+        String now = request.getSession().getAttribute("queryProductInOut_now").toString();
+
+        DepotBean depot = (DepotBean)request.getSession().getAttribute("queryProductInOut_depot");
+
+        OutputStream out = null;
+
+        String filenName = "ProductChange_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            write.writeLine("日期,仓库,产品名称,产品编码,入库数量,出库数量,异动数量,当前库存,良品库存");
+
+            for (StorageLogVO each : values)
+            {
+                write.writeLine(now + ',' + depot.getName() + ','
+                                + each.getProductName().replaceAll(",", " ").replaceAll("\r\n", "")
+                                + ',' + each.getProductCode() + ',' + each.getPreAmount() + ','
+                                + each.getAfterAmount() + ',' + each.getChangeAmount() + ','
+                                + each.getAfterAmount1() + ',' + each.getAfterAmount2());
+            }
+
+            write.close();
+
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -890,9 +1126,11 @@ public class StorageAction extends DispatchAction
         {
             StorageRelationVO storageRelationBean = (StorageRelationVO)iterator.next();
 
-            if ( !StorageConstant.PUBLIC_STAFFER.equals(storageRelationBean.getStafferId()))
+            String sname = storageRelationBean.getStafferName();
+
+            if (StringTools.isNullOrNone(sname))
             {
-                iterator.remove();
+                sname = "公共";
             }
 
             ProductBean product = productDAO.find(storageRelationBean.getProductId());
@@ -900,11 +1138,13 @@ public class StorageAction extends DispatchAction
             if (product != null)
             {
                 storageRelationBean.setProductName(product.getName()
-                                                   + "     数量【"
+                                                   + "["
+                                                   + product.getCode()
+                                                   + "]数量【"
                                                    + storageRelationBean.getAmount()
                                                    + "】 价格【"
                                                    + ElTools.formatNum(storageRelationBean
-                                                       .getPrice()) + "】");
+                                                       .getPrice()) + "】(" + sname + ")");
             }
 
             if ( !StringTools.isNullOrNone(pname))
@@ -983,13 +1223,14 @@ public class StorageAction extends DispatchAction
         String sourceRelationId = request.getParameter("sourceRelationId");
 
         String amount = request.getParameter("amount");
+        String apply = request.getParameter("apply");
 
         User user = Helper.getUser(request);
 
         try
         {
             String id = productFacade.transferStorageRelationInDepotpart(user.getId(),
-                sourceRelationId, destDepotpartId, CommonTools.parseInt(amount));
+                sourceRelationId, destDepotpartId, CommonTools.parseInt(amount), apply);
 
             request.setAttribute(KeyConstant.MESSAGE, "产品仓区间转移成功,流水号:" + id);
         }
@@ -997,7 +1238,7 @@ public class StorageAction extends DispatchAction
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
 
-            return mapping.findForward("queryStorageRelation");
+            return mapping.findForward("error");
         }
 
         return preForMoveDepotpart(mapping, form, request, response);
@@ -1048,6 +1289,19 @@ public class StorageAction extends DispatchAction
             if (StringTools.isNullOrNone(vo.getStafferName()))
             {
                 vo.setStafferName("公共");
+            }
+
+            int sum = storageRelationManager.sumPreassignByStorageRelation(vo);
+
+            vo.setMayAmount(sum);
+
+            if (vo.getAmount() - sum > 0)
+            {
+                vo.setAmount(vo.getAmount() - sum);
+            }
+            else
+            {
+                vo.setAmount(0);
             }
         }
 
@@ -1271,6 +1525,111 @@ public class StorageAction extends DispatchAction
                                             "\r\n", "") + ',' + each.getProductCode() + ','
                                         + String.valueOf(each.getAmount()) + ','
                                         + MathTools.formatNum(each.getPrice()));
+                    }
+                }
+
+            }
+
+            write.close();
+
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * exportStorageRelation2(不含价格的)
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportStorageRelation2(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
+                                                HttpServletResponse reponse)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        String filenName = "Product_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            List<DepotBean> lList = depotDAO.listEntityBeans();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            write.writeLine("日期,仓库,仓区,仓区属性,产品名称,产品编码,产品数量");
+
+            String now = TimeTools.now("yyyy-MM-dd");
+
+            for (DepotBean locationBean : lList)
+            {
+                List<StorageRelationVO> list = storageRelationDAO
+                    .queryStorageRelationWithoutPrice(locationBean.getId());
+
+                for (StorageRelationVO each : list)
+                {
+                    if (each.getAmount() > 0)
+                    {
+                        String typeName = DefinedCommon.getValue("depotpartType", each
+                            .getDepotpartType());
+
+                        write.writeLine(now
+                                        + ','
+                                        + locationBean.getName()
+                                        + ','
+                                        + each.getDepotpartName()
+                                        + ','
+                                        + typeName
+                                        + ','
+                                        + each.getProductName().replaceAll(",", " ").replaceAll(
+                                            "\r\n", "") + ',' + each.getProductCode() + ','
+                                        + String.valueOf(each.getTotal()));
                     }
                 }
 

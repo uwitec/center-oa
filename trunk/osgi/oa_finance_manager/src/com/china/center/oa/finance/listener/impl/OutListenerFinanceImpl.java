@@ -19,6 +19,7 @@ import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
+import com.china.center.oa.finance.helper.BillHelper;
 import com.china.center.oa.publics.constant.PluginNameConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
@@ -234,13 +235,23 @@ public class OutListenerFinanceImpl implements OutListener
             {
                 inBillBean.setOutId("");
 
+                inBillBean.setOutBalanceId("");
+
                 inBillBean.setStatus(FinanceConstant.INBILL_STATUS_NOREF);
+
+                if (inBillBean.getCheckStatus() == PublicConstant.CHECK_STATUS_END)
+                {
+                    inBillBean.setDescription(inBillBean.getDescription()
+                                              + "<br>销售单被驳回,重置收款单的核对状态.");
+
+                    BillHelper.initInBillCheckStatus(inBillBean);
+                }
             }
 
             inBillDAO.updateAllEntityBeans(list);
         }
 
-        // 清空预收
+        // 清空已经付款
         outDAO.updateHadPay(bean.getFullId(), 0.0d);
     }
 
@@ -439,6 +450,7 @@ public class OutListenerFinanceImpl implements OutListener
                 // 后生成对冲的单据(且必须是)
                 inBillBean.setId(commonDAO.getSquenceString20());
                 inBillBean.setMoneys( -inBillBean.getMoneys());
+                inBillBean.setSrcMoneys( -inBillBean.getMoneys());
                 inBillBean.setCheckStatus(PublicConstant.CHECK_STATUS_INIT);
                 inBillBean.setChecks("");
                 inBillBean.setDescription("取消坏账生成的对冲单据");

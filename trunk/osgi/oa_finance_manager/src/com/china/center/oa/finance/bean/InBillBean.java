@@ -72,6 +72,9 @@ public class InBillBean implements Serializable
     @Html(title = "金额", type = Element.DOUBLE, must = true)
     private double moneys = 0.0d;
 
+    @Html(title = "原始金额", type = Element.DOUBLE, must = true)
+    private double srcMoneys = 0.0d;
+
     /**
      * 单位
      */
@@ -517,6 +520,23 @@ public class InBillBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the srcMoneys
+     */
+    public double getSrcMoneys()
+    {
+        return srcMoneys;
+    }
+
+    /**
+     * @param srcMoneys
+     *            the srcMoneys to set
+     */
+    public void setSrcMoneys(double srcMoneys)
+    {
+        this.srcMoneys = srcMoneys;
     }
 
 }

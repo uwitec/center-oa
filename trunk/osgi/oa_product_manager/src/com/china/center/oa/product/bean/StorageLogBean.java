@@ -84,6 +84,9 @@ public class StorageLogBean implements Serializable
 
     private int afterAmount22 = 0;
 
+    /**
+     * 异动数量
+     */
     private int changeAmount = 0;
 
     @Join(tagClass = DepotpartBean.class)

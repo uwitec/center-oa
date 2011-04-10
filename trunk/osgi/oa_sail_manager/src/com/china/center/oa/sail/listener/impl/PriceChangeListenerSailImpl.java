@@ -64,7 +64,7 @@ public class PriceChangeListenerSailImpl implements PriceChangeListener
             YYTools.getFinanceEndDate());
 
         // 是否存在调拨途中的产品(修改后在途的产品直接是异动库存,但是状态在3)
-        Integer count2 = -outDAO.sumNotEndProductInIn2(relation, YYTools.getFinanceBeginDate(),
+        Integer count2 = outDAO.sumNotEndProductInIn2(relation, YYTools.getFinanceBeginDate(),
             YYTools.getFinanceEndDate());
 
         int result = count1 + count2;

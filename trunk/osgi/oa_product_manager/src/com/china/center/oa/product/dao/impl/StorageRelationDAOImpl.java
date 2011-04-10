@@ -9,11 +9,15 @@
 package com.china.center.oa.product.dao.impl;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.china.center.jdbc.annosql.tools.BeanTools;
+import com.china.center.jdbc.inter.IbatisDaoSupport;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.dao.StorageRelationDAO;
 import com.china.center.oa.product.vo.StorageRelationVO;
 import com.china.center.oa.product.vs.StorageRelationBean;
@@ -29,6 +33,8 @@ import com.china.center.oa.product.vs.StorageRelationBean;
  */
 public class StorageRelationDAOImpl extends BaseDAO<StorageRelationBean, StorageRelationVO> implements StorageRelationDAO
 {
+    private IbatisDaoSupport ibatisDaoSupport = null;
+
     public int sumAllProductInStorage(String storageId)
     {
         String sql = BeanTools.getSumHead(claz, "amount") + "where storageId = ?";
@@ -132,5 +138,44 @@ public class StorageRelationDAOImpl extends BaseDAO<StorageRelationBean, Storage
         jdbcOperation.update(sql, change, id);
 
         return change;
+    }
+
+    public int sumProductInOKLocationId(String productId, String locationId)
+    {
+        String sql = "select sum(t1.amount) from t_center_storageralation t1, "
+                     + "t_center_depotpart t2 "
+                     + "where t1.productId = ? and t1.locationId = ? and t1.depotpartId = t2.id and t2.type = ? ";
+
+        return this.jdbcOperation.queryForInt(sql, productId, locationId,
+            DepotConstant.DEPOTPART_TYPE_OK);
+    }
+
+    /**
+     * @return the ibatisDaoSupport
+     */
+    public IbatisDaoSupport getIbatisDaoSupport()
+    {
+        return ibatisDaoSupport;
+    }
+
+    /**
+     * @param ibatisDaoSupport
+     *            the ibatisDaoSupport to set
+     */
+    public void setIbatisDaoSupport(IbatisDaoSupport ibatisDaoSupport)
+    {
+        this.ibatisDaoSupport = ibatisDaoSupport;
+    }
+
+    public List<StorageRelationVO> queryStorageRelationWithoutPrice(String depotId)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("depotId", depotId);
+
+        List<StorageRelationVO> result = getIbatisDaoSupport().queryForList(
+            "StorageRelationDAO.queryStorageRelationWithoutPrice", paramterMap);
+
+        return result;
     }
 }

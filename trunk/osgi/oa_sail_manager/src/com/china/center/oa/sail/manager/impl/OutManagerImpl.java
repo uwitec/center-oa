@@ -1312,7 +1312,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     }
 
     /**
-     * 变动库存的时候插入唯一的值,保证库存只变动一次
+     * 变动库存的时候插入唯一的值,保证库存只变动一次(领样转销售也要插入,只是不减少库存)
      * 
      * @param user
      * @param outBean
@@ -1328,6 +1328,9 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         unique.setLogTime(TimeTools.now());
 
         outUniqueDAO.saveEntityBean(unique);
+
+        // 更新库存异动时间
+        outDAO.updateChangeTime(outBean.getFullId(), TimeTools.now());
     }
 
     /**
@@ -1811,6 +1814,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         {
             // 检查是否溢出
             checkSwithToSail(outBean.getRefOutFullId());
+
+            saveUnique(user, outBean);
 
             return;
         }

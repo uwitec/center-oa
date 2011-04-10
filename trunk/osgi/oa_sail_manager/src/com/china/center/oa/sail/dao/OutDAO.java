@@ -68,6 +68,8 @@ public interface OutDAO extends DAO<OutBean, OutVO>
 
     boolean updateManagerId(String fullId, String managerId);
 
+    boolean updateChangeTime(String fullId, String changeTime);
+
     boolean updateStaffcredit(String fullId, double staffcredit);
 
     /**

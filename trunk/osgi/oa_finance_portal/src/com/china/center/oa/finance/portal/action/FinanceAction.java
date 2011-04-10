@@ -67,6 +67,7 @@ import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
+import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.manager.OutManager;
@@ -1149,6 +1150,14 @@ public class FinanceAction extends DispatchAction
         if (out == null)
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据不完备");
+
+            return mapping.findForward("error");
+        }
+
+        if (out.getStatus() == OutConstant.STATUS_SAVE
+            || out.getStatus() == OutConstant.STATUS_REJECT)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "保存和驳回的单据不能勾款");
 
             return mapping.findForward("error");
         }

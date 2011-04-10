@@ -51,6 +51,11 @@ public class OutBean implements Serializable
     private String managerTime = "";
 
     /**
+     * 库存移动时间
+     */
+    private String changeTime = "";
+
+    /**
      * 库单类型
      */
     private int outType = OutConstant.OUTTYPE_OUT_COMMON;
@@ -1346,6 +1351,23 @@ public class OutBean implements Serializable
     }
 
     /**
+     * @return the changeTime
+     */
+    public String getChangeTime()
+    {
+        return changeTime;
+    }
+
+    /**
+     * @param changeTime
+     *            the changeTime to set
+     */
+    public void setChangeTime(String changeTime)
+    {
+        this.changeTime = changeTime;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -1374,6 +1396,9 @@ public class OutBean implements Serializable
             .append(TAB)
             .append("managerTime = ")
             .append(this.managerTime)
+            .append(TAB)
+            .append("changeTime = ")
+            .append(this.changeTime)
             .append(TAB)
             .append("outType = ")
             .append(this.outType)

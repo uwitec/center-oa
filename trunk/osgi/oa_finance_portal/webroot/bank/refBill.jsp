@@ -44,7 +44,6 @@ function check()
     
     var bad = parseFloat($$('badMoney'));
     
-   
     if ((pu + bad) < total)
     {
         return window.confirm('付款单金额不足,确认当前只付款:' + pu + ',应付金额:' + total + ',坏账金额:' + bad);
@@ -109,7 +108,8 @@ function check()
 
                     <c:forEach items="${billList}" var="item" varStatus="vs">
                         <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
-                            <td align="center"><input type="checkbox" name="billId" value="${item.id}" pmoney="${item.moneys}"></td>
+                            <td align="center"><input type="checkbox" name="billId" value="${item.id}" 
+                            pmoney="${my:formatNum(item.moneys)}"></td>
                             
                             <td align="center">${item.id}</td>
 

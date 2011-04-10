@@ -28,6 +28,7 @@ import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.PaymentApplyDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.dao.PaymentVSOutDAO;
+import com.china.center.oa.finance.helper.BillHelper;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.PaymentApplyManager;
 import com.china.center.oa.finance.vs.PaymentVSOutBean;
@@ -449,7 +450,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
             // 生成收款单
             if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_PAYMENT)
             {
-                // 增加收款单
+                // 回款转收款通过,增加收款单
                 saveBillInner(user, apply, payment, item);
             }
             else
@@ -465,6 +466,31 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
                 if (bill.getStatus() == FinanceConstant.INBILL_STATUS_PAYMENTS)
                 {
                     throw new MYException("收款单状态错误,请确认操作");
+                }
+
+                OutBean outBean = outDAO.find(item.getOutId());
+
+                if (outBean == null)
+                {
+                    throw new MYException("数据错误,请确认操作");
+                }
+
+                if ( !StringTools.isNullOrNone(outBean.getChecks()))
+                {
+                    bill.setDescription(bill.getDescription() + "<br>销售单核对信息:"
+                                        + outBean.getChecks());
+                }
+
+                if (bill.getCheckStatus() == PublicConstant.CHECK_STATUS_END)
+                {
+                    bill.setDescription(bill.getDescription() + "<br>与销售单关联付款所以重置核对状态,原核对信息:"
+                                        + bill.getChecks());
+                }
+
+                if (BillHelper.isPreInBill(bill))
+                {
+                    // 这里需要把收款单的状态变成未核对
+                    BillHelper.initInBillCheckStatus(bill);
                 }
 
                 bill.setOutId(item.getOutId());
@@ -555,6 +581,8 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         inBean.setLogTime(TimeTools.now());
 
         inBean.setMoneys(item.getMoneys());
+
+        inBean.setSrcMoneys(item.getMoneys());
 
         if (StringTools.isNullOrNone(item.getOutId()))
         {

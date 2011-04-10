@@ -46,7 +46,7 @@ public class StorageRelationListenerSailImpl implements StorageRelationListener
             .getDepotpartId(), bean.getPriceKey(), bean.getStafferId());
 
         // 出库单提交后也是预占库存的(因为正数需要踢出,防止开单抵消单据)
-        int sumInIn = -outDAO.sumNotEndProductInInByStorageRelation(bean.getProductId(), bean
+        int sumInIn = outDAO.sumNotEndProductInInByStorageRelation(bean.getProductId(), bean
             .getDepotpartId(), bean.getPriceKey(), bean.getStafferId());
 
         // 返回一定大于0

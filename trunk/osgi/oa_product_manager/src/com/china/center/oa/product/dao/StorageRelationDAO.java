@@ -39,12 +39,29 @@ public interface StorageRelationDAO extends DAO<StorageRelationBean, StorageRela
 
     int sumProductInLocationId(String productId, String locationId);
 
+    /**
+     * 统计良品仓的库存
+     * 
+     * @param productId
+     * @param locationId
+     * @return
+     */
+    int sumProductInOKLocationId(String productId, String locationId);
+
     int sumProductInLocationIdAndPriceKey(String productId, String locationId, String priceKey);
 
     int sumAllProductByProductId(String productId);
 
     List<StorageRelationVO> queryStorageRelationByCondition(ConditionParse condition,
                                                             boolean isLimit);
+
+    /**
+     * 查询仓库下库存,和价格无关的o
+     * 
+     * @param depotId
+     * @return
+     */
+    List<StorageRelationVO> queryStorageRelationWithoutPrice(String depotId);
 
     /**
      * findByDepotpartIdAndProductIdAndPriceKeyAndStafferId(查询)

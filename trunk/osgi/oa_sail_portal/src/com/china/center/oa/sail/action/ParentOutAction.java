@@ -71,6 +71,7 @@ import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.InvoiceConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
+import com.china.center.oa.publics.constant.StafferConstant;
 import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DepartmentDAO;
@@ -502,11 +503,15 @@ public class ParentOutAction extends DispatchAction
         double noPayBusiness = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(user.getStafferId(),
             sb2.getIndustryId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
 
-        if (sb2 != null)
+        if (sb2 != null && sb2.getBlack() == StafferConstant.BLACK_NO)
         {
             // 设置其剩余的信用额度
             request.setAttribute("credit", ElTools.formatNum(sb2.getCredit() * sb2.getLever()
                                                              - noPayBusiness));
+        }
+        else
+        {
+            request.setAttribute("credit", "您是黑名单");
         }
 
         if ( !"1".equals(flag))
@@ -1638,6 +1643,14 @@ public class ParentOutAction extends DispatchAction
         {
             // 强制设置成OUT_SAIL_TYPE_MONEY
             if (CustomerConstant.BLACK_LEVEL.equals(customercreditlevel))
+            {
+                outBean.setReserve3(OutConstant.OUT_SAIL_TYPE_MONEY);
+            }
+
+            // 业务员黑名单
+            StafferBean sb = stafferDAO.find(user.getStafferId());
+
+            if (sb != null && sb.getBlack() == StafferConstant.BLACK_YES)
             {
                 outBean.setReserve3(OutConstant.OUT_SAIL_TYPE_MONEY);
             }
@@ -3182,6 +3195,8 @@ public class ParentOutAction extends DispatchAction
             {
                 condtion.addCondition("OutBean.locationId", "=", user.getLocationId());
             }
+
+            condtion.addCondition("order by changeTime desc");
         }
         // 总部核对(已经付款的销售单)
         else if ("6".equals(queryType))
@@ -3192,6 +3207,8 @@ public class ParentOutAction extends DispatchAction
 
                 request.setAttribute("status", OutConstant.STATUS_PASS);
             }
+
+            condtion.addCondition("order by changeTime desc");
         }
         // 总裁审批赠送
         else if ("7".equals(queryType))

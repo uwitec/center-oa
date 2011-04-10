@@ -33,6 +33,7 @@ import com.china.center.oa.stock.bean.StockItemBean;
 import com.china.center.oa.stock.dao.StockItemDAO;
 import com.china.center.oa.stock.manager.StockManager;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.MathTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
@@ -138,8 +139,18 @@ public class BillManagerImpl implements BillManager
                     OutConstant.BADDEBTSCHECKSTATUS_YES);
             }
 
-            return inBillDAO.saveEntityBean(bean);
+            return saveInBillInner(bean);
         }
+    }
+
+    private boolean saveInBillInner(InBillBean bean)
+    {
+        if (bean.getSrcMoneys() == 0.0)
+        {
+            bean.setSrcMoneys(bean.getMoneys());
+        }
+
+        return inBillDAO.saveEntityBean(bean);
     }
 
     @Transactional(rollbackFor = MYException.class)
@@ -248,6 +259,16 @@ public class BillManagerImpl implements BillManager
 
         // 处理采购付款
         handleStockItem(user, bean);
+
+        return saveOutBillInner(bean);
+    }
+
+    private boolean saveOutBillInner(OutBillBean bean)
+    {
+        if (bean.getSrcMoneys() == 0.0)
+        {
+            bean.setSrcMoneys(bean.getMoneys());
+        }
 
         return outBillDAO.saveEntityBean(bean);
     }
@@ -405,7 +426,7 @@ public class BillManagerImpl implements BillManager
 
         inbill.setType(FinanceConstant.INBILL_TYPE_TRANSFER);
 
-        inBillDAO.saveEntityBean(inbill);
+        saveInBillInner(inbill);
 
         return inbill;
     }
@@ -467,7 +488,7 @@ public class BillManagerImpl implements BillManager
 
             inbill.setType(FinanceConstant.INBILL_TYPE_TRANSFER);
 
-            inBillDAO.saveEntityBean(inbill);
+            saveInBillInner(inbill);
 
             // 更新源单状态
             bean.setStatus(FinanceConstant.OUTBILL_STATUS_END);
@@ -509,6 +530,9 @@ public class BillManagerImpl implements BillManager
 
         bill.setMoneys(bill.getMoneys() - newMoney);
 
+        bill.setDescription(bill.getDescription() + "<br>" + "销售关联分拆了:"
+                            + MathTools.formatNum(newMoney) + "出去");
+
         inBillDAO.updateEntityBean(bill);
 
         // 分拆后时间不能变(锁定状态不能变)
@@ -516,9 +540,11 @@ public class BillManagerImpl implements BillManager
 
         bill.setMoneys(newMoney);
 
+        bill.setSrcMoneys(newMoney);
+
         bill.setDescription("分拆" + id + "后自动生成新的收款单");
 
-        inBillDAO.saveEntityBean(bill);
+        saveInBillInner(bill);
 
         return bill.getId();
     }

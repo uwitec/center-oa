@@ -75,7 +75,7 @@ public interface StorageRelationManager extends ListenerManager<StorageRelationL
         throws MYException;
 
     /**
-     * transferStorageRelation(储位产品转移,只能是公共的库存)
+     * transferStorageRelation(储位产品转移,公私都可以转)
      * 
      * @param user
      * @param sourceStorageId
@@ -99,7 +99,7 @@ public interface StorageRelationManager extends ListenerManager<StorageRelationL
      * @throws MYException
      */
     String transferStorageRelationInDepotpart(User user, String sourceRelationId,
-                                              String dirDepotpartId, int amount)
+                                              String dirDepotpartId, int amount, String apply)
         throws MYException;
 
     void lockStorageRelation();
