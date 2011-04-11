@@ -9,6 +9,7 @@
 package com.china.center.oa.sail.manager.impl;
 
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -91,6 +92,7 @@ import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.sail.vo.BaseBalanceVO;
 import com.china.center.oa.sail.vo.OutVO;
 import com.china.center.osgi.dym.DynamicBundleTools;
+import com.china.center.tools.BeanUtil;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
@@ -452,8 +454,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         addSub = true;
                     }
 
-                    // 强制设置为赠送
-                    if (hasZero)
+                    // 销售单强制设置为赠送
+                    if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL && hasZero)
                     {
                         outBean.setOutType(OutConstant.OUTTYPE_OUT_PRESENT);
                     }
@@ -1815,6 +1817,9 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             // 检查是否溢出
             checkSwithToSail(outBean.getRefOutFullId());
 
+            // CORE 领样转销售通过的时候,生成的对冲单据
+            createDuichong(user, outBean, baseList);
+
             saveUnique(user, outBean);
 
             return;
@@ -1862,6 +1867,95 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         }
 
         saveUnique(user, outBean);
+    }
+
+    /**
+     * 领样转销售通过的时候,生成的对冲单据
+     * 
+     * @param outBean
+     * @param baseList
+     * @throws MYException
+     */
+    private void createDuichong(User user, final OutBean outBean, final List<BaseBean> baseList)
+        throws MYException
+    {
+        OutBean newInBean = new OutBean();
+
+        // 先保存
+        String id = getAll(commonDAO.getSquence());
+
+        LocationBean location = locationDAO.find(outBean.getLocationId());
+
+        if (location == null)
+        {
+            _logger.error("区域不存在:" + outBean.getLocationId());
+
+            throw new MYException("区域不存在:" + outBean.getLocationId());
+        }
+
+        String flag = location.getCode();
+
+        String time = TimeTools.now("yyMMddHHmm");
+
+        final String fullId = flag + time + id;
+
+        BeanUtil.copyProperties(newInBean, outBean);
+
+        newInBean.setId(id);
+
+        newInBean.setFullId(fullId);
+
+        newInBean.setType(OutConstant.OUT_TYPE_INBILL);
+
+        newInBean.setOutType(OutConstant.OUTTYPE_IN_SWATCH);
+
+        newInBean.setStatus(OutConstant.BUY_STATUS_PASS);
+
+        newInBean.setRefOutFullId(outBean.getFullId());
+
+        newInBean.setChecks("");
+
+        newInBean.setCheckStatus(PublicConstant.CHECK_STATUS_INIT);
+
+        newInBean.setDescription("领样转销售[" + outBean.getFullId() + "]的库管通过的时候自动产生一张财务做帐的领样退库单,"
+                                 + "此单据系统自动生成，直接到待核对状态(此单不会对库存产生任何异动)");
+
+        List<BaseBean> newBaseList = new ArrayList();
+
+        for (BaseBean element : baseList)
+        {
+            BaseBean newEach = new BaseBean();
+
+            BeanUtil.copyProperties(newEach, element);
+
+            newEach.setOutId(fullId);
+
+            newBaseList.add(newEach);
+        }
+
+        newInBean.setBaseList(newBaseList);
+
+        setInvoiceId(newInBean);
+
+        // 保存入库单
+        outDAO.saveEntityBean(newInBean);
+
+        for (BaseBean baseBean : newBaseList)
+        {
+            baseBean.setId(commonDAO.getSquenceString());
+
+            baseBean.setOutId(fullId);
+
+            // 增加单个产品到base表
+            baseDAO.saveEntityBean(baseBean);
+        }
+
+        newInBean.setStatus(0);
+
+        addOutLog(fullId, user, newInBean, "提交", SailConstant.OPR_OUT_PASS,
+            OutConstant.BUY_STATUS_PASS);
+
+        saveUnique(user, newInBean);
     }
 
     /**

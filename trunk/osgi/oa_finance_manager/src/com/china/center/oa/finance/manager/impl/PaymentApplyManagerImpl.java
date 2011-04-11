@@ -46,6 +46,7 @@ import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.MathTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
@@ -546,15 +547,16 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
                 }
             }
 
-            int maxFee = parameterDAO.getInt(SysConfigConstant.MAX_RECVIVE_FEE);
-
             // 如果存在手续费先付款
             if (payment.getHandling() > 0)
             {
+                int maxFee = parameterDAO.getInt(SysConfigConstant.MAX_RECVIVE_FEE);
+
                 OutBillBean out = new OutBillBean();
 
                 out.setBankId(payment.getBankId());
-                out.setDescription("回款转收款自动生成手续费:" + payment.getId());
+                out.setDescription("回款转收款自动生成手续费:" + payment.getId() + ".回款金额:"
+                                   + MathTools.formatNum(payment.getMoney()));
                 out.setLocationId(user.getLocationId());
                 out.setMoneys(payment.getHandling());
 

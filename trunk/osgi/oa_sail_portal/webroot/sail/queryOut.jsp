@@ -44,37 +44,39 @@ function comp()
 		alert('必须要有开始和结束时间一个');
 		return false;
 	}
-
+	
 	if (str1 != '' && str2 == '')
-	{
-		if (!coo(str1, now))
-		{
-			alert('查询日期跨度不能大于3个月(90天)!');
-			return false;
-		}
+    {
+        if (!coo(str1, now))
+        {
+            alert('查询日期跨度不能大于3个月(90天)!');
+            return false;
+        }
 
-		$O('outTime1').value = now;
-	}
+        $O('outTime1').value = now;
+    }
 
-	if (str1 == '' && str2 != '')
-	{
-		if (!coo(now, str2))
-		{
-			alert('查询日期跨度不能大于3个月(90天)!');
-			return false;
-		}
+    if (str1 == '' && str2 != '')
+    {
+        if (!coo(now, str2))
+        {
+            alert('查询日期跨度不能大于3个月(90天)!');
+            return false;
+        }
 
-		$O('outTime').value = now;
-	}
+        $O('outTime').value = now;
+    }
 
-	if (str1 != '' && str2 != '')
-	{
-		if (!coo(str1, str2))
-		{
-			alert('查询日期跨度不能大于3个月(90天)!');
-			return false;
-		}
-	}
+    if (str1 != '' && str2 != '')
+    {
+        if (!coo(str1, str2))
+        {
+            alert('查询日期跨度不能大于3个月(90天)!');
+            return false;
+        }
+    }
+	
+	
 
 	return true;
 }
@@ -113,6 +115,8 @@ function res()
 {
 	$O('customerName').value = '';
 	$O("customerId").value = '';
+	$O("changeTime").value = '';
+	$O("changeTime1").value = '';
 	$O("id").value = '';
 	$O("stafferName").value = '';
 	setSelectIndex($O('status'), 0);
@@ -383,7 +387,8 @@ function reject()
 function outBack()
 {
     //个人领样
-    if (getRadio('fullId').statuss == 3 && getRadio('fullId').outtype == 1)
+    if ((getRadio('fullId').statuss == 3 || getRadio('fullId').statuss == 4) 
+            && getRadio('fullId').outtype == 1)
     {
         $l('../sail/out.do?method=findOut&fow=91&outId=' + getRadioValue("fullId"));
     }
@@ -422,7 +427,8 @@ function applyBackPay()
 function swatchToSail()
 {
 	//个人领样
-    if (getRadio('fullId').statuss == 3 && getRadio('fullId').outtype == 1)
+    if ((getRadio('fullId').statuss == 3 || getRadio('fullId').statuss == 4) 
+         && getRadio('fullId').outtype == 1)
     {
     	if (window.confirm("确定领样转销售?"))
         $l('../sail/out.do?method=swatchToSail&outId=' + getRadioValue("fullId"));
@@ -476,6 +482,14 @@ function swatchToSail()
 						<td align="center"><p:plugin name="outTime1" size="20" value="${outTime1}"/>
 						</td>
 					</tr>
+					
+					<tr class="content1">
+                        <td width="15%" align="center">发货时间从</td>
+                        <td align="center" width="35%"><p:plugin name="changeTime" type="1" size="20" value="${changeTime}"/></td>
+                        <td width="15%" align="center">到</td>
+                        <td align="center"><p:plugin name="changeTime1" type="1" size="20" value="${changeTime1}"/>
+                        </td>
+                    </tr>
 
 					<tr class="content2">
 						<td width="15%" align="center">销售单状态</td>

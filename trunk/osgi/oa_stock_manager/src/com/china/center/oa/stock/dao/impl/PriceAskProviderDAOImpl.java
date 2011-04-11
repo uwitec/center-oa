@@ -9,6 +9,7 @@
 package com.china.center.oa.stock.dao.impl;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,9 +66,6 @@ public class PriceAskProviderDAOImpl extends BaseDAO<PriceAskProviderBean, Price
 
         paramterMap.put("productId", productId);
 
-        // 虚拟存储
-        // paramterMap.put("saveType", PriceConstant.PRICE_ASK_SAVE_TYPE_ABS);
-
         // 只查询采购询价的
         paramterMap.put("src", PriceConstant.PRICE_ASK_SRC_STOCK);
 
@@ -75,8 +73,18 @@ public class PriceAskProviderDAOImpl extends BaseDAO<PriceAskProviderBean, Price
 
         paramterMap.put("stockId", stockId);
 
-        return (List)this.ibatisDaoSupport.queryForList("PriceAskProviderDAOImpl.queryByCondition",
-            paramterMap);
+        List result = new ArrayList();
+
+        result.addAll((List)this.ibatisDaoSupport.queryForList(
+            "PriceAskProviderDAOImpl.queryByCondition", paramterMap));
+
+        // 只查询采购询价的
+        paramterMap.put("src", PriceConstant.PRICE_ASK_SRC_MAKE);
+
+        result.addAll((List)this.ibatisDaoSupport.queryForList(
+            "PriceAskProviderDAOImpl.queryByCondition", paramterMap));
+
+        return result;
     }
 
     /**

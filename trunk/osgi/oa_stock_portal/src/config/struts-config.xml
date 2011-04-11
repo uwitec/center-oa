@@ -29,6 +29,7 @@
             type="org.springframework.web.struts.DelegatingActionProxy"
             validate="false">
              <forward name="addStock"/>
+             <forward name="addStock1"/>
              <forward name="processStock"/>
              <forward name="processStock2"/>
              <forward name="rptPriceAskProviderList"/>

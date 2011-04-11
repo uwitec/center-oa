@@ -3004,6 +3004,9 @@ public class ParentOutAction extends DispatchAction
 
         condtion.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_OUTBILL);
 
+        // 这里是过滤
+        String queryType = RequestTools.getValueFromRequest(request, "queryType");
+
         String outTime = request.getParameter("outTime");
 
         String outTime1 = request.getParameter("outTime1");
@@ -3028,6 +3031,20 @@ public class ParentOutAction extends DispatchAction
             condtion.addCondition("OutBean.outTime", "<=", TimeTools.now_short());
 
             request.setAttribute("outTime1", TimeTools.now_short());
+        }
+
+        String changeTime = request.getParameter("changeTime");
+
+        String changeTime1 = request.getParameter("changeTime1");
+
+        if ( !StringTools.isNullOrNone(changeTime))
+        {
+            condtion.addCondition("OutBean.changeTime", ">=", changeTime);
+        }
+
+        if ( !StringTools.isNullOrNone(changeTime1))
+        {
+            condtion.addCondition("OutBean.changeTime", "<=", changeTime1);
         }
 
         String id = request.getParameter("id");
@@ -3130,9 +3147,6 @@ public class ParentOutAction extends DispatchAction
         }
 
         StafferBean staffer = Helper.getStaffer(request);
-
-        // 这里是过滤
-        String queryType = RequestTools.getValueFromRequest(request, "queryType");
 
         // 事业部经理查询
         if ("1".equals(queryType))
@@ -3382,6 +3396,20 @@ public class ParentOutAction extends DispatchAction
             condtion.addCondition("OutBean.outTime", "<=", TimeTools.now_short());
 
             request.setAttribute("outTime1", TimeTools.now_short());
+        }
+
+        String changeTime = request.getParameter("changeTime");
+
+        String changeTime1 = request.getParameter("changeTime1");
+
+        if ( !StringTools.isNullOrNone(changeTime))
+        {
+            condtion.addCondition("OutBean.changeTime", ">=", changeTime);
+        }
+
+        if ( !StringTools.isNullOrNone(changeTime1))
+        {
+            condtion.addCondition("OutBean.changeTime", "<=", changeTime1);
         }
 
         String id = request.getParameter("id");

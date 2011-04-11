@@ -368,6 +368,9 @@ public class StockAction extends DispatchAction
 
             bean.setExceptStatus(StockConstant.EXCEPTSTATUS_COMMON);
 
+            // 权限
+            checkAddTypeAuth(user, String.valueOf(bean.getMode()));
+
             stockManager.updateStockBean(user, bean);
 
             request.setAttribute(KeyConstant.MESSAGE, "成功修改采购单:" + bean.getId());
@@ -1035,7 +1038,16 @@ public class StockAction extends DispatchAction
     {
         prepare(request);
 
-        return mapping.findForward("addStock");
+        String type = request.getParameter("type");
+
+        if ("0".equals(type))
+        {
+            return mapping.findForward("addStock");
+        }
+        else
+        {
+            return mapping.findForward("addStock1");
+        }
     }
 
     private void prepare(HttpServletRequest request)

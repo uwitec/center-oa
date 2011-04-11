@@ -113,6 +113,8 @@ function res()
 {
 	$O('customerName').value = '';
 	$O("customerId").value = '';
+	$O("changeTime").value = '';
+	$O("changeTime1").value = '';
 	$O("id").value = '';
 	setSelectIndex($O('status'), 0);
 	setSelectIndex($O('inway'), 0);
@@ -326,6 +328,14 @@ function reject()
 						<td align="center"><p:plugin name="outTime1" size="20" value="${outTime1}"/>
 						</td>
 					</tr>
+					
+					<tr class="content1">
+                        <td width="15%" align="center">发货时间从</td>
+                        <td align="center" width="35%"><p:plugin name="changeTime" type="1" size="20" value="${changeTime}"/></td>
+                        <td width="15%" align="center">到</td>
+                        <td align="center"><p:plugin name="changeTime1" size="20" type="1" value="${changeTime1}"/>
+                        </td>
+                    </tr>
 
 					<tr class="content2">
 						<td width="15%" align="center">入库单状态</td>
@@ -448,6 +458,7 @@ function reject()
 						<td align="center" onclick="tableSort(this)" class="td_class">状态</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">${fg}类型</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">${fg}时间</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">发货时间</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">金额</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">${fg}人</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">目的仓库</td>
@@ -481,6 +492,7 @@ function reject()
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('buyStatus', item.status)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('outType_in', item.outType)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.outTime}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${item.changeTime}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.destinationName}</td>

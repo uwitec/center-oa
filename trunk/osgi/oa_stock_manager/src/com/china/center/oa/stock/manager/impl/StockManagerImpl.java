@@ -119,10 +119,16 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
             throw new MYException("区域不存在");
         }
 
+        // TODO 修改为定长
         bean.setId(lb.getCode() + "_CG" + TimeTools.now("yyyyMMddHHmm")
                    + commonDAO.getSquenceString());
 
         bean.setStatus(StockConstant.STOCK_STATUS_INIT);
+
+        if (StringTools.isNullOrNone(bean.getStafferId()))
+        {
+            bean.setStafferId(user.getStafferId());
+        }
 
         // 保存采购主单据
         stockDAO.saveEntityBean(bean);
@@ -526,8 +532,14 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
         // 默认是内外网询价的
         bean.setType(PriceConstant.PRICE_ASK_TYPE_BOTH);
 
-        // 采购询价
-        bean.setSrc(PriceConstant.PRICE_ASK_SRC_STOCK);
+        if (stock.getMode() == StockConstant.STOCK_MODE_SAIL)
+        {
+            bean.setSrc(PriceConstant.PRICE_ASK_SRC_STOCK);
+        }
+        else
+        {
+            bean.setSrc(PriceConstant.PRICE_ASK_SRC_MAKE);
+        }
 
         bean.setRefStock(stock.getId());
 
@@ -1077,6 +1089,11 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
             && sb.getStatus() != StockConstant.STOCK_STATUS_INIT)
         {
             throw new MYException("采购单不存在驳回状态不能修改");
+        }
+
+        if (StringTools.isNullOrNone(bean.getStafferId()))
+        {
+            bean.setStafferId(user.getStafferId());
         }
 
         // 更新采购主单据

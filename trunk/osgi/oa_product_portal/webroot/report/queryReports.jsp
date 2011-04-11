@@ -78,7 +78,7 @@ function stat()
 			<tr class="content2">
 				<td width="15%" align="center">仓区:</td>
 				<td align="left" colspan="1"><select name="depotpartId"
-					class="select_class" values="${depotpartId}">
+					class="select_class" values="${depotpartId}" style="width: 100%">
 					<option value="">--</option>
 					<c:forEach items="${depotpartList}" var="item">
 					<option value="${item.id}">${item.name}</option>

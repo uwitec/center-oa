@@ -292,6 +292,17 @@ function checkBean()
                        </td>
                     </tr>
                     
+                    <tr class="content2">
+                        <td align="right">关联单据：</td>
+                        <td colspan="1">
+                       <a href="../sail/out.do?method=findOut&fow=99&outId=${bean.refOutFullId}">${bean.refOutFullId}</a>
+                       </td>
+                       <td align="right">事业部：</td>
+                        <td colspan="1">
+                      ${shiye.name}
+                       </td>
+                    </tr>
+                    
                     <tr class="content1">
                         <td align="right">信用描述：</td>
                         <td colspan="3">

@@ -271,7 +271,6 @@ function clearValues()
     
 	<input type="hidden" name="stafferId" value="">
 	<input type="hidden" name="oprMode" value="">
-	<input type="hidden" name="mode" value="${type}">
 	<input
 	type="hidden" name="id" value="${bean.id}"> <p:navigation
 	height="22">
@@ -301,6 +300,10 @@ function clearValues()
 			
 			<p:pro field="type">
                 <option value="1">外网/卢工/马甸询价</option>
+            </p:pro>
+            
+            <p:pro field="mode">
+                <option value="0">销售采购</option>
             </p:pro>
 
 			<p:pro field="flow" innerString="quick='true'" outString="支持简拼选择">

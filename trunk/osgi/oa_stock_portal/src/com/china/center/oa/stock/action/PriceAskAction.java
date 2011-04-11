@@ -1386,7 +1386,7 @@ public class PriceAskAction extends DispatchAction
                 // 外网和内外网
                 condtion.addCondition("AND PriceAskBean.type in (1, 2)");
             }
-            else
+            else if ("1".equals(src))
             {
                 // 采购
                 // 只能看到普通存储的
@@ -1397,6 +1397,15 @@ public class PriceAskAction extends DispatchAction
                     .addIntCondition("PriceAskBean.src", "=", PriceConstant.PRICE_ASK_SRC_STOCK);
 
                 request.setAttribute("src", "1");
+            }
+            else
+            {
+                condtion.addIntCondition("PriceAskBean.saveType", "=",
+                    PriceConstant.PRICE_ASK_SAVE_TYPE_COMMON);
+
+                condtion.addIntCondition("PriceAskBean.src", "=", PriceConstant.PRICE_ASK_SRC_MAKE);
+
+                request.setAttribute("src", "2");
             }
         }
 

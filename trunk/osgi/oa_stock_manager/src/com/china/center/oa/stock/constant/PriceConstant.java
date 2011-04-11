@@ -136,10 +136,16 @@ public interface PriceConstant
     int PRICE_ASK_SRC_ASK = 0;
 
     /**
-     * 询价来源-采购
+     * 询价来源-销售采购
      */
-    @Defined(key = "priceAskSrc", value = "采购")
+    @Defined(key = "priceAskSrc", value = "销售采购")
     int PRICE_ASK_SRC_STOCK = 1;
+
+    /**
+     * 询价来源-生产采购
+     */
+    @Defined(key = "priceAskSrc", value = "生产采购")
+    int PRICE_ASK_SRC_MAKE = 2;
 
     /**
      * 采购询价类型-普通(非采购询价)

@@ -661,8 +661,6 @@ public class OutAction extends ParentOutAction
         }
         else
         {
-            RequestTools.menuInitQuery(request);
-
             return queryBuy(mapping, form, request, reponse);
         }
     }
@@ -1555,6 +1553,10 @@ public class OutAction extends ParentOutAction
             {
                 request.setAttribute("lastBaseList", list.subList(1, list.size()));
             }
+
+            PrincipalshipBean shiye = principalshipDAO.find(bean.getIndustryId());
+
+            request.setAttribute("shiye", shiye);
 
             request.setAttribute("logList", voList);
         }

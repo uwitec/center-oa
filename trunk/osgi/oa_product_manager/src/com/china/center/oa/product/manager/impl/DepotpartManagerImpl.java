@@ -113,7 +113,7 @@ public class DepotpartManagerImpl implements DepotpartManager
     public boolean deleteBean(User user, final String id)
         throws MYException
     {
-        JudgeTools.judgeParameterIsNull(id, true);
+        JudgeTools.judgeParameterIsNull(id);
 
         DepotpartBean old = depotpartDAO.find(id);
 
