@@ -3347,8 +3347,10 @@ public class ParentOutAction extends DispatchAction
      * @param request
      * @param user
      * @return
+     * @throws MYException
      */
     protected ConditionParse getQueryBuyCondition(HttpServletRequest request, User user)
+        throws MYException
     {
         ConditionParse condtion = new ConditionParse();
 
@@ -3438,6 +3440,8 @@ public class ParentOutAction extends DispatchAction
             condtion.addIntCondition("OutBean.inway", "=", inway);
         }
 
+        StafferBean staffer = Helper.getStaffer(request);
+
         // 这里是过滤
         String queryType = RequestTools.getValueFromRequest(request, "queryType");
 
@@ -3452,7 +3456,7 @@ public class ParentOutAction extends DispatchAction
                 request.setAttribute("status", OutConstant.STATUS_LOCATION_MANAGER_CHECK);
             }
 
-            condtion.addCondition("OutBean.locationId", "=", user.getLocationId());
+            condtion.addCondition("and OutBean.industryId in " + getAllIndustryId(staffer));
         }
         // 总裁审核
         else if ("2".equals(queryType))
