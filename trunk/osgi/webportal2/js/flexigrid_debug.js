@@ -566,6 +566,7 @@ var gobal_guid;
                                             con = parserString(con, row.cell);  
                                             
                                             td.innerHTML = bs + con + es;
+                                            td.title = con;
                                          }
                                          else
                                          {
@@ -597,6 +598,7 @@ var gobal_guid;
                                             }
                                             
                                             td.innerHTML = bs + con + es;
+                                            td.title = con;
                                          }
                                          $(tr).append(td);
                                          td = null;

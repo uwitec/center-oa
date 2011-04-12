@@ -787,4 +787,14 @@ div.colCopy {
     background: url(images/edit.gif) no-repeat center left;
 }
 
+.flexigrid div.fbutton .draw
+{
+    background: url(images/get.png) no-repeat center left;
+}
+
+.flexigrid div.fbutton .odraw
+{
+    background: url(images/oget.png) no-repeat center left;
+} 
+
  
