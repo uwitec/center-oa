@@ -55,6 +55,13 @@ public class PageSeparate implements Serializable
         init(rowCount, pageSize);
     }
 
+    public void reset2(int rowCount, int pageSize)
+    {
+        init(rowCount, pageSize);
+
+        setNowPage2(0);
+    }
+
     public PageSeparate(int rowCount, int pageSize)
     {
         init(rowCount, pageSize);
@@ -293,6 +300,11 @@ public class PageSeparate implements Serializable
         this.nowPage = nowPage;
 
         return true;
+    }
+
+    public void setNowPage2(int nowPage)
+    {
+        this.nowPage = nowPage;
     }
 
     /**
