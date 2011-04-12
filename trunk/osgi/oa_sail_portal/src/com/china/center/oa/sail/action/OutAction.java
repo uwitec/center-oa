@@ -1789,7 +1789,7 @@ public class OutAction extends ParentOutAction
 
             if (check.getResult() != -1)
             {
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "金额全部使用,无法申请退款");
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, check.getMessage() + ",所以无法退款.");
 
                 return mapping.findForward("error");
             }

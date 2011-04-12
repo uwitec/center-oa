@@ -331,9 +331,9 @@ function reject()
 					
 					<tr class="content1">
                         <td width="15%" align="center">发货时间从</td>
-                        <td align="center" width="35%"><p:plugin name="changeTime" type="1" size="20" value="${changeTime}"/></td>
+                        <td align="center" width="35%"><p:plugin name="changeTime" type="0" size="20" value="${changeTime}"/></td>
                         <td width="15%" align="center">到</td>
-                        <td align="center"><p:plugin name="changeTime1" size="20" type="1" value="${changeTime1}"/>
+                        <td align="center"><p:plugin name="changeTime1" size="20" type="0" value="${changeTime1}"/>
                         </td>
                     </tr>
 

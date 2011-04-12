@@ -485,9 +485,9 @@ function swatchToSail()
 					
 					<tr class="content1">
                         <td width="15%" align="center">发货时间从</td>
-                        <td align="center" width="35%"><p:plugin name="changeTime" type="1" size="20" value="${changeTime}"/></td>
+                        <td align="center" width="35%"><p:plugin name="changeTime" type="0" size="20" value="${changeTime}"/></td>
                         <td width="15%" align="center">到</td>
-                        <td align="center"><p:plugin name="changeTime1" type="1" size="20" value="${changeTime1}"/>
+                        <td align="center"><p:plugin name="changeTime1" type="0" size="20" value="${changeTime1}"/>
                         </td>
                     </tr>
 
@@ -654,7 +654,7 @@ function swatchToSail()
 							<td align="center"><input type="radio" name="fullId" 
 							   temptype="${item.tempType}"
 							   hasmap="${hasMap[item.fullId]}"
-							   index="${radioIndex}"
+							   ${vs.index == 0 ? "checked=checked" : ""}
 							   con="${item.consign}"
 							   pay="${item.reserve3}"
 							   paytype="${item.pay}"

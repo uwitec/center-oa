@@ -411,80 +411,6 @@ public class BaseBean implements Serializable
     }
 
     /**
-     * Constructs a <code>String</code> with all attributes in name = value format.
-     * 
-     * @return a <code>String</code> representation of this object.
-     */
-    public String toString()
-    {
-        final String TAB = ",";
-
-        StringBuilder retValue = new StringBuilder();
-
-        retValue
-            .append("BaseBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("outId = ")
-            .append(this.outId)
-            .append(TAB)
-            .append("productId = ")
-            .append(this.productId)
-            .append(TAB)
-            .append("productName = ")
-            .append(this.productName)
-            .append(TAB)
-            .append("showName = ")
-            .append(this.showName)
-            .append(TAB)
-            .append("showId = ")
-            .append(this.showId)
-            .append(TAB)
-            .append("locationId = ")
-            .append(this.locationId)
-            .append(TAB)
-            .append("unit = ")
-            .append(this.unit)
-            .append(TAB)
-            .append("amount = ")
-            .append(this.amount)
-            .append(TAB)
-            .append("inway = ")
-            .append(this.inway)
-            .append(TAB)
-            .append("storageId = ")
-            .append(this.storageId)
-            .append(TAB)
-            .append("owner = ")
-            .append(this.owner)
-            .append(TAB)
-            .append("ownerName = ")
-            .append(this.ownerName)
-            .append(TAB)
-            .append("price = ")
-            .append(this.price)
-            .append(TAB)
-            .append("costPrice = ")
-            .append(this.costPrice)
-            .append(TAB)
-            .append("costPriceKey = ")
-            .append(this.costPriceKey)
-            .append(TAB)
-            .append("value = ")
-            .append(this.value)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append(" )");
-
-        return retValue.toString();
-    }
-
-    /**
      * @return the depotpartId
      */
     public String getDepotpartId()
@@ -568,5 +494,85 @@ public class BaseBean implements Serializable
         }
         else if ( !productId.equals(other.productId)) return false;
         return true;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("BaseBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("outId = ")
+            .append(this.outId)
+            .append(TAB)
+            .append("productId = ")
+            .append(this.productId)
+            .append(TAB)
+            .append("productName = ")
+            .append(this.productName)
+            .append(TAB)
+            .append("showName = ")
+            .append(this.showName)
+            .append(TAB)
+            .append("showId = ")
+            .append(this.showId)
+            .append(TAB)
+            .append("locationId = ")
+            .append(this.locationId)
+            .append(TAB)
+            .append("unit = ")
+            .append(this.unit)
+            .append(TAB)
+            .append("amount = ")
+            .append(this.amount)
+            .append(TAB)
+            .append("inway = ")
+            .append(this.inway)
+            .append(TAB)
+            .append("storageId = ")
+            .append(this.storageId)
+            .append(TAB)
+            .append("depotpartId = ")
+            .append(this.depotpartId)
+            .append(TAB)
+            .append("depotpartName = ")
+            .append(this.depotpartName)
+            .append(TAB)
+            .append("owner = ")
+            .append(this.owner)
+            .append(TAB)
+            .append("ownerName = ")
+            .append(this.ownerName)
+            .append(TAB)
+            .append("price = ")
+            .append(this.price)
+            .append(TAB)
+            .append("costPrice = ")
+            .append(this.costPrice)
+            .append(TAB)
+            .append("costPriceKey = ")
+            .append(this.costPriceKey)
+            .append(TAB)
+            .append("value = ")
+            .append(this.value)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }

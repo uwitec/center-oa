@@ -309,6 +309,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                     double total = 0.0d;
 
+                    List<BaseBean> baseList = new ArrayList();
+
                     for (int i = 0; i < nameList.length; i++ )
                     {
                         BaseBean base = new BaseBean();
@@ -448,6 +450,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         // 其实也是成本
                         base.setDescription(desList[i].trim());
 
+                        baseList.add(base);
+
                         // 增加单个产品到base表
                         baseDAO.saveEntityBean(base);
 
@@ -462,6 +466,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                     // 重新计算价格
                     outBean.setTotal(total);
+
+                    outBean.setBaseList(baseList);
 
                     // 保存入库单
                     outDAO.saveEntityBean(outBean);
@@ -503,6 +509,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             _logger.error("增加库单错误：", e);
             throw new MYException("系统错误，请联系管理员:" + e);
         }
+
+        _logger.info(user.getStafferName() + "/" + user.getName() + "/ADD:" + outBean);
 
         return fullId;
     }
@@ -1560,7 +1568,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         outDAO.updataInWay(fullId, OutConstant.IN_WAY_NO);
 
                         // 变成没有付款
-                        outDAO.modifyPay(fullId, OutConstant.PAY_NOT);
+                        outDAO.updatePay(fullId, OutConstant.PAY_NOT);
 
                         // 操作日志
                         addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_REJECT,
@@ -2075,6 +2083,10 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             throw new MYException("单据不能被删除,请确认操作");
         }
 
+        List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(fullId);
+
+        outBean.setBaseList(baseList);
+
         // 入库操作在数据库事务中完成
         TransactionTemplate tran = new TransactionTemplate(transactionManager);
         try
@@ -2133,6 +2145,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             _logger.error("删除库单错误：", e);
             throw new MYException("系统错误,请重新操作");
         }
+
+        _logger.info(user.getStafferName() + "/" + user.getName() + "/DELETE:" + outBean);
 
         return true;
     }

@@ -44,8 +44,8 @@ function load()
 		     {id: 'table1', caption: '所有职员客户分布', bclass: 'table', onpress : queryAllStafferCustomerDistribute, auth: '0209'},
 		     {id: 'syn', caption: '客户分公司同步', bclass: 'table', onpress : synAll, auth: '0210'},
 		     {id: 'configCredit', caption: '配置客户信用', bclass: 'update', onpress : configCredit},
-		     {id: 'queryCreditLog', caption: '信用变更日志', bclass: 'search', onpress : queryCreditLog},
-		     {id: 'queryCredit', caption: '信用明细', bclass: 'search', onpress : queryCredit},
+		     {id: 'queryCreditLog', caption: '信用变更日志', bclass: 'search', onpress : queryCreditLog, auth: '0219'},
+		     {id: 'queryCredit', caption: '信用明细', bclass: 'search', onpress : queryCredit, auth: '0219'},
 		     {id: 'queryVistor', caption: '拜访记录', bclass: 'search', onpress : queryVistor},
 		     {id: 'search', bclass: 'search', onpress : doSearch}
 		     ],

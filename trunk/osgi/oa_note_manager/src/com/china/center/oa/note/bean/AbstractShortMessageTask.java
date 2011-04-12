@@ -195,7 +195,14 @@ public abstract class AbstractShortMessageTask implements Serializable
      */
     public void setMessage(String message)
     {
-        this.message = message;
+        if (message.length() <= 200)
+        {
+            this.message = message;
+        }
+        else
+        {
+            this.message = message.substring(0, 200);
+        }
     }
 
     /**

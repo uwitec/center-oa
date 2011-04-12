@@ -244,6 +244,9 @@ function refBill()
     }
     else
     {
+        if (getRadio('fullId').outtype == 1 || getRadio('fullId').outtype == 3)
+        alert('个人领样和委托代销不走此勾款流程!\r\n委托代销通过委托代销结算/退货勾款,\r\n个人领样通过退库和转销售勾款.');
+        else
         alert('不能操作!');
     }
 }

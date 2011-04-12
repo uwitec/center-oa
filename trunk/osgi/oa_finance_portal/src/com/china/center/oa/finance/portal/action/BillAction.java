@@ -1,6 +1,8 @@
 package com.china.center.oa.finance.portal.action;
 
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,12 +19,17 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
 import com.center.china.osgi.publics.User;
+import com.center.china.osgi.publics.file.writer.WriteFile;
+import com.center.china.osgi.publics.file.writer.WriteFileFactory;
 import com.china.center.actionhelper.common.ActionTools;
+import com.china.center.actionhelper.common.JSONPageSeparateTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.common.MYException;
+import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.finance.bean.BackPayApplyBean;
 import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.bean.InBillBean;
@@ -794,6 +801,211 @@ public class BillAction extends DispatchAction
         }
 
         return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * exportInBill
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportInBill(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        // String depotartId = request.getParameter("depotartId");
+
+        String filenName = "INBill_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            write.writeLine("日期,标识,帐户,类型,状态,核对,金额,原始金额,客户,职员,经手人,备注,核对");
+
+            ConditionParse condtion = JSONPageSeparateTools.getCondition(request, QUERYINBILL);
+
+            PageSeparate page = new PageSeparate(JSONPageSeparateTools.getPageSeparate(request,
+                QUERYINBILL));
+
+            page.reset2(page.getRowCount(), 1000);
+
+            // TEMPLATE 分页导出记录
+            while (page.nextPage())
+            {
+                List<InBillVO> voList = this.inBillDAO.queryEntityVOsByCondition(condtion, page);
+
+                for (InBillVO each : voList)
+                {
+                    String typeName = DefinedCommon.getValue("inbillType", each.getType());
+                    String statusName = DefinedCommon.getValue("inbillStatus", each.getStatus());
+                    String pubCheckName = DefinedCommon.getValue("pubCheckStatus", each
+                        .getCheckStatus());
+
+                    write.writeLine("[" + each.getLogTime() + "]" + ',' + each.getId() + ','
+                                    + each.getBankName() + ',' + typeName + ',' + statusName + ','
+                                    + pubCheckName + ',' + MathTools.formatNum(each.getMoneys())
+                                    + ',' + MathTools.formatNum(each.getSrcMoneys()) + ','
+                                    + each.getCustomerName() + ',' + each.getOwnerName() + ","
+                                    + each.getStafferName() + ','
+                                    + StringTools.getExportString(each.getDescription()) + ','
+                                    + StringTools.getExportString(each.getChecks()));
+                }
+            }
+
+            write.close();
+
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * exportOutBill
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportOutBill(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        String filenName = "OUTBill_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            write.writeLine("日期,标识,帐户,类型,状态,核对,金额,原始金额,客户,职员,经手人,备注,核对");
+
+            ConditionParse condtion = JSONPageSeparateTools.getCondition(request, QUERYOUTBILL);
+
+            PageSeparate page = new PageSeparate(JSONPageSeparateTools.getPageSeparate(request,
+                QUERYOUTBILL));
+
+            page.reset2(page.getRowCount(), 1000);
+
+            while (page.nextPage())
+            {
+                List<OutBillVO> voList = this.outBillDAO.queryEntityVOsByCondition(condtion, page);
+
+                for (OutBillVO each : voList)
+                {
+                    String typeName = DefinedCommon.getValue("outbillType", each.getType());
+                    String statusName = DefinedCommon.getValue("outbillStatus", each.getStatus());
+                    String pubCheckName = DefinedCommon.getValue("pubCheckStatus", each
+                        .getCheckStatus());
+
+                    write.writeLine("[" + each.getLogTime() + "]" + ',' + each.getId() + ','
+                                    + each.getBankName() + ',' + typeName + ',' + statusName + ','
+                                    + pubCheckName + ',' + MathTools.formatNum(each.getMoneys())
+                                    + ',' + MathTools.formatNum(each.getSrcMoneys()) + ','
+                                    + each.getProvideName() + ',' + each.getOwnerName() + ","
+                                    + each.getStafferName() + ','
+                                    + StringTools.getExportString(each.getDescription()) + ','
+                                    + StringTools.getExportString(each.getChecks()));
+                }
+            }
+
+            write.close();
+
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
     }
 
     /**

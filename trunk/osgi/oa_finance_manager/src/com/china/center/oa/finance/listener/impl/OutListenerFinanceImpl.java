@@ -195,14 +195,14 @@ public class OutListenerFinanceImpl implements OutListener
             {
                 message = formatter
                     .format(
-                        "销售单总金额[%.2f],当前已经付款金额[%.2f],委托退货金额[%.2f],坏账金额[%.2f],退货金额[%.2f],没有完全付款",
+                        "销售单总金额[%.2f],当前已经收到的付款金额[%.2f],委托退货金额[%.2f],坏账金额[%.2f],退货金额[%.2f],没有完全结算",
                         bean.getTotal(), hasPay, balancePay, bean.getBadDebts(), refInOutTotal)
                     .toString();
             }
             else
             {
                 message = formatter.format(
-                    "销售单总金额[%.2f],当前已经付款金额[%.2f],坏账金额[%.2f],退货实物价值[%.2f],退货返还金额[%.2f],没有完全付款",
+                    "销售单总金额[%.2f],当前已经收到的付款金额[%.2f],坏账金额[%.2f],退货实物价值[%.2f],退货返还金额[%.2f],没有完全结算",
                     bean.getTotal(), hasPay, bean.getBadDebts(), refInOutTotal, hasdOut).toString();
             }
         }
@@ -210,7 +210,7 @@ public class OutListenerFinanceImpl implements OutListener
         {
             message = formatter
                 .format(
-                    "【销售单总金额[%.2f],退货返还金额[%.2f]】,当前已经付款金额[%.2f],坏账金额[%.2f],退货实物价值[%.2f],委托退货金额[%.2f],全部付款",
+                    "【销售单总金额[%.2f],退货返还金额[%.2f]】,当前已经收到的付款金额[%.2f],坏账金额[%.2f],退货实物价值[%.2f],委托退货金额[%.2f],全部结算",
                     bean.getTotal(), hasdOut, hasPay, bean.getBadDebts(), refInOutTotal, balancePay)
                 .toString();
         }

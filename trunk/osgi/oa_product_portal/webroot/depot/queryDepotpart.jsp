@@ -3,6 +3,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+<style type="text/css">
+.flexigrid div.fbutton .draw
+{
+    background: url(../css/flexigrid/images/get.png) no-repeat center left;
+}
+
+.flexigrid div.fbutton .odraw
+{
+    background: url(../css/flexigrid/images/oget.png) no-repeat center left;
+} 
+</style>
 <p:link title="仓区管理" link="true" guid="true" cal="true" dialog="true" />
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
@@ -38,6 +49,7 @@ function load()
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1104'},
              {id: 'update', bclass: 'update', onpress : updateBean, auth: '1104'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1104'},
+             {id: 'export2', bclass: 'odraw',  caption: '导出仓区库存(不含价格)', onpress : exports3},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
          <p:conf/>
@@ -78,6 +90,14 @@ function updateBean()
 	}
 	else
 	$error('不能操作');
+}
+
+function exports3()
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    document.location.href = '../depot/storage.do?method=exportStorageRelation3&depotartId=' + getRadioValue('checkb');
+    else
+    $error('不能操作');
 }
 
 function doSearch()

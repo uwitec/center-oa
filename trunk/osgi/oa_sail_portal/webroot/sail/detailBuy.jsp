@@ -192,7 +192,7 @@ function checkBean()
 					<tr class="content2">
 						<td align="right">经手人：</td>
 						<td><input type="text" name="stafferName" maxlength="14"
-							value="${user.stafferName}" readonly="readonly"></td>
+							value="${bean.stafferName}" readonly="readonly"></td>
 						<td align="right">单据标识：</td>
 						<td><input type="text" name="fullId" maxlength="40"
 							value="${bean.fullId}" readonly="readonly"></td>

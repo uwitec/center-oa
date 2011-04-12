@@ -197,6 +197,15 @@ function check()
             desList[i].focus();
             return false;
         }
+        
+        if (parseInt(trim(desList[i].value)) == 0)
+        {
+            if (!window.confirm('你确定产品入库成本为0?你确定产品入库成本为0?'))
+            {
+                 desList[i].focus();
+                 return false;
+            }
+        }
     }
     
     for (var i = 1; i < values.length; i++)

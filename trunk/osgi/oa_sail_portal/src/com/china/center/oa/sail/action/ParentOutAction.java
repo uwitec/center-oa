@@ -2886,7 +2886,7 @@ public class ParentOutAction extends DispatchAction
             condtion.addIntCondition("inway", "=", inway);
         }
 
-        condtion.addCondition("order by OutBean.id desc");
+        condtion.addCondition("order by OutBean.outTime desc");
 
         return condtion;
     }
@@ -3039,12 +3039,12 @@ public class ParentOutAction extends DispatchAction
 
         if ( !StringTools.isNullOrNone(changeTime))
         {
-            condtion.addCondition("OutBean.changeTime", ">=", changeTime);
+            condtion.addCondition("OutBean.changeTime", ">=", changeTime + " 00:00:00");
         }
 
         if ( !StringTools.isNullOrNone(changeTime1))
         {
-            condtion.addCondition("OutBean.changeTime", "<=", changeTime1);
+            condtion.addCondition("OutBean.changeTime", "<=", changeTime1 + " 23:59:59");
         }
 
         String id = request.getParameter("id");
@@ -3404,12 +3404,12 @@ public class ParentOutAction extends DispatchAction
 
         if ( !StringTools.isNullOrNone(changeTime))
         {
-            condtion.addCondition("OutBean.changeTime", ">=", changeTime);
+            condtion.addCondition("OutBean.changeTime", ">=", changeTime + " 00:00:00");
         }
 
         if ( !StringTools.isNullOrNone(changeTime1))
         {
-            condtion.addCondition("OutBean.changeTime", "<=", changeTime1);
+            condtion.addCondition("OutBean.changeTime", "<=", changeTime1 + " 23:59:59");
         }
 
         String id = request.getParameter("id");

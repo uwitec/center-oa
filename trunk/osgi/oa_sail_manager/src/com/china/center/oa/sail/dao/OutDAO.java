@@ -99,6 +99,8 @@ public interface OutDAO extends DAO<OutBean, OutVO>
 
     boolean modifyPay(String fullId, int pay);
 
+    boolean updatePay(String fullId, int pay);
+
     boolean modifyTempType(String fullId, int tempType);
 
     boolean mark(String fullId, boolean status);

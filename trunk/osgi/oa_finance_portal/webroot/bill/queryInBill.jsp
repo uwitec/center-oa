@@ -44,13 +44,14 @@ function load()
              {display: '时间', name : 'logTime', sortable : true, width : 'auto'}
              ],
          extAtt: {
-             id : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}' + checkStr + '>', end : '</a>'}
+             id : {begin : '<a title=点击查看明细 href=' + gurl + 'find' + ukey + '&id={id}' + checkStr + '>', end : '</a>'}
          },
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1603'},
              //{id: 'update', bclass: 'update', caption: '分拆预收', auth: '1603', onpress : splitInBill},
              {id: 'update2', bclass: 'update', caption: '总部核对', auth: '1803', onpress : updateInBillBeanChecks},
              {id: 'del', bclass: 'delete', auth: '1603', onpress : delBean},
+             {id: 'export', bclass: 'odraw',  caption: '导出查询结果', onpress : exports},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -125,6 +126,11 @@ function updateInBillBeanChecks2()
     }
     else
     $error('不能操作');
+}
+
+function exports()
+{
+    document.location.href = '../finance/bill.do?method=exportInBill';
 }
 
 function doSearch()

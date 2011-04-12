@@ -61,6 +61,7 @@ import com.china.center.oa.product.dao.StorageLogDAO;
 import com.china.center.oa.product.dao.StorageRelationDAO;
 import com.china.center.oa.product.facade.ProductFacade;
 import com.china.center.oa.product.manager.StorageRelationManager;
+import com.china.center.oa.product.vo.DepotpartVO;
 import com.china.center.oa.product.vo.StorageLogVO;
 import com.china.center.oa.product.vo.StorageRelationVO;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
@@ -1585,6 +1586,8 @@ public class StorageAction extends DispatchAction
     {
         OutputStream out = null;
 
+        // String depotartId = request.getParameter("depotartId");
+
         String filenName = "Product_" + TimeTools.now("MMddHHmmss") + ".csv";
 
         reponse.setContentType("application/x-dbf");
@@ -1633,6 +1636,109 @@ public class StorageAction extends DispatchAction
                     }
                 }
 
+            }
+
+            write.close();
+
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 导出仓区
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportStorageRelation3(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
+                                                HttpServletResponse reponse)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        String depotartId = request.getParameter("depotartId");
+
+        DepotpartVO depotpartBean = depotpartDAO.findVO(depotartId);
+
+        String filenName = "Product_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            write.writeLine("日期,仓库,仓区,仓区属性,产品名称,产品编码,产品数量");
+
+            String now = TimeTools.now("yyyy-MM-dd");
+
+            List<StorageRelationVO> list = storageRelationDAO
+                .queryStorageRelationWithoutPrice(depotpartBean.getLocationId());
+
+            for (StorageRelationVO each : list)
+            {
+                if (each.getAmount() > 0 && each.getDepotpartId().equals(depotartId))
+                {
+                    String typeName = DefinedCommon.getValue("depotpartType", each
+                        .getDepotpartType());
+
+                    write.writeLine(now
+                                    + ','
+                                    + depotpartBean.getLocationName()
+                                    + ','
+                                    + each.getDepotpartName()
+                                    + ','
+                                    + typeName
+                                    + ','
+                                    + each.getProductName().replaceAll(",", " ").replaceAll("\r\n",
+                                        "") + ',' + each.getProductCode() + ','
+                                    + String.valueOf(each.getTotal()));
+                }
             }
 
             write.close();

@@ -332,6 +332,16 @@ public class StringTools
         return format(format, args).toString() + LINE_SPLIT;
     }
 
+    public static String getExportString(String str)
+    {
+        if (str == null)
+        {
+            return "";
+        }
+
+        return str.replaceAll(",", ";").replaceAll("\r\n", "");
+    }
+
     /**
      * Filter the specified string for characters that are sensitive to HTML interpreters, returning the string with
      * these characters replaced by the corresponding character entities.
