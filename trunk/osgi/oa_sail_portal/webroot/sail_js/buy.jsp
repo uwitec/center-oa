@@ -198,13 +198,11 @@ function check()
             return false;
         }
         
-        if (parseInt(trim(desList[i].value)) == 0)
+        if (parseFloat(trim(desList[i].value)) == 0)
         {
-            if (!window.confirm('你确定产品入库成本为0?你确定产品入库成本为0?'))
-            {
-                 desList[i].focus();
-                 return false;
-            }
+            alert('入库成本价格不能为0!');
+            desList[i].focus();
+            return false;
         }
     }
     

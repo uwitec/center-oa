@@ -79,27 +79,91 @@ function addBean()
 				</td>
 			</tr>
 			
-			<tr class="content1">
-                <td colspan="2" align="left">
-                 退货仓库：${bean.dirDepotName}
-                </td>
-            </tr>
-			
-			<tr class="content2">
-                <td colspan="2" align="left">
-                 备注：${bean.description}
-                </td>
-            </tr>
-            
-            <tr class="content1">
-                <td colspan="2" align="left">
-                 审批意见：${bean.reason}
-                </td>
-            </tr>
 		</table>
 
 		</td>
 	</tr>
+	
+	<tr>
+        <td height="10" colspan='2'></td>
+    </tr>
+	
+	<tr>
+        <td colspan='2' align='center'>
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" id="mainTable"
+            class="border">
+            <tr>
+                <td>
+                <table width="100%" border="0" cellspacing='1'>
+                    <tr class="content1">
+                        <td width="15%" align="right">退货仓库：</td>
+
+                        <td width="35%">${bean.dirDepotName}</td>
+
+                            <td width="15%" align="right">状态：</td>
+                            <td width="35%">${my:get('outBalanceStatus', bean.status)}</td>
+                    </tr>
+                    
+                    <tr class="content2">
+                        <td width="15%" align="right">备注：</td>
+
+                        <td width="35%">${bean.description}</td>
+                        <td width="15%" align="right">审批意见：</td>
+                        <td width="35%">${bean.reason}</td>
+                    </tr>
+
+                </table>
+                </td>
+            </tr>
+        </table>
+
+        </td>
+    </tr>
+    
+    <tr>
+        <td height="10" colspan='2'></td>
+    </tr>
+	
+	<tr>
+        <td colspan='2' align='center'>
+        <div id="desc1" style="display: block;">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0"
+            class="border">
+            <tr>
+                <td>
+                <table width="100%" border="0" cellspacing='1' id="tables">
+                    <tr align="center" class="content0">
+                        <td width="10%" align="center">审批人</td>
+                        <td width="10%" align="center">审批动作</td>
+                        <td width="10%" align="center">前状态</td>
+                        <td width="10%" align="center">后状态</td>
+                        <td width="45%" align="center">意见</td>
+                        <td width="15%" align="center">时间</td>
+                    </tr>
+
+                    <c:forEach items="${logList}" var="item" varStatus="vs">
+                        <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
+                            <td align="center">${item.actor}</td>
+
+                            <td  align="center">${my:get('oprMode', item.oprMode)}</td>
+
+                            <td  align="center">${my:get('outBalanceStatus', item.preStatus)}</td>
+
+                            <td  align="center">${my:get('outBalanceStatus', item.afterStatus)}</td>
+
+                            <td  align="center">${item.description}</td>
+
+                            <td  align="center">${item.logTime}</td>
+
+                        </tr>
+                    </c:forEach>
+                </table>
+                </td>
+            </tr>
+        </table>
+        </div>
+        </td>
+    </tr>
 
 	<p:line flag="1" />
 

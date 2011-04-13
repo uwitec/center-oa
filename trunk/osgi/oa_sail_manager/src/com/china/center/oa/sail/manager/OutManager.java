@@ -163,6 +163,17 @@ public interface OutManager extends ListenerManager<OutListener>
         throws MYException;
 
     /**
+     * passOutBalance
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean passOutBalanceToDepot(final User user, String id)
+        throws MYException;
+
+    /**
      * deleteOutBalance
      * 
      * @param user

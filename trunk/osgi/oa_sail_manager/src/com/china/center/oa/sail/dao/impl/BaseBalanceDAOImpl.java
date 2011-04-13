@@ -14,7 +14,6 @@ import java.util.List;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.sail.bean.BaseBalanceBean;
-import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.dao.BaseBalanceDAO;
 import com.china.center.oa.sail.vo.BaseBalanceVO;
 
@@ -36,7 +35,7 @@ public class BaseBalanceDAOImpl extends BaseDAO<BaseBalanceBean, BaseBalanceVO> 
 
         condition.addCondition("BaseBalanceBean.baseId", "=", id);
 
-        condition.addIntCondition("OutBalanceBean.status", "=", OutConstant.OUTBALANCE_STATUS_PASS);
+        condition.addCondition("and OutBalanceBean.status in (1, 99)");
 
         return queryEntityVOsByCondition(condition);
     }

@@ -2520,19 +2520,34 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         outBalanceDAO.updateEntityBean(bean);
 
-        OutBean out = outDAO.find(bean.getOutId());
+        addOutLog2(id, user, OutConstant.OUTBALANCE_STATUS_SUBMIT, "结算中心通过",
+            SailConstant.OPR_OUT_PASS, OutConstant.OUTBALANCE_STATUS_PASS);
 
-        if (out == null)
-        {
-            throw new MYException("数据错误,请确认操作");
-        }
+        notifyManager.notifyMessage(bean.getStafferId(), bean.getOutId() + "的结算清单已经被["
+                                                         + user.getStafferName() + "]通过");
+
+        return true;
+    }
+
+    @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean passOutBalanceToDepot(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        OutBalanceBean bean = checkBalancePassToDepot(id);
+
+        bean.setStatus(OutConstant.OUTBALANCE_STATUS_END);
+
+        outBalanceDAO.updateEntityBean(bean);
 
         boolean useDefaultDepotpart = true;
 
         DepotpartBean defaultOKDepotpart = null;
 
         if (bean.getType() == OutConstant.OUTBALANCE_TYPE_BACK
-            && !out.getLocation().equals(bean.getDirDepot()))
+            && !StringTools.isNullOrNone(bean.getDirDepot()))
         {
             useDefaultDepotpart = false;
 
@@ -2542,6 +2557,10 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             {
                 throw new MYException("默认仓区不存在,请确认操作");
             }
+        }
+        else
+        {
+            throw new MYException("不是退货单或者没有选择退货的的仓库,请确认操作");
         }
 
         List<BaseBalanceBean> baseList = baseBalanceDAO.queryEntityBeansByFK(id);
@@ -2591,8 +2610,11 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
         }
 
+        addOutLog2(id, user, OutConstant.OUTBALANCE_STATUS_PASS, "库管通过", SailConstant.OPR_OUT_PASS,
+            OutConstant.OUTBALANCE_STATUS_END);
+
         notifyManager.notifyMessage(bean.getStafferId(), bean.getOutId() + "的结算清单已经被["
-                                                         + user.getStafferName() + "]通过");
+                                                         + user.getStafferName() + "]退库通过");
 
         return true;
     }
@@ -2684,6 +2706,31 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         return bean;
     }
 
+    private OutBalanceBean checkBalancePassToDepot(String id)
+        throws MYException
+    {
+        OutBalanceBean bean = outBalanceDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bean.getStatus() != OutConstant.OUTBALANCE_STATUS_PASS)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bean.getType() != OutConstant.OUTBALANCE_TYPE_BACK)
+        {
+            throw new MYException("只能是退货单入库,请确认操作");
+        }
+
+        checkBalanceOver(id);
+
+        return bean;
+    }
+
     private void checkBalanceOver(String id)
         throws MYException
     {
@@ -2701,7 +2748,10 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
             for (BaseBalanceBean pss : hasPassBaseList)
             {
-                total += pss.getAmount();
+                if ( !pss.getId().equals(baseBalanceBean.getId()))
+                {
+                    total += pss.getAmount();
+                }
             }
 
             if (total > baseBean.getAmount())
@@ -2725,16 +2775,32 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             throw new MYException("数据错误,请确认操作");
         }
 
-        if (bean.getStatus() != OutConstant.OUTBALANCE_STATUS_SUBMIT)
+        if (bean.getType() == OutConstant.OUTBALANCE_TYPE_SAIL)
         {
-            throw new MYException("数据错误,请确认操作");
+            if (bean.getStatus() != OutConstant.OUTBALANCE_STATUS_SUBMIT)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
         }
+        else
+        {
+            if (bean.getStatus() != OutConstant.OUTBALANCE_STATUS_SUBMIT
+                && bean.getStatus() != OutConstant.OUTBALANCE_STATUS_PASS)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+        }
+
+        int old = bean.getStatus();
 
         bean.setStatus(OutConstant.OUTBALANCE_STATUS_REJECT);
 
         bean.setReason(reason);
 
         outBalanceDAO.updateEntityBean(bean);
+
+        addOutLog2(id, user, old, "驳回", SailConstant.OPR_OUT_REJECT,
+            OutConstant.OUTBALANCE_STATUS_REJECT);
 
         notifyManager.notifyMessage(bean.getStafferId(), bean.getOutId() + "的结算清单已经被["
                                                          + user.getStafferName() + "]驳回");
@@ -3058,6 +3124,25 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         log.setLogTime(TimeTools.now());
 
         log.setPreStatus(outBean.getStatus());
+
+        log.setAfterStatus(astatus);
+
+        flowLogDAO.saveEntityBean(log);
+    }
+
+    private void addOutLog2(final String fullId, final User user, final int preStatus, String des,
+                            int mode, int astatus)
+    {
+        FlowLogBean log = new FlowLogBean();
+
+        log.setActor(user.getStafferName());
+
+        log.setDescription(des);
+        log.setFullId(fullId);
+        log.setOprMode(mode);
+        log.setLogTime(TimeTools.now());
+
+        log.setPreStatus(preStatus);
 
         log.setAfterStatus(astatus);
 

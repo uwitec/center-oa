@@ -163,6 +163,22 @@ function pass()
     }
 }
 
+function passToDepot()
+{
+    if (getRadio('fullId').statuss == 1 && window.confirm("确定通过结算清单,且接受货品入库?"))
+    {
+        getObj('method').value = 'passOutBalanceToDepot';
+        
+        getObj('id').value = getRadioValue("fullId");
+        
+        adminForm.submit();
+    }
+    else
+    {
+        alert('不能操作');
+    }
+}
+
 function del()
 {
     if (getRadio('fullId').statuss == 2 && window.confirm("确定删除结算清单?"))
@@ -206,7 +222,7 @@ function refBill()
 
 <p:navigation
     height="22">
-    <td width="550" class="navigation">销售管理 &gt;&gt; 我的结算清单</td>
+    <td width="550" class="navigation">销售管理 &gt;&gt; 我的结算清单${queryType}</td>
                 <td width="85"></td>
 </p:navigation> <br>
 
@@ -367,6 +383,15 @@ function refBill()
 			type="button" class="button_class"
 			value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;" onclick="reject()" />&nbsp;&nbsp;
 		</c:if>
+		
+		<c:if test="${queryType == '3'}">
+        <input
+            type="button" class="button_class"
+            value="&nbsp;&nbsp;通过入库&nbsp;&nbsp;" onclick="passToDepot()" />&nbsp;&nbsp; 
+            <input
+            type="button" class="button_class"
+            value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;" onclick="reject()" />&nbsp;&nbsp;
+        </c:if>
 		</div>
 		
 		</td>

@@ -63,6 +63,7 @@ import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.AuthBean;
 import com.china.center.oa.publics.bean.DepartmentBean;
 import com.china.center.oa.publics.bean.DutyBean;
+import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.InvoiceCreditBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
@@ -348,6 +349,10 @@ public class ParentOutAction extends DispatchAction
 
             baseBean.setShowName(MathTools.formatNum(bbb.getSailPrice()));
         }
+
+        List<FlowLogBean> logs = flowLogDAO.queryEntityBeansByFK(id);
+
+        request.setAttribute("logList", logs);
 
         request.setAttribute("baseList", baseList);
 
@@ -2318,6 +2323,12 @@ public class ParentOutAction extends DispatchAction
         {
             throw new MYException("用户没有此操作的权限");
         }
+
+        if ("3".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.BUY_SUBMIT))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
     }
 
     /**
@@ -2977,6 +2988,24 @@ public class ParentOutAction extends DispatchAction
                 request.setAttribute("status", OutConstant.OUTBALANCE_STATUS_SUBMIT);
             }
         }
+        // 查询退货的
+        else if ("3".equals(queryType))
+        {
+            if (OldPageSeparateTools.isMenuLoad(request))
+            {
+                condtion.addIntCondition("OutBalanceBean.status", "=",
+                    OutConstant.OUTBALANCE_STATUS_PASS);
+
+                request.setAttribute("status", OutConstant.OUTBALANCE_STATUS_PASS);
+            }
+
+            condtion.addIntCondition("OutBalanceBean.type", "=", OutConstant.OUTBALANCE_TYPE_BACK);
+
+            request.setAttribute("type", OutConstant.OUTBALANCE_TYPE_BACK);
+
+            // 库存所管辖的
+            setDepotCondotionInOutBlance(user, condtion);
+        }
         else
         {
             condtion.addFlaseCondition();
@@ -3608,6 +3637,50 @@ public class ParentOutAction extends DispatchAction
                     sb.append("OutBean.destinationId = '" + authBean.getId() + "'");
                 }
 
+            }
+
+            sb.append(") ");
+
+            condtion.addCondition(sb.toString());
+        }
+    }
+
+    /**
+     * setDepotCondotionInOutBlance
+     * 
+     * @param user
+     * @param condtion
+     */
+    protected void setDepotCondotionInOutBlance(User user, ConditionParse condtion)
+    {
+        // 只能看到自己的仓库
+        List<AuthBean> depotAuthList = userManager.queryExpandAuthById(user.getId(),
+            AuthConstant.EXPAND_AUTH_DEPOT);
+
+        if (ListTools.isEmptyOrNull(depotAuthList))
+        {
+            // 永远也没有结果
+            condtion.addFlaseCondition();
+        }
+        else
+        {
+            StringBuffer sb = new StringBuffer();
+
+            sb.append("and (");
+
+            for (Iterator iterator = depotAuthList.iterator(); iterator.hasNext();)
+            {
+                AuthBean authBean = (AuthBean)iterator.next();
+
+                // 接受仓库是自己管辖的
+                if (iterator.hasNext())
+                {
+                    sb.append("OutBalanceBean.dirDepot = '" + authBean.getId() + "' or ");
+                }
+                else
+                {
+                    sb.append("OutBalanceBean.dirDepot = '" + authBean.getId() + "'");
+                }
             }
 
             sb.append(") ");

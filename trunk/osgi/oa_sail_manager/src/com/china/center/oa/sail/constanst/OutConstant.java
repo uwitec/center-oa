@@ -291,6 +291,12 @@ public interface OutConstant
     int OUTBALANCE_STATUS_PASS = 1;
 
     /**
+     * 库管通过
+     */
+    @Defined(key = "outBalanceStatus", value = "库管通过")
+    int OUTBALANCE_STATUS_END = 99;
+
+    /**
      * 驳回
      */
     @Defined(key = "outBalanceStatus", value = "驳回")

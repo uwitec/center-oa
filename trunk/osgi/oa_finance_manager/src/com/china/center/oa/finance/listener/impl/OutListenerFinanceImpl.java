@@ -148,7 +148,7 @@ public class OutListenerFinanceImpl implements OutListener
 
             condition.addIntCondition("OutBalanceBean.type", "=", OutConstant.OUTBALANCE_TYPE_BACK);
             condition.addIntCondition("OutBalanceBean.status", "=",
-                OutConstant.OUTBALANCE_STATUS_PASS);
+                OutConstant.OUTBALANCE_STATUS_END);
 
             List<OutBalanceBean> balanceList = outBalanceDAO.queryEntityBeansByCondition(condition);
 

@@ -38,6 +38,7 @@ import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.InvoiceConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.constant.PublicLock;
@@ -502,12 +503,58 @@ public class OutAction extends ParentOutAction
 
         User user = (User)request.getSession().getAttribute("user");
 
+        try
+        {
+            outManager.passOutBalance(user, id);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+        }
+
+        RequestTools.actionInitQuery(request);
+
+        request.setAttribute("queryType", "2");
+
+        return queryOutBalance(mapping, form, request, reponse);
+    }
+
+    /**
+     * passOutBalanceToDepot
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward passOutBalanceToDepot(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
+                                               HttpServletResponse reponse)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        User user = (User)request.getSession().getAttribute("user");
+
+        if ( !userManager.containAuth(user.getId(), AuthConstant.BUY_SUBMIT))
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "没有权限操作");
+
+            return mapping.findForward("error");
+        }
+
         // LOCK 委托代销结算单通过(退库)
         synchronized (PublicLock.PRODUCT_CORE)
         {
             try
             {
-                outManager.passOutBalance(user, id);
+                outManager.passOutBalanceToDepot(user, id);
 
                 request.setAttribute(KeyConstant.MESSAGE, "成功操作");
             }
@@ -521,7 +568,7 @@ public class OutAction extends ParentOutAction
 
         RequestTools.actionInitQuery(request);
 
-        request.setAttribute("queryType", "2");
+        request.setAttribute("queryType", "3");
 
         return queryOutBalance(mapping, form, request, reponse);
     }
@@ -1818,7 +1865,8 @@ public class OutAction extends ParentOutAction
                 {
                     OutBalanceBean outBalanceBean = (OutBalanceBean)iterator.next();
 
-                    if (outBalanceBean.getStatus() != OutConstant.OUTBALANCE_STATUS_PASS)
+                    if (outBalanceBean.getStatus() != OutConstant.OUTBALANCE_STATUS_PASS
+                        && outBalanceBean.getStatus() != OutConstant.OUTBALANCE_STATUS_END)
                     {
                         iterator.remove();
                     }

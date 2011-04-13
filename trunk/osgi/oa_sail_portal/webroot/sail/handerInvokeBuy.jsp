@@ -95,6 +95,12 @@ function invokeOther()
         return false;
     }
     
+    if ($$('otherLocation') == '')
+    {
+        alert('请选择转调的仓库');
+        return false;
+    }
+    
     if ($$('otherLocation') == '${bean.destinationId}')
     {
         alert('调入仓库就是本仓库');
