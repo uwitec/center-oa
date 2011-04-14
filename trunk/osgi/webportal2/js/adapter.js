@@ -178,7 +178,7 @@ function $ESC(id)
         //防止body.onmouseup已经绑定
         if (document.body.onkeydown == null)
         {
-            var event = getEvent();
+            var event = window.common.getEvent();
             
             if (event.keyCode == 27)
             {
