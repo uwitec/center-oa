@@ -133,6 +133,14 @@ function showDiv(id)
 
 function load()
 {
+    //index="${radioIndex}"
+    var ll = document.getElementsByName('fullId');
+    
+    for (var i = 0 ; i < ll.length; i++)
+    {
+        ll[i].index = $$('radioIndex');
+    }
+    
 	loadForm();
 	tooltip.init();
 	
@@ -285,6 +293,32 @@ function reject()
     }
 }
 
+//选择自动联想radio
+function hrefAndSelect(obj)
+{
+    //$Set(radio, obj.indexs);
+    var tr = getTrObject(obj);
+
+    if (tr != null)
+    {
+        var rad = tr.getElementsByTagName('input');
+
+        for (i = 0; i < rad.length; i++)
+        {
+            if (rad[i].type.toLowerCase() == 'checkbox')
+            {
+                rad[i].checked = !rad[i].checked;
+            }
+            
+            if (rad[i].type.toLowerCase() == 'radio')
+            {
+                rad[i].checked = true;
+            }
+        }
+    }
+    
+    getObj('radioIndex').value = $Index('fullId');
+}
 
 </script>
 
@@ -301,7 +335,7 @@ function reject()
 	name="outId">
 <input type="hidden" value="" name="oldStatus">
 <input type="hidden" value="" name="statuss">
-<input type="hidden" value="" name="radioIndex">
+<input type="hidden" value="${radioIndex}" name="radioIndex">
 <input type="hidden" value="" name="reason">
 
 <c:set var="fg" value='入库'/>
@@ -474,11 +508,10 @@ function reject()
                         </c:if>
 						<tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'
 						>
-							<td align="center"><input type="radio" name="fullId" 
+							<td align="center"><input type="radio" name="fullId" onclick="hrefAndSelect(this)"
 							   temptype="${item.tempType}"
 							   inway="${item.inway}"
 							   hasmap="${hasMap[item.fullId]}"
-							   index="${radioIndex}"
 							   con="${item.consign}"
 							   outtype="${item.outType}"
 							   pay="${item.reserve3}"

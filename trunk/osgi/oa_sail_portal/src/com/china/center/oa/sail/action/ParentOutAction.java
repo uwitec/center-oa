@@ -245,7 +245,16 @@ public class ParentOutAction extends DispatchAction
 
         String flag = request.getParameter("flag");
 
-        innerForPrepare(request);
+        try
+        {
+            innerForPrepare(request, true);
+        }
+        catch (MYException e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+            return mapping.findForward("error");
+        }
 
         // 增加入库单
         if ("1".equals(flag))
@@ -366,8 +375,10 @@ public class ParentOutAction extends DispatchAction
      * innerForPrepare(准备库单的维护)
      * 
      * @param request
+     * @throws MYException
      */
-    protected void innerForPrepare(HttpServletRequest request)
+    protected void innerForPrepare(HttpServletRequest request, boolean check)
+        throws MYException
     {
         String flag = RequestTools.getValueFromRequest(request, "flag");
 
@@ -491,6 +502,14 @@ public class ParentOutAction extends DispatchAction
         request.setAttribute("showJSON", shows.toString());
 
         StafferBean staffer = stafferDAO.find(user.getStafferId());
+
+        if (check)
+        {
+            if (StringTools.isNullOrNone(staffer.getIndustryId()))
+            {
+                throw new MYException("您没有事业部属性,不能开单");
+            }
+        }
 
         request.setAttribute("staffer", staffer);
     }
@@ -735,6 +754,7 @@ public class ParentOutAction extends DispatchAction
             ws.addCell(new Label(j++ , i, "单据号码", format));
             ws.addCell(new Label(j++ , i, "类型", format));
             ws.addCell(new Label(j++ , i, "回款日期", format));
+            ws.addCell(new Label(j++ , i, "到货日期", format));
             ws.addCell(new Label(j++ , i, "状态", format));
             ws.addCell(new Label(j++ , i, "经办人", format));
             ws.addCell(new Label(j++ , i, "仓库", format));
@@ -800,6 +820,8 @@ public class ParentOutAction extends DispatchAction
                     ws.addCell(new Label(j++ , i, OutHelper.getOutType(element)));
 
                     ws.addCell(new Label(j++ , i, element.getRedate()));
+
+                    ws.addCell(new Label(j++ , i, element.getArriveDate()));
 
                     ws.addCell(new Label(j++ , i, OutHelper.getStatus(element.getStatus(), false)));
 
@@ -2795,7 +2817,7 @@ public class ParentOutAction extends DispatchAction
             condtion.addIntCondition("OutBean.tempType", "=", tempType);
         }
 
-        condtion.addCondition("order by OutBean.id desc");
+        condtion.addCondition("order by OutBean.outTime desc");
 
         return condtion;
     }
@@ -3325,7 +3347,7 @@ public class ParentOutAction extends DispatchAction
 
         if ( !condtion.containOrder())
         {
-            condtion.addCondition("order by OutBean.id desc");
+            condtion.addCondition("order by OutBean.outTime desc");
         }
 
         return condtion;
@@ -3595,7 +3617,7 @@ public class ParentOutAction extends DispatchAction
 
         if ( !condtion.containOrder())
         {
-            condtion.addCondition("order by OutBean.id desc");
+            condtion.addCondition("order by OutBean.outTime desc");
         }
 
         return condtion;

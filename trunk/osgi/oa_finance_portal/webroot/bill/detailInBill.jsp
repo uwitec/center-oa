@@ -104,6 +104,10 @@ function pagePrint()
             <p:cell title="时间" end="true">
                ${bean.logTime}
             </p:cell>
+            
+            <p:cell title="回款备注" end="true">
+               ${bean.paymentDes}
+            </p:cell>
 
 			<p:cell title="备注" end="true">
                ${bean.description}

@@ -37,6 +37,9 @@ public class InBillVO extends InBillBean
     @Relationship(relationField = "ownerId")
     private String ownerName = "";
 
+    @Relationship(relationField = "paymentId", tagField = "description")
+    private String paymentDes = "";
+
     /**
      * default constructor
      */
@@ -142,6 +145,23 @@ public class InBillVO extends InBillBean
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the paymentDes
+     */
+    public String getPaymentDes()
+    {
+        return paymentDes;
+    }
+
+    /**
+     * @param paymentDes
+     *            the paymentDes to set
+     */
+    public void setPaymentDes(String paymentDes)
+    {
+        this.paymentDes = paymentDes;
     }
 
 }

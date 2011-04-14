@@ -13,6 +13,7 @@
 <script src="../js/jquery/jquery.js"></script>
 <script src="../js/plugin/dialog/jquery.dialog.js"></script>
 <script src="../js/plugin/highlight/jquery.highlight.js"></script>
+<script src="../js/adapter.js"></script>
 <script language="javascript">
 function detail()
 {
@@ -153,6 +154,8 @@ function load()
                     }
                 }
      });
+     
+     $ESC('dlg');
 }
 
 function payOut()
@@ -323,22 +326,92 @@ function check()
             hi = "注意:当前业务员下有超期的销售单  ";
         }
         
+        $.messager.prompt('通过', '请输入意见', '同意', function(r){
+                    if (r)
+                    {
+                        $Dbuttons(true);
+                        
+                        getObj('method').value = 'modifyOutStatus';
+    
+                        getObj('statuss').value = nextStatusMap[queryType];
+                        
+                        getObj('oldStatus').value = getRadio('fullId').statuss;
+            
+                        getObj('outId').value = getRadioValue("fullId");
+            
+                        getObj('radioIndex').value = $Index('fullId');
+            
+                        var sss = r;
+            
+                        getObj('reason').value = r;
+            
+                        if (!(sss == null || sss == ''))
+                        {
+                            adminForm.submit();
+                        }
+                        else
+                        {
+                            $Dbuttons(false);
+                        }
+                    }
+                   
+                });
+    }
+    else
+    {
+        alert('不可以操作!');
+    }
+}
+
+
+function centerSubmit()
+{
+    getObj('method').value = 'modifyOutStatus';
+
+    getObj('statuss').value = 2;
+    
+    getObj('oldStatus').value = getRadio('fullId').statuss;
+
+    getObj('outId').value = getRadioValue("fullId");
+
+    getObj('radioIndex').value = $Index('fullId');
+
+    getObj('reason').value = $$('passReason');
+    
+    if (getObj('reason').value == '')
+    {
+        alert('请输入驳回意见');
+        return false;
+    }
+    
+    $Dbuttons(true);
+    
+    $('#dlg').dialog({closed:true});
+
+    adminForm.submit();
+}
+
+function rchange()
+{
+    $('#passReason').val($$('reasonRadio'));
+}
+
+function reject()
+{
+    if (getRadio('fullId').statuss == oldStatusMap[queryType])
+    {
         if (getRadio('fullId').statuss != 1)
         {
-	         $.messager.prompt('通过', '请输入意见', '同意', function(r){
+	        $.messager.prompt('驳回', '请输入驳回原因', '', function(r){
 	                if (r)
 	                {
 	                    $Dbuttons(true);
-	                    
 	                    getObj('method').value = 'modifyOutStatus';
-	
-			            getObj('statuss').value = nextStatusMap[queryType];
-			            
-			            getObj('oldStatus').value = getRadio('fullId').statuss;
-			
-			            getObj('outId').value = getRadioValue("fullId");
-			
-			            getObj('radioIndex').value = $Index('fullId');
+	                    getObj('statuss').value = '2';
+	                    getObj('oldStatus').value = getRadio('fullId').statuss;
+	                    getObj('outId').value = getRadioValue("fullId");
+	        
+	                    getObj('radioIndex').value = $Index('fullId');
 	        
 	                    var sss = r;
 	        
@@ -355,75 +428,11 @@ function check()
 	                }
 	               
 	            });
-           }
-           else
-           {
-               $('#dlg').dialog({closed:false}); 
-           }
-    }
-    else
-    {
-        alert('不可以操作!');
-    }
-}
-
-
-function centerSubmit()
-{
-    $Dbuttons(true);
-                        
-    getObj('method').value = 'modifyOutStatus';
-
-    getObj('statuss').value = nextStatusMap[queryType];
-    
-    getObj('oldStatus').value = getRadio('fullId').statuss;
-
-    getObj('outId').value = getRadioValue("fullId");
-
-    getObj('radioIndex').value = $Index('fullId');
-
-    getObj('reason').value = $$('passReason');
-    
-    $('#dlg').dialog({closed:true});
-
-    adminForm.submit();
-}
-
-function rchange()
-{
-    $('#passReason').val($$('reasonRadio'));
-}
-
-function reject()
-{
-    if (getRadio('fullId').statuss == oldStatusMap[queryType])
-    {
-        $.messager.prompt('驳回', '请输入驳回原因', '', function(r){
-                if (r)
-                {
-                    $Dbuttons(true);
-                    getObj('method').value = 'modifyOutStatus';
-                    getObj('statuss').value = '2';
-                    getObj('oldStatus').value = getRadio('fullId').statuss;
-                    getObj('outId').value = getRadioValue("fullId");
-        
-                    getObj('radioIndex').value = $Index('fullId');
-        
-                    var sss = r;
-        
-                    getObj('reason').value = r;
-        
-                    if (!(sss == null || sss == ''))
-                    {
-                        adminForm.submit();
-                    }
-                    else
-                    {
-                        $Dbuttons(false);
-                    }
-                }
-               
-            });
+          }
+          else
+          {
+              $('#dlg').dialog({closed:false});   
+          }
     }
     else
     {
@@ -848,14 +857,14 @@ function swatchToSail()
 </table>
 
 </form>
-<div id="dlg" title="结算中心通过" style="width:320px;height:300px">
+<div id="dlg" title="结算中心驳回" style="width:320px;height:300px">
     <div style="padding:20px;height:200px;" id="dia_inner" title="">
-    意见：<input type="text" name="passReason" id="passReason" value="同意"><br>
+    意见：<input type="text" name="passReason" id="passReason" value=""><br>
     <input type="radio" name="reasonRadio" value="批价错误" onclick="rchange()">批价错误<br>
     <input type="radio" name="reasonRadio" value="帐期错误" onclick="rchange()">帐期错误<br>
     <input type="radio" name="reasonRadio" value="品名错误" onclick="rchange()">品名错误<br>
     <input type="radio" name="reasonRadio" value="黑名单人员" onclick="rchange()">黑名单人员<br>
-    <input type="radio" name="reasonRadio" value="同意" onclick="rchange()">同意<br>
+    <input type="radio" name="reasonRadio" value="金质产品需要先款后货" onclick="rchange()">金质产品需要先款后货<br>
    </div>
 </div>
 </body>

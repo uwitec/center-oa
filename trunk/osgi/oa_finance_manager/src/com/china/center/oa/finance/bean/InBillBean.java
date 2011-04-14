@@ -101,6 +101,7 @@ public class InBillBean implements Serializable
 
     private String refBillId = "";
 
+    @Join(tagClass = PaymentBean.class, type = JoinType.LEFT)
     private String paymentId = "";
 
     private String logTime = "";

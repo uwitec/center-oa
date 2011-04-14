@@ -85,7 +85,8 @@ function load()
 									height="6"></td>
 								<td class="caption"><strong>销售单:<font color=red>${hasOver}</font> 您信用还剩:${credit}</strong>
 								<font color="blue">产品仓库：</font>
-								<select name="location" class="select_class" values="${currentLocationId}" onchange="clearsAll()">
+								<select name="location" class="select_class" oncheck="notNone" onchange="clearsAll()">
+								    <option value="">--</option>
 									<c:forEach items='${locationList}' var="item">
 										<option value="${item.id}">${item.name}</option>
 									</c:forEach>
@@ -191,7 +192,8 @@ function load()
                         <font color="#FF0000">*</font></td>
                         <td align="right">纳税实体：</td>
                         <td colspan="1">
-                        <select name="dutyId" class="select_class" style="width: 240px" onchange="loadShow()">
+                        <select name="dutyId" class="select_class" style="width: 240px" oncheck="notNone;" onchange="loadShow()">
+                            <option value="">--</option>
                             <c:forEach items="${dutyList}" var="item">
                             <option value="${item.id}">${item.name}</option>
                             </c:forEach>

@@ -700,8 +700,6 @@ public class OutAction extends ParentOutAction
 
         CommonTools.saveParamers(request);
 
-        RequestTools.actionInitQuery(request);
-
         if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
             return queryOut(mapping, form, request, reponse);
@@ -1621,7 +1619,13 @@ public class OutAction extends ParentOutAction
             request.setAttribute("flag", "1");
         }
 
-        innerForPrepare(request);
+        try
+        {
+            innerForPrepare(request, false);
+        }
+        catch (MYException e)
+        {
+        }
 
         if ("1".equals(fow))
         {

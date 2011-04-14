@@ -435,7 +435,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         PaymentBean payment = paymentDAO.find(apply.getPaymentId());
 
         // CORE 生成收款单,更新销售单和委托清单付款状态
-        createInbill(user, apply, payment);
+        createInbill(user, apply, payment, reason);
 
         // 更新回款单的状态和使用金额
         updatePayment(apply);
@@ -453,7 +453,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
      * @param payment
      * @throws MYException
      */
-    private void createInbill(User user, PaymentApplyBean apply, PaymentBean payment)
+    private void createInbill(User user, PaymentApplyBean apply, PaymentBean payment, String reason)
         throws MYException
     {
         List<PaymentVSOutBean> vsList = apply.getVsList();
@@ -469,7 +469,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
             if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_PAYMENT)
             {
                 // 回款转收款通过,增加收款单
-                saveBillInner(user, apply, payment, item);
+                saveBillInner(user, apply, payment, item, reason);
             }
             else
             {
@@ -496,13 +496,17 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
                 if ( !StringTools.isNullOrNone(outBean.getChecks()))
                 {
                     bill.setDescription(bill.getDescription() + "<br>销售单核对信息:"
-                                        + outBean.getChecks());
+                                        + outBean.getChecks() + "<br>审批意见:" + reason);
                 }
 
                 if (bill.getCheckStatus() == PublicConstant.CHECK_STATUS_END)
                 {
                     bill.setDescription(bill.getDescription() + "<br>与销售单关联付款所以重置核对状态,原核对信息:"
-                                        + bill.getChecks());
+                                        + bill.getChecks() + "<br>审批意见:" + reason);
+                }
+                else
+                {
+                    bill.setDescription(bill.getDescription() + "<br>审批意见:" + reason);
                 }
 
                 if (BillHelper.isPreInBill(bill))
@@ -595,7 +599,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
     }
 
     private void saveBillInner(User user, PaymentApplyBean apply, PaymentBean payment,
-                               PaymentVSOutBean item)
+                               PaymentVSOutBean item, String reason)
     {
         InBillBean inBean = new InBillBean();
 
@@ -617,13 +621,14 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         {
             inBean.setStatus(FinanceConstant.INBILL_STATUS_NOREF);
 
-            inBean.setDescription("自动生成预收收款单,从回款单:" + payment.getId() + ",未关联销售单:");
+            inBean.setDescription("自动生成预收收款单,从回款单:" + payment.getId() + ",未关联销售单.审批意见:" + reason);
         }
         else
         {
             inBean.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
 
-            inBean.setDescription("自动生成收款单,从回款单:" + payment.getId() + ",关联的销售单:" + item.getOutId());
+            inBean.setDescription("自动生成收款单,从回款单:" + payment.getId() + ",关联的销售单:" + item.getOutId()
+                                  + ".审批意见:" + reason);
         }
 
         inBean.setOutId(item.getOutId());
