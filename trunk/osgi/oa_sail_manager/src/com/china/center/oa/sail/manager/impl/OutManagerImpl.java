@@ -1269,7 +1269,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     }
 
     /**
-     * 处理base入库
+     * CORE 处理入库单的库存变动 采购入库/调拨(调出/回滚)/领样退货/销售退单
      * 
      * @param user
      * @param outBean
@@ -1404,7 +1404,76 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
         }
 
+        // 验证 销售退库
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK)
+        {
+            List<OutBean> refBuyList = queryRefOut(outBean.getRefOutFullId());
+
+            // 原单据的base
+            List<BaseBean> lastList = OutHelper.trimBaseList2(baseDAO.queryEntityBeansByFK(outBean
+                .getRefOutFullId()));
+
+            for (BaseBean baseBean : lastList)
+            {
+                int hasBack = 0;
+
+                for (OutBean ref : refBuyList)
+                {
+                    List<BaseBean> refBaseList = OutHelper.trimBaseList2(ref.getBaseList());
+
+                    for (BaseBean refBase : refBaseList)
+                    {
+                        if (refBase.equals2(baseBean))
+                        {
+                            hasBack += refBase.getAmount();
+
+                            break;
+                        }
+                    }
+                }
+
+                if (hasBack > baseBean.getAmount())
+                {
+                    throw new MYException("退货数量溢出，可退数量合计:[%d],当前退货数量(含本单):[%d]", baseBean
+                        .getAmount(), hasBack);
+                }
+            }
+        }
+
         return baseList;
+    }
+
+    /**
+     * 查询REF的入库单(已经通过的)
+     * 
+     * @param request
+     * @param outId
+     * @return
+     */
+    protected List<OutBean> queryRefOut(String outId)
+    {
+        // 查询当前已经有多少个人领样
+        ConditionParse con = new ConditionParse();
+
+        con.addWhereStr();
+
+        con.addCondition("OutBean.refOutFullId", "=", outId);
+
+        con.addCondition(" and OutBean.status in (3, 4)");
+
+        con.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
+
+        List<OutBean> refBuyList = outDAO.queryEntityBeansByCondition(con);
+
+        for (OutBean outBean : refBuyList)
+        {
+            List<BaseBean> list = baseDAO.queryEntityBeansByFK(outBean.getFullId());
+
+            outBean.setBaseList(list);
+        }
+
+        return refBuyList;
     }
 
     /**

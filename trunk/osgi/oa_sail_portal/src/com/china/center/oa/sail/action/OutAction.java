@@ -1795,9 +1795,11 @@ public class OutAction extends ParentOutAction
 
                 List<OutBean> refBuyList = queryRefOut(request, outId);
 
-                List<BaseBean> baseList = bean.getBaseList();
+                // 这里是归类统计的哦
+                List<BaseBean> baseList = OutHelper.trimBaseList2(bean.getBaseList());
 
                 // 计算出已经退货的数量
+                int total = 0;
                 for (BaseBean baseBean : baseList)
                 {
                     int hasBack = 0;
@@ -1805,11 +1807,11 @@ public class OutAction extends ParentOutAction
                     // 退库
                     for (OutBean ref : refBuyList)
                     {
-                        List<BaseBean> refBaseList = ref.getBaseList();
+                        List<BaseBean> refBaseList = OutHelper.trimBaseList2(ref.getBaseList());
 
                         for (BaseBean refBase : refBaseList)
                         {
-                            if (refBase.equals(baseBean))
+                            if (refBase.equals2(baseBean))
                             {
                                 hasBack += refBase.getAmount();
 
@@ -1819,7 +1821,21 @@ public class OutAction extends ParentOutAction
                     }
 
                     baseBean.setInway(hasBack);
+
+                    baseBean.setId(OutHelper.getKey2(baseBean));
+
+                    total += (baseBean.getAmount() - hasBack);
                 }
+
+                if (total == 0)
+                {
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "销售单已经全部退库，不能处理");
+
+                    return mapping.findForward("error");
+                }
+
+                // 合并后的列表
+                bean.setBaseList(baseList);
 
                 return mapping.findForward("handerOutBack2");
             }

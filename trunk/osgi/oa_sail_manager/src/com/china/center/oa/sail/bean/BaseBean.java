@@ -497,6 +497,38 @@ public class BaseBean implements Serializable
     }
 
     /**
+     * 这里没有仓区
+     * 
+     * @param obj
+     * @return
+     */
+    public boolean equals2(Object obj)
+    {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if ( ! (obj instanceof BaseBean)) return false;
+        final BaseBean other = (BaseBean)obj;
+        if (costPriceKey == null)
+        {
+            if (other.costPriceKey != null) return false;
+        }
+        else if ( !costPriceKey.equals(other.costPriceKey)) return false;
+
+        if (owner == null)
+        {
+            if (other.owner != null) return false;
+        }
+        else if ( !owner.equals(other.owner)) return false;
+
+        if (productId == null)
+        {
+            if (other.productId != null) return false;
+        }
+        else if ( !productId.equals(other.productId)) return false;
+        return true;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.

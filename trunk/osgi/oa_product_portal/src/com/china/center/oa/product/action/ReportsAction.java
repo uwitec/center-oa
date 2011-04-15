@@ -33,6 +33,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
+import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.bean.ProductBean;
@@ -258,6 +259,7 @@ public class ReportsAction extends DispatchAction
             WritableCellFormat format = new WritableCellFormat(font);
 
             ws.addCell(new Label(j++ , i, "仓区", format));
+            ws.addCell(new Label(j++ , i, "属性", format));
             ws.addCell(new Label(j++ , i, "产品", format));
             ws.addCell(new Label(j++ , i, "原始数量", format));
             ws.addCell(new Label(j++ , i, "异动数量", format));
@@ -274,7 +276,17 @@ public class ReportsAction extends DispatchAction
                 j = 0;
                 i++ ;
 
+                DepotpartBean depotpartBean = depotpartDAO.find(statProductBean.getDepotpartId());
+
+                String typeName = "";
+
+                if (depotpartBean != null)
+                {
+                    typeName = DefinedCommon.getValue("depotpartType", depotpartBean.getType());
+                }
+
                 ws.addCell(new Label(j++ , i, statProductBean.getDepotpartName()));
+                ws.addCell(new Label(j++ , i, typeName));
                 ws.addCell(new Label(j++ , i, statProductBean.getProductName()));
                 ws.addCell(new jxl.write.Number(j++ , i, statProductBean.getPreAmount(), wcfN));
                 ws.addCell(new jxl.write.Number(j++ , i, statProductBean.getChangeAmount(), wcfN));

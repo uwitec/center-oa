@@ -49,6 +49,7 @@ import com.china.center.oa.customer.wrap.NotPayWrap;
 import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.product.bean.DepotBean;
+import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.constant.StorageConstant;
@@ -1064,7 +1065,7 @@ public class ParentOutAction extends DispatchAction
     }
 
     /**
-     * 个人领样退库
+     * 个人领样退库--申请
      * 
      * @param mapping
      * @param form
@@ -1160,30 +1161,8 @@ public class ParentOutAction extends DispatchAction
 
         List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outId);
 
-        List<OutBean> refBuyList = queryRefOut(request, outId);
-
-        // 计算出已经退货的数量
-        for (BaseBean baseBean : baseList)
-        {
-            int hasBack = 0;
-
-            for (OutBean ref : refBuyList)
-            {
-                List<BaseBean> refBaseList = ref.getBaseList();
-
-                for (BaseBean refBase : refBaseList)
-                {
-                    if (refBase.equals(baseBean))
-                    {
-                        hasBack += refBase.getAmount();
-
-                        break;
-                    }
-                }
-            }
-
-            baseBean.setInway(hasBack);
-        }
+        // 校验库存
+        makeLingYang(outId, request, baseList);
 
         double total = 0.0d;
 
@@ -1227,9 +1206,11 @@ public class ParentOutAction extends DispatchAction
                             .getCostPrice()));
                         baseBean.setOwner(each.getOwner());
                         baseBean.setOwnerName(each.getOwnerName());
+
                         baseBean.setDepotpartId(each.getDepotpartId());
 
                         baseBean.setDepotpartName(each.getDepotpartName());
+
                         baseBean.setDescription(String.valueOf(each.getCostPrice()));
 
                         baseBean.setValue(each.getPrice() * back);
@@ -1274,6 +1255,82 @@ public class ParentOutAction extends DispatchAction
     }
 
     /**
+     * 个人领样的预处理
+     * 
+     * @param outId
+     * @param request
+     * @param bean
+     */
+    private void makeLingYang(String outId, HttpServletRequest request, List<BaseBean> baseList)
+    {
+        ConditionParse con = new ConditionParse();
+
+        con.addWhereStr();
+
+        con.addCondition("OutBean.refOutFullId", "=", outId);
+
+        con.addCondition("OutBean.type", "=", OutConstant.OUT_TYPE_OUTBILL);
+
+        // 领样转销售
+        List<OutBean> refList = outDAO.queryEntityBeansByCondition(con);
+
+        // 领样退库未审批的
+        con.clear();
+
+        con.addWhereStr();
+
+        con.addCondition("OutBean.refOutFullId", "=", outId);
+
+        con.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
+
+        con.addIntCondition("OutBean.status", "=", OutConstant.STATUS_SAVE);
+
+        con.addIntCondition("OutBean.outType", "=", OutConstant.OUTTYPE_IN_SWATCH);
+
+        List<OutBean> refBuyList = queryRefOut(request, outId);
+
+        // 计算出已经退货的数量
+        for (BaseBean baseBean : baseList)
+        {
+            int hasBack = 0;
+
+            // 退库
+            for (OutBean ref : refBuyList)
+            {
+                List<BaseBean> refBaseList = ref.getBaseList();
+
+                for (BaseBean refBase : refBaseList)
+                {
+                    if (refBase.equals(baseBean))
+                    {
+                        hasBack += refBase.getAmount();
+
+                        break;
+                    }
+                }
+            }
+
+            // 转销售的
+            for (OutBean ref : refList)
+            {
+                List<BaseBean> refBaseList = baseDAO.queryEntityBeansByFK(ref.getFullId());
+
+                for (BaseBean refBase : refBaseList)
+                {
+                    if (refBase.equals(baseBean))
+                    {
+                        hasBack += refBase.getAmount();
+
+                        break;
+                    }
+                }
+            }
+
+            baseBean.setInway(hasBack);
+        }
+    }
+
+    /**
      * 销售退单
      * 
      * @param mapping
@@ -1290,6 +1347,9 @@ public class ParentOutAction extends DispatchAction
         User user = Helper.getUser(request);
 
         String outId = request.getParameter("outId");
+
+        // 目的仓库
+        String dirDeport = request.getParameter("dirDeport");
 
         String adescription = request.getParameter("adescription");
 
@@ -1309,6 +1369,13 @@ public class ParentOutAction extends DispatchAction
         if (oldOut == null)
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+
+            return mapping.findForward("error");
+        }
+
+        if (StringTools.isNullOrNone(dirDeport))
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "请选择目的仓库");
 
             return mapping.findForward("error");
         }
@@ -1344,7 +1411,7 @@ public class ParentOutAction extends DispatchAction
         out.setLocationId(user.getLocationId());
 
         // 目的仓库
-        out.setLocation(oldOut.getLocation());
+        out.setLocation(dirDeport);
 
         out.setInway(OutConstant.IN_WAY_NO);
 
@@ -1354,22 +1421,31 @@ public class ParentOutAction extends DispatchAction
 
         out.setDescription("销售退库,销售单号:" + outId + ". " + adescription);
 
-        List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outId);
+        DepotpartBean okDepotpart = depotpartDAO.findDefaultOKDepotpart(dirDeport);
+
+        if (okDepotpart == null)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "仓库下没有良品仓");
+
+            return mapping.findForward("error");
+        }
+
+        List<BaseBean> baseList = OutHelper.trimBaseList2(baseDAO.queryEntityBeansByFK(outId));
 
         List<OutBean> refBuyList = queryRefOut(request, outId);
 
-        // 计算出已经退货的数量
+        // 计算出已经退货的数量(这里是根据产品的总量进行统计的哦)
         for (BaseBean baseBean : baseList)
         {
             int hasBack = 0;
 
             for (OutBean ref : refBuyList)
             {
-                List<BaseBean> refBaseList = ref.getBaseList();
+                List<BaseBean> refBaseList = OutHelper.trimBaseList2(ref.getBaseList());
 
                 for (BaseBean refBase : refBaseList)
                 {
-                    if (refBase.equals(baseBean))
+                    if (refBase.equals2(baseBean))
                     {
                         hasBack += refBase.getAmount();
 
@@ -1379,6 +1455,8 @@ public class ParentOutAction extends DispatchAction
             }
 
             baseBean.setInway(hasBack);
+
+            baseBean.setId(OutHelper.getKey2(baseBean));
         }
 
         double total = 0.0d;
@@ -1423,7 +1501,24 @@ public class ParentOutAction extends DispatchAction
 
                         baseBean.setOwner(each.getOwner());
                         baseBean.setOwnerName(each.getOwnerName());
-                        baseBean.setDepotpartId(each.getDepotpartId());
+
+                        if (oldOut.getLocation().equals(out.getLocation()))
+                        {
+                            baseBean.setDepotpartId(each.getDepotpartId());
+                        }
+                        else
+                        {
+                            baseBean.setDepotpartId(okDepotpart.getId());
+                        }
+
+                        if (oldOut.getLocation().equals(out.getLocation()))
+                        {
+                            baseBean.setDepotpartName(each.getDepotpartName());
+                        }
+                        else
+                        {
+                            baseBean.setDepotpartName(okDepotpart.getName());
+                        }
 
                         baseBean.setValue(each.getPrice() * back);
 
@@ -1434,8 +1529,6 @@ public class ParentOutAction extends DispatchAction
 
                             return mapping.findForward("error");
                         }
-
-                        baseBean.setDepotpartName(each.getDepotpartName());
 
                         // 成本
                         baseBean.setDescription(String.valueOf(each.getCostPrice()));
@@ -1462,6 +1555,14 @@ public class ParentOutAction extends DispatchAction
                     StorageConstant.OPR_STORAGE_OUTBACK);
 
                 request.setAttribute(KeyConstant.MESSAGE, "成功申请退库:" + fullId);
+            }
+            else
+            {
+
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "退库数量为0");
+
+                return mapping.findForward("error");
+
             }
         }
         catch (MYException e)

@@ -159,6 +159,7 @@ public class OutListenerFinanceImpl implements OutListener
         }
         else
         {
+            // 查询销售退货的价值
             refInOutTotal = outDAO.sumOutBackValue(bean.getFullId());
         }
 

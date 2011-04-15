@@ -31,7 +31,7 @@ function load()
 
     hides(true);
     
-    $detail($O('viewTable'), ['pr', 'ba', 'backUnm', 'adescription']);
+    $detail($O('viewTable'), ['pr', 'ba', 'backUnm', 'adescription', 'dirDeport']);
     
     highlights($("#mainTable").get(0), ['未付款'], 'red');
     
@@ -276,7 +276,18 @@ function outBack()
                        </td>
                     </tr>
                     
-                    <tr class="content2">
+                     <tr class="content2">
+                        <td align="right">退货仓库：</td>
+                        <td colspan="3">
+                        <select name="dirDeport" style="WIDTH: 300px;" values="${bean.location}" oncheck="notNone">
+                            <c:forEach items='${locationList}' var="item">
+                                        <option value="${item.id}">${item.name}</option>
+                            </c:forEach>
+                        </select><font color="#FF0000">*</font>
+                       </td>
+                    </tr>
+                    
+                    <tr class="content1">
                         <td align="right">退货备注：</td>
                         <td colspan="3">
                        <textarea rows="3" cols="55" oncheck="notNone;"
@@ -284,7 +295,7 @@ function outBack()
                             <font color="#FF0000">*</font>
                        </td>
                     </tr>
-
+                    
 				</table>
 				</td>
 			</tr>

@@ -864,6 +864,7 @@ function swatchToSail()
     <input type="radio" name="reasonRadio" value="帐期错误" onclick="rchange()">帐期错误<br>
     <input type="radio" name="reasonRadio" value="品名错误" onclick="rchange()">品名错误<br>
     <input type="radio" name="reasonRadio" value="黑名单人员" onclick="rchange()">黑名单人员<br>
+    <input type="radio" name="reasonRadio" value="款到发货客户" onclick="rchange()">款到发货客户<br>
     <input type="radio" name="reasonRadio" value="金质产品需要先款后货" onclick="rchange()">金质产品需要先款后货<br>
    </div>
 </div>

@@ -278,6 +278,55 @@ public abstract class OutHelper
             else
             {
                 baseBean.setAmount(each.getAmount() + baseBean.getAmount());
+
+                baseBean.setValue(each.getValue() + baseBean.getValue());
+            }
+        }
+
+        Collection<BaseBean> values = mapBean.values();
+
+        List<BaseBean> lastList = new ArrayList<BaseBean>();
+
+        for (BaseBean baseBean : values)
+        {
+            lastList.add(baseBean);
+        }
+        return lastList;
+    }
+
+    public static String getKey2(BaseBean each)
+    {
+        String key = each.getProductId() + "-" + each.getCostPriceKey() + "-" + each.getOwner();
+
+        return key;
+    }
+
+    /**
+     * 合并价格、产品、公卖的trim(存在不同仓库同价格的出售)
+     * 
+     * @param baseList
+     * @return
+     */
+    public static List<BaseBean> trimBaseList2(List<BaseBean> baseList)
+    {
+        // 由于是默认仓,所以存在重复产品的行为,这里需要合并重复的
+        Map<String, BaseBean> mapBean = new HashMap<String, BaseBean>();
+
+        for (BaseBean each : baseList)
+        {
+            String key = getKey2(each);
+
+            BaseBean baseBean = mapBean.get(key);
+
+            if (baseBean == null)
+            {
+                mapBean.put(key, each);
+            }
+            else
+            {
+                baseBean.setAmount(each.getAmount() + baseBean.getAmount());
+
+                baseBean.setValue(each.getValue() + baseBean.getValue());
             }
         }
 
