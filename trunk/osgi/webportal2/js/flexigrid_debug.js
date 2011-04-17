@@ -8,6 +8,20 @@
  * $Date: 2009/05/29 03:15:51 $
  */
 var gobal_guid;
+
+if(window.HTMLElement)
+{ 
+    HTMLElement.prototype.__defineSetter__("innerText",function(sText){ 
+        var parsedText=document.createTextNode(sText); 
+        this.innerHTML=parsedText; 
+        return parsedText; 
+        }); 
+    HTMLElement.prototype.__defineGetter__("innerText",function(){ 
+        var r=this.ownerDocument.createRange(); 
+        r.selectNodeContents(this); 
+        return r.toString(); 
+        }); 
+} 
  
 (function($){
           
@@ -566,7 +580,7 @@ var gobal_guid;
                                             con = parserString(con, row.cell);  
                                             
                                             td.innerHTML = bs + con + es;
-                                            td.title = con;
+                                            td.title = td.innerText;
                                          }
                                          else
                                          {
@@ -598,7 +612,7 @@ var gobal_guid;
                                             }
                                             
                                             td.innerHTML = bs + con + es;
-                                            td.title = con;
+                                            td.title = td.innerText;
                                          }
                                          $(tr).append(td);
                                          td = null;
