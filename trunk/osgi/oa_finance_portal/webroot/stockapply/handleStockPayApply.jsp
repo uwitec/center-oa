@@ -197,7 +197,7 @@ function getNextInput(el)
                <a href="../stock/stock.do?method=findStock&id=${bean.stockId}">${bean.stockId}</a>/${bean.stockItemId}
             </p:cell>
 
-			<p:cell title="时间">
+			<p:cell title="时间" end="true">
                ${bean.logTime}
             </p:cell>
             

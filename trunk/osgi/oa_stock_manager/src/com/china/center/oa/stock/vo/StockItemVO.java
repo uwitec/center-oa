@@ -33,6 +33,9 @@ public class StockItemVO extends StockItemBean
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
 
+    @Relationship(relationField = "dutyId")
+    private String dutyName = "";
+
     @Ignore
     private List<PriceAskProviderBeanVO> asksVo = null;
 
@@ -146,6 +149,23 @@ public class StockItemVO extends StockItemBean
     }
 
     /**
+     * @return the dutyName
+     */
+    public String getDutyName()
+    {
+        return dutyName;
+    }
+
+    /**
+     * @param dutyName
+     *            the dutyName to set
+     */
+    public void setDutyName(String dutyName)
+    {
+        this.dutyName = dutyName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -174,6 +194,9 @@ public class StockItemVO extends StockItemBean
             .append(TAB)
             .append("stafferName = ")
             .append(this.stafferName)
+            .append(TAB)
+            .append("dutyName = ")
+            .append(this.dutyName)
             .append(TAB)
             .append("asksVo = ")
             .append(this.asksVo)

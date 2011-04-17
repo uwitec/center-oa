@@ -353,8 +353,15 @@ function exports()
 					<option value="0">未逾期</option>
 					<option value="1">已逾期</option>
 				</select></td>
-				<td align="center"></td>
-                <td align="center" width="35%"></td>
+				<td align="center">采购模式</td>
+                <td align="center" width="35%">
+                <select name="mode"
+                    class="select_class" values="${mode}">
+                    <option value="">--</option>
+                    <option value="0">销售采购</option>
+                    <option value="1">生产采购</option>
+                </select>
+                </td>
 			</tr>
 			
 			<tr align=center class="content0">
@@ -514,16 +521,12 @@ function exports()
 
 	<p:button leftWidth="100%" rightWidth="0%">
 		<div align="right">
-		<c:if test="${ltype == '1'}">
+		<c:if test="${ltype == '2' || ltype == '1'}">
 		<input type="button" class="button_class"
 			id="b_export" style="cursor: pointer"
 			value="&nbsp;&nbsp;导出采购单&nbsp;&nbsp;" onclick="exports()">
 		</c:if>
-			 <c:if test="${ltype == '0'}">
-			<input type="button" class="button_class" name="adds"
-				style="cursor: pointer" value="&nbsp;&nbsp;增加采购单&nbsp;&nbsp;"
-				onclick="addBean()">
-		</c:if>
+			
 		</div>
 	</p:button>
 

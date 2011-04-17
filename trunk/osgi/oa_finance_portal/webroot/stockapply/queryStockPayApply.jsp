@@ -28,7 +28,7 @@ function load()
          title: '申请列表',
          url: gurl + 'query' + ukey + '&mode=' + mode,
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} lstafferId={stafferId}>', width : 40, align: 'center'},
+             {display: '<input type=checkbox id=flexi_Check onclick=checkAll(this)> 选择', name : 'check', content : '<input type=checkbox name=checkb value={id} lstatus={status} lstafferId={stafferId} lprovideId={provideId} >', width : 40, align: 'center'},
              {display: '采购人', name : 'stafferName', width : '8%'},
              {display: '状态', name : 'status', cc: 'stockPayApplyStatus', width : '8%'},
              {display: '采购', name : 'stockId', content: '{stockId}/{stockItemId}', width : '20%'},
@@ -42,7 +42,8 @@ function load()
              stafferName : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}&mode= ' + mode + '>', end : '</a>'}
          },
          buttons : [
-             {id: 'pass', caption: '处理',bclass: 'update', auth: '1606', onpress : doProcess},
+             {id: 'pass', caption: '处理',bclass: 'update', auth: '1310,1311,1312', onpress : doProcess},
+             {id: 'pass', caption: '合并付款',bclass: 'update', auth: '1310', onpress : composeProcess},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -69,21 +70,48 @@ function delBean(opr, grid)
     $error('不能操作');
 }
 
-function updateBean()
-{
-	if (getRadio('checkb') && getRadioValue('checkb'))
-	{	
-		$l(gurl + 'find' + ukey + '&update=1&id=' + getRadioValue('checkb'));
-	}
-	else
-	$error('不能操作');
-}
-
 function doProcess()
 {
     if (getRadio('checkb') && getRadioValue('checkb'))
     {   
         $l(gurl + 'find' + ukey + '&update=1&id=' + getRadioValue('checkb') + '&mode=' + mode);
+    }
+    else
+    $error('不能操作');
+}
+
+function composeProcess()
+{
+    var clis = getCheckBox('checkb');
+    
+    var pid = '';
+    
+    if (clis.length > 1)
+    {
+        var str = '';
+        
+        for (var i = 0; i < clis.length; i++)
+        {
+            str += clis[i].value + ';';
+            
+	        if (pid == '')
+	        {
+	            pid = clis[i].lprovideId; 
+	        }
+	        else
+	        {
+	            if (pid != clis[i].lprovideId)
+	            {
+	                alert('供应商必须一致');
+	                return false;
+	            }
+	        }
+        }
+        
+        if (window.confirm('确定合并选中的付款申请?'))
+        {
+            $l(gurl + 'compose' + ukey + '&ids=' + str + '&mode=' + mode);
+        }
     }
     else
     $error('不能操作');

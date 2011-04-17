@@ -16,6 +16,7 @@ import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.ProviderBean;
+import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.stock.constant.StockConstant;
 
@@ -82,6 +83,11 @@ public class StockItemBean implements Serializable
      * 税务平台的产品
      */
     private String showId = "";
+
+    @Join(tagClass = DutyBean.class, type = JoinType.LEFT)
+    private String dutyId = "";
+
+    private String invoiceType = "";
 
     /**
      * 最终的仓区
@@ -520,6 +526,57 @@ public class StockItemBean implements Serializable
     }
 
     /**
+     * @return the depotpartId
+     */
+    public String getDepotpartId()
+    {
+        return depotpartId;
+    }
+
+    /**
+     * @param depotpartId
+     *            the depotpartId to set
+     */
+    public void setDepotpartId(String depotpartId)
+    {
+        this.depotpartId = depotpartId;
+    }
+
+    /**
+     * @return the dutyId
+     */
+    public String getDutyId()
+    {
+        return dutyId;
+    }
+
+    /**
+     * @param dutyId
+     *            the dutyId to set
+     */
+    public void setDutyId(String dutyId)
+    {
+        this.dutyId = dutyId;
+    }
+
+    /**
+     * @return the invoiceType
+     */
+    public String getInvoiceType()
+    {
+        return invoiceType;
+    }
+
+    /**
+     * @param invoiceType
+     *            the invoiceType to set
+     */
+    public void setInvoiceType(String invoiceType)
+    {
+        this.invoiceType = invoiceType;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -573,6 +630,15 @@ public class StockItemBean implements Serializable
             .append("showId = ")
             .append(this.showId)
             .append(TAB)
+            .append("dutyId = ")
+            .append(this.dutyId)
+            .append(TAB)
+            .append("invoiceType = ")
+            .append(this.invoiceType)
+            .append(TAB)
+            .append("depotpartId = ")
+            .append(this.depotpartId)
+            .append(TAB)
             .append("price = ")
             .append(this.price)
             .append(TAB)
@@ -606,22 +672,5 @@ public class StockItemBean implements Serializable
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the depotpartId
-     */
-    public String getDepotpartId()
-    {
-        return depotpartId;
-    }
-
-    /**
-     * @param depotpartId
-     *            the depotpartId to set
-     */
-    public void setDepotpartId(String depotpartId)
-    {
-        this.depotpartId = depotpartId;
     }
 }

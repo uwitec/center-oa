@@ -137,6 +137,13 @@ function showDiv(id)
 
 function load()
 {
+    var ll = document.getElementsByName('fullId');
+    
+    for (var i = 0 ; i < ll.length; i++)
+    {
+        ll[i].index = $$('radioIndex');
+    }
+    
 	loadForm();
 	tooltip.init();
 	
@@ -495,6 +502,33 @@ function swatchToSail()
     }
 }
 
+//选择自动联想radio
+function hrefAndSelect(obj)
+{
+    //$Set(radio, obj.indexs);
+    var tr = getTrObject(obj);
+
+    if (tr != null)
+    {
+        var rad = tr.getElementsByTagName('input');
+
+        for (i = 0; i < rad.length; i++)
+        {
+            if (rad[i].type.toLowerCase() == 'checkbox')
+            {
+                rad[i].checked = !rad[i].checked;
+            }
+            
+            if (rad[i].type.toLowerCase() == 'radio')
+            {
+                rad[i].checked = true;
+            }
+        }
+    }
+    
+    getObj('radioIndex').value = $Index('fullId');
+}
+
 </script>
 
 </head>
@@ -510,7 +544,7 @@ function swatchToSail()
 	name="outId">
 <input type="hidden" value="" name="oldStatus">
 <input type="hidden" value="" name="statuss">
-<input type="hidden" value="" name="radioIndex">
+<input type="hidden" value="${ppmap.radioIndex}" name="radioIndex">
 <input type="hidden" value="" name="reason">
 <input type="hidden" value="" name="baddebts">
 
@@ -533,24 +567,24 @@ function swatchToSail()
 				<table width="100%" border="0" cellspacing='1'>
 					<tr class="content1">
 						<td width="15%" align="center">开始时间</td>
-						<td align="center" width="35%"><p:plugin name="outTime" size="20" value="${outTime}"/></td>
+						<td align="center" width="35%"><p:plugin name="outTime" size="20" value="${ppmap.outTime}"/></td>
 						<td width="15%" align="center">结束时间</td>
-						<td align="center"><p:plugin name="outTime1" size="20" value="${outTime1}"/>
+						<td align="center"><p:plugin name="outTime1" size="20" value="${ppmap.outTime1}"/>
 						</td>
 					</tr>
 					
 					<tr class="content1">
                         <td width="15%" align="center">发货时间从</td>
-                        <td align="center" width="35%"><p:plugin name="changeTime" type="0" size="20" value="${changeTime}"/></td>
+                        <td align="center" width="35%"><p:plugin name="changeTime" type="0" size="20" value="${ppmap.changeTime}"/></td>
                         <td width="15%" align="center">到</td>
-                        <td align="center"><p:plugin name="changeTime1" type="0" size="20" value="${changeTime1}"/>
+                        <td align="center"><p:plugin name="changeTime1" type="0" size="20" value="${ppmap.changeTime1}"/>
                         </td>
                     </tr>
 
 					<tr class="content2">
 						<td width="15%" align="center">销售单状态</td>
 						<td align="center">
-						<select name="status" class="select_class" values="${status}">
+						<select name="status" class="select_class" values="${ppmap.status}">
 							<option value="">--</option>
 							<p:option type="outStatus"/>
 							<option value="99">发货态</option>
@@ -558,26 +592,26 @@ function swatchToSail()
 
 						</td>
 						<td width="15%" align="center">客户：</td>
-						<td align="center"><input type="text" name="customerName" maxlength="14" value="${customerName}"></td>
+						<td align="center"><input type="text" name="customerName" maxlength="14" value="${ppmap.customerName}"></td>
 					</tr>
 
 					<tr class="content1">
 						<td width="15%" align="center">销售类型</td>
 						<td align="center">
 						<select name="outType"
-							class="select_class" values=${outType}>
+							class="select_class" values=${ppmap.outType}>
 							<option value="">--</option>
 							<p:option type="outType_out"></p:option>
 						</select>
 
 						</td>
 						<td width="15%" align="center">销售单号</td>
-						<td align="center"><input type="text" name="id" value="${id}"></td>
+						<td align="center"><input type="text" name="id" value="${ppmap.id}"></td>
 					</tr>
 
 					<tr class="content2">
 						<td width="15%" align="center">是否回款</td>
-						<td align="center" colspan="1"><select name="pay" values="${pay}"
+						<td align="center" colspan="1"><select name="pay" values="${ppmap.pay}"
 							class="select_class">
 							<option value="">--</option>
 							<option value="1">是</option>
@@ -588,7 +622,7 @@ function swatchToSail()
 						<td width="15%" align="center">仓库</td>
                         <td align="center">
                         <select name="location"
-                            class="select_class" values=${location}>
+                            class="select_class" values=${ppmap.location}>
                             <option value="">--</option>
                             <c:forEach items="${depotList}" var="item">
                              <option value="${item.id}">${item.name}</option>
@@ -601,7 +635,7 @@ function swatchToSail()
 						<td width="15%" align="center">销售部门</td>
 						<td align="center">
 						<select name="department"
-							class="select_class" values=${department}>
+							class="select_class" values=${ppmap.department}>
 							<option value="">--</option>
 							<c:forEach items='${departementList}' var="item">
 								<option value="${item.name}">${item.name}</option>
@@ -609,7 +643,7 @@ function swatchToSail()
 						</select>
 						</td>
 						<td width="15%" align="center">销售人员</td>
-						<td align="center"><input type="text" name="stafferName" value="${stafferName}"></td>
+						<td align="center"><input type="text" name="stafferName" value="${ppmap.stafferName}"></td>
 					</tr>
 
 					<tr class="content2">
@@ -719,7 +753,7 @@ function swatchToSail()
 							   baddebts='${my:formatNum(item.total - item.hadPay)}' 
 							   value="${item.fullId}"/></td>
 							<td align="center"
-							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}${pcheck}">
+							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&radioIndex=${vs.index}&fow=99&outId=${item.fullId}${pcheck}">
 							${item.fullId}</a></td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.customerName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('outStatus', item.status)}</td>

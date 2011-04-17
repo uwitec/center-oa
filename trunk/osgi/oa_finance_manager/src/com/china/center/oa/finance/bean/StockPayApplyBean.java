@@ -45,7 +45,7 @@ public class StockPayApplyBean implements Serializable
     @Join(tagClass = InvoiceBean.class, type = JoinType.LEFT)
     private String invoiceId = "";
 
-    @Join(tagClass = DutyBean.class)
+    @Join(tagClass = DutyBean.class, type = JoinType.LEFT)
     private String dutyId = "";
 
     @FK

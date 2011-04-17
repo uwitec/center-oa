@@ -3,6 +3,7 @@ package com.china.center.oa.sail.action;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -661,6 +662,8 @@ public class OutAction extends ParentOutAction
                                 HttpServletResponse reponse)
         throws ServletException
     {
+        String formDetail = request.getParameter("formDetail");
+
         String fullId = request.getParameter("outId");
 
         OutBean outBean = outDAO.find(fullId);
@@ -697,6 +700,13 @@ public class OutAction extends ParentOutAction
         }
 
         request.setAttribute(KeyConstant.MESSAGE, "成功核对单据:" + fullId);
+
+        if ("1".equals(formDetail))
+        {
+            request.setAttribute("holdCondition", formDetail);
+
+            request.setAttribute("forward", "1");
+        }
 
         CommonTools.saveParamers(request);
 
@@ -1565,6 +1575,8 @@ public class OutAction extends ParentOutAction
 
         String fow = RequestTools.getValueFromRequest(request, "fow");
 
+        String radioIndex = RequestTools.getValueFromRequest(request, "radioIndex");
+
         CommonTools.saveParamers(request);
 
         User user = Helper.getUser(request);
@@ -1625,6 +1637,16 @@ public class OutAction extends ParentOutAction
         }
         catch (MYException e)
         {
+        }
+
+        if ( !StringTools.isNullOrNone(radioIndex))
+        {
+            Map map = (Map)request.getSession().getAttribute("ppmap");
+
+            if (map != null)
+            {
+                map.put("radioIndex", radioIndex);
+            }
         }
 
         if ("1".equals(fow))

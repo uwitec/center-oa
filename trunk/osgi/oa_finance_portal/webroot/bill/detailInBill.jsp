@@ -85,7 +85,7 @@ function pagePrint()
                 ${bean.paymentId}
             </p:cell>
             
-            <p:cell title="开单人">
+            <p:cell title="会计">
                ${bean.stafferName}
             </p:cell>
             

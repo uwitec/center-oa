@@ -9,6 +9,7 @@
 package com.china.center.oa.finance.manager.impl;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.china.center.spring.ex.annotation.Exceptional;
@@ -30,6 +31,7 @@ import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.MathTools;
+import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -98,6 +100,116 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
         stockPayApplyDAO.updateEntityBean(apply);
 
         saveFlowLog(user, preStatus, apply, reason, PublicConstant.OPRMODE_PASS);
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean composeStockPayApply(User user, List<String> idList)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, idList);
+
+        if (idList.size() <= 1)
+        {
+            throw new MYException("超过两个申请才可以合并,请确认操作");
+        }
+
+        List<StockPayApplyBean> beanList = new ArrayList<StockPayApplyBean>();
+
+        double total = 0.0d;
+
+        String pid = "";
+
+        StringBuffer stockBuffer = new StringBuffer();
+
+        StringBuffer stockItemBuffer = new StringBuffer();
+
+        StringBuffer idBuffer = new StringBuffer();
+
+        for (String id : idList)
+        {
+            StockPayApplyBean bean = stockPayApplyDAO.find(id);
+
+            if (bean == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            if (bean.getStatus() != StockPayApplyConstant.APPLY_STATUS_INIT)
+            {
+                throw new MYException("付款申请不再初始态,不能合并,请确认操作");
+            }
+
+            if (StringTools.isNullOrNone(pid))
+            {
+                pid = bean.getProvideId();
+            }
+            else
+            {
+                if ( !pid.equals(bean.getProvideId()))
+                {
+                    throw new MYException("供应商一致才能合并,请确认操作");
+                }
+            }
+
+            idBuffer
+                .append(id)
+                .append("/金额:")
+                .append(MathTools.formatNum(bean.getMoneys()))
+                .append(';');
+
+            stockBuffer.append(bean.getStockId()).append(';');
+            stockItemBuffer.append(bean.getStockItemId()).append(';');
+
+            total += bean.getMoneys();
+
+            beanList.add(bean);
+        }
+
+        StockPayApplyBean apply = new StockPayApplyBean();
+
+        apply.setId(commonDAO.getSquenceString20());
+
+        apply.setDescription("合并后系统生成付款申请:" + idBuffer.toString() + ".采购单:"
+                             + stockBuffer.toString() + ".采购项:" + stockItemBuffer.toString());
+
+        apply.setDutyId(beanList.get(0).getDutyId());
+
+        apply.setInvoiceId(beanList.get(0).getInvoiceId());
+
+        apply.setLocationId(beanList.get(0).getLocationId());
+
+        apply.setLogTime(TimeTools.now());
+
+        apply.setMoneys(total);
+
+        // 今天
+        apply.setPayDate(TimeTools.now_short());
+
+        apply.setProvideId(beanList.get(0).getProvideId());
+
+        apply.setStatus(StockPayApplyConstant.APPLY_STATUS_INIT);
+
+        apply.setStockId("");
+
+        apply.setStockItemId("");
+
+        apply.setStafferId(user.getStafferId());
+
+        stockPayApplyDAO.saveEntityBean(apply);
+
+        // 自动结束掉
+        for (StockPayApplyBean each : beanList)
+        {
+
+            each.setStatus(StockPayApplyConstant.APPLY_STATUS_END);
+
+            stockPayApplyDAO.updateEntityBean(each);
+
+            saveFlowLog(user, StockPayApplyConstant.APPLY_STATUS_INIT, each, "自动合并付款单",
+                PublicConstant.OPRMODE_EXCEPTION);
+        }
 
         return true;
     }
@@ -341,7 +453,7 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
         throws MYException
     {
         // 自动生成付款单
-        outBill.setDescription("采购付款单:" + apply.getStockId());
+        outBill.setDescription("采购付款申请:" + apply.getId());
 
         outBill.setInvoiceId(apply.getInvoiceId());
 

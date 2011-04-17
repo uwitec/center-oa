@@ -88,6 +88,7 @@ import com.china.center.oa.stock.vo.StockVO;
 import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
+import com.china.center.tools.MathTools;
 import com.china.center.tools.SequenceTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
@@ -406,35 +407,31 @@ public class StockAction extends DispatchAction
                                                HttpServletResponse reponse)
         throws ServletException
     {
-        StockBean bean = new StockBean();
+        String id = request.getParameter("id");
+
+        String willDate = request.getParameter("willDate");
+
+        StockBean bean = stockDAO.find(id);
 
         try
         {
-            BeanUtil.getBean(bean, request);
-
-            setStockBean(bean, request);
+            setStockBean2(bean, request);
 
             User user = Helper.getUser(request);
 
-            bean.setUserId(user.getId());
+            bean.setInvoice(StockConstant.INVOICE_YES);
 
-            bean.setLocationId(user.getLocationId());
-
-            bean.setLogTime(TimeTools.now());
-
-            bean.setStafferId(user.getStafferId());
-
-            bean.setExceptStatus(StockConstant.EXCEPTSTATUS_COMMON);
+            bean.setWillDate(MathTools.parseInt(willDate));
 
             stockManager.updateStockDutyConfig(user, bean);
 
-            request.setAttribute(KeyConstant.MESSAGE, "成功修改采购单:" + bean.getId());
+            request.setAttribute(KeyConstant.MESSAGE, "成功配置采购单:" + bean.getId());
         }
         catch (MYException e)
         {
             _logger.warn(e, e);
 
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "修改采购单失败:" + e.getMessage());
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "配置采购单失败:" + e.getMessage());
         }
 
         CommonTools.removeParamers(request);
@@ -648,6 +645,57 @@ public class StockAction extends DispatchAction
      * @param request
      * @throws MYException
      */
+    private void setStockBean2(StockBean pbean, HttpServletRequest request)
+        throws MYException
+    {
+        List<StockItemBean> item = new ArrayList<StockItemBean>();
+
+        for (int i = 0; i < 1000; i++ )
+        {
+            String pid = request.getParameter("productId_" + i);
+
+            if ( !StringTools.isNullOrNone(pid))
+            {
+                StockItemBean bean = new StockItemBean();
+
+                bean.setProductId(request.getParameter(pid));
+
+                bean.setPriceAskProviderId(request.getParameter("netaskId_" + i));
+
+                bean.setId(request.getParameter("itemId_" + i));
+
+                bean.setLogTime(TimeTools.now());
+
+                bean.setPrePrice(Float.parseFloat(request.getParameter("price_" + i)));
+
+                bean.setShowId(request.getParameter("showId_" + i));
+
+                bean.setDutyId(request.getParameter("dutyId_" + i));
+
+                String invoiceType = request.getParameter("invoiceType_" + i);
+
+                bean.setInvoiceType(invoiceType);
+
+                bean.setAmount(CommonTools.parseInt(request.getParameter("amount_" + i)));
+
+                int num = storageRelationDAO.sumAllProductByProductId(bean.getProductId());
+
+                // 当前库存总数量
+                bean.setProductNum(num);
+
+                bean.setStatus(StockConstant.STOCK_ITEM_STATUS_INIT);
+
+                item.add(bean);
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        pbean.setItem(item);
+    }
+
     private void setStockBean(StockBean pbean, HttpServletRequest request)
         throws MYException
     {
@@ -932,15 +980,18 @@ public class StockAction extends DispatchAction
 
         if ( !StringTools.isNullOrNone(update))
         {
-            int last = 5 - vo.getItemVO().size();
-
-            // 补齐
-            for (int i = 0; i < last; i++ )
+            if ( !"2".equals(update))
             {
-                vo.getItemVO().add(new StockItemVO());
-            }
+                int last = 5 - vo.getItemVO().size();
 
-            request.setAttribute("maxItem", 5 - last);
+                // 补齐
+                for (int i = 0; i < last; i++ )
+                {
+                    vo.getItemVO().add(new StockItemVO());
+                }
+
+                request.setAttribute("maxItem", 5 - last);
+            }
 
             if ("1".equals(update))
             {
@@ -948,6 +999,17 @@ public class StockAction extends DispatchAction
             }
             else
             {
+                // 如果没有询价不能配置
+                List<StockItemVO> itemVO = vo.getItemVO();
+
+                for (StockItemVO stockItemVO : itemVO)
+                {
+                    if (stockItemVO.getStatus() == StockConstant.STOCK_ITEM_STATUS_INIT)
+                    {
+                        return ActionTools.toError("还没有全部询价,不能配置税务属性", mapping, request);
+                    }
+                }
+
                 return mapping.findForward("updateStockDutyConfig");
             }
         }
@@ -1723,6 +1785,8 @@ public class StockAction extends DispatchAction
             String typeStr = request.getParameter("type");
 
             condtion.addIntCondition("StockBean.mode", "=", typeStr);
+
+            request.setAttribute("mode", typeStr);
         }
 
         // 暂时没有
@@ -1761,42 +1825,55 @@ public class StockAction extends DispatchAction
         }
         else
         {
-            // 设置不同角色的默认状态
-            Map<Integer, Integer> map = new HashMap<Integer, Integer>();
-
-            // MANAGER
-            map.put(1, StockConstant.STOCK_STATUS_SUBMIT);
-
-            // 采购主管审核
-            map.put(2, StockConstant.STOCK_STATUS_PRICEPASS);
-
-            // PRICE
-            map.put(3, StockConstant.STOCK_STATUS_MANAGERPASS);
-
-            // STOCK
-            map.put(4, StockConstant.STOCK_STATUS_PRICEPASS);
-
-            // STOCKMANAGER
-            map.put(5, StockConstant.STOCK_STATUS_STOCKPASS);
-
-            // 董事长
-            map.put(6, StockConstant.STOCK_STATUS_STOCKPASS);
-
-            // STOCK(结束采购)
-            map.put(7, StockConstant.STOCK_STATUS_END);
-
-            // 采购拿货
-            map.put(8, StockConstant.STOCK_STATUS_STOCKMANAGERPASS);
-
-            for (Map.Entry<Integer, Integer> entry : map.entrySet())
+            if (type == 2)
             {
-                if (type == entry.getKey())
+                if (isMenuLoad(request))
                 {
-                    condtion.addIntCondition("StockBean.status", "=", entry.getValue());
+                    condtion.addIntCondition("StockBean.status", "=",
+                        StockConstant.STOCK_STATUS_PRICEPASS);
 
-                    request.setAttribute("status", entry.getValue());
+                    request.setAttribute("status", StockConstant.STOCK_STATUS_PRICEPASS);
+                }
+            }
+            else
+            {
+                // 设置不同角色的默认状态
+                Map<Integer, Integer> map = new HashMap<Integer, Integer>();
 
-                    break;
+                // MANAGER
+                map.put(1, StockConstant.STOCK_STATUS_SUBMIT);
+
+                // 采购主管审核
+                map.put(2, StockConstant.STOCK_STATUS_PRICEPASS);
+
+                // PRICE
+                map.put(3, StockConstant.STOCK_STATUS_MANAGERPASS);
+
+                // STOCK
+                map.put(4, StockConstant.STOCK_STATUS_PRICEPASS);
+
+                // STOCKMANAGER
+                map.put(5, StockConstant.STOCK_STATUS_STOCKPASS);
+
+                // 董事长
+                map.put(6, StockConstant.STOCK_STATUS_STOCKPASS);
+
+                // STOCK(结束采购)
+                map.put(7, StockConstant.STOCK_STATUS_END);
+
+                // 采购拿货
+                map.put(8, StockConstant.STOCK_STATUS_STOCKMANAGERPASS);
+
+                for (Map.Entry<Integer, Integer> entry : map.entrySet())
+                {
+                    if (type == entry.getKey())
+                    {
+                        condtion.addIntCondition("StockBean.status", "=", entry.getValue());
+
+                        request.setAttribute("status", entry.getValue());
+
+                        break;
+                    }
                 }
             }
         }
@@ -1837,6 +1914,13 @@ public class StockAction extends DispatchAction
             condtion.addIntCondition("StockBean.stype", "=", stockType);
         }
 
+        String mode = request.getParameter("mode");
+
+        if ( !StringTools.isNullOrNone(mode))
+        {
+            condtion.addIntCondition("StockBean.mode", "=", mode);
+        }
+
         String id = request.getParameter("ids");
 
         if ( !StringTools.isNullOrNone(id))
@@ -1873,6 +1957,26 @@ public class StockAction extends DispatchAction
         }
 
         condtion.addCondition("order by StockBean.logTime desc");
+    }
+
+    private boolean isMenuLoad(HttpServletRequest request)
+    {
+        // f_menu
+        String menu = request.getParameter("menu");
+
+        if ( !StringTools.isNullOrNone(menu))
+        {
+            return true;
+        }
+
+        Object o1 = request.getAttribute("menu");
+
+        if (o1 != null)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -1967,15 +2071,21 @@ public class StockAction extends DispatchAction
 
             ws.addCell(new Label(j++ , i, "时间", format));
             ws.addCell(new Label(j++ , i, "采购单号", format));
+            ws.addCell(new Label(j++ , i, "状态", format));
             ws.addCell(new Label(j++ , i, "采购人", format));
             ws.addCell(new Label(j++ , i, "采购区域", format));
             ws.addCell(new Label(j++ , i, "采购总金额", format));
+
+            // 子项
             ws.addCell(new Label(j++ , i, "产品名称", format));
             ws.addCell(new Label(j++ , i, "产品编码", format));
             ws.addCell(new Label(j++ , i, "采购数量", format));
             ws.addCell(new Label(j++ , i, "参考价格", format));
             ws.addCell(new Label(j++ , i, "采购价格", format));
             ws.addCell(new Label(j++ , i, "供应商", format));
+            ws.addCell(new Label(j++ , i, "纳税实体", format));
+            ws.addCell(new Label(j++ , i, "发票", format));
+            ws.addCell(new Label(j++ , i, "开票品名", format));
             ws.addCell(new Label(j++ , i, "本品合计", format));
 
             boolean fr = true;
@@ -1996,20 +2106,56 @@ public class StockAction extends DispatchAction
 
                         ws.addCell(new Label(j++ , i, item.getLogTime()));
                         ws.addCell(new Label(j++ , i, item.getId()));
+                        ws
+                            .addCell(new Label(j++ , i, ElTools
+                                .get("stockStatus", item.getStatus())));
                         ws.addCell(new Label(j++ , i, item.getUserName()));
                         ws.addCell(new Label(j++ , i, item.getLocationName()));
-                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(item
+                        ws.addCell(new Label(j++ , i, String.valueOf(MathTools.formatNum(item
                             .getTotal()))));
 
+                        // 子项
                         ws.addCell(new Label(j++ , i, vo.getProductName()));
                         ws.addCell(new Label(j++ , i, vo.getProductCode()));
                         ws.addCell(new Label(j++ , i, String.valueOf(vo.getAmount())));
-                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(vo
+                        ws.addCell(new Label(j++ , i, String.valueOf(MathTools.formatNum(vo
                             .getPrePrice()))));
-                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(vo
+                        ws.addCell(new Label(j++ , i, String.valueOf(MathTools.formatNum(vo
                             .getPrice()))));
+
                         ws.addCell(new Label(j++ , i, vo.getProviderName()));
-                        ws.addCell(new Label(j++ , i, String.valueOf(ElTools.formatNum(vo
+
+                        ws.addCell(new Label(j++ , i, vo.getDutyName()));
+
+                        String invoiceTypeName = "没有发票";
+
+                        if ( !StringTools.isNullOrNone(vo.getInvoiceType()))
+                        {
+                            InvoiceBean iBean = invoiceDAO.find(vo.getInvoiceType());
+
+                            if (iBean != null)
+                            {
+                                invoiceTypeName = iBean.getFullName();
+                            }
+                        }
+
+                        ws.addCell(new Label(j++ , i, invoiceTypeName));
+
+                        String showName = "";
+
+                        if ( !StringTools.isNullOrNone(vo.getShowId()))
+                        {
+                            ShowBean show = showDAO.find(vo.getShowId());
+
+                            if (show != null)
+                            {
+                                showName = show.getName();
+                            }
+                        }
+
+                        ws.addCell(new Label(j++ , i, showName));
+
+                        ws.addCell(new Label(j++ , i, String.valueOf(MathTools.formatNum(vo
                             .getTotal()))));
                     }
 

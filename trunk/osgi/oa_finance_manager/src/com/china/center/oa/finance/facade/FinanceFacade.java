@@ -250,4 +250,15 @@ public interface FinanceFacade
 
     boolean updateOutBillBeanChecks(String userId, String id, String checks)
         throws MYException;
+
+    /**
+     * 合并付款
+     * 
+     * @param stafferId
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean composeStockPayApply(String userId, List<String> idList)
+        throws MYException;
 }

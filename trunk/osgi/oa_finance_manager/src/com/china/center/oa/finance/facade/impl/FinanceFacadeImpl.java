@@ -663,6 +663,28 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
+    public boolean composeStockPayApply(String userId, List<String> idList)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, idList);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (STOCKPAYAPPLY_LOCK)
+        {
+            if (containAuth(user, AuthConstant.STOCK_PAY_APPLY))
+            {
+                return stockPayApplyManager.composeStockPayApply(user, idList);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
     public boolean endStockPayBySEC(String userId, String id, String reason,
                                     List<OutBillBean> outBillList)
         throws MYException

@@ -49,6 +49,17 @@ public interface StockPayApplyManager
         throws MYException;
 
     /**
+     * 合并付款
+     * 
+     * @param stafferId
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean composeStockPayApply(User user, List<String> idList)
+        throws MYException;
+
+    /**
      * 结束申请付款(需要同步)
      * 
      * @param stafferId

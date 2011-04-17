@@ -883,7 +883,7 @@ public class PriceAskAction extends DispatchAction
     }
 
     /**
-     * queryPriceAskForProcess(内网询价处理)(包括内部询价、内外询价)
+     * queryPriceAskForProcess(内网询价处理)(包括内部询价、内外询价,生产询价)
      * 
      * @param mapping
      * @param form
@@ -909,7 +909,14 @@ public class PriceAskAction extends DispatchAction
         {
             if (OldPageSeparateTools.isFirstLoad(request))
             {
-                setConditionForAsk(request, condtion, 1);
+                if (srcType == 4)
+                {
+                    setConditionForAsk(request, condtion, 5);
+                }
+                else
+                {
+                    setConditionForAsk(request, condtion, 1);
+                }
             }
 
             QueryTools.commonQueryVO("queryPriceAskForProcess", request, list, condtion,
@@ -1315,6 +1322,8 @@ public class PriceAskAction extends DispatchAction
             condtion.addIntCondition("PriceAskBean.saveType", "=",
                 PriceConstant.PRICE_ASK_SAVE_TYPE_COMMON);
 
+            condtion.addIntCondition("PriceAskBean.src", "<>", PriceConstant.PRICE_ASK_SRC_MAKE);
+
             // 内网和内外网
             condtion.addCondition("AND PriceAskBean.type in (0, 2)");
         }
@@ -1396,7 +1405,7 @@ public class PriceAskAction extends DispatchAction
                 condtion
                     .addIntCondition("PriceAskBean.src", "=", PriceConstant.PRICE_ASK_SRC_STOCK);
 
-                request.setAttribute("src", "1");
+                QueryTools.setParMapAttribute(request, "src", "1");
             }
             else
             {
@@ -1405,7 +1414,7 @@ public class PriceAskAction extends DispatchAction
 
                 condtion.addIntCondition("PriceAskBean.src", "=", PriceConstant.PRICE_ASK_SRC_MAKE);
 
-                request.setAttribute("src", "2");
+                QueryTools.setParMapAttribute(request, "src", "2");
             }
         }
 
@@ -1426,6 +1435,21 @@ public class PriceAskAction extends DispatchAction
                 .getInt(SysConfigConstant.ASK_PRODUCT_AMOUNT_MAX));
 
             condtion.addCondition("AND PriceAskBean.status in (0, 1)");
+        }
+
+        // 处理生产采购
+        if (conditionType == 5)
+        {
+            // 只能看到普通存储的
+            condtion.addIntCondition("PriceAskBean.saveType", "=",
+                PriceConstant.PRICE_ASK_SAVE_TYPE_COMMON);
+
+            condtion.addIntCondition("PriceAskBean.src", "=", PriceConstant.PRICE_ASK_SRC_MAKE);
+
+            // 内网和内外网
+            condtion.addCondition("AND PriceAskBean.type in (0, 2)");
+
+            QueryTools.setParMapAttribute(request, "src", "2");
         }
 
         // 采购主管看全部的

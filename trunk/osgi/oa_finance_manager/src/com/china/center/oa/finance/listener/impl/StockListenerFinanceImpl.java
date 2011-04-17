@@ -54,9 +54,9 @@ public class StockListenerFinanceImpl implements StockListener
 
         apply.setDescription("采购自动生成付款申请:" + bean.getId() + "/" + item.getId());
 
-        apply.setDutyId(bean.getDutyId());
+        apply.setDutyId(item.getDutyId());
 
-        apply.setInvoiceId(bean.getInvoiceType());
+        apply.setInvoiceId(item.getInvoiceType());
 
         apply.setLocationId(bean.getLocationId());
 

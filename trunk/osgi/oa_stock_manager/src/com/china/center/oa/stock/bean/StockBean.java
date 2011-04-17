@@ -15,7 +15,6 @@ import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.jdbc.annotation.enums.JoinType;
-import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
@@ -55,8 +54,10 @@ public class StockBean implements Serializable
     @Join(tagClass = StafferBean.class, type = JoinType.LEFT, alias = "owe")
     private String owerId = "";
 
+    /**
+     * 废弃
+     */
     @Html(title = "纳税实体", type = Element.SELECT, must = true)
-    @Join(tagClass = DutyBean.class, type = JoinType.LEFT)
     private String dutyId = "";
 
     /**
@@ -123,6 +124,9 @@ public class StockBean implements Serializable
     @Html(title = "发票选择", must = true, type = Element.SELECT)
     private int invoice = StockConstant.INVOICE_NO;
 
+    /**
+     * 废弃
+     */
     @Html(title = "发票类型", type = Element.SELECT)
     private String invoiceType = "";
 

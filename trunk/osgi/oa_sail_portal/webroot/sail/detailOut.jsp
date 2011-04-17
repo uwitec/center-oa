@@ -63,7 +63,7 @@ function checkBean()
     $.messager.prompt('总部核对', '请核对说明', '', function(msg){
                 if (msg)
                 {
-                    $l('../sail/out.do?method=checks&outId=${bean.fullId}&reason=' + ajaxPararmter(msg) + '&queryType=6');
+                    $l('../sail/out.do?method=checks&outId=${bean.fullId}&formDetail=1&reason=' + ajaxPararmter(msg) + '&queryType=6');
                 }
                
             }, 2);

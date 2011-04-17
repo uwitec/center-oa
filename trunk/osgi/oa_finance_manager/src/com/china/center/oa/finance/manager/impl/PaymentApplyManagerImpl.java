@@ -521,6 +521,9 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
 
                 bill.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
 
+                // 谁审批的就是谁的单子
+                bill.setStafferId(user.getStafferId());
+
                 inBillDAO.updateEntityBean(bill);
             }
         }

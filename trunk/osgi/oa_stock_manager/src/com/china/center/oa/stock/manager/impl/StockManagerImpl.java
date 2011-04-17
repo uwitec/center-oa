@@ -465,10 +465,13 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
         // 如果是采购代销的采购主管通过直接到
         if (nextStatus == StockConstant.STOCK_STATUS_STOCKMANAGERPASS)
         {
-            // 这里先校验是否已经配置
-            if (StringTools.isNullOrNone(sb.getDutyId()))
+            for (StockItemVO stockItemVO : itemList)
             {
-                throw new MYException("请先配置税务属性");
+                // 这里先校验是否已经配置
+                if (StringTools.isNullOrNone(stockItemVO.getDutyId()))
+                {
+                    throw new MYException("请先配置税务属性");
+                }
             }
 
             // 代销采购
@@ -1134,11 +1137,7 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
 
         old.setWillDate(bean.getWillDate());
 
-        old.setDutyId(bean.getDutyId());
-
         old.setInvoice(bean.getInvoice());
-
-        old.setInvoiceType(bean.getInvoiceType());
 
         // 更新采购主单据
         stockDAO.updateEntityBean(old);
@@ -1152,9 +1151,11 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
         {
             for (StockItemBean oldItem : oldItems)
             {
-                if (oldItem.getProductId().equals(newItem.getProductId()))
+                if (oldItem.getId().equals(newItem.getId()))
                 {
                     oldItem.setShowId(newItem.getShowId());
+                    oldItem.setDutyId(newItem.getDutyId());
+                    oldItem.setInvoiceType(newItem.getInvoiceType());
                 }
             }
         }

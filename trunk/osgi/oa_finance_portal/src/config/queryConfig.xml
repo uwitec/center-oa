@@ -180,6 +180,10 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
+        <condtion name="stafferName" filed="name" caption="所属会计" pfix="SB1">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
         <condtion name="customerName" filed="name" caption="单位" pfix="UnitViewBean">
             <opr>like</opr>
             <type>text</type>
@@ -242,6 +246,10 @@
             <inner></inner>
         </condtion>
         <condtion name="stafferName" filed="name" caption="所属职员" pfix="SB2">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="stafferName" filed="name" caption="所属会计" pfix="SB1">
             <opr>like</opr>
             <type>text</type>
         </condtion>

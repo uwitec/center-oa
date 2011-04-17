@@ -82,15 +82,8 @@ function showDiv(id)
 				<option value="">--</option>
                <p:option type="stockStype"></p:option>
             </p:pro>
-			
-            <p:pro field="invoiceType" innerString="style='width: 300px'">
-                <option value="">没有发票</option>
-                <c:forEach items="${invoiceList}" var="item">
-				<option value="${item.id}">${item.fullName}</option>
-				</c:forEach>
-            </p:pro>
             
-            <p:pro field="areaId" innerString="style='width: 300px'" cell="0">
+            <p:pro field="areaId" innerString="style='width: 300px'">
                <option value="">--</option>
                <p:option type="123"></p:option>
             </p:pro>
@@ -124,11 +117,6 @@ function showDiv(id)
             <p:pro field="mode" cell="1">
             <p:option type="stockMode"></p:option>
             </p:pro>
-            
-            
-            <p:cells celspan="2" title="纳税实体">
-            ${bean.dutyName}
-            </p:cells>
 
 			<p:cells celspan="2" title="备注">
 			${bean.description}
@@ -166,7 +154,6 @@ function showDiv(id)
 				<td width="5%" align="center">是否入库</td>
 				<td width="10%" align="center">合计金额</td>
 				<td width="10%" align="center">描述</td>
-				<td width="10%" align="center">开单名</td>
 				
 			</tr>
 
@@ -209,18 +196,48 @@ function showDiv(id)
 					
 					<td align="center">${item.description}</td>
 					
-					<td align="center">
-					 <select name="showId_3" style="WIDTH: 150px;" values="${item.showId}" autodisplay="1">
-                                 <p:option type="showList"></p:option>
-                      </select>
-					</td>
-					
 				</tr>
 			</c:forEach>
 		</table>
 	</p:subBody>
 
 	<p:tr />
+	
+	<p:subBody width="100%">
+        <table width="100%" border="0" cellspacing='1' id="tables">
+            <tr align="center" class="content0">
+                <td width="30%" align="center">采购产品</td>
+                <td width="20%" align="center">纳税实体</td>
+                <td width="30%" align="center">发票类型</td>
+                <td width="20%" align="center">开单名</td>
+            </tr>
+
+            <c:forEach items="${bean.itemVO}" var="item" varStatus="vs">
+                <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
+                    <td align="center">${item.productName}</td>
+
+                    <td align="center">${item.dutyName}</td>
+                    
+                    <td align="center">
+                     <select name="invoiceType" style="WIDTH: 150px;" values="${item.invoiceType}" autodisplay="1">
+                                <option value="">没有发票</option>
+                                <c:forEach items="${invoiceList}" var="item">
+                                <option value="${item.id}">${item.fullName}</option>
+                                </c:forEach>
+                      </select>
+                    </td>
+                    
+                     <td align="center">
+                     <select name="showId" style="WIDTH: 150px;" values="${item.showId}" autodisplay="1">
+                                 <p:option type="showList"></p:option>
+                      </select>
+                    </td>
+                </tr>
+            </c:forEach>
+        </table>
+    </p:subBody>
+
+    <p:tr />
 
 	<p:subBody width="100%">
 		<table width="100%" border="0" cellspacing='1' id="tables">

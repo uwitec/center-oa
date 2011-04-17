@@ -65,14 +65,6 @@ function pagePrint()
                ${bean.provideName}
             </p:cell>
             
-            <p:cell title="纳税实体">
-               ${bean.dutyName}
-            </p:cell>
-            
-             <p:cell title="发票类型">
-               ${bean.invoiceName}
-            </p:cell>
-            
             <p:cell title="最早付款">
                ${bean.payDate}
             </p:cell>
@@ -107,7 +99,7 @@ function pagePrint()
 
             <c:forEach items="${outList}" var="item" varStatus="vs">
                 <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
-                    <td align="center">${item.id}</td>
+                    <td align="center"><a href="../finance/bill.do?method=findOutBill&id=${item.id}">${item.id}</a></td>
 
                     <td align="center">${my:formatNum(item.moneys)}</td>
 

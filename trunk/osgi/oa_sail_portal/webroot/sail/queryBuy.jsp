@@ -335,7 +335,7 @@ function hrefAndSelect(obj)
 	name="outId">
 <input type="hidden" value="" name="oldStatus">
 <input type="hidden" value="" name="statuss">
-<input type="hidden" value="${radioIndex}" name="radioIndex">
+<input type="hidden" value="${ppmap.radioIndex}" name="radioIndex">
 <input type="hidden" value="" name="reason">
 
 <c:set var="fg" value='入库'/>
@@ -357,24 +357,24 @@ function hrefAndSelect(obj)
 				<table width="100%" border="0" cellspacing='1'>
 					<tr class="content1">
 						<td width="15%" align="center">开始时间</td>
-						<td align="center" width="35%"><p:plugin name="outTime" size="20" value="${outTime}"/></td>
+						<td align="center" width="35%"><p:plugin name="outTime" size="20" value="${ppmap.outTime}"/></td>
 						<td width="15%" align="center">结束时间</td>
-						<td align="center"><p:plugin name="outTime1" size="20" value="${outTime1}"/>
+						<td align="center"><p:plugin name="outTime1" size="20" value="${ppmap.outTime1}"/>
 						</td>
 					</tr>
 					
 					<tr class="content1">
                         <td width="15%" align="center">发货时间从</td>
-                        <td align="center" width="35%"><p:plugin name="changeTime" type="0" size="20" value="${changeTime}"/></td>
+                        <td align="center" width="35%"><p:plugin name="changeTime" type="0" size="20" value="${ppmap.changeTime}"/></td>
                         <td width="15%" align="center">到</td>
-                        <td align="center"><p:plugin name="changeTime1" size="20" type="0" value="${changeTime1}"/>
+                        <td align="center"><p:plugin name="changeTime1" size="20" type="0" value="${ppmap.changeTime1}"/>
                         </td>
                     </tr>
 
 					<tr class="content2">
 						<td width="15%" align="center">入库单状态</td>
 						<td align="center">
-						<select name="status" class="select_class" values="${status}">
+						<select name="status" class="select_class" values="${ppmap.status}">
 							<option value="">--</option>
 							<p:option type="buyStatus"/>
 							<option value="99">发货态</option>
@@ -382,27 +382,27 @@ function hrefAndSelect(obj)
 
 						</td>
 						<td width="15%" align="center">供应商：</td>
-						<td align="center"><input type="text" name="customerName" maxlength="14" value="${customerName}"></td>
+						<td align="center"><input type="text" name="customerName" maxlength="14" value="${ppmap.customerName}"></td>
 					</tr>
 
 					<tr class="content1">
 						<td width="15%" align="center">入库类型</td>
 						<td align="center">
 						<select name="outType"
-							class="select_class" values=${outType}>
+							class="select_class" values=${ppmap.outType}>
 							<option value="">--</option>
 							<p:option type="outType_in"></p:option>
 						</select>
 
 						</td>
 						<td width="15%" align="center">入库单号</td>
-						<td align="center"><input type="text" name="id" value="${id}"></td>
+						<td align="center"><input type="text" name="id" value="${ppmap.id}"></td>
 					</tr>
 
 					<tr class="content2">
 						<td width="15%" align="center">在途状态</td>
 						<td align="center" colspan="1">
-						<select name="inway" values="${inway}"
+						<select name="inway" values="${ppmap.inway}"
 							class="select_class">
 							<option value="">--</option>
 							<p:option type="inway"></p:option>
@@ -411,7 +411,7 @@ function hrefAndSelect(obj)
 						<td width="15%" align="center">仓库</td>
                         <td align="center">
                         <select name="location"
-                            class="select_class" values=${location}>
+                            class="select_class" values=${ppmap.location}>
                             <option value="">--</option>
                             <c:forEach items="${depotList}" var="item">
                              <option value="${item.id}">${item.name}</option>
@@ -519,7 +519,7 @@ function hrefAndSelect(obj)
 							   statuss='${item.status}' 
 							   value="${item.fullId}"/></td>
 							<td align="center"
-							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&fow=99&outId=${item.fullId}${pcheck}">
+							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&radioIndex=${vs.index}&fow=99&outId=${item.fullId}${pcheck}">
 							${item.fullId}</a></td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.customerName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('buyStatus', item.status)}</td>

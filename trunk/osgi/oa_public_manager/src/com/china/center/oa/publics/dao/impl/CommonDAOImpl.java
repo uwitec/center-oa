@@ -75,6 +75,8 @@ public class CommonDAOImpl implements CommonDAO
             catch (Throwable e)
             {
                 _logger.error(e, e);
+
+                return (int)SequenceTools.getCurrentSequence();
             }
             finally
             {
@@ -102,9 +104,8 @@ public class CommonDAOImpl implements CommonDAO
                     }
                 }
             }
-            // jdbcOperation2.update(sql, new Object[] {kk + 1, tem});
 
-            return (int)SequenceTools.getCurrentSequence();
+            return tem;
         }
     }
 

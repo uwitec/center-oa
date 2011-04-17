@@ -2493,7 +2493,18 @@ public class ParentOutAction extends DispatchAction
         {
             if (OldPageSeparateTools.isFirstLoad(request))
             {
-                ConditionParse condtion = getQueryCondition(request, user);
+                Object attribute = request.getAttribute("holdCondition");
+
+                ConditionParse condtion = null;
+
+                if (attribute == null)
+                {
+                    condtion = getQueryCondition(request, user);
+                }
+                else
+                {
+                    condtion = OldPageSeparateTools.getCondition(request, QUERYOUT);
+                }
 
                 int tatol = outDAO.countVOByCondition(condtion.toString());
 
@@ -2542,9 +2553,13 @@ public class ParentOutAction extends DispatchAction
 
         int radioIndex = CommonTools.parseInt(request.getParameter("radioIndex"));
 
+        Map map = (Map)request.getSession().getAttribute("ppmap");
+
         if (list.size() > 0 && radioIndex >= list.size())
         {
             request.setAttribute("radioIndex", list.size() - 1);
+
+            map.put("radioIndex", list.size() - 1);
         }
 
         List<InvoiceBean> invoiceList = invoiceDAO.queryEntityBeansByCondition("where forward = ?",
@@ -2610,7 +2625,18 @@ public class ParentOutAction extends DispatchAction
         {
             if (OldPageSeparateTools.isFirstLoad(request))
             {
-                ConditionParse condtion = getQueryBuyCondition(request, user);
+                Object attribute = request.getAttribute("holdCondition");
+
+                ConditionParse condtion = null;
+
+                if (attribute == null)
+                {
+                    condtion = getQueryBuyCondition(request, user);
+                }
+                else
+                {
+                    condtion = OldPageSeparateTools.getCondition(request, QUERYBUY);
+                }
 
                 int tatol = outDAO.countVOByCondition(condtion.toString());
 
@@ -2645,9 +2671,13 @@ public class ParentOutAction extends DispatchAction
 
         int radioIndex = CommonTools.parseInt(request.getParameter("radioIndex"));
 
+        Map map = (Map)request.getSession().getAttribute("ppmap");
+
         if (list.size() > 0 && radioIndex >= list.size())
         {
             request.setAttribute("radioIndex", list.size() - 1);
+
+            map.put("radioIndex", list.size() - 1);
         }
 
         request.getSession().setAttribute("listOut1", list);
@@ -3150,6 +3180,8 @@ public class ParentOutAction extends DispatchAction
     protected ConditionParse getQueryCondition(HttpServletRequest request, User user)
         throws MYException
     {
+        Map<String, String> queryOutCondtionMap = CommonTools.saveParamersToMap(request);
+
         ConditionParse condtion = new ConditionParse();
 
         condtion.addWhereStr();
@@ -3172,6 +3204,8 @@ public class ParentOutAction extends DispatchAction
             condtion.addCondition("OutBean.outTime", ">=", TimeTools.now_short( -7));
 
             request.setAttribute("outTime", TimeTools.now_short( -7));
+
+            queryOutCondtionMap.put("outTime", TimeTools.now_short( -7));
         }
 
         if ( !StringTools.isNullOrNone(outTime1))
@@ -3183,6 +3217,8 @@ public class ParentOutAction extends DispatchAction
             condtion.addCondition("OutBean.outTime", "<=", TimeTools.now_short());
 
             request.setAttribute("outTime1", TimeTools.now_short());
+
+            queryOutCondtionMap.put("outTime1", TimeTools.now_short());
         }
 
         String changeTime = request.getParameter("changeTime");
@@ -3309,6 +3345,9 @@ public class ParentOutAction extends DispatchAction
                     OutConstant.STATUS_LOCATION_MANAGER_CHECK);
 
                 request.setAttribute("status", OutConstant.STATUS_LOCATION_MANAGER_CHECK);
+
+                queryOutCondtionMap.put("status", String
+                    .valueOf(OutConstant.STATUS_LOCATION_MANAGER_CHECK));
             }
 
             condtion.addCondition("and OutBean.industryId in " + getAllIndustryId(staffer));
@@ -3321,6 +3360,8 @@ public class ParentOutAction extends DispatchAction
                 condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_SUBMIT);
 
                 request.setAttribute("status", OutConstant.STATUS_SUBMIT);
+
+                queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_SUBMIT));
             }
         }
         // 处理发货单 物流审批(只有中心仓库才有物流的)
@@ -3331,6 +3372,8 @@ public class ParentOutAction extends DispatchAction
                 condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_MANAGER_PASS);
 
                 request.setAttribute("status", OutConstant.STATUS_MANAGER_PASS);
+
+                queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_MANAGER_PASS));
             }
 
             setDepotCondotionInOut(user, condtion);
@@ -3345,6 +3388,8 @@ public class ParentOutAction extends DispatchAction
                 condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_FLOW_PASS);
 
                 request.setAttribute("status", OutConstant.STATUS_FLOW_PASS);
+
+                queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_FLOW_PASS));
             }
 
             setDepotCondotionInOut(user, condtion);
@@ -3361,6 +3406,8 @@ public class ParentOutAction extends DispatchAction
                 condtion.addCondition("and OutBean.status in (3, 4)");
 
                 request.setAttribute("pay", OutConstant.PAY_NOT);
+
+                queryOutCondtionMap.put("pay", String.valueOf(OutConstant.PAY_NOT));
             }
 
             if ( !userManager.containAuth(user.getId(), AuthConstant.BILL_QUERY_ALL))
@@ -3378,6 +3425,8 @@ public class ParentOutAction extends DispatchAction
                 condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_PASS);
 
                 request.setAttribute("status", OutConstant.STATUS_PASS);
+
+                queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_PASS));
             }
 
             condtion.addCondition("order by changeTime desc");
@@ -3390,6 +3439,8 @@ public class ParentOutAction extends DispatchAction
                 condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_CEO_CHECK);
 
                 request.setAttribute("status", OutConstant.STATUS_CEO_CHECK);
+
+                queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_CEO_CHECK));
             }
         }
         // 查询销售退库
@@ -3414,7 +3465,11 @@ public class ParentOutAction extends DispatchAction
 
             request.setAttribute("outType", OutConstant.OUTTYPE_OUT_SWATCH);
 
+            queryOutCondtionMap.put("outType", String.valueOf(OutConstant.OUTTYPE_OUT_SWATCH));
+
             request.setAttribute("status", OutConstant.STATUS_PASS);
+
+            queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_PASS));
         }
         // 查询下属的销售单
         else if ("10".equals(queryType))
@@ -3450,6 +3505,8 @@ public class ParentOutAction extends DispatchAction
         {
             condtion.addCondition("order by OutBean.outTime desc");
         }
+
+        request.getSession().setAttribute("ppmap", queryOutCondtionMap);
 
         return condtion;
     }
@@ -3518,6 +3575,8 @@ public class ParentOutAction extends DispatchAction
     protected ConditionParse getQueryBuyCondition(HttpServletRequest request, User user)
         throws MYException
     {
+        Map<String, String> queryOutCondtionMap = CommonTools.saveParamersToMap(request);
+
         ConditionParse condtion = new ConditionParse();
 
         condtion.addWhereStr();
@@ -3537,6 +3596,8 @@ public class ParentOutAction extends DispatchAction
             condtion.addCondition("OutBean.outTime", ">=", TimeTools.now_short( -7));
 
             request.setAttribute("outTime", TimeTools.now_short( -7));
+
+            queryOutCondtionMap.put("outTime", TimeTools.now_short( -7));
         }
 
         if ( !StringTools.isNullOrNone(outTime1))
@@ -3548,6 +3609,8 @@ public class ParentOutAction extends DispatchAction
             condtion.addCondition("OutBean.outTime", "<=", TimeTools.now_short());
 
             request.setAttribute("outTime1", TimeTools.now_short());
+
+            queryOutCondtionMap.put("outTime1", TimeTools.now_short());
         }
 
         String changeTime = request.getParameter("changeTime");
@@ -3634,6 +3697,9 @@ public class ParentOutAction extends DispatchAction
                     OutConstant.STATUS_LOCATION_MANAGER_CHECK);
 
                 request.setAttribute("status", OutConstant.STATUS_LOCATION_MANAGER_CHECK);
+
+                queryOutCondtionMap.put("status", String
+                    .valueOf(OutConstant.STATUS_LOCATION_MANAGER_CHECK));
             }
 
             condtion.addCondition("and OutBean.industryId in " + getAllIndustryId(staffer));
@@ -3646,6 +3712,8 @@ public class ParentOutAction extends DispatchAction
                 condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_CEO_CHECK);
 
                 request.setAttribute("status", OutConstant.STATUS_CEO_CHECK);
+
+                queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_CEO_CHECK));
             }
         }
         // 董事长审核
@@ -3656,6 +3724,8 @@ public class ParentOutAction extends DispatchAction
                 condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_CHAIRMA_CHECK);
 
                 request.setAttribute("status", OutConstant.STATUS_CHAIRMA_CHECK);
+
+                queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_CHAIRMA_CHECK));
             }
         }
         // 库管调拨
@@ -3667,9 +3737,13 @@ public class ParentOutAction extends DispatchAction
 
                 request.setAttribute("status", OutConstant.STATUS_PASS);
 
+                queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_PASS));
+
                 condtion.addIntCondition("OutBean.inway", "=", OutConstant.IN_WAY);
 
                 request.setAttribute("inway", OutConstant.IN_WAY);
+
+                queryOutCondtionMap.put("inway", String.valueOf(OutConstant.IN_WAY));
             }
 
             setDepotCondotionInBuy(user, condtion);
@@ -3682,6 +3756,8 @@ public class ParentOutAction extends DispatchAction
                 condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_SAVE);
 
                 request.setAttribute("status", OutConstant.STATUS_SAVE);
+
+                queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_SAVE));
 
                 // 领样退库/销售退库
                 condtion.addCondition("and OutBean.outType in (4, 5)");
@@ -3708,6 +3784,8 @@ public class ParentOutAction extends DispatchAction
                 condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_PASS);
 
                 request.setAttribute("status", OutConstant.STATUS_PASS);
+
+                queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_PASS));
             }
         }
         // 未知的则什么都没有
@@ -3720,6 +3798,8 @@ public class ParentOutAction extends DispatchAction
         {
             condtion.addCondition("order by OutBean.outTime desc");
         }
+
+        request.getSession().setAttribute("ppmap", queryOutCondtionMap);
 
         return condtion;
     }

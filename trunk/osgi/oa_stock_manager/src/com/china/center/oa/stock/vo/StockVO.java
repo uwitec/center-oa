@@ -31,7 +31,7 @@ public class StockVO extends StockBean
     @Relationship(relationField = "industryId")
     private String industryName = "";
 
-    @Relationship(relationField = "dutyId")
+    @Ignore
     private String dutyName = "";
 
     /**

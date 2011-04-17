@@ -335,6 +335,57 @@ public class StockPayAction extends DispatchAction
     }
 
     /**
+     * composeStockPayApply
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward composeStockPayApply(ActionMapping mapping, ActionForm form,
+                                              HttpServletRequest request,
+                                              HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("ids");
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            String[] splits = id.split(";");
+
+            List<String> idList = new ArrayList<String>();
+
+            for (String each : splits)
+            {
+                if ( !StringTools.isNullOrNone(each))
+                {
+                    idList.add(each.trim());
+                }
+            }
+
+            financeFacade.composeStockPayApply(user.getId(), idList);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        request.setAttribute("mode", "0");
+
+        return mapping.findForward("queryStockPayApply");
+    }
+
+    /**
      * closeStockPay
      * 
      * @param mapping
