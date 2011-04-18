@@ -430,8 +430,8 @@ function hrefAndSelect(obj)
 						</select>
 
 						</td>
-						<td width="15%" align="center"></td>
-						<td align="center"></td>
+						<td width="15%" align="center">职员</td>
+						<td align="center"><input type="text" name="stafferName" value="${ppmap.stafferName}"></td>
 					</tr>
 
 					<tr class="content1">

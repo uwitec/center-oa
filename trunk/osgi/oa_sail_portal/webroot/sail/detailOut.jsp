@@ -31,7 +31,7 @@ function load()
 
     hides(true);
     
-    $detail($O('viewTable'), ['pr', 'ba']);
+    $detail($O('viewTable'), ['pr', 'ba', 'pr2']);
     
     highlights($("#mainTable").get(0), ['未付款'], 'red');
     
@@ -48,11 +48,13 @@ function pagePrint()
 {
     $O('na').style.display = 'none';
     $O('pr').style.display = 'none';
+    $O('pr2').style.display = 'none';
     $O('ba').style.display = 'none';
     $O('desc1').style.display = 'none';
     window.print();
 
     $O('pr').style.display = 'inline';
+    $O('pr2').style.display = 'inline';
     $O('ba').style.display = 'inline';
     $O('na').style.display = 'block';
     $O('desc1').style.display = 'block';
@@ -62,6 +64,7 @@ function pagePrint2()
 {
     $O('na').style.display = 'none';
     $O('pr').style.display = 'none';
+    $O('pr2').style.display = 'none';
     $O('ba').style.display = 'none';
     $O('desc1').style.display = 'none';
     $O('cost_td').style.display = 'none';
@@ -69,6 +72,7 @@ function pagePrint2()
     window.print();
 
     $O('pr').style.display = 'inline';
+    $O('pr2').style.display = 'inline';
     $O('ba').style.display = 'inline';
     $O('na').style.display = 'block';
     $O('desc1').style.display = 'block';
@@ -811,7 +815,7 @@ function checkBean()
         <input type="button" name="pr"
             class="button_class" onclick="pagePrint()"
             value="&nbsp;&nbsp;打 印&nbsp;&nbsp;">&nbsp;&nbsp;
-            <input type="button" name="pr"
+            <input type="button" name="pr2"
             class="button_class" onclick="pagePrint2()"
             value="&nbsp;&nbsp;打印(无成本)&nbsp;&nbsp;">&nbsp;&nbsp;
             <input
