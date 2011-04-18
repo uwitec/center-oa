@@ -17,6 +17,7 @@ import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.LocationBean;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.sail.constanst.OutConstant;
 
@@ -118,6 +119,7 @@ public class OutBean implements Serializable
     /**
      * 销售行业范围(4级组织)
      */
+    @Join(tagClass = PrincipalshipBean.class, type = JoinType.LEFT)
     private String industryId = "";
 
     /**
@@ -1378,188 +1380,38 @@ public class OutBean implements Serializable
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue
-            .append("OutBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("fullId = ")
-            .append(this.fullId)
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("flowId = ")
-            .append(this.flowId)
-            .append(TAB)
-            .append("outTime = ")
-            .append(this.outTime)
-            .append(TAB)
-            .append("managerTime = ")
-            .append(this.managerTime)
-            .append(TAB)
-            .append("changeTime = ")
-            .append(this.changeTime)
-            .append(TAB)
-            .append("outType = ")
-            .append(this.outType)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("hasInvoice = ")
-            .append(this.hasInvoice)
-            .append(TAB)
-            .append("invoiceId = ")
-            .append(this.invoiceId)
-            .append(TAB)
-            .append("dutyId = ")
-            .append(this.dutyId)
-            .append(TAB)
-            .append("status = ")
-            .append(this.status)
-            .append(TAB)
-            .append("invoiceStatus = ")
-            .append(this.invoiceStatus)
-            .append(TAB)
-            .append("invoiceMoney = ")
-            .append(this.invoiceMoney)
-            .append(TAB)
-            .append("department = ")
-            .append(this.department)
-            .append(TAB)
-            .append("customerId = ")
-            .append(this.customerId)
-            .append(TAB)
-            .append("customerName = ")
-            .append(this.customerName)
-            .append(TAB)
-            .append("locationId = ")
-            .append(this.locationId)
-            .append(TAB)
-            .append("location = ")
-            .append(this.location)
-            .append(TAB)
-            .append("industryId = ")
-            .append(this.industryId)
-            .append(TAB)
-            .append("industryId2 = ")
-            .append(this.industryId2)
-            .append(TAB)
-            .append("connector = ")
-            .append(this.connector)
-            .append(TAB)
-            .append("phone = ")
-            .append(this.phone)
-            .append(TAB)
-            .append("stafferName = ")
-            .append(this.stafferName)
-            .append(TAB)
-            .append("stafferId = ")
-            .append(this.stafferId)
-            .append(TAB)
-            .append("managerId = ")
-            .append(this.managerId)
-            .append(TAB)
-            .append("total = ")
-            .append(this.total)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append("checks = ")
-            .append(this.checks)
-            .append(TAB)
-            .append("checkStatus = ")
-            .append(this.checkStatus)
-            .append(TAB)
-            .append("reday = ")
-            .append(this.reday)
-            .append(TAB)
-            .append("redate = ")
-            .append(this.redate)
-            .append(TAB)
-            .append("depotpartId = ")
-            .append(this.depotpartId)
-            .append(TAB)
-            .append("marks = ")
-            .append(this.marks)
-            .append(TAB)
-            .append("mark = ")
-            .append(this.mark)
-            .append(TAB)
-            .append("consign = ")
-            .append(this.consign)
-            .append(TAB)
-            .append("pay = ")
-            .append(this.pay)
-            .append(TAB)
-            .append("inway = ")
-            .append(this.inway)
-            .append(TAB)
-            .append("tempType = ")
-            .append(this.tempType)
-            .append(TAB)
-            .append("hadPay = ")
-            .append(this.hadPay)
-            .append(TAB)
-            .append("badDebts = ")
-            .append(this.badDebts)
-            .append(TAB)
-            .append("badDebtsCheckStatus = ")
-            .append(this.badDebtsCheckStatus)
-            .append(TAB)
-            .append("arriveDate = ")
-            .append(this.arriveDate)
-            .append(TAB)
-            .append("destinationId = ")
-            .append(this.destinationId)
-            .append(TAB)
-            .append("refOutFullId = ")
-            .append(this.refOutFullId)
-            .append(TAB)
-            .append("tranNo = ")
-            .append(this.tranNo)
-            .append(TAB)
-            .append("reserve1 = ")
-            .append(this.reserve1)
-            .append(TAB)
-            .append("reserve2 = ")
-            .append(this.reserve2)
-            .append(TAB)
-            .append("reserve3 = ")
-            .append(this.reserve3)
-            .append(TAB)
-            .append("reserve4 = ")
-            .append(this.reserve4)
-            .append(TAB)
-            .append("reserve5 = ")
-            .append(this.reserve5)
-            .append(TAB)
-            .append("reserve6 = ")
-            .append(this.reserve6)
-            .append(TAB)
-            .append("reserve7 = ")
-            .append(this.reserve7)
-            .append(TAB)
-            .append("reserve8 = ")
-            .append(this.reserve8)
-            .append(TAB)
-            .append("reserve9 = ")
-            .append(this.reserve9)
-            .append(TAB)
-            .append("curcredit = ")
-            .append(this.curcredit)
-            .append(TAB)
-            .append("staffcredit = ")
-            .append(this.staffcredit)
-            .append(TAB)
-            .append("managercredit = ")
-            .append(this.managercredit)
-            .append(TAB)
-            .append("baseList = ")
-            .append(this.baseList)
-            .append(TAB)
-            .append(" )");
+        retValue.append("OutBean ( ").append(super.toString()).append(TAB).append("fullId = ").append(this.fullId).append(
+            TAB).append("id = ").append(this.id).append(TAB).append("flowId = ").append(this.flowId).append(TAB).append(
+            "outTime = ").append(this.outTime).append(TAB).append("managerTime = ").append(this.managerTime).append(TAB).append(
+            "changeTime = ").append(this.changeTime).append(TAB).append("outType = ").append(this.outType).append(TAB).append(
+            "type = ").append(this.type).append(TAB).append("hasInvoice = ").append(this.hasInvoice).append(TAB).append(
+            "invoiceId = ").append(this.invoiceId).append(TAB).append("dutyId = ").append(this.dutyId).append(TAB).append(
+            "status = ").append(this.status).append(TAB).append("invoiceStatus = ").append(this.invoiceStatus).append(
+            TAB).append("invoiceMoney = ").append(this.invoiceMoney).append(TAB).append("department = ").append(
+            this.department).append(TAB).append("customerId = ").append(this.customerId).append(TAB).append(
+            "customerName = ").append(this.customerName).append(TAB).append("locationId = ").append(this.locationId).append(
+            TAB).append("location = ").append(this.location).append(TAB).append("industryId = ").append(this.industryId).append(
+            TAB).append("industryId2 = ").append(this.industryId2).append(TAB).append("connector = ").append(
+            this.connector).append(TAB).append("phone = ").append(this.phone).append(TAB).append("stafferName = ").append(
+            this.stafferName).append(TAB).append("stafferId = ").append(this.stafferId).append(TAB).append(
+            "managerId = ").append(this.managerId).append(TAB).append("total = ").append(this.total).append(TAB).append(
+            "description = ").append(this.description).append(TAB).append("checks = ").append(this.checks).append(TAB).append(
+            "checkStatus = ").append(this.checkStatus).append(TAB).append("reday = ").append(this.reday).append(TAB).append(
+            "redate = ").append(this.redate).append(TAB).append("depotpartId = ").append(this.depotpartId).append(TAB).append(
+            "marks = ").append(this.marks).append(TAB).append("mark = ").append(this.mark).append(TAB).append(
+            "consign = ").append(this.consign).append(TAB).append("pay = ").append(this.pay).append(TAB).append(
+            "inway = ").append(this.inway).append(TAB).append("tempType = ").append(this.tempType).append(TAB).append(
+            "hadPay = ").append(this.hadPay).append(TAB).append("badDebts = ").append(this.badDebts).append(TAB).append(
+            "badDebtsCheckStatus = ").append(this.badDebtsCheckStatus).append(TAB).append("arriveDate = ").append(
+            this.arriveDate).append(TAB).append("destinationId = ").append(this.destinationId).append(TAB).append(
+            "refOutFullId = ").append(this.refOutFullId).append(TAB).append("tranNo = ").append(this.tranNo).append(TAB).append(
+            "reserve1 = ").append(this.reserve1).append(TAB).append("reserve2 = ").append(this.reserve2).append(TAB).append(
+            "reserve3 = ").append(this.reserve3).append(TAB).append("reserve4 = ").append(this.reserve4).append(TAB).append(
+            "reserve5 = ").append(this.reserve5).append(TAB).append("reserve6 = ").append(this.reserve6).append(TAB).append(
+            "reserve7 = ").append(this.reserve7).append(TAB).append("reserve8 = ").append(this.reserve8).append(TAB).append(
+            "reserve9 = ").append(this.reserve9).append(TAB).append("curcredit = ").append(this.curcredit).append(TAB).append(
+            "staffcredit = ").append(this.staffcredit).append(TAB).append("managercredit = ").append(this.managercredit).append(
+            TAB).append("baseList = ").append(this.baseList).append(TAB).append(" )");
 
         return retValue.toString();
     }

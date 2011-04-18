@@ -20,6 +20,8 @@
 	
 	<osgi:reference id="enumDAO" interface="com.china.center.oa.publics.dao.EnumDAO" />
 	
+	<osgi:reference id="orgManager" interface="com.china.center.oa.publics.manager.OrgManager" />
+	
 	<osgi:reference id="userManager" interface="com.china.center.oa.publics.manager.UserManager" />
 	
 	<osgi:reference id="authManager" interface="com.china.center.oa.publics.manager.AuthManager" />

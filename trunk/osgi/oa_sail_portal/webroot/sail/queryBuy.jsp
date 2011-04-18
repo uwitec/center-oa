@@ -418,7 +418,20 @@ function hrefAndSelect(obj)
                             </c:forEach>
                         </select>
                         </td>
+					</tr>
 					
+					<tr class="content1">
+						<td width="15%" align="center">事业部</td>
+						<td align="center">
+						<select name="industryId"
+							class="select_class" values=${ppmap.industryId}>
+							<option value="">--</option>
+							<p:option type="locationList"></p:option>
+						</select>
+
+						</td>
+						<td width="15%" align="center"></td>
+						<td align="center"></td>
 					</tr>
 
 					<tr class="content1">
