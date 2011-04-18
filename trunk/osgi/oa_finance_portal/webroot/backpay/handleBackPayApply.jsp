@@ -30,7 +30,11 @@ function endBean()
 {
     $O('method').value = 'endBackPayApply';
     
+    if ( $O('backPay'))
     submit('确定付款给客户?(自动生成付款单)付款金额:' + $$('backPay'), null, null);
+    else
+    submit('确定全部转预收?', null, null);
+    
 }
 
 function selectBank()
@@ -134,7 +138,7 @@ function getBank(obj)
                ${bean.logTime}
             </p:cell>
 
-            <c:if test="${bean.status == 2 && mode != 0}">
+            <c:if test="${bean.status == 2 && mode != 0 && bean.backPay > 0}">
 	            <p:cell title="申请退款金额" end="true">
 	                <input type="text" oncheck="notNone;isFloat;" readonly="readonly" name="backPay" value="${my:formatNum(bean.backPay)}">
 	                <font color="red">*</font>

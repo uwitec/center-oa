@@ -151,8 +151,7 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
 
         condition.addCondition("BackPayApplyBean.billId", "=", bean.getBillId());
 
-        condition.addIntCondition("BackPayApplyBean.status", "<",
-            BackPayApplyConstant.STATUS_REJECT);
+        condition.addIntCondition("BackPayApplyBean.status", "<", BackPayApplyConstant.STATUS_REJECT);
 
         int countByCondition = backPayApplyDAO.countByCondition(condition.toString());
 
@@ -171,8 +170,7 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
      * @param reason
      * @param oprMode
      */
-    private void saveFlowLog(User user, int preStatus, BackPayApplyBean apply, String reason,
-                             int oprMode)
+    private void saveFlowLog(User user, int preStatus, BackPayApplyBean apply, String reason, int oprMode)
     {
         FlowLogBean log = new FlowLogBean();
 
@@ -224,8 +222,8 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
         if ( !MathTools.equal(bean.getBackPay() + bean.getChangePayment(), max))
         {
             throw new MYException(
-                "销售单支付金额[%.2f],退货实物价值[%.2f],退货返还金额[%.2f],申请退货返还金额[%.2f],申请转预收金额[%.2f],申请金额必须等于[%.2f]",
-                hasdIn, backTotal, hasdOut, bean.getBackPay(), bean.getChangePayment(), max);
+                "销售单支付金额[%.2f],退货实物价值[%.2f],退货返还金额[%.2f],申请退货返还金额[%.2f],申请转预收金额[%.2f],申请金额必须等于[%.2f]", hasdIn,
+                backTotal, hasdOut, bean.getBackPay(), bean.getChangePayment(), max);
         }
     }
 
@@ -360,8 +358,13 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
 
         BackPayApplyBean bean = backPayApplyDAO.find(id);
 
+        String outBillId = "";
+
         // 付款
-        String outBillId = createOutBill(user, outBill, bean);
+        if (outBill != null)
+        {
+            outBillId = createOutBill(user, outBill, bean);
+        }
 
         if (bean.getType() == BackPayApplyConstant.TYPE_OUT)
         {
@@ -384,8 +387,7 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
             }
 
             // 直接把预收拆分成两个单据
-            String newId = billManager.splitInBillBeanWithoutTransactional(user, inBill.getId(),
-                bean.getBackPay());
+            String newId = billManager.splitInBillBeanWithoutTransactional(user, inBill.getId(), bean.getBackPay());
 
             // 预收
             InBillBean newInBill = inBillDAO.find(newId);
@@ -442,8 +444,7 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
                 // 最后的处理
                 if (each.getMoneys() > hasOut)
                 {
-                    String newId = billManager.splitInBillBeanWithoutTransactional(user, each
-                        .getId(), hasOut);
+                    String newId = billManager.splitInBillBeanWithoutTransactional(user, each.getId(), hasOut);
 
                     // 预收
                     InBillBean newInBill = inBillDAO.find(newId);

@@ -31,7 +31,7 @@ function selectStaffer()
 
 function selectOut()
 {
-    window.common.modal('../sail/out.do?method=rptQueryOut&selectMode=0&mode=0&load=1&bad=1');
+    window.common.modal('../sail/out.do?method=rptQueryOut&selectMode=0&load=1&bad=1');
 }
 
 function getOut(oos)
