@@ -58,6 +58,37 @@ function pagePrint()
     $O('desc1').style.display = 'block';
 }
 
+function pagePrint2()
+{
+    $O('na').style.display = 'none';
+    $O('pr').style.display = 'none';
+    $O('ba').style.display = 'none';
+    $O('desc1').style.display = 'none';
+    $O('cost_td').style.display = 'none';
+    hiddenCost('none');
+    window.print();
+
+    $O('pr').style.display = 'inline';
+    $O('ba').style.display = 'inline';
+    $O('na').style.display = 'block';
+    $O('desc1').style.display = 'block';
+    $O('cost_td').style.display = 'block';
+    hiddenCost('block');
+}
+
+function hiddenCost(str)
+{
+	//var costList = document.getElementsByName('desciprt');
+	
+	for (var i = 0; i < 30; i++)
+	{
+		if ($O('sub_td_' + i))
+		{
+			$O('sub_td_' + i).style.display = str;
+		}
+	}
+}
+
 function checkBean()
 {
     $.messager.prompt('总部核对', '请核对说明', '', function(msg){
@@ -375,7 +406,7 @@ function checkBean()
 						<td width="5%" align="center">数量</td>
 						<td width="10%" align="center">销售价</td>
 						<td width="10%" align="center">金额<span id="total"></span></td>
-						<td width="10%" align="center">成本</td>
+						<td width="10%" align="center" id="cost_td">成本</td>
 						<td width="25%" align="center">类型</td>
 						<td width="15%" align="center">开发票品名</td>
 					</tr>
@@ -454,7 +485,7 @@ function checkBean()
 						<td align="center"><input type="text" value="${fristBase.value}"
 							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
-						<td align="center"><input type="text" id="unDesciprt" readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
+						<td align="center" id="sub_td_0"><input type="text" id="unDesciprt" readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
 							style="width: 100%" name="desciprt"></td>
 							
 						<td align="center"><input type="text" id="unRstafferName" readonly="readonly" value="${fristBase.depotpartName}-->${fristBase.ownerName}"
@@ -497,7 +528,7 @@ function checkBean()
                         <td align="center"><input type="text" value="${fristBase.value}"
                             value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
-                        <td align="center"><input type="text"  readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
+                        <td align="center" id="sub_td_${vs.index + 1 }"><input type="text"  readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
                             style="width: 100%" name="desciprt"></td>
                             
                         <td align="center"><input type="text" readonly="readonly" value="${fristBase.depotpartName}-->${fristBase.ownerName}"
@@ -779,7 +810,11 @@ function checkBean()
         
         <input type="button" name="pr"
             class="button_class" onclick="pagePrint()"
-            value="&nbsp;&nbsp;打 印&nbsp;&nbsp;">&nbsp;&nbsp;<input
+            value="&nbsp;&nbsp;打 印&nbsp;&nbsp;">&nbsp;&nbsp;
+            <input type="button" name="pr"
+            class="button_class" onclick="pagePrint2()"
+            value="&nbsp;&nbsp;打印(无成本)&nbsp;&nbsp;">&nbsp;&nbsp;
+            <input
             type="button" name="ba" class="button_class"
             onclick="javascript:history.go(-1)"
             value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>
