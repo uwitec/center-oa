@@ -104,7 +104,7 @@ function load()
 				<font color="#FF0000">*</font>
 			</p:cell>
 			
-			<p:cell title="申请人">
+			<p:cell title="备注">
                 <input type="text" name="apply" oncheck="notNone;">
                 <font color="#FF0000">*</font>
             </p:cell>

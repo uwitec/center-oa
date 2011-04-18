@@ -1645,8 +1645,16 @@ public class OutAction extends ParentOutAction
             }
         }
 
+        // 修改单据
         if ("1".equals(fow))
         {
+            if ( !OutHelper.canDelete(bean))
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "此状态不能修改单据");
+
+                return mapping.findForward("error");
+            }
+
             if (bean.getType() == OutConstant.OUT_TYPE_OUTBILL)
             {
                 if (outManager.isSwatchToSail(outId))
