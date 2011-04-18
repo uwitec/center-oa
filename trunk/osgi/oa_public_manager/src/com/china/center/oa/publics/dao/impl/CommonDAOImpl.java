@@ -31,7 +31,7 @@ public class CommonDAOImpl implements CommonDAO
         {
             if (squenceBegin != 0 && squenceBegin < squenceEnd)
             {
-                return ++squenceBegin;
+                return squenceBegin++ ;
             }
 
             String sql = "select max(id) from T_CENTER_SEQUENCE";
