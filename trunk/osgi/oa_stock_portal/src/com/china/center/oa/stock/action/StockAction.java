@@ -65,7 +65,6 @@ import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.ShowDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
-import com.china.center.oa.publics.helper.AuthHelper;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.publics.vo.FlowLogVO;
 import com.china.center.oa.stock.action.helper.PriceAskHelper;
@@ -1161,8 +1160,6 @@ public class StockAction extends DispatchAction
 
         String itemId = request.getParameter("itemId");
 
-        String ltype = request.getParameter("ltype");
-
         StockItemVO vo = stockItemDAO.findVO(itemId);
 
         request.setAttribute("bean", vo);
@@ -1204,14 +1201,8 @@ public class StockAction extends DispatchAction
 
         request.setAttribute("product", product);
 
-        User user = Helper.getUser(request);
-
-        if (AuthHelper.containAuth(user, AuthConstant.PRICE_ASK_NET_MANAGER) && "2".equals(ltype))
-        {
-            return mapping.findForward("stockAskPriceForNet");
-        }
-
-        return mapping.findForward("stockAskPrice");
+        // 规定所有的询价都是一致的
+        return mapping.findForward("stockAskPriceForNet");
     }
 
     /**
