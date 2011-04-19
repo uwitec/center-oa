@@ -444,10 +444,9 @@ public interface AuthConstant
     String PRICE_ASK_NET_INNER_PROCESS = "1206";
 
     /**
-     * (核价员)-REPRICE(废弃)
+     * 生产采购
      */
-    @Deprecated
-    String PRICE_ASK_REPRICE = "1207";
+    String PRICE_ASK_MAKE = "1207";
 
     /**
      * 增加采购(业务员)
