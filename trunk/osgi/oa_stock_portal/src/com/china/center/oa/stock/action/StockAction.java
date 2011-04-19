@@ -1492,7 +1492,8 @@ public class StockAction extends DispatchAction
 
         if ("8".equals(queryType)
             && !userManager.containAuth(user, AuthConstant.PRICE_ASK_PROCESS,
-                AuthConstant.PRICE_ASK_MANAGER, AuthConstant.PRICE_ASK_NET_INNER_PROCESS))
+                AuthConstant.PRICE_ASK_MANAGER, AuthConstant.PRICE_ASK_NET_INNER_PROCESS,
+                AuthConstant.PRICE_ASK_MAKE))
         {
             throw new MYException("用户没有此操作的权限");
         }
