@@ -4153,7 +4153,7 @@ public class ParentOutAction extends DispatchAction
     }
 
     /**
-     * 查询REF的入库单(已经通过的)
+     * 查询REF的入库单(已经通过的,退库的)
      * 
      * @param request
      * @param outId
@@ -4171,6 +4171,9 @@ public class ParentOutAction extends DispatchAction
         con.addCondition(" and OutBean.status in (3, 4)");
 
         con.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
+
+        // 排除其他入库(对冲单据)
+        con.addIntCondition("OutBean.outType", "<>", OutConstant.OUTTYPE_IN_OTHER);
 
         List<OutBean> refBuyList = outDAO.queryEntityBeansByCondition(con);
 

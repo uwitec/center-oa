@@ -1984,11 +1984,15 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         newInBean.setType(OutConstant.OUT_TYPE_INBILL);
 
-        newInBean.setOutType(OutConstant.OUTTYPE_IN_SWATCH);
+        newInBean.setOutType(OutConstant.OUTTYPE_IN_OTHER);
 
         newInBean.setStatus(OutConstant.BUY_STATUS_PASS);
 
-        newInBean.setRefOutFullId(outBean.getFullId());
+        newInBean.setRefOutFullId(outBean.getRefOutFullId());
+
+        newInBean.setCustomerId(CustomerConstant.PUBLIC_CUSTOMER_ID);
+
+        newInBean.setCustomerName(CustomerConstant.PUBLIC_CUSTOMER_NAME);
 
         newInBean.setChecks("");
 
@@ -3764,6 +3768,9 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         con.addCondition("OutBean.refOutFullId", "=", outId);
 
         con.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
+
+        // 排除其他入库(对冲单据)
+        con.addIntCondition("OutBean.outType", "<>", OutConstant.OUTTYPE_IN_OTHER);
 
         // 包括保存的,防止溢出
         List<OutBean> refBuyList = outDAO.queryEntityBeansByCondition(con);

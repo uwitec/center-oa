@@ -180,7 +180,7 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
-        <condtion name="stafferName" filed="name" caption="所属会计" pfix="SB1">
+        <condtion name="stafferName2" filed="name" caption="所属会计" pfix="SB1">
             <opr>like</opr>
             <type>text</type>
         </condtion>
@@ -249,7 +249,7 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
-        <condtion name="stafferName" filed="name" caption="所属会计" pfix="SB1">
+        <condtion name="stafferName2" filed="name" caption="所属会计" pfix="SB1">
             <opr>like</opr>
             <type>text</type>
         </condtion>
