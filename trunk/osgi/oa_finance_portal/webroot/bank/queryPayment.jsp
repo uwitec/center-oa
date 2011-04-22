@@ -34,8 +34,8 @@ function load()
              {display: '回款来源', name : 'fromer', width : '8%'},
              {display: '客户', name : 'customerName', width : '10%'},
              {display: '回款/手续费', name : 'money', content: '{money}/{handling}',  width : '10%', toFixed: 2},
-             {display: '回款时间', name : 'receiveTime', width : '8%', sortable : true,},
-             {display: '回款批次', name : 'batchId', width : '10%', sortable : true,},
+             {display: '回款时间', name : 'receiveTime', width : '8%', sortable : true},
+             {display: '回款批次', name : 'batchId', width : '10%', sortable : true},
              {display: '标识', name : 'refId', sortable : true, width : '12%'},
              {display: '备注', name : 'description', width : 'auto'}
              ],
