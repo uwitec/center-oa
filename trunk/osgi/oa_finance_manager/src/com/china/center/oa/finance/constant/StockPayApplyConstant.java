@@ -35,7 +35,25 @@ public interface StockPayApplyConstant
     int APPLY_STATUS_REJECT = 1;
 
     /**
-     * 待总裁审批
+     * 待营运中心审批
+     */
+    @Defined(key = "stockPayApplyStatus", value = "待营运中心审批")
+    int APPLY_STATUS_SAIL = 11;
+
+    /**
+     * 待稽核审批
+     */
+    @Defined(key = "stockPayApplyStatus", value = "待稽核审批")
+    int APPLY_STATUS_CHECK = 12;
+
+    /**
+     * 待财务总监审批
+     */
+    @Defined(key = "stockPayApplyStatus", value = "待财务总监审批")
+    int APPLY_STATUS_CFO = 13;
+
+    /**
+     * 待总裁审批(5万以上的)
      */
     @Defined(key = "stockPayApplyStatus", value = "待总裁审批")
     int APPLY_STATUS_CEO = 2;

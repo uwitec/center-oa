@@ -34,6 +34,9 @@ public class StockPayApplyVO extends StockPayApplyBean
     @Relationship(relationField = "provideId")
     private String provideName = "";
 
+    @Relationship(relationField = "provideId", tagField = "bank")
+    private String provideBank = "";
+
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
 
@@ -113,6 +116,23 @@ public class StockPayApplyVO extends StockPayApplyBean
     }
 
     /**
+     * @return the provideBank
+     */
+    public String getProvideBank()
+    {
+        return provideBank;
+    }
+
+    /**
+     * @param provideBank
+     *            the provideBank to set
+     */
+    public void setProvideBank(String provideBank)
+    {
+        this.provideBank = provideBank;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -135,6 +155,9 @@ public class StockPayApplyVO extends StockPayApplyBean
             .append(TAB)
             .append("provideName = ")
             .append(this.provideName)
+            .append(TAB)
+            .append("provideBank = ")
+            .append(this.provideBank)
             .append(TAB)
             .append("stafferName = ")
             .append(this.stafferName)

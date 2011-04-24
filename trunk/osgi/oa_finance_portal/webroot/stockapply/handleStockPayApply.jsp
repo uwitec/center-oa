@@ -197,7 +197,11 @@ function getNextInput(el)
                <a href="../stock/stock.do?method=findStock&id=${bean.stockId}">${bean.stockId}</a>/${bean.stockItemId}
             </p:cell>
 
-			<p:cell title="时间" end="true">
+			<p:cell title="供应商银行帐号">
+               ${bean.provideBank}
+            </p:cell>
+            
+            <p:cell title="时间" end="true">
                ${bean.logTime}
             </p:cell>
             
@@ -292,7 +296,7 @@ function getNextInput(el)
                 onclick="closeBean()">&nbsp;&nbsp;
 			</c:if>
 			
-			<c:if test="${bean.status == 2}">
+			<c:if test="${bean.status == 2 || bean.status == 11 || bean.status == 12 || bean.status == 13}">
             <input type="button" class="button_class"
                 id="ok_p" style="cursor: pointer" value="&nbsp;&nbsp;通 过&nbsp;&nbsp;"
                 onclick="passBean()">&nbsp;&nbsp;

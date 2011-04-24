@@ -27,7 +27,7 @@ import com.china.center.oa.finance.bean.OutBillBean;
 public interface StockPayApplyManager
 {
     /**
-     * 通过(需要同步)
+     * 提交(需要同步)
      * 
      * @param stafferId
      * @param id
@@ -38,7 +38,7 @@ public interface StockPayApplyManager
         throws MYException;
 
     /**
-     * 通过(需要同步)
+     * 通过,这里的通过是过程中的,不包括头尾(需要同步)
      * 
      * @param stafferId
      * @param id

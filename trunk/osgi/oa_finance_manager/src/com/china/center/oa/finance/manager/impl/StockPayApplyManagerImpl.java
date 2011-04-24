@@ -25,9 +25,13 @@ import com.china.center.oa.finance.dao.StockPayApplyDAO;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.StockPayApplyManager;
 import com.china.center.oa.publics.bean.FlowLogBean;
+import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
+import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
+import com.china.center.oa.publics.dao.ParameterDAO;
+import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.MathTools;
@@ -53,6 +57,10 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
     private BillManager billManager = null;
 
     private CommonDAO commonDAO = null;
+
+    private ParameterDAO parameterDAO = null;
+
+    private UserManager userManager = null;
 
     /**
      * default constructor
@@ -93,7 +101,7 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
             stockPayApplyDAO.saveEntityBean(lastApply);
         }
 
-        apply.setStatus(StockPayApplyConstant.APPLY_STATUS_CEO);
+        apply.setStatus(getNextStatus(user, apply));
 
         apply.setMoneys(payMoney);
 
@@ -202,7 +210,6 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
         // 自动结束掉
         for (StockPayApplyBean each : beanList)
         {
-
             each.setStatus(StockPayApplyConstant.APPLY_STATUS_END);
 
             stockPayApplyDAO.updateEntityBean(each);
@@ -290,11 +297,6 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        if (apply.getStatus() != StockPayApplyConstant.APPLY_STATUS_CEO)
-        {
-            throw new MYException("状态不能通过,请确认操作");
-        }
-
         if (TimeTools.now_short().compareTo(apply.getPayDate()) < 0)
         {
             throw new MYException("付款的最早时间还没有到,请确认操作");
@@ -352,14 +354,89 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
 
         StockPayApplyBean apply = checkPassByCEO(id);
 
-        apply.setStatus(StockPayApplyConstant.APPLY_STATUS_SEC);
+        int oldStatus = apply.getStatus();
+
+        apply.setStatus(getNextStatus(user, apply));
 
         stockPayApplyDAO.updateEntityBean(apply);
 
-        saveFlowLog(user, StockPayApplyConstant.APPLY_STATUS_CEO, apply, reason,
-            PublicConstant.OPRMODE_PASS);
+        saveFlowLog(user, oldStatus, apply, reason, PublicConstant.OPRMODE_PASS);
 
         return true;
+    }
+
+    /**
+     * getNextStatus
+     * 
+     * @param apply
+     * @return
+     * @throws MYException
+     */
+    private int getNextStatus(User user, StockPayApplyBean apply)
+        throws MYException
+    {
+        int next = StockPayApplyConstant.APPLY_STATUS_SAIL;
+
+        if (apply.getStatus() == StockPayApplyConstant.APPLY_STATUS_INIT)
+        {
+            if ( !userManager.containAuth(user.getId(), AuthConstant.STOCK_PAY_APPLY))
+            {
+                throw new MYException("没有操作权限");
+            }
+
+            next = StockPayApplyConstant.APPLY_STATUS_SAIL;
+        }
+
+        if (apply.getStatus() == StockPayApplyConstant.APPLY_STATUS_SAIL)
+        {
+            if ( !userManager.containAuth(user.getId(), AuthConstant.STOCK_PAY_SAIL))
+            {
+                throw new MYException("没有操作权限");
+            }
+
+            next = StockPayApplyConstant.APPLY_STATUS_CHECK;
+        }
+
+        if (apply.getStatus() == StockPayApplyConstant.APPLY_STATUS_CHECK)
+        {
+            if ( !userManager.containAuth(user.getId(), AuthConstant.STOCK_PAY_CHECK))
+            {
+                throw new MYException("没有操作权限");
+            }
+
+            next = StockPayApplyConstant.APPLY_STATUS_CFO;
+        }
+
+        if (apply.getStatus() == StockPayApplyConstant.APPLY_STATUS_CFO)
+        {
+            if ( !userManager.containAuth(user.getId(), AuthConstant.STOCK_PAY_CFO))
+            {
+                throw new MYException("没有操作权限");
+            }
+
+            int max = parameterDAO.getInt(SysConfigConstant.STOCK_MAX_SINGLE_MONEY);
+
+            if (apply.getMoneys() >= max)
+            {
+                next = StockPayApplyConstant.APPLY_STATUS_CEO;
+            }
+            else
+            {
+                next = StockPayApplyConstant.APPLY_STATUS_SEC;
+            }
+        }
+
+        if (apply.getStatus() == StockPayApplyConstant.APPLY_STATUS_CEO)
+        {
+            if ( !userManager.containAuth(user.getId(), AuthConstant.STOCK_PAY_CEO))
+            {
+                throw new MYException("没有操作权限");
+            }
+
+            next = StockPayApplyConstant.APPLY_STATUS_SEC;
+        }
+
+        return next;
     }
 
     @Transactional(rollbackFor = MYException.class)
@@ -542,5 +619,39 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
     public void setBillManager(BillManager billManager)
     {
         this.billManager = billManager;
+    }
+
+    /**
+     * @return the parameterDAO
+     */
+    public ParameterDAO getParameterDAO()
+    {
+        return parameterDAO;
+    }
+
+    /**
+     * @param parameterDAO
+     *            the parameterDAO to set
+     */
+    public void setParameterDAO(ParameterDAO parameterDAO)
+    {
+        this.parameterDAO = parameterDAO;
+    }
+
+    /**
+     * @return the userManager
+     */
+    public UserManager getUserManager()
+    {
+        return userManager;
+    }
+
+    /**
+     * @param userManager
+     *            the userManager to set
+     */
+    public void setUserManager(UserManager userManager)
+    {
+        this.userManager = userManager;
     }
 }

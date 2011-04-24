@@ -206,6 +206,10 @@
             <type>select</type>
             <option>$bankList</option>
         </condtion>
+       <condtion name="bankName" caption="帐户名" filed="name" pfix="BankBean">
+           <opr>like</opr>
+           <type>text</type>
+        </condtion>
         <condtion name="checkStatus" caption="核对">
             <opr>=</opr>
             <datatype>1</datatype>
@@ -270,6 +274,10 @@
             <datatype>0</datatype>
             <type>select</type>
             <option>$bankList</option>
+        </condtion>
+        <condtion name="bankName" caption="帐户名" filed="name" pfix="BankBean">
+           <opr>like</opr>
+           <type>text</type>
         </condtion>
         <condtion name="checkStatus" caption="核对">
             <opr>=</opr>

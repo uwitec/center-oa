@@ -214,7 +214,8 @@ public interface FinanceFacade
     boolean deleteBackPayApplyBean(String userId, String id)
         throws MYException;
 
-    boolean endBackPayApplyBean(String userId, String id, String reason, OutBillBean outBill)
+    boolean endBackPayApplyBean(String userId, String id, String reason,
+                                List<OutBillBean> outBillList)
         throws MYException;
 
     /**

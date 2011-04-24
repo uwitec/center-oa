@@ -9,6 +9,7 @@
 package com.china.center.oa.finance.portal.action;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -49,6 +50,7 @@ import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.MathTools;
 import com.china.center.tools.RequestTools;
+import com.china.center.tools.StringTools;
 
 
 /**
@@ -89,8 +91,8 @@ public class BackPayApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryBackPayApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse response)
+    public ActionForward queryBackPayApply(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -120,7 +122,8 @@ public class BackPayApplyAction extends DispatchAction
         // 结算中心
         else if ("1".equals(mode))
         {
-            condtion.addIntCondition("BackPayApplyBean.status", "=", BackPayApplyConstant.STATUS_SUBMIT);
+            condtion.addIntCondition("BackPayApplyBean.status", "=",
+                BackPayApplyConstant.STATUS_SUBMIT);
         }
         // 出纳
         else if ("2".equals(mode))
@@ -130,7 +133,8 @@ public class BackPayApplyAction extends DispatchAction
                 condtion.addCondition("BackPayApplyBean.locationId", "=", user.getLocationId());
             }
 
-            condtion.addIntCondition("BackPayApplyBean.status", "=", BackPayApplyConstant.STATUS_SEC);
+            condtion.addIntCondition("BackPayApplyBean.status", "=",
+                BackPayApplyConstant.STATUS_SEC);
         }
         else
         {
@@ -209,8 +213,8 @@ public class BackPayApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findBackPayApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward findBackPayApply(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -260,8 +264,8 @@ public class BackPayApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addBackPayApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward addBackPayApply(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         BackPayApplyBean bean = new BackPayApplyBean();
@@ -306,8 +310,8 @@ public class BackPayApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward passBackPayApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward passBackPayApply(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -348,8 +352,8 @@ public class BackPayApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteBackPayApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward deleteBackPayApply(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -384,16 +388,13 @@ public class BackPayApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward endBackPayApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward endBackPayApply(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
 
         String reason = request.getParameter("reason");
-        String bankId = request.getParameter("bankId");
-        String payType = request.getParameter("payType");
-        String backPay = request.getParameter("backPay");
 
         BackPayApplyBean back = backPayApplyDAO.find(id);
 
@@ -401,19 +402,44 @@ public class BackPayApplyAction extends DispatchAction
         {
             User user = Helper.getUser(request);
 
-            OutBillBean outBill = null;
+            List<OutBillBean> outBillList = new ArrayList<OutBillBean>();
 
             if (back.getBackPay() > 0)
             {
-                outBill = new OutBillBean();
-                outBill.setBankId(bankId);
+                String[] bankIds = request.getParameterValues("bankId");
+                String[] payTypes = request.getParameterValues("payType");
+                String[] moneys = request.getParameterValues("money");
 
-                outBill.setPayType(MathTools.parseInt(payType));
+                double pageTotal = 0.0d;
 
-                outBill.setMoneys(MathTools.parseDouble(backPay));
+                for (int i = 0; i < bankIds.length; i++ )
+                {
+                    if (StringTools.isNullOrNone(bankIds[i]))
+                    {
+                        continue;
+                    }
+
+                    OutBillBean outBill = new OutBillBean();
+
+                    outBill.setBankId(bankIds[i]);
+
+                    outBill.setPayType(MathTools.parseInt(payTypes[i]));
+
+                    outBill.setMoneys(MathTools.parseDouble(moneys[i]));
+
+                    outBillList.add(outBill);
+
+                    pageTotal += outBill.getMoneys();
+                }
+
+                if ( !MathTools.equal(back.getBackPay(), pageTotal))
+                {
+                    return ActionTools.toError("付款金额不等于申请付款金额", mapping, request);
+                }
             }
 
-            financeFacade.endBackPayApplyBean(user.getId(), id, reason, outBill);
+            // 会计结束退款申请
+            financeFacade.endBackPayApplyBean(user.getId(), id, reason, outBillList);
 
             request.setAttribute(KeyConstant.MESSAGE, "成功操作");
         }
@@ -441,8 +467,8 @@ public class BackPayApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rejectBackPayApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward rejectBackPayApply(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");

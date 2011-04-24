@@ -37,7 +37,9 @@ import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
+import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -151,7 +153,8 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
 
         condition.addCondition("BackPayApplyBean.billId", "=", bean.getBillId());
 
-        condition.addIntCondition("BackPayApplyBean.status", "<", BackPayApplyConstant.STATUS_REJECT);
+        condition.addIntCondition("BackPayApplyBean.status", "<",
+            BackPayApplyConstant.STATUS_REJECT);
 
         int countByCondition = backPayApplyDAO.countByCondition(condition.toString());
 
@@ -170,7 +173,8 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
      * @param reason
      * @param oprMode
      */
-    private void saveFlowLog(User user, int preStatus, BackPayApplyBean apply, String reason, int oprMode)
+    private void saveFlowLog(User user, int preStatus, BackPayApplyBean apply, String reason,
+                             int oprMode)
     {
         FlowLogBean log = new FlowLogBean();
 
@@ -222,8 +226,8 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
         if ( !MathTools.equal(bean.getBackPay() + bean.getChangePayment(), max))
         {
             throw new MYException(
-                "销售单支付金额[%.2f],退货实物价值[%.2f],退货返还金额[%.2f],申请退货返还金额[%.2f],申请转预收金额[%.2f],申请金额必须等于[%.2f]", hasdIn,
-                backTotal, hasdOut, bean.getBackPay(), bean.getChangePayment(), max);
+                "销售单支付金额[%.2f],退货实物价值[%.2f],退货返还金额[%.2f],申请退货返还金额[%.2f],申请转预收金额[%.2f],申请金额必须等于[%.2f]",
+                hasdIn, backTotal, hasdOut, bean.getBackPay(), bean.getChangePayment(), max);
         }
     }
 
@@ -350,7 +354,8 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
     }
 
     @Transactional(rollbackFor = MYException.class)
-    public boolean endBackPayApplyBean(User user, String id, String reason, OutBillBean outBill)
+    public boolean endBackPayApplyBean(User user, String id, String reason,
+                                       List<OutBillBean> outBillList)
         throws MYException
     {
         // 先通过
@@ -360,10 +365,11 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
 
         String outBillId = "";
 
-        // 付款
-        if (outBill != null)
+        // 付款(销售退款和预收退款)
+        if ( !ListTools.isEmptyOrNull(outBillList))
         {
-            outBillId = createOutBill(user, outBill, bean);
+            // 事务里面先付款给供应商/客户
+            outBillId = createOutBill(user, outBillList, bean);
         }
 
         if (bean.getType() == BackPayApplyConstant.TYPE_OUT)
@@ -373,7 +379,7 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
         }
         else
         {
-            // 处理预收退款
+            // 处理预收退款(把部分预收拆分出变成已经收款且锁定,正好和上面的付款抵消掉)
             InBillBean inBill = inBillDAO.find(bean.getBillId());
 
             if (inBill == null)
@@ -387,7 +393,8 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
             }
 
             // 直接把预收拆分成两个单据
-            String newId = billManager.splitInBillBeanWithoutTransactional(user, inBill.getId(), bean.getBackPay());
+            String newId = billManager.splitInBillBeanWithoutTransactional(user, inBill.getId(),
+                bean.getBackPay());
 
             // 预收
             InBillBean newInBill = inBillDAO.find(newId);
@@ -403,7 +410,7 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
             newInBill.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
             newInBill.setLock(FinanceConstant.BILL_LOCK_YES);
             newInBill.setRefBillId(outBillId);
-            newInBill.setDescription(newInBill.getDescription() + ";自动关联退款的付款单:" + outBillId);
+            newInBill.setDescription(newInBill.getDescription() + ";预收退款自动关联退款的付款单:" + outBillId);
 
             inBillDAO.updateEntityBean(newInBill);
         }
@@ -412,7 +419,7 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
     }
 
     /**
-     * 处理销售退款
+     * 处理销售退款(只有转预收才处理,无预收不处理)
      * 
      * @param user
      * @param bean
@@ -444,7 +451,8 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
                 // 最后的处理
                 if (each.getMoneys() > hasOut)
                 {
-                    String newId = billManager.splitInBillBeanWithoutTransactional(user, each.getId(), hasOut);
+                    String newId = billManager.splitInBillBeanWithoutTransactional(user, each
+                        .getId(), hasOut);
 
                     // 预收
                     InBillBean newInBill = inBillDAO.find(newId);
@@ -486,53 +494,59 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
             // 这里不更新单子的状态,只更新付款金额
             outDAO.updateHadPay(bean.getOutId(), newPay);
         }
+
+        if ( !StringTools.isNullOrNone(bean.getOutId()))
+        {
+            outManager.payOutWithoutTransactional2(user, bean.getOutId(), "销售退款后清算");
+        }
     }
 
-    private String createOutBill(User user, OutBillBean outBill, BackPayApplyBean apply)
+    private String createOutBill(User user, List<OutBillBean> outBillList, BackPayApplyBean apply)
         throws MYException
     {
-        if (apply.getType() == BackPayApplyConstant.TYPE_OUT)
+        for (OutBillBean outBill : outBillList)
         {
-            // 自动生成付款单
-            outBill.setDescription("销售退货付款:" + apply.getOutId());
-
-            outBill.setStockId(apply.getOutId());
-        }
-        else
-        {
-            InBillBean inBill = inBillDAO.find(apply.getBillId());
-
-            if (inBill == null)
+            if (apply.getType() == BackPayApplyConstant.TYPE_OUT)
             {
-                throw new MYException("数据错误,请确认操作");
+                // 自动生成付款单
+                outBill.setDescription("销售退货付款:" + apply.getOutId());
+
+                outBill.setStockId(apply.getOutId());
+            }
+            else
+            {
+                InBillBean inBill = inBillDAO.find(apply.getBillId());
+
+                if (inBill == null)
+                {
+                    throw new MYException("数据错误,请确认操作");
+                }
+
+                outBill.setDescription("预收退款:" + apply.getBillId());
+
+                outBill.setStockId(inBill.getPaymentId());
+
+                outBill.setRefBillId(apply.getBillId());
             }
 
-            outBill.setDescription("预收退款:" + apply.getBillId());
+            outBill.setLocationId(user.getLocationId());
 
-            outBill.setStockId(inBill.getPaymentId());
+            outBill.setLogTime(TimeTools.now());
 
-            outBill.setRefBillId(apply.getBillId());
+            outBill.setType(FinanceConstant.OUTBILL_TYPE_OUTBACK);
+
+            outBill.setOwnerId(apply.getStafferId());
+
+            outBill.setStafferId(user.getStafferId());
+
+            outBill.setProvideId(apply.getCustomerId());
+
+            outBill.setLock(FinanceConstant.BILL_LOCK_YES);
+
+            billManager.addOutBillBeanWithoutTransaction(user, outBill);
         }
 
-        outBill.setLocationId(user.getLocationId());
-
-        outBill.setLogTime(TimeTools.now());
-
-        outBill.setType(FinanceConstant.OUTBILL_TYPE_OUTBACK);
-
-        outBill.setMoneys(apply.getBackPay());
-
-        outBill.setOwnerId(apply.getStafferId());
-
-        outBill.setStafferId(user.getStafferId());
-
-        outBill.setProvideId(apply.getCustomerId());
-
-        outBill.setLock(FinanceConstant.BILL_LOCK_YES);
-
-        billManager.addOutBillBeanWithoutTransaction(user, outBill);
-
-        return outBill.getId();
+        return outBillList.get(0).getId();
     }
 
     /**

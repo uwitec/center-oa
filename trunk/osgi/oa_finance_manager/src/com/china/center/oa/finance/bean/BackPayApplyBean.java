@@ -52,8 +52,14 @@ public class BackPayApplyBean implements Serializable
      */
     private int type = BackPayApplyConstant.TYPE_OUT;
 
+    /**
+     * 退款
+     */
     private double backPay = 0.0d;
 
+    /**
+     * 转预收
+     */
     private double changePayment = 0.0d;
 
     @Join(tagClass = StafferBean.class, type = JoinType.LEFT)

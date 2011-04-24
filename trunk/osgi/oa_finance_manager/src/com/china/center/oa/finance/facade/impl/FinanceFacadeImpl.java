@@ -652,7 +652,8 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
 
         synchronized (STOCKPAYAPPLY_LOCK)
         {
-            if (containAuth(user, AuthConstant.STOCK_PAY_CEO))
+            if (containAuth(user, AuthConstant.STOCK_PAY_CEO, AuthConstant.STOCK_PAY_SAIL,
+                AuthConstant.STOCK_PAY_CHECK, AuthConstant.STOCK_PAY_CFO))
             {
                 return stockPayApplyManager.passStockPayByCEO(user, id, reason);
             }
@@ -796,7 +797,8 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
-    public boolean endBackPayApplyBean(String userId, String id, String reason, OutBillBean outBill)
+    public boolean endBackPayApplyBean(String userId, String id, String reason,
+                                       List<OutBillBean> outBillList)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(userId, id);
@@ -809,7 +811,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         {
             if (containAuth(user, AuthConstant.SAIL_BACKPAY_SEC))
             {
-                return backPayApplyManager.endBackPayApplyBean(user, id, reason, outBill);
+                return backPayApplyManager.endBackPayApplyBean(user, id, reason, outBillList);
             }
             else
             {

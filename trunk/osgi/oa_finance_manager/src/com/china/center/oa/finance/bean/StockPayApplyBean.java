@@ -26,7 +26,8 @@ import com.china.center.oa.publics.bean.StafferBean;
 
 
 /**
- * 采购付款申请单
+ * 采购付款申请单<br>
+ * 提交--营运中心审批，稽核审批和财务总监审批，总裁审批（5万以上），财务付款
  * 
  * @author ZHUZHU
  * @version 2011-2-17

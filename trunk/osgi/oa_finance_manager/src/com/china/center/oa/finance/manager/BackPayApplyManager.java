@@ -9,6 +9,8 @@
 package com.china.center.oa.finance.manager;
 
 
+import java.util.List;
+
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.BackPayApplyBean;
@@ -45,6 +47,6 @@ public interface BackPayApplyManager
      * @return
      * @throws MYException
      */
-    boolean endBackPayApplyBean(User user, String id, String reason, OutBillBean outBill)
+    boolean endBackPayApplyBean(User user, String id, String reason, List<OutBillBean> outBillList)
         throws MYException;
 }

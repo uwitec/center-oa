@@ -30,7 +30,7 @@ function load()
          colModel : [
              {display: '<input type=checkbox id=flexi_Check onclick=checkAll(this)> 选择', name : 'check', content : '<input type=checkbox name=checkb value={id} lstatus={status} lstafferId={stafferId} lprovideId={provideId} >', width : 40, align: 'center'},
              {display: '采购人', name : 'stafferName', width : '8%'},
-             {display: '状态', name : 'status', cc: 'stockPayApplyStatus', width : '8%'},
+             {display: '状态', name : 'status', cc: 'stockPayApplyStatus', width : '10%'},
              {display: '采购', name : 'stockId', content: '{stockId}/{stockItemId}', width : '20%'},
              {display: '供应商', name : 'provideName', width : '15%'},
              {display: '总金额', name : 'moneys', width : '8%', toFixed: 2},

@@ -128,7 +128,7 @@ public class StockPayAction extends DispatchAction
     }
 
     /**
-     * queryCEOStockPayApply
+     * queryCEOStockPayApply(过程中审批通过的)
      * 
      * @param mapping
      * @param form
@@ -155,7 +155,22 @@ public class StockPayAction extends DispatchAction
             condtion.addIntCondition("StockPayApplyBean.status", "=",
                 StockPayApplyConstant.APPLY_STATUS_CEO);
         }
-        else
+        else if ("2".equals(mode))
+        {
+            condtion.addIntCondition("StockPayApplyBean.status", "=",
+                StockPayApplyConstant.APPLY_STATUS_SAIL);
+        }
+        else if ("3".equals(mode))
+        {
+            condtion.addIntCondition("StockPayApplyBean.status", "=",
+                StockPayApplyConstant.APPLY_STATUS_CHECK);
+        }
+        else if ("4".equals(mode))
+        {
+            condtion.addIntCondition("StockPayApplyBean.status", "=",
+                StockPayApplyConstant.APPLY_STATUS_CFO);
+        }
+        else if ("5".equals(mode))
         {
             User user = Helper.getUser(request);
 
@@ -166,6 +181,10 @@ public class StockPayAction extends DispatchAction
 
             condtion.addIntCondition("StockPayApplyBean.status", "=",
                 StockPayApplyConstant.APPLY_STATUS_SEC);
+        }
+        else
+        {
+            condtion.addFlaseCondition();
         }
 
         condtion.addCondition("order by StockPayApplyBean.payDate");
@@ -511,6 +530,7 @@ public class StockPayAction extends DispatchAction
         {
             User user = Helper.getUser(request);
 
+            // 结束采购付款
             financeFacade.endStockPayBySEC(user.getId(), id, reason, outBillList);
 
             request.setAttribute(KeyConstant.MESSAGE, "成功操作");
