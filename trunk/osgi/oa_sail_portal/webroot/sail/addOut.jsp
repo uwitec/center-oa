@@ -16,11 +16,30 @@
 <script language="JavaScript" src="../sail_js/addOut.js"></script>
 <script language="javascript">
 <%@include file="../sail_js/out.jsp"%>
+
+var duesMap = {};
+<c:forEach items="${dutyList}" var="item">
+duesMap['${item.id}'] = '${item.dues}';
+</c:forEach>
 /**
  * 查询库存
  */
 function opens(obj)
 {
+    if ($$('location') == '')
+    {
+        alert('请选择仓库');
+        
+        return false;
+    }
+    
+    if ($$('dutyId') == '')
+    {
+        alert('请选择纳税实体');
+        
+        return false;
+    }
+    
     oo = obj;
     
     window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&sailLocation=${user.locationId}&showAbs=1&load=1&depotId='+ $$('location') + '&code=' + obj.productcode);
@@ -40,6 +59,21 @@ function load()
     managerChange();
 }
 
+function changePrice()
+{
+    var ssList = document.getElementsByName('inputPrice');
+    
+    for (var i = 0; i < ssList.length; i++)
+    {
+        if (ssList[i].value != '')
+        {
+           ccs(ssList[i]);
+           total();
+        }
+    }
+}
+
+
 </script>
 </head>
 <body class="body_class" onload="load()">
@@ -57,6 +91,7 @@ function load()
 <input type=hidden name="showNameList" value="" />
 <input type=hidden name="customercreditlevel" value="" />
 <input type=hidden name="id" value="" />
+<input type=hidden name="inputPriceList"> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">库单管理 &gt;&gt; 填写销售单</td>
@@ -192,10 +227,10 @@ function load()
                         <font color="#FF0000">*</font></td>
                         <td align="right">纳税实体：</td>
                         <td colspan="1">
-                        <select name="dutyId" class="select_class" style="width: 240px" oncheck="notNone;" onchange="loadShow()">
+                        <select name="dutyId" class="select_class" style="width: 240px" oncheck="notNone;" onchange="loadShow();changePrice();">
                             <option value="">--</option>
                             <c:forEach items="${dutyList}" var="item">
-                            <option value="${item.id}">${item.name}</option>
+                            <option value="${item.id}">${item.name} (${item.dues}%)</option>
                             </c:forEach>
                         </select>
                         <font color="#FF0000">*</font></td>
@@ -250,9 +285,10 @@ function load()
 						<td width="5%" align="center">单位</td>
 						<td width="5%" align="center">数量</td>
 						<td width="10%" align="center">单价</td>
+						<td width="10%" align="center">含税价</td>
 						<td width="10%" align="left">金额<span id="total"></span></td>
 						<td width="10%" align="center">成本</td>
-						<td width="25%" align="center">类型</td>
+						<td width="15%" align="center">类型</td>
 						<td width="15%" align="center">开发票品名</td>
 						<td width="15%" align="center"><input type="button" accesskey="A"
 							value="增加" class="button_class" onclick="addTr()"></td>
@@ -284,7 +320,11 @@ function load()
 
 						<td align="center"><input type="text"
 							style="width: 100%" maxlength="8" onkeyup="cc(this)"
-							onblur="blu(this)" name="price"></td>
+							onblur="blu(this)" name="inputPrice"></td>
+							
+						<td align="center"><input type="text" value="0.00"
+                            style="width: 100%" maxlength="8" readonly="readonly"
+                            onblur="blu(this)" name="price"></td>
 
 						<td align="center"><input type="text"
 							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
@@ -324,8 +364,11 @@ function load()
 						<td align="center"><input type="text" style="width: 100%" id="unAmount"
 							maxlength="8" onkeyup="cc(this)" name="amount"></td>
 
-						<td align="center"><input type="text" style="width: 100%" id="unPrice"
-							maxlength="11" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
+						<td align="center"><input type="text" style="width: 100%" id="unInputPrice"
+							maxlength="11" onkeyup="cc(this)" onblur="blu(this)" name="inputPrice"></td>
+							
+						<td align="center"><input type="text" style="width: 100%" id="unPrice" readonly="readonly" value="0.00"
+                            maxlength="11" onblur="blu(this)" name="price"></td>
 
 						<td align="center"><input type="text"
 							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>

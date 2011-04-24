@@ -16,11 +16,31 @@
 <script language="JavaScript" src="../sail_js/addOut.js"></script>
 <script language="javascript">
 <%@include file="../sail_js/out.jsp"%>
+
+var duesMap = {};
+<c:forEach items="${dutyList}" var="item">
+duesMap['${item.id}'] = '${item.dues}';
+</c:forEach>
+
 /**
  * 查询库存
  */
 function opens(obj)
 {
+    if ($$('location') == '')
+    {
+        alert('请选择仓库');
+        
+        return false;
+    }
+    
+    if ($$('dutyId') == '')
+    {
+        alert('请选择纳税实体');
+        
+        return false;
+    }
+    
 	oo = obj;
 	
 	window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&showAbs=1&load=1&depotId='+ $$('location') + '&name=' + encodeURIComponent(obj.value));
@@ -71,7 +91,7 @@ function load()
     if ($$('outType') == 4)
     {
         //价格为0
-        var showArr = $("input[name='price']") ;
+        var showArr = $("input[name='inputPrice']") ;
         
         for (var i = 0; i < showArr.length; i++)
         {
@@ -86,6 +106,20 @@ function load()
         removeAllItem($O('reserve3'));
         
         setOption($O('reserve3'), '1', '款到发货(黑名单客户/零售)');   
+    }
+}
+
+function changePrice()
+{
+    var ssList = document.getElementsByName('inputPrice');
+    
+    for (var i = 0; i < ssList.length; i++)
+    {
+        if (ssList[i].value != '')
+        {
+	       ccs(ssList[i]);
+	       total();
+	    }
     }
 }
 
@@ -115,6 +149,7 @@ function load()
 <input type=hidden name="showNameList" value="" />
 <input type=hidden name="customercreditlevel" value="" />
 <input type=hidden name="refOutFullId" value="${bean.refOutFullId}" />
+<input type=hidden name="inputPriceList"> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">库单管理 &gt;&gt; 修改销售单(如果需要增加开发票品名,请到 公共资源-->配置管理)</td>
@@ -243,9 +278,9 @@ function load()
                         <font color="#FF0000">*</font></td>
                         <td align="right">纳税实体：</td>
                         <td colspan="1">
-                        <select name="dutyId" class="select_class" style="width: 240px" values="${bean.dutyId}" onchange="loadShow()">
+                        <select name="dutyId" class="select_class" style="width: 240px" values="${bean.dutyId}" onchange="loadShow();changePrice();">
                             <c:forEach items="${dutyList}" var="item">
-                            <option value="${item.id}">${item.name}</option>
+                            <option value="${item.id}">${item.name} (${item.dues}%)</option>
                             </c:forEach>
                         </select>
                         <font color="#FF0000">*</font></td>
@@ -300,13 +335,14 @@ function load()
 				<td>
 				<table width="100%" border="0" cellspacing='1' id="tables">
 					<tr align="center" class="content0">
-						<td width="20%" align="center">品名</td>
+						<td width="15%" align="center">品名</td>
 						<td width="5%" align="center">单位</td>
 						<td width="5%" align="center">数量</td>
 						<td width="10%" align="center">单价</td>
+						<td width="10%" align="center">含税价</td>
 						<td width="10%" align="left">金额<span id="total"></span></td>
 						<td width="10%" align="center">成本</td>
-						<td width="25%" align="center">类型</td>
+						<td width="20%" align="center">类型</td>
 						<td width="15%" align="center">开发票品名</td>
 						<td width="15%" align="center">
 						<c:if test="${!lock_sw}">
@@ -338,8 +374,12 @@ function load()
 						<td align="center"><input type="text"
 							style="width: 100%" maxlength="6" onkeyup="cc(this)"
 							name="amount"></td>
-
+							
 						<td align="center"><input type="text"
+                            style="width: 100%" maxlength="8" onkeyup="cc(this)"
+                            onblur="blu(this)" name="inputPrice"></td>
+
+						<td align="center"><input type="text" readonly="readonly"
 							style="width: 100%" maxlength="8" onkeyup="cc(this)"
 							onblur="blu(this)" name="price"></td>
 
@@ -384,11 +424,14 @@ function load()
 
 						<td align="center"><input type="text" style="width: 100%" id="unAmount" value="${fristBase.amount}"
 							maxlength="6" onkeyup="cc(this)" name="amount"></td>
+							
+						<td align="center"><input type="text" style="width: 100%" id="unInputPrice" value="${my:formatNum(fristBase.inputPrice)}"
+                            maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="inputPrice"></td>
 
-						<td align="center"><input type="text" style="width: 100%" id="unPrice" value="${my:formatNum(fristBase.price)}"
+						<td align="center"><input type="text" style="width: 100%" readonly="readonly" id="unPrice" value="${my:formatNum(fristBase.price)}" 
 							maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
 
-						<td align="center"><input type="text" value="${fristBase.value}"
+						<td align="center"><input type="text" value="${my:formatNum(fristBase.value)}"
 							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
 						<td align="center"><input type="text" id="unDesciprt" readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
@@ -427,6 +470,9 @@ function load()
 
                         <td align="center"><input type="text" style="width: 100%"  value="${fristBase.amount}"
                             maxlength="6" onkeyup="cc(this)" name="amount"></td>
+                            
+                        <td align="center"><input type="text" style="width: 100%" value="${my:formatNum(fristBase.inputPrice)}"
+                            maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="inputPrice"></td>
 
                         <td align="center"><input type="text" style="width: 100%"  value="${my:formatNum(fristBase.price)}"
                             maxlength="11" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>

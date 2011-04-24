@@ -145,6 +145,7 @@ function check(isAdd)
     ids = '';
     amous = '';
     
+    $O('inputPriceList').value = '';
     $O('priceList').value = '';
     $O('totalList').value = '';
     $O('nameList').value = '';
@@ -188,6 +189,7 @@ function check(isAdd)
     var units = document.getElementsByName('unit');
     var amounts = document.getElementsByName('amount');
     var prices = document.getElementsByName('price');
+    var inputPrices = document.getElementsByName('inputPrice');
     var values = document.getElementsByName('value');
     var outProductNames = document.getElementsByName('outProductName');
 
@@ -286,6 +288,7 @@ function check(isAdd)
         }
 
         $O('priceList').value = $O('priceList').value + prices[i].value + '~';
+        $O('inputPriceList').value = $O('inputPriceList').value + inputPrices[i].value + '~';
     }
 
     var desList = document.getElementsByName('desciprt');
@@ -379,6 +382,12 @@ function checkTotal()
 function save()
 {
     $O('saves').value = 'save';
+    
+    if (changePrice)
+    {
+        changePrice();
+    }
+    
     if (check(true))
     {
         checkTotal();
@@ -403,7 +412,7 @@ function managerChange()
      $O('phone').oncheck = '';
      
      //价格为0
-     var showArr = $("input[name='price']") ;
+     var showArr = $("input[name='inputPrice']") ;
      
      for (var i = 0; i < showArr.length; i++)
      {
@@ -468,7 +477,7 @@ function managerChange()
         resetReserve3_ZS();
         
         //价格为0
-        var showArr = $("input[name='price']") ;
+        var showArr = $("input[name='inputPrice']") ;
         
         for (var i = 0; i < showArr.length; i++)
 	    {

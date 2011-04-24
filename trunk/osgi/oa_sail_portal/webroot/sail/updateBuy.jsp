@@ -45,6 +45,7 @@ function opens(obj)
 <input type=hidden name="otherList" value="" />
 <input type=hidden name="showIdList" value="" />
 <input type=hidden name="showNameList" value="" />
+<input type=hidden name="inputPriceList" value="" />
 <input type=hidden name="customercreditlevel" value="" />
 <input type=hidden name="id" value="" />
 <input type=hidden name="fullId" value="${bean.fullId}" />

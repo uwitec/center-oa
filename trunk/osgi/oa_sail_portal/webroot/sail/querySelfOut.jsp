@@ -364,6 +364,8 @@ function load()
     name="oldStatus">
 	<input type="hidden" value=""
 	name="statuss">
+	<input type="hidden" value="1"
+    name="selfQuery">
 <c:set var="fg" value='销售'/>
 
 <p:navigation

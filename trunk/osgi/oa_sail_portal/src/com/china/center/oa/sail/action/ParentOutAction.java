@@ -1163,6 +1163,10 @@ public class ParentOutAction extends DispatchAction
 
         out.setRefOutFullId(outId);
 
+        out.setDutyId(oldOut.getDutyId());
+
+        out.setInvoiceId(oldOut.getInvoiceId());
+
         out.setDescription("个人领样退库,领样单号:" + outId + ". " + adescription);
 
         List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outId);

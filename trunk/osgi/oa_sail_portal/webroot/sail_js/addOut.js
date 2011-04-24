@@ -21,19 +21,25 @@ function ccs(obj)
 	
 	var p = os.cells[3].childNodes[0].value;
 	
-	os.cells[4].childNodes[0].value = mul(m, p);
+	var dues = parseInt(duesMap[$$('dutyId')], 10) + 100;
 	
-	var tem = os.cells[4].childNodes[0].value;
+	var dp = mul(dues / 100.0, p);
+	
+	os.cells[4].childNodes[0].value = formatNum(dp, 2);
+	
+	os.cells[5].childNodes[0].value = mul(m, dp);
+	
+	var tem = os.cells[5].childNodes[0].value;
 	
 	if (tem == 'NaN')
 	{
-		os.cells[4].childNodes[0].value = '';
+		os.cells[5].childNodes[0].value = '';
 		return;
 	}
 	
 	tem = tem + "";
 	
-	os.cells[4].childNodes[0].value = formatNum(tem, 2);
+	os.cells[5].childNodes[0].value = formatNum(tem, 2);
 	
 	total();
 	
@@ -189,6 +195,7 @@ function clears()
 {
 	document.getElementById('unAmount').value = '';
 	document.getElementById('unAmount').title = '';
+	document.getElementById('unInputPrice').value = '';
 	document.getElementById('unPrice').value = '';
 	document.getElementById('unProductName').value = '';
 	document.getElementById('unProductName').productid = '';
@@ -202,6 +209,7 @@ function clearsAll()
 	clearArray(document.getElementsByName('productName'));
 	clearArray(document.getElementsByName('amount'), true);
 	clearArray(document.getElementsByName('price'));
+	clearArray(document.getElementsByName('inputPrice'));
 	clearArray(document.getElementsByName('value'));
 	clearArray(document.getElementsByName('desciprt'));
 	clearArray(document.getElementsByName('rstafferName'));
@@ -309,8 +317,8 @@ function getProductRelation(ox)
         os.cells[2].childNodes[0].title = '当前产品的最大数量:' + ox[0].pamount;
         os.cells[2].childNodes[0].oncheck = 'range(0, ' + ox[0].pamount + ')';
         os.cells[3].childNodes[0].value = ox[0].pbatchprice;
-        os.cells[5].childNodes[0].value = ox[0].pprice;
-        os.cells[6].childNodes[0].value =  ox[0].pdepotpartname + '-->' + ox[0].pstaffername;
+        os.cells[6].childNodes[0].value = ox[0].pprice;
+        os.cells[7].childNodes[0].value =  ox[0].pdepotpartname + '-->' + ox[0].pstaffername;
     }
     
     for(var i = indes; i < ox.length; i++)
@@ -329,8 +337,8 @@ function getProductRelation(ox)
         inps[1].title = '当前产品的最大数量:' + ox[i].pamount;
         inps[1].oncheck = 'range(0, ' + ox[i].pamount + ')';
         inps[2].value = ox[i].pbatchprice;
-        inps[4].value = ox[i].pprice;
-        inps[5].value = ox[i].pdepotpartname + '-->' + ox[i].pstaffername;
+        inps[5].value = ox[i].pprice;
+        inps[6].value = ox[i].pdepotpartname + '-->' + ox[i].pstaffername;
     }
 }
 

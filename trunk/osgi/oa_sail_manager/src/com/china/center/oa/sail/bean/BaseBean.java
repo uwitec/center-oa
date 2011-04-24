@@ -74,9 +74,14 @@ public class BaseBean implements Serializable
     private String ownerName = "公共";
 
     /**
-     * 销售价格
+     * 销售价格(含税价)
      */
     private double price = 0.0d;
+
+    /**
+     * 输入价格
+     */
+    private double inputPrice = 0.0d;
 
     /**
      * 成本
@@ -529,6 +534,23 @@ public class BaseBean implements Serializable
     }
 
     /**
+     * @return the inputPrice
+     */
+    public double getInputPrice()
+    {
+        return inputPrice;
+    }
+
+    /**
+     * @param inputPrice
+     *            the inputPrice to set
+     */
+    public void setInputPrice(double inputPrice)
+    {
+        this.inputPrice = inputPrice;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -590,6 +612,9 @@ public class BaseBean implements Serializable
             .append(TAB)
             .append("price = ")
             .append(this.price)
+            .append(TAB)
+            .append("inputPrice = ")
+            .append(this.inputPrice)
             .append(TAB)
             .append("costPrice = ")
             .append(this.costPrice)

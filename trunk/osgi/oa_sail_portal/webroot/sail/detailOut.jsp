@@ -135,7 +135,7 @@ function checkBean()
 </p:navigation> <br>
 </div>
 
-<table width="95%" border="0" cellpadding="0" cellspacing="0" id="viewTable"
+<table width="98%" border="0" cellpadding="0" cellspacing="0" id="viewTable"
 	align="center">
 	<tr>
 		<td valign="top" colspan='2'>
@@ -405,13 +405,14 @@ function checkBean()
 				<td>
 				<table width="100%" border="0" cellspacing='1' id="tables">
 					<tr align="center" class="content0">
-						<td width="20%" align="center">品名</td>
+						<td width="15%" align="center">品名</td>
 						<td width="5%" align="center">单位</td>
 						<td width="5%" align="center">数量</td>
-						<td width="10%" align="center">销售价</td>
+						<td width="10%" align="center">输入价</td>
+						<td width="10%" align="center">销售价(含税)</td>
 						<td width="10%" align="center">金额<span id="total"></span></td>
 						<td width="10%" align="center" id="cost_td">成本</td>
-						<td width="25%" align="center">类型</td>
+						<td width="20%" align="center">类型</td>
 						<td width="15%" align="center">开发票品名</td>
 					</tr>
 
@@ -438,6 +439,10 @@ function checkBean()
 						<td align="center"><input type="text"
 							style="width: 100%" maxlength="6" onkeyup="cc(this)"
 							name="amount"></td>
+							
+						<td align="center"><input type="text"
+                            style="width: 100%" maxlength="8" onkeyup="cc(this)"
+                            onblur="blu(this)" name="inputPrice"></td>
 
 						<td align="center"><input type="text"
 							style="width: 100%" maxlength="8" onkeyup="cc(this)"
@@ -482,11 +487,14 @@ function checkBean()
 
 						<td align="center"><input type="text" style="width: 100%" id="unAmount" value="${fristBase.amount}"
 							maxlength="6" onkeyup="cc(this)" name="amount"></td>
+						
+						<td align="center"><input type="text" style="width: 100%" id="unInputPrice" value="${my:formatNum(fristBase.inputPrice)}"
+                            maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="inputPrice"></td>
 
-						<td align="center"><input type="text" style="width: 100%" id="unPrice" value="${fristBase.price}"
+						<td align="center"><input type="text" style="width: 100%" id="unPrice" value="${my:formatNum(fristBase.price)}"
 							maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
 
-						<td align="center"><input type="text" value="${fristBase.value}"
+						<td align="center"><input type="text" value="${my:formatNum(fristBase.value)}"
 							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
 						<td align="center" id="sub_td_0"><input type="text" id="unDesciprt" readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
@@ -525,11 +533,14 @@ function checkBean()
 
                         <td align="center"><input type="text" style="width: 100%"  value="${fristBase.amount}"
                             maxlength="6" onkeyup="cc(this)" name="amount"></td>
+                            
+                        <td align="center"><input type="text" style="width: 100%" value="${my:formatNum(fristBase.inputPrice)}"
+                            maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="inputPrice"></td>
 
                         <td align="center"><input type="text" style="width: 100%"  value="${my:formatNum(fristBase.price)}"
                             maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
 
-                        <td align="center"><input type="text" value="${fristBase.value}"
+                        <td align="center"><input type="text" value="${my:formatNum(fristBase.value)}"
                             value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
                         <td align="center" id="sub_td_${vs.index + 1 }"><input type="text"  readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"

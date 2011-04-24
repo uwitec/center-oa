@@ -51,6 +51,7 @@ import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.helper.StorageRelationHelper;
 import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
+import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.InvoiceCreditBean;
 import com.china.center.oa.publics.bean.LocationBean;
@@ -62,6 +63,7 @@ import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.constant.PublicLock;
 import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.dao.InvoiceCreditDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
@@ -133,6 +135,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     private DepotDAO depotDAO = null;
 
     private BaseDAO baseDAO = null;
+
+    private DutyDAO dutyDAO = null;
 
     private ConsignDAO consignDAO = null;
 
@@ -234,8 +238,11 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         final String[] showNameList = request.getParameter("showNameList").split("~");
         final String[] unitList = request.getParameter("unitList").split("~");
         final String[] amontList = request.getParameter("amontList").split("~");
+
+        // 含税价
         final String[] priceList = request.getParameter("priceList").split("~");
-        // final String[] totalList = request.getParameter("totalList").split("~");
+        // 输入价格
+        final String[] inputPriceList = request.getParameter("inputPriceList").split("~");
         final String[] desList = request.getParameter("desList").split("~");
         final String[] otherList = request.getParameter("otherList").split("~");
 
@@ -347,6 +354,34 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         else
                         {
                             base.setPrice(MathTools.parseDouble(priceList[i]));
+                        }
+
+                        // 验证税点
+                        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+                        {
+                            // 输入价格
+                            base.setInputPrice(MathTools.parseDouble(inputPriceList[i]));
+
+                            DutyBean duty = dutyDAO.find(outBean.getDutyId());
+
+                            if (duty == null)
+                            {
+                                throw new RuntimeException("纳税实体不存在,请确认操作");
+                            }
+
+                            double inputPrice = base.getInputPrice();
+
+                            double outPrice = base.getPrice();
+
+                            if ( !MathTools.equal2(inputPrice * (100 + duty.getDues()) / 100.0d,
+                                outPrice))
+                            {
+                                throw new RuntimeException("卖出价格非含税价格,请确认操作");
+                            }
+                        }
+                        else
+                        {
+                            base.setInputPrice(base.getPrice());
                         }
 
                         if (base.getPrice() == 0)
@@ -3973,6 +4008,23 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         {
             throw new RuntimeException(e.getErrorContent());
         }
+    }
+
+    /**
+     * @return the dutyDAO
+     */
+    public DutyDAO getDutyDAO()
+    {
+        return dutyDAO;
+    }
+
+    /**
+     * @param dutyDAO
+     *            the dutyDAO to set
+     */
+    public void setDutyDAO(DutyDAO dutyDAO)
+    {
+        this.dutyDAO = dutyDAO;
     }
 
 }
