@@ -519,6 +519,21 @@ public interface AuthConstant
     String STOCK_MAKE_PASS = "1314";
 
     /**
+     * 采购付款-营运中心审批
+     */
+    String STOCK_PAY_SAIL = "1315";
+
+    /**
+     * 采购付款-稽核审批
+     */
+    String STOCK_PAY_CHECK = "1316";
+
+    /**
+     * 采购付款-财务总监审批
+     */
+    String STOCK_PAY_CFO = "1317";
+
+    /**
      * 提交库单(业务员)
      */
     String SAIL_SUBMIT = "1401";

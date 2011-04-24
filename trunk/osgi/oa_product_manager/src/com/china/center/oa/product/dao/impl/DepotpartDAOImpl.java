@@ -58,6 +58,18 @@ public class DepotpartDAOImpl extends BaseDAO<DepotpartBean, DepotpartVO> implem
             return null;
         }
 
+        // 返回南京物流中心-物流中心库(销售可发)
+        if (DepotConstant.CENTER_DEPOT_ID.equals(depotId))
+        {
+            for (DepotpartBean depotpartBean : list)
+            {
+                if ("1".equals(depotpartBean.getId()))
+                {
+                    return depotpartBean;
+                }
+            }
+        }
+
         return list.get(0);
     }
 }

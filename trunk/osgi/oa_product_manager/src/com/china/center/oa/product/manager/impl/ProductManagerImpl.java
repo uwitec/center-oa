@@ -140,7 +140,8 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
     }
 
     @Transactional(rollbackFor = MYException.class)
-    public boolean configProductVSLocation(User user, String productId, List<ProductVSLocationBean> vsList)
+    public boolean configProductVSLocation(User user, String productId,
+                                           List<ProductVSLocationBean> vsList)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, vsList);
@@ -250,7 +251,8 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
      * @param bean
      * @throws MYException
      */
-    private void executeProductStatusChange(User user, String productId, int oldStatus, int newStatus)
+    private void executeProductStatusChange(User user, String productId, int oldStatus,
+                                            int newStatus)
         throws MYException
     {
         // 实现监听
@@ -379,7 +381,7 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
         String fol = "1";
 
         // 10位
-        String squenceString = StringTools.formatString(bean.getId(), 10);
+        String squenceString = StringTools.formatString(bean.getId(), 5);
 
         String code = fl + sl + tl + fol + squenceString;
 

@@ -58,6 +58,11 @@ public interface DepotConstant
     String STOCK_DEPOT_ID = "99000000000000000001";
 
     /**
+     * 物流中心库
+     */
+    String CENTER_DEPOT_ID = "99000000000000000002";
+
+    /**
      * 采购仓区
      */
     String STOCK_DEPOTPART_ID = "10000000000000000002";
