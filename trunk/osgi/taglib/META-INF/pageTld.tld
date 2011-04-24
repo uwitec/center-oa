@@ -212,6 +212,16 @@
             com.china.center.common.taglib.PageQuery
         </tagclass>
         <bodycontent>JSP</bodycontent>
+        <attribute>
+            <name>width</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>height</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 	
 	<tag>

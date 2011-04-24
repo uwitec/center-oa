@@ -15,11 +15,16 @@ import javax.servlet.jsp.JspException;
 
 public class PageQuery extends BodyTagCenterSupport
 {
+    private String width = "500px";
+
+    private String height = "200px";
+
     /**
      * 默认构建器
      */
     public PageQuery()
-    {}
+    {
+    }
 
     public int doStartTag()
         throws JspException
@@ -42,10 +47,12 @@ public class PageQuery extends BodyTagCenterSupport
         // <input type=hidden name=cacheEle id=cacheEle value=''/>
         // <input type=hidden name=cacheFlag id=cacheFlag value="0"/>
 
-        buffer.append("<div id='modalQuery' title='查询条件设置' style='width:500px;'>").append(line);
-
-        buffer.append("<div style='padding:20px;height:200px;' id='dialog_inner' title=''/>").append(
+        buffer.append("<div id='modalQuery' title='查询条件设置' style='width:" + width + ";'>").append(
             line);
+
+        buffer
+            .append("<div style='padding:20px;height:" + height + ";' id='dialog_inner' title=''/>")
+            .append(line);
 
         buffer.append("</div>").append(line);
     }
@@ -59,5 +66,39 @@ public class PageQuery extends BodyTagCenterSupport
         this.writeContext(buffer.toString());
 
         return EVAL_PAGE;
+    }
+
+    /**
+     * @return the width
+     */
+    public String getWidth()
+    {
+        return width;
+    }
+
+    /**
+     * @param width
+     *            the width to set
+     */
+    public void setWidth(String width)
+    {
+        this.width = width;
+    }
+
+    /**
+     * @return the height
+     */
+    public String getHeight()
+    {
+        return height;
+    }
+
+    /**
+     * @param height
+     *            the height to set
+     */
+    public void setHeight(String height)
+    {
+        this.height = height;
     }
 }
