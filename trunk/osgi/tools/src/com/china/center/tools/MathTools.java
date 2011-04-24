@@ -72,6 +72,14 @@ public abstract class MathTools
         return parseDouble(astr) - parseDouble(bstr) == 0;
     }
 
+    public static boolean equal2(double a, double b)
+    {
+        long aa = Math.round(a * 100);
+        long bb = Math.round(b * 100);
+
+        return aa - bb == 0;
+    }
+
     public static String formatNum(double d)
     {
         DecimalFormat df = new DecimalFormat("####0.00");
