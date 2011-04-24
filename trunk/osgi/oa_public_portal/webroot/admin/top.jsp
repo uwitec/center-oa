@@ -112,7 +112,7 @@ function checkLock()
 	        });
      }
     
-    setTimeout("checkLock()", 30000);
+    setTimeout("checkLock()", 5000);
 }
 </script>
 </head>
