@@ -46,6 +46,8 @@ function addBean()
 			</p:pro>
 
 			<p:pro field="icp"  />
+			
+			<p:pro field="dues"  />
 
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
 

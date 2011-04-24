@@ -43,6 +43,12 @@ public class DutyBean implements DataClone<DutyBean>, Serializable
     @Html(title = "纳税类型", must = true, type = Element.SELECT)
     private int type = DutyConstant.DUTY_TYPE_COMMON;
 
+    /**
+     * 税点(内部的)
+     */
+    @Html(title = "税点(%)", must = true, type = Element.NUMBER, maxLength = 3)
+    private int dues = 0;
+
     @Html(title = "税务证号", must = true, maxLength = 100)
     private String icp = "";
 
@@ -60,6 +66,7 @@ public class DutyBean implements DataClone<DutyBean>, Serializable
         this.id = dutyBean.id;
         this.name = dutyBean.name;
         this.type = dutyBean.type;
+        this.dues = dutyBean.dues;
         this.icp = dutyBean.icp;
         this.description = dutyBean.description;
     }
@@ -139,6 +146,45 @@ public class DutyBean implements DataClone<DutyBean>, Serializable
         this.icp = icp;
     }
 
+    public DutyBean clones()
+    {
+        return new DutyBean(this);
+    }
+
+    /**
+     * @return the type
+     */
+    public int getType()
+    {
+        return type;
+    }
+
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(int type)
+    {
+        this.type = type;
+    }
+
+    /**
+     * @return the dues
+     */
+    public int getDues()
+    {
+        return dues;
+    }
+
+    /**
+     * @param dues
+     *            the dues to set
+     */
+    public void setDues(int dues)
+    {
+        this.dues = dues;
+    }
+
     /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
@@ -160,6 +206,12 @@ public class DutyBean implements DataClone<DutyBean>, Serializable
             .append("name = ")
             .append(this.name)
             .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("dues = ")
+            .append(this.dues)
+            .append(TAB)
             .append("icp = ")
             .append(this.icp)
             .append(TAB)
@@ -169,27 +221,5 @@ public class DutyBean implements DataClone<DutyBean>, Serializable
             .append(" )");
 
         return retValue.toString();
-    }
-
-    public DutyBean clones()
-    {
-        return new DutyBean(this);
-    }
-
-    /**
-     * @return the type
-     */
-    public int getType()
-    {
-        return type;
-    }
-
-    /**
-     * @param type
-     *            the type to set
-     */
-    public void setType(int type)
-    {
-        this.type = type;
     }
 }
