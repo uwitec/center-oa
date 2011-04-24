@@ -279,7 +279,7 @@ public class OutListenerFinanceImpl implements OutListener
     {
         ResultBean result = new ResultBean();
 
-        result.setMessage("领样全部退库或/转销售");
+        result.setMessage("领样全部退库/转销售");
 
         List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(fullId);
 
@@ -368,6 +368,8 @@ public class OutListenerFinanceImpl implements OutListener
         con.addCondition(" and OutBean.status in (3, 4)");
 
         con.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
+
+        con.addIntCondition("OutBean.outType", "<>", OutConstant.OUTTYPE_IN_OTHER);
 
         List<OutBean> refBuyList = outDAO.queryEntityBeansByCondition(con);
 
