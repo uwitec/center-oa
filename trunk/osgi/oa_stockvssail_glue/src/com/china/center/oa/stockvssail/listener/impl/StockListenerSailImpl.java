@@ -15,7 +15,6 @@ import java.util.List;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.product.bean.DepotpartBean;
-import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.DepotpartDAO;
 import com.china.center.oa.product.helper.StorageRelationHelper;
@@ -111,12 +110,25 @@ public class StockListenerSailImpl implements StockListener
             // 所在区域
             out.setLocationId(user.getLocationId());
 
-            // 目的仓库
-            out.setLocation(DepotConstant.STOCK_DEPOT_ID);
+            String depotpartId = each.getDepotpartId();
+
+            DepotpartBean depotpartBean = depotpartDAO.find(depotpartId);
+
+            if (depotpartBean == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 目的仓库通过仓区自动获取
+            out.setLocation(depotpartBean.getLocationId());
 
             out.setTotal(item.getTotal());
 
             out.setInway(OutConstant.IN_WAY_NO);
+
+            out.setDutyId(each.getDutyId());
+
+            out.setInvoiceId(each.getInvoiceType());
 
             out.setDescription("采购单自动转换成入库单,采购单单号:" + bean.getId());
 

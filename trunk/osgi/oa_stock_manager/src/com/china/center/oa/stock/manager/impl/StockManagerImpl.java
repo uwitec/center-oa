@@ -1001,6 +1001,9 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
             }
         }
 
+        addLog(user, item.getStockId(), stock.getStatus(), stock, PublicConstant.OPRMODE_PASS,
+            "询价人拿货");
+
         if (all)
         {
             // 修改成待结束采购

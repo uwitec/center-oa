@@ -2382,6 +2382,58 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         return outDAO.modifyPay(fullId, OutConstant.PAY_YES);
     }
 
+    public boolean payOutWithoutTransactional2(final User user, String fullId, String reason)
+        throws MYException
+    {
+        // 需要增加是否超期 flowId
+        OutBean out = outDAO.find(fullId);
+
+        if (out == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        OutListener listener = this.findListener(PluginNameConstant.OUTLISTENER_FINANCEIMPL);
+
+        if (listener == null)
+        {
+            return true;
+        }
+
+        ResultBean result = listener.onHadPay(user, out);
+
+        if (result.getResult() != 0)
+        {
+            addOutLog(fullId, user, out, reason + ",但是系统核算后没有完全付款", SailConstant.OPR_OUT_PASS, out
+                .getStatus());
+
+            // 不能完全回款
+            return outDAO.modifyPay(fullId, OutConstant.PAY_NOT);
+        }
+
+        // 如果getRedate为空说明已经超前回款了
+        if ( !StringTools.isNullOrNone(out.getRedate()))
+        {
+            int delay = TimeTools.cdate(TimeTools.now(), out.getRedate());
+
+            if (delay > 0)
+            {
+                outDAO.modifyTempType(fullId, delay);
+            }
+            else
+            {
+                outDAO.modifyTempType(fullId, 0);
+            }
+        }
+
+        addOutLog(fullId, user, out, reason, SailConstant.OPR_OUT_PASS, out.getStatus());
+
+        notifyOut(out, user, 2);
+
+        // 修改付款标识
+        return outDAO.modifyPay(fullId, OutConstant.PAY_YES);
+    }
+
     public ResultBean checkOutPayStatus(User user, OutBean out)
     {
         ResultBean result = new ResultBean();

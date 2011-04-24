@@ -231,6 +231,18 @@ public interface OutManager extends ListenerManager<OutListener>
         throws MYException;
 
     /**
+     * payOutWithoutTransactional(更新销售单的付款状态,除了参数检查其他不抛出异常)
+     * 
+     * @param user
+     * @param fullId
+     * @param reason
+     * @return
+     * @throws MYException
+     */
+    boolean payOutWithoutTransactional2(final User user, String fullId, String reason)
+        throws MYException;
+
+    /**
      * payBaddebts
      * 
      * @param user

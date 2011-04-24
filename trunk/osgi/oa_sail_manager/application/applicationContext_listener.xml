@@ -50,6 +50,18 @@
             </list>
         </property>
     </bean>
-
+    
+    <bean id="productListenerSailImpl" class="com.china.center.oa.sail.listener.impl.ProductListenerSailImpl" />
+    
+    <bean id="productLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="productManager"/>
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="productListenerSailImpl" />
+            </list>
+        </property>
+    </bean>
 	
 </beans>

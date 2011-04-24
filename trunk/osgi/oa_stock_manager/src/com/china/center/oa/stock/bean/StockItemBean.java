@@ -87,6 +87,9 @@ public class StockItemBean implements Serializable
     @Join(tagClass = DutyBean.class, type = JoinType.LEFT)
     private String dutyId = "";
 
+    /**
+     * 发票类型
+     */
     private String invoiceType = "";
 
     /**

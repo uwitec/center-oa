@@ -1413,6 +1413,10 @@ public class ParentOutAction extends DispatchAction
 
         out.setCustomerName(oldOut.getCustomerName());
 
+        out.setDutyId(oldOut.getDutyId());
+
+        out.setInvoiceId(oldOut.getInvoiceId());
+
         // 所在区域
         out.setLocationId(user.getLocationId());
 

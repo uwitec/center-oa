@@ -1021,9 +1021,18 @@ public class StockAction extends DispatchAction
         // 询价人拿货
         if ("2".equals(process))
         {
-            // 查询采购中心的良品仓区
-            List<DepotpartBean> depotpartList = depotpartDAO
-                .queryOkDepotpartInDepot(DepotConstant.STOCK_DEPOT_ID);
+            List<DepotpartBean> depotpartList = null;
+
+            if (vo.getMode() == StockConstant.STOCK_MODE_SAIL)
+            {
+                // 查询采购中心的良品仓区
+                depotpartList = depotpartDAO.queryOkDepotpartInDepot(DepotConstant.STOCK_DEPOT_ID);
+            }
+            else
+            {
+                // 查询生产库
+                depotpartList = depotpartDAO.queryOkDepotpartInDepot(DepotConstant.MAKE_DEPOT_ID);
+            }
 
             request.setAttribute("depotpartList", depotpartList);
 
