@@ -73,6 +73,67 @@ function changePrice()
     }
 }
 
+//格式化数字 四舍五入
+function formatNum2(num, length)
+{
+     var reg = /[0-9]*(.)?[0-9]*$/;
+
+     if (!reg.test(num))
+     {
+        reg = /[0-9]*.$/;
+        if (!reg.test(num))
+        {
+            return num;
+        }
+     }
+
+     num += '';
+     
+     if (num.indexOf('.') == -1)
+     {
+        return num + '.' + getLength0(length);
+     }
+
+     var hou = num.substring(num.indexOf('.') + 1);
+
+     if (hou.length <= length)
+     {
+        return num + getLength0(length - hou.length);
+     }
+
+     //超过 指定的四舍五入
+     var ins = parseFloat(num.substring(0, num.indexOf('.') + 1) + hou.substring(0, length));
+
+     var last = parseInt(hou.charAt(length));
+     var add;
+
+     if (last >= 5)
+     {
+        add = '0.' + getLength0(length - 1) + '1';
+     }
+     else
+     {
+        add = '0.' + getLength0(length);
+     }
+
+     var result =  ins + parseFloat(add);
+
+     var sresult = result + '';
+     
+     if (sresult.indexOf('.') == -1)
+     {
+        return sresult;
+     }
+     
+     if (sresult.indexOf('.') != -1)
+     {
+         sresult = sresult + '00';           
+     }
+     
+     return sresult.substring(0, sresult.indexOf('.') + 3);
+}
+
+
 
 </script>
 </head>
@@ -230,7 +291,7 @@ function changePrice()
                         <select name="dutyId" class="select_class" style="width: 240px" oncheck="notNone;" onchange="loadShow();changePrice();">
                             <option value="">--</option>
                             <c:forEach items="${dutyList}" var="item">
-                            <option value="${item.id}">${item.name} (${item.dues}%)</option>
+                            <option value="${item.id}">${item.name} (${item.dues}‰)</option>
                             </c:forEach>
                         </select>
                         <font color="#FF0000">*</font></td>

@@ -357,7 +357,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         }
 
                         // 验证税点
-                        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+                        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL
+                            && outBean.getOutType() != OutConstant.OUTTYPE_OUT_SWATCH)
                         {
                             // 输入价格
                             base.setInputPrice(MathTools.parseDouble(inputPriceList[i]));
@@ -373,7 +374,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                             double outPrice = base.getPrice();
 
-                            if ( !MathTools.equal2(inputPrice * (100 + duty.getDues()) / 100.0d,
+                            if ( !MathTools.equal2(inputPrice * (1000 + duty.getDues()) / 1000.0d,
                                 outPrice))
                             {
                                 throw new RuntimeException("卖出价格非含税价格,请确认操作");

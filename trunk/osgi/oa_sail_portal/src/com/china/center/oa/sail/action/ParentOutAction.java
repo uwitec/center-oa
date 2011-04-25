@@ -759,7 +759,7 @@ public class ParentOutAction extends DispatchAction
             ws.addCell(new Label(j++ , i, "单据号码", format));
             ws.addCell(new Label(j++ , i, "类型", format));
             ws.addCell(new Label(j++ , i, "回款日期", format));
-            ws.addCell(new Label(j++ , i, "到货日期", format));
+            ws.addCell(new Label(j++ , i, "库管通过日期", format));
             ws.addCell(new Label(j++ , i, "状态", format));
             ws.addCell(new Label(j++ , i, "经办人", format));
             ws.addCell(new Label(j++ , i, "仓库", format));
@@ -828,7 +828,14 @@ public class ParentOutAction extends DispatchAction
 
                     ws.addCell(new Label(j++ , i, element.getRedate()));
 
-                    ws.addCell(new Label(j++ , i, element.getArriveDate()));
+                    String changeTime = element.getChangeTime();
+
+                    if (changeTime.length() > 10)
+                    {
+                        changeTime = changeTime.substring(0, 10);
+                    }
+
+                    ws.addCell(new Label(j++ , i, changeTime));
 
                     ws.addCell(new Label(j++ , i, OutHelper.getStatus(element.getStatus(), false)));
 

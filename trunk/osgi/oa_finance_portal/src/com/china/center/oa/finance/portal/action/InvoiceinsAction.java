@@ -579,6 +579,8 @@ public class InvoiceinsAction extends DispatchAction
 
         bean.setMoneys(total);
 
+        System.out.println("total:" + total);
+
         bean.setItemList(itemList);
 
         User user = Helper.getUser(request);
@@ -671,9 +673,12 @@ public class InvoiceinsAction extends DispatchAction
                 }
             }
 
-            if (canUse > 0)
+            if ( !MathTools.equal(canUse, 0))
             {
-                throw new MYException("开票金额过多,请确认操作");
+                if (canUse > 0)
+                {
+                    throw new MYException("开票金额过多,请确认操作");
+                }
             }
 
             bean.setVsList(vsList);

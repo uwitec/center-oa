@@ -21,9 +21,15 @@ function ccs(obj)
 	
 	var p = os.cells[3].childNodes[0].value;
 	
-	var dues = parseInt(duesMap[$$('dutyId')], 10) + 100;
+	var dues = parseInt(duesMap[$$('dutyId')], 10) + 1000;
 	
-	var dp = mul(dues / 100.0, p);
+	//个人领样没有税
+	if ($$('outType') == 1)
+	{
+		dues = 1000;
+	}
+	
+	var dp = mul(dues / 1000.0, p);
 	
 	os.cells[4].childNodes[0].value = formatNum(dp, 2);
 	

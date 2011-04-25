@@ -28,7 +28,7 @@ function load()
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
              {display: '名称', name : 'name', width : '25%'},
              {display: '类型', name : 'type', cc: 'dutyType', width : '10%'},
-             {display: '税点(%)', name : 'dues', width : '10%'},
+             {display: '税点(‰)', name : 'dues', width : '10%'},
              {display: '税务证号', name : 'icp', width : '25%'},
              {display: '其他', name : 'description', width : 'auto'}
              ],

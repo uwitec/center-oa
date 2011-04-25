@@ -9,6 +9,8 @@
 package com.china.center.oa.finance.portal.action;
 
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -29,13 +31,17 @@ import org.apache.struts.actions.DispatchAction;
 import com.center.china.osgi.publics.User;
 import com.center.china.osgi.publics.file.read.ReadeFileFactory;
 import com.center.china.osgi.publics.file.read.ReaderFile;
+import com.center.china.osgi.publics.file.writer.WriteFile;
+import com.center.china.osgi.publics.file.writer.WriteFileFactory;
 import com.china.center.actionhelper.common.ActionTools;
+import com.china.center.actionhelper.common.JSONPageSeparateTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.common.MYException;
+import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.finance.bean.BankBean;
@@ -1498,6 +1504,108 @@ public class FinanceAction extends DispatchAction
         }
 
         return true;
+    }
+
+    /**
+     * exportPayment
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportPayment(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        // String depotartId = request.getParameter("depotartId");
+
+        String filenName = "Payment_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            write.writeLine("日期,系统标识,导入标识,导入批次,帐户,类型,状态,认领人,回款来源,绑定客户,回款金额,手续费,回款时间,备注");
+
+            ConditionParse condtion = JSONPageSeparateTools.getCondition(request, QUERYPAYMENT);
+
+            PageSeparate page = new PageSeparate(JSONPageSeparateTools.getPageSeparate(request,
+                QUERYPAYMENT));
+
+            page.reset2(page.getRowCount(), 1000);
+
+            while (page.nextPage())
+            {
+                List<PaymentVO> voList = this.paymentDAO.queryEntityVOsByCondition(condtion, page);
+
+                for (PaymentVO each : voList)
+                {
+                    String typeName = DefinedCommon.getValue("paymentType", each.getType());
+                    String statusName = DefinedCommon.getValue("paymentStatus", each.getStatus());
+
+                    write.writeLine("[" + each.getLogTime() + "]" + ',' + each.getId() + ',' + "M"
+                                    + each.getRefId() + ',' + "M" + each.getBatchId() + ','
+                                    + each.getBankName() + ',' + typeName + ',' + statusName + ','
+                                    + each.getStafferName() + ',' + each.getFromer() + ','
+                                    + each.getCustomerName() + ","
+                                    + MathTools.formatNum(each.getMoney()) + ','
+                                    + MathTools.formatNum(each.getHandling()) + ','
+                                    + each.getReceiveTime() + ','
+                                    + StringTools.getExportString(each.getDescription()));
+                }
+            }
+
+            write.close();
+
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
     }
 
     /**

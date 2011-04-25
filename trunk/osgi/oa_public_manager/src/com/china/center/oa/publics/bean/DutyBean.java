@@ -46,7 +46,7 @@ public class DutyBean implements DataClone<DutyBean>, Serializable
     /**
      * 税点(内部的)
      */
-    @Html(title = "税点(%)", must = true, type = Element.NUMBER, maxLength = 3)
+    @Html(title = "税点(‰)", must = true, type = Element.NUMBER, maxLength = 3)
     private int dues = 0;
 
     @Html(title = "税务证号", must = true, maxLength = 100)
