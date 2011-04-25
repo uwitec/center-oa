@@ -31,9 +31,9 @@ public abstract class StorageRelationHelper
      */
     public static String getPriceKey(double value)
     {
-        double last = value * 100;
+        int last = (int) (value * 100);
 
-        return String.valueOf(Math.round(last));
+        return String.valueOf(last);
     }
 
     public static ProductChangeWrap createProductChangeWrap(StorageRelationBean bean)
