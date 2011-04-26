@@ -11,6 +11,7 @@ package com.china.center.oa.product.helper;
 
 import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
+import com.china.center.tools.MathTools;
 
 
 /**
@@ -31,7 +32,9 @@ public abstract class StorageRelationHelper
      */
     public static String getPriceKey(double value)
     {
-        int last = (int) (value * 100);
+        String formatNum = MathTools.formatNum(value);
+
+        int last = (int) (Double.parseDouble(formatNum) * 100);
 
         return String.valueOf(last);
     }
