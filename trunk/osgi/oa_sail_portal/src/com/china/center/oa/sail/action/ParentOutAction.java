@@ -3057,6 +3057,13 @@ public class ParentOutAction extends DispatchAction
             condtion.addCondition("OutBean.customerId", "=", customerId);
         }
 
+        String customerName = request.getParameter("customerName");
+
+        if ( !StringTools.isNullOrNone(customerName))
+        {
+            condtion.addCondition("OutBean.customerName", "like", customerName);
+        }
+
         String outType = request.getParameter("outType");
 
         if ( !StringTools.isNullOrNone(outType))
@@ -3692,7 +3699,7 @@ public class ParentOutAction extends DispatchAction
 
         String customerName = request.getParameter("customerName");
 
-        if ( !StringTools.isNullOrNone(customerId))
+        if ( !StringTools.isNullOrNone(customerName))
         {
             condtion.addCondition("OutBean.customerName", "like", customerName);
         }
@@ -3716,6 +3723,13 @@ public class ParentOutAction extends DispatchAction
         if ( !StringTools.isNullOrNone(location))
         {
             condtion.addCondition("OutBean.location", "=", location);
+        }
+
+        String destinationId = request.getParameter("destinationId");
+
+        if ( !StringTools.isNullOrNone(destinationId))
+        {
+            condtion.addCondition("OutBean.destinationId", "=", destinationId);
         }
 
         String inway = request.getParameter("inway");

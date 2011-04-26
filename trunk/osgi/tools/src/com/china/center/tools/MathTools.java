@@ -74,10 +74,10 @@ public abstract class MathTools
 
     public static boolean equal2(double a, double b)
     {
-        long aa = Math.round(a * 100);
-        long bb = Math.round(b * 100);
+        int aa = (int)Math.round(a * 1000);
+        int bb = (int)Math.round(b * 1000);
 
-        return aa - bb == 0;
+        return Math.abs(aa - bb) <= 10;
     }
 
     public static String formatNum(double d)

@@ -396,7 +396,7 @@ function hrefAndSelect(obj)
 
 						</td>
 						<td width="15%" align="center">入库单号</td>
-						<td align="center"><input type="text" name="id" value="${ppmap.id}"></td>
+						<td align="center"><input type="text" name="id" value="${ppmap.id}" style="width: 90%"></td>
 					</tr>
 
 					<tr class="content2">
@@ -408,7 +408,7 @@ function hrefAndSelect(obj)
 							<p:option type="inway"></p:option>
 						</select></td>
 						
-						<td width="15%" align="center">仓库</td>
+						<td width="15%" align="center">源仓库</td>
                         <td align="center">
                         <select name="location"
                             class="select_class" values=${ppmap.location}>
@@ -433,6 +433,23 @@ function hrefAndSelect(obj)
 						<td width="15%" align="center">职员</td>
 						<td align="center"><input type="text" name="stafferName" value="${ppmap.stafferName}"></td>
 					</tr>
+					
+					<tr class="content2">
+                        <td width="15%" align="center">目的仓库</td>
+                        <td align="center">
+                        <select name="destinationId"
+                            class="select_class" values=${ppmap.destinationId}>
+                            <option value="">--</option>
+                            <c:forEach items="${depotList}" var="item">
+                             <option value="${item.id}">${item.name}</option>
+                            </c:forEach>
+                        </select>
+                        </td>
+
+                        </td>
+                        <td width="15%" align="center"></td>
+                        <td align="center"></td>
+                    </tr>
 
 					<tr class="content1">
 

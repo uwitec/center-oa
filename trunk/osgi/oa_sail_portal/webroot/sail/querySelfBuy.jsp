@@ -260,9 +260,7 @@ function load()
 
 						</td>
 						<td width="15%" align="center">供应商：</td>
-						<td align="center"><input type="text" name="customerName" maxlength="14" value="${customerName}"
-							onclick="selectCustomer()" style="cursor: hand"
-							readonly="readonly"></td>
+                        <td align="center"><input type="text" name="customerName" maxlength="14" value="${customerName}"></td>
 					</tr>
 
 					<tr class="content1">

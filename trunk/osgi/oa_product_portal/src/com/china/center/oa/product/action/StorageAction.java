@@ -233,6 +233,14 @@ public class StorageAction extends DispatchAction
                         vo.setStafferName("公共");
                     }
 
+                    int preassign = storageRelationManager.sumPreassignByStorageRelation(vo);
+
+                    vo.setPreassignAmount(preassign);
+
+                    int inway = storageRelationManager.sumInwayByStorageRelation(vo);
+
+                    vo.setInwayAmount(inway);
+
                 }
             });
 
