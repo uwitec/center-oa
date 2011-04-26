@@ -26,21 +26,20 @@ function load()
          url: gurl + 'query' + ukey,
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} lstafferId={stafferId}>', width : 40, align: 'center'},
-             {display: '帐户', name : 'bankName', width : '18%'},
+             {display: '系统标识', name : 'id', width : '14%'},
+             {display: '帐户', name : 'bankName', width : '12%'},
              {display: '类型', name : 'type', cc: 'paymentType', width : '5%'},
              {display: '状态', name : 'status', cc: 'paymentStatus', width : '5%'},
-             //{display: '使用状态', name : 'useall', cc: 'paymentUseall', width : '8%'},
              {display: '认领人', name : 'stafferName', cc: 'paymentStatus', width : '5%'},
              {display: '回款来源', name : 'fromer', width : '8%'},
              {display: '客户', name : 'customerName', width : '10%'},
              {display: '回款/手续费', name : 'money', content: '{money}/{handling}',  width : '10%', toFixed: 2},
              {display: '回款时间', name : 'receiveTime', width : '8%', sortable : true},
-             {display: '回款批次', name : 'batchId', width : '10%', sortable : true},
              {display: '标识', name : 'refId', sortable : true, width : '12%'},
              {display: '备注', name : 'description', width : 'auto'}
              ],
          extAtt: {
-             //name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
+             id : {begin : '<a href=' + gurl + 'find' + ukey + '&mode=2&id={id}>', end : '</a>'}
          },
          buttons : [
              {id: 'add', bclass: 'add',  onpress : addBean, auth: '1602'},

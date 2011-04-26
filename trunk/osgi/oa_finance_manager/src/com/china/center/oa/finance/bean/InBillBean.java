@@ -11,6 +11,7 @@ package com.china.center.oa.finance.bean;
 
 import java.io.Serializable;
 
+import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.jdbc.annotation.Column;
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.FK;
@@ -101,6 +102,7 @@ public class InBillBean implements Serializable
 
     private String refBillId = "";
 
+    @FK(index = AnoConstant.FK_FIRST)
     @Join(tagClass = PaymentBean.class, type = JoinType.LEFT)
     private String paymentId = "";
 

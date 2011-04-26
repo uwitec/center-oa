@@ -42,6 +42,7 @@ import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.common.MYException;
 import com.china.center.common.taglib.DefinedCommon;
+import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.finance.bean.BankBean;
@@ -60,6 +61,7 @@ import com.china.center.oa.finance.facade.FinanceFacade;
 import com.china.center.oa.finance.manager.StatBankManager;
 import com.china.center.oa.finance.vo.BankVO;
 import com.china.center.oa.finance.vo.InBillVO;
+import com.china.center.oa.finance.vo.OutBillVO;
 import com.china.center.oa.finance.vo.PaymentApplyVO;
 import com.china.center.oa.finance.vo.PaymentVO;
 import com.china.center.oa.finance.vs.PaymentVSOutBean;
@@ -1609,7 +1611,7 @@ public class FinanceAction extends DispatchAction
     }
 
     /**
-     * findPayment
+     * findPayment(领取回款和回款详细)
      * 
      * @param mapping
      * @param form
@@ -1631,7 +1633,26 @@ public class FinanceAction extends DispatchAction
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据异常,请重新操作");
 
-            return mapping.findForward("querySelfPayment");
+            return mapping.findForward("error");
+        }
+
+        double hasUsed = inBillDAO.sumByPaymentId(id);
+
+        request.setAttribute("bean", bean);
+
+        request.setAttribute("hasUsed", hasUsed);
+
+        if ("2".equals(mode))
+        {
+            List<InBillVO> inBillList = inBillDAO.queryEntityVOsByFK(id, AnoConstant.FK_FIRST);
+
+            List<OutBillVO> outBillList = outBillDAO.queryEntityVOsByFK(id);
+
+            request.setAttribute("inBillList", inBillList);
+
+            request.setAttribute("outBillList", outBillList);
+
+            return mapping.findForward("detailPayment");
         }
 
         List<PaymentApplyBean> queryEntityBeansByFK = paymentApplyDAO.queryEntityBeansByFK(id);
@@ -1645,12 +1666,6 @@ public class FinanceAction extends DispatchAction
                 return mapping.findForward("querySelfPayment");
             }
         }
-
-        double hasUsed = inBillDAO.sumByPaymentId(id);
-
-        request.setAttribute("bean", bean);
-
-        request.setAttribute("hasUsed", hasUsed);
 
         if ("1".equals(mode))
         {

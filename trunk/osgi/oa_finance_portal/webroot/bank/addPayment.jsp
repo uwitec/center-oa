@@ -111,7 +111,7 @@ function clearValues()
 			onclick="addBean()"></div>
 	</p:button>
 
-	<p:message/>
+	<p:message2/>
 </p:body></form>
 </body>
 </html>
