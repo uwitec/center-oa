@@ -171,7 +171,7 @@ function getProvider(id, name)
 			</p:cell>
 
 			<p:cells celspan="2" title="参考价格">
-			${bean.prePrice}
+			${my:formatNum(bean.prePrice)}
 			</p:cells>
 
 
