@@ -34,7 +34,7 @@
 
     <bean id="deleteHisTrigger"
         class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail" ref="statOutJob" />
+        <property name="jobDetail" ref="deleteHisJob" />
         <property name="cronExpression" value="0 0 4 * * ?" />
     </bean>
 

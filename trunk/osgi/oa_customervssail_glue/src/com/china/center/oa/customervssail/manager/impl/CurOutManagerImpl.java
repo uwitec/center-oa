@@ -102,6 +102,8 @@ public class CurOutManagerImpl implements CurOutManager
      */
     public void deleteHis()
     {
+        triggerLog.info("CurOutManagerImpl deleteHis begin.....");
+
         final ConditionParse condition = new ConditionParse();
 
         condition.addCondition("CreditlogBean.logTime", "<=", TimeTools.getDateFullString( -7));
@@ -126,6 +128,7 @@ public class CurOutManagerImpl implements CurOutManager
             _logger.error(e, e);
         }
 
+        triggerLog.info("CurOutManagerImpl deleteHis end.....");
     }
 
     /**
