@@ -235,6 +235,8 @@ function loadShow(mode)
 		
 		removeAllItem(each);
 		
+		setOption(each, '', '--');
+		
 		for (var j = 0; j < json.length; j++)
 		{
 			var item = json[j];

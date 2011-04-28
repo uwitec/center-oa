@@ -374,9 +374,18 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                             double outPrice = base.getPrice();
 
-                            if ( !MathTools.equal2(inputPrice * (1000 + duty.getDues()) / 1000.0d,
-                                outPrice))
+                            double a = inputPrice * (1000 + duty.getDues()) / 1000.0d;
+
+                            double b = outPrice;
+
+                            if ( !MathTools.equal2(a, b))
                             {
+                                _logger.equals("error price1:" + a);
+                                _logger.equals("error price2:" + b);
+
+                                _logger.equals("error price3:" + ((int)Math.round(a * 1000)));
+                                _logger.equals("error price4:" + ((int)Math.round(b * 1000)));
+
                                 throw new RuntimeException("卖出价格非含税价格,请确认操作");
                             }
                         }
@@ -926,7 +935,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                 wrap.setRefId(outBean.getFullId());
 
-                storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, true);
+                storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, false);
             }
 
             saveUnique(user, outBean);
@@ -1350,7 +1359,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                 wrap.setType(type);
                 wrap.setRefId(outBean.getFullId());
 
-                storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, true);
+                storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, false);
             }
 
             saveUnique(user, outBean);
@@ -1976,7 +1985,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
             wrap.setType(type);
 
-            storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, true);
+            storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, false);
         }
 
         saveUnique(user, outBean);
@@ -2643,7 +2652,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             throw new MYException("不是委托代销的销售单,请确认操作");
         }
 
-        if (out.getStatus() != OutConstant.STATUS_PASS)
+        if (out.getStatus() != OutConstant.STATUS_PASS
+            && out.getStatus() != OutConstant.STATUS_SEC_PASS)
         {
             throw new MYException("数据错误,请确认操作");
         }
@@ -2767,7 +2777,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                 wrap.setType(StorageConstant.OPR_STORAGE_BALANCE);
                 wrap.setRefId(id);
 
-                storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, true);
+                storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, false);
             }
         }
 

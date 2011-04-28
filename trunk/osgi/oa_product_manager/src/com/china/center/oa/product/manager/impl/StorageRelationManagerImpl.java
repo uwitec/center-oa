@@ -469,12 +469,15 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
         }
     }
 
-    public int initPriceKey()
+    public int[] initPriceKey()
     {
         // LOCK 产品库存priceKey初始化,单独提供事务
         synchronized (PublicLock.PRODUCT_CORE)
         {
-            int result = 0;
+            int[] result = new int[2];
+
+            int success = 0;
+            int fail = 0;
 
             final List<StorageRelationBean> allList = storageRelationDAO.listEntityBeans();
 
@@ -501,14 +504,18 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
                             }
                         });
 
-                        result++ ;
+                        success++ ;
                     }
                     catch (Exception e)
                     {
+                        fail++ ;
                         _logger.error(e, e);
                     }
                 }
             }
+
+            result[0] = success;
+            result[1] = fail;
 
             return result;
         }

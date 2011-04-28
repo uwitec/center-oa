@@ -225,7 +225,7 @@ function del()
 
 function balance()
 {
-    if (getRadio('fullId').statuss == '3' && getRadio('fullId').outtype == '3')
+    if ((getRadio('fullId').statuss == '3' || getRadio('fullId').statuss == '4') && getRadio('fullId').outtype == '3')
     {
         document.location.href = '../sail/out.do?method=preForAddOutBalance&type=0&outId=' + getRadioValue("fullId");
     }
@@ -253,7 +253,8 @@ function refBill()
 
 function balance2()
 {
-    if (getRadio('fullId').statuss == '3' && getRadio('fullId').outtype == '3')
+    if ((getRadio('fullId').statuss == '3' || getRadio('fullId').statuss == '4')
+         && getRadio('fullId').outtype == '3')
     {
         document.location.href = '../sail/out.do?method=preForAddOutBalance&type=1&outId=' + getRadioValue("fullId");
     }

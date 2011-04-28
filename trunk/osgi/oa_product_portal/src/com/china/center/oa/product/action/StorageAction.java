@@ -221,6 +221,8 @@ public class StorageAction extends DispatchAction
 
         condtion.addCondition("StorageRelationBean.stafferId", "=", StorageConstant.PUBLIC_STAFFER);
 
+        condtion.addIntCondition("StorageRelationBean.amount", ">", 0);
+
         ActionTools.processJSONQueryCondition(QUERYPUBLICSTORAGERELATION, request, condtion);
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPUBLICSTORAGERELATION, request,
@@ -271,7 +273,7 @@ public class StorageAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYDEPOTSTORAGERELATION, request, condtion);
 
-        condtion.addCondition("order by StorageRelationBean.price desc");
+        condtion.addCondition("order by StorageRelationBean.amount desc");
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYDEPOTSTORAGERELATION, request,
             condtion, this.storageRelationDAO, new HandleResult<StorageRelationVO>()
@@ -1054,9 +1056,9 @@ public class StorageAction extends DispatchAction
     {
         AjaxResult ajax = new AjaxResult();
 
-        int initPriceKey = storageRelationManager.initPriceKey();
+        int[] initPriceKey = storageRelationManager.initPriceKey();
 
-        ajax.setSuccess("成功初始化库存KEY:" + initPriceKey);
+        ajax.setSuccess("成功初始化库存KEY:" + initPriceKey[0] + ",失败:" + initPriceKey[1]);
 
         return JSONTools.writeResponse(response, ajax);
     }

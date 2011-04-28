@@ -129,5 +129,5 @@ public interface StorageRelationManager extends ListenerManager<StorageRelationL
      * 
      * @return
      */
-    int initPriceKey();
+    int[] initPriceKey();
 }
