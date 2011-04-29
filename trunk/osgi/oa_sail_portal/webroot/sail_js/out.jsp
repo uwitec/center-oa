@@ -240,6 +240,13 @@ function check(isAdd)
             amounts[i].focus();
             return false;
         }
+        
+        if (parseInt(amounts[i].value, 10) < 0)
+        {
+            alert('数据错误,产品数量不能为负数!');
+            amounts[i].focus();
+            return false;
+        }
 
         amous = amous + amounts[i].value + '~';
 

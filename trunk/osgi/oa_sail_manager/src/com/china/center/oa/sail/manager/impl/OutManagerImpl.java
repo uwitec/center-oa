@@ -380,13 +380,14 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                             if ( !MathTools.equal2(a, b))
                             {
-                                _logger.equals("error price1:" + a);
-                                _logger.equals("error price2:" + b);
+                                _logger.error("error price1:" + a);
+                                _logger.error("error price2:" + b);
 
-                                _logger.equals("error price3:" + ((int)Math.round(a * 1000)));
-                                _logger.equals("error price4:" + ((int)Math.round(b * 1000)));
+                                _logger.error("error price3:" + ((int)Math.round(a * 1000)));
+                                _logger.error("error price4:" + ((int)Math.round(b * 1000)));
 
-                                throw new RuntimeException("卖出价格非含税价格,请确认操作");
+                                // TODO 等待日志定位问题
+                                // throw new RuntimeException("卖出价格非含税价格,请确认操作");
                             }
                         }
                         else
