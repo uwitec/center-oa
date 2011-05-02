@@ -109,7 +109,6 @@ function stat()
 			<tr align=center class="content0">
 				<td align="center" class="td_class">选择</td>
 				<td align="center" class="td_class" onclick="tableSort(this)"><strong>仓区</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this)"><strong>储位</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"><strong>产品</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>原始数量</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>异动数量</strong></td>
@@ -123,7 +122,6 @@ function stat()
 						value="${item.productId};${item.depotpartId}"
 						${vs.index== 0 ? "checked" : ""}/></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.depotpartName}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${item.storageName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.productName}</td>
 					
 					<td align="center" onclick="hrefAndSelect(this)">${item.preAmount}</td>
