@@ -1179,7 +1179,14 @@ public class ParentOutAction extends DispatchAction
         List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outId);
 
         // 校验库存
-        makeLingYang(outId, request, baseList);
+        List<OutBean> makeLingYang = makeLingYang(outId, request, baseList);
+
+        if ( !ListTools.isEmptyOrNull(makeLingYang))
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "此单存在转销售单据,所以只能全部转销售,不能退库处理");
+
+            return mapping.findForward("error");
+        }
 
         double total = 0.0d;
 
@@ -1272,13 +1279,14 @@ public class ParentOutAction extends DispatchAction
     }
 
     /**
-     * 个人领样的预处理
+     * 个人领样退库的预处理
      * 
      * @param outId
      * @param request
      * @param bean
      */
-    private void makeLingYang(String outId, HttpServletRequest request, List<BaseBean> baseList)
+    private List<OutBean> makeLingYang(String outId, HttpServletRequest request,
+                                       List<BaseBean> baseList)
     {
         ConditionParse con = new ConditionParse();
 
@@ -1345,6 +1353,8 @@ public class ParentOutAction extends DispatchAction
 
             baseBean.setInway(hasBack);
         }
+
+        return refList;
     }
 
     /**
@@ -2976,7 +2986,7 @@ public class ParentOutAction extends DispatchAction
             condtion.addIntCondition("OutBean.tempType", "=", tempType);
         }
 
-        condtion.addCondition("order by OutBean.outTime desc");
+        condtion.addCondition("order by OutBean.id desc");
 
         return condtion;
     }
@@ -3085,7 +3095,7 @@ public class ParentOutAction extends DispatchAction
             condtion.addIntCondition("inway", "=", inway);
         }
 
-        condtion.addCondition("order by OutBean.outTime desc");
+        condtion.addCondition("order by OutBean.id desc");
 
         return condtion;
     }
@@ -3538,7 +3548,7 @@ public class ParentOutAction extends DispatchAction
 
         if ( !condtion.containOrder())
         {
-            condtion.addCondition("order by OutBean.outTime desc");
+            condtion.addCondition("order by OutBean.id desc");
         }
 
         request.getSession().setAttribute("ppmap", queryOutCondtionMap);
@@ -3852,7 +3862,7 @@ public class ParentOutAction extends DispatchAction
 
         if ( !condtion.containOrder())
         {
-            condtion.addCondition("order by OutBean.outTime desc");
+            condtion.addCondition("order by OutBean.id desc");
         }
 
         request.getSession().setAttribute("ppmap", queryOutCondtionMap);
