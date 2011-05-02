@@ -28,6 +28,7 @@ import com.china.center.jdbc.annosql.InnerBean;
 import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.tools.CommonTools;
+import com.china.center.tools.StringTools;
 
 
 /**
@@ -173,9 +174,19 @@ public abstract class JSONTools
         return getJSONString(list, page);
     }
 
-    public static String getJSONString(List list, PageSeparate page)
+    public static String getJSONString(List list, PageSeparate page, String hint)
     {
+
         Map pageInfo = new HashMap();
+
+        if (StringTools.isNullOrNone(hint))
+        {
+            pageInfo.put("hint", "");
+        }
+        else
+        {
+            pageInfo.put("hint", hint);
+        }
 
         pageInfo.put("nowPage", page.getNowPage());
 
@@ -205,6 +216,12 @@ public abstract class JSONTools
         pageInfo.put("rows", mapList);
         JSONObject object = new JSONObject(pageInfo);
         return object.toString();
+
+    }
+
+    public static String getJSONString(List list, PageSeparate page)
+    {
+        return getJSONString(list, page, "");
     }
 
     /**

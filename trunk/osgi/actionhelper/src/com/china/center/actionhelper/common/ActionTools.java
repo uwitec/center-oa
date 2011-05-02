@@ -22,6 +22,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import com.china.center.actionhelper.query.CommonQuery;
+import com.china.center.actionhelper.query.HandleHint;
 import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.actionhelper.query.QueryConditionBean;
 import com.china.center.actionhelper.query.QueryConfig;
@@ -438,6 +439,17 @@ public abstract class ActionTools
                                                                                                    DAO<T, V> dao,
                                                                                                    HandleResult<V> handle)
     {
+        return queryVOByJSONAndToString(key, request, condtion, dao, handle, "");
+    }
+
+    public static <T extends Serializable, V extends Serializable> String queryVOByJSONAndToString(
+                                                                                                   String key,
+                                                                                                   HttpServletRequest request,
+                                                                                                   ConditionParse condtion,
+                                                                                                   DAO<T, V> dao,
+                                                                                                   HandleResult<V> handle,
+                                                                                                   HandleHint hint)
+    {
         List<V> list = new ArrayList<V>();
 
         list.addAll((List<V>)commonQueryBeanInnerByJSON(key, request, condtion, dao, false));
@@ -447,7 +459,27 @@ public abstract class ActionTools
             handle.handle(object);
         }
 
-        return JSONTools.getJSONString(list, PageSeparateTools.getPageSeparate(request, key));
+        return queryVOByJSONAndToString(key, request, condtion, dao, handle, hint.getHint());
+    }
+
+    public static <T extends Serializable, V extends Serializable> String queryVOByJSONAndToString(
+                                                                                                   String key,
+                                                                                                   HttpServletRequest request,
+                                                                                                   ConditionParse condtion,
+                                                                                                   DAO<T, V> dao,
+                                                                                                   HandleResult<V> handle,
+                                                                                                   String hint)
+    {
+        List<V> list = new ArrayList<V>();
+
+        list.addAll((List<V>)commonQueryBeanInnerByJSON(key, request, condtion, dao, false));
+
+        for (V object : list)
+        {
+            handle.handle(object);
+        }
+
+        return JSONTools.getJSONString(list, PageSeparateTools.getPageSeparate(request, key), hint);
     }
 
     public static <T extends Serializable, V extends Serializable> String queryBeanByJSONAndToString(
