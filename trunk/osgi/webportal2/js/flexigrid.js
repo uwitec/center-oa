@@ -46,6 +46,7 @@ if(window.HTMLElement)
              nowrap: true, //
              page: 1, //current page
              total: 1, //total pages
+             hint: '', //hint msg
              currentRows: 0, //total pages
              useRp: true, //use the results per page select box
              rp: 10, // results per page
@@ -502,6 +503,11 @@ if(window.HTMLElement)
                 else
                     p.total = data.total;
                     
+                if (p.dataType !='xml')
+                {
+                	p.hint = data.hint;
+                }
+                    
                 if (p.total==0)
                     {
                     $('tr, a, td, div',t).unbind();
@@ -776,7 +782,11 @@ if(window.HTMLElement)
             stat = stat.replace(/{to}/,r2);
             stat = stat.replace(/{total}/,p.total);
             
+            // add hint to show
+            if (p.hint == '' || p.hint == null)
             $('.pPageStat',this.pDiv).html(stat);
+            else
+            $('.pPageStat',this.pDiv).html(stat + '  |  ' + p.hint);
             
             },
             
