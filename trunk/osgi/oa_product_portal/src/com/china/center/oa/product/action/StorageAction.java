@@ -39,6 +39,7 @@ import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.actionhelper.json.AjaxResult;
+import com.china.center.actionhelper.query.HandleHint;
 import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.common.MYException;
 import com.china.center.common.taglib.DefinedCommon;
@@ -73,6 +74,7 @@ import com.china.center.oa.publics.dao.StafferVSIndustryDAO;
 import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
+import com.china.center.tools.IntegerWrap;
 import com.china.center.tools.MathTools;
 import com.china.center.tools.RequestTools;
 import com.china.center.tools.StringTools;
@@ -177,6 +179,8 @@ public class StorageAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYSTORAGERELATION, request, condtion);
 
+        final IntegerWrap wrap = new IntegerWrap();
+
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSTORAGERELATION, request,
             condtion, this.storageRelationDAO, new HandleResult<StorageRelationVO>()
             {
@@ -194,6 +198,14 @@ public class StorageAction extends DispatchAction
                     int inway = storageRelationManager.sumInwayByStorageRelation(vo);
 
                     vo.setInwayAmount(inway);
+
+                    wrap.add(vo.getAmount());
+                }
+            }, new HandleHint()
+            {
+                public String getHint()
+                {
+                    return "产品当前页数量:" + wrap.getResult();
                 }
             });
 

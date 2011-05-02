@@ -78,6 +78,16 @@ public class ConsignBean extends OutBean
     private String transportFee = "";
 
     /**
+     * 收货人
+     */
+    private String reveiver = "";
+
+    /**
+     * 发货地
+     */
+    private String sendPlace = "";
+
+    /**
      * default constructor
      */
     public ConsignBean()
@@ -391,6 +401,57 @@ public class ConsignBean extends OutBean
     }
 
     /**
+     * @return the gid
+     */
+    public String getGid()
+    {
+        return gid;
+    }
+
+    /**
+     * @param gid
+     *            the gid to set
+     */
+    public void setGid(String gid)
+    {
+        this.gid = gid;
+    }
+
+    /**
+     * @return the reveiver
+     */
+    public String getReveiver()
+    {
+        return reveiver;
+    }
+
+    /**
+     * @param reveiver
+     *            the reveiver to set
+     */
+    public void setReveiver(String reveiver)
+    {
+        this.reveiver = reveiver;
+    }
+
+    /**
+     * @return the sendPlace
+     */
+    public String getSendPlace()
+    {
+        return sendPlace;
+    }
+
+    /**
+     * @param sendPlace
+     *            the sendPlace to set
+     */
+    public void setSendPlace(String sendPlace)
+    {
+        this.sendPlace = sendPlace;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -404,6 +465,9 @@ public class ConsignBean extends OutBean
         retValue
             .append("ConsignBean ( ")
             .append(super.toString())
+            .append(TAB)
+            .append("gid = ")
+            .append(this.gid)
             .append(TAB)
             .append("fullId = ")
             .append(this.fullId)
@@ -459,26 +523,15 @@ public class ConsignBean extends OutBean
             .append("transportFee = ")
             .append(this.transportFee)
             .append(TAB)
+            .append("reveiver = ")
+            .append(this.reveiver)
+            .append(TAB)
+            .append("sendPlace = ")
+            .append(this.sendPlace)
+            .append(TAB)
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the gid
-     */
-    public String getGid()
-    {
-        return gid;
-    }
-
-    /**
-     * @param gid
-     *            the gid to set
-     */
-    public void setGid(String gid)
-    {
-        this.gid = gid;
     }
 
 }

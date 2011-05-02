@@ -144,6 +144,21 @@ function change()
                              <td>发货单号：</td>
                             <td colspan="3"><input type="text" name="transportNo" id="transportNo" value="${consignBean.transportNo}" class="input_class"></td>
                         </tr>
+                        
+                         <tr class="content1">
+                             <td>发货地：</td>
+                            <td colspan="3"><input type="text" name="sendPlace" value="${consignBean.sendPlace}" class="input_class"></td>
+                        </tr>
+                        
+                         <tr class="content2">
+                             <td>收货人：</td>
+                            <td colspan="3"><input type="text" name="reveiver" value="${consignBean.reveiver}" class="input_class"></td>
+                        </tr>
+                        
+                         <tr class="content1">
+                             <td>备货人：</td>
+                            <td colspan="3"><input type="text" name="preparer" value="${consignBean.preparer}" class="input_class"></td>
+                        </tr>
 
                         <tr class="content2">
                              <td>检验人：</td>
@@ -160,6 +175,11 @@ function change()
                             <td colspan="3">
                             <input type="text" name="packageTime" value="${consignBean.packageTime}" class="input_class">
                             </td>
+                        </tr>
+                        
+                        <tr class="content2">
+                             <td>监控设备：</td>
+                            <td colspan="3"><input type="text" name="mathine" value="${consignBean.mathine}" class="input_class"></td>
                         </tr>
                         
                         <tr class="content1">
@@ -184,16 +204,6 @@ function change()
                             <td colspan="3">
                             <input type="text" name="arriveTime" value="${consignBean.arriveTime}" class="input_class">
                             </td>
-                        </tr>
-                        
-                        <tr class="content1">
-                             <td>备货人：</td>
-                            <td colspan="3"><input type="text" name="preparer" value="${consignBean.preparer}" class="input_class"></td>
-                        </tr>
-                        
-                        <tr class="content2">
-                             <td>监控设备：</td>
-                            <td colspan="3"><input type="text" name="mathine" value="${consignBean.mathine}" class="input_class"></td>
                         </tr>
                         
                         <tr class="content1">
