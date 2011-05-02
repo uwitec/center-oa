@@ -1479,6 +1479,13 @@ public class OutAction extends ParentOutAction
 
             List<OutBean> refBuyList = queryRefOut(request, outId);
 
+            if ( !ListTools.isEmptyOrNull(refBuyList))
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "此单存在退库,所以转销售只能全部退库后重新发起销售");
+
+                return mapping.findForward("error");
+            }
+
             List<BaseBean> baseList = bean.getBaseList();
 
             // 计算出已经退货的数量
