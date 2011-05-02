@@ -212,7 +212,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
             fullId = flag + time + id;
 
-            outBean.setId(id);
+            outBean.setId(getOutId(id));
 
             outBean.setFullId(fullId);
 
@@ -592,7 +592,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         String fullId = flag + time + id;
 
-        outBean.setId(id);
+        outBean.setId(getOutId(id));
 
         outBean.setFullId(fullId);
 
@@ -756,7 +756,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         final String fullId = flag + time + id;
 
-        outBean.setId(id);
+        outBean.setId(getOutId(id));
 
         outBean.setFullId(fullId);
 
@@ -2024,7 +2024,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         BeanUtil.copyProperties(newInBean, outBean);
 
-        newInBean.setId(id);
+        newInBean.setId(getOutId(id));
 
         newInBean.setFullId(fullId);
 
@@ -3070,6 +3070,16 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         String s = "00000000" + i;
 
         return s.substring(s.length() - 9);
+    }
+
+    private String getOutId(String idStr)
+    {
+        while (idStr.length() > 0 && idStr.charAt(0) == '0')
+        {
+            idStr = idStr.substring(1);
+        }
+
+        return idStr;
     }
 
     /**
