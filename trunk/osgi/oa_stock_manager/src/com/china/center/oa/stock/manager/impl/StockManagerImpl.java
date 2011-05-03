@@ -723,8 +723,7 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
 
         if (current == StockConstant.STOCK_STATUS_STOCKPASS)
         {
-            if (AuthHelper.containAuth(user, AuthConstant.STOCK_NET_STOCK_PASS,
-                AuthConstant.STOCK_INNER_STOCK_PASS))
+            if (AuthHelper.containAuth(user, AuthConstant.STOCK_NOTICE_CHAIRMA))
             {
                 return StockConstant.STOCK_STATUS_STOCKMANAGERPASS;
             }

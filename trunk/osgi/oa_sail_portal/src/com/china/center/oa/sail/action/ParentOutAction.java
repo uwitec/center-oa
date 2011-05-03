@@ -764,6 +764,7 @@ public class ParentOutAction extends DispatchAction
             ws.addCell(new Label(j++ , i, "经办人", format));
             ws.addCell(new Label(j++ , i, "仓库", format));
             ws.addCell(new Label(j++ , i, "目的库", format));
+            ws.addCell(new Label(j++ , i, "关联单据", format));
             ws.addCell(new Label(j++ , i, "描述", format));
 
             ws.addCell(new Label(j++ , i, "品名", format));
@@ -844,6 +845,8 @@ public class ParentOutAction extends DispatchAction
                     ws.addCell(new Label(j++ , i, element.getDepotName()));
 
                     ws.addCell(new Label(j++ , i, element.getDestinationName()));
+
+                    ws.addCell(new Label(j++ , i, element.getRefOutFullId()));
 
                     ws.addCell(new Label(j++ , i, element.getDescription()));
 
