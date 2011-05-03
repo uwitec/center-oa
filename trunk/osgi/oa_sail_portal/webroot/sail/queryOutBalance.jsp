@@ -207,6 +207,11 @@ function refBill()
     }
 }
 
+function exports()
+{
+    if (window.confirm("确定导出当前的全部查询的单据?"))
+    document.location.href = '../sail/out.do?method=exportOutBalance';
+}
 
 </script>
 
@@ -392,6 +397,10 @@ function refBill()
             type="button" class="button_class"
             value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;" onclick="reject()" />&nbsp;&nbsp;
         </c:if>
+        
+         <input
+                type="button" class="button_class"
+                value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;
 		</div>
 		
 		</td>

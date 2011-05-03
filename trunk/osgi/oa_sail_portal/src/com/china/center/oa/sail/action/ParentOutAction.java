@@ -922,6 +922,183 @@ public class ParentOutAction extends DispatchAction
     }
 
     /**
+     * exportOutBalance
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportOutBalance(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        String exportKey = QUERYSELFOUTBALANCE;
+
+        List<OutBalanceVO> outList = null;
+
+        String filenName = null;
+
+        if (OldPageSeparateTools.getPageSeparate(request, exportKey).getRowCount() > 1500)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "导出的记录数不能超过1500");
+
+            return mapping.findForward("error");
+        }
+
+        outList = outBalanceDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(
+            request, exportKey));
+
+        filenName = "Balance_Export_" + TimeTools.now("MMddHHmmss") + ".xls";
+
+        if (outList.size() == 0)
+        {
+            return null;
+        }
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WritableWorkbook wwb = null;
+
+        WritableSheet ws = null;
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            // create a excel
+            wwb = Workbook.createWorkbook(out);
+            ws = wwb.createSheet("sheel1", 0);
+            int i = 0, j = 0;
+
+            OutBalanceVO element = null;
+
+            WritableFont font = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD, false,
+                jxl.format.UnderlineStyle.NO_UNDERLINE, jxl.format.Colour.BLUE);
+
+            WritableCellFormat format = new WritableCellFormat(font);
+
+            element = (OutBalanceVO)outList.get(0);
+
+            ws.addCell(new Label(j++ , i, "日期", format));
+            ws.addCell(new Label(j++ , i, "客户", format));
+            ws.addCell(new Label(j++ , i, "标识", format));
+            ws.addCell(new Label(j++ , i, "销售单号", format));
+            ws.addCell(new Label(j++ , i, "总金额", format));
+            ws.addCell(new Label(j++ , i, "类型", format));
+            ws.addCell(new Label(j++ , i, "职员", format));
+            ws.addCell(new Label(j++ , i, "状态", format));
+            ws.addCell(new Label(j++ , i, "仓库", format));
+            ws.addCell(new Label(j++ , i, "描述", format));
+
+            ws.addCell(new Label(j++ , i, "品名", format));
+            ws.addCell(new Label(j++ , i, "结算数量", format));
+            ws.addCell(new Label(j++ , i, "销售价", format));
+            ws.addCell(new Label(j++ , i, "成本", format));
+            ws.addCell(new Label(j++ , i, "合计", format));
+
+            // 写outbean
+            for (Iterator iter = outList.iterator(); iter.hasNext();)
+            {
+                element = (OutBalanceVO)iter.next();
+
+                // 写baseBean
+                List<BaseBalanceBean> baseList = null;
+
+                BaseBalanceBean base = null;
+
+                try
+                {
+                    baseList = baseBalanceDAO.queryEntityBeansByFK(element.getId());
+                }
+                catch (Exception e)
+                {
+                    _logger.error(e, e);
+                }
+
+                for (Iterator iterator = baseList.iterator(); iterator.hasNext();)
+                {
+                    j = 0;
+                    i++ ;
+
+                    ws.addCell(new Label(j++ , i, element.getLogTime()));
+
+                    ws.addCell(new Label(j++ , i, element.getCustomerName()));
+
+                    ws.addCell(new Label(j++ , i, element.getId()));
+
+                    ws.addCell(new Label(j++ , i, element.getOutId()));
+
+                    ws.addCell(new Label(j++ , i, MathTools.formatNum(element.getTotal())));
+
+                    ws
+                        .addCell(new Label(j++ , i, ElTools
+                            .get("outBalanceType", element.getType())));
+
+                    ws.addCell(new Label(j++ , i, element.getStafferName()));
+
+                    ws.addCell(new Label(j++ , i, ElTools.get("outBalanceStatus", element
+                        .getStatus())));
+
+                    ws.addCell(new Label(j++ , i, element.getDirDepotName()));
+
+                    ws.addCell(new Label(j++ , i, element.getDescription()));
+
+                    // 下面是base里面的数据
+                    base = (BaseBalanceBean)iterator.next();
+
+                    BaseBean baseBean = baseDAO.find(base.getBaseId());
+
+                    ws.addCell(new Label(j++ , i, baseBean.getProductName()));
+                    ws.addCell(new Label(j++ , i, String.valueOf(base.getAmount())));
+                    ws.addCell(new Label(j++ , i, MathTools.formatNum(baseBean.getPrice())));
+                    ws.addCell(new Label(j++ , i, MathTools.formatNum(baseBean.getCostPrice())));
+                    ws.addCell(new Label(j++ , i, MathTools.formatNum(base.getAmount()
+                                                                      * baseBean.getPrice())));
+                }
+
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.error(e, e);
+            return null;
+        }
+        finally
+        {
+            if (wwb != null)
+            {
+                try
+                {
+                    wwb.write();
+                    wwb.close();
+                }
+                catch (Exception e1)
+                {
+                }
+            }
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * TEMPLATE 导出XLS文件
      * 
      * @param mapping
