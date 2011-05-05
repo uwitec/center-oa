@@ -1,7 +1,7 @@
 //格式化数字 四舍五入
 function formatNum(num, length)
 {
-	 var reg = /[0-9]*(.)?[0-9]*$/;
+     var reg = /[0-9]*(.)?[0-9]*$/;
 
      if (!reg.test(num))
      {
@@ -52,10 +52,10 @@ function formatNum(num, length)
      
      if (sresult.indexOf('.') != -1)
      {
-         sresult = sresult + '00';           
+         sresult = sresult + '0000000000000000';           
      }
      
-     return sresult.substring(0, sresult.indexOf('.') + 3);
+     return sresult.substring(0, sresult.indexOf('.') + length + 1);
 }
 
 function getLength0(length)
