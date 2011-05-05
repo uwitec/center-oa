@@ -991,6 +991,7 @@ public class ParentOutAction extends DispatchAction
             ws.addCell(new Label(j++ , i, "标识", format));
             ws.addCell(new Label(j++ , i, "销售单号", format));
             ws.addCell(new Label(j++ , i, "总金额", format));
+            ws.addCell(new Label(j++ , i, "已付金额", format));
             ws.addCell(new Label(j++ , i, "类型", format));
             ws.addCell(new Label(j++ , i, "职员", format));
             ws.addCell(new Label(j++ , i, "状态", format));
@@ -1036,6 +1037,8 @@ public class ParentOutAction extends DispatchAction
                     ws.addCell(new Label(j++ , i, element.getOutId()));
 
                     ws.addCell(new Label(j++ , i, MathTools.formatNum(element.getTotal())));
+
+                    ws.addCell(new Label(j++ , i, MathTools.formatNum(element.getPayMoney())));
 
                     ws
                         .addCell(new Label(j++ , i, ElTools

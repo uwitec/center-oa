@@ -68,6 +68,7 @@ function blu(obj)
 function blus(obj)
 {
 	obj.value = trim(obj.value);
+	
 	var tem = obj.value;
 	
 	if (tem.indexOf('.') == -1)
@@ -81,8 +82,16 @@ function blus(obj)
 		return;
 	}
 	
-	tem += '00';
-	obj.value = tem.substring(0, tem.indexOf('.') + 3);
+	tem += '00000000';
+	
+	if (obj.name == 'inputPrice')
+	{
+	   obj.value = tem.substring(0, tem.indexOf('.') + 5);
+	}
+	else
+	{
+		obj.value = tem.substring(0, tem.indexOf('.') + 3);
+	}
 }
 
 function addTr()
