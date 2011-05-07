@@ -409,6 +409,11 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
             newInBill.setOutBalanceId("");
             newInBill.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
             newInBill.setLock(FinanceConstant.BILL_LOCK_YES);
+
+            // 未核对
+            newInBill.setCheckStatus(PublicConstant.CHECK_STATUS_INIT);
+            newInBill.setChecks("");
+
             newInBill.setRefBillId(outBillId);
             newInBill.setDescription(newInBill.getDescription() + ";预收退款自动关联退款的付款单:" + outBillId);
 
@@ -465,6 +470,11 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
                     // 取消关联了
                     newInBill.setOutId("");
                     newInBill.setOutBalanceId("");
+
+                    // 未核对
+                    newInBill.setCheckStatus(PublicConstant.CHECK_STATUS_INIT);
+                    newInBill.setChecks("");
+
                     newInBill.setStatus(FinanceConstant.INBILL_STATUS_NOREF);
 
                     inBillDAO.updateEntityBean(newInBill);
@@ -478,6 +488,11 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
                     each.setOutId("");
                     each.setOutBalanceId("");
                     each.setStatus(FinanceConstant.INBILL_STATUS_NOREF);
+
+                    // 未核对
+                    each.setCheckStatus(PublicConstant.CHECK_STATUS_INIT);
+                    each.setChecks("");
+
                     each.setDescription("销售退款转预收:" + bean.getOutId());
 
                     inBillDAO.updateEntityBean(each);
