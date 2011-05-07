@@ -12,6 +12,7 @@ package com.china.center.oa.product.facade;
 import java.util.List;
 
 import com.china.center.common.MYException;
+import com.china.center.oa.product.bean.ComposeFeeDefinedBean;
 import com.china.center.oa.product.bean.ComposeProductBean;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
@@ -223,5 +224,14 @@ public interface ProductFacade
         throws MYException;
 
     boolean rejectStorageApply(String userId, String id)
+        throws MYException;
+
+    boolean addComposeFeeDefinedBean(String userId, ComposeFeeDefinedBean bean)
+        throws MYException;
+
+    boolean updateComposeFeeDefinedBean(String userId, ComposeFeeDefinedBean bean)
+        throws MYException;
+
+    boolean deleteComposeFeeDefinedBean(String userId, String id)
         throws MYException;
 }

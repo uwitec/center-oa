@@ -13,6 +13,7 @@ import java.util.List;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.product.bean.ComposeFeeDefinedBean;
 import com.china.center.oa.product.bean.ComposeProductBean;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
@@ -643,6 +644,63 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
         if (containAuth(user, AuthConstant.PRODUCT_CD))
         {
             return composeProductManager.addComposeProduct(user, bean);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    public boolean addComposeFeeDefinedBean(String userId, ComposeFeeDefinedBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.PRODUCT_CD))
+        {
+            return composeProductManager.addComposeFeeDefinedBean(user, bean);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    public boolean deleteComposeFeeDefinedBean(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.PRODUCT_CD))
+        {
+            return composeProductManager.deleteComposeFeeDefinedBean(user, id);
+        }
+        else
+        {
+            throw noAuth();
+        }
+    }
+
+    public boolean updateComposeFeeDefinedBean(String userId, ComposeFeeDefinedBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, bean);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        if (containAuth(user, AuthConstant.PRODUCT_CD))
+        {
+            return composeProductManager.updateComposeFeeDefinedBean(user, bean);
         }
         else
         {

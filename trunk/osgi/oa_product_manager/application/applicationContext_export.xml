@@ -74,4 +74,6 @@
 
 	<osgi:service ref="storageApplyManager" interface="com.china.center.oa.product.manager.StorageApplyManager" />
 
+	<osgi:service ref="composeFeeDefinedDAO" interface="com.china.center.oa.product.dao.ComposeFeeDefinedDAO" />
+
 </beans>

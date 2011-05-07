@@ -12,6 +12,8 @@
             <forward name="detailCompose"/>
             <forward name="priceChange"/>
             <forward name="queryPriceChange"/>
+            <forward name="queryComposeFeeDefined"/>
+            <forward name="updateComposeFeeDefined"/>
             <forward name="detailPriceChange"/>
         </action>
         

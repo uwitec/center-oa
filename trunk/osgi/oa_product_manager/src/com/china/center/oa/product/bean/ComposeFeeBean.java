@@ -11,12 +11,13 @@ package com.china.center.oa.product.bean;
 
 import java.io.Serializable;
 
+import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
-import com.china.center.oa.publics.bean.EnumBean;
+import com.china.center.jdbc.annotation.enums.JoinType;
 
 
 /**
@@ -37,7 +38,8 @@ public class ComposeFeeBean implements Serializable
     @FK
     private String parentId = "";
 
-    @Join(tagClass = EnumBean.class, tagField = "key")
+    @FK(index = AnoConstant.FK_FIRST)
+    @Join(tagClass = ComposeFeeDefinedBean.class, type = JoinType.LEFT)
     private String feeItemId = "";
 
     private double price = 0.0d;
@@ -147,10 +149,26 @@ public class ComposeFeeBean implements Serializable
 
         StringBuffer retValue = new StringBuffer();
 
-        retValue.append("ComposeFeeBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("parentId = ").append(this.parentId).append(TAB).append("feeItemId = ").append(this.feeItemId).append(
-            TAB).append("price = ").append(this.price).append(TAB).append("logTime = ").append(this.logTime).append(TAB).append(
-            " )");
+        retValue
+            .append("ComposeFeeBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("parentId = ")
+            .append(this.parentId)
+            .append(TAB)
+            .append("feeItemId = ")
+            .append(this.feeItemId)
+            .append(TAB)
+            .append("price = ")
+            .append(this.price)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

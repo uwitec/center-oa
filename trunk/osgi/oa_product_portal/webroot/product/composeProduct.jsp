@@ -259,10 +259,10 @@ function load()
                     
                     <c:forEach items="${feeList}" var="item">
                     <tr align="center" class="content1">
-                        <td width="30%" align="center">${item.value}</td>
+                        <td width="30%" align="center">${item.name}</td>
                         <td width="30%" align="center">
                         <input type="hidden" 
-                    name="feeItemId" value="${item.key}">
+                    name="feeItemId" value="${item.id}">
                         <input type="text" style="width: 100%"
                     name="feeItem" value="0.0" oncheck="notNone;isFloat">
                         </td>

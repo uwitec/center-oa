@@ -11,6 +11,7 @@ package com.china.center.oa.product.manager;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.product.bean.ComposeFeeDefinedBean;
 import com.china.center.oa.product.bean.ComposeProductBean;
 import com.china.center.oa.product.vo.ComposeProductVO;
 
@@ -81,4 +82,13 @@ public interface ComposeProductManager
         throws MYException;
 
     ComposeProductVO findById(String id);
+
+    boolean addComposeFeeDefinedBean(User user, ComposeFeeDefinedBean bean)
+        throws MYException;
+
+    boolean updateComposeFeeDefinedBean(User user, ComposeFeeDefinedBean bean)
+        throws MYException;
+
+    boolean deleteComposeFeeDefinedBean(User user, String id)
+        throws MYException;
 }

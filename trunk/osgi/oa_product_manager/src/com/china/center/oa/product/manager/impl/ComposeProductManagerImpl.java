@@ -16,12 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.jdbc.annosql.constant.AnoConstant;
+import com.china.center.jdbc.expression.Expression;
 import com.china.center.oa.product.bean.ComposeFeeBean;
+import com.china.center.oa.product.bean.ComposeFeeDefinedBean;
 import com.china.center.oa.product.bean.ComposeItemBean;
 import com.china.center.oa.product.bean.ComposeProductBean;
 import com.china.center.oa.product.constant.ComposeConstant;
 import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.ComposeFeeDAO;
+import com.china.center.oa.product.dao.ComposeFeeDefinedDAO;
 import com.china.center.oa.product.dao.ComposeItemDAO;
 import com.china.center.oa.product.dao.ComposeProductDAO;
 import com.china.center.oa.product.manager.ComposeProductManager;
@@ -50,6 +54,8 @@ public class ComposeProductManagerImpl implements ComposeProductManager
     private ComposeItemDAO composeItemDAO = null;
 
     private ComposeFeeDAO composeFeeDAO = null;
+
+    private ComposeFeeDefinedDAO composeFeeDefinedDAO = null;
 
     private StorageRelationManager storageRelationManager = null;
 
@@ -191,6 +197,53 @@ public class ComposeProductManagerImpl implements ComposeProductManager
         composeFeeDAO.deleteEntityBeansByFK(id);
 
         return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean addComposeFeeDefinedBean(User user, ComposeFeeDefinedBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, bean);
+
+        bean.setId(commonDAO.getSquenceString());
+
+        // TEMPLATE DAO校验表达式
+        Expression exp = new Expression(bean, this);
+
+        exp.check("#name &unique @composeFeeDefinedDAO", "名称已经存在");
+
+        return composeFeeDefinedDAO.saveEntityBean(bean);
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean deleteComposeFeeDefinedBean(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        int count = composeFeeDAO.countByFK(id, AnoConstant.FK_FIRST);
+
+        if (count > 0)
+        {
+            throw new MYException("费用项已经被使用,不能删除");
+        }
+
+        return composeFeeDefinedDAO.deleteEntityBean(id);
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean updateComposeFeeDefinedBean(User user, ComposeFeeDefinedBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, bean);
+
+        bean.setId(commonDAO.getSquenceString());
+
+        Expression exp = new Expression(bean, this);
+
+        exp.check("#name &unique2 @composeFeeDefinedDAO", "名称已经存在");
+
+        return composeFeeDefinedDAO.updateEntityBean(bean);
     }
 
     /*
@@ -435,5 +488,22 @@ public class ComposeProductManagerImpl implements ComposeProductManager
     public void setStorageRelationManager(StorageRelationManager storageRelationManager)
     {
         this.storageRelationManager = storageRelationManager;
+    }
+
+    /**
+     * @return the composeFeeDefinedDAO
+     */
+    public ComposeFeeDefinedDAO getComposeFeeDefinedDAO()
+    {
+        return composeFeeDefinedDAO;
+    }
+
+    /**
+     * @param composeFeeDefinedDAO
+     *            the composeFeeDefinedDAO to set
+     */
+    public void setComposeFeeDefinedDAO(ComposeFeeDefinedDAO composeFeeDefinedDAO)
+    {
+        this.composeFeeDefinedDAO = composeFeeDefinedDAO;
     }
 }

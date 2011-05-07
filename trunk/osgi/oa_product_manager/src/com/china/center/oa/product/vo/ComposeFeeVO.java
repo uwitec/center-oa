@@ -25,7 +25,7 @@ import com.china.center.oa.product.bean.ComposeFeeBean;
 @Entity(inherit = true)
 public class ComposeFeeVO extends ComposeFeeBean
 {
-    @Relationship(relationField = "feeItemId", tagField = "value")
+    @Relationship(relationField = "feeItemId")
     private String feeItemName = "";
 
     /**
@@ -63,8 +63,8 @@ public class ComposeFeeVO extends ComposeFeeBean
 
         StringBuffer retValue = new StringBuffer();
 
-        retValue.append("ComposeFeeVO ( ").append(super.toString()).append(TAB).append("feeItemName = ").append(
-            this.feeItemName).append(TAB).append(" )");
+        retValue.append("ComposeFeeVO ( ").append(super.toString()).append(TAB).append(
+            "feeItemName = ").append(this.feeItemName).append(TAB).append(" )");
 
         return retValue.toString();
     }

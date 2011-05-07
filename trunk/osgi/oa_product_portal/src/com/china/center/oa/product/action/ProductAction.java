@@ -47,6 +47,7 @@ import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.product.bean.ComposeFeeBean;
+import com.china.center.oa.product.bean.ComposeFeeDefinedBean;
 import com.china.center.oa.product.bean.ComposeItemBean;
 import com.china.center.oa.product.bean.ComposeProductBean;
 import com.china.center.oa.product.bean.DepotBean;
@@ -60,6 +61,7 @@ import com.china.center.oa.product.constant.ComposeConstant;
 import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.constant.ProductConstant;
 import com.china.center.oa.product.constant.StorageConstant;
+import com.china.center.oa.product.dao.ComposeFeeDefinedDAO;
 import com.china.center.oa.product.dao.ComposeProductDAO;
 import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.DepotpartDAO;
@@ -83,7 +85,6 @@ import com.china.center.oa.product.vs.ProductCombinationBean;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
 import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.publics.Helper;
-import com.china.center.oa.publics.bean.EnumBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
@@ -122,6 +123,8 @@ public class ProductAction extends DispatchAction
 
     private ProductDAO productDAO = null;
 
+    private ComposeFeeDefinedDAO composeFeeDefinedDAO = null;
+
     private ComposeProductDAO composeProductDAO = null;
 
     private CommonDAO commonDAO = null;
@@ -157,6 +160,8 @@ public class ProductAction extends DispatchAction
     private static String RPTQUERYABSPRODUCT = "rptQueryAbsProduct";
 
     private static String QUERYPRICECHANGE = "queryPriceChange";
+
+    private static String QUERYCOMPOSEFEEDEFINED = "queryComposeFeeDefined";
 
     /**
      * default constructor
@@ -805,6 +810,175 @@ public class ProductAction extends DispatchAction
     }
 
     /**
+     * queryComposeFeeDefined
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryComposeFeeDefined(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
+                                                HttpServletResponse response)
+        throws ServletException
+    {
+        final ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        ActionTools.processJSONQueryCondition(QUERYCOMPOSEFEEDEFINED, request, condtion);
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCOMPOSEFEEDEFINED, request,
+            condtion, this.composeFeeDefinedDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * addComposeFeeDefinedBean
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward addComposeFeeDefined(ActionMapping mapping, ActionForm form,
+                                              HttpServletRequest request,
+                                              HttpServletResponse response)
+        throws ServletException
+    {
+        ComposeFeeDefinedBean bean = new ComposeFeeDefinedBean();
+
+        BeanUtil.getBean(bean, request);
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            productFacade.addComposeFeeDefinedBean(user.getId(), bean);
+
+            request.setAttribute(KeyConstant.MESSAGE, "操作成功");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        return mapping.findForward(QUERYCOMPOSEFEEDEFINED);
+    }
+
+    /**
+     * findComposeFeeDefined
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward findComposeFeeDefined(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
+                                               HttpServletResponse response)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        String id = request.getParameter("id");
+
+        ComposeFeeDefinedBean bean = composeFeeDefinedDAO.findVO(id);
+
+        if (bean == null)
+        {
+            return ActionTools.toError("数据异常,请重新操作", QUERYCOMPOSEFEEDEFINED, mapping, request);
+        }
+
+        request.setAttribute("bean", bean);
+
+        return mapping.findForward("updateComposeFeeDefined");
+    }
+
+    /**
+     * updateComposeFeeDefinedBean
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward updateComposeFeeDefined(ActionMapping mapping, ActionForm form,
+                                                 HttpServletRequest request,
+                                                 HttpServletResponse response)
+        throws ServletException
+    {
+        ComposeFeeDefinedBean bean = new ComposeFeeDefinedBean();
+
+        BeanUtil.getBean(bean, request);
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            productFacade.updateComposeFeeDefinedBean(user.getId(), bean);
+
+            request.setAttribute(KeyConstant.MESSAGE, "操作成功");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        return mapping.findForward(QUERYCOMPOSEFEEDEFINED);
+    }
+
+    /**
+     * deleteComposeFeeDefinedBean
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward deleteComposeFeeDefined(ActionMapping mapping, ActionForm form,
+                                                 HttpServletRequest request,
+                                                 HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            productFacade.deleteComposeFeeDefinedBean(user.getId(), id);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("删除失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
      * 产品调价
      * 
      * @param mapping
@@ -877,13 +1051,16 @@ public class ProductAction extends DispatchAction
 
         for (int i = 0; i < feeItems.length; i++ )
         {
-            ComposeFeeBean each = new ComposeFeeBean();
-            each.setFeeItemId(feeItemIds[i]);
-            each.setPrice(CommonTools.parseFloat(feeItems[i]));
-            each.setLogTime(bean.getLogTime());
-            feeList.add(each);
+            if ( !MathTools.equal(0.0, CommonTools.parseFloat(feeItems[i])))
+            {
+                ComposeFeeBean each = new ComposeFeeBean();
+                each.setFeeItemId(feeItemIds[i]);
+                each.setPrice(CommonTools.parseFloat(feeItems[i]));
+                each.setLogTime(bean.getLogTime());
+                feeList.add(each);
 
-            total += each.getPrice();
+                total += each.getPrice();
+            }
         }
 
         bean.setFeeList(feeList);
@@ -1100,7 +1277,7 @@ public class ProductAction extends DispatchAction
 
         request.setAttribute("depotpartListStr", object.toString());
 
-        List<EnumBean> feeList = enumDAO.queryEntityBeansByFK("122");
+        List<ComposeFeeDefinedBean> feeList = composeFeeDefinedDAO.listEntityBeans();
 
         request.setAttribute("feeList", feeList);
 
@@ -2265,5 +2442,22 @@ public class ProductAction extends DispatchAction
     public void setOrgManager(OrgManager orgManager)
     {
         this.orgManager = orgManager;
+    }
+
+    /**
+     * @return the composeFeeDefinedDAO
+     */
+    public ComposeFeeDefinedDAO getComposeFeeDefinedDAO()
+    {
+        return composeFeeDefinedDAO;
+    }
+
+    /**
+     * @param composeFeeDefinedDAO
+     *            the composeFeeDefinedDAO to set
+     */
+    public void setComposeFeeDefinedDAO(ComposeFeeDefinedDAO composeFeeDefinedDAO)
+    {
+        this.composeFeeDefinedDAO = composeFeeDefinedDAO;
     }
 }

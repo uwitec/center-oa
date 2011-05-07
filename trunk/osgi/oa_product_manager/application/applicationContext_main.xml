@@ -75,4 +75,6 @@
 
 	<bean id="storageApplyManager" class="com.china.center.oa.product.manager.impl.StorageApplyManagerImpl" />
 
+	<bean id="composeFeeDefinedDAO" class="com.china.center.oa.product.dao.impl.ComposeFeeDefinedDAOImpl" />
+
 </beans>
