@@ -5,7 +5,6 @@
 <head>
 <base target="_self">
 <p:link title="外网询价查询" />
-<script src="../js/prototype.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/tableSort.js"></script>
 <script src="../js/common.js"></script>
