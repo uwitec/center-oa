@@ -250,6 +250,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         _logger.info(fullId + "/price/" + request.getParameter("priceList"));
 
+        _logger.info(fullId + "/inputPriceList/" + request.getParameter("inputPriceList"));
+
         _logger.info(fullId + "/desList/" + request.getParameter("desList"));
 
         _logger.info(fullId + "/otherList/" + request.getParameter("otherList"));
@@ -387,7 +389,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                                 _logger.error("error price4:" + ((int)Math.round(b * 1000)));
 
                                 // TODO 等待日志定位问题
-                                // throw new RuntimeException("卖出价格非含税价格,请确认操作");
+                                // throw new RuntimeException("卖出价格非含税价格,请重新操作");
                             }
                         }
                         else
