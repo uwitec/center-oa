@@ -36,12 +36,15 @@ function load()
 	<p:subBody width="100%">
 
 		<p:table cells="2">
+			<p:cell title="凭证时间">${bean.financeDate}</p:cell>
 			<p:cell title="标识">${bean.id}</p:cell>
 			<p:cell title="纳税实体">${bean.dutyName}</p:cell>
 			<p:cell title="类型">${my:get('financeType', bean.type)}</p:cell>
-			<p:cell title="金额">${my:formatNum(bean.inmoney)}</p:cell>
+			<p:cell title="创建类型">${my:get('financeCreateType', bean.createType)}</p:cell>
+			<p:cell title="状态">${my:get('financeStatus', bean.status)}</p:cell>
+			<p:cell title="总金额">${bean.showInmoney}</p:cell>
 			<p:cell title="录入人">${bean.createrName}</p:cell>
-			<p:cell title="时间" end="true">${bean.logTime}</p:cell>
+			<p:cell title="录入时间">${bean.logTime}</p:cell>
 			<p:cell title="描述" end="true">${bean.description}</p:cell>
 		</p:table>
 	</p:subBody>
@@ -53,7 +56,8 @@ function load()
 			<tr align="center" class="content0">
 				 <td width="10%" align="center">索引</td>
 				 <td width="15%" align="center">摘要</td>
-                 <td width="50%" align="center">科目</td>
+                 <td width="40%" align="center">科目</td>
+                 <td width="10%" align="center">关联单据</td>
                  <td width="8%" align="center">借方金额</td>
                  <td width="8%" align="center">贷方金额</td>
 			</tr>
@@ -63,8 +67,9 @@ function load()
 				<td align="center">${item.pareId}</td>
 				<td align="center">${item.description}</td>
 				<td align="center">${item.taxName}(${item.departmentName}/${item.stafferName}/${item.unitName})</td>
-				<td align="center">${my:formatNum(item.inmoney)}</td>
-				<td align="center">${my:formatNum(item.outmoney)}</td>
+				<td align="center">${item.refId}</td>
+				<td align="center">${item.showInmoney}</td>
+				<td align="center">${item.showOutmoney}</td>
 			</tr>
 			</c:forEach>
 		</p:table>

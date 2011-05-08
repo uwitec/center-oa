@@ -20,6 +20,7 @@ import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.tax.constanst.TaxConstanst;
 
 
@@ -45,30 +46,50 @@ public class FinanceBean implements Serializable
      */
     private int type = TaxConstanst.FINANCE_TYPE_MANAGER;
 
-    private int status = 0;
+    /**
+     * 0:未人工核对 1:已核对
+     */
+    private int status = TaxConstanst.FINANCE_STATUS_NOCHECK;
 
     /**
-     * 凭证创建的类型(0:手工创建 其他是系统创建)
+     * 凭证创建的类型(0:手工创建 其他是系统创建/也有不同分类)
      */
     private int createType = TaxConstanst.FINANCE_CREATETYPE_HAND;
 
     /**
-     * 关联单据
+     * 主关联单据
      */
     private String refId = "";
 
+    /**
+     * 管理凭证是不分纳税实体的(都在总部),税务凭证是分纳税实体的
+     */
     @Join(tagClass = DutyBean.class)
-    private String dutyId = "";
+    private String dutyId = PublicConstant.DEFAULR_DUTY_ID;
 
     @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
     private String createrId = "";
 
-    private double inmoney = 0.0d;
+    /**
+     * 准确到微分,就是小数点后四位
+     */
+    private int inmoney = 0;
 
-    private double outmoney = 0.0d;
+    /**
+     * 准确到微分,就是小数点后四位
+     */
+    private int outmoney = 0;
 
     private String description = "";
 
+    /**
+     * 凭证时间
+     */
+    private String financeDate = "";
+
+    /**
+     * 入库时间
+     */
     private String logTime = "";
 
     @Ignore
@@ -186,7 +207,7 @@ public class FinanceBean implements Serializable
     /**
      * @return the inmoney
      */
-    public double getInmoney()
+    public int getInmoney()
     {
         return inmoney;
     }
@@ -195,7 +216,7 @@ public class FinanceBean implements Serializable
      * @param inmoney
      *            the inmoney to set
      */
-    public void setInmoney(double inmoney)
+    public void setInmoney(int inmoney)
     {
         this.inmoney = inmoney;
     }
@@ -203,7 +224,7 @@ public class FinanceBean implements Serializable
     /**
      * @return the outmoney
      */
-    public double getOutmoney()
+    public int getOutmoney()
     {
         return outmoney;
     }
@@ -212,7 +233,7 @@ public class FinanceBean implements Serializable
      * @param outmoney
      *            the outmoney to set
      */
-    public void setOutmoney(double outmoney)
+    public void setOutmoney(int outmoney)
     {
         this.outmoney = outmoney;
     }
@@ -303,6 +324,23 @@ public class FinanceBean implements Serializable
     }
 
     /**
+     * @return the financeDate
+     */
+    public String getFinanceDate()
+    {
+        return financeDate;
+    }
+
+    /**
+     * @param financeDate
+     *            the financeDate to set
+     */
+    public void setFinanceDate(String financeDate)
+    {
+        this.financeDate = financeDate;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -311,16 +349,55 @@ public class FinanceBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("FinanceBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("name = ").append(this.name).append(TAB).append("type = ").append(this.type).append(TAB).append(
-            "status = ").append(this.status).append(TAB).append("createType = ").append(this.createType).append(TAB).append(
-            "refId = ").append(this.refId).append(TAB).append("dutyId = ").append(this.dutyId).append(TAB).append(
-            "createrId = ").append(this.createrId).append(TAB).append("inmoney = ").append(this.inmoney).append(TAB).append(
-            "outmoney = ").append(this.outmoney).append(TAB).append("description = ").append(this.description).append(
-            TAB).append("logTime = ").append(this.logTime).append(TAB).append("itemList = ").append(this.itemList).append(
-            TAB).append(" )");
+        retValue
+            .append("FinanceBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("name = ")
+            .append(this.name)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("createType = ")
+            .append(this.createType)
+            .append(TAB)
+            .append("refId = ")
+            .append(this.refId)
+            .append(TAB)
+            .append("dutyId = ")
+            .append(this.dutyId)
+            .append(TAB)
+            .append("createrId = ")
+            .append(this.createrId)
+            .append(TAB)
+            .append("inmoney = ")
+            .append(this.inmoney)
+            .append(TAB)
+            .append("outmoney = ")
+            .append(this.outmoney)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("financeDate = ")
+            .append(this.financeDate)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("itemList = ")
+            .append(this.itemList)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

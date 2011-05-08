@@ -8,7 +8,6 @@
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/json.js"></script>
-<script language="JavaScript" src="../js/prototype.js"></script>
 <script language="JavaScript" src="../tax_js/autosuggest_debug.js"></script>
 <script language="JavaScript" src="../tax_js/addTax.js"></script>
 <script language="JavaScript" src="../tax_js/addFinance.js"></script>
@@ -52,28 +51,29 @@ function checks()
 		
 		var ous = getTrInnerObj(deList[i], 'outmoney');
 		
-		if (ins.value != 'NA')
+		
+		var eachIn = 0.0;
+		
+		var eachOut = 0.0;
+		
+		if (ins.value != '')
 		{
-			if (parseFloat(ins.value) <= 0.0)
-			{
-				alert('金额必须大于0');
-				
-				return false;
-			}
-			
-			inMoney += parseFloat(ins.value);
+		    eachIn = parseFloat(ins.value);
+			inMoney += eachIn;
 		}
 		
-		if (ous.value != 'NA')
+		if (ous.value != '')
 		{
-			if (parseFloat(ous.value) <= 0.0)
-			{
-				alert('金额必须大于0');
-				
-				return false;
-			}
+			eachOut = parseFloat(ous.value);
 			
-			outMoney += parseFloat(ous.value);
+			outMoney += eachOut;
+		}
+		
+		if (eachIn * eachOut != 0)
+		{
+		    alert('借贷双方不能都有金额');
+		    
+		    return false;
 		}
 		
 		if (inMoney == outMoney && inMoney != 0.0)
@@ -98,9 +98,6 @@ function load()
 {
 	loadForm();
 	
-	addTr();
-	addTr();
-	addTr();
 	addTr();
 	addTr();
 	addTr();
@@ -139,18 +136,22 @@ function callClick(obj, el)
 	<p:subBody width="98%">
 		<p:table cells="1">
 			<p:tr align="left">
-			凭证归属：
-			<select name="dutyId" class="select_class" style="width: 15%;" oncheck="notNone">
-		         <option value="">--</option>
-		         <p:option type="dutyList"></p:option>
-	         </select>
+			凭证日期：
+			<p:plugin name="financeDate" size="20" type="0" oncheck="cnow(12)"/>
 	         凭证类型：
 			<select name="type" class="select_class" style="width: 15%;" oncheck="notNone">
 		         <option value="">--</option>
 		         <p:option type="financeType"/>
 	         </select>
-         	描述：<input type="text" style="width: 50%"
-                    name="description" value="" maxlength="100">
+			凭证归属：
+			<select name="dutyId" class="select_class" style="width: 15%;" oncheck="notNone">
+		         <option value="">--</option>
+		         <p:option type="dutyList"></p:option>
+	         </select>
+			</p:tr>
+			
+			<p:tr align="left">
+			描述：<textarea  name="description" rows="3" cols="80" oncheck="maxLength(200)"></textarea>
 			</p:tr>
 		</p:table>
 	</p:subBody>
@@ -166,7 +167,8 @@ function callClick(obj, el)
                 <table width="100%" border="0" cellspacing='1' id="tables">
                     <tr align="center" class="content0">
                         <td width="15%" align="center">摘要</td>
-                        <td width="60%" align="center">科目</td>
+                        <td width="40%" align="center">科目</td>
+                        <td width="25%" align="center">辅助核算</td>
                         <td width="8%" align="center">借方金额</td>
                         <td width="8%" align="center">贷方金额</td>
                         <td width="5%" align="left"><input type="button" accesskey="A"
@@ -193,32 +195,41 @@ function callClick(obj, el)
 </form>
 <table>
     <tr class="content1" id="trCopy" style="display: none;">
-         <td width="15%" align="center">
-         <input type="text" 
-         style="width: 100%" value="" name="idescription">
+         <td>
+         <textarea  name="idescription" rows="3"></textarea>
          </td>
-         <td width="60%" align="center">
-         <input type="text" style="width: 50%;"
+         <td>
+         <input type="text" style="width: 95%;"
                 name="taxId" value="">
          <input type="hidden" name="taxId2" value="">
-         <select name="departmentId" class="select_class" style="width: 15%;display: none;">
+         </td>
+         
+         <td>
+         <br>
+         部门:<select name="departmentId" class="select_class" style="width: 85%;display: none;">
          <option value="">选择部门</option>
          <c:forEach var="item" items="${departmentBeanList}">
              <option value="${item.id}">${item.name}</option>
          </c:forEach>
          </select>
-         <input type="text" style="width: 15%;display: none;cursor: pointer;" onclick="selectStaffer(this)"
+         <br>
+         <br>
+         职员:<input type="text" style="width: 85%;display: none;cursor: pointer;" onclick="selectStaffer(this)"
                     name="stafferId" value="选择职员" readonly="readonly">
          <input type="hidden" name="stafferId2" value=""> 
-         <input type="text" style="width: 15%;display: none;cursor: pointer;" onclick="selectUnit(this)"
+         <br>
+         单位:<input type="text" style="width: 85%;display: none;cursor: pointer;" onclick="selectUnit(this)"
                     name="unitId" value="选择单位" readonly="readonly">
          <input type="hidden" name="unitId2" value=""> 
+         <br>
          </td>
-         <td width="8%" align="center">
+         
+         <td>
          <input type="text" style="width: 100%;"
-                    name="inmoney" value="" oncheck=""></td>
+                    name="inmoney" value="" oncheck="">
+         </td>
                     
-         <td width="8%" align="center">
+         <td align="center">
          <input type="text" style="width: 100%"
                     name="outmoney" value="" oncheck=""></td>
                     

@@ -30,7 +30,7 @@ function load()
              {display: '类型', name : 'type', cc: 'financeType', width : '10%'},
              {display: '分类', name : 'createType', cc: 'financeCreateType', width : '10%'},
              {display: '纳税实体', name : 'dutyName',  width : '10%'},
-             {display: '金额', name : 'inmoney', toFixed: 2, width : '10%'},
+             {display: '金额', name : 'showInmoney', width : '10%'},
              {display: '制作人', name : 'createrName', width : '10%'},
              {display: '时间', name : 'logTime',  sortable : true, width : 'auto'}
              ],

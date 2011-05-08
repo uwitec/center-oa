@@ -27,11 +27,13 @@ function load()
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
              {display: '名称', name : 'name', width : '25%'},
-             {display: '编码', name : 'code', width : '15%'},
+             {display: '编码', name : 'code', width : '20%'},
              {display: '分类', name : 'ptypeName', width : '5%'},
              {display: '类型', name : 'type', cc: 'taxType', width : '5%'},
+             {display: '节点', name : 'bottomFlag', cc: 'taxBottomFlag', width : '8%'},
+             {display: '级别', name : 'level', content: '第{level}级', width : '5%'},
              {display: '余额方向', name : 'forward',  cc: 'taxForward', width : '5%'},
-             {display: '关联银行', name : 'refName', width : '20%'},
+             {display: '关联银行', name : 'refName', width : '12%'},
              {display: '辅助核算型', name : 'other', width : 'auto'}
              ],
          extAtt: {
@@ -52,7 +54,7 @@ function load()
 function $callBack()
 {
     loadForm();
-    
+    highlights($("#mainTable").get(0), ['最小科目'], 'blue');
 }
 
 function addBean(opr, grid)

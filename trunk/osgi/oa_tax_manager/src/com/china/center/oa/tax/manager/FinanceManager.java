@@ -27,6 +27,17 @@ public interface FinanceManager
     boolean addFinanceBean(User user, FinanceBean bean)
         throws MYException;
 
+    /**
+     * addFinanceBeanWithoutTransactional(无事务的)
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    boolean addFinanceBeanWithoutTransactional(User user, FinanceBean bean)
+        throws MYException;
+
     boolean deleteFinanceBean(User user, String id)
         throws MYException;
 

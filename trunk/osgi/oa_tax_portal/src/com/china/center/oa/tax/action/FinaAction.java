@@ -11,6 +11,7 @@ package com.china.center.oa.tax.action;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -144,7 +145,14 @@ public class FinaAction extends DispatchAction
         condtion.addCondition("order by FinanceBean.logTime desc");
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCE, request, condtion,
-            this.financeDAO);
+            this.financeDAO, new HandleResult<FinanceVO>()
+            {
+                public void handle(FinanceVO obj)
+                {
+                    obj.getShowInmoney();
+                    obj.getShowOutmoney();
+                }
+            });
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -556,9 +564,9 @@ public class FinaAction extends DispatchAction
 
         List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
 
-        double inTotal = 0.0d;
+        int inTotal = 0;
 
-        double outTotal = 0.0d;
+        int outTotal = 0;
 
         String pareId = SequenceTools.getSequence();
 
@@ -631,24 +639,21 @@ public class FinaAction extends DispatchAction
 
             item.setPareId(pareId);
 
-            if (item.getForward() == TaxConstanst.TAX_FORWARD_IN)
-            {
-                item.setInmoney(MathTools.parseDouble(inmoneys[i]));
-            }
-            else
-            {
-                item.setOutmoney(MathTools.parseDouble(outmoneys[i]));
-            }
+            item
+                .setInmoney((int) (MathTools.parseDouble(inmoneys[i]) * TaxConstanst.DOUBLE_TO_INT));
+
+            item
+                .setOutmoney((int) (MathTools.parseDouble(outmoneys[i]) * TaxConstanst.DOUBLE_TO_INT));
 
             inTotal += item.getInmoney();
 
             outTotal += item.getOutmoney();
 
-            if (inTotal == outTotal && outTotal != 0.0)
+            if (inTotal == outTotal && outTotal != 0)
             {
-                inTotal = 0.0d;
+                inTotal = 0;
 
-                outTotal = 0.0d;
+                outTotal = 0;
 
                 pareId = SequenceTools.getSequence();
             }
@@ -677,6 +682,16 @@ public class FinaAction extends DispatchAction
                                           HttpServletRequest request, HttpServletResponse response)
     {
         List<TaxBean> taxList = taxDAO.listEntityBeans("order by TaxBean.code asc");
+
+        for (Iterator iterator = taxList.iterator(); iterator.hasNext();)
+        {
+            TaxBean taxBean = (TaxBean)iterator.next();
+
+            if (taxBean.getBottomFlag() == TaxConstanst.TAX_BOTTOMFLAG_ROOT)
+            {
+                iterator.remove();
+            }
+        }
 
         request.setAttribute("taxList", taxList);
 

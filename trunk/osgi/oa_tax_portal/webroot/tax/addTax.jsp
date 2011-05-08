@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="增加科目" />
+<p:link title="增加科目" guid="true"/>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
@@ -12,12 +12,34 @@ function addBean()
 {
 	submit('确定增加科目?');
 }
+
+function getTax(oos)
+{
+    var obj = oos[0];
+    
+    if (obj.pbottomflag == 1)
+    {
+        alert('只能选择父级科目');
+        
+        return false;
+    }
+    
+    $("input[name='parentId']").val(obj.value);
+    
+    $("input[name='parentName']").val(obj.pname);
+}
+
+function selectTax()
+{
+    window.common.modal('../tax/tax.do?method=rptQueryTax&load=1&selectMode=1');
+}
 </script>
 
 </head>
 <body class="body_class">
 <form name="formEntry" action="../tax/tax.do" method="post"><input
 	type="hidden" name="method" value="addTax">
+<input type="hidden" name="parentId" value="">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
@@ -41,6 +63,15 @@ function addBean()
 			<p:pro field="name" innerString="size=60"/>
 			
 			<p:pro field="code" innerString="size=60"/>
+			
+			<p:pro field="parentId" innerString="readonly=true size=60">
+                <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectTax()">&nbsp;&nbsp;
+            </p:pro>
+			
+			<p:pro field="bottomFlag">
+                <p:option type="taxBottomFlag"/>
+            </p:pro>
 			
 			<p:pro field="ptype">
 				<p:option type="taxTypeList"/>

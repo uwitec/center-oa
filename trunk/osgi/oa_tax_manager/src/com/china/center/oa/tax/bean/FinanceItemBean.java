@@ -11,11 +11,13 @@ package com.china.center.oa.tax.bean;
 
 import java.io.Serializable;
 
+import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.oa.publics.constant.PublicConstant;
 
 
 /**
@@ -44,14 +46,55 @@ public class FinanceItemBean implements Serializable
 
     private int forward = 0;
 
+    /**
+     * 主关联单据
+     */
+    private String refId = "";
+
+    private String refOut = "";
+
+    private String refBill = "";
+
+    private String refStock = "";
+
+    /**
+     * 凭证时间
+     */
+    private String financeDate = "";
+
+    @FK(index = AnoConstant.FK_FIRST)
     @Join(tagClass = TaxBean.class)
     private String taxId = "";
 
-    private String dutyId = "";
+    private String taxId0 = "";
 
-    private double inmoney = 0.0d;
+    private String taxId1 = "";
 
-    private double outmoney = 0.0d;
+    private String taxId2 = "";
+
+    private String taxId3 = "";
+
+    private String taxId4 = "";
+
+    private String taxId5 = "";
+
+    private String taxId6 = "";
+
+    private String taxId7 = "";
+
+    private String taxId8 = "";
+
+    private String dutyId = PublicConstant.DEFAULR_DUTY_ID;
+
+    /**
+     * 准确到微分,就是小数点后四位
+     */
+    private int inmoney = 0;
+
+    /**
+     * 准确到微分,就是小数点后四位
+     */
+    private int outmoney = 0;
 
     private String description = "";
 
@@ -60,7 +103,7 @@ public class FinanceItemBean implements Serializable
     private String unitId = "";
 
     /**
-     * 0:客户 1:供应商
+     * 0:客户 1:供应商 2:纳税实体
      */
     private int unitType = 0;
 
@@ -197,7 +240,7 @@ public class FinanceItemBean implements Serializable
     /**
      * @return the inmoney
      */
-    public double getInmoney()
+    public int getInmoney()
     {
         return inmoney;
     }
@@ -206,7 +249,7 @@ public class FinanceItemBean implements Serializable
      * @param inmoney
      *            the inmoney to set
      */
-    public void setInmoney(double inmoney)
+    public void setInmoney(int inmoney)
     {
         this.inmoney = inmoney;
     }
@@ -214,7 +257,7 @@ public class FinanceItemBean implements Serializable
     /**
      * @return the outmoney
      */
-    public double getOutmoney()
+    public int getOutmoney()
     {
         return outmoney;
     }
@@ -223,7 +266,7 @@ public class FinanceItemBean implements Serializable
      * @param outmoney
      *            the outmoney to set
      */
-    public void setOutmoney(double outmoney)
+    public void setOutmoney(int outmoney)
     {
         this.outmoney = outmoney;
     }
@@ -348,6 +391,244 @@ public class FinanceItemBean implements Serializable
     }
 
     /**
+     * @return the taxId0
+     */
+    public String getTaxId0()
+    {
+        return taxId0;
+    }
+
+    /**
+     * @param taxId0
+     *            the taxId0 to set
+     */
+    public void setTaxId0(String taxId0)
+    {
+        this.taxId0 = taxId0;
+    }
+
+    /**
+     * @return the taxId1
+     */
+    public String getTaxId1()
+    {
+        return taxId1;
+    }
+
+    /**
+     * @param taxId1
+     *            the taxId1 to set
+     */
+    public void setTaxId1(String taxId1)
+    {
+        this.taxId1 = taxId1;
+    }
+
+    /**
+     * @return the taxId2
+     */
+    public String getTaxId2()
+    {
+        return taxId2;
+    }
+
+    /**
+     * @param taxId2
+     *            the taxId2 to set
+     */
+    public void setTaxId2(String taxId2)
+    {
+        this.taxId2 = taxId2;
+    }
+
+    /**
+     * @return the taxId3
+     */
+    public String getTaxId3()
+    {
+        return taxId3;
+    }
+
+    /**
+     * @param taxId3
+     *            the taxId3 to set
+     */
+    public void setTaxId3(String taxId3)
+    {
+        this.taxId3 = taxId3;
+    }
+
+    /**
+     * @return the taxId4
+     */
+    public String getTaxId4()
+    {
+        return taxId4;
+    }
+
+    /**
+     * @param taxId4
+     *            the taxId4 to set
+     */
+    public void setTaxId4(String taxId4)
+    {
+        this.taxId4 = taxId4;
+    }
+
+    /**
+     * @return the taxId5
+     */
+    public String getTaxId5()
+    {
+        return taxId5;
+    }
+
+    /**
+     * @param taxId5
+     *            the taxId5 to set
+     */
+    public void setTaxId5(String taxId5)
+    {
+        this.taxId5 = taxId5;
+    }
+
+    /**
+     * @return the taxId6
+     */
+    public String getTaxId6()
+    {
+        return taxId6;
+    }
+
+    /**
+     * @param taxId6
+     *            the taxId6 to set
+     */
+    public void setTaxId6(String taxId6)
+    {
+        this.taxId6 = taxId6;
+    }
+
+    /**
+     * @return the taxId7
+     */
+    public String getTaxId7()
+    {
+        return taxId7;
+    }
+
+    /**
+     * @param taxId7
+     *            the taxId7 to set
+     */
+    public void setTaxId7(String taxId7)
+    {
+        this.taxId7 = taxId7;
+    }
+
+    /**
+     * @return the taxId8
+     */
+    public String getTaxId8()
+    {
+        return taxId8;
+    }
+
+    /**
+     * @param taxId8
+     *            the taxId8 to set
+     */
+    public void setTaxId8(String taxId8)
+    {
+        this.taxId8 = taxId8;
+    }
+
+    /**
+     * @return the refId
+     */
+    public String getRefId()
+    {
+        return refId;
+    }
+
+    /**
+     * @param refId
+     *            the refId to set
+     */
+    public void setRefId(String refId)
+    {
+        this.refId = refId;
+    }
+
+    /**
+     * @return the refOut
+     */
+    public String getRefOut()
+    {
+        return refOut;
+    }
+
+    /**
+     * @param refOut
+     *            the refOut to set
+     */
+    public void setRefOut(String refOut)
+    {
+        this.refOut = refOut;
+    }
+
+    /**
+     * @return the refBill
+     */
+    public String getRefBill()
+    {
+        return refBill;
+    }
+
+    /**
+     * @param refBill
+     *            the refBill to set
+     */
+    public void setRefBill(String refBill)
+    {
+        this.refBill = refBill;
+    }
+
+    /**
+     * @return the refStock
+     */
+    public String getRefStock()
+    {
+        return refStock;
+    }
+
+    /**
+     * @param refStock
+     *            the refStock to set
+     */
+    public void setRefStock(String refStock)
+    {
+        this.refStock = refStock;
+    }
+
+    /**
+     * @return the financeDate
+     */
+    public String getFinanceDate()
+    {
+        return financeDate;
+    }
+
+    /**
+     * @param financeDate
+     *            the financeDate to set
+     */
+    public void setFinanceDate(String financeDate)
+    {
+        this.financeDate = financeDate;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -356,7 +637,7 @@ public class FinanceItemBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
         retValue
             .append("FinanceItemBean ( ")
@@ -380,8 +661,50 @@ public class FinanceItemBean implements Serializable
             .append("forward = ")
             .append(this.forward)
             .append(TAB)
+            .append("refId = ")
+            .append(this.refId)
+            .append(TAB)
+            .append("refOut = ")
+            .append(this.refOut)
+            .append(TAB)
+            .append("refBill = ")
+            .append(this.refBill)
+            .append(TAB)
+            .append("refStock = ")
+            .append(this.refStock)
+            .append(TAB)
+            .append("financeDate = ")
+            .append(this.financeDate)
+            .append(TAB)
             .append("taxId = ")
             .append(this.taxId)
+            .append(TAB)
+            .append("taxId0 = ")
+            .append(this.taxId0)
+            .append(TAB)
+            .append("taxId1 = ")
+            .append(this.taxId1)
+            .append(TAB)
+            .append("taxId2 = ")
+            .append(this.taxId2)
+            .append(TAB)
+            .append("taxId3 = ")
+            .append(this.taxId3)
+            .append(TAB)
+            .append("taxId4 = ")
+            .append(this.taxId4)
+            .append(TAB)
+            .append("taxId5 = ")
+            .append(this.taxId5)
+            .append(TAB)
+            .append("taxId6 = ")
+            .append(this.taxId6)
+            .append(TAB)
+            .append("taxId7 = ")
+            .append(this.taxId7)
+            .append(TAB)
+            .append("taxId8 = ")
+            .append(this.taxId8)
             .append(TAB)
             .append("dutyId = ")
             .append(this.dutyId)

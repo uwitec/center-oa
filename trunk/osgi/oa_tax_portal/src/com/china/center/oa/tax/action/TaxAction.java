@@ -26,13 +26,16 @@ import com.center.china.osgi.publics.User;
 import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
+import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.dao.BankDAO;
 import com.china.center.oa.publics.Helper;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.bean.TaxTypeBean;
 import com.china.center.oa.tax.dao.TaxDAO;
@@ -41,6 +44,7 @@ import com.china.center.oa.tax.facade.TaxFacade;
 import com.china.center.oa.tax.vo.TaxVO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
+import com.china.center.tools.StringTools;
 
 
 /**
@@ -65,6 +69,8 @@ public class TaxAction extends DispatchAction
 
     private static final String QUERYTAX = "queryTax";
 
+    private static final String RPTQUERYTAX = "rptQueryTax";
+
     /**
      * default constructor
      */
@@ -82,8 +88,8 @@ public class TaxAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryTax(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse response)
+    public ActionForward queryTax(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -94,11 +100,13 @@ public class TaxAction extends DispatchAction
 
         condtion.addCondition("order by TaxBean.code asc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYTAX, request, condtion, this.taxDAO,
-            new HandleResult<TaxVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYTAX, request, condtion,
+            this.taxDAO, new HandleResult<TaxVO>()
             {
                 public void handle(TaxVO obj)
                 {
+                    obj.setLevel(obj.getLevel() + 1);
+
                     obj.getOther();
                 }
             });
@@ -106,8 +114,74 @@ public class TaxAction extends DispatchAction
         return JSONTools.writeResponse(response, jsonstr);
     }
 
-    public ActionForward preForAddTax(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    /**
+     * rptQueryTax
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryTax(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        List<TaxVO> list = null;
+
+        if (PageSeparateTools.isFirstLoad(request))
+        {
+            ConditionParse condtion = new ConditionParse();
+
+            condtion.addWhereStr();
+
+            setCondition(request, condtion);
+
+            int total = taxDAO.countVOByCondition(condtion.toString());
+
+            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+
+            PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYTAX);
+
+            list = taxDAO.queryEntityVOsByCondition(condtion, page);
+        }
+        else
+        {
+            PageSeparateTools.processSeparate(request, RPTQUERYTAX);
+
+            list = taxDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                RPTQUERYTAX), PageSeparateTools.getPageSeparate(request, RPTQUERYTAX));
+        }
+
+        request.setAttribute("beanList", list);
+
+        request.setAttribute("rptMethod", RPTQUERYTAX);
+
+        return mapping.findForward("rptQueryTax");
+    }
+
+    private void setCondition(HttpServletRequest request, ConditionParse condtion)
+    {
+        String name = request.getParameter("name");
+
+        String code = request.getParameter("code");
+
+        if ( !StringTools.isNullOrNone(name))
+        {
+            condtion.addCondition("TaxBean.name", "like", name);
+        }
+
+        if ( !StringTools.isNullOrNone(code))
+        {
+            condtion.addCondition("TaxBean.code", "like", code);
+        }
+    }
+
+    public ActionForward preForAddTax(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         List<TaxTypeBean> taxTypeList = taxTypeDAO.listEntityBeans();
@@ -169,8 +243,8 @@ public class TaxAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteTax(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                   HttpServletResponse response)
+    public ActionForward deleteTax(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();

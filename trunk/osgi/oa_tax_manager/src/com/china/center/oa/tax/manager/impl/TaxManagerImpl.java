@@ -17,8 +17,10 @@ import com.china.center.common.MYException;
 import com.china.center.jdbc.expression.Expression;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.tax.bean.TaxBean;
+import com.china.center.oa.tax.constanst.TaxConstanst;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.manager.TaxManager;
+import com.china.center.tools.BeanUtil;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.StringTools;
 
@@ -48,6 +50,12 @@ public class TaxManagerImpl implements TaxManager
     public boolean addTaxBean(User user, TaxBean bean)
         throws MYException
     {
+        return addTaxBeanWithoutTransactional(user, bean);
+    }
+
+    public boolean addTaxBeanWithoutTransactional(User user, TaxBean bean)
+        throws MYException
+    {
         JudgeTools.judgeParameterIsNull(user, bean);
 
         bean.setId(commonDAO.getSquenceString20());
@@ -55,6 +63,62 @@ public class TaxManagerImpl implements TaxManager
         Expression exp = new Expression(bean, this);
 
         exp.check("#name || #code &unique @taxDAO", "名称或者编码已经存在");
+
+        // 检查父级点
+        if (StringTools.isNullOrNone(bean.getParentId()))
+        {
+            bean.setParentId("0");
+        }
+
+        if ("0".equals(bean.getParentId()))
+        {
+            bean.setLevel(TaxConstanst.TAX_LEVEL_DEFAULT);
+        }
+        else
+        {
+            TaxBean parent = taxDAO.find(bean.getParentId());
+
+            if (parent == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            if (parent.getBottomFlag() == TaxConstanst.TAX_BOTTOMFLAG_ITEM)
+            {
+                throw new MYException("父级科目不能是最小科目,请确认操作");
+            }
+
+            // 递归获取各级的ID
+            bean.setLevel(parent.getLevel() + 1);
+
+            if (bean.getLevel() > TaxConstanst.TAX_LEVEL_MAX)
+            {
+                throw new MYException("最多支持9级科目,请确认操作");
+            }
+
+            BeanUtil.copyPropertyWithoutException(bean, "parentId" + parent.getLevel(), parent
+                .getId());
+
+            int allLevel = parent.getLevel() - 1;
+
+            for (int i = allLevel; i >= 0; i-- )
+            {
+                parent = taxDAO.find(parent.getParentId());
+
+                if (parent == null)
+                {
+                    throw new MYException("数据错误,请确认操作");
+                }
+
+                BeanUtil.copyPropertyWithoutException(bean, "parentId" + parent.getLevel(), parent
+                    .getId());
+
+                if ("0".equals(parent.getParentId()))
+                {
+                    break;
+                }
+            }
+        }
 
         taxDAO.saveEntityBean(bean);
 
@@ -111,15 +175,16 @@ public class TaxManagerImpl implements TaxManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        bean.setUnit(old.getUnit());
-        bean.setDepartment(old.getDepartment());
-        bean.setStaffer(old.getStaffer());
+        // 只能更新name和code
+        old.setName(bean.getName());
 
-        Expression exp = new Expression(bean, this);
+        old.setCode(bean.getCode());
+
+        Expression exp = new Expression(old, this);
 
         exp.check("#name || #code &unique2 @taxDAO", "名称或者编码已经存在");
 
-        taxDAO.updateEntityBean(bean);
+        taxDAO.updateEntityBean(old);
 
         return true;
     }
@@ -157,5 +222,4 @@ public class TaxManagerImpl implements TaxManager
     {
         this.commonDAO = commonDAO;
     }
-
 }

@@ -11,7 +11,6 @@ package com.china.center.oa.tax.listener.impl;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
-import com.china.center.jdbc.expression.Expression;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.listener.BankListener;
@@ -19,6 +18,7 @@ import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.constanst.TaxConstanst;
 import com.china.center.oa.tax.dao.TaxDAO;
+import com.china.center.oa.tax.manager.TaxManager;
 
 
 /**
@@ -32,6 +32,8 @@ import com.china.center.oa.tax.dao.TaxDAO;
 public class BankListenerTaxImpl implements BankListener
 {
     private TaxDAO taxDAO = null;
+
+    private TaxManager taxManager = null;
 
     private CommonDAO commonDAO = null;
 
@@ -57,10 +59,11 @@ public class BankListenerTaxImpl implements BankListener
 
         bean.setCode(bank.getCode());
 
-        bean.setPtype("90000000000000000001");
+        bean.setPtype(TaxConstanst.TAX_PTYPE_PROPERTY);
 
         bean.setDepartment(bank.getDepartment());
 
+        // 默认方向都是贷方
         bean.setForward(TaxConstanst.TAX_FORWARD_OUT);
 
         bean.setRefId(bank.getId());
@@ -69,13 +72,11 @@ public class BankListenerTaxImpl implements BankListener
 
         bean.setType(TaxConstanst.TAX_TYPE_BANK);
 
-        bean.setId(commonDAO.getSquenceString20());
+        bean.setParentId(bank.getParentTaxId());
 
-        Expression exp = new Expression(bean, this);
+        bean.setBottomFlag(TaxConstanst.TAX_BOTTOMFLAG_ITEM);
 
-        exp.check("#name || #code &unique @taxDAO", "名称或者编码已经存在");
-
-        taxDAO.saveEntityBean(bean);
+        taxManager.addTaxBeanWithoutTransactional(user, bean);
     }
 
     /*
@@ -142,6 +143,23 @@ public class BankListenerTaxImpl implements BankListener
     public void setCommonDAO(CommonDAO commonDAO)
     {
         this.commonDAO = commonDAO;
+    }
+
+    /**
+     * @return the taxManager
+     */
+    public TaxManager getTaxManager()
+    {
+        return taxManager;
+    }
+
+    /**
+     * @param taxManager
+     *            the taxManager to set
+     */
+    public void setTaxManager(TaxManager taxManager)
+    {
+        this.taxManager = taxManager;
     }
 
 }

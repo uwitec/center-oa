@@ -22,6 +22,12 @@
             <type>select</type>
             <option>$taxType</option>
         </condtion>
+        <condtion name="bottomFlag" caption="节点">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$taxBottomFlag</option>
+        </condtion>
         <condtion name="forward" caption="余额方向">
             <opr>=</opr>
             <datatype>1</datatype>

@@ -115,36 +115,18 @@ function taxChange(obj)
 		if ((taxList[i].code + taxList[i].name) == option.value)
 		{
 			// in
-			if (taxList[i].forward == 0)
-			{
-				outEle.value = 'NA';
-				
-				outEle.oncheck = '';
-				
-				outEle.readOnly = true;
-				
-				inEle.readOnly = false;
-				
-				inEle.value = '0.0';
-				
-				inEle.oncheck = 'notNone;isFloat';
-			}
+			outEle.value = '0.0';
+                
+            outEle.oncheck = 'notNone;isFloat';
+            
+            outEle.readOnly = false;
+            
+            inEle.readOnly = false;
+            
+            inEle.value = '0.0';
+            
+            inEle.oncheck = 'notNone;isFloat';
 			
-			if (taxList[i].forward == 1)
-			{
-				inEle.value = 'NA';
-				
-				inEle.oncheck = '';
-				
-				inEle.readOnly = true;
-				
-				outEle.readOnly = false;
-				
-				outEle.value = '0.0';
-				
-				outEle.oncheck = 'notNone;isFloat';
-			}
-
 			if (taxList[i].department == 1)
 			{
 				$v2(depEle, true);

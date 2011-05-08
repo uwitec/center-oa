@@ -37,6 +37,18 @@ function addTrInner(list)
     
     new hint(getTrInnerObj2(trow, 'taxId'), list, HINT_MODE.CLIENT, false, null, callClick);
     
+    for (var i = 2; i < table.rows.length; i++)
+    {
+        if (i % 2 == 1)
+        {
+            table.rows[i].className = 'content1';
+        }
+        else
+        {
+            table.rows[i].className = 'content2';
+        }
+    }
+    
     return trow;
 }
 

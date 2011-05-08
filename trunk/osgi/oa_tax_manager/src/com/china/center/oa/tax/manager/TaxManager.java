@@ -27,6 +27,9 @@ public interface TaxManager
     boolean addTaxBean(User user, TaxBean bean)
         throws MYException;
 
+    boolean addTaxBeanWithoutTransactional(User user, TaxBean bean)
+        throws MYException;
+
     boolean updateTaxBean(User user, TaxBean bean)
         throws MYException;
 
