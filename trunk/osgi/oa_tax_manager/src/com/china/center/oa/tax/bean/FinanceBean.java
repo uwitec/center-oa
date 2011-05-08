@@ -73,12 +73,12 @@ public class FinanceBean implements Serializable
     /**
      * 准确到微分,就是小数点后四位
      */
-    private int inmoney = 0;
+    private long inmoney = 0;
 
     /**
      * 准确到微分,就是小数点后四位
      */
-    private int outmoney = 0;
+    private long outmoney = 0;
 
     private String description = "";
 
@@ -207,7 +207,7 @@ public class FinanceBean implements Serializable
     /**
      * @return the inmoney
      */
-    public int getInmoney()
+    public long getInmoney()
     {
         return inmoney;
     }
@@ -216,7 +216,7 @@ public class FinanceBean implements Serializable
      * @param inmoney
      *            the inmoney to set
      */
-    public void setInmoney(int inmoney)
+    public void setInmoney(long inmoney)
     {
         this.inmoney = inmoney;
     }
@@ -224,7 +224,7 @@ public class FinanceBean implements Serializable
     /**
      * @return the outmoney
      */
-    public int getOutmoney()
+    public long getOutmoney()
     {
         return outmoney;
     }
@@ -233,7 +233,7 @@ public class FinanceBean implements Serializable
      * @param outmoney
      *            the outmoney to set
      */
-    public void setOutmoney(int outmoney)
+    public void setOutmoney(long outmoney)
     {
         this.outmoney = outmoney;
     }

@@ -111,9 +111,9 @@ public class FinanceManagerImpl implements FinanceManager
 
         Map<String, List<FinanceItemBean>> pareMap = new HashMap<String, List<FinanceItemBean>>();
 
-        int inTotal = 0;
+        long inTotal = 0;
 
-        int outTotal = 0;
+        long outTotal = 0;
 
         // 整理出凭证对(且校验凭证的合法性)
         for (FinanceItemBean financeItemBean : itemList)
@@ -228,9 +228,9 @@ public class FinanceManagerImpl implements FinanceManager
         {
             List<FinanceItemBean> pareList = pareMap.get(key);
 
-            int inMoney = 0;
+            long inMoney = 0;
 
-            int outMoney = 0;
+            long outMoney = 0;
 
             for (FinanceItemBean item : pareList)
             {

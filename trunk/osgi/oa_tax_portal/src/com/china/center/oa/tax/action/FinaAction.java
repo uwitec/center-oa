@@ -564,9 +564,9 @@ public class FinaAction extends DispatchAction
 
         List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
 
-        int inTotal = 0;
+        long inTotal = 0;
 
-        int outTotal = 0;
+        long outTotal = 0;
 
         String pareId = SequenceTools.getSequence();
 
@@ -640,10 +640,10 @@ public class FinaAction extends DispatchAction
             item.setPareId(pareId);
 
             item
-                .setInmoney((int) (MathTools.parseDouble(inmoneys[i]) * TaxConstanst.DOUBLE_TO_INT));
+                .setInmoney((long) (MathTools.parseDouble(inmoneys[i]) * TaxConstanst.DOUBLE_TO_INT));
 
             item
-                .setOutmoney((int) (MathTools.parseDouble(outmoneys[i]) * TaxConstanst.DOUBLE_TO_INT));
+                .setOutmoney((long) (MathTools.parseDouble(outmoneys[i]) * TaxConstanst.DOUBLE_TO_INT));
 
             inTotal += item.getInmoney();
 
