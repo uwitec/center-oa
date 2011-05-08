@@ -264,6 +264,9 @@ public class FinanceManagerImpl implements FinanceManager
             throw new MYException("只能删除手工凭证,请重新操作");
         }
 
+        // 获取凭证项
+        old.setItemList(financeItemDAO.queryEntityBeansByFK(id));
+
         // 删除凭证
         financeDAO.deleteEntityBean(id);
 

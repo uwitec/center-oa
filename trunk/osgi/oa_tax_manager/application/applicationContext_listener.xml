@@ -35,4 +35,17 @@
 		</property>
 	</bean>
 	
+	<bean id="composeProductListenerTaxImpl" class="com.china.center.oa.tax.listener.impl.ComposeProductListenerTaxImpl" />
+    
+    <bean id="composeProductListener" class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="composeProductManager"/>
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="composeProductListenerTaxImpl" />
+            </list>
+        </property>
+    </bean>
+	
 </beans>

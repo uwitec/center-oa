@@ -107,9 +107,9 @@ public interface TaxConstanst
     int FINANCE_TYPE_DUTY = 1;
 
     /**
-     * 人工录入
+     * 手工凭证
      */
-    @Defined(key = "financeCreateType", value = "人工录入")
+    @Defined(key = "financeCreateType", value = "手工凭证")
     int FINANCE_CREATETYPE_HAND = 0;
 
     /**
