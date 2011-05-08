@@ -38,6 +38,7 @@ public class ComposeFeeDefinedBean implements Serializable
     @Html(title = "名称", must = true, maxLength = 100)
     private String name = "";
 
+    @Html(title = "关联科目", name = "taxName", maxLength = 40)
     private String taxId = "";
 
     @Html(title = "描述", type = Element.TEXTAREA, maxLength = 255)

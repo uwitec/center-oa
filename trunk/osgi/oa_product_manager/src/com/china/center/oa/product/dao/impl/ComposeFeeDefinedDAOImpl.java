@@ -12,6 +12,7 @@ package com.china.center.oa.product.dao.impl;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.product.bean.ComposeFeeDefinedBean;
 import com.china.center.oa.product.dao.ComposeFeeDefinedDAO;
+import com.china.center.oa.product.vo.ComposeFeeDefinedVO;
 
 
 /**
@@ -22,6 +23,6 @@ import com.china.center.oa.product.dao.ComposeFeeDefinedDAO;
  * @see ComposeFeeDefinedDAOImpl
  * @since 3.0
  */
-public class ComposeFeeDefinedDAOImpl extends BaseDAO<ComposeFeeDefinedBean, ComposeFeeDefinedBean> implements ComposeFeeDefinedDAO
+public class ComposeFeeDefinedDAOImpl extends BaseDAO<ComposeFeeDefinedBean, ComposeFeeDefinedVO> implements ComposeFeeDefinedDAO
 {
 }

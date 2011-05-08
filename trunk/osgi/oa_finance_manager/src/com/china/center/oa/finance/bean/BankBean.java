@@ -57,6 +57,9 @@ public class BankBean implements Serializable
     private String code = "";
 
     @Ignore
+    private String parentTaxId = "";
+
+    @Ignore
     private int unit = 0;
 
     @Ignore
@@ -251,6 +254,23 @@ public class BankBean implements Serializable
     }
 
     /**
+     * @return the parentTaxId
+     */
+    public String getParentTaxId()
+    {
+        return parentTaxId;
+    }
+
+    /**
+     * @param parentTaxId
+     *            the parentTaxId to set
+     */
+    public void setParentTaxId(String parentTaxId)
+    {
+        this.parentTaxId = parentTaxId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -259,7 +279,7 @@ public class BankBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
         retValue
             .append("BankBean ( ")
@@ -279,6 +299,9 @@ public class BankBean implements Serializable
             .append(TAB)
             .append("code = ")
             .append(this.code)
+            .append(TAB)
+            .append("parentTaxId = ")
+            .append(this.parentTaxId)
             .append(TAB)
             .append("unit = ")
             .append(this.unit)

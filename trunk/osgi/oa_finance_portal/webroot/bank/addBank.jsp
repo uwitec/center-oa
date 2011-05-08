@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="增加帐户" />
+<p:link title="增加帐户" guid="true"/>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
@@ -12,12 +12,36 @@ function addBean()
 {
 	submit('确定增加帐户?');
 }
+
+function selectTax()
+{
+    window.common.modal('../tax/tax.do?method=rptQueryTax&load=1&selectMode=1');
+}
+
+function getTax(oos)
+{
+    var obj = oos[0];
+    
+    if (obj.pbottomflag == 1)
+    {
+        alert('只能选择父级科目');
+        
+        return false;
+    }
+    
+    $("input[name='parentTaxId']").val(obj.value);
+    
+    $("input[name='parentTaxName']").val(obj.pname);
+}
+
 </script>
 
 </head>
 <body class="body_class">
-<form name="formEntry" action="../finance/bank.do" method="post"><input
-	type="hidden" name="method" value="addBank">
+<form name="formEntry" action="../finance/bank.do" method="post">
+<input type="hidden" name="method" value="addBank">
+<input type="hidden" name="parentTaxId" value="">
+
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
@@ -49,6 +73,12 @@ function addBean()
 			<p:pro field="dutyId">
                 <p:option type="dutyList"/>
             </p:pro>
+            
+            <p:cell title="父级科目">
+                <input type="text" name="parentTaxName" value="" readonly="readonly" size="60">
+                <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectTax()">&nbsp;&nbsp;
+            </p:cell>
             
             <p:cell title="辅助核算项">
 				<input type="checkbox" name="unit" value="1">单位<br>

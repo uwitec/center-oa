@@ -9,11 +9,13 @@
 package com.china.center.oa.product.manager.impl;
 
 
+import java.util.Collection;
 import java.util.List;
 
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.annosql.constant.AnoConstant;
@@ -28,8 +30,10 @@ import com.china.center.oa.product.dao.ComposeFeeDAO;
 import com.china.center.oa.product.dao.ComposeFeeDefinedDAO;
 import com.china.center.oa.product.dao.ComposeItemDAO;
 import com.china.center.oa.product.dao.ComposeProductDAO;
+import com.china.center.oa.product.listener.ComposeProductListener;
 import com.china.center.oa.product.manager.ComposeProductManager;
 import com.china.center.oa.product.manager.StorageRelationManager;
+import com.china.center.oa.product.vo.ComposeFeeDefinedVO;
 import com.china.center.oa.product.vo.ComposeProductVO;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
 import com.china.center.oa.publics.dao.CommonDAO;
@@ -47,7 +51,7 @@ import com.china.center.tools.TimeTools;
  * @since 1.0
  */
 @Exceptional
-public class ComposeProductManagerImpl implements ComposeProductManager
+public class ComposeProductManagerImpl extends AbstractListenerManager<ComposeProductListener> implements ComposeProductManager
 {
     private ComposeProductDAO composeProductDAO = null;
 
@@ -237,13 +241,34 @@ public class ComposeProductManagerImpl implements ComposeProductManager
     {
         JudgeTools.judgeParameterIsNull(user, bean);
 
-        bean.setId(commonDAO.getSquenceString());
-
         Expression exp = new Expression(bean, this);
 
         exp.check("#name &unique2 @composeFeeDefinedDAO", "名称已经存在");
 
         return composeFeeDefinedDAO.updateEntityBean(bean);
+    }
+
+    public ComposeFeeDefinedVO findComposeFeeDefinedVO(String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(id);
+
+        ComposeFeeDefinedVO vo = composeFeeDefinedDAO.findVO(id);
+
+        if (vo == null)
+        {
+            return vo;
+        }
+
+        // 这里动态获取凭证信息
+        Collection<ComposeProductListener> listenerMapValues = this.listenerMapValues();
+
+        for (ComposeProductListener composeProductListener : listenerMapValues)
+        {
+            composeProductListener.onFindComposeFeeDefinedVO(vo);
+        }
+
+        return vo;
     }
 
     /*

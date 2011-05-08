@@ -43,6 +43,7 @@ import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.actionhelper.jsonimpl.JSONArray;
+import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
@@ -72,7 +73,9 @@ import com.china.center.oa.product.dao.ProductVSLocationDAO;
 import com.china.center.oa.product.dao.ProviderDAO;
 import com.china.center.oa.product.dao.StorageRelationDAO;
 import com.china.center.oa.product.facade.ProductFacade;
+import com.china.center.oa.product.manager.ComposeProductManager;
 import com.china.center.oa.product.manager.ProductManager;
+import com.china.center.oa.product.vo.ComposeFeeDefinedVO;
 import com.china.center.oa.product.vo.ComposeProductVO;
 import com.china.center.oa.product.vo.PriceChangeNewItemVO;
 import com.china.center.oa.product.vo.PriceChangeSrcItemVO;
@@ -140,6 +143,8 @@ public class ProductAction extends DispatchAction
     private PriceChangeDAO priceChangeDAO = null;
 
     private StorageRelationDAO storageRelationDAO = null;
+
+    private ComposeProductManager composeProductManager = null;
 
     private EnumDAO enumDAO = null;
 
@@ -831,7 +836,23 @@ public class ProductAction extends DispatchAction
         ActionTools.processJSONQueryCondition(QUERYCOMPOSEFEEDEFINED, request, condtion);
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCOMPOSEFEEDEFINED, request,
-            condtion, this.composeFeeDefinedDAO);
+            condtion, this.composeFeeDefinedDAO, new HandleResult<ComposeFeeDefinedVO>()
+            {
+                public void handle(ComposeFeeDefinedVO obj)
+                {
+                    try
+                    {
+                        ComposeFeeDefinedVO vo = composeProductManager.findComposeFeeDefinedVO(obj
+                            .getId());
+
+                        obj.setTaxName(vo.getTaxName());
+                    }
+                    catch (MYException e)
+                    {
+                        _logger.warn(e, e);
+                    }
+                }
+            });
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -892,7 +913,17 @@ public class ProductAction extends DispatchAction
 
         String id = request.getParameter("id");
 
-        ComposeFeeDefinedBean bean = composeFeeDefinedDAO.findVO(id);
+        ComposeFeeDefinedVO bean = null;
+
+        try
+        {
+            bean = composeProductManager.findComposeFeeDefinedVO(id);
+        }
+        catch (MYException e)
+        {
+            return ActionTools.toError(e.getErrorContent(), QUERYCOMPOSEFEEDEFINED, mapping,
+                request);
+        }
 
         if (bean == null)
         {
@@ -2459,5 +2490,22 @@ public class ProductAction extends DispatchAction
     public void setComposeFeeDefinedDAO(ComposeFeeDefinedDAO composeFeeDefinedDAO)
     {
         this.composeFeeDefinedDAO = composeFeeDefinedDAO;
+    }
+
+    /**
+     * @return the composeProductManager
+     */
+    public ComposeProductManager getComposeProductManager()
+    {
+        return composeProductManager;
+    }
+
+    /**
+     * @param composeProductManager
+     *            the composeProductManager to set
+     */
+    public void setComposeProductManager(ComposeProductManager composeProductManager)
+    {
+        this.composeProductManager = composeProductManager;
     }
 }

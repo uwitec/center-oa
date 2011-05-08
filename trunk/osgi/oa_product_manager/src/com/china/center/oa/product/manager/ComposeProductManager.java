@@ -9,10 +9,13 @@
 package com.china.center.oa.product.manager;
 
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.product.bean.ComposeFeeDefinedBean;
 import com.china.center.oa.product.bean.ComposeProductBean;
+import com.china.center.oa.product.listener.ComposeProductListener;
+import com.china.center.oa.product.vo.ComposeFeeDefinedVO;
 import com.china.center.oa.product.vo.ComposeProductVO;
 
 
@@ -24,7 +27,7 @@ import com.china.center.oa.product.vo.ComposeProductVO;
  * @see ComposeProductManager
  * @since 1.0
  */
-public interface ComposeProductManager
+public interface ComposeProductManager extends ListenerManager<ComposeProductListener>
 {
     /**
      * 合成产品
@@ -90,5 +93,8 @@ public interface ComposeProductManager
         throws MYException;
 
     boolean deleteComposeFeeDefinedBean(User user, String id)
+        throws MYException;
+
+    ComposeFeeDefinedVO findComposeFeeDefinedVO(String id)
         throws MYException;
 }

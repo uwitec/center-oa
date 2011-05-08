@@ -77,6 +77,8 @@
 	
 	<osgi:reference id="storageRelationManager" interface="com.china.center.oa.product.manager.StorageRelationManager" />
 	
+	<osgi:reference id="composeProductManager" interface="com.china.center.oa.product.manager.ComposeProductManager" />
+	
 	<osgi:reference id="composeFeeDefinedDAO" interface="com.china.center.oa.product.dao.ComposeFeeDefinedDAO" />
 	
 </beans>

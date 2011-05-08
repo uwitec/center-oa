@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="增加合成费用" />
+<p:link title="增加合成费用" guid="true"/>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
@@ -12,6 +12,28 @@ function addBean()
 {
 	submit('确定修改合成费用?');
 }
+
+function getTax(oos)
+{
+    var obj = oos[0];
+    
+    if (obj.pbottomflag == 0)
+    {
+        alert('只能选择最小科目');
+        
+        return false;
+    }
+    
+    $("input[name='taxId']").val(obj.value);
+    
+    $("input[name='taxName']").val(obj.pname);
+}
+
+function selectTax()
+{
+    window.common.modal('../tax/tax.do?method=rptQueryTax&load=1&selectMode=1');
+}
+
 </script>
 
 </head>
@@ -19,6 +41,7 @@ function addBean()
 <form name="formEntry" action="../product/product.do" method="post"><input
 	type="hidden" name="method" value="updateComposeFeeDefined">
 <input type="hidden" name="id" value="${bean.id}">
+<input type="hidden" name="taxId" value="${bean.taxId}">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
@@ -40,6 +63,11 @@ function addBean()
 		<p:table cells="1">
 
 			<p:pro field="name" innerString="size=60"/>
+			
+			<p:pro field="taxId" innerString="readonly=true size=60" value="${bean.taxName}">
+                <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectTax()">&nbsp;&nbsp;
+            </p:pro>
 			
 			<p:pro field="description" innerString="rows=3 cols=55" />
 
