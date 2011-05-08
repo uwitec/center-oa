@@ -36,7 +36,8 @@ public class BeanUtil extends BeanUtils
     private static final Log _logger = LogFactory.getLog(BeanUtil.class);
 
     private BeanUtil()
-    {}
+    {
+    }
 
     /**
      * getBean
@@ -105,11 +106,14 @@ public class BeanUtil extends BeanUtils
             BeanUtils.populate(obj, map);
         }
         catch (IllegalAccessException e)
-        {}
+        {
+        }
         catch (InvocationTargetException e)
-        {}
+        {
+        }
         catch (Exception e)
-        {}
+        {
+        }
     }
 
     public static String getProperty(Object obj, String name)
@@ -148,9 +152,25 @@ public class BeanUtil extends BeanUtils
             BeanUtils.copyProperties(dest, orig);
         }
         catch (IllegalAccessException e)
-        {}
+        {
+        }
         catch (InvocationTargetException e)
-        {}
+        {
+        }
+    }
+
+    public static void copyPropertyWithoutException(Object bean, String name, Object value)
+    {
+        try
+        {
+            BeanUtils.copyProperty(bean, name, value);
+        }
+        catch (IllegalAccessException e)
+        {
+        }
+        catch (InvocationTargetException e)
+        {
+        }
     }
 
     public static void getBeanInner(Object obj, Map<?, ?> properties)
@@ -196,13 +216,17 @@ public class BeanUtil extends BeanUtils
                 }
             }
             catch (IllegalArgumentException e)
-            {}
+            {
+            }
             catch (IllegalAccessException e)
-            {}
+            {
+            }
             catch (InvocationTargetException e)
-            {}
+            {
+            }
             catch (Exception ee)
-            {}
+            {
+            }
 
         }
     }
