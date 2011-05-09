@@ -579,8 +579,6 @@ public class InvoiceinsAction extends DispatchAction
 
         bean.setMoneys(total);
 
-        System.out.println("total:" + total);
-
         bean.setItemList(itemList);
 
         User user = Helper.getUser(request);
