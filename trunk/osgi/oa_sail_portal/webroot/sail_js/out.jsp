@@ -278,20 +278,27 @@ function check(isAdd)
             return false;
         }
         
-        if (parseInt(trim(prices[i].value)) == 0)
+        if (!isFloat(prices[i].value))
+        {
+            alert('数据错误,产品价格只能是浮点数!');
+            prices[i].focus();
+            return false;
+        }
+        
+        if (!isFloat(inputPrices[i].value))
+        {
+            alert('数据错误,产品输入价格只能是浮点数!');
+            inputPrices[i].focus();
+            return false;
+        }
+        
+        if (parseFloat(trim(prices[i].value)) == 0)
         {
             if (!window.confirm('除非赠品单价不要填0,否则到总裁审批,你确定?'))
             {
                  prices[i].focus();
                  return false;
             }
-        }
-
-        if (!isFloat(prices[i].value))
-        {
-            alert('数据错误,产品数量只能是浮点数!');
-            prices[i].focus();
-            return false;
         }
 
         $O('priceList').value = $O('priceList').value + prices[i].value + '~';
