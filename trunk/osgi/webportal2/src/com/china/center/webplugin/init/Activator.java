@@ -170,11 +170,14 @@ public class Activator implements BundleActivator
                 {
                     File[] subBundle = eachBundle.listFiles();
 
-                    for (File eachDir : subBundle)
+                    if (subBundle != null)
                     {
-                        if (eachDir.getAbsolutePath().endsWith("webroot"))
+                        for (File eachDir : subBundle)
                         {
-                            scan(eachDir);
+                            if (eachDir.getAbsolutePath().endsWith("webroot"))
+                            {
+                                scan(eachDir);
+                            }
                         }
                     }
                 }
