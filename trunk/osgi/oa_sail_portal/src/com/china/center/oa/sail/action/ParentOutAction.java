@@ -1364,7 +1364,7 @@ public class ParentOutAction extends DispatchAction
         // 校验库存
         List<OutBean> makeLingYang = makeLingYang(outId, request, baseList);
 
-        if ( !ListTools.isEmptyOrNull(makeLingYang))
+        if ( !ListTools.isEmptyOrNull(makeLingYang) && false)
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "此单存在转销售单据,所以只能全部转销售,不能退库处理");
 

@@ -1479,7 +1479,7 @@ public class OutAction extends ParentOutAction
 
             List<OutBean> refBuyList = queryRefOut(request, outId);
 
-            if ( !ListTools.isEmptyOrNull(refBuyList))
+            if ( !ListTools.isEmptyOrNull(refBuyList) && false)
             {
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "此单存在退库,所以转销售只能全部退库后重新发起销售");
 
