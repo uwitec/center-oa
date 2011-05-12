@@ -301,16 +301,6 @@ function check(isAdd)
             }
         }
         
-        if (parseFloat(trim(prices[i].value)) != 0 
-            && (parseFloat(trim(prices[i].value)) < parseFloat(trim(inputPrices[i].cost))))
-        {
-            if (!window.confirm('产品含税销售价['+prices[i].value+']低于成本价['+inputPrices[i].cost+'],你确定?'))
-            {
-                 inputPrices[i].focus();
-                 return false;
-            }
-        }
-
         $O('priceList').value = $O('priceList').value + prices[i].value + '~';
         $O('inputPriceList').value = $O('inputPriceList').value + inputPrices[i].value + '~';
     }
@@ -331,6 +321,16 @@ function check(isAdd)
             alert('格式错误,成本只能是浮点数!');
             desList[i].focus();
             return false;
+        }
+        
+        if (parseFloat(trim(prices[i].value)) != 0 
+            && (parseFloat(trim(prices[i].value)) < parseFloat(trim(desList[i].value))))
+        {
+            if (!window.confirm('产品含税销售价['+prices[i].value+']低于成本价['+desList[i].value+'],你确定?'))
+            {
+                 inputPrices[i].focus();
+                 return false;
+            }
         }
     }
     
