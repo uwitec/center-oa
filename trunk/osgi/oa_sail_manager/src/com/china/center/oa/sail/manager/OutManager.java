@@ -316,4 +316,11 @@ public interface OutManager extends ListenerManager<OutListener>
      * @throws MYException
      */
     ResultBean checkOutPayStatus(User user, OutBean out);
+
+    /**
+     * initPriceKey
+     * 
+     * @return
+     */
+    int[] initPriceKey();
 }

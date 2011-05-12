@@ -34,7 +34,7 @@ public abstract class StorageRelationHelper
     {
         String formatNum = MathTools.formatNum(value);
 
-        int last = (int) (Double.parseDouble(formatNum) * 100);
+        int last = (int)Math.round( (Double.parseDouble(formatNum) * 100));
 
         return String.valueOf(last);
     }

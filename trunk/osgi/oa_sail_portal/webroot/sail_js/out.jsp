@@ -296,7 +296,17 @@ function check(isAdd)
         {
             if (!window.confirm('除非赠品单价不要填0,否则到总裁审批,你确定?'))
             {
-                 prices[i].focus();
+                 inputPrices[i].focus();
+                 return false;
+            }
+        }
+        
+        if (parseFloat(trim(prices[i].value)) != 0 
+            && (parseFloat(trim(prices[i].value)) < parseFloat(trim(inputPrices[i].cost))))
+        {
+            if (!window.confirm('产品含税销售价['+prices[i].value+']低于成本价['+inputPrices[i].cost+'],你确定?'))
+            {
+                 inputPrices[i].focus();
                  return false;
             }
         }

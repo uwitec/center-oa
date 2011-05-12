@@ -376,7 +376,7 @@ function changePrice()
 							name="amount"></td>
 							
 						<td align="center"><input type="text"
-                            style="width: 100%" maxlength="8" onkeyup="cc(this)"
+                            style="width: 100%" maxlength="8" onkeyup="cc(this)" cost=""
                             onblur="blu(this)" name="inputPrice"></td>
 
 						<td align="center"><input type="text" readonly="readonly"
@@ -426,7 +426,7 @@ function changePrice()
 							maxlength="6" onkeyup="cc(this)" name="amount"></td>
 							
 						<td align="center"><input type="text" style="width: 100%" id="unInputPrice" value="${my:formatNum(fristBase.inputPrice)}"
-                            maxlength="13" onkeyup="cc(this)" onblur="blu(this)" name="inputPrice"></td>
+                            cost="" maxlength="13" onkeyup="cc(this)" onblur="blu(this)" name="inputPrice"></td>
 
 						<td align="center"><input type="text" style="width: 100%" readonly="readonly" id="unPrice" value="${my:formatNum(fristBase.price)}" 
 							maxlength="11" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
@@ -471,7 +471,7 @@ function changePrice()
                         <td align="center"><input type="text" style="width: 100%"  value="${fristBase.amount}"
                             maxlength="6" onkeyup="cc(this)" name="amount"></td>
                             
-                        <td align="center"><input type="text" style="width: 100%" value="${my:formatNum(fristBase.inputPrice)}"
+                        <td align="center"><input type="text" style="width: 100%" value="${my:formatNum(fristBase.inputPrice)}" cost=""
                             maxlength="13" onkeyup="cc(this)" onblur="blu(this)" name="inputPrice"></td>
 
                         <td align="center"><input type="text" style="width: 100%"  value="${my:formatNum(fristBase.price)}"

@@ -333,6 +333,14 @@ function check()
             hi = "注意:当前业务员下有超期的销售单  ";
         }
         
+        if (getRadio('fullId').reserve9 == "1")
+        {
+            if (!window.confirm('当前单据的存在产品价格低于成本价,确认是否准备通过?'))
+            {
+                return false;
+            }
+        }
+        
         $.messager.prompt('通过', '请输入意见', '同意', function(r){
                     if (r)
                     {
@@ -750,6 +758,7 @@ function hrefAndSelect(obj)
 							   paytype="${item.pay}"
 							   outtype="${item.outType}"
 							   statuss='${item.status}' 
+							   reserve9='${item.reserve9}' 
 							   baddebts='${my:formatNum(item.total - item.hadPay)}' 
 							   value="${item.fullId}"/></td>
 							<td align="center"

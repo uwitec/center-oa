@@ -168,6 +168,7 @@ function queryAbs()
 				<td align="center" onclick="tableSort(this, true)" class="td_class"><strong>可发数量</strong></td>
 				<td align="center" onclick="tableSort(this, true)" class="td_class"><strong>价格</strong></td>
 				<td align="center" onclick="tableSort(this, true)" class="td_class"><strong>批发价</strong></td>
+				<td align="center" onclick="tableSort(this, true)" class="td_class"><strong>成本</strong></td>
 				<td align="center" onclick="tableSort(this)" class="td_class"><strong>职员</strong></td>
 			</tr>
 
@@ -182,6 +183,7 @@ function queryAbs()
 					pcode="${item.productCode}" 
 					pprice="${my:formatNum(item.price)}" 
 					pbatchprice="${my:formatNum(item.batchPrice)}" 
+					pcostprice="${my:formatNum(item.costPrice)}" 
 					pamount="${item.amount}" value="${item.productId}"/></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.depotpartName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.storageName}</td>
@@ -189,6 +191,7 @@ function queryAbs()
 					<td align="center" onclick="hrefAndSelect(this)">${item.mayAmount}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.price)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.batchPrice)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.costPrice)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
 				</tr>
 			</c:forEach>

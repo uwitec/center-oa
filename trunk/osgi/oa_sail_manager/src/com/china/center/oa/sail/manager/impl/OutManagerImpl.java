@@ -31,6 +31,7 @@ import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.credit.bean.CreditLevelBean;
 import com.china.center.oa.credit.dao.CreditCoreDAO;
 import com.china.center.oa.credit.dao.CreditLevelDAO;
@@ -43,6 +44,7 @@ import com.china.center.oa.note.dao.ShortMessageTaskDAO;
 import com.china.center.oa.note.manager.HandleMessage;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
+import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.DepotDAO;
@@ -343,7 +345,20 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             throw new RuntimeException("产品ID为空,数据不完备");
                         }
 
-                        base.setProductName(nameList[i]);
+                        ProductBean product = productDAO.find(base.getProductId());
+
+                        if (product == null)
+                        {
+                            throw new RuntimeException("产品为空,数据不完备");
+                        }
+
+                        if ( !nameList[i].trim().equals(product.getName()))
+                        {
+                            throw new RuntimeException("数据错误,请重新操作");
+                        }
+
+                        // 产品名称来源于数据库
+                        base.setProductName(product.getName());
 
                         base.setUnit(unitList[i]);
 
@@ -4048,6 +4063,78 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     public void setDutyDAO(DutyDAO dutyDAO)
     {
         this.dutyDAO = dutyDAO;
+    }
+
+    public int[] initPriceKey()
+    {
+        int[] result = new int[2];
+
+        int success = 0;
+        int fail = 0;
+
+        String lastTime = "2011-04-01";
+
+        String outTime = TimeTools.now_short( -180);
+
+        if (lastTime.compareTo(outTime) > 0)
+        {
+            outTime = lastTime;
+        }
+
+        int count = baseDAO.countBaseByOutTime(outTime);
+
+        PageSeparate page = new PageSeparate();
+
+        page.reset2(count, 2000);
+
+        while (page.hasNextPage())
+        {
+            page.nextPage();
+
+            List<BaseBean> baseList = baseDAO.queryBaseByOutTime(outTime, page);
+
+            for (final BaseBean each : baseList)
+            {
+                String priceKey = StorageRelationHelper.getPriceKey(each.getCostPrice());
+
+                if ( !priceKey.equals(each.getCostPriceKey()))
+                {
+                    _logger.info(each + "||old CostPriceKey:" + each.getCostPriceKey()
+                                 + ";new CostPriceKey:" + priceKey);
+
+                    each.setCostPriceKey(priceKey);
+
+                    try
+                    {
+                        // 增加管理员操作在数据库事务中完成
+                        TransactionTemplate tran = new TransactionTemplate(transactionManager);
+
+                        tran.execute(new TransactionCallback()
+                        {
+                            public Object doInTransaction(TransactionStatus arg0)
+                            {
+                                baseDAO.updateCostPricekey(each.getId(), each.getCostPriceKey());
+
+                                return Boolean.TRUE;
+                            }
+                        });
+
+                        success++ ;
+                    }
+                    catch (Exception e)
+                    {
+                        fail++ ;
+
+                        _logger.error(e, e);
+                    }
+                }
+            }
+        }
+
+        result[0] = success;
+        result[1] = fail;
+
+        return result;
     }
 
 }

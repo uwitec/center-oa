@@ -81,4 +81,6 @@
 	
 	<osgi:reference id="composeFeeDefinedDAO" interface="com.china.center.oa.product.dao.ComposeFeeDefinedDAO" />
 	
+	<osgi:reference id="outManager" interface="com.china.center.oa.sail.manager.OutManager" />
+	
 </beans>

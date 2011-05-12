@@ -74,6 +74,9 @@ public class StorageRelationVO extends StorageRelationBean
     @Ignore
     private double batchPrice = 0.0d;
 
+    @Ignore
+    private double costPrice = 0.0d;
+
     /**
      * default constructor
      */
@@ -303,6 +306,23 @@ public class StorageRelationVO extends StorageRelationBean
     }
 
     /**
+     * @return the costPrice
+     */
+    public double getCostPrice()
+    {
+        return costPrice;
+    }
+
+    /**
+     * @param costPrice
+     *            the costPrice to set
+     */
+    public void setCostPrice(double costPrice)
+    {
+        this.costPrice = costPrice;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -355,6 +375,9 @@ public class StorageRelationVO extends StorageRelationBean
             .append(TAB)
             .append("batchPrice = ")
             .append(this.batchPrice)
+            .append(TAB)
+            .append("costPrice = ")
+            .append(this.costPrice)
             .append(TAB)
             .append(" )");
 

@@ -71,6 +71,7 @@ import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.StafferVSIndustryDAO;
+import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -104,6 +105,8 @@ public class StorageAction extends DispatchAction
     private DepotDAO depotDAO = null;
 
     private StafferDAO stafferDAO = null;
+
+    private OutManager outManager = null;
 
     private StorageLogDAO storageLogDAO = null;
 
@@ -1070,7 +1073,10 @@ public class StorageAction extends DispatchAction
 
         int[] initPriceKey = storageRelationManager.initPriceKey();
 
-        ajax.setSuccess("成功初始化库存KEY:" + initPriceKey[0] + ",失败:" + initPriceKey[1]);
+        int[] initPriceKey2 = outManager.initPriceKey();
+
+        ajax.setSuccess("成功初始化KEY:" + initPriceKey[0] + '/' + initPriceKey2[0] + ",失败:"
+                        + initPriceKey[1] + '/' + initPriceKey2[1]);
 
         return JSONTools.writeResponse(response, ajax);
     }
@@ -1471,6 +1477,8 @@ public class StorageAction extends DispatchAction
             {
                 // 设置批发价
                 vo.setBatchPrice(product.getBatchPrice());
+
+                vo.setCostPrice(product.getCost());
             }
         }
 
@@ -2302,5 +2310,22 @@ public class StorageAction extends DispatchAction
     public void setStafferDAO(StafferDAO stafferDAO)
     {
         this.stafferDAO = stafferDAO;
+    }
+
+    /**
+     * @return the outManager
+     */
+    public OutManager getOutManager()
+    {
+        return outManager;
+    }
+
+    /**
+     * @param outManager
+     *            the outManager to set
+     */
+    public void setOutManager(OutManager outManager)
+    {
+        this.outManager = outManager;
     }
 }

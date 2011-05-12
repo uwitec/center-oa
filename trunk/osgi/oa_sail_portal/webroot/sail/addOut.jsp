@@ -319,7 +319,7 @@ function changePrice()
 							name="amount"></td>
 
 						<td align="center"><input type="text"
-							style="width: 100%" maxlength="13" onkeyup="cc(this)"
+							style="width: 100%" maxlength="13" onkeyup="cc(this)" cost=""
 							onblur="blu(this)" name="inputPrice"></td>
 							
 						<td align="center"><input type="text" value="0.00"
@@ -364,7 +364,7 @@ function changePrice()
 						<td align="center"><input type="text" style="width: 100%" id="unAmount"
 							maxlength="8" onkeyup="cc(this)" name="amount"></td>
 
-						<td align="center"><input type="text" style="width: 100%" id="unInputPrice"
+						<td align="center"><input type="text" style="width: 100%" id="unInputPrice" cost=""
 							maxlength="13" onkeyup="cc(this)" onblur="blu(this)" name="inputPrice"></td>
 							
 						<td align="center"><input type="text" style="width: 100%" id="unPrice" readonly="readonly" value="0.00"

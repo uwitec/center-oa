@@ -50,6 +50,7 @@ import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
+import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.product.constant.DepotConstant;
 import com.china.center.oa.product.constant.StorageConstant;
@@ -4437,6 +4438,8 @@ public class ParentOutAction extends DispatchAction
     {
         Map divMap = new HashMap();
 
+        String queryType = RequestTools.getValueFromRequest(request, "queryType");
+
         if (list != null)
         {
             for (Object each : list)
@@ -4446,6 +4449,34 @@ public class ParentOutAction extends DispatchAction
                 try
                 {
                     List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(bean.getFullId());
+
+                    for (BaseBean baseBean : baseList)
+                    {
+                        // 销售价低于成本
+                        if ("2".equals(queryType))
+                        {
+                            if (bean.getOutType() == OutConstant.OUTTYPE_OUT_PRESENT)
+                            {
+                                break;
+                            }
+
+                            ProductBean product = productDAO.find(baseBean.getProductId());
+
+                            if (product == null)
+                            {
+                                continue;
+                            }
+
+                            double cost = product.getCost();
+
+                            if (baseBean.getPrice() < cost)
+                            {
+                                bean.setReserve9("1");
+
+                                break;
+                            }
+                        }
+                    }
 
                     divMap.put(bean.getFullId(), OutHelper.createTable(baseList, bean.getTotal()));
                 }

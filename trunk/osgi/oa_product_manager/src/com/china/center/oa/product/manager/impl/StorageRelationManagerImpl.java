@@ -487,6 +487,9 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
 
                 if ( !priceKey.equals(each.getPriceKey()))
                 {
+                    _logger.info(each + "||old PriceKey:" + each.getPriceKey() + ";new PriceKey:"
+                                 + priceKey);
+
                     each.setPriceKey(priceKey);
 
                     try

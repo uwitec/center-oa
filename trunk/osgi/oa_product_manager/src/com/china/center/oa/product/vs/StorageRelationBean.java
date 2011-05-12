@@ -252,15 +252,43 @@ public class StorageRelationBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("StorageRelationBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("depotpartId = ").append(this.depotpartId).append(TAB).append("storageId = ").append(
-            this.storageId).append(TAB).append("productId = ").append(this.productId).append(TAB).append(
-            "locationId = ").append(this.locationId).append(TAB).append("stafferId = ").append(this.stafferId).append(
-            TAB).append("priceKey = ").append(this.priceKey).append(TAB).append("amount = ").append(this.amount).append(
-            TAB).append("price = ").append(this.price).append(TAB).append("lastPrice = ").append(this.lastPrice).append(
-            TAB).append(" )");
+        retValue
+            .append("StorageRelationBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("depotpartId = ")
+            .append(this.depotpartId)
+            .append(TAB)
+            .append("storageId = ")
+            .append(this.storageId)
+            .append(TAB)
+            .append("productId = ")
+            .append(this.productId)
+            .append(TAB)
+            .append("locationId = ")
+            .append(this.locationId)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("priceKey = ")
+            .append(this.priceKey)
+            .append(TAB)
+            .append("amount = ")
+            .append(this.amount)
+            .append(TAB)
+            .append("price = ")
+            .append(this.price)
+            .append(TAB)
+            .append("lastPrice = ")
+            .append(this.lastPrice)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

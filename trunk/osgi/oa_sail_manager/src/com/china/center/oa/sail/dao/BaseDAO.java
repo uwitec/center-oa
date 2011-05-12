@@ -9,7 +9,10 @@
 package com.china.center.oa.sail.dao;
 
 
+import java.util.List;
+
 import com.china.center.jdbc.inter.DAO;
+import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.sail.bean.BaseBean;
 
 
@@ -23,5 +26,9 @@ import com.china.center.oa.sail.bean.BaseBean;
  */
 public interface BaseDAO extends DAO<BaseBean, BaseBean>
 {
+    int countBaseByOutTime(String outTime);
 
+    List<BaseBean> queryBaseByOutTime(String outTime, PageSeparate pageSeparate);
+
+    boolean updateCostPricekey(String id, String costPricekey);
 }
