@@ -9,6 +9,8 @@
 package com.china.center.oa.product.manager;
 
 
+import java.util.List;
+
 import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
@@ -130,4 +132,11 @@ public interface StorageRelationManager extends ListenerManager<StorageRelationL
      * @return
      */
     int[] initPriceKey();
+
+    /**
+     * 检查库存异动日志
+     * 
+     * @return
+     */
+    List<String> checkStorageLog();
 }

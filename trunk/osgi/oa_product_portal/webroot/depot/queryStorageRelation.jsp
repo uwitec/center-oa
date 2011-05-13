@@ -42,6 +42,7 @@ function load()
          buttons : [
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1107'},
              {id: 'update', bclass: 'update', caption: '更新库存KEY', onpress : initPriceKey, auth: '1107'},
+             {id: 'update2', bclass: 'update', caption: '库存体检', onpress : checkStorageLog, auth: '1107'},
              {id: 'search', bclass: 'search', onpress : doSearch},
              {id: 'search1', bclass: 'search', caption: '仓区下异动历史', onpress : depotpartLog},
              {id: 'search2', bclass: 'search', caption: '仓区下异动(价格)', onpress : depotpartLog2},
@@ -75,6 +76,12 @@ function initPriceKey(opr, grid)
 {
     if(window.confirm('只有在库存存在BUG下才使用此功能,确定更新库存KEY?'))    
         $ajax(gurl + 'initPriceKey', callBackFun);
+}
+
+function checkStorageLog(opr, grid)
+{
+    if(window.confirm('确定库存体检?'))    
+    $l(gurl + 'checkStorageLog');
 }
 
 function depotpartLog(opr, grid)

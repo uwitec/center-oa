@@ -11,6 +11,7 @@ package com.china.center.oa.product.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -23,6 +24,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.bean.PriceHistoryBean;
@@ -41,6 +43,7 @@ import com.china.center.oa.product.dao.StorageRelationDAO;
 import com.china.center.oa.product.helper.StorageRelationHelper;
 import com.china.center.oa.product.listener.StorageRelationListener;
 import com.china.center.oa.product.manager.StorageRelationManager;
+import com.china.center.oa.product.vo.StorageLogVO;
 import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
 import com.china.center.oa.publics.constant.PublicLock;
@@ -887,6 +890,88 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
     public synchronized void unlockStorageRelation()
     {
         StorageRelationManagerImpl.storageRelationLock = false;
+    }
+
+    public List<String> checkStorageLog()
+    {
+        final List<String> result = new LinkedList<String>();
+
+        String logTime = "2011-04-01 00:00:00";
+
+        // 获得仓区下移动的产品
+        List<DepotBean> listEntityBeans = depotDAO.listEntityBeans();
+
+        int total = 0;
+        int success = 0;
+        int fail = 0;
+        // 迭代仓库
+        for (DepotBean depotBean : listEntityBeans)
+        {
+            List<String> productList = storageLogDAO.queryDistinctProductByDepotIdAndLogTime(
+                depotBean.getId(), logTime);
+
+            // 产品
+            for (String productIdEach : productList)
+            {
+                total++ ;
+                ConditionParse condition = new ConditionParse();
+
+                condition.addWhereStr();
+
+                condition.addCondition("StorageLogBean.locationId", "=", depotBean.getId());
+                condition.addCondition("StorageLogBean.productId", "=", productIdEach);
+                condition.addCondition("StorageLogBean.logTime", ">=", logTime);
+
+                condition.addCondition("order by StorageLogBean.id asc");
+
+                List<StorageLogVO> logList = storageLogDAO.queryEntityVOsByCondition(condition);
+
+                int end = -99;
+
+                boolean allTrue = true;
+
+                for (StorageLogVO storageLogBeanEach : logList)
+                {
+                    if (end == -99)
+                    {
+                        end = storageLogBeanEach.getAfterAmount2();
+                    }
+                    else
+                    {
+                        if (storageLogBeanEach.getPreAmount2() != end)
+                        {
+                            String msg = "产品[" + storageLogBeanEach.getProductName() + "]在仓库["
+                                         + storageLogBeanEach.getLocationName() + "]下异动断节";
+
+                            _logger.error(msg + ".StorageLog:" + storageLogBeanEach);
+
+                            result.add(msg);
+
+                            allTrue = false;
+
+                            break;
+                        }
+                        else
+                        {
+                            end = storageLogBeanEach.getAfterAmount2();
+                        }
+                    }
+                }
+
+                if (allTrue)
+                {
+                    success++ ;
+                }
+                else
+                {
+                    fail++ ;
+                }
+            }
+        }
+
+        result.add("共计体检库存异动:" + total + ".其中成功:" + success + ".失败:" + fail);
+
+        return result;
     }
 
     /**

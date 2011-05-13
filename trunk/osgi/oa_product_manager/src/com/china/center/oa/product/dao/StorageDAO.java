@@ -25,4 +25,5 @@ import com.china.center.oa.product.vo.StorageVO;
 public interface StorageDAO extends DAO<StorageBean, StorageVO>
 {
     StorageBean findFristStorage(String depotpartId);
+
 }

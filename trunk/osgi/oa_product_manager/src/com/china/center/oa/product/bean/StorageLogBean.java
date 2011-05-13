@@ -56,6 +56,9 @@ public class StorageLogBean implements Serializable
      */
     private int preAmount1 = 0;
 
+    /**
+     * 仓区下整个产品的数量(价格)
+     */
     private int preAmount11 = 0;
 
     /**

@@ -426,6 +426,28 @@ public class StorageAction extends DispatchAction
     }
 
     /**
+     * checkStorageLog
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward checkStorageLog(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        List<String> checkStorageLog = storageRelationManager.checkStorageLog();
+
+        request.setAttribute("checkStorageLog", checkStorageLog);
+
+        // 仓库下
+        return mapping.findForward("checkStorageLog");
+    }
+
+    /**
      * 当天仓库的异动明细
      * 
      * @param mapping
