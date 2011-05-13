@@ -4095,6 +4095,22 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
             for (final BaseBean each : baseList)
             {
+                // 核对品名和开单不对的单据
+                ProductBean product = productDAO.find(each.getProductId());
+
+                if (product == null)
+                {
+                    _logger.error("BASE:" + each.getId() + ",product is null:"
+                                  + each.getProductId());
+                }
+
+                if (product != null && !product.getName().equals(each.getProductName()))
+                {
+                    _logger.error("BASE:" + each.getId() + ",product is name error:"
+                                  + each.getProductName() + ", real is:" + product.getName()
+                                  + ",fullid is:" + each.getOutId());
+                }
+
                 String priceKey = StorageRelationHelper.getPriceKey(each.getCostPrice());
 
                 if ( !priceKey.equals(each.getCostPriceKey()))
