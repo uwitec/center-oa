@@ -18,6 +18,7 @@ import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.product.constant.StorageConstant;
 
 
@@ -89,10 +90,10 @@ public class StorageLogBean implements Serializable
      */
     private int changeAmount = 0;
 
-    @Join(tagClass = DepotpartBean.class)
+    @Join(tagClass = DepotpartBean.class, type = JoinType.LEFT)
     private String depotpartId = "";
 
-    @Join(tagClass = StorageBean.class)
+    @Join(tagClass = StorageBean.class, type = JoinType.LEFT)
     private String storageId = "";
 
     @Join(tagClass = ProductBean.class)
