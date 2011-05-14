@@ -131,4 +131,8 @@
 
 	<bean id="invoiceCreditDAO" class="com.china.center.oa.publics.dao.impl.InvoiceCreditDAOImpl" />
 
+	<bean id="planDAO" class="com.china.center.oa.publics.dao.impl.PlanDAOImpl" />
+
+	<bean id="planManager" class="com.china.center.oa.publics.manager.impl.PlanManagerImpl" />
+
 </beans>

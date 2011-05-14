@@ -114,4 +114,8 @@
 
 	<osgi:service ref="invoiceCreditDAO" interface="com.china.center.oa.publics.dao.InvoiceCreditDAO" />
 
+	<osgi:service ref="planDAO" interface="com.china.center.oa.publics.dao.PlanDAO" />
+
+	<osgi:service ref="planManager" interface="com.china.center.oa.publics.manager.PlanManager" />
+
 </beans>

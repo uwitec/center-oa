@@ -51,6 +51,19 @@
         <property name="startDelay" value="30000" />
         <property name="repeatInterval" value="30000" />
     </bean>
+    
+    <bean id="planJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="planManager" />
+        <property name="targetMethod" value="carryPlan" />
+        <property name="concurrent" value="false" />
+    </bean>
+    
+    <bean id="planTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="planJob" />
+        <property name="cronExpression" value="0 30 0 * * ?" />
+    </bean>
 
 	<bean
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -59,6 +72,7 @@
 				<ref bean="everyDayCarryWithOutTransactionalTrigger" />
 				<ref bean="everyHourCarryWithOutTransactionalTrigger" />
 				<ref bean="hotLoadingParameterTrigger" />
+				<ref bean="planTrigger" />
 			</list>
 		</property>
 	</bean>
