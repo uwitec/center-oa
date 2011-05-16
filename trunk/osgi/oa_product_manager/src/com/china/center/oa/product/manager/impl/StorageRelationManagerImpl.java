@@ -9,6 +9,9 @@
 package com.china.center.oa.product.manager.impl;
 
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -21,9 +24,13 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.center.china.osgi.config.ConfigLoader;
 import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
+import com.center.china.osgi.publics.file.writer.WriteFile;
+import com.center.china.osgi.publics.file.writer.WriteFileFactory;
 import com.china.center.common.MYException;
+import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
@@ -44,11 +51,14 @@ import com.china.center.oa.product.helper.StorageRelationHelper;
 import com.china.center.oa.product.listener.StorageRelationListener;
 import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.vo.StorageLogVO;
+import com.china.center.oa.product.vo.StorageRelationVO;
 import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
 import com.china.center.oa.publics.constant.PublicLock;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.ListTools;
+import com.china.center.tools.MathTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
@@ -63,6 +73,8 @@ import com.china.center.tools.TimeTools;
  */
 public class StorageRelationManagerImpl extends AbstractListenerManager<StorageRelationListener> implements StorageRelationManager
 {
+    private final Log triggerLog = LogFactory.getLog("trigger");
+
     private final Log _logger = LogFactory.getLog(getClass());
 
     private final Log monitorLog = LogFactory.getLog("bill");
@@ -972,6 +984,156 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
         result.add("共计体检库存异动:" + total + ".其中成功:" + success + ".失败:" + fail);
 
         return result;
+    }
+
+    public void exportAllStorageRelation()
+    {
+        triggerLog.info("begin exportAllStorageRelation...");
+
+        WriteFile write = null;
+
+        OutputStream out = null;
+
+        try
+        {
+            out = new FileOutputStream(getProductStorePath() + "/ProductAmount_"
+                                       + TimeTools.now("yyyyMMddHHmmss") + ".csv");
+
+            ConditionParse condtion = new ConditionParse();
+
+            List<DepotBean> lList = depotDAO.listEntityBeans();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            write.writeLine("日期,仓库,仓区,仓区属性,储位,产品名称,产品编码,产品数量,产品价格");
+
+            String now = TimeTools.now("yyyy-MM-dd");
+
+            for (DepotBean locationBean : lList)
+            {
+                condtion.clear();
+
+                condtion.addCondition("StorageRelationBean.locationId", "=", locationBean.getId());
+
+                condtion.addIntCondition("StorageRelationBean.amount", ">", 0);
+
+                List<StorageRelationVO> list = storageRelationDAO
+                    .queryEntityVOsByCondition(condtion);
+
+                for (StorageRelationVO each : list)
+                {
+                    if (each.getAmount() > 0)
+                    {
+                        String typeName = DefinedCommon.getValue("depotpartType", each
+                            .getDepotpartType());
+
+                        write.writeLine(now
+                                        + ','
+                                        + locationBean.getName()
+                                        + ','
+                                        + each.getDepotpartName()
+                                        + ','
+                                        + typeName
+                                        + ','
+                                        + each.getStorageName()
+                                        + ','
+                                        + each.getProductName().replaceAll(",", " ").replaceAll(
+                                            "\r\n", "") + ',' + each.getProductCode() + ','
+                                        + String.valueOf(each.getAmount()) + ','
+                                        + MathTools.formatNum(each.getPrice()));
+                    }
+                }
+
+            }
+
+            // 导出在途的产品
+            Collection<StorageRelationListener> listenerMapValues = this.listenerMapValues();
+
+            List<StorageRelationVO> extList = new LinkedList<StorageRelationVO>();
+
+            for (StorageRelationListener storageRelationListener : listenerMapValues)
+            {
+                List<StorageRelationVO> onExportOtherStorageRelation = storageRelationListener
+                    .onExportOtherStorageRelation();
+
+                if ( !ListTools.isEmptyOrNull(onExportOtherStorageRelation))
+                {
+                    extList.addAll(onExportOtherStorageRelation);
+                }
+            }
+
+            for (StorageRelationVO each : extList)
+            {
+                DepotBean depot = depotDAO.find(each.getLocationId());
+
+                String locationName = "";
+
+                if (depot != null)
+                {
+                    locationName = depot.getName();
+                }
+
+                ProductBean product = productDAO.find(each.getProductId());
+
+                String productCode = "";
+
+                if (product != null)
+                {
+                    productCode = product.getCode();
+                }
+
+                String typeName = "在途库存";
+
+                write.writeLine(now + ',' + locationName + ',' + each.getDepotpartName() + ','
+                                + typeName + ',' + each.getStorageName() + ','
+                                + each.getProductName().replaceAll(",", " ").replaceAll("\r\n", "")
+                                + ',' + productCode + ',' + String.valueOf(each.getAmount()) + ','
+                                + MathTools.formatNum(each.getPrice()));
+            }
+
+            write.close();
+
+        }
+        catch (Throwable e)
+        {
+            triggerLog.error(e, e);
+        }
+        finally
+        {
+            if (write != null)
+            {
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        triggerLog.info("end exportAllStorageRelation...");
+    }
+
+    /**
+     * @return the mailAttchmentPath
+     */
+    public String getProductStorePath()
+    {
+        return ConfigLoader.getProperty("productStore");
     }
 
     /**

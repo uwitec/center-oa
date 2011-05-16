@@ -9,8 +9,11 @@
 package com.china.center.oa.product.listener;
 
 
+import java.util.List;
+
 import com.center.china.osgi.publics.ParentListener;
 import com.china.center.common.MYException;
+import com.china.center.oa.product.vo.StorageRelationVO;
 import com.china.center.oa.product.vs.StorageRelationBean;
 
 
@@ -41,4 +44,11 @@ public interface StorageRelationListener extends ParentListener
      * @throws MYException
      */
     int onFindInwayByStorageRelation(StorageRelationBean relation);
+
+    /**
+     * exportOtherStorageRelation(导出其他的库存)
+     * 
+     * @return
+     */
+    List<StorageRelationVO> onExportOtherStorageRelation();
 }

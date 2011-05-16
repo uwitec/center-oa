@@ -9,8 +9,13 @@
 package com.china.center.oa.sail.listener.impl;
 
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.china.center.oa.product.listener.StorageRelationListener;
+import com.china.center.oa.product.vo.StorageRelationVO;
 import com.china.center.oa.product.vs.StorageRelationBean;
+import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.tools.TimeTools;
 
@@ -67,6 +72,36 @@ public class StorageRelationListenerSailImpl implements StorageRelationListener
             TimeTools.now_short());
 
         return sum;
+    }
+
+    public List<StorageRelationVO> onExportOtherStorageRelation()
+    {
+        List<BaseBean> baseList = outDAO.queryInwayOut();
+
+        List<StorageRelationVO> voList = new LinkedList<StorageRelationVO>();
+
+        for (BaseBean each : baseList)
+        {
+            StorageRelationVO vo = new StorageRelationVO();
+
+            vo.setDepotpartName(each.getDepotpartName());
+
+            vo.setProductName(each.getProductName());
+
+            vo.setAmount( -each.getAmount());
+
+            vo.setPrice(each.getCostPrice());
+
+            vo.setProductId(each.getProductId());
+
+            vo.setLocationId(each.getLocationId());
+
+            vo.setStorageName(each.getOutId());
+
+            voList.add(vo);
+        }
+
+        return voList;
     }
 
     /*

@@ -139,4 +139,9 @@ public interface StorageRelationManager extends ListenerManager<StorageRelationL
      * @return
      */
     List<String> checkStorageLog();
+
+    /**
+     * 导出库存
+     */
+    void exportAllStorageRelation();
 }

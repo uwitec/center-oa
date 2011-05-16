@@ -14,6 +14,7 @@ import java.util.Map;
 
 import com.china.center.jdbc.inter.DAO;
 import com.china.center.oa.product.vs.StorageRelationBean;
+import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.vo.OutVO;
 import com.china.center.oa.sail.wrap.CreditWrap;
@@ -246,4 +247,11 @@ public interface OutDAO extends DAO<OutBean, OutVO>
      */
     List<CreditWrap> queryAllNoPay(String stafferId, String industryId, String beginDate,
                                    String endDate);
+
+    /**
+     * 在途的产品
+     * 
+     * @return
+     */
+    List<BaseBean> queryInwayOut();
 }

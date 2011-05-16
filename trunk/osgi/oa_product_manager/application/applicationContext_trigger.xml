@@ -14,7 +14,7 @@
 	
     <bean id="exportAllStorageRelationJob"
         class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="storageManager" />
+        <property name="targetObject" ref="storageRelationManager" />
         <property name="targetMethod" value="exportAllStorageRelation" />
         <property name="concurrent" value="false" />
     </bean>

@@ -90,7 +90,7 @@ public class DBJob implements CommonJob
             triggerLog.info("备份数据库失败:" + filePath);
         }
 
-        String delPath = getDb_bak() + '/' + TimeTools.getSpecialDateString( -15, "yyyy/MM/dd");
+        String delPath = getDb_bak() + '/' + TimeTools.getSpecialDateString( -30, "yyyy/MM/dd");
 
         try
         {

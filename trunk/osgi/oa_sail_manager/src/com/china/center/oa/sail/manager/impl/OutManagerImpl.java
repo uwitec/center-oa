@@ -352,9 +352,10 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             throw new RuntimeException("产品为空,数据不完备");
                         }
 
-                        if ( !nameList[i].trim().equals(product.getName()))
+                        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL
+                            && !nameList[i].trim().equals(product.getName()))
                         {
-                            throw new RuntimeException("数据错误,请重新操作");
+                            throw new RuntimeException("产品名不匹配,请重新操作");
                         }
 
                         // 产品名称来源于数据库

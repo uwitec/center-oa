@@ -23,6 +23,7 @@ import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.publics.constant.PublicConstant;
+import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.dao.OutDAO;
@@ -445,6 +446,14 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         return (Integer)count;
     }
 
+    public List<BaseBean> queryInwayOut()
+    {
+        String sql = "select t1.* from t_center_base t1, t_center_out t2 "
+                     + "where t1.outid = t2.fullid and t2.inway = 1 and t2.status = 3 and t2.type = 1 and t2.outType = 1 and t2.outTime > ?";
+
+        return this.jdbcOperation.queryForListBySql(sql, BaseBean.class, "2011-04-01");
+    }
+
     public boolean updataInWay(String fullId, int inway)
     {
         jdbcOperation.updateField("inway", inway, fullId, this.claz);
@@ -666,4 +675,5 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
 
         return backTotal;
     }
+
 }

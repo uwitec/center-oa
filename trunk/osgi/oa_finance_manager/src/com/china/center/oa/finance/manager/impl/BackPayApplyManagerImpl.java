@@ -476,6 +476,11 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
                     newInBill.setChecks("");
 
                     newInBill.setStatus(FinanceConstant.INBILL_STATUS_NOREF);
+                    newInBill
+                        .setDescription(newInBill.getDescription()
+                                        + ";退货转预收,销售单:"
+                                        + "<a href='../sail/out.do?method=findOut&radioIndex=0&fow=99&outId="
+                                        + bean.getOutId() + "'>" + bean.getOutId() + "</a>");
 
                     inBillDAO.updateEntityBean(newInBill);
 
