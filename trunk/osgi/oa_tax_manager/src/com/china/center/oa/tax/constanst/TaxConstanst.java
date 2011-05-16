@@ -149,136 +149,154 @@ public interface TaxConstanst
     int FINANCE_CREATETYPE_PRODUCT_PRICE_BACK = 6;
 
     /**
-     * 入库-调出
+     * 入库-调出（调入接受时）
      */
-    @Defined(key = "financeCreateType", value = "入库-调出")
-    int FINANCE_CREATETYPE_BUY_OUT = 7;
-
-    /**
-     * 入库-调入
-     */
-    @Defined(key = "financeCreateType", value = "入库-调入")
-    int FINANCE_CREATETYPE_BUY_IN = 8;
-
-    /**
-     * 入库-调出回滚
-     */
-    @Defined(key = "financeCreateType", value = "入库-调出回滚")
-    int FINANCE_CREATETYPE_BUY_OUTBACK = 9;
+    @Defined(key = "financeCreateType", value = "入库-调拨")
+    int FINANCE_CREATETYPE_BUY_OUT = 20;
 
     /**
      * 入库-报废
      */
     @Defined(key = "financeCreateType", value = "入库-报废")
-    int FINANCE_CREATETYPE_BUY_DROP = 10;
+    int FINANCE_CREATETYPE_BUY_DROP = 21;
 
     /**
      * 入库-系统纠正
      */
     @Defined(key = "financeCreateType", value = "入库-系统纠正")
-    int FINANCE_CREATETYPE_BUY_ERRORP = 11;
+    int FINANCE_CREATETYPE_BUY_ERRORP = 22;
 
     /**
      * 入库-采购退货
      */
     @Defined(key = "financeCreateType", value = "入库-采购退货")
-    int FINANCE_CREATETYPE_BUY_STOCKBACK = 12;
+    int FINANCE_CREATETYPE_BUY_STOCKBACK = 23;
 
     /**
      * 入库-其它入库
      */
     @Defined(key = "financeCreateType", value = "入库-其它入库")
-    int FINANCE_CREATETYPE_BUY_OTHER = 13;
-
-    /**
-     * 销售-销售出库
-     */
-    @Defined(key = "financeCreateType", value = "销售-销售出库")
-    int FINANCE_CREATETYPE_SAIL_COMMON = 14;
-
-    /**
-     * 销售-个人领养
-     */
-    @Defined(key = "financeCreateType", value = "销售-个人领样")
-    int FINANCE_CREATETYPE_SAIL_SWATCH = 15;
-
-    /**
-     * 销售-零售
-     */
-    @Defined(key = "financeCreateType", value = "销售-零售")
-    int FINANCE_CREATETYPE_SAIL_RETAIL = 16;
-
-    /**
-     * 销售-委托代销
-     */
-    @Defined(key = "financeCreateType", value = "销售-委托代销")
-    int FINANCE_CREATETYPE_SAIL_CONSIGN = 17;
-
-    /**
-     * 销售-赠送
-     */
-    @Defined(key = "financeCreateType", value = "销售-赠送")
-    int FINANCE_CREATETYPE_SAIL_PRESENT = 18;
+    int FINANCE_CREATETYPE_BUY_OTHER = 24;
 
     /**
      * 入库-个人领养退库
      */
     @Defined(key = "financeCreateType", value = "入库-个人领样退库")
-    int FINANCE_CREATETYPE_OUT_SWATCHBACK = 19;
+    int FINANCE_CREATETYPE_OUT_SWATCHBACK = 25;
 
     /**
      * 入库-销售退库
      */
     @Defined(key = "financeCreateType", value = "入库-销售退库")
-    int FINANCE_CREATETYPE_OUT_SAILBACK = 20;
+    int FINANCE_CREATETYPE_OUT_SAILBACK = 26;
 
     /**
-     * 资金-回款认领
+     * 销售-销售出库
      */
-    @Defined(key = "financeCreateType", value = "资金-回款认领")
-    int FINANCE_CREATETYPE_BILL_GETPAY = 21;
+    @Defined(key = "financeCreateType", value = "销售-销售出库")
+    int FINANCE_CREATETYPE_SAIL_COMMON = 40;
 
     /**
-     * 资金-回款退领
+     * 销售-个人领样
      */
-    @Defined(key = "financeCreateType", value = "资金-回款退领")
-    int FINANCE_CREATETYPE_BILL_GETPAY_BACK = 22;
+    @Defined(key = "financeCreateType", value = "销售-个人领样")
+    int FINANCE_CREATETYPE_SAIL_SWATCH = 41;
 
     /**
-     * 资金-预收转应收
+     * 销售-领样转销售
      */
-    @Defined(key = "financeCreateType", value = "资金-预收转应收")
-    int FINANCE_CREATETYPE_BILL_MAYTOREAL = 23;
+    @Defined(key = "financeCreateType", value = "销售-领样转销售")
+    int FINANCE_CREATETYPE_SAIL_SWATCHSAIL = 42;
 
     /**
-     * 资金-预收转应收回滚
+     * 销售-零售
      */
-    @Defined(key = "financeCreateType", value = "资金-预收转应收回滚")
-    int FINANCE_CREATETYPE_BILL_MAYTOREAL_BACK = 24;
+    @Defined(key = "financeCreateType", value = "销售-零售")
+    int FINANCE_CREATETYPE_SAIL_RETAIL = 43;
+
+    /**
+     * 销售-委托发货
+     */
+    @Defined(key = "financeCreateType", value = "销售-委托发货")
+    int FINANCE_CREATETYPE_SAIL_CONSIGN = 44;
+
+    /**
+     * 销售-委托结算单
+     */
+    @Defined(key = "financeCreateType", value = "销售-委托结算单")
+    int FINANCE_CREATETYPE_SAIL_CONSIGN_PAY = 45;
+
+    /**
+     * 销售-委托退货单
+     */
+    @Defined(key = "financeCreateType", value = "销售-委托退货单")
+    int FINANCE_CREATETYPE_SAIL_CONSIGN_BACK = 46;
+
+    /**
+     * 销售-赠送
+     */
+    @Defined(key = "financeCreateType", value = "销售-赠送")
+    int FINANCE_CREATETYPE_SAIL_PRESENT = 47;
 
     /**
      * 销售-销售坏账
      */
     @Defined(key = "financeCreateType", value = "销售-销售坏账")
-    int FINANCE_CREATETYPE_SAIL_BADMONEY = 25;
+    int FINANCE_CREATETYPE_SAIL_BADMONEY = 48;
 
     /**
      * 销售-坏账取消
      */
     @Defined(key = "financeCreateType", value = "销售-坏账取消")
-    int FINANCE_CREATETYPE_SAIL_BADMONEY_BACK = 26;
+    int FINANCE_CREATETYPE_SAIL_BADMONEY_BACK = 49;
+
+    /**
+     * 资金-回款新增
+     */
+    @Defined(key = "financeCreateType", value = "资金-回款新增")
+    int FINANCE_CREATETYPE_PAYBACK_ADD = 60;
+
+    /**
+     * 资金-回款认领
+     */
+    @Defined(key = "financeCreateType", value = "资金-回款认领")
+    int FINANCE_CREATETYPE_BILL_GETPAY = 61;
+
+    /**
+     * 资金-回款退领
+     */
+    @Defined(key = "financeCreateType", value = "资金-回款退领")
+    int FINANCE_CREATETYPE_BILL_GETPAY_BACK = 62;
+
+    /**
+     * 资金-预收转应收
+     */
+    @Defined(key = "financeCreateType", value = "资金-预收转应收")
+    int FINANCE_CREATETYPE_BILL_MAYTOREAL = 63;
+
+    /**
+     * 资金-预收转应收回滚
+     */
+    @Defined(key = "financeCreateType", value = "资金-预收转应收回滚")
+    int FINANCE_CREATETYPE_BILL_MAYTOREAL_BACK = 64;
 
     /**
      * 资金-销售退款
      */
     @Defined(key = "financeCreateType", value = "资金-销售退款")
-    int FINANCE_CREATETYPE_BILL_SAILBACK = 27;
+    int FINANCE_CREATETYPE_BILL_SAILBACK = 65;
 
     /**
      * 资金-预收退款
      */
     @Defined(key = "financeCreateType", value = "资金-预收退款")
-    int FINANCE_CREATETYPE_BILL_MAYBACK = 28;
+    int FINANCE_CREATETYPE_BILL_MAYBACK = 66;
+
+    /**
+     * 资金-预收转费用
+     */
+    @Defined(key = "financeCreateType", value = "资金-预收转费用")
+    int FINANCE_CREATETYPE_BILL_TOFEE = 67;
 
     /**
      * 客户
