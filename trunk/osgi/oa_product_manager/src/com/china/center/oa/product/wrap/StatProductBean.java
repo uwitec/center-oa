@@ -27,6 +27,13 @@ public class StatProductBean extends StorageLogBean
     private String productName = "";
 
     /**
+     * 产品名称
+     */
+    private String productCode = "";
+
+    private String locationName = "";
+
+    /**
      * 当前数量
      */
     private int currentAmount = 0;
@@ -104,5 +111,77 @@ public class StatProductBean extends StorageLogBean
     public void setDepotpartName(String depotpartName)
     {
         this.depotpartName = depotpartName;
+    }
+
+    /**
+     * @return the productCode
+     */
+    public String getProductCode()
+    {
+        return productCode;
+    }
+
+    /**
+     * @param productCode
+     *            the productCode to set
+     */
+    public void setProductCode(String productCode)
+    {
+        this.productCode = productCode;
+    }
+
+    /**
+     * @return the locationName
+     */
+    public String getLocationName()
+    {
+        return locationName;
+    }
+
+    /**
+     * @param locationName
+     *            the locationName to set
+     */
+    public void setLocationName(String locationName)
+    {
+        this.locationName = locationName;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("StatProductBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("storageName = ")
+            .append(this.storageName)
+            .append(TAB)
+            .append("depotpartName = ")
+            .append(this.depotpartName)
+            .append(TAB)
+            .append("productName = ")
+            .append(this.productName)
+            .append(TAB)
+            .append("productCode = ")
+            .append(this.productCode)
+            .append(TAB)
+            .append("locationName = ")
+            .append(this.locationName)
+            .append(TAB)
+            .append("currentAmount = ")
+            .append(this.currentAmount)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }

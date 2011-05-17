@@ -8,7 +8,7 @@
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/tableSort.js"></script>
 <script language="javascript">
-function process()
+function process2()
 {
 	if (getRadioValue('consigns') == '')
 	{
@@ -16,7 +16,19 @@ function process()
 		return;
 	}
 	
-	document.location.href = '../product/reports.do?method=listStorageLog&productId=' + getRadioValue('consigns');
+	document.location.href = '../depot/storage.do?method=queryStorageLog&queryType=2&productId='
+	    + getRadio('consigns').pid + '&locationId=' + getRadio('consigns').loca;
+}
+
+function process()
+{
+    if (getRadioValue('consigns') == '')
+    {
+        alert('请选择');
+        return;
+    }
+    
+    document.location.href = '../product/reports.do?method=listStorageLog&productId=' + getRadioValue('consigns');
 }
 
 function exports()
@@ -37,9 +49,9 @@ function load()
 
 function cc()
 {
-	if (compareDays($$('beginDate'), $$('endDate')) > 40)
+	if (compareDays($$('beginDate'), $$('endDate')) > 90)
 	{
-		alert('跨度不能大于40天');
+		alert('跨度不能大于90天');
 		return false;
 	}
 	
@@ -60,9 +72,9 @@ function stat()
 	<td width="85"></td>
 </p:navigation> <br>
 
-<p:body width="90%">
+<p:body width="100%">
 
-	<p:subBody width="95%">
+	<p:subBody width="98%">
 		<table width="100%" align="center" cellspacing='1' class="table0">
 			<tr class="content1">
 				<td width="15%" align="center">开始时间</td>
@@ -77,16 +89,21 @@ function stat()
 
 			<tr class="content2">
 				<td width="15%" align="center">仓区:</td>
-				<td align="left" colspan="1"><select name="depotpartId"
-					class="select_class" values="${depotpartId}" style="width: 100%">
+				<td align="left" colspan="3"><select name="depotpartId"
+					class="select_class" values="${depotpartId}" style="width: 50%">
 					<option value="">--</option>
 					<c:forEach items="${depotpartList}" var="item">
 					<option value="${item.id}">${item.name}</option>
 					</c:forEach>
 				</select></td>
-				<td width="15%" align="center">产品</td>
-				<td align="left" colspan="1"><input type="text" name="productName" value="${productName}"></td>
 			</tr>
+			
+			<tr class="content1">
+                <td width="15%" align="center">产品名称</td>
+                <td align="left" colspan="1"><input type="text" name="productName" style="width: 100%" value="${productName}"></td>
+                <td width="15%" align="center">产品编码</td>
+                <td align="left" colspan="1"><input type="text" name="productCode" style="width: 100%" value="${productCode}"></td>
+            </tr>
 
 			<tr class="content1">
 				<td colspan="4" align="right"><input type="button" onclick="stat()"
@@ -104,10 +121,11 @@ function stat()
 
 	<p:line flag="0" />
 
-	<p:subBody width="95%">
+	<p:subBody width="98%">
 		<table width="100%" align="center" cellspacing='1' class="table0">
 			<tr align=center class="content0">
 				<td align="center" class="td_class">选择</td>
+				<td align="center" class="td_class" onclick="tableSort(this)"><strong>仓库</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"><strong>仓区</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"><strong>产品</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>原始数量</strong></td>
@@ -120,9 +138,12 @@ function stat()
 				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
 					<td align="center"><input type="radio" name="consigns"
 						value="${item.productId};${item.depotpartId}"
+						pid="${item.productId}"
+						loca="${item.locationId}"
 						${vs.index== 0 ? "checked" : ""}/></td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.locationName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.depotpartName}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${item.productName}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.productName}(${item.productCode})</td>
 					
 					<td align="center" onclick="hrefAndSelect(this)">${item.preAmount}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.changeAmount}</td>
@@ -142,6 +163,8 @@ function stat()
 			value="&nbsp;&nbsp;导出盘点&nbsp;&nbsp;" onclick="exportsAll()">&nbsp;&nbsp;
 			<input type="button" class="button_class"
 			value="&nbsp;&nbsp;查看明细&nbsp;&nbsp;" onclick="process()">&nbsp;&nbsp;
+			<input type="button" class="button_class"
+            value="&nbsp;&nbsp;仓库下异动明细&nbsp;&nbsp;" onclick="process2()">&nbsp;&nbsp;
 		</div>
 	</p:button>
 

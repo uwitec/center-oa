@@ -35,10 +35,12 @@ import org.apache.struts.actions.DispatchAction;
 
 import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.StorageBean;
 import com.china.center.oa.product.bean.StorageLogBean;
+import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.DepotpartDAO;
 import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.dao.StorageDAO;
@@ -71,6 +73,8 @@ public class ReportsAction extends DispatchAction
     private StorageRelationDAO storageRelationDAO = null;
 
     private DepotpartDAO depotpartDAO = null;
+
+    private DepotDAO depotDAO = null;
 
     /**
      * default constructor
@@ -526,6 +530,7 @@ public class ReportsAction extends DispatchAction
         if (pp != null)
         {
             bean.setProductName(pp.getName());
+            bean.setProductCode(pp.getCode());
         }
 
         StorageBean sb = storageDAO.find(bean.getStorageId());
@@ -539,6 +544,15 @@ public class ReportsAction extends DispatchAction
         if (db != null)
         {
             bean.setDepotpartName(db.getName());
+            // 设置仓库
+            bean.setLocationId(db.getLocationId());
+
+            DepotBean depot = depotDAO.find(db.getLocationId());
+
+            if (depot != null)
+            {
+                bean.setLocationName(depot.getName());
+            }
         }
     }
 
@@ -572,6 +586,13 @@ public class ReportsAction extends DispatchAction
         if ( !StringTools.isNullOrNone(productName))
         {
             condition.addCondition("t2.name", "like", productName);
+        }
+
+        String productCode = request.getParameter("productCode");
+
+        if ( !StringTools.isNullOrNone(productCode))
+        {
+            condition.addCondition("t2.code", "like", productCode);
         }
 
         condition.addCondition("order by t1.id");
@@ -660,6 +681,23 @@ public class ReportsAction extends DispatchAction
     public void setStorageRelationDAO(StorageRelationDAO storageRelationDAO)
     {
         this.storageRelationDAO = storageRelationDAO;
+    }
+
+    /**
+     * @return the depotDAO
+     */
+    public DepotDAO getDepotDAO()
+    {
+        return depotDAO;
+    }
+
+    /**
+     * @param depotDAO
+     *            the depotDAO to set
+     */
+    public void setDepotDAO(DepotDAO depotDAO)
+    {
+        this.depotDAO = depotDAO;
     }
 
 }
