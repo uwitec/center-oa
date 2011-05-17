@@ -1078,7 +1078,7 @@ public class CustomerAction extends DispatchAction
 
         condtion.addWhereStr();
 
-        // condtion.addCondition("CustomerBean.locationId", "=", user.getLocationId());
+        condtion.addCondition("CustomerBean.createTime", ">=", "2011-04-01 00:00:00");
 
         // condtion.addIntCondition("CustomerBean.status", "=", CustomerConstant.REAL_STATUS_IDLE);
 
