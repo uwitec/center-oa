@@ -75,7 +75,7 @@ function reject(id)
 
 function detail(id)
 {
-	document.location.href = '../stock/ask.do?method=findPriceAsk&id=' + id;
+	document.location.href = '../stock/ask.do?method=findPriceAsk&id=' + id + '&srcType=${srcType}';
 }
 
 function selectProduct(index)
@@ -292,6 +292,11 @@ function updatePass(id)
 						<a title="处理询价" href="javascript:process('${item.id}')"> <img
 							src="../images/opr/change.gif" border="0" height="15" width="15"></a>
 					</c:if>
+					
+					<c:if test="${item.saveType == 1}">
+                        <a title="询价详细" href="javascript:detail('${item.id}')"> <img
+                            src="../images/opr/edit.gif" border="0" height="15" width="15"></a>
+                    </c:if>
 
 					</td>
 					<td align="center" onclick="hrefAndSelect(this)">

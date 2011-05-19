@@ -1121,7 +1121,12 @@ public class PriceAskAction extends DispatchAction
 
                     if (items.size() > 0)
                     {
+                        priceAskBeanVO.setSaveType(1);
                         map.put(priceAskBeanVO.getId(), PriceAskHelper.createTable(items, user, 1));
+                    }
+                    else
+                    {
+                        priceAskBeanVO.setSaveType(0);
                     }
                 }
             }

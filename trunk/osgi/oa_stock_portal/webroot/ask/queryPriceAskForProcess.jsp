@@ -78,7 +78,7 @@ function reject(id)
 
 function detail(id)
 {
-	document.location.href = '../stock/ask.do?method=findPriceAsk&id=' + id;
+	document.location.href = '../stock/ask.do?method=findPriceAsk&id=' + id + '&srcType=${srcType}';
 }
 
 function selectProduct(index)
