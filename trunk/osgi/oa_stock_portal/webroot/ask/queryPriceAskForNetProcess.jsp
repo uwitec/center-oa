@@ -293,7 +293,7 @@ function updatePass(id)
 							src="../images/opr/change.gif" border="0" height="15" width="15"></a>
 					</c:if>
 					
-					<c:if test="${item.saveType == 1}">
+					<c:if test="${item.status == 1}">
                         <a title="询价详细" href="javascript:detail('${item.id}')"> <img
                             src="../images/opr/edit.gif" border="0" height="15" width="15"></a>
                     </c:if>
