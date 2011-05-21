@@ -1446,7 +1446,7 @@ public class StorageAction extends DispatchAction
 
         ConditionParse condtion = setRptQueryProductCondition2(request);
 
-        // CORE 控制出售区域(某些产品只能在一定的区域下销售)
+        // CORE 控制出售区域(某些产品只能在一定的区域下销售) 这个参数只有为空才有意义
         String sailLocation = request.getParameter("sailLocation");
 
         int total = storageRelationDAO.countVOByCondition(condtion.toString());
