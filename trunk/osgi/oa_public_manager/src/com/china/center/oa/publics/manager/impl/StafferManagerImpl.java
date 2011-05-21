@@ -141,7 +141,7 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
             }
         }
 
-        handlerOne(bean, set, null);
+        handlerOne(bean, set, null, null);
 
         // 这里只保存第一个
         bean.setIndustryId(industryId);
@@ -202,7 +202,8 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
      * @param set
      * @throws MYException
      */
-    private void handlerOne(StafferBean bean, Set<String> set, List<InvoiceCreditBean> oldVS)
+    private void handlerOne(StafferBean bean, Set<String> set, List<InvoiceCreditBean> oldVS,
+                            StafferBean oldBean)
         throws MYException
     {
         if (set.size() > 1)
@@ -217,7 +218,7 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
             }
         }
 
-        if ( !equal(set, oldVS))
+        if ( !equal(set, oldVS) || oldBean.getCredit() != bean.getCredit())
         {
             // 事业部信用
             invoiceCreditDAO.deleteEntityBeansByFK(bean.getId());
@@ -367,7 +368,7 @@ public class StafferManagerImpl extends AbstractListenerManager<StafferListener>
 
         List<InvoiceCreditBean> oldVS = invoiceCreditDAO.queryEntityBeansByFK(bean.getId());
 
-        handlerOne(bean, set, oldVS);
+        handlerOne(bean, set, oldVS, oldBean);
 
         if (set.size() > 0)
         {
