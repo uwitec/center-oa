@@ -248,6 +248,10 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         final String[] desList = request.getParameter("desList").split("~");
         final String[] otherList = request.getParameter("otherList").split("~");
 
+        _logger.info(fullId + "/nameList/" + request.getParameter("nameList"));
+
+        _logger.info(fullId + "/idsList/" + request.getParameter("idsList"));
+
         _logger.info(fullId + "/totalList/" + request.getParameter("totalList"));
 
         _logger.info(fullId + "/price/" + request.getParameter("priceList"));
@@ -353,9 +357,10 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         }
 
                         if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL
-                            && !nameList[i].trim().equals(product.getName()))
+                            && !nameList[i].trim().equals(product.getName().trim()))
                         {
-                            throw new RuntimeException("产品名不匹配,请重新操作");
+                            throw new RuntimeException("产品名不匹配,请重新操作.申请:" + nameList[i].trim()
+                                                       + ".实际:" + product.getName());
                         }
 
                         // 产品名称来源于数据库
