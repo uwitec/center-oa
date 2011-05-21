@@ -42,7 +42,7 @@ function opens(obj)
     
     oo = obj;
     
-    window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&sailLocation=${user.locationId}&showAbs=1&load=1&depotId='+ $$('location') + '&code=' + obj.productcode);
+    window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&sailLocation=${g_staffer.industryId}&showAbs=1&load=1&depotId='+ $$('location') + '&code=' + obj.productcode);
 }
 
 function load()
