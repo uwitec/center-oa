@@ -13,6 +13,7 @@
 	<entry key="systemAtt">d:/oa_attachment/flow</entry>
 	<entry key="mailAttchmentPath">d:/oa_attachment/mail</entry>
 	<entry key="productStore">d:/oa_attachment/product</entry>
+	<entry key="bankStore">d:/oa_attachment/bank</entry>
 	<entry key="script">D:/oa_attachment/script</entry>
 	<entry key="picPath">D:/oa_attachment/picPath</entry>
 	<entry key="db_bak">d:/oa_db_bak</entry>

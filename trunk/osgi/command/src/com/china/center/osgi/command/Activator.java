@@ -16,6 +16,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceReference;
 
 
 public class Activator implements BundleActivator, CommandProvider
@@ -191,8 +192,8 @@ public class Activator implements BundleActivator, CommandProvider
                     version = method.invoke(bundles[i]).toString();
                 }
 
-                String allStr = String.valueOf(bundles[i].getBundleId()) + bundles[i].getSymbolicName() + version
-                                + getStateName(bundles[i]);
+                String allStr = String.valueOf(bundles[i].getBundleId())
+                                + bundles[i].getSymbolicName() + version + getStateName(bundles[i]);
 
                 if (contain(allStr, filtrateList))
                 {
@@ -209,6 +210,92 @@ public class Activator implements BundleActivator, CommandProvider
             intp.print(newline);
 
             intp.print("filter bundles amount: " + total);
+        }
+    }
+
+    /**
+     * filter
+     * 
+     * @param ci
+     * @throws Exception
+     */
+    public void _exc(CommandInterpreter intp)
+        throws Exception
+    {
+        Bundle[] bundles = (Bundle[])context.getBundles();
+
+        if (bundles.length == 0)
+        {
+            intp.println("NO bundle");
+        }
+        else
+        {
+            String filtrate = intp.nextArgument();
+
+            List<String> filtrateList = new ArrayList();
+
+            while (filtrate != null)
+            {
+                filtrateList.add(filtrate);
+
+                filtrate = intp.nextArgument();
+            }
+
+            if (filtrateList.size() != 2)
+            {
+                intp.print("参数不正确.exc 接口 方法");
+
+                intp.print(newline);
+
+                return;
+            }
+
+            String className = filtrateList.get(0).trim();
+
+            String methodName = filtrateList.get(1).trim();
+
+            // 类名.方法(无参数的)
+            ServiceReference serviceReference = context.getServiceReference(className);
+
+            if (serviceReference == null)
+            {
+                intp.print("接口没有找到注册的服务");
+
+                intp.print(newline);
+
+                return;
+            }
+
+            Object service = context.getService(serviceReference);
+
+            if (service == null)
+            {
+                intp.print("注册的服务不存在");
+
+                intp.print(newline);
+
+                return;
+            }
+
+            Method[] declaredMethods = service.getClass().getDeclaredMethods();
+
+            for (Method method : declaredMethods)
+            {
+                if (method.getName().equalsIgnoreCase(methodName))
+                {
+                    method.invoke(service);
+
+                    intp.print(methodName + ":执行成功");
+
+                    intp.print(newline);
+
+                    return;
+                }
+            }
+
+            intp.print(methodName + ":没有找到");
+
+            intp.print(newline);
         }
     }
 
@@ -246,8 +333,8 @@ public class Activator implements BundleActivator, CommandProvider
                     version = method.invoke(bundles[i]).toString();
                 }
 
-                String allStr = String.valueOf(bundles[i].getBundleId()) + bundles[i].getSymbolicName() + version
-                                + getStateName(bundles[i]);
+                String allStr = String.valueOf(bundles[i].getBundleId())
+                                + bundles[i].getSymbolicName() + version + getStateName(bundles[i]);
 
                 if (contain(allStr, filtrateList))
                 {
@@ -301,8 +388,8 @@ public class Activator implements BundleActivator, CommandProvider
                     version = method.invoke(bundles[i]).toString();
                 }
 
-                String allStr = String.valueOf(bundles[i].getBundleId()) + bundles[i].getSymbolicName() + version
-                                + getStateName(bundles[i]);
+                String allStr = String.valueOf(bundles[i].getBundleId())
+                                + bundles[i].getSymbolicName() + version + getStateName(bundles[i]);
 
                 if (contain(allStr, filtrateList))
                 {
