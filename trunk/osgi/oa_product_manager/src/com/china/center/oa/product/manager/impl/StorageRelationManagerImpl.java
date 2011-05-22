@@ -906,6 +906,9 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
 
     public List<String> checkStorageLog()
     {
+        // 先导出库存
+        exportAllStorageRelation();
+
         final List<String> result = new LinkedList<String>();
 
         String logTime = "2011-04-01 00:00:00";

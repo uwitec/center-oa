@@ -46,6 +46,8 @@ public class ComposeFeeBean implements Serializable
 
     private String logTime = "";
 
+    private String description = "";
+
     /**
      * default constructor
      */
@@ -139,6 +141,23 @@ public class ComposeFeeBean implements Serializable
     }
 
     /**
+     * @return the description
+     */
+    public String getDescription()
+    {
+        return description;
+    }
+
+    /**
+     * @param description
+     *            the description to set
+     */
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -147,7 +166,7 @@ public class ComposeFeeBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
         retValue
             .append("ComposeFeeBean ( ")
@@ -167,6 +186,9 @@ public class ComposeFeeBean implements Serializable
             .append(TAB)
             .append("logTime = ")
             .append(this.logTime)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
             .append(TAB)
             .append(" )");
 

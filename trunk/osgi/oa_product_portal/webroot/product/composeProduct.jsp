@@ -254,7 +254,8 @@ function load()
                 <table width="100%" border="0" cellspacing='1' id="tables2">
                     <tr align="center" class="content0">
                         <td width="30%" align="center">合成费用项</td>
-                        <td width="70%" align="center">费用</td>
+                        <td width="20%" align="center">费用</td>
+                        <td width="50%" align="center">备注</td>
                     </tr>
                     
                     <c:forEach items="${feeList}" var="item">
@@ -265,6 +266,10 @@ function load()
                     name="feeItemId" value="${item.id}">
                         <input type="text" style="width: 100%"
                     name="feeItem" value="0.0" oncheck="notNone;isFloat">
+                        </td>
+                        <td width="30%" align="center">
+                        <input type="text" style="width: 100%"
+                    name="idescription" value="" maxlength="200">
                         </td>
                     </tr>
                     </c:forEach>

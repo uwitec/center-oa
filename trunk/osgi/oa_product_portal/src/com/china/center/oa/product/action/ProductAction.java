@@ -1075,6 +1075,7 @@ public class ProductAction extends DispatchAction
         // 获取费用
         String[] feeItemIds = request.getParameterValues("feeItemId");
         String[] feeItems = request.getParameterValues("feeItem");
+        String[] idescriptions = request.getParameterValues("idescription");
 
         List<ComposeFeeBean> feeList = new ArrayList<ComposeFeeBean>();
 
@@ -1088,6 +1089,7 @@ public class ProductAction extends DispatchAction
                 each.setFeeItemId(feeItemIds[i]);
                 each.setPrice(CommonTools.parseFloat(feeItems[i]));
                 each.setLogTime(bean.getLogTime());
+                each.setDescription(idescriptions[i]);
                 feeList.add(each);
 
                 total += each.getPrice();

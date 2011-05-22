@@ -84,14 +84,16 @@ function pagePrint()
 	<p:subBody width="100%">
 		<p:table cells="2">
 			<tr align="center" class="content0">
-				<td width="50%" align="center">合成费用项</td>
-				<td width="50%" align="center">费用</td>
+				<td width="30%" align="center">合成费用项</td>
+				<td width="20%" align="center">费用</td>
+				<td width="50%" align="center">备注</td>
 			</tr>
 			
 			<c:forEach items="${bean.feeVOList}" var="item">
 			<tr align="center" class="content1">
-				<td width="50%" align="center">${item.feeItemName}</td>
-				<td width="50%" align="center">${my:formatNum(item.price)}</td>
+				<td width="30%" align="center">${item.feeItemName}</td>
+				<td width="30%" align="center">${my:formatNum(item.price)}</td>
+				<td width="50%" align="center">${item.description}</td>
 			</tr>
 			</c:forEach>
 		</p:table>
