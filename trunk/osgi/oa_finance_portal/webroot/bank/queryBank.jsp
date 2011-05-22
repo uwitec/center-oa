@@ -39,8 +39,8 @@ function load()
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1601'},
              {id: 'update', bclass: 'update', onpress : updateBean, auth: '1601'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1601'},
-             {id: 'export', bclass: 'odraw',  caption: '帐户当前异动明细', onpress : exports},
-             {id: 'export2', bclass: 'odraw',  caption: '帐户历史异动明细', onpress : exports2},
+             {id: 'export', bclass: 'replied',  caption: '帐户当前异动明细', onpress : exports},
+             {id: 'export2', bclass: 'replied',  caption: '帐户历史异动明细', onpress : exports2},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
