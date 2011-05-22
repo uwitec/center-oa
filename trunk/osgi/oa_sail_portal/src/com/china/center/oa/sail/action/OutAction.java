@@ -721,6 +721,46 @@ public class OutAction extends ParentOutAction
     }
 
     /**
+     * checksOutBalance总部核对委托退单
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward checksOutBalance(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        String fullId = request.getParameter("id");
+
+        String checks = request.getParameter("reason");
+
+        User user = (User)request.getSession().getAttribute("user");
+
+        try
+        {
+            outManager.checkOutBalance(fullId, user, checks);
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理错误:" + e.getErrorContent());
+
+            return mapping.findForward("error");
+        }
+
+        request.setAttribute(KeyConstant.MESSAGE, "成功核对单据:" + fullId);
+
+        request.setAttribute("forward", "1");
+
+        return queryOutBalance(mapping, form, request, reponse);
+    }
+
+    /**
      * 付款(结算中心)
      * 
      * @param mapping

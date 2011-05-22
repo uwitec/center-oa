@@ -13,6 +13,7 @@
 <script src="../js/jquery/jquery.js"></script>
 <script src="../js/plugin/dialog/jquery.dialog.js"></script>
 <script src="../js/plugin/highlight/jquery.highlight.js"></script>
+<script src="../js/adapter.js"></script>
 <script language="javascript">
 function comp()
 {
@@ -213,6 +214,39 @@ function exports()
     document.location.href = '../sail/out.do?method=exportOutBalance';
 }
 
+function centerCheck()
+{
+    if (getRadio('fullId').statuss == 99 && getRadio('fullId').pcheckstatus == 0)
+    {
+        $.messager.prompt('总部核对', '请核对说明', '', function(r){
+                if (r)
+                {
+                    $Dbuttons(true);
+                    getObj('method').value = 'checksOutBalance';
+                    getObj('id').value = getRadioValue("fullId");
+        
+                    var sss = r;
+        
+                    getObj('reason').value = r;
+        
+                    if (!(sss == null || sss == ''))
+                    {
+                        adminForm.submit();
+                    }
+                    else
+                    {
+                        $Dbuttons(false);
+                    }
+                }
+               
+            });
+    }
+    else
+    {
+        alert('不能操作');
+    }
+}
+
 </script>
 
 </head>
@@ -227,7 +261,7 @@ function exports()
 
 <p:navigation
     height="22">
-    <td width="550" class="navigation">销售管理 &gt;&gt; 我的结算清单${queryType}</td>
+    <td width="550" class="navigation">销售管理 &gt;&gt; 结算清单${queryType}</td>
                 <td width="85"></td>
 </p:navigation> <br>
 
@@ -275,7 +309,6 @@ function exports()
                     </tr>
 
 					<tr class="content2">
-
 						<td colspan="4" align="right"><input type="button" id="query_b"
 							onclick="query()" class="button_class"
 							value="&nbsp;&nbsp;查 询&nbsp;&nbsp;">&nbsp;&nbsp;
@@ -313,6 +346,7 @@ function exports()
 						<td align="center" onclick="tableSort(this)" class="td_class">已开票</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">类型</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">提交人</td>
+						<td align="center" onclick="tableSort(this)" class="td_class">核对</td>
 						<td align="center" onclick="tableSort(this)" class="td_class">时间</td>
 					</tr>
 
@@ -322,10 +356,18 @@ function exports()
 							<td align="center"><input type="radio" name="fullId" 
 								statuss='${item.status}' 
 								ptype='${item.type}' 
+								pcheckstatus='${item.checkStatus}' 
 								pcustomerid='${item.customerId}' 
 								value="${item.id}" ${vs.index== 0 ? "checked" : ""}/></td>
 							<td align="center" onclick="hrefAndSelect(this)">
-							<a href="../sail/out.do?method=findOutBalance&id=${item.id}">
+							
+							<c:set var="pcheck" value=""></c:set>
+							
+							<c:if test="${queryType == '4' && item.checkStatus == 0}">
+	                        <c:set var="pcheck" value="&check=1"></c:set>
+	                        </c:if>
+							
+							<a href="../sail/out.do?method=findOutBalance&id=${item.id}${pcheck}">
 							${item.id}
 							</a>
 							</td>
@@ -342,6 +384,7 @@ function exports()
 							<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.invoiceMoney)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('outBalanceType', item.type)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
+							<td align="center" onclick="hrefAndSelect(this)">${my:get('pubCheckStatus', item.checkStatus)}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.logTime}</td>
 						</tr>
 					</c:forEach>
@@ -396,6 +439,11 @@ function exports()
             <input
             type="button" class="button_class"
             value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;" onclick="reject()" />&nbsp;&nbsp;
+        </c:if>
+        
+        <c:if test="${queryType == '4'}">
+        <input type="button" class="button_class"
+                value="&nbsp;&nbsp;总部核对&nbsp;&nbsp;" onClick="centerCheck()"/>&nbsp;&nbsp;
         </c:if>
         
          <input

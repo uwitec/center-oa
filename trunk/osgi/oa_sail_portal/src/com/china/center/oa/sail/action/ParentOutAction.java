@@ -344,6 +344,8 @@ public class ParentOutAction extends DispatchAction
                                         HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
+        CommonTools.saveParamers(request);
+
         String id = request.getParameter("id");
 
         OutBalanceBean bean = outBalanceDAO.findVO(id);
@@ -2666,6 +2668,12 @@ public class ParentOutAction extends DispatchAction
         {
             throw new MYException("用户没有此操作的权限");
         }
+
+        if ("4".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.FINANCE_CHECK))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
     }
 
     /**
@@ -3306,9 +3314,9 @@ public class ParentOutAction extends DispatchAction
         }
         else
         {
-            condtion.addCondition("OutBalanceBean.logTime", ">=", TimeTools.now_short( -7));
+            condtion.addCondition("OutBalanceBean.logTime", ">=", TimeTools.now_short( -30));
 
-            request.setAttribute("outTime", TimeTools.now_short( -7));
+            request.setAttribute("outTime", TimeTools.now_short( -30));
         }
 
         if ( !StringTools.isNullOrNone(outTime1))
@@ -3386,6 +3394,24 @@ public class ParentOutAction extends DispatchAction
 
             // 库存所管辖的
             setDepotCondotionInOutBlance(user, condtion);
+        }
+        // 退货总部核对
+        else if ("4".equals(queryType))
+        {
+            if (OldPageSeparateTools.isMenuLoad(request))
+            {
+                condtion.addIntCondition("OutBalanceBean.status", "=",
+                    OutConstant.OUTBALANCE_STATUS_END);
+
+                request.setAttribute("status", OutConstant.OUTBALANCE_STATUS_END);
+
+                condtion.addIntCondition("OutBalanceBean.checkStatus", "=",
+                    PublicConstant.CHECK_STATUS_INIT);
+            }
+
+            condtion.addIntCondition("OutBalanceBean.type", "=", OutConstant.OUTBALANCE_TYPE_BACK);
+
+            request.setAttribute("type", OutConstant.OUTBALANCE_TYPE_BACK);
         }
         else
         {

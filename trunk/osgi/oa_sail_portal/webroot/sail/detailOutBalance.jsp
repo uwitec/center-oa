@@ -5,11 +5,16 @@
 <html>
 <head>
 <p:link title="委托代销结算清单" />
+<link href="../js/plugin/dialog/css/dialog.css" type="text/css" rel="stylesheet"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="JavaScript" src="../js/json.js"></script>
+<script src="../js/jquery/jquery.js"></script>
+<script src="../js/plugin/dialog/jquery.dialog.js"></script>
+<script src="../js/plugin/highlight/jquery.highlight.js"></script>
+<script src="../js/adapter.js"></script>
 <script language="javascript">
 function load()
 {
@@ -21,10 +26,39 @@ function addBean()
     submit('确定提交委托代销结算?');
 }
 
+function centerCheck()
+{
+   $.messager.prompt('总部核对', '请核对说明', '', function(r){
+                if (r)
+                {
+                    $Dbuttons(true);
+                    
+                    getObj('method').value = 'checksOutBalance';
+        
+                    var sss = r;
+        
+                    getObj('reason').value = r;
+        
+                    if (!(sss == null || sss == ''))
+                    {
+                        formBean.submit();
+                    }
+                    else
+                    {
+                        $Dbuttons(false);
+                    }
+                }
+               
+            });
+}
+
 </script>
 </head>
 <body class="body_class" onload="load()">
 <form name="formBean" method=post action="../sail/out.do">
+<input type="hidden" value="" name="method"> 
+    <input type="hidden" value="${bean.id}" name="id">
+    <input type="hidden" value="" name="reason">
 <p:navigation
     height="22">
     <td width="550" class="navigation">结算清单详细</td>
@@ -111,6 +145,14 @@ function addBean()
                         <td width="15%" align="right">审批意见：</td>
                         <td width="35%">${bean.reason}</td>
                     </tr>
+                    
+                     <tr class="content1">
+                        <td width="15%" align="right">核对：</td>
+
+                        <td width="35%">${my:get('pubCheckStatus', bean.checkStatus)}</td>
+                        <td width="15%" align="right">核对信息：</td>
+                        <td width="35%">${bean.checks}</td>
+                    </tr>
 
                 </table>
                 </td>
@@ -170,6 +212,13 @@ function addBean()
 	<tr>
         <td width="100%">
         <div align="right">
+         <c:if test="${check == 1}">
+        <input
+            type="button" name="ba" class="button_class"
+            onclick="centerCheck()"
+            value="&nbsp;&nbsp;总部核对&nbsp;&nbsp;">&nbsp;&nbsp;
+        </c:if>
+        
     <input
             type="button" name="ba" class="button_class"
             onclick="javascript:history.go(-1)"
