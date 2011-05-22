@@ -196,7 +196,8 @@ public class Activator implements BundleActivator
             for (File subDir : listFiles)
             {
                 // /webroot/ask
-                if (subDir.isDirectory())
+                if (subDir.isDirectory() && !subDir.getName().endsWith("CVS")
+                    && !subDir.getName().endsWith(".svn"))
                 {
                     File[] fileList = subDir.listFiles();
 
