@@ -121,4 +121,14 @@ public interface SysConfigConstant
      */
     String MAX_RECVIVE_FEE = "MAX_RECVIVE_FEE";
 
+    /**
+     * 银行期初点
+     */
+    String BANK_STAT_POINT = "BANK_STAT_POINT";
+
+    /**
+     * 银行导出余额的时间临界点
+     */
+    String BANK_EXPORT_POINT = "BANK_EXPORT_POINT";
+
 }
