@@ -169,7 +169,7 @@ public abstract class OutHelper
 
             // 调动分为两个单据 一个是源头的调出入库单 一个是目的的调入入库单
             // 源头调出后状态处于提交态,此时可以驳回的
-            if (outBean.getStatus() == OutConstant.STATUS_PASS
+            if ( (outBean.getStatus() == OutConstant.STATUS_PASS || outBean.getStatus() == OutConstant.STATUS_SEC_PASS)
                 && outBean.getType() == OutConstant.OUTTYPE_IN_MOVEOUT)
             {
                 return true;

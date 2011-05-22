@@ -530,12 +530,10 @@ function hrefAndSelect(obj)
 					</tr>
 					
 					<c:forEach items="${listOut1}" var="item" varStatus="vs">
-					    <c:if test="${queryType == '8' && item.status == 3}">
+					    <c:set var="pcheck" value=""></c:set>
+					    <c:if test="${queryType == '8' && (item.status == 3 || item.status == 4)}">
                         <c:set var="pcheck" value="&check=1"></c:set>
 	                    </c:if>
-	                    <c:if test="${queryType != '8' || item.status != 3}">
-                        <c:set var="pcheck" value=""></c:set>
-                        </c:if>
 						<tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'
 						>
 							<td align="center"><input type="radio" name="fullId" onclick="hrefAndSelect(this)"
