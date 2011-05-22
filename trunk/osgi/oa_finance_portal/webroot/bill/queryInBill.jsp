@@ -40,7 +40,7 @@ function load()
              {display: '核对', name : 'checkStatus', cc: 'pubCheckStatus', width : '5%'},
              {display: '金额', name : 'moneys',  toFixed: 2, width : '8%'},
              {display: '客户', name : 'customerName', width : '12%'},
-             {display: '职员', name : 'ownerName', width : '5%'},
+             {display: '职员/更新', name : 'ownerName', content: '{ownerName}/{updateId}', sortable : true, cname: 'updateId', width : '10%'},
              {display: '时间', name : 'logTime', sortable : true, width : 'auto'}
              ],
          extAtt: {

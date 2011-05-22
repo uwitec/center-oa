@@ -50,4 +50,6 @@ public interface InBillDAO extends DAO<InBillBean, InBillVO>
     int countUnitInBill(String id);
 
     boolean updateSrcMoneys(String id, double srcMoneys);
+
+    boolean updateUpdateId(String id, int updateId);
 }

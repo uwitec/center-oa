@@ -24,7 +24,7 @@ function load()
          title: '统计列表',
          url: gurl + 'query' + ukey,
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
+             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={bankId}>', width : 40, align: 'center'},
              {display: '月份', name : 'timeKey', width : '10%'},
              {display: '名称', name : 'bankName', width : '25%'},
              {display: '月度余额', name : 'total', toFixed: 2, sortable : true, width : 'auto'}

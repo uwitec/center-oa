@@ -542,6 +542,8 @@ public class BillManagerImpl implements BillManager
 
         bill.setSrcMoneys(newMoney);
 
+        bill.setUpdateId(0);
+
         bill.setDescription("分拆" + id + "后自动生成新的收款单");
 
         saveInBillInner(bill);

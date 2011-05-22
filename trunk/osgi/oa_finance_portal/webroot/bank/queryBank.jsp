@@ -39,6 +39,8 @@ function load()
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1601'},
              {id: 'update', bclass: 'update', onpress : updateBean, auth: '1601'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1601'},
+             {id: 'export', bclass: 'odraw',  caption: '帐户当前异动明细', onpress : exports},
+             {id: 'export2', bclass: 'odraw',  caption: '帐户历史异动明细', onpress : exports2},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -78,6 +80,41 @@ function updateBean()
 	}
 	else
 	$error('不能操作');
+}
+
+function exports()
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {
+        if (window.confirm('确定导出帐户异动明细?'))
+        document.location.href = gurl + 'exportCurrentBank&bankId=' + getRadioValue('checkb');
+    }
+    else
+    $error('不能操作');
+}
+
+function exports2()
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {
+        $.messager.prompt('异动日期', '截至异动日期(必须2011-05-22以后)', '', function(value, opr){
+                    if (opr)
+                    {
+                        var sss = value;
+                        
+                        if (!(sss == null || sss == '') && sss >= '2011-05-22')
+                        {
+                            document.location.href = '../finance/bank.do?method=exportStatBank&bankId=' + getRadioValue('checkb') + '&timekey=' + sss;
+                        }
+                        else
+                        {
+                            alert('请选择异动日期,或者异动日期必须2011-05-22以后');
+                        }
+                    }
+                }, 1);
+    }
+    else
+    $error('不能操作');
 }
 
 function doSearch()

@@ -39,6 +39,8 @@ import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.dao.BankDAO;
 import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
+import com.china.center.oa.finance.dao.PaymentDAO;
+import com.china.center.oa.finance.dao.StatBankDAO;
 import com.china.center.oa.finance.facade.FinanceFacade;
 import com.china.center.oa.finance.vo.InBillVO;
 import com.china.center.oa.finance.vo.OutBillVO;
@@ -46,6 +48,7 @@ import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.dao.InvoiceDAO;
+import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.manager.AuthManager;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.sail.bean.OutBean;
@@ -84,6 +87,12 @@ public class BillAction extends DispatchAction
     private FinanceFacade financeFacade = null;
 
     private InvoiceDAO invoiceDAO = null;
+
+    private StatBankDAO statBankDAO = null;
+
+    private ParameterDAO parameterDAO = null;
+
+    private PaymentDAO paymentDAO = null;
 
     private static final String QUERYINBILL = "queryInBill";
 
@@ -1142,5 +1151,56 @@ public class BillAction extends DispatchAction
     public void setUserManager(UserManager userManager)
     {
         this.userManager = userManager;
+    }
+
+    /**
+     * @return the statBankDAO
+     */
+    public StatBankDAO getStatBankDAO()
+    {
+        return statBankDAO;
+    }
+
+    /**
+     * @param statBankDAO
+     *            the statBankDAO to set
+     */
+    public void setStatBankDAO(StatBankDAO statBankDAO)
+    {
+        this.statBankDAO = statBankDAO;
+    }
+
+    /**
+     * @return the parameterDAO
+     */
+    public ParameterDAO getParameterDAO()
+    {
+        return parameterDAO;
+    }
+
+    /**
+     * @param parameterDAO
+     *            the parameterDAO to set
+     */
+    public void setParameterDAO(ParameterDAO parameterDAO)
+    {
+        this.parameterDAO = parameterDAO;
+    }
+
+    /**
+     * @return the paymentDAO
+     */
+    public PaymentDAO getPaymentDAO()
+    {
+        return paymentDAO;
+    }
+
+    /**
+     * @param paymentDAO
+     *            the paymentDAO to set
+     */
+    public void setPaymentDAO(PaymentDAO paymentDAO)
+    {
+        this.paymentDAO = paymentDAO;
     }
 }

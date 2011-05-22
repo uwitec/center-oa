@@ -465,6 +465,22 @@ public class OutListenerFinanceImpl implements OutListener
         }
     }
 
+    public void onCheck(User user, OutBean bean)
+        throws MYException
+    {
+        // 更新未核对的收款单UPDATEID
+        List<InBillBean> billList = inBillDAO.queryEntityBeansByFK(bean.getFullId());
+
+        for (InBillBean inBillBean : billList)
+        {
+            if (inBillBean.getCheckStatus() == PublicConstant.CHECK_STATUS_INIT)
+            {
+                inBillDAO.updateUpdateId(inBillBean.getId(), commonDAO.getSquence());
+            }
+        }
+
+    }
+
     /*
      * (non-Javadoc)
      * 

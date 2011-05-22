@@ -128,6 +128,11 @@ public class OutBillBean implements Serializable
     private int checkStatus = PublicConstant.CHECK_STATUS_INIT;
 
     /**
+     * 销售单核对更新ID
+     */
+    private int updateId = 0;
+
+    /**
      * default constructor
      */
     public OutBillBean()
@@ -475,6 +480,40 @@ public class OutBillBean implements Serializable
     }
 
     /**
+     * @return the srcMoneys
+     */
+    public double getSrcMoneys()
+    {
+        return srcMoneys;
+    }
+
+    /**
+     * @param srcMoneys
+     *            the srcMoneys to set
+     */
+    public void setSrcMoneys(double srcMoneys)
+    {
+        this.srcMoneys = srcMoneys;
+    }
+
+    /**
+     * @return the updateId
+     */
+    public int getUpdateId()
+    {
+        return updateId;
+    }
+
+    /**
+     * @param updateId
+     *            the updateId to set
+     */
+    public void setUpdateId(int updateId)
+    {
+        this.updateId = updateId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -516,6 +555,9 @@ public class OutBillBean implements Serializable
             .append("moneys = ")
             .append(this.moneys)
             .append(TAB)
+            .append("srcMoneys = ")
+            .append(this.srcMoneys)
+            .append(TAB)
             .append("provideId = ")
             .append(this.provideId)
             .append(TAB)
@@ -549,26 +591,12 @@ public class OutBillBean implements Serializable
             .append("checkStatus = ")
             .append(this.checkStatus)
             .append(TAB)
+            .append("updateId = ")
+            .append(this.updateId)
+            .append(TAB)
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the srcMoneys
-     */
-    public double getSrcMoneys()
-    {
-        return srcMoneys;
-    }
-
-    /**
-     * @param srcMoneys
-     *            the srcMoneys to set
-     */
-    public void setSrcMoneys(double srcMoneys)
-    {
-        this.srcMoneys = srcMoneys;
     }
 
 }

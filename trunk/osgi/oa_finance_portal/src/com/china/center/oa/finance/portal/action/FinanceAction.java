@@ -9,9 +9,12 @@
 package com.china.center.oa.finance.portal.action;
 
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,6 +61,7 @@ import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.dao.PaymentVSOutDAO;
 import com.china.center.oa.finance.dao.StatBankDAO;
 import com.china.center.oa.finance.facade.FinanceFacade;
+import com.china.center.oa.finance.manager.BankManager;
 import com.china.center.oa.finance.manager.StatBankManager;
 import com.china.center.oa.finance.vo.BankVO;
 import com.china.center.oa.finance.vo.InBillVO;
@@ -72,6 +76,7 @@ import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
+import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
@@ -86,6 +91,7 @@ import com.china.center.tools.RequestDataStream;
 import com.china.center.tools.SequenceTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
+import com.china.center.tools.UtilStream;
 
 
 /**
@@ -129,6 +135,10 @@ public class FinanceAction extends DispatchAction
     private OutBillDAO outBillDAO = null;
 
     private OutManager outManager = null;
+
+    private ParameterDAO parameterDAO = null;
+
+    private BankManager bankManager = null;
 
     private static final String QUERYBANK = "queryBank";
 
@@ -1810,6 +1820,144 @@ public class FinanceAction extends DispatchAction
     }
 
     /**
+     * exportCurrentBank 导出帐户当前异动明细(201103的结余+收款单+为认领的回款-付款单)
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportCurrentBank(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        // 银行ID
+        String bankId = request.getParameter("bankId");
+
+        String filenName = "BANK_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        try
+        {
+            BankBean bank = bankDAO.find(bankId);
+
+            if (bank == null)
+            {
+                return ActionTools.toError("银行不存在,请确认操作", mapping, request);
+            }
+
+            out = reponse.getOutputStream();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            // 获取统计
+            bankManager.wirteBankStat(write, bank);
+
+            write.close();
+
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * exportStatBank
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     * @throws IOException
+     */
+    public ActionForward exportStatBank(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException
+    {
+        String bankId = request.getParameter("bankId");
+
+        String timekey = request.getParameter("timekey");
+
+        BankBean bank = bankDAO.find(bankId);
+
+        if (bank == null)
+        {
+            return ActionTools.toError("银行不存在,请确认操作", mapping, request);
+        }
+
+        Date date = TimeTools.getDateByFormat(timekey, TimeTools.SHORT_FORMAT);
+
+        String newKey = TimeTools.getStringByFormat(date, "yyyyMMdd");
+
+        String path = Helper.getRootPath();
+
+        String fileName = bank.getName() + "_统计_" + newKey + ".csv";
+
+        path = path + "bank/" + newKey + "/" + fileName;
+
+        File file = new File(path);
+
+        OutputStream out = response.getOutputStream();
+
+        response.setContentLength((int)file.length());
+
+        response.setContentType("application/x-dbf");
+
+        response.setHeader("Content-Disposition", "attachment; filename="
+                                                  + StringTools.getStringBySet(fileName, "GBK",
+                                                      "ISO8859-1"));
+
+        UtilStream us = new UtilStream(new FileInputStream(file), out);
+
+        us.copyAndCloseStream();
+
+        return null;
+    }
+
+    /**
      * @return the financeFacade
      */
     public FinanceFacade getFinanceFacade()
@@ -2062,6 +2210,40 @@ public class FinanceAction extends DispatchAction
     public void setOutManager(OutManager outManager)
     {
         this.outManager = outManager;
+    }
+
+    /**
+     * @return the parameterDAO
+     */
+    public ParameterDAO getParameterDAO()
+    {
+        return parameterDAO;
+    }
+
+    /**
+     * @param parameterDAO
+     *            the parameterDAO to set
+     */
+    public void setParameterDAO(ParameterDAO parameterDAO)
+    {
+        this.parameterDAO = parameterDAO;
+    }
+
+    /**
+     * @return the bankManager
+     */
+    public BankManager getBankManager()
+    {
+        return bankManager;
+    }
+
+    /**
+     * @param bankManager
+     *            the bankManager to set
+     */
+    public void setBankManager(BankManager bankManager)
+    {
+        this.bankManager = bankManager;
     }
 
 }

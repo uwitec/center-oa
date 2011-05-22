@@ -25,11 +25,25 @@
         <property name="cronExpression" value="0 30 2 * * ?" />
     </bean>
     
+    <bean id="exportAllCurrentBankStatJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="bankManager" />
+        <property name="targetMethod" value="exportAllCurrentBankStat" />
+        <property name="concurrent" value="false" />
+    </bean>
+    
+    <bean id="exportAllCurrentBankStatTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="exportAllCurrentBankStatJob" />
+        <property name="cronExpression" value="0 58 23 * * ?" />
+    </bean>
+    
     <bean
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
 				<ref bean="statBankTrigger" />
+				<ref bean="exportAllCurrentBankStatTrigger" />
 			</list>
 		</property>
 	</bean>
