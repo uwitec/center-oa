@@ -3982,11 +3982,7 @@ public class ParentOutAction extends DispatchAction
         {
             if (OldPageSeparateTools.isMenuLoad(request))
             {
-                condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_PASS);
-
-                request.setAttribute("status", OutConstant.STATUS_PASS);
-
-                queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_PASS));
+                condtion.addCondition("and OutBean.status in (3, 4)");
 
                 condtion.addIntCondition("OutBean.inway", "=", OutConstant.IN_WAY);
 
