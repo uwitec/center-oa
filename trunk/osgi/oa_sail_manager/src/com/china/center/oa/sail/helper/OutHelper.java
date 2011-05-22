@@ -340,4 +340,17 @@ public abstract class OutHelper
         }
         return lastList;
     }
+
+    public static BaseBean findBase(List<BaseBean> baseList, BaseBean base)
+    {
+        for (BaseBean baseBean : baseList)
+        {
+            if (baseBean.equals(base))
+            {
+                return baseBean;
+            }
+        }
+
+        return null;
+    }
 }

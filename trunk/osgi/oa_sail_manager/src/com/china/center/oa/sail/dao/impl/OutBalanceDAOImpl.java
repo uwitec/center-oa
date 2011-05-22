@@ -53,4 +53,13 @@ public class OutBalanceDAOImpl extends BaseDAO<OutBalanceBean, OutBalanceVO> imp
 
         return true;
     }
+
+    public boolean updateCheck(String id, int checkStatus, String checks)
+    {
+        String sql = BeanTools.getUpdateHead(claz) + "set checkStatus = ?, checks = ? where id = ?";
+
+        jdbcOperation.update(sql, checkStatus, checks, id);
+
+        return true;
+    }
 }

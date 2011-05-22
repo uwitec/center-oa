@@ -26,6 +26,8 @@ public interface OutBalanceDAO extends DAO<OutBalanceBean, OutBalanceVO>
 {
     boolean updateInvoiceStatus(String id, double invoiceMoney, int invoiceStatus);
 
+    boolean updateCheck(String id, int checkStatus, String check);
+
     /**
      * 更新已经付款金额
      * 

@@ -22,6 +22,7 @@ import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.sail.constanst.OutConstant;
 
 
@@ -87,6 +88,13 @@ public class OutBalanceBean implements Serializable
      */
     @Join(tagClass = DepotBean.class, type = JoinType.LEFT)
     private String dirDepot = "";
+
+    /**
+     * 总部核对信息
+     */
+    private String checks = "";
+
+    private int checkStatus = PublicConstant.CHECK_STATUS_INIT;
 
     @Ignore
     private List<BaseBalanceBean> baseBalanceList = null;
@@ -436,6 +444,40 @@ public class OutBalanceBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the checks
+     */
+    public String getChecks()
+    {
+        return checks;
+    }
+
+    /**
+     * @param checks
+     *            the checks to set
+     */
+    public void setChecks(String checks)
+    {
+        this.checks = checks;
+    }
+
+    /**
+     * @return the checkStatus
+     */
+    public int getCheckStatus()
+    {
+        return checkStatus;
+    }
+
+    /**
+     * @param checkStatus
+     *            the checkStatus to set
+     */
+    public void setCheckStatus(int checkStatus)
+    {
+        this.checkStatus = checkStatus;
     }
 
 }

@@ -133,6 +133,9 @@ public interface OutManager extends ListenerManager<OutListener>
     boolean check(final String fullId, final User user, final String checks)
         throws MYException;
 
+    boolean checkOutBalance(final String id, final User user, final String checks)
+        throws MYException;
+
     OutBean findOutById(final String fullId);
 
     boolean delOut(User user, final String fullId)

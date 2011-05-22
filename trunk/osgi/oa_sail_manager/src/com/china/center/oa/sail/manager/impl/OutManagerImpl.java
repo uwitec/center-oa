@@ -1689,9 +1689,17 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                     {
                         handlerMoveOutBack(fullId, user, outBean);
 
+                        if (outBean.getCheckStatus() == PublicConstant.CHECK_STATUS_INIT)
+                        {
+                            outDAO.modifyChecks(outBean.getFullId(), "调拨回滚后原单据还未核对,系统自动核对原调拨单");
+
+                            outDAO
+                                .modifyOutStatus(outBean.getFullId(), OutConstant.STATUS_SEC_PASS);
+                        }
+
                         // 操作日志
                         addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_REJECT,
-                            outBean.getStatus());
+                            OutConstant.STATUS_SEC_PASS);
                     }
                     else
                     {
@@ -2070,7 +2078,13 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         newInBean.setDescription("领样转销售[" + outBean.getFullId() + "]的库管通过的时候自动产生一张财务做帐的领样退库单,"
                                  + "此单据系统自动生成，直接到待核对状态(此单不会对库存产生任何异动)");
 
+        String lingyangId = outBean.getRefOutFullId();
+
+        List<BaseBean> lyBaseList = baseDAO.queryEntityBeansByFK(lingyangId);
+
         List<BaseBean> newBaseList = new ArrayList();
+
+        double newTotal = 0.0d;
 
         for (BaseBean element : baseList)
         {
@@ -2080,8 +2094,24 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
             newEach.setOutId(fullId);
 
+            // 价格是领样的价格哦
+            BaseBean findBase = OutHelper.findBase(lyBaseList, newEach);
+
+            if (findBase == null)
+            {
+                throw new MYException("找不到对应的领样原始单据,请确认操作");
+            }
+
+            newEach.setPrice(findBase.getPrice());
+
+            newEach.setValue(newEach.getAmount() * findBase.getPrice());
+
+            newTotal += newEach.getValue();
+
             newBaseList.add(newEach);
         }
+
+        newInBean.setTotal(newTotal);
 
         newInBean.setBaseList(newBaseList);
 
@@ -2185,6 +2215,31 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         return true;
 
+    }
+
+    @Exceptional
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean checkOutBalance(String id, User user, String checks)
+        throws MYException
+    {
+        OutBalanceBean bean = outBalanceDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bean.getStatus() != OutConstant.OUTBALANCE_STATUS_END)
+        {
+            throw new MYException("不在库管通过,请确认操作");
+        }
+
+        outBalanceDAO.updateCheck(id, PublicConstant.CHECK_STATUS_END, checks);
+
+        addOutLog2(id, user, OutConstant.OUTBALANCE_STATUS_END, "总部核对", SailConstant.OPR_OUT_PASS,
+            OutConstant.OUTBALANCE_STATUS_END);
+
+        return true;
     }
 
     public OutBean findOutById(final String fullId)
@@ -4033,9 +4088,18 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         newOut.setInway(OutConstant.IN_WAY_NO);
 
-        newOut.setChecks("");
+        if (outBean.getCheckStatus() == PublicConstant.CHECK_STATUS_INIT)
+        {
+            newOut.setChecks("原调拨单据还未核对,系统自动核对回滚单据");
 
-        newOut.setCheckStatus(PublicConstant.CHECK_STATUS_INIT);
+            newOut.setCheckStatus(PublicConstant.CHECK_STATUS_END);
+        }
+        else
+        {
+            newOut.setChecks("");
+
+            newOut.setCheckStatus(PublicConstant.CHECK_STATUS_INIT);
+        }
 
         newOut.setReserve1(OutConstant.MOVEOUT_ROLLBACK);
 
@@ -4061,6 +4125,11 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         {
             coloneOutAndSubmitWithOutAffair(newOut, user,
                 StorageConstant.OPR_STORAGE_REDEPLOY_ROLLBACK);
+
+            if (outBean.getCheckStatus() == PublicConstant.CHECK_STATUS_INIT)
+            {
+                outDAO.modifyOutStatus(newOut.getFullId(), OutConstant.STATUS_SEC_PASS);
+            }
         }
         catch (MYException e)
         {
