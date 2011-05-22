@@ -54,6 +54,15 @@ public interface OutListener extends ParentListener
         throws MYException;
 
     /**
+     * 总部核对监听
+     * 
+     * @param bean
+     * @throws MYException
+     */
+    void onCheck(User user, OutBean bean)
+        throws MYException;
+
+    /**
      * 取消坏账
      * 
      * @param user

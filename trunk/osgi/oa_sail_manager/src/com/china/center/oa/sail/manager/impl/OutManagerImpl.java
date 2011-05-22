@@ -1732,7 +1732,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         catch (Exception e)
         {
             _logger.error("增加库单错误：", e);
-            throw new MYException("系统错误,请重新操作");
+
+            throw new MYException(e.toString());
         }
     }
 
@@ -2108,7 +2109,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     }
 
     /**
-     * CORE (销售单的终结)财务收款
+     * CORE (销售单的终结)财务核对
      * 
      * @param outBean
      * @param user
@@ -2142,7 +2143,20 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                     outDAO.modifyOutStatus(fullId, OutConstant.STATUS_SEC_PASS);
 
-                    // TODO_OSGI 核对此销售单的应收,看看是否正确结余(然后写到应收字段里面)
+                    // OSGI 监听实现
+                    Collection<OutListener> listenerMapValues = listenerMapValues();
+
+                    for (OutListener listener : listenerMapValues)
+                    {
+                        try
+                        {
+                            listener.onCheck(user, outBean);
+                        }
+                        catch (MYException e)
+                        {
+                            throw new RuntimeException(e.getErrorContent());
+                        }
+                    }
 
                     addOutLog(fullId, user, outBean, "核对", SailConstant.OPR_OUT_PASS,
                         OutConstant.STATUS_SEC_PASS);
@@ -4050,6 +4064,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         }
         catch (MYException e)
         {
+            _logger.error(e, e);
+
             throw new RuntimeException(e.getErrorContent());
         }
     }
