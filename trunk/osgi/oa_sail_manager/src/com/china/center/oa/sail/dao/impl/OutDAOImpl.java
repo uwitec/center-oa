@@ -449,7 +449,7 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
     public List<BaseBean> queryInwayOut()
     {
         String sql = "select t1.* from t_center_base t1, t_center_out t2 "
-                     + "where t1.outid = t2.fullid and t2.inway = 1 and t2.status = 3 and t2.type = 1 and t2.outType = 1 and t2.outTime > ?";
+                     + "where t1.outid = t2.fullid and t2.inway = 1 and t2.status in (3, 4) and t2.type = 1 and t2.outType = 1 and t2.outTime > ?";
 
         return this.jdbcOperation.queryForListBySql(sql, BaseBean.class, "2011-04-01");
     }
