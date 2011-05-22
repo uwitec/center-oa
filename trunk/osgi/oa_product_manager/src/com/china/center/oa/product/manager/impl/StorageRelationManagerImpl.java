@@ -56,6 +56,7 @@ import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
 import com.china.center.oa.publics.constant.PublicLock;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.publics.manager.FatalNotify;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
@@ -73,6 +74,8 @@ import com.china.center.tools.TimeTools;
  */
 public class StorageRelationManagerImpl extends AbstractListenerManager<StorageRelationListener> implements StorageRelationManager
 {
+    private final Log fatalLog = LogFactory.getLog("fatal");
+
     private final Log triggerLog = LogFactory.getLog("trigger");
 
     private final Log _logger = LogFactory.getLog(getClass());
@@ -96,6 +99,8 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
     private ProductDAO productDAO = null;
 
     private CommonDAO commonDAO = null;
+
+    private FatalNotify fatalNotify = null;
 
     private StorageRelationDAO storageRelationDAO = null;
 
@@ -906,8 +911,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
 
     public List<String> checkStorageLog()
     {
-        // 先导出库存
-        exportAllStorageRelation();
+        triggerLog.info("begin checkStorageLog...");
 
         final List<String> result = new LinkedList<String>();
 
@@ -958,7 +962,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
                             String msg = "产品[" + storageLogBeanEach.getProductName() + "]在仓库["
                                          + storageLogBeanEach.getLocationName() + "]下异动断节";
 
-                            _logger.error(msg + ".StorageLog:" + storageLogBeanEach);
+                            fatalLog.error(msg + ".StorageLog:" + storageLogBeanEach);
 
                             result.add(msg);
 
@@ -984,7 +988,18 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
             }
         }
 
-        result.add("共计体检库存异动:" + total + ".其中成功:" + success + ".失败:" + fail);
+        String totalMsg = "共计体检库存异动:" + total + ".其中成功:" + success + ".失败:" + fail;
+
+        result.add(totalMsg);
+
+        if (fail > 0)
+        {
+            fatalNotify.notify(totalMsg);
+        }
+
+        triggerLog.info("checkStorageLog:" + totalMsg);
+
+        triggerLog.info("end checkStorageLog...");
 
         return result;
     }
@@ -1290,6 +1305,23 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
     public void setPriceHistoryDAO(PriceHistoryDAO priceHistoryDAO)
     {
         this.priceHistoryDAO = priceHistoryDAO;
+    }
+
+    /**
+     * @return the fatalNotify
+     */
+    public FatalNotify getFatalNotify()
+    {
+        return fatalNotify;
+    }
+
+    /**
+     * @param fatalNotify
+     *            the fatalNotify to set
+     */
+    public void setFatalNotify(FatalNotify fatalNotify)
+    {
+        this.fatalNotify = fatalNotify;
     }
 
 }

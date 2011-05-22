@@ -2154,18 +2154,29 @@ public class ParentOutAction extends DispatchAction
         importLog.info(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus() + "(预计:"
                        + OutConstant.STATUS_SUBMIT + ")");
 
-        if (newOut.getReserve3() != OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER
-            && newOut.getStatus() != OutConstant.STATUS_SUBMIT)
+        if (newOut.getOutType() == OutConstant.OUTTYPE_OUT_PRESENT)
         {
-            loggerError(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus() + "(预计:"
-                        + OutConstant.STATUS_SUBMIT + ")");
+            if (newOut.getStatus() != OutConstant.STATUS_CEO_CHECK)
+            {
+                loggerError(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus()
+                            + "(预计:" + OutConstant.STATUS_CEO_CHECK + ")");
+            }
         }
-
-        if (newOut.getReserve3() == OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER
-            && newOut.getStatus() != OutConstant.STATUS_LOCATION_MANAGER_CHECK)
+        else
         {
-            loggerError(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus() + "(预计:"
-                        + OutConstant.STATUS_LOCATION_MANAGER_CHECK + ")");
+            if (newOut.getReserve3() != OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER
+                && newOut.getStatus() != OutConstant.STATUS_SUBMIT)
+            {
+                loggerError(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus()
+                            + "(预计:" + OutConstant.STATUS_SUBMIT + ")");
+            }
+
+            if (newOut.getReserve3() == OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER
+                && newOut.getStatus() != OutConstant.STATUS_LOCATION_MANAGER_CHECK)
+            {
+                loggerError(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus()
+                            + "(预计:" + OutConstant.STATUS_LOCATION_MANAGER_CHECK + ")");
+            }
         }
     }
 

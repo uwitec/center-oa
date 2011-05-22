@@ -25,11 +25,25 @@
         <property name="cronExpression" value="0 59 23 * * ?" />
     </bean>
     
+    <bean id="checkStorageLogJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="storageRelationManager" />
+        <property name="targetMethod" value="checkStorageLog" />
+        <property name="concurrent" value="false" />
+    </bean>
+    
+    <bean id="checkStorageLogTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="checkStorageLogJob" />
+        <property name="cronExpression" value="0 50 3 * * ?" />
+    </bean>
+    
     <bean
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
 				<ref bean="exportAllStorageRelationTrigger" />
+				<ref bean="checkStorageLogTrigger" />
 			</list>
 		</property>
 	</bean>
