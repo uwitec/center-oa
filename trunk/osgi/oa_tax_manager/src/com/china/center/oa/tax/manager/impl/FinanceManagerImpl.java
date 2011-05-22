@@ -315,6 +315,10 @@ public class FinanceManagerImpl implements FinanceManager
         {
             tableName = "T_CENTER_CUSTOMER_NOW";
         }
+        else if (type == CheckConstant.CHECK_TYPE_BASEBALANCE)
+        {
+            tableName = "T_CENTER_OUTBALANCE";
+        }
         else
         {
             throw new MYException("数据错误,请确认操作");
