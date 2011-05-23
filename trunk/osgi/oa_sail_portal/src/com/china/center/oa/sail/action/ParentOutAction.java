@@ -2151,11 +2151,11 @@ public class ParentOutAction extends DispatchAction
             return;
         }
 
-        importLog.info(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus() + "(预计:"
-                       + OutConstant.STATUS_SUBMIT + ")");
-
         if (newOut.getOutType() == OutConstant.OUTTYPE_OUT_PRESENT)
         {
+            importLog.info(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus()
+                           + "(预计:" + OutConstant.STATUS_CEO_CHECK + ")");
+
             if (newOut.getStatus() != OutConstant.STATUS_CEO_CHECK)
             {
                 loggerError(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus()
@@ -2164,6 +2164,9 @@ public class ParentOutAction extends DispatchAction
         }
         else
         {
+            importLog.info(id + ":" + user.getStafferName() + "(after):" + newOut.getStatus()
+                           + "(预计:" + OutConstant.STATUS_SUBMIT + ")");
+
             if (newOut.getReserve3() != OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER
                 && newOut.getStatus() != OutConstant.STATUS_SUBMIT)
             {
