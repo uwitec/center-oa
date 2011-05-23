@@ -76,6 +76,8 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
 {
     private final Log fatalLog = LogFactory.getLog("fatal");
 
+    private final Log operationLog = LogFactory.getLog("opr");
+
     private final Log triggerLog = LogFactory.getLog("trigger");
 
     private final Log _logger = LogFactory.getLog(getClass());
@@ -998,6 +1000,8 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
         }
 
         triggerLog.info("checkStorageLog:" + totalMsg);
+
+        operationLog.info("checkStorageLog:" + totalMsg);
 
         triggerLog.info("end checkStorageLog...");
 
