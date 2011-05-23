@@ -7,6 +7,7 @@
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
+<script language="JavaScript" src="../js/math.js"></script>
 <script language="javascript">
 
 function addBean()
@@ -56,9 +57,9 @@ function check()
         return false;
     }
     
-    if ((total - pu) - bad < 0 && bad != 0)
+    if (parseFloat(formatNum((total - pu), 2)) - bad < 0 && bad != 0)
     {
-        alert('坏账金额过多,当前最多坏账金额:' + (total - pu));
+        alert('坏账金额过多,当前最多坏账金额:' + formatNum((total - pu), 2));
         
         return false;
     }
