@@ -569,7 +569,7 @@ public interface AuthConstant
     String SAIL_INVOKE = "1407";
 
     /**
-     * 分公司经理审批(信用分担)
+     * 事业部(信用分担)
      */
     String SAIL_LOCATION_MANAGER = "1408";
 
