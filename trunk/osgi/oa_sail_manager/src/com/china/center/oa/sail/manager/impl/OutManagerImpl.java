@@ -806,7 +806,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     }
 
     /**
-     * 提交
+     * 提交(包括领样退库和销售退库)
      * 
      * @param outBean
      * @param user
@@ -1427,9 +1427,21 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             throw new MYException(fullId + " 不存在");
         }
 
-        if ( !OutHelper.canSubmit(outBean))
+        // 退库-事业部经理审批
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && (outBean.getOutType() == OutConstant.OUTTYPE_IN_SWATCH || outBean.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK))
         {
-            throw new MYException(fullId + " 状态错误,不能提交");
+            if (outBean.getStatus() != OutConstant.BUY_STATUS_SUBMIT)
+            {
+                throw new MYException(fullId + " 状态错误,不能提交");
+            }
+        }
+        else
+        {
+            if ( !OutHelper.canSubmit(outBean))
+            {
+                throw new MYException(fullId + " 状态错误,不能提交");
+            }
         }
 
         final List<BaseBean> baseList = checkCoreStorage(outBean, false);
@@ -1931,10 +1943,21 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         }
 
         // 检查pass的条件
-        if (outBean.getStatus() == OutConstant.STATUS_SAVE
-            || outBean.getStatus() == OutConstant.STATUS_REJECT)
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && (outBean.getOutType() == OutConstant.OUTTYPE_IN_SWATCH || outBean.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK))
         {
-            throw new MYException("状态不可以通过!");
+            if (outBean.getStatus() != OutConstant.STATUS_SAVE)
+            {
+                throw new MYException("状态不可以通过!");
+            }
+        }
+        else
+        {
+            if (outBean.getStatus() == OutConstant.STATUS_SAVE
+                || outBean.getStatus() == OutConstant.STATUS_REJECT)
+            {
+                throw new MYException("状态不可以通过!");
+            }
         }
 
         // 检查日志核对
@@ -2288,9 +2311,22 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             throw new MYException("数据错误,请确认操作");
         }
 
-        if ( !OutHelper.canDelete(outBean))
+        // 退库的逻辑比较特殊
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && (outBean.getOutType() == OutConstant.OUTTYPE_IN_SWATCH || outBean.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK))
         {
-            throw new MYException("单据不能被删除,请确认操作");
+            if ( ! (outBean.getStatus() == OutConstant.STATUS_SAVE
+                    || outBean.getStatus() == OutConstant.STATUS_REJECT || outBean.getStatus() == OutConstant.BUY_STATUS_SUBMIT))
+            {
+                throw new MYException("单据不能被删除,请确认操作");
+            }
+        }
+        else
+        {
+            if ( !OutHelper.canDelete(outBean))
+            {
+                throw new MYException("单据不能被删除,请确认操作");
+            }
         }
 
         List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(fullId);
@@ -3882,6 +3918,14 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     private void handerPassBuy(final String fullId, final User user, final OutBean outBean,
                                int newNextStatus)
     {
+        // 退库-事业部经理审批
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && (outBean.getOutType() == OutConstant.OUTTYPE_IN_SWATCH || outBean.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK))
+        {
+            // 不处理
+            return;
+        }
+
         // 分公司总经理审批-->待总裁审批
         if (newNextStatus == OutConstant.STATUS_CEO_CHECK)
         {

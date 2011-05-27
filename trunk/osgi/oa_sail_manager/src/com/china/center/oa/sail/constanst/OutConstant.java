@@ -375,7 +375,7 @@ public interface OutConstant
     int BUY_STATUS_FLOW_PASS = 7;
 
     /**
-     * 分公司总经理审批
+     * 待事业部经理审批
      */
     @Defined(key = "buyStatus", value = "待事业部经理审批")
     int BUY_STATUS_LOCATION_MANAGER_CHECK = 8;

@@ -81,6 +81,11 @@ public abstract class OutHelper
         return getStatus(i, true);
     }
 
+    public static String getStatus2(int i)
+    {
+        return DefinedCommon.getValue("buyStatus", i);
+    }
+
     /**
      * getStatus
      * 
