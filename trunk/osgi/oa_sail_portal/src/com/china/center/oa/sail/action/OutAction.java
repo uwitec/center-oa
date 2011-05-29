@@ -116,6 +116,8 @@ public class OutAction extends ParentOutAction
     {
         String fullId = request.getParameter("outId");
 
+        String queryType = request.getParameter("queryType");
+
         User user = (User)request.getSession().getAttribute("user");
 
         if (StringTools.isNullOrNone(fullId))
@@ -135,7 +137,8 @@ public class OutAction extends ParentOutAction
         }
 
         if (bean.getStatus() == OutConstant.STATUS_SAVE
-            || bean.getStatus() == OutConstant.STATUS_REJECT)
+            || bean.getStatus() == OutConstant.STATUS_REJECT
+            || bean.getStatus() == OutConstant.BUY_STATUS_SUBMIT)
         {
             try
             {
@@ -163,7 +166,7 @@ public class OutAction extends ParentOutAction
 
         RequestTools.menuInitQuery(request);
 
-        request.setAttribute("queryType", "5");
+        request.setAttribute("queryType", queryType);
 
         return queryBuy(mapping, form, request, reponse);
     }
@@ -1214,7 +1217,9 @@ public class OutAction extends ParentOutAction
         int resultStatus = -1;
 
         // 入库单的提交(调拨)
-        if (out.getType() == OutConstant.OUT_TYPE_INBILL && statuss == OutConstant.STATUS_SUBMIT)
+        if (out.getType() == OutConstant.OUT_TYPE_INBILL
+            && statuss == OutConstant.STATUS_SUBMIT
+            && ! (out.getOutType() == OutConstant.OUTTYPE_IN_SWATCH || out.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK))
         {
             try
             {
@@ -1228,6 +1233,24 @@ public class OutAction extends ParentOutAction
                 _logger.warn(e, e);
 
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理异常：" + e.getErrorContent());
+
+                return mapping.findForward("error");
+            }
+        }
+        // 领样退库或者是销售退库的事业部审批
+        else if (out.getType() == OutConstant.OUT_TYPE_INBILL
+                 && (out.getOutType() == OutConstant.OUTTYPE_IN_SWATCH || out.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK))
+        {
+            try
+            {
+                resultStatus = outManager.pass(fullId, user, OutConstant.BUY_STATUS_SUBMIT, reason,
+                    depotpartId);
+            }
+            catch (MYException e)
+            {
+                _logger.warn(e, e);
+
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
 
                 return mapping.findForward("error");
             }
@@ -1440,8 +1463,16 @@ public class OutAction extends ParentOutAction
 
         RequestTools.actionInitQuery(request);
 
-        request.setAttribute(KeyConstant.MESSAGE, "单据[" + fullId + "]操作成功,下一步是:"
-                                                  + OutHelper.getStatus(realOut.getStatus()));
+        if (realOut.getType() == OutConstant.OUT_TYPE_OUTBILL)
+        {
+            request.setAttribute(KeyConstant.MESSAGE, "单据[" + fullId + "]操作成功,下一步是:"
+                                                      + OutHelper.getStatus(realOut.getStatus()));
+        }
+        else
+        {
+            request.setAttribute(KeyConstant.MESSAGE, "单据[" + fullId + "]操作成功,下一步是:"
+                                                      + OutHelper.getStatus2(realOut.getStatus()));
+        }
 
         if (realOut.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
@@ -1815,7 +1846,7 @@ public class OutAction extends ParentOutAction
 
                 con.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
 
-                con.addIntCondition("OutBean.status", "=", OutConstant.STATUS_SAVE);
+                con.addCondition("and OutBean.status in (0, 1)");
 
                 con.addIntCondition("OutBean.outType", "=", OutConstant.OUTTYPE_IN_SWATCH);
 

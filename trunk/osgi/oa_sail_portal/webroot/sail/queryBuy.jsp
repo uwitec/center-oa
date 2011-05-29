@@ -155,7 +155,7 @@ function processInvoke()
 
 function sureBack()
 {
-	if (getRadio('fullId').statuss == 0 && (getRadio('fullId').outtype == 4 || getRadio('fullId').outtype == 5))
+	if (getRadio('fullId').statuss == 1 && (getRadio('fullId').outtype == 4 || getRadio('fullId').outtype == 5))
 	{
 	   if (window.confirm('确认退库?'))
         document.location.href = '../sail/out.do?method=submitOut&outId=' + getRadioValue("fullId");
@@ -166,10 +166,10 @@ function sureBack()
 
 function rejectBack()
 {
-	if (getRadio('fullId').statuss == 0 && (getRadio('fullId').outtype == 4 || getRadio('fullId').outtype == 5))
+	if ((getRadio('fullId').statuss == 0 || getRadio('fullId').statuss == 1) && (getRadio('fullId').outtype == 4 || getRadio('fullId').outtype == 5))
 	{
 	   if (window.confirm('确认驳回退库?'))
-        document.location.href = '../sail/out.do?method=rejectBack&outId=' + getRadioValue("fullId");
+        document.location.href = '../sail/out.do?method=rejectBack&queryType=${queryType}&outId=' + getRadioValue("fullId");
     }
     else
     alert('不能操作');
@@ -236,6 +236,47 @@ function check()
             getObj('statuss').value = nextStatusMap[queryType];
             
             getObj('oldStatus').value = getRadio('fullId').statuss;
+
+            getObj('outId').value = getRadioValue("fullId");
+
+            getObj('radioIndex').value = $Index('fullId');
+
+            getObj('reason').value = '同意';
+
+            adminForm.submit();
+        }
+        else
+        {
+            $Dbuttons(false);  
+        }
+    }
+    else
+    {
+        alert('不可以操作!');
+    }
+}
+
+// 通过入库单
+function check1()
+{
+    if (getRadio('fullId').statuss == 0)
+    {
+        var hi = '';
+        
+        if (nextStatusMap[queryType] == 3)
+        {
+            hi = '通过此库单库存会发生变动,';
+        }
+        
+        if (window.confirm(hi + "确定审核通过入库单?"))
+        {
+            $Dbuttons(true);
+            
+            getObj('method').value = 'modifyOutStatus';
+
+            getObj('statuss').value = 1;
+            
+            getObj('oldStatus').value = 0;
 
             getObj('outId').value = getRadioValue("fullId");
 
@@ -446,7 +487,6 @@ function hrefAndSelect(obj)
                         </select>
                         </td>
 
-                        </td>
                         <td width="15%" align="center"></td>
                         <td align="center"></td>
                     </tr>
@@ -586,7 +626,8 @@ function hrefAndSelect(obj)
 	<tr>
 		<td width="100%">
 		<div align="right">
-		<c:if test="${queryType != '4' && queryType != '5' && queryType != '6' && queryType != '7' && queryType != '8'}">
+		<c:if test="${queryType != '4' && queryType != '5' && queryType != '6' 
+		      && queryType != '7' && queryType != '8' && queryType != '9'}">
         <input name="bu1"
                 type="button" class="button_class" value="&nbsp;审核通过&nbsp;"
                 onclick="check()" />&nbsp;&nbsp;<input type="button" name="bu2"
@@ -609,6 +650,14 @@ function hrefAndSelect(obj)
         <c:if test="${queryType == '8'}">
          <input type="button" class="button_class"
                 value="&nbsp;&nbsp;总部核对&nbsp;&nbsp;" onClick="centerCheck()"/>&nbsp;&nbsp;
+        </c:if>
+        
+        <c:if test="${queryType == '9'}">
+        <input name="bu3"
+                type="button" class="button_class" value="&nbsp;通过退库&nbsp;"
+                onclick="check1()" />&nbsp;&nbsp;<input type="button" name="bu3"
+                class="button_class" value="&nbsp;&nbsp;驳回退库&nbsp;&nbsp;"
+                onclick="rejectBack()" />&nbsp;&nbsp;
         </c:if>
         
         <input

@@ -1817,7 +1817,7 @@ public class ParentOutAction extends DispatchAction
 
         con.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
 
-        con.addIntCondition("OutBean.status", "=", OutConstant.STATUS_SAVE);
+        con.addCondition("and OutBean.status in (0, 1)");
 
         con.addIntCondition("OutBean.outType", "=", OutConstant.OUTTYPE_IN_OUTBACK);
 
@@ -2224,11 +2224,25 @@ public class ParentOutAction extends DispatchAction
                 return mapping.findForward("error");
             }
 
-            if (out.getStatus() != OutConstant.STATUS_SAVE)
+            // 退库-事业部经理审批
+            if (out.getType() == OutConstant.OUT_TYPE_INBILL
+                && (out.getOutType() == OutConstant.OUTTYPE_IN_SWATCH || out.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK))
             {
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+                if (out.getStatus() != OutConstant.BUY_STATUS_SUBMIT)
+                {
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "状态错误");
 
-                return mapping.findForward("error");
+                    return mapping.findForward("error");
+                }
+            }
+            else
+            {
+                if (out.getStatus() != OutConstant.STATUS_SAVE)
+                {
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "状态错误");
+
+                    return mapping.findForward("error");
+                }
             }
 
             try
@@ -2650,8 +2664,15 @@ public class ParentOutAction extends DispatchAction
             throw new MYException("用户没有此操作的权限");
         }
 
+        // 总部会计
         if ("8".equals(queryType)
             && !userManager.containAuth(user.getId(), AuthConstant.BILL_QUERY_ALL))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
+
+        if ("9".equals(queryType)
+            && !userManager.containAuth(user.getId(), AuthConstant.SAIL_LOCATION_MANAGER))
         {
             throw new MYException("用户没有此操作的权限");
         }
@@ -4038,11 +4059,11 @@ public class ParentOutAction extends DispatchAction
         {
             if (OldPageSeparateTools.isMenuLoad(request))
             {
-                condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_SAVE);
+                condtion.addIntCondition("OutBean.status", "=", OutConstant.BUY_STATUS_SUBMIT);
 
-                request.setAttribute("status", OutConstant.STATUS_SAVE);
+                request.setAttribute("status", OutConstant.BUY_STATUS_SUBMIT);
 
-                queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_SAVE));
+                queryOutCondtionMap.put("status", String.valueOf(OutConstant.BUY_STATUS_SUBMIT));
 
                 // 领样退库/销售退库
                 condtion.addCondition("and OutBean.outType in (4, 5)");
@@ -4072,6 +4093,23 @@ public class ParentOutAction extends DispatchAction
 
                 queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_PASS));
             }
+        }
+        // 事业部经理领样退库/销售退库
+        else if ("9".equals(queryType))
+        {
+            if (OldPageSeparateTools.isMenuLoad(request))
+            {
+                condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_SAVE);
+
+                request.setAttribute("status", OutConstant.STATUS_SAVE);
+
+                queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_SAVE));
+
+                // 领样退库/销售退库
+                condtion.addCondition("and OutBean.outType in (4, 5)");
+            }
+
+            condtion.addCondition("and OutBean.industryId in " + getAllIndustryId(staffer));
         }
         // 未知的则什么都没有
         else
