@@ -89,6 +89,12 @@ public interface FinanceConstant
     int INBILL_TYPE_BADOUT = 4;
 
     /**
+     * 预收转费用
+     */
+    @Defined(key = "inbillType", value = "预收转费用")
+    int INBILL_TYPE_FEE = 5;
+
+    /**
      * 转账
      */
     @Defined(key = "inbillType", value = "转账")
@@ -146,6 +152,12 @@ public interface FinanceConstant
      * 临时
      */
     int PAYAPPLY_TYPE_TEMP = 2;
+
+    /**
+     * 预收转费用
+     */
+    @Defined(key = "payApplyType", value = "预收转费用")
+    int PAYAPPLY_TYPE_CHANGEFEE = 3;
 
     /**
      * 正常

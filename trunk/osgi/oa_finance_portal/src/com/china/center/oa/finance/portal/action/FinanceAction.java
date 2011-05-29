@@ -869,6 +869,42 @@ public class FinanceAction extends DispatchAction
     }
 
     /**
+     * 预收转费用
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward drawPayment4(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String billId = request.getParameter("billId");
+
+            User user = Helper.getUser(request);
+
+            addApply3(request, billId, user);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
      * 付款申请(只有第一次认领才会调用)
      * 
      * @param request
@@ -1063,6 +1099,61 @@ public class FinanceAction extends DispatchAction
         }
 
         apply.setMoneys(total);
+
+        financeFacade.addPaymentApply(user.getId(), apply);
+    }
+
+    /**
+     * 预收转费用
+     * 
+     * @param request
+     * @param id
+     * @param customerId
+     * @param user
+     * @throws MYException
+     */
+    private void addApply3(HttpServletRequest request, String billId, User user)
+        throws MYException
+    {
+        String reason = request.getParameter("reason");
+
+        InBillBean bill = inBillDAO.find(billId);
+
+        if (bill == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bill.getStatus() != FinanceConstant.INBILL_STATUS_NOREF)
+        {
+            throw new MYException("不是预收的收款单,请确认操作");
+        }
+
+        // 看看是否存在退款申请
+
+        PaymentApplyBean apply = new PaymentApplyBean();
+
+        apply.setType(FinanceConstant.PAYAPPLY_TYPE_CHANGEFEE);
+        apply.setCustomerId(bill.getCustomerId());
+        apply.setLocationId(user.getLocationId());
+        apply.setLogTime(TimeTools.now());
+        apply.setStafferId(user.getStafferId());
+        apply.setDescription(reason);
+
+        List<PaymentVSOutBean> vsList = new ArrayList<PaymentVSOutBean>();
+
+        PaymentVSOutBean vs = new PaymentVSOutBean();
+
+        vs.setBillId(billId);
+        vs.setMoneys(bill.getMoneys());
+        vs.setStafferId(user.getStafferId());
+        vs.setLocationId(user.getLocationId());
+
+        vsList.add(vs);
+
+        apply.setVsList(vsList);
+
+        apply.setMoneys(bill.getMoneys());
 
         financeFacade.addPaymentApply(user.getId(), apply);
     }

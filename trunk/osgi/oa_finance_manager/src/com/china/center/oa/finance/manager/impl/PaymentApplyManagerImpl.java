@@ -19,11 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.bean.PaymentApplyBean;
 import com.china.center.oa.finance.bean.PaymentBean;
+import com.china.center.oa.finance.constant.BackPayApplyConstant;
 import com.china.center.oa.finance.constant.FinanceConstant;
+import com.china.center.oa.finance.dao.BackPayApplyDAO;
 import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.PaymentApplyDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
@@ -79,6 +82,8 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
     private BillManager billManager = null;
 
     private ParameterDAO parameterDAO = null;
+
+    private BackPayApplyDAO backPayApplyDAO = null;
 
     private OutDAO outDAO = null;
 
@@ -277,6 +282,31 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
             }
         }
 
+        // 预收转费用
+        if (oldType == FinanceConstant.PAYAPPLY_TYPE_CHANGEFEE)
+        {
+            String billId = bean.getVsList().get(0).getBillId();
+
+            checkHaveBackPay(billId);
+
+            // 更新预付金额
+            InBillBean bill = inBillDAO.find(billId);
+
+            if (bill.getStatus() != FinanceConstant.INBILL_STATUS_NOREF)
+            {
+                throw new MYException("预收转费用必须是预收,请确认操作");
+            }
+
+            if ( !bill.getOwnerId().equals(user.getStafferId()))
+            {
+                throw new MYException("只能操作自己的单据,请确认操作");
+            }
+
+            bill.setStatus(FinanceConstant.INBILL_STATUS_PREPAYMENTS);
+
+            inBillDAO.updateEntityBean(bill);
+        }
+
         bean.setMoneys(tt);
 
         paymentApplyDAO.saveEntityBean(bean);
@@ -286,6 +316,33 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         saveFlowlog(user, bean);
 
         return true;
+    }
+
+    /**
+     * 是否存在退款申请
+     * 
+     * @param billId
+     * @throws MYException
+     */
+    private void checkHaveBackPay(String billId)
+        throws MYException
+    {
+        // 一个单子只能存在一个申请
+        ConditionParse condition = new ConditionParse();
+
+        condition.addWhereStr();
+
+        condition.addCondition("BackPayApplyBean.billId", "=", billId);
+
+        condition.addIntCondition("BackPayApplyBean.status", "<",
+            BackPayApplyConstant.STATUS_REJECT);
+
+        int countByCondition = backPayApplyDAO.countByCondition(condition.toString());
+
+        if (countByCondition > 0)
+        {
+            throw new MYException("此预收存在未结束的退款申请,请确认操作");
+        }
     }
 
     private void saveFlowlog(User user, PaymentApplyBean bean)
@@ -318,6 +375,11 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         }
 
         if (bean.getType() == FinanceConstant.PAYAPPLY_TYPE_TEMP)
+        {
+            return;
+        }
+
+        if (bean.getType() == FinanceConstant.PAYAPPLY_TYPE_CHANGEFEE)
         {
             return;
         }
@@ -434,7 +496,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
 
         PaymentBean payment = paymentDAO.find(apply.getPaymentId());
 
-        // CORE 生成收款单,更新销售单和委托清单付款状态
+        // CORE 生成收款单,更新销售单和委托清单付款状态/或者转成费用
         createInbill(user, apply, payment, reason);
 
         // 更新回款单的状态和使用金额
@@ -470,6 +532,36 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
             {
                 // 回款转收款通过,增加收款单
                 saveBillInner(user, apply, payment, item, reason);
+            }
+            // 预收转费用
+            else if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_CHANGEFEE)
+            {
+                // 把预收转成费用,且新生成的需要核对
+                String billId = item.getBillId();
+
+                // 更新预付金额
+                InBillBean bill = inBillDAO.find(billId);
+
+                if (bill.getStatus() != FinanceConstant.INBILL_STATUS_PREPAYMENTS)
+                {
+                    throw new MYException("预收转费用必须是关联申请态,请确认操作");
+                }
+
+                bill.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
+
+                bill.setOutId("");
+
+                bill.setOutBalanceId("");
+
+                // 变成未核对的状态
+                bill.setCheckStatus(PublicConstant.CHECK_STATUS_INIT);
+
+                // 转成费用的收款单
+                bill.setType(FinanceConstant.INBILL_TYPE_FEE);
+
+                bill.setDescription(bill.getDescription() + " " + apply.getDescription());
+
+                inBillDAO.updateEntityBean(bill);
             }
             else
             {
@@ -756,6 +848,11 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
             return;
         }
 
+        if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_CHANGEFEE)
+        {
+            return;
+        }
+
         PaymentBean payment = paymentDAO.find(apply.getPaymentId());
 
         double hasUsed = inBillDAO.sumByPaymentId(apply.getPaymentId());
@@ -798,6 +895,11 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         apply.setMoneys(total);
 
         if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_BING)
+        {
+            return apply;
+        }
+
+        if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_CHANGEFEE)
         {
             return apply;
         }
@@ -868,8 +970,9 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
 
         for (PaymentVSOutBean item : vsList)
         {
-            // 如果是关联收款单则取消
-            if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_BING)
+            // 如果是关联收款单则取消/预收转费用
+            if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_BING
+                || apply.getType() == FinanceConstant.PAYAPPLY_TYPE_CHANGEFEE)
             {
                 InBillBean bill = inBillDAO.find(item.getBillId());
 
@@ -1170,6 +1273,23 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
     public void setParameterDAO(ParameterDAO parameterDAO)
     {
         this.parameterDAO = parameterDAO;
+    }
+
+    /**
+     * @return the backPayApplyDAO
+     */
+    public BackPayApplyDAO getBackPayApplyDAO()
+    {
+        return backPayApplyDAO;
+    }
+
+    /**
+     * @param backPayApplyDAO
+     *            the backPayApplyDAO to set
+     */
+    public void setBackPayApplyDAO(BackPayApplyDAO backPayApplyDAO)
+    {
+        this.backPayApplyDAO = backPayApplyDAO;
     }
 
 }

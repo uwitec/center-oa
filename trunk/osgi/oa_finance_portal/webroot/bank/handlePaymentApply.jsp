@@ -78,6 +78,10 @@ function rejectBean()
 			<p:cell title="时间">
                ${bean.logTime}
             </p:cell>
+            
+            <p:cell title="备注">
+               ${bean.description}
+            </p:cell>
 
 			<p:cell title="审批意见">
 				<textarea rows=3 cols=55 oncheck="notNone;maxLength(200);" name="reason"></textarea>

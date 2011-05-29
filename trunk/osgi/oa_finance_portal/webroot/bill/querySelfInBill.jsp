@@ -40,6 +40,7 @@ function load()
          },
          buttons : [
              {id: 'update', bclass: 'update', caption: '申请预收退款', onpress : splitInBill},
+             {id: 'update1', bclass: 'update', caption: '预收转费用', onpress : splitInBill2, auth: '99999'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -66,6 +67,21 @@ function splitInBill(opr, grid)
                 $ajax('../finance/bill.do?method=splitInBill&id=' + $$('checkb') + '&newMoney=' + value, callBackFun);
                 else
                 $error('只能输入数字');           
+            });
+    }
+    else
+    $error('不能操作');
+}
+
+function splitInBill2(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {   
+        $.messager.prompt('预收转费用', '请输入备注', '',
+            function(value, isOk)
+            {
+                if (isOk)
+                $ajax2('../finance/bank.do?method=drawPayment4&billId=' + $$('checkb'), {'reason' : value},  callBackFun);
             });
     }
     else
