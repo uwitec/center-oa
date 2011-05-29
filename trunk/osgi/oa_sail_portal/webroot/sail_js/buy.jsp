@@ -323,10 +323,14 @@ function managerChange()
     {
         showTr('pro_tr', true);
         showTr('duty_tr', true);
+        showTr('invoice_tr', true);
+        $O('customerName').oncheck = 'notNone';
     }
     else
     {
         showTr('pro_tr', false);
+        showTr('invoice_tr', false);
+        $O('customerName').oncheck = '';
     }
     
     if ($$('outType') == 99)
