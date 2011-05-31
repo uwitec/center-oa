@@ -505,7 +505,7 @@ if(window.HTMLElement)
                     
                 if (p.dataType !='xml')
                 {
-                	p.hint = data.hint;
+                    p.hint = data.hint;
                 }
                     
                 if (p.total==0)
@@ -590,7 +590,7 @@ if(window.HTMLElement)
                                          }
                                          else
                                          {
-                                            var con = row.cell[iname];
+                                            var con = escapeXML(row.cell[iname]);
                                             
                                             var ccs = $(this).attr('cc');
                                             
@@ -1991,7 +1991,7 @@ function getSplit(orgStr, map)
     
     if (value != null && value != undefined)
     {
-       orgStr = orgStr.replace("{" + key + "}", value.toString());
+       orgStr = orgStr.replace("{" + key + "}", escapeXML(value.toString()));
     }
     
     return orgStr;
@@ -2094,6 +2094,17 @@ function ajaxPararmter(str)
     str = str.replace(/\?/g, "%3F");
     str = str.replace(/\#/g, "%23");
     str = str.replace(/\//g, "%2F");
+    
+    return str;
+}
+
+function escapeXML(str)
+{
+    str = str.replace(/\&/g, "&amp;");
+    str = str.replace(/\</g, "&lt;"); 
+    str = str.replace(/\>/g, "&gt;"); 
+    str = str.replace(/\"/g, "&quot");
+    str = str.replace(/\'/g, "&#39;");
     
     return str;
 }
