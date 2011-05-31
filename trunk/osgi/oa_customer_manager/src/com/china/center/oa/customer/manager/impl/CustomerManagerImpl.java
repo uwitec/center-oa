@@ -108,7 +108,7 @@ public class CustomerManagerImpl extends AbstractListenerManager<CustomerListene
     {
         JudgeTools.judgeParameterIsNull(user, bean, bean.getName());
 
-        bean.setName(bean.getName().trim());
+        bean.setName(StringTools.getLineString(bean.getName().trim()));
 
         checkAddBean(bean);
 
@@ -139,7 +139,7 @@ public class CustomerManagerImpl extends AbstractListenerManager<CustomerListene
 
         checkAssignCode(bean, code);
 
-        handleAdd(user, bean.getId(), bean);
+        // handleAdd(user, bean.getId(), bean);
 
         return true;
     }
@@ -412,8 +412,8 @@ public class CustomerManagerImpl extends AbstractListenerManager<CustomerListene
         if (bean.getOpr() == CustomerConstant.OPR_ADD)
         {
             // 先审批改变状态
-            customerApplyDAO.updateStatus(cid, CustomerConstant.STATUS_WAIT_CODE);
-            // handleAdd(user, cid, bean);
+            // customerApplyDAO.updateStatus(cid, CustomerConstant.STATUS_WAIT_CODE);
+            handleAdd(user, cid, bean);
         }
 
         if (bean.getOpr() == CustomerConstant.OPR_UPDATE)

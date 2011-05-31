@@ -10,18 +10,16 @@
 <script src="../js/pop.js"></script>
 <script src="../js/json.js"></script>
 <script src="../js/plugin/dialog/jquery.dialog.js"></script>
-<script src="../js/plugin/highlight/jquery.highlight.js"></script>
 <script type="text/javascript">
 
 var allDef = window.top.topFrame.allDef;
 var guidMap;
 var thisObj;
-var updateCode = window.top.topFrame.containAuth('0214') ? '1' : '0';
 function load()
 {
 	 guidMap = {
 		 title: '申请客户列表',
-		 url: '../customer/customer.do?method=queryApplyCustomer',
+		 url: '../customer/customer.do?method=queryCheckApplyCustomer',
 		 colModel : [
 		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lname={name}>', width : 40, sortable : false, align: 'center'},
 		     {display: '客户', name : 'name', width : '20%', sortable : false, align: 'left'},
@@ -34,24 +32,18 @@ function load()
 		     {display: '时间', name : 'loginTime', width : 'auto', sortable : true, align: 'left'}
 		     ],
 		 extAtt: {
-		     name : {begin : '<a href=../customer/customer.do?method=findApplyCustomer&id={id}&updateCode='+ updateCode + '>', end : '</a>'}
+		     name : {begin : '<a href=../customer/customer.do?method=findApplyCustomer&id={id}>', end : '</a>'}
 		 },
 		 buttons : [
-		     {id: 'add', caption: '申请增加', bclass: 'add', auth: '0202', onpress : addBean},
-		     {id: 'del',  caption: '删除申请', bclass: 'delete', auth: '0202', onpress : delBean}
+		     {id: 'pass', caption: '通过',bclass: 'pass', auth: '0203', onpress : doPass},
+		     {id: 'reject', caption: '驳回',bclass: 'reject', auth: '0203', onpress : doReject},
+		     {id: 'search', caption: '查询现有客户', bclass: 'search', auth: '0203', onpress : selectCus}
 		     ],
-		 <p:conf queryMode="0"/>
+		 <p:conf callBack="loadForm" queryMode="0"/>
 	 };
 	 
 	 $("#mainTable").flexigrid(guidMap, thisObj);
-}
-
-function $callBack()
-{
-    loadForm();
-    
-    highlights($("#mainTable").get(0), ['驳回'], 'red');
-}
+ }
  
 function doPass()
 {
@@ -80,31 +72,7 @@ function doReject()
                         $ajax2('../customer/customer.do?method=processApply&operation=1&id=' + getRadioValue('checkb'), {'reson' : r},  callBackFun);
                     }
                    
-                });
-}
-
-function doAssignCode()
-{
-    if (getRadio('checkb') && getRadioValue('checkb'))
-    {
-        $l('../customer/customer.do?method=findApplyCustomer&updateCode=1&id=' + getRadioValue('checkb'));
-    }
-}
-
-function delBean()
-{
-    if (getRadio('checkb') && getRadioValue('checkb'))
-    {
-        if (window.confirm('确定删除申请--' + getRadio('checkb').lname))
-        {
-            $ajax('../customer/customer.do?method=delApplyCustomer&id=' + getRadioValue('checkb'), callBackFun);
-        }
-    }
-}
-
-function addBean()
-{
-    $l('../customer/customer.do?method=preForAddApplyCustomer');
+                }, 2);
 }
 
 function selectCus()
@@ -115,13 +83,6 @@ function selectCus()
 function getCustomer(obj)
 {
     
-}
-
-function commonQuery(par)
-{
-    gobal_guid.p.queryCondition = par;
-    
-    gobal_guid.grid.populate(true);
 }
 </script>
 </head>

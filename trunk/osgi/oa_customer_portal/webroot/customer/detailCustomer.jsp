@@ -223,6 +223,12 @@ function checkBean()
             <p:pro field="assignPer3" />
             <p:pro field="assignPer4" />
             
+            <c:if test="${apply == true}">
+	            <p:cell title="审批意见" end="true">
+	               <c:out value="${bean.reson}"/>
+	            </p:cell>
+            </c:if>
+            
 		</p:table>
 	</p:subBody>
 

@@ -40,6 +40,9 @@ public class CustomerApplyVO extends CustomerApplyBean
     @Relationship(relationField = "hlocal")
     private String hlocalName = "";
 
+    @Relationship(relationField = "locationId")
+    private String locationName = "";
+
     /**
      * default constructor
      */
@@ -143,11 +146,44 @@ public class CustomerApplyVO extends CustomerApplyBean
 
         StringBuffer retValue = new StringBuffer();
 
-        retValue.append("CustomerApplyVO ( ").append(super.toString()).append(TAB).append("provinceName = ").append(
-            this.provinceName).append(TAB).append("cityName = ").append(this.cityName).append(TAB).append("areaName = ").append(
-            this.areaName).append(TAB).append("stafferName = ").append(this.stafferName).append(TAB).append(
-            "hlocalName = ").append(this.hlocalName).append(TAB).append(" )");
+        retValue
+            .append("CustomerApplyVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("provinceName = ")
+            .append(this.provinceName)
+            .append(TAB)
+            .append("cityName = ")
+            .append(this.cityName)
+            .append(TAB)
+            .append("areaName = ")
+            .append(this.areaName)
+            .append(TAB)
+            .append("stafferName = ")
+            .append(this.stafferName)
+            .append(TAB)
+            .append("hlocalName = ")
+            .append(this.hlocalName)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the locationName
+     */
+    public String getLocationName()
+    {
+        return locationName;
+    }
+
+    /**
+     * @param locationName
+     *            the locationName to set
+     */
+    public void setLocationName(String locationName)
+    {
+        this.locationName = locationName;
     }
 }

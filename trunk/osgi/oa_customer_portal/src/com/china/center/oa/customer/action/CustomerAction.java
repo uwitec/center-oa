@@ -167,6 +167,8 @@ public class CustomerAction extends DispatchAction
 
     private static String RPTQUERYSELFCUSTOMER = "rptQuerySelfCustomer";
 
+    private static String QUERYCHECKAPPLYCUSTOMER = "queryCheckApplyCustomer";
+
     /**
      * default constructor
      */
@@ -889,22 +891,50 @@ public class CustomerAction extends DispatchAction
         condtion.addIntCondition("CustomerApplyBean.opr", "<>",
             CustomerConstant.OPR_UPATE_ASSIGNPER);
 
-        if (userManager.containAuth(user, AuthConstant.CUSTOMER_CHECK))
-        {
-            condtion.addCondition("CustomerApplyBean.locationId", "=", user.getLocationId());
-
-            condtion
-                .addIntCondition("CustomerApplyBean.status", "=", CustomerConstant.STATUS_APPLY);
-        }
-        else
-        {
-            // 只能看到自己的客户
-            condtion.addCondition("CustomerApplyBean.updaterId", "=", user.getStafferId());
-        }
+        // 只能看到自己的客户
+        condtion.addCondition("CustomerApplyBean.updaterId", "=", user.getStafferId());
 
         ActionTools.processJSONQueryCondition(QUERYAPPLYCUSTOMER, request, condtion);
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYAPPLYCUSTOMER, request,
+            condtion, this.customerApplyDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryCheckApplyCustomer
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryCheckApplyCustomer(ActionMapping mapping, ActionForm form,
+                                                 HttpServletRequest request,
+                                                 HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        User user = Helper.getUser(request);
+
+        condtion.addIntCondition("CustomerApplyBean.opr", "<>", CustomerConstant.OPR_UPATE_CREDIT);
+
+        condtion.addIntCondition("CustomerApplyBean.opr", "<>",
+            CustomerConstant.OPR_UPATE_ASSIGNPER);
+
+        condtion.addCondition("CustomerApplyBean.locationId", "=", user.getLocationId());
+
+        condtion.addIntCondition("CustomerApplyBean.status", "=", CustomerConstant.STATUS_APPLY);
+
+        ActionTools.processJSONQueryCondition(QUERYCHECKAPPLYCUSTOMER, request, condtion);
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKAPPLYCUSTOMER, request,
             condtion, this.customerApplyDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
@@ -1723,6 +1753,8 @@ public class CustomerAction extends DispatchAction
             }
 
             request.setAttribute("bean", vo);
+
+            request.setAttribute("apply", true);
 
             // 修改客户编码
             if (userManager.containAuth(user, AuthConstant.CUSTOMER_ASSIGN_CODE)
