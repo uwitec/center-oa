@@ -342,6 +342,16 @@ public class StringTools
         return str.replaceAll(",", ";").replaceAll("\r\n", "");
     }
 
+    public static String getLineString(String str)
+    {
+        if (str == null)
+        {
+            return "";
+        }
+
+        return str.replaceAll("\r\n", "").replaceAll("\r", "");
+    }
+
     /**
      * Filter the specified string for characters that are sensitive to HTML interpreters, returning the string with
      * these characters replaced by the corresponding character entities.

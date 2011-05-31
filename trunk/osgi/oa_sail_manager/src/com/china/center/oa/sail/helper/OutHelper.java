@@ -20,6 +20,7 @@ import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.tools.MathTools;
+import com.china.center.tools.StringTools;
 
 
 /**
@@ -59,7 +60,8 @@ public abstract class OutHelper
 
             buffer.append("<tr class='" + cls + "'>");
 
-            buffer.append("<td width='20%' align='center'>" + bean.getProductName() + "</td>");
+            buffer.append("<td width='20%' align='center'>"
+                          + StringTools.getLineString(bean.getProductName()) + "</td>");
             buffer.append("<td width='5%' align='center'>" + bean.getUnit() + "</td>");
             buffer.append("<td width='10%' align='center'>" + bean.getAmount() + "</td>");
             buffer.append(" <td width='15%' align='center'>" + MathTools.formatNum(bean.getPrice())
@@ -73,7 +75,7 @@ public abstract class OutHelper
 
         buffer.append("</table>");
 
-        return buffer.toString();
+        return StringTools.getLineString(buffer.toString());
     }
 
     public static String getStatus(int i)
