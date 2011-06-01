@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <query>
 	<item name="queryCustomer" deaultpfix="CustomerBean">
+	    <condtion name="alogTime" filed="createTime" caption="创建时间从">
+            <opr>&gt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
+        <condtion name="blogTime" filed="createTime" caption="到">
+            <opr>&lt;=</opr>
+            <type>date</type>
+            <inner></inner>
+        </condtion>
 		<condtion name="name" caption="客户名称">
 			<opr>like</opr>
 			<type>text</type>
@@ -33,6 +43,12 @@
 			<type>select</type>
 			<option>$108</option>
 		</condtion>
+		<condtion name="createrId" caption="创建人">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$staffer</option>
+        </condtion>
 	</item>
 	
 	<item name="queryLocationCustomer" alias="queryCustomer"/>
