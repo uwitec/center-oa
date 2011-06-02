@@ -203,7 +203,7 @@ public class CustomerFacadeImpl extends AbstarctFacade implements CustomerFacade
 
         checkUser(user);
 
-        if (containAuth(user, AuthConstant.CUSTOMER_CHECK))
+        if (containAuth(user, AuthConstant.CUSTOMER_INFO_CHECK))
         {
             return customerManager.rejectApplyCustomer(user, cid, reson);
         }
@@ -255,7 +255,7 @@ public class CustomerFacadeImpl extends AbstarctFacade implements CustomerFacade
 
         checkUser(user);
 
-        if (containAuth(user, AuthConstant.CUSTOMER_CHECK))
+        if (containAuth(user, AuthConstant.CUSTOMER_INFO_CHECK))
         {
             return customerManager.passApplyCustomer(user, cid);
         }

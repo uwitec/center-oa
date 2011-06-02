@@ -69,7 +69,7 @@ public interface AuthConstant
     String CUSTOMER_OPR = "0202";
 
     /**
-     * 审批客户
+     * 客户分配审批
      */
     String CUSTOMER_CHECK = "0203";
 
@@ -167,6 +167,11 @@ public interface AuthConstant
      * 利润分配审核
      */
     String CUSTOMER_ASSIGNPER_APPROVE = "021802";
+
+    /**
+     * 客户信息审批
+     */
+    String CUSTOMER_INFO_CHECK = "0220";
 
     /**
      * 查询地市考核配置
