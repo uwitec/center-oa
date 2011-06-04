@@ -485,6 +485,24 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
         // 当结束的时候 把各个item的状态标志成结束(给询价作为参考)
         if (nextStatus == StockConstant.STOCK_STATUS_END)
         {
+            // 检验是否都已经入库
+            boolean all = true;
+
+            for (StockItemBean stockItemBean : itemList)
+            {
+                if (stockItemBean.getFechProduct() == StockConstant.STOCK_ITEM_FECH_NO)
+                {
+                    all = false;
+
+                    break;
+                }
+            }
+
+            if ( !all)
+            {
+                throw new MYException("还没有全部拿货不能通过");
+            }
+
             for (StockItemBean stockItemBean2 : itemList)
             {
                 // 更新状态
