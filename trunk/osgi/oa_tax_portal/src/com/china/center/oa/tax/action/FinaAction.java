@@ -619,7 +619,7 @@ public class FinaAction extends DispatchAction
 
         if ("1".equals(update))
         {
-            if (bean.getStatus() != TaxConstanst.FINANCE_STATUS_CHECK)
+            if (bean.getStatus() == TaxConstanst.FINANCE_STATUS_CHECK)
             {
                 return ActionTools.toError("已经被核对(锁定)不能修改,请重新操作", mapping, request);
             }
