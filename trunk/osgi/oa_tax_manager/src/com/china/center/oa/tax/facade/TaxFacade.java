@@ -36,6 +36,9 @@ public interface TaxFacade
     boolean addFinanceBean(String userId, FinanceBean bean)
         throws MYException;
 
+    boolean updateFinanceBean(String userId, FinanceBean bean)
+        throws MYException;
+
     boolean deleteFinanceBean(String userId, String id)
         throws MYException;
 

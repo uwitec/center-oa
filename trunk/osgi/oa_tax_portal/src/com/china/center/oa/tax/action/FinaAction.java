@@ -37,6 +37,10 @@ import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
+import com.china.center.oa.product.bean.DepotBean;
+import com.china.center.oa.product.bean.ProductBean;
+import com.china.center.oa.product.dao.DepotDAO;
+import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.DepartmentBean;
 import com.china.center.oa.publics.bean.DutyBean;
@@ -107,7 +111,13 @@ public class FinaAction extends DispatchAction
 
     private FinanceItemDAO financeItemDAO = null;
 
+    private DepotDAO depotDAO = null;
+
+    private ProductDAO productDAO = null;
+
     private static final String QUERYFINANCE = "queryFinance";
+
+    private static final String QUERYFINANCEITEM = "queryFinanceItem";
 
     private static final String QUERYCHECKVIEW = "queryCheckView";
 
@@ -151,6 +161,42 @@ public class FinaAction extends DispatchAction
                 {
                     obj.getShowInmoney();
                     obj.getShowOutmoney();
+                }
+            });
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryFinanceItem
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryFinanceItem(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        Map<String, String> initMap = initItemLogTime(request, condtion);
+
+        ActionTools.processJSONQueryCondition(QUERYFINANCEITEM, request, condtion, initMap);
+
+        condtion.addCondition("order by FinanceItemBean.logTime desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCEITEM, request, condtion,
+            this.financeItemDAO, new HandleResult<FinanceItemVO>()
+            {
+                public void handle(FinanceItemVO obj)
+                {
+                    fillItemVO(obj);
                 }
             });
 
@@ -209,19 +255,41 @@ public class FinaAction extends DispatchAction
     {
         Map<String, String> changeMap = new HashMap<String, String>();
 
-        String alogTime = request.getParameter("alogTime");
+        String alogTime = request.getParameter("afinanceDate");
 
-        String blogTime = request.getParameter("blogTime");
+        String blogTime = request.getParameter("bfinanceDate");
 
         if (StringTools.isNullOrNone(alogTime) && StringTools.isNullOrNone(blogTime))
         {
-            changeMap.put("alogTime", TimeTools.now( -90));
+            changeMap.put("afinanceDate", TimeTools.now_short( -30));
 
-            changeMap.put("blogTime", TimeTools.now(1));
+            changeMap.put("bfinanceDate", TimeTools.now_short(1));
 
-            condtion.addCondition("FinanceBean.logTime", ">=", TimeTools.now( -90));
+            condtion.addCondition("FinanceBean.financeDate", ">=", TimeTools.now_short( -30));
 
-            condtion.addCondition("FinanceBean.logTime", "<=", TimeTools.now(1));
+            condtion.addCondition("FinanceBean.financeDate", "<=", TimeTools.now_short(1));
+        }
+
+        return changeMap;
+    }
+
+    private Map<String, String> initItemLogTime(HttpServletRequest request, ConditionParse condtion)
+    {
+        Map<String, String> changeMap = new HashMap<String, String>();
+
+        String alogTime = request.getParameter("afinanceDate");
+
+        String blogTime = request.getParameter("bfinanceDate");
+
+        if (StringTools.isNullOrNone(alogTime) && StringTools.isNullOrNone(blogTime))
+        {
+            changeMap.put("afinanceDate", TimeTools.now_short( -30));
+
+            changeMap.put("bfinanceDate", TimeTools.now_short(1));
+
+            condtion.addCondition("FinanceItemBean.financeDate", ">=", TimeTools.now_short( -30));
+
+            condtion.addCondition("FinanceItemBean.financeDate", "<=", TimeTools.now_short(1));
         }
 
         return changeMap;
@@ -269,6 +337,46 @@ public class FinaAction extends DispatchAction
             User user = Helper.getUser(request);
 
             taxFacade.addFinanceBean(user.getId(), bean);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作:" + bean.getName());
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        return mapping.findForward(QUERYFINANCE);
+    }
+
+    /**
+     * updateFinance
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward updateFinance(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        FinanceBean bean = new FinanceBean();
+
+        try
+        {
+            BeanUtil.getBean(bean, request);
+
+            setFinanceBean(bean, request);
+
+            User user = Helper.getUser(request);
+
+            taxFacade.updateFinanceBean(user.getId(), bean);
 
             request.setAttribute(KeyConstant.MESSAGE, "成功操作:" + bean.getName());
         }
@@ -489,6 +597,8 @@ public class FinaAction extends DispatchAction
     {
         String id = request.getParameter("id");
 
+        String update = request.getParameter("update");
+
         FinanceVO bean = financeDAO.findVO(id);
 
         if (bean == null)
@@ -500,48 +610,103 @@ public class FinaAction extends DispatchAction
 
         for (FinanceItemVO item : voList)
         {
-            TaxBean tax = taxDAO.find(item.getTaxId());
-
-            item.setForward(tax.getForward());
-
-            item.setTaxName(tax.getCode() + tax.getName());
-
-            if (tax.getDepartment() == TaxConstanst.TAX_CHECK_YES)
-            {
-                DepartmentBean depart = departmentDAO.find(item.getDepartmentId());
-
-                if (depart != null)
-                {
-                    item.setDepartmentName(depart.getName());
-                }
-            }
-
-            if (tax.getStaffer() == TaxConstanst.TAX_CHECK_YES)
-            {
-                StafferBean sb = stafferDAO.find(item.getStafferId());
-
-                if (sb != null)
-                {
-                    item.setStafferName(sb.getName());
-                }
-            }
-
-            if (tax.getUnit() == TaxConstanst.TAX_CHECK_YES)
-            {
-                UnitBean unit = unitDAO.find(item.getUnitId());
-
-                if (unit != null)
-                {
-                    item.setUnitName(unit.getName());
-                }
-            }
+            fillItemVO(item);
         }
 
         bean.setItemVOList(voList);
 
         request.setAttribute("bean", bean);
 
+        if ("1".equals(update))
+        {
+            if (bean.getStatus() != TaxConstanst.FINANCE_STATUS_CHECK)
+            {
+                return ActionTools.toError("已经被核对(锁定)不能修改,请重新操作", mapping, request);
+            }
+
+            preInner(request);
+
+            return mapping.findForward("updateFinance");
+        }
+
         return mapping.findForward("detailFinance");
+    }
+
+    /**
+     * fillItemVO
+     * 
+     * @param item
+     */
+    private void fillItemVO(FinanceItemVO item)
+    {
+        TaxBean tax = taxDAO.find(item.getTaxId());
+
+        item.setForward(tax.getForward());
+
+        item.setTaxName(tax.getCode() + tax.getName());
+
+        if (tax.getDepartment() == TaxConstanst.TAX_CHECK_YES)
+        {
+            DepartmentBean depart = departmentDAO.find(item.getDepartmentId());
+
+            if (depart != null)
+            {
+                item.setDepartmentName(depart.getName());
+            }
+        }
+
+        if (tax.getStaffer() == TaxConstanst.TAX_CHECK_YES)
+        {
+            StafferBean sb = stafferDAO.find(item.getStafferId());
+
+            if (sb != null)
+            {
+                item.setStafferName(sb.getName());
+            }
+        }
+
+        if (tax.getUnit() == TaxConstanst.TAX_CHECK_YES)
+        {
+            UnitBean unit = unitDAO.find(item.getUnitId());
+
+            if (unit != null)
+            {
+                item.setUnitName(unit.getName());
+            }
+        }
+
+        if (tax.getProduct() == TaxConstanst.TAX_CHECK_YES)
+        {
+            ProductBean product = productDAO.find(item.getProductId());
+
+            if (product != null)
+            {
+                item.setProductName(product.getName());
+            }
+        }
+
+        if (tax.getDepot() == TaxConstanst.TAX_CHECK_YES)
+        {
+            DepotBean depot = depotDAO.find(item.getDepotId());
+
+            if (depot != null)
+            {
+                item.setDepotName(depot.getName());
+            }
+        }
+
+        if (tax.getDuty() == TaxConstanst.TAX_CHECK_YES)
+        {
+            DutyBean duty2 = dutyDAO.find(item.getDuty2Id());
+
+            if (duty2 != null)
+            {
+                item.setDuty2Name(duty2.getName());
+            }
+        }
+
+        item.getShowInmoney();
+        item.getShowOutmoney();
     }
 
     /**
@@ -559,6 +724,9 @@ public class FinaAction extends DispatchAction
         String[] taxIds = request.getParameterValues("taxId2");
         String[] stafferId2s = request.getParameterValues("stafferId2");
         String[] unitId2s = request.getParameterValues("unitId2");
+        String[] productId2s = request.getParameterValues("productId2");
+        String[] depotIds = request.getParameterValues("depotId");
+        String[] duty2Ids = request.getParameterValues("duty2Id");
         String[] inmoneys = request.getParameterValues("inmoney");
         String[] outmoneys = request.getParameterValues("outmoney");
 
@@ -603,6 +771,10 @@ public class FinaAction extends DispatchAction
 
                 item.setDepartmentId(departmentIds[i]);
             }
+            else
+            {
+                item.setDepartmentId("");
+            }
 
             if (tax.getStaffer() == TaxConstanst.TAX_CHECK_YES)
             {
@@ -612,6 +784,10 @@ public class FinaAction extends DispatchAction
                 }
 
                 item.setStafferId(stafferId2s[i]);
+            }
+            else
+            {
+                item.setStafferId("");
             }
 
             if (tax.getUnit() == TaxConstanst.TAX_CHECK_YES)
@@ -631,6 +807,73 @@ public class FinaAction extends DispatchAction
                 }
 
                 item.setUnitType(unit.getType());
+            }
+            else
+            {
+                item.setUnitId("");
+            }
+
+            if (tax.getProduct() == TaxConstanst.TAX_CHECK_YES)
+            {
+                if (StringTools.isNullOrNone(productId2s[i]))
+                {
+                    throw new MYException("科目[%s]产品不能为空,请重新操作", tax.getCode() + tax.getName());
+                }
+
+                item.setProductId(productId2s[i]);
+
+                ProductBean product = productDAO.find(item.getProductId());
+
+                if (product == null)
+                {
+                    throw new MYException("产品不存在,请确认操作");
+                }
+            }
+            else
+            {
+                item.setProductId("");
+            }
+
+            if (tax.getDepot() == TaxConstanst.TAX_CHECK_YES)
+            {
+                if (StringTools.isNullOrNone(depotIds[i]))
+                {
+                    throw new MYException("科目[%s]仓库不能为空,请重新操作", tax.getCode() + tax.getName());
+                }
+
+                item.setDepotId(depotIds[i]);
+
+                DepotBean depot = depotDAO.find(item.getDepotId());
+
+                if (depot == null)
+                {
+                    throw new MYException("仓库不存在,请确认操作");
+                }
+            }
+            else
+            {
+                item.setDepotId("");
+            }
+
+            if (tax.getDuty() == TaxConstanst.TAX_CHECK_YES)
+            {
+                if (StringTools.isNullOrNone(duty2Ids[i]))
+                {
+                    throw new MYException("科目[%s]纳税实体不能为空,请重新操作", tax.getCode() + tax.getName());
+                }
+
+                item.setDuty2Id(duty2Ids[i]);
+
+                DutyBean duty2 = dutyDAO.find(item.getDuty2Id());
+
+                if (duty2 == null)
+                {
+                    throw new MYException("纳税实体不存在,请确认操作");
+                }
+            }
+            else
+            {
+                item.setDuty2Id("");
             }
 
             item.setName(idescriptions[i]);
@@ -681,6 +924,13 @@ public class FinaAction extends DispatchAction
     public ActionForward preForAddFinance(ActionMapping mapping, ActionForm form,
                                           HttpServletRequest request, HttpServletResponse response)
     {
+        preInner(request);
+
+        return mapping.findForward("addFinance");
+    }
+
+    private void preInner(HttpServletRequest request)
+    {
         List<TaxBean> taxList = taxDAO.listEntityBeans("order by TaxBean.code asc");
 
         for (Iterator iterator = taxList.iterator(); iterator.hasNext();)
@@ -699,6 +949,10 @@ public class FinaAction extends DispatchAction
 
         request.setAttribute("dutyList", dutyList);
 
+        List<DepotBean> depotList = depotDAO.listEntityBeans();
+
+        request.setAttribute("depotList", depotList);
+
         List<DepartmentBean> departmentBeanList = departmentDAO.listEntityBeans();
 
         request.setAttribute("departmentBeanList", departmentBeanList);
@@ -706,8 +960,6 @@ public class FinaAction extends DispatchAction
         JSONArray object = new JSONArray(taxList, false);
 
         request.setAttribute("taxListStr", object.toString());
-
-        return mapping.findForward("addFinance");
     }
 
     /**
@@ -985,6 +1237,40 @@ public class FinaAction extends DispatchAction
     public void setUnitViewDAO(UnitViewDAO unitViewDAO)
     {
         this.unitViewDAO = unitViewDAO;
+    }
+
+    /**
+     * @return the depotDAO
+     */
+    public DepotDAO getDepotDAO()
+    {
+        return depotDAO;
+    }
+
+    /**
+     * @param depotDAO
+     *            the depotDAO to set
+     */
+    public void setDepotDAO(DepotDAO depotDAO)
+    {
+        this.depotDAO = depotDAO;
+    }
+
+    /**
+     * @return the productDAO
+     */
+    public ProductDAO getProductDAO()
+    {
+        return productDAO;
+    }
+
+    /**
+     * @param productDAO
+     *            the productDAO to set
+     */
+    public void setProductDAO(ProductDAO productDAO)
+    {
+        this.productDAO = productDAO;
     }
 
 }

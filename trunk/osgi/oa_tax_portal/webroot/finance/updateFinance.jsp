@@ -3,11 +3,12 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="增加凭证" />
+<p:link title="修改凭证" />
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/json.js"></script>
+<script language="JavaScript" src="../js/math.js"></script>
 <script language="JavaScript" src="../tax_js/autosuggest_debug.js"></script>
 <script language="JavaScript" src="../tax_js/addTax.js"></script>
 <script language="JavaScript" src="../tax_js/addFinance.js"></script>
@@ -15,8 +16,10 @@
 
 function addBean()
 {
-    submit('确定增加凭证?', null, checks);
+    submit('确定修改凭证?', null, checks);
 }
+
+var total = ${my:formatNum(bean.inmoney / 10000.0)};
 
 var taxList = JSON.parse('${taxListStr}');
 
@@ -39,6 +42,8 @@ function checks()
 	var inMoney = 0.0;
 	
 	var outMoney = 0.0;
+	
+	var inotal = 0.0;
 	
 	for (var i = 0; i < deList.length; i++)
 	{
@@ -67,6 +72,7 @@ function checks()
 			eachOut = parseFloat(ous.value);
 			
 			outMoney += eachOut;
+			inotal += eachOut;
 		}
 		
 		if (eachIn * eachOut != 0)
@@ -91,9 +97,16 @@ function checks()
 	
 	if (inMoney != outMoney)
 	{
-		alert('借贷必相等,借方:' + inMoney + ',贷方:' + outMoney);
+		alert('借贷必相等,借方:' + formatNum(inMoney, 2) + ',贷方:' + formatNum(outMoney, 2));
 				
 		return false;
+	}
+	
+	if (formatNum(total, 2) != formatNum(inotal, 2))
+	{
+	    alert('原金额必须是:' + formatNum(total, 2) + ',当前金额:' + formatNum(inotal, 2));
+                
+        return false;   
 	}
 	
     return true;
@@ -103,7 +116,7 @@ function load()
 {
 	loadForm();
 	
-	addTr();
+	initTr();
 }
 
 function callClick(obj, el)
@@ -116,12 +129,12 @@ function callClick(obj, el)
 </head>
 <body class="body_class" onload="load()">
 <form name="formEntry" action="../finance/finance.do" method="post">
-<input
-	type="hidden" name="method" value="addFinance"> 
+<input type="hidden" name="method" value="updateFinance"> 
+<input type="hidden" name="id" value="${bean.id}"> 
 
 <p:navigation height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javaScript:window.history.go(-1);">凭证管理</span> &gt;&gt; 增加凭证</td>
+		onclick="javaScript:window.history.go(-1);">凭证管理</span> &gt;&gt; 修改凭证</td>
 	<td width="85"></td>
 </p:navigation>
 
@@ -139,21 +152,21 @@ function callClick(obj, el)
 		<p:table cells="1">
 			<p:tr align="left">
 			凭证日期：
-			<p:plugin name="financeDate" size="20" type="0" oncheck="cnow(12)"/>
+			<p:plugin name="financeDate" size="20" type="0" oncheck="cnow(12)" value="${bean.financeDate}"/>
 	         凭证类型：
-			<select name="type" class="select_class" style="width: 15%;" oncheck="notNone">
+			<select name="type" class="select_class" style="width: 15%;" oncheck="notNone" values="${bean.type}" readonly="true">
 		         <option value="">--</option>
 		         <p:option type="financeType"/>
 	         </select>
 			凭证归属：
-			<select name="dutyId" class="select_class" style="width: 15%;" oncheck="notNone">
+			<select name="dutyId" class="select_class" style="width: 15%;" oncheck="notNone" values="${bean.dutyId}">
 		         <option value="">--</option>
 		         <p:option type="dutyList"></p:option>
 	         </select>
 			</p:tr>
 			
 			<p:tr align="left">
-			描述：<textarea  name="description" rows="3" cols="80" oncheck="maxLength(200)"></textarea>
+			描述：<textarea name="description" rows="3" cols="80" oncheck="maxLength(200)"><c:out value="${bean.description}" /></textarea>
 			</p:tr>
 		</p:table>
 	</p:subBody>
@@ -176,6 +189,69 @@ function callClick(obj, el)
                         <td width="5%" align="left"><input type="button" accesskey="A"
                             value="增加" class="button_class" onclick="addTr()"></td>
                     </tr>
+                    
+                    <c:forEach items="${bean.itemVOList}" var="itemTop">
+					         <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
+					         <td>
+					         <textarea  name="idescription" rows="3"><c:out value="${itemTop.description}" /></textarea>
+					         </td>
+					         <td>
+					         <input type="text" style="width: 95%;"
+					                name="taxId" value="${itemTop.taxName}">
+					         <input type="hidden" name="taxId2" value="${itemTop.taxId}">
+					         </td>
+					         
+					         <td>
+					         <br>
+					         <select name="departmentId" class="select_class" style="width: 85%;display: inline;" title="选择部门" head="部门" values="${itemTop.departmentId}">
+					         <option value="">选择部门</option>
+					         <c:forEach var="item" items="${departmentBeanList}">
+					             <option value="${item.id}">${item.name}</option>
+					         </c:forEach>
+					         </select>
+					         <br>
+					         <input type="text" style="width: 85%;display: inline;cursor: pointer;" onclick="selectStaffer(this)" title="选择职员" head="职员" 
+					                    name="stafferId" value="${itemTop.stafferName}" readonly="readonly">
+					         <input type="hidden" name="stafferId2" value="${itemTop.stafferId}"> 
+					         <br>
+					         <input type="text" style="width: 85%;display: inline;cursor: pointer;" onclick="selectUnit(this)" title="选择单位" head="单位"
+					                    name="unitId" value="${itemTop.unitName}" readonly="readonly">
+					         <input type="hidden" name="unitId2" value="${itemTop.unitId}"> 
+					         <br>
+					         <input type="text" style="width: 85%;display: inline;cursor: pointer;" onclick="selectProduct(this)" title="选择产品" head="产品"
+					                    name="productId" value="${itemTop.productName}" readonly="readonly">
+					         <input type="hidden" name="productId2" value="${itemTop.productId}"> 
+					         <br>
+					         <select name="depotId" class="select_class" style="width: 85%;display: inline;" title="选择仓库" head="仓库" values="${itemTop.depotId}">
+					         <option value="">选择仓库</option>
+					         <c:forEach var="item" items="${depotList}">
+					             <option value="${item.id}">${item.name}</option>
+					         </c:forEach>
+					         </select>
+					         <br>
+					         <select name=duty2Id class="select_class" style="width: 85%;display: inline;" title="选择纳税实体" head="纳税实体" values="${itemTop.duty2Id}">
+					         <option value="">选择纳税实体</option>
+					         <p:option type="dutyList"></p:option>
+					         </select>
+					         <br>
+					         <br>
+					         </td>
+					         
+					         <td>
+					         <input type="text" style="width: 100%;"
+					                    name="inmoney" value="${my:formatNum(itemTop.inmoney / 10000.0)}" oncheck="">
+					         </td>
+					                    
+					         <td align="center">
+					         <input type="text" style="width: 100%"
+					                    name="outmoney" value="${my:formatNum(itemTop.outmoney / 10000.0)}" oncheck=""></td>
+					                    
+					        <td width="5%" align="center"><input type=button
+					            value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
+					        </tr>
+                    </c:forEach>
+                    
+                    
                 </table>
                 </td>
             </tr>

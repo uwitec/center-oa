@@ -74,4 +74,8 @@
 	
 	<osgi:reference id="outManager" interface="com.china.center.oa.sail.manager.OutManager" />
 	
+	<osgi:reference id="depotDAO" interface="com.china.center.oa.product.dao.DepotDAO" />
+	
+	<osgi:reference id="productDAO" interface="com.china.center.oa.product.dao.ProductDAO" />
+	
 </beans>

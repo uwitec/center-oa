@@ -144,6 +144,28 @@ public class TaxFacadeImpl extends AbstarctFacade implements TaxFacade
         }
     }
 
+    public boolean updateFinanceBean(String userId, FinanceBean bean)
+        throws MYException
+    {
+        synchronized (FINANCE_LOCK)
+        {
+            JudgeTools.judgeParameterIsNull(userId, bean);
+
+            User user = userManager.findUser(userId);
+
+            checkUser(user);
+
+            if (containAuth(user, AuthConstant.FINANCE_OPR))
+            {
+                return financeManager.updateFinanceBean(user, bean);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
     public boolean deleteFinanceBean(String userId, String id)
         throws MYException
     {
@@ -155,7 +177,7 @@ public class TaxFacadeImpl extends AbstarctFacade implements TaxFacade
 
             checkUser(user);
 
-            if (containAuth(user, AuthConstant.FINANCE_OPR))
+            if (containAuth(user, AuthConstant.FINANCE_DELETE))
             {
                 return financeManager.deleteFinanceBean(user, id);
             }
@@ -260,5 +282,4 @@ public class TaxFacadeImpl extends AbstarctFacade implements TaxFacade
     {
         this.financeManager = financeManager;
     }
-
 }

@@ -55,14 +55,14 @@
     </item>
     
     <item name="queryFinance" deaultpfix="FinanceBean">
-    	<condtion name="alogTime" filed="logTime" caption="开始时间">
-			<opr>&gt;=</opr>
-			<type>datetime</type>
-		</condtion>
-		<condtion name="blogTime" filed="logTime" caption="结束时间">
-			<opr>&lt;=</opr>
-			<type>datetime</type>
-		</condtion>
+		<condtion name="afinanceDate" filed="financeDate" caption="凭证日期从">
+            <opr>&gt;=</opr>
+            <type>date</type>
+        </condtion>
+        <condtion name="bfinanceDate" filed="financeDate" caption="到">
+            <opr>&lt;=</opr>
+            <type>date</type>
+        </condtion>
 		<condtion name="id" caption="标识">
 			<opr>like</opr>
 			<type>text</type>
@@ -79,13 +79,64 @@
 			<type>select</type>
 			<option>$financeType</option>
 		</condtion>
+		<condtion name="status" caption="状态">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$financeStatus</option>
+        </condtion>
 		<condtion name="createType" caption="分类">
 			<opr>=</opr>
 			<datatype>1</datatype>
 			<type>select</type>
 			<option>$financeCreateType</option>
 		</condtion>
+		<condtion name="createrName" filed="name" caption="创建人" pfix="StafferBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
 	</item>
+	
+	<item name="queryFinanceItem" deaultpfix="FinanceItemBean">
+        <condtion name="afinanceDate" filed="financeDate" caption="凭证日期从">
+            <opr>&gt;=</opr>
+            <type>date</type>
+        </condtion>
+        <condtion name="bfinanceDate" filed="financeDate" caption="到">
+            <opr>&lt;=</opr>
+            <type>date</type>
+        </condtion>
+        <condtion name="pid" caption="凭证标识">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="taxCode" filed="code" caption="科目编码(A)" pfix="TaxBean">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="dutyId" caption="纳税实体">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$dutyList</option>
+        </condtion>
+        <condtion name="taxCode0" filed="code" caption="一级编码(A)" pfix="TA0">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="taxCode1" filed="code" caption="二级编码(A)" pfix="TA1">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="taxCode2" filed="code" caption="三级编码(A)" pfix="TA2">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="taxCode3" filed="code" caption="四级编码(A)" pfix="TA3">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+    </item>
 	
 	<item name="queryCheckView" deaultpfix="CheckViewBean">
         <condtion name="alogTime" filed="logTime" caption="时间从">

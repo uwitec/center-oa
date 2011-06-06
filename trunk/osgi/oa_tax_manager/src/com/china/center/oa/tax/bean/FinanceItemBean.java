@@ -17,6 +17,7 @@ import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.publics.constant.PublicConstant;
 
 
@@ -66,12 +67,16 @@ public class FinanceItemBean implements Serializable
     @Join(tagClass = TaxBean.class)
     private String taxId = "";
 
+    @Join(tagClass = TaxBean.class, type = JoinType.LEFT, alias = "TA0")
     private String taxId0 = "";
 
+    @Join(tagClass = TaxBean.class, type = JoinType.LEFT, alias = "TA1")
     private String taxId1 = "";
 
+    @Join(tagClass = TaxBean.class, type = JoinType.LEFT, alias = "TA2")
     private String taxId2 = "";
 
+    @Join(tagClass = TaxBean.class, type = JoinType.LEFT, alias = "TA3")
     private String taxId3 = "";
 
     private String taxId4 = "";

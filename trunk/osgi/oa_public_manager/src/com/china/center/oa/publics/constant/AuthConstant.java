@@ -698,4 +698,9 @@ public interface AuthConstant
      */
     String FINANCE_CHECK = "1803";
 
+    /**
+     * 凭证删除
+     */
+    String FINANCE_DELETE = "1804";
+
 }

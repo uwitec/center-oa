@@ -18,6 +18,7 @@
 			<forward name="queryFinance" path="/finance/queryFinance.jsp" />
 			<forward name="queryCheckView" path="/finance/queryCheck.jsp" />
 			<forward name="addFinance" path="/finance/addFinance.jsp" />
+			<forward name="updateFinance" path="/finance/updateFinance.jsp" />
 			<forward name="detailFinance" path="/finance/detailFinance.jsp" />
 			<forward name="rptQueryUnit" path="/finance/rptQueryUnit.jsp" />
 			<forward name="queryInBill" path="/bill/queryInBill.jsp" />

@@ -7,6 +7,25 @@ function addTr()
     }
 }
 
+function initTr()
+{
+    var list = initData();
+    
+    var deList = document.getElementsByName('taxId');
+    
+    for (var i = 0; i < deList.length; i++)
+    {
+       if (deList[i].value == '')
+       {
+           continue;
+       }
+       
+       new hint(deList[i], list, HINT_MODE.CLIENT, false, null, callClick);
+       
+       taxChange(deList[i]);
+    }
+}
+
 function addTrInner(list)
 {
     var table = $O("tables");

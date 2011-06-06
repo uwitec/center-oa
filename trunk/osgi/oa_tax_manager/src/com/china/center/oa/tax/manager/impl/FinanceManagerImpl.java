@@ -89,7 +89,11 @@ public class FinanceManagerImpl implements FinanceManager
             bean.setFinanceDate(TimeTools.now_short());
         }
 
-        // TODO 校验凭证时间不能大于当前时间,也不能小于最近的结算时间
+        // 校验凭证时间不能大于当前时间,也不能小于最近的结算时间
+        if (bean.getFinanceDate().compareTo(TimeTools.now_short()) > 0)
+        {
+            throw new MYException("凭证时间不能大于[%s]", TimeTools.now_short());
+        }
 
         // 入库时间
         bean.setLogTime(TimeTools.now());
@@ -120,6 +124,8 @@ public class FinanceManagerImpl implements FinanceManager
         {
             financeItemBean.setId(commonDAO.getSquenceString20());
 
+            financeItemBean.setFinanceDate(bean.getFinanceDate());
+
             financeItemBean.setName(financeItemBean.getId());
 
             financeItemBean.setPid(bean.getId());
@@ -143,23 +149,8 @@ public class FinanceManagerImpl implements FinanceManager
                 throw new MYException("科目不存在,请确认操作");
             }
 
-            if (tax.getUnit() == TaxConstanst.TAX_CHECK_YES
-                && StringTools.isNullOrNone(financeItemBean.getUnitId()))
-            {
-                throw new MYException("科目[%s]下辅助核算型-单位必须存在,请确认操作", tax.getName());
-            }
-
-            if (tax.getDepartment() == TaxConstanst.TAX_CHECK_YES
-                && StringTools.isNullOrNone(financeItemBean.getDepartmentId()))
-            {
-                throw new MYException("科目[%s]下辅助核算型-部门必须存在,请确认操作", tax.getName());
-            }
-
-            if (tax.getStaffer() == TaxConstanst.TAX_CHECK_YES
-                && StringTools.isNullOrNone(financeItemBean.getStafferId()))
-            {
-                throw new MYException("科目[%s]下辅助核算型-职员必须存在,请确认操作", tax.getName());
-            }
+            // 检查辅助核算项
+            checkItem(financeItemBean, tax);
 
             // 拷贝凭证的父级ID
             TaxHelper.copyParent(financeItemBean, tax);
@@ -205,11 +196,204 @@ public class FinanceManagerImpl implements FinanceManager
         return true;
     }
 
+    /**
+     * checkItem
+     * 
+     * @param financeItemBean
+     * @param tax
+     * @throws MYException
+     */
+    private void checkItem(FinanceItemBean financeItemBean, TaxBean tax)
+        throws MYException
+    {
+        if (tax.getUnit() == TaxConstanst.TAX_CHECK_YES
+            && StringTools.isNullOrNone(financeItemBean.getUnitId()))
+        {
+            throw new MYException("科目[%s]下辅助核算型-单位必须存在,请确认操作", tax.getName());
+        }
+
+        if (tax.getDepartment() == TaxConstanst.TAX_CHECK_YES
+            && StringTools.isNullOrNone(financeItemBean.getDepartmentId()))
+        {
+            throw new MYException("科目[%s]下辅助核算型-部门必须存在,请确认操作", tax.getName());
+        }
+
+        if (tax.getStaffer() == TaxConstanst.TAX_CHECK_YES
+            && StringTools.isNullOrNone(financeItemBean.getStafferId()))
+        {
+            throw new MYException("科目[%s]下辅助核算型-职员必须存在,请确认操作", tax.getName());
+        }
+
+        if (tax.getProduct() == TaxConstanst.TAX_CHECK_YES
+            && StringTools.isNullOrNone(financeItemBean.getProductId()))
+        {
+            throw new MYException("科目[%s]下辅助核算型-产品必须存在,请确认操作", tax.getName());
+        }
+
+        if (tax.getDepot() == TaxConstanst.TAX_CHECK_YES
+            && StringTools.isNullOrNone(financeItemBean.getDepotId()))
+        {
+            throw new MYException("科目[%s]下辅助核算型-仓库必须存在,请确认操作", tax.getName());
+        }
+
+        if (tax.getDuty() == TaxConstanst.TAX_CHECK_YES
+            && StringTools.isNullOrNone(financeItemBean.getDuty2Id()))
+        {
+            throw new MYException("科目[%s]下辅助核算型-纳税实体必须存在,请确认操作", tax.getName());
+        }
+    }
+
     @Transactional(rollbackFor = MYException.class)
     public boolean addFinanceBean(User user, FinanceBean bean)
         throws MYException
     {
         return addFinanceBeanWithoutTransactional(user, bean);
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean updateFinanceBean(User user, FinanceBean bean)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, bean, bean.getItemList());
+
+        FinanceBean old = financeDAO.find(bean.getId());
+
+        if (old == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (old.getStatus() != TaxConstanst.FINANCE_STATUS_CHECK)
+        {
+            throw new MYException("已经被核对(锁定)不能修改,请重新操作");
+        }
+
+        bean.setType(old.getType());
+        bean.setCreateType(old.getCreateType());
+        bean.setStatus(old.getStatus());
+        bean.setLogTime(old.getLogTime());
+        bean.setCreaterId(old.getCreaterId());
+
+        bean.setName(bean.getId());
+
+        // 允许自己制定凭证日期
+        if (StringTools.isNullOrNone(bean.getFinanceDate()))
+        {
+            bean.setFinanceDate(TimeTools.now_short());
+        }
+
+        // 校验凭证时间不能大于当前时间,也不能小于最近的结算时间
+        if (bean.getFinanceDate().compareTo(TimeTools.now_short()) > 0)
+        {
+            throw new MYException("凭证时间不能大于[%s]", TimeTools.now_short());
+        }
+
+        // 默认纳税实体
+        if (bean.getType() == TaxConstanst.FINANCE_TYPE_MANAGER
+            && StringTools.isNullOrNone(bean.getDutyId()))
+        {
+            bean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
+        }
+
+        if (bean.getType() == TaxConstanst.FINANCE_TYPE_DUTY
+            && StringTools.isNullOrNone(bean.getDutyId()))
+        {
+            throw new MYException("税务凭证必须有纳税实体的属性");
+        }
+
+        List<FinanceItemBean> itemList = bean.getItemList();
+
+        Map<String, List<FinanceItemBean>> pareMap = new HashMap<String, List<FinanceItemBean>>();
+
+        long inTotal = 0;
+
+        long outTotal = 0;
+
+        // 整理出凭证对(且校验凭证的合法性)
+        for (FinanceItemBean financeItemBean : itemList)
+        {
+            financeItemBean.setId(commonDAO.getSquenceString20());
+
+            financeItemBean.setFinanceDate(bean.getFinanceDate());
+
+            financeItemBean.setName(financeItemBean.getId());
+
+            financeItemBean.setPid(bean.getId());
+
+            // 纳税实体
+            financeItemBean.setDutyId(bean.getDutyId());
+
+            financeItemBean.setLogTime(TimeTools.now());
+
+            String taxId = financeItemBean.getTaxId();
+
+            if (StringTools.isNullOrNone(taxId))
+            {
+                throw new MYException("缺少科目信息,请确认操作");
+            }
+
+            TaxBean tax = taxDAO.find(taxId);
+
+            if (tax == null)
+            {
+                throw new MYException("科目不存在,请确认操作");
+            }
+
+            // 检查辅助核算项
+            checkItem(financeItemBean, tax);
+
+            // 拷贝凭证的父级ID
+            TaxHelper.copyParent(financeItemBean, tax);
+
+            String key = financeItemBean.getPareId();
+
+            if (pareMap.get(key) == null)
+            {
+                pareMap.put(key, new ArrayList<FinanceItemBean>());
+            }
+
+            pareMap.get(key).add(financeItemBean);
+
+            // 必须有一个为0
+            if (financeItemBean.getInmoney() * financeItemBean.getOutmoney() != 0)
+            {
+                throw new MYException("借方金额或者贷方金额不能都不为0");
+            }
+
+            inTotal += financeItemBean.getInmoney();
+
+            outTotal += financeItemBean.getOutmoney();
+        }
+
+        bean.setInmoney(inTotal);
+
+        bean.setOutmoney(outTotal);
+
+        if (inTotal != outTotal)
+        {
+            throw new MYException("总借[%s],总贷[%s]不等,凭证增加错误", MathTools
+                .formatNum(inTotal / (TaxConstanst.DOUBLE_TO_INT + 0.0d)), MathTools
+                .formatNum(outTotal / (TaxConstanst.DOUBLE_TO_INT + 0.0d)));
+        }
+
+        if (bean.getInmoney() != old.getInmoney())
+        {
+            throw new MYException("原单据金额[%s],当前金额[%s]不等,凭证增加错误", MathTools
+                .formatNum(bean.getInmoney() / (TaxConstanst.DOUBLE_TO_INT + 0.0d)), MathTools
+                .formatNum(old.getInmoney() / (TaxConstanst.DOUBLE_TO_INT + 0.0d)));
+        }
+
+        // CORE 核对借贷必相等的原则
+        checkPare(pareMap);
+
+        financeDAO.updateEntityBean(bean);
+
+        // 先删除
+        financeItemDAO.deleteEntityBeansByFK(bean.getId());
+
+        financeItemDAO.saveAllEntityBeans(itemList);
+
+        return true;
     }
 
     /**
@@ -241,7 +425,7 @@ public class FinanceManagerImpl implements FinanceManager
 
             if (inMoney != outMoney)
             {
-                throw new MYException("借[%d],贷[%d]不等,凭证增加错误", inMoney, outMoney);
+                throw new MYException("借[%d],贷[%d]不等,凭证错误", inMoney, outMoney);
             }
         }
     }
@@ -262,6 +446,11 @@ public class FinanceManagerImpl implements FinanceManager
         if (old.getCreateType() != TaxConstanst.FINANCE_CREATETYPE_HAND)
         {
             throw new MYException("只能删除手工凭证,请重新操作");
+        }
+
+        if (old.getStatus() != TaxConstanst.FINANCE_STATUS_CHECK)
+        {
+            throw new MYException("已经被核对(锁定)不能删除,请重新操作");
         }
 
         // 获取凭证项

@@ -44,7 +44,7 @@ function load()
 			<p:cell title="状态">${my:get('financeStatus', bean.status)}</p:cell>
 			<p:cell title="总金额">${bean.showInmoney}</p:cell>
 			<p:cell title="录入人">${bean.createrName}</p:cell>
-			<p:cell title="录入时间">${bean.logTime}</p:cell>
+			<p:cell title="录入时间" end="true">${bean.logTime}</p:cell>
 			<p:cell title="描述" end="true">${bean.description}</p:cell>
 		</p:table>
 	</p:subBody>
@@ -56,7 +56,8 @@ function load()
 			<tr align="center" class="content0">
 				 <td width="10%" align="center">索引</td>
 				 <td width="15%" align="center">摘要</td>
-                 <td width="40%" align="center">科目</td>
+                 <td width="15%" align="center">科目</td>
+                 <td width="25%" align="center">辅助(部门/职员/单位/产品/仓区/纳税实体)</td>
                  <td width="10%" align="center">关联单据</td>
                  <td width="8%" align="center">借方金额</td>
                  <td width="8%" align="center">贷方金额</td>
@@ -66,7 +67,8 @@ function load()
 			<tr align="center" class="content1">
 				<td align="center">${item.pareId}</td>
 				<td align="center">${item.description}</td>
-				<td align="center">${item.taxName}(${item.departmentName}/${item.stafferName}/${item.unitName})</td>
+				<td align="center">${item.taxName}</td>
+				<td align="center">${item.departmentName}/${item.stafferName}/${item.unitName}/${item.productName}/${item.depotName}/${item.duty2Name}</td>
 				<td align="center">${item.refId}</td>
 				<td align="center">${item.showInmoney}</td>
 				<td align="center">${item.showOutmoney}</td>
