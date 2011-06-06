@@ -51,7 +51,7 @@ function load()
              //{id: 'update', bclass: 'update', caption: '分拆预收', auth: '1603', onpress : splitInBill},
              {id: 'update2', bclass: 'update', caption: '总部核对', auth: '1803', onpress : updateInBillBeanChecks},
              {id: 'del', bclass: 'delete', auth: '1603', onpress : delBean},
-             {id: 'export', bclass: 'odraw',  caption: '导出查询结果', onpress : exports},
+             {id: 'export', bclass: 'replied',  caption: '导出查询结果', onpress : exports},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>

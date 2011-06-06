@@ -50,7 +50,7 @@ function load()
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1607'},
              {id: 'update', bclass: 'update', caption: '总部核对', auth: '1803', onpress : updateOutBillBeanChecks},
              {id: 'del', bclass: 'delete', auth: '1607', onpress : delBean},
-             {id: 'export', bclass: 'odraw',  caption: '导出查询结果', onpress : exports},
+             {id: 'export', bclass: 'replied',  caption: '导出查询结果', onpress : exports},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>

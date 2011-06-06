@@ -27,16 +27,32 @@ function getTax(oos)
     $("input[name='parentId']").val(obj.value);
     
     $("input[name='parentName']").val(obj.pname);
+    
+    $("input[name='code']").val(obj.pcode + '-');
 }
 
 function selectTax()
 {
     window.common.modal('../tax/tax.do?method=rptQueryTax&load=1&selectMode=1');
 }
+
+var gbref = false;
+function selectBank()
+{
+    gbref = !gbref;
+    $v('refId_TR', gbref);
+    $v('refType_TR', gbref);
+}
+
+function load()
+{
+    $v('refId_TR', false);
+    $v('refType_TR', false);
+}
 </script>
 
 </head>
-<body class="body_class">
+<body class="body_class" onload="load()">
 <form name="formEntry" action="../tax/tax.do" method="post"><input
 	type="hidden" name="method" value="addTax">
 <input type="hidden" name="parentId" value="">
@@ -62,11 +78,21 @@ function selectTax()
 
 			<p:pro field="name" innerString="size=60"/>
 			
-			<p:pro field="code" innerString="size=60"/>
-			
 			<p:pro field="parentId" innerString="readonly=true size=60">
                 <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectTax()">&nbsp;&nbsp;
+                    class="button_class" onclick="selectTax()">&nbsp;
+                <input type="button" value="&nbsp;高级配置&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectBank()">&nbsp;&nbsp;
+            </p:pro>
+            
+			<p:pro field="code" innerString="size=60"/>
+			
+            <p:pro field="refId" innerString="style='width:400px'">
+                <p:option type="bankList" empty="true"/>
+            </p:pro>
+            
+            <p:pro field="refType">
+                <p:option type="taxRefType" empty="true"/>
             </p:pro>
 			
 			<p:pro field="bottomFlag">
@@ -88,7 +114,10 @@ function selectTax()
 			<p:cell title="辅助核算项">
 			<input type="checkbox" name="unit" value="1">单位<br>
 			<input type="checkbox" name="department" value="1">部门<br>
-			<input type="checkbox" name="staffer" value="1">职员
+			<input type="checkbox" name="staffer" value="1">职员<br>
+			<input type="checkbox" name="depot" value="1">仓库<br>
+			<input type="checkbox" name="product" value="1">产品<br>
+			<input type="checkbox" name="duty" value="1">纳税实体
 			</p:cell>
 
 		</p:table>

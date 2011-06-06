@@ -33,6 +33,12 @@ public class TaxVO extends TaxBean
     @Relationship(relationField = "refId")
     private String refName = "";
 
+    @Relationship(relationField = "parentId")
+    private String parentName = "";
+
+    @Ignore
+    private String parentAllShow = "";
+
     @Ignore
     private String other = "";
 
@@ -60,6 +66,21 @@ public class TaxVO extends TaxBean
         if (getStaffer() == TaxConstanst.TAX_CHECK_YES)
         {
             sb.append("职员").append("/");
+        }
+
+        if (getProduct() == TaxConstanst.TAX_CHECK_YES)
+        {
+            sb.append("产品").append("/");
+        }
+
+        if (getDepot() == TaxConstanst.TAX_CHECK_YES)
+        {
+            sb.append("仓库").append("/");
+        }
+
+        if (getDuty() == TaxConstanst.TAX_CHECK_YES)
+        {
+            sb.append("纳税实体").append("/");
         }
 
         if (sb.length() > 0)
@@ -116,6 +137,40 @@ public class TaxVO extends TaxBean
     }
 
     /**
+     * @return the parentName
+     */
+    public String getParentName()
+    {
+        return parentName;
+    }
+
+    /**
+     * @param parentName
+     *            the parentName to set
+     */
+    public void setParentName(String parentName)
+    {
+        this.parentName = parentName;
+    }
+
+    /**
+     * @return the parentAllShow
+     */
+    public String getParentAllShow()
+    {
+        return parentAllShow;
+    }
+
+    /**
+     * @param parentAllShow
+     *            the parentAllShow to set
+     */
+    public void setParentAllShow(String parentAllShow)
+    {
+        this.parentAllShow = parentAllShow;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -124,11 +179,28 @@ public class TaxVO extends TaxBean
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("TaxVO ( ").append(super.toString()).append(TAB).append("ptypeName = ").append(this.ptypeName).append(
-            TAB).append("refName = ").append(this.refName).append(TAB).append("other = ").append(this.other).append(TAB).append(
-            " )");
+        retValue
+            .append("TaxVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("ptypeName = ")
+            .append(this.ptypeName)
+            .append(TAB)
+            .append("refName = ")
+            .append(this.refName)
+            .append(TAB)
+            .append("parentName = ")
+            .append(this.parentName)
+            .append(TAB)
+            .append("parentAllShow = ")
+            .append(this.parentAllShow)
+            .append(TAB)
+            .append("other = ")
+            .append(this.other)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

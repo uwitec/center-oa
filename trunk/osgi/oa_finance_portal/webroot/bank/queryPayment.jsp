@@ -45,7 +45,7 @@ function load()
              {id: 'add', bclass: 'add',  onpress : addBean, auth: '1602'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1602'},
              {id: 'del1', bclass: 'del',  caption: '删除批次', onpress : delBean1, auth: '1602'},
-             {id: 'export', bclass: 'odraw',  caption: '导出查询结果', onpress : exports},
+             {id: 'export', bclass: 'replied',  caption: '导出查询结果', onpress : exports},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>

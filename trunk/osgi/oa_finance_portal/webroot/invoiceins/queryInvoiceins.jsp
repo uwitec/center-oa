@@ -62,7 +62,7 @@ function load()
              <c:if test="${mode == 2}">
              {id: 'add2', bclass: 'add', caption: '对分公司开票', onpress : addBean2, auth: '1604'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1605'},
-             {id: 'export', bclass: 'odraw', caption: '导出查询结果', onpress : exports, auth: '1604'},
+             {id: 'export', bclass: 'replied', caption: '导出查询结果', onpress : exports, auth: '1604'},
              </c:if>
              
              {id: 'search', bclass: 'search', onpress : doSearch}

@@ -66,13 +66,8 @@ public class PageSelectOption extends BodyTagCenterSupport
             int end = Integer.parseInt(splits[1].trim());
             for (int i = begin; i <= end; i++ )
             {
-                buffer
-                    .append("<option value=")
-                    .append(i)
-                    .append(">")
-                    .append(i)
-                    .append("</option>")
-                    .append(line);
+                buffer.append("<option value='").append(i).append("'>").append(i).append(
+                    "</option>").append(line);
             }
         }
         else
@@ -83,7 +78,7 @@ public class PageSelectOption extends BodyTagCenterSupport
             {
                 for (MapBean mapBean : list)
                 {
-                    buffer.append("<option value=").append(mapBean.getKey()).append(">").append(
+                    buffer.append("<option value='").append(mapBean.getKey()).append("'>").append(
                         mapBean.getValue()).append("</option>").append(line);
                 }
             }
@@ -109,9 +104,9 @@ public class PageSelectOption extends BodyTagCenterSupport
                         try
                         {
                             buffer
-                                .append("<option value=")
+                                .append("<option value='")
                                 .append(InnerReflect.get(object, "id"))
-                                .append(">")
+                                .append("'>")
                                 .append(InnerReflect.get(object, "name"))
                                 .append("</option>")
                                 .append(line);

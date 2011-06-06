@@ -7,6 +7,7 @@
 			validate="false">
 			<forward name="queryTax" path="/tax/queryTax.jsp" />
 			<forward name="addTax" path="/tax/addTax.jsp" />
+			<forward name="updateTax" path="/tax/updateTax.jsp" />
 			<forward name="rptQueryTax" path="/tax/rptQueryTax.jsp" />
 			<forward name="detailTax" path="/tax/detailTax.jsp" />
 		</action>

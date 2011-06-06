@@ -111,6 +111,12 @@ public class FinanceItemBean implements Serializable
 
     private String stafferId = "";
 
+    private String depotId = "";
+
+    private String productId = "";
+
+    private String duty2Id = "";
+
     /**
      * default constructor
      */
@@ -629,6 +635,57 @@ public class FinanceItemBean implements Serializable
     }
 
     /**
+     * @return the depotId
+     */
+    public String getDepotId()
+    {
+        return depotId;
+    }
+
+    /**
+     * @param depotId
+     *            the depotId to set
+     */
+    public void setDepotId(String depotId)
+    {
+        this.depotId = depotId;
+    }
+
+    /**
+     * @return the productId
+     */
+    public String getProductId()
+    {
+        return productId;
+    }
+
+    /**
+     * @param productId
+     *            the productId to set
+     */
+    public void setProductId(String productId)
+    {
+        this.productId = productId;
+    }
+
+    /**
+     * @return the duty2Id
+     */
+    public String getDuty2Id()
+    {
+        return duty2Id;
+    }
+
+    /**
+     * @param duty2Id
+     *            the duty2Id to set
+     */
+    public void setDuty2Id(String duty2Id)
+    {
+        this.duty2Id = duty2Id;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -732,6 +789,15 @@ public class FinanceItemBean implements Serializable
             .append(TAB)
             .append("stafferId = ")
             .append(this.stafferId)
+            .append(TAB)
+            .append("depotId = ")
+            .append(this.depotId)
+            .append(TAB)
+            .append("productId = ")
+            .append(this.productId)
+            .append(TAB)
+            .append("duty2Id = ")
+            .append(this.duty2Id)
             .append(TAB)
             .append(" )");
 

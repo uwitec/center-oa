@@ -12,6 +12,7 @@ package com.china.center.oa.tax.manager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.tax.bean.TaxBean;
+import com.china.center.oa.tax.vo.TaxVO;
 
 
 /**
@@ -24,6 +25,8 @@ import com.china.center.oa.tax.bean.TaxBean;
  */
 public interface TaxManager
 {
+    void init2();
+
     boolean addTaxBean(User user, TaxBean bean)
         throws MYException;
 
@@ -35,4 +38,6 @@ public interface TaxManager
 
     boolean deleteTaxBean(User user, String id)
         throws MYException;
+
+    TaxVO findVO(TaxVO vo);
 }

@@ -93,7 +93,14 @@ function pop(obj)
 			</tr>
 
 			<tr class="content1">
-				<td colspan="4" align="right"><input type="button"
+			    <td width="15%" align="center">节点</td>
+                <td align="center">
+                <select name="bottomFlag" class="select_class" values="${bottomFlag}">
+                            <option value="">--</option>
+                            <p:option type="taxBottomFlag"/>
+                        </select>
+                </td>
+				<td colspan="2" align="right"><input type="button"
 					onclick="querys()" class="button_class"
 					value="&nbsp;&nbsp;查 询&nbsp;&nbsp;"></td>
 		</table>

@@ -53,11 +53,28 @@ public class BankBean implements Serializable
      * 生成科目所使用
      */
     @Ignore
-    @Html(title = "科目编码", must = true, maxLength = 40)
+    @Html(title = "银行科目编码", must = true, maxLength = 40)
     private String code = "";
+
+    /**
+     * 生成科目所使用
+     */
+    @Ignore
+    @Html(title = "暂记户科目编码", must = true, maxLength = 40)
+    private String code2 = "";
+
+    /**
+     * 生成科目所使用
+     */
+    @Ignore
+    @Html(title = "科目类型", must = true, type = Element.SELECT)
+    private int taxType = 0;
 
     @Ignore
     private String parentTaxId = "";
+
+    @Ignore
+    private String parentTaxId2 = "";
 
     @Ignore
     private int unit = 0;
@@ -67,6 +84,15 @@ public class BankBean implements Serializable
 
     @Ignore
     private int staffer = 0;
+
+    @Ignore
+    private int depot = 0;
+
+    @Ignore
+    private int product = 0;
+
+    @Ignore
+    private int duty = 0;
 
     /**
      * 余额
@@ -271,6 +297,91 @@ public class BankBean implements Serializable
     }
 
     /**
+     * @return the code2
+     */
+    public String getCode2()
+    {
+        return code2;
+    }
+
+    /**
+     * @param code2
+     *            the code2 to set
+     */
+    public void setCode2(String code2)
+    {
+        this.code2 = code2;
+    }
+
+    /**
+     * @return the parentTaxId2
+     */
+    public String getParentTaxId2()
+    {
+        return parentTaxId2;
+    }
+
+    /**
+     * @param parentTaxId2
+     *            the parentTaxId2 to set
+     */
+    public void setParentTaxId2(String parentTaxId2)
+    {
+        this.parentTaxId2 = parentTaxId2;
+    }
+
+    /**
+     * @return the depot
+     */
+    public int getDepot()
+    {
+        return depot;
+    }
+
+    /**
+     * @param depot
+     *            the depot to set
+     */
+    public void setDepot(int depot)
+    {
+        this.depot = depot;
+    }
+
+    /**
+     * @return the product
+     */
+    public int getProduct()
+    {
+        return product;
+    }
+
+    /**
+     * @param product
+     *            the product to set
+     */
+    public void setProduct(int product)
+    {
+        this.product = product;
+    }
+
+    /**
+     * @return the duty
+     */
+    public int getDuty()
+    {
+        return duty;
+    }
+
+    /**
+     * @param duty
+     *            the duty to set
+     */
+    public void setDuty(int duty)
+    {
+        this.duty = duty;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -300,8 +411,14 @@ public class BankBean implements Serializable
             .append("code = ")
             .append(this.code)
             .append(TAB)
+            .append("code2 = ")
+            .append(this.code2)
+            .append(TAB)
             .append("parentTaxId = ")
             .append(this.parentTaxId)
+            .append(TAB)
+            .append("parentTaxId2 = ")
+            .append(this.parentTaxId2)
             .append(TAB)
             .append("unit = ")
             .append(this.unit)
@@ -312,6 +429,15 @@ public class BankBean implements Serializable
             .append("staffer = ")
             .append(this.staffer)
             .append(TAB)
+            .append("depot = ")
+            .append(this.depot)
+            .append(TAB)
+            .append("product = ")
+            .append(this.product)
+            .append(TAB)
+            .append("duty = ")
+            .append(this.duty)
+            .append(TAB)
             .append("total = ")
             .append(this.total)
             .append(TAB)
@@ -321,6 +447,23 @@ public class BankBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the taxType
+     */
+    public int getTaxType()
+    {
+        return taxType;
+    }
+
+    /**
+     * @param taxType
+     *            the taxType to set
+     */
+    public void setTaxType(int taxType)
+    {
+        this.taxType = taxType;
     }
 
 }

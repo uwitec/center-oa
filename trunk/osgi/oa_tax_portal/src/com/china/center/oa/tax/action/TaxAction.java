@@ -41,6 +41,7 @@ import com.china.center.oa.tax.bean.TaxTypeBean;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.dao.TaxTypeDAO;
 import com.china.center.oa.tax.facade.TaxFacade;
+import com.china.center.oa.tax.manager.TaxManager;
 import com.china.center.oa.tax.vo.TaxVO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -66,6 +67,8 @@ public class TaxAction extends DispatchAction
     private BankDAO bankDAO = null;
 
     private TaxFacade taxFacade = null;
+
+    private TaxManager taxManager = null;
 
     private static final String QUERYTAX = "queryTax";
 
@@ -105,9 +108,7 @@ public class TaxAction extends DispatchAction
             {
                 public void handle(TaxVO obj)
                 {
-                    obj.setLevel(obj.getLevel() + 1);
-
-                    obj.getOther();
+                    taxManager.findVO(obj);
                 }
             });
 
@@ -169,6 +170,8 @@ public class TaxAction extends DispatchAction
 
         String code = request.getParameter("code");
 
+        String bottomFlag = request.getParameter("bottomFlag");
+
         if ( !StringTools.isNullOrNone(name))
         {
             condtion.addCondition("TaxBean.name", "like", name);
@@ -177,6 +180,11 @@ public class TaxAction extends DispatchAction
         if ( !StringTools.isNullOrNone(code))
         {
             condtion.addCondition("TaxBean.code", "like", code);
+        }
+
+        if ( !StringTools.isNullOrNone(bottomFlag))
+        {
+            condtion.addIntCondition("TaxBean.bottomFlag", "=", bottomFlag);
         }
     }
 
@@ -218,6 +226,76 @@ public class TaxAction extends DispatchAction
             User user = Helper.getUser(request);
 
             taxFacade.addTaxBean(user.getId(), bean);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作:" + bean.getName());
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        return mapping.findForward("queryTax");
+    }
+
+    /**
+     * findTax
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward findTax(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        // String update = request.getParameter("update");
+
+        TaxVO bean = taxDAO.findVO(id);
+
+        if (bean == null)
+        {
+            return ActionTools.toError("数据异常,请重新操作", mapping, request);
+        }
+
+        taxManager.findVO(bean);
+
+        request.setAttribute("bean", bean);
+
+        return mapping.findForward("updateTax");
+    }
+
+    /**
+     * updateTax
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward updateTax(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        TaxBean bean = new TaxBean();
+
+        try
+        {
+            BeanUtil.getBean(bean, request);
+
+            User user = Helper.getUser(request);
+
+            taxFacade.updateTaxBean(user.getId(), bean);
 
             request.setAttribute(KeyConstant.MESSAGE, "成功操作:" + bean.getName());
         }
@@ -335,5 +413,22 @@ public class TaxAction extends DispatchAction
     public void setBankDAO(BankDAO bankDAO)
     {
         this.bankDAO = bankDAO;
+    }
+
+    /**
+     * @return the taxManager
+     */
+    public TaxManager getTaxManager()
+    {
+        return taxManager;
+    }
+
+    /**
+     * @param taxManager
+     *            the taxManager to set
+     */
+    public void setTaxManager(TaxManager taxManager)
+    {
+        this.taxManager = taxManager;
     }
 }

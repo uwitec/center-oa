@@ -336,4 +336,16 @@ public interface TaxConstanst
      */
     @Defined(key = "financeStatus", value = "已核对")
     int FINANCE_STATUS_CHECK = 1;
+
+    /**
+     * 银行
+     */
+    @Defined(key = "taxRefType", value = "银行")
+    int TAX_REFTYPE_BANK = 0;
+
+    /**
+     * 暂记户
+     */
+    @Defined(key = "taxRefType", value = "暂记户")
+    int TAX_REFTYPE_BANKTEMP = 1;
 }

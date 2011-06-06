@@ -56,25 +56,33 @@ public class BankListenerTaxImpl implements BankListener
         TaxBean bean = new TaxBean();
 
         bean.setName(bank.getName());
-
         bean.setCode(bank.getCode());
-
-        bean.setPtype(TaxConstanst.TAX_PTYPE_PROPERTY);
-
-        bean.setDepartment(bank.getDepartment());
-
-        // 默认方向都是贷方
-        bean.setForward(TaxConstanst.TAX_FORWARD_OUT);
-
-        bean.setRefId(bank.getId());
-
-        bean.setStaffer(bank.getStaffer());
-
-        bean.setType(TaxConstanst.TAX_TYPE_BANK);
-
         bean.setParentId(bank.getParentTaxId());
 
+        bean.setPtype(TaxConstanst.TAX_PTYPE_PROPERTY);
+        bean.setRefType(TaxConstanst.TAX_REFTYPE_BANK);
+        // 默认方向都是贷方
+        bean.setForward(TaxConstanst.TAX_FORWARD_OUT);
+        bean.setRefId(bank.getId());
+
+        bean.setUnit(bank.getUnit());
+        bean.setStaffer(bank.getStaffer());
+        bean.setDepartment(bank.getDepartment());
+        bean.setDepot(bank.getDepot());
+        bean.setProduct(bank.getProduct());
+        bean.setDuty(bank.getDuty());
+
+        bean.setType(bank.getTaxType());
         bean.setBottomFlag(TaxConstanst.TAX_BOTTOMFLAG_ITEM);
+
+        taxManager.addTaxBeanWithoutTransactional(user, bean);
+
+        // 增加暂记户
+        bean.setId("");
+        bean.setName(bank.getName() + "_暂记户");
+        bean.setCode(bank.getCode2());
+        bean.setParentId(bank.getParentTaxId2());
+        bean.setRefType(TaxConstanst.TAX_REFTYPE_BANKTEMP);
 
         taxManager.addTaxBeanWithoutTransactional(user, bean);
     }

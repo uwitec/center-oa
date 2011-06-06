@@ -9,6 +9,10 @@
 package com.china.center.oa.tax.manager.impl;
 
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +24,7 @@ import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.constanst.TaxConstanst;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.manager.TaxManager;
+import com.china.center.oa.tax.vo.TaxVO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.StringTools;
@@ -60,9 +65,28 @@ public class TaxManagerImpl implements TaxManager
 
         bean.setId(commonDAO.getSquenceString20());
 
+        // 设置默认值
+        if (StringTools.isNullOrNone(bean.getRefId()))
+        {
+            bean.setRefType(TaxConstanst.TAX_REFTYPE_BANK);
+        }
+        else
+        {
+            if (bean.getBottomFlag() == TaxConstanst.TAX_BOTTOMFLAG_ROOT)
+            {
+                throw new MYException("关联银行的科目必须是最小科目,请确认操作");
+            }
+        }
+
         Expression exp = new Expression(bean, this);
 
         exp.check("#name || #code &unique @taxDAO", "名称或者编码已经存在");
+
+        // 检查银行的关联属性
+        if ( !StringTools.isNullOrNone(bean.getRefId()))
+        {
+            exp.check("#refId && #refType &unique @taxDAO", "银行关联已经存在");
+        }
 
         // 检查父级点
         if (StringTools.isNullOrNone(bean.getParentId()))
@@ -86,6 +110,12 @@ public class TaxManagerImpl implements TaxManager
             if (parent.getBottomFlag() == TaxConstanst.TAX_BOTTOMFLAG_ITEM)
             {
                 throw new MYException("父级科目不能是最小科目,请确认操作");
+            }
+
+            // 检查编码是否是父级的开始
+            if ( !bean.getCode().startsWith(parent.getCode() + "-"))
+            {
+                throw new MYException("编码前缀必须是[%s],请确认操作", parent.getCode() + "-");
             }
 
             // 递归获取各级的ID
@@ -120,9 +150,86 @@ public class TaxManagerImpl implements TaxManager
             }
         }
 
+        int length = bean.getCode().split("-").length - 1;
+
+        if (length != bean.getLevel())
+        {
+            throw new MYException("编码必须是-分隔,且级数和科目级别对应,请确认操作");
+        }
+
         taxDAO.saveEntityBean(bean);
 
         return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public void init2()
+    {
+        List<TaxBean> listEntityBeans = taxDAO.listEntityBeans("order by code");
+
+        Map<String, TaxBean> map = new HashMap();
+
+        for (TaxBean taxBean : listEntityBeans)
+        {
+            map.put(taxBean.getCode(), taxBean);
+        }
+
+        for (TaxBean taxBean : listEntityBeans)
+        {
+            String code = taxBean.getCode();
+
+            String[] codes = code.split("-");
+
+            String key = "";
+
+            taxBean.setLevel(codes.length - 1);
+
+            taxBean.setBottomFlag(1);
+
+            if (codes.length == 1)
+            {
+                taxBean.setParentId("0");
+            }
+            else
+            {
+                for (int i = 0; i < codes.length; i++ )
+                {
+                    if (i < codes.length - 1)
+                    {
+                        String eachStr = codes[i];
+
+                        key = key + eachStr + "-";
+
+                        String field = "parentId" + i;
+
+                        Map temp = new HashMap();
+
+                        TaxBean tax = map.get(key.substring(0, key.length() - 1));
+
+                        if (tax == null)
+                        {
+                            System.out.println(key + "/Error");
+
+                            return;
+                        }
+
+                        tax.setBottomFlag(0);
+
+                        temp.put(field, tax.getId());
+
+                        BeanUtil.copyProperties(taxBean, temp);
+
+                        // 最后一个
+                        if (i == codes.length - 2)
+                        {
+                            taxBean.setParentId(tax.getId());
+                        }
+                    }
+                }
+            }
+        }
+
+        taxDAO.updateAllEntityBeans(listEntityBeans);
     }
 
     /*
@@ -187,6 +294,46 @@ public class TaxManagerImpl implements TaxManager
         taxDAO.updateEntityBean(old);
 
         return true;
+    }
+
+    public TaxVO findVO(TaxVO vo)
+    {
+        // 补全
+        vo.setLevel(vo.getLevel() + 1);
+
+        vo.getOther();
+
+        StringBuffer sb = new StringBuffer();
+
+        for (int i = 0; i <= TaxConstanst.TAX_LEVEL_MAX; i++ )
+        {
+            String field = "parentId" + i;
+
+            Object propertyValue = BeanUtil.getProperty(vo, field);
+
+            if (propertyValue == null)
+            {
+                break;
+            }
+
+            TaxBean tax = taxDAO.find(propertyValue.toString());
+
+            if (tax == null)
+            {
+                break;
+            }
+
+            sb.append(tax.getName()).append("->");
+        }
+
+        if (sb.length() > 0)
+        {
+            sb.delete(sb.length() - 2, sb.length());
+        }
+
+        vo.setParentAllShow(sb.toString());
+
+        return vo;
     }
 
     /**

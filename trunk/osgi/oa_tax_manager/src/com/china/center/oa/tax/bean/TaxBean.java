@@ -42,6 +42,7 @@ public class TaxBean implements Serializable
     /**
      * 父节点
      */
+    @Join(tagClass = TaxBean.class, type = JoinType.LEFT, alias = "PA")
     @Html(title = "父科目", name = "parentName", maxLength = 40)
     private String parentId = "0";
 
@@ -88,6 +89,12 @@ public class TaxBean implements Serializable
     @Html(title = "类型", must = true, type = Element.SELECT)
     private int type = TaxConstanst.TAX_TYPE_CASH;
 
+    /**
+     * 0:银行科目 1:暂记户银行科目
+     */
+    @Html(title = "银行关联类型", type = Element.SELECT)
+    private int refType = TaxConstanst.TAX_REFTYPE_BANK;
+
     private int status = 0;
 
     /**
@@ -97,18 +104,25 @@ public class TaxBean implements Serializable
     private int bottomFlag = TaxConstanst.TAX_BOTTOMFLAG_ROOT;
 
     /**
-     * 科目级别(根是0,最大不超过8)
+     * 科目级别(一级是0,最大不超过8)
      */
     private int level = TaxConstanst.TAX_LEVEL_DEFAULT;
 
     @Html(title = "余额方向", must = true, type = Element.SELECT)
     private int forward = TaxConstanst.TAX_FORWARD_IN;
 
+    // 6大辅助核算
     private int unit = TaxConstanst.TAX_CHECK_NO;
 
     private int department = TaxConstanst.TAX_CHECK_NO;
 
     private int staffer = TaxConstanst.TAX_CHECK_NO;
+
+    private int depot = TaxConstanst.TAX_CHECK_NO;
+
+    private int product = TaxConstanst.TAX_CHECK_NO;
+
+    private int duty = TaxConstanst.TAX_CHECK_NO;
 
     /**
      * default constructor
@@ -509,6 +523,74 @@ public class TaxBean implements Serializable
     }
 
     /**
+     * @return the depot
+     */
+    public int getDepot()
+    {
+        return depot;
+    }
+
+    /**
+     * @param depot
+     *            the depot to set
+     */
+    public void setDepot(int depot)
+    {
+        this.depot = depot;
+    }
+
+    /**
+     * @return the product
+     */
+    public int getProduct()
+    {
+        return product;
+    }
+
+    /**
+     * @param product
+     *            the product to set
+     */
+    public void setProduct(int product)
+    {
+        this.product = product;
+    }
+
+    /**
+     * @return the duty
+     */
+    public int getDuty()
+    {
+        return duty;
+    }
+
+    /**
+     * @param duty
+     *            the duty to set
+     */
+    public void setDuty(int duty)
+    {
+        this.duty = duty;
+    }
+
+    /**
+     * @return the refType
+     */
+    public int getRefType()
+    {
+        return refType;
+    }
+
+    /**
+     * @param refType
+     *            the refType to set
+     */
+    public void setRefType(int refType)
+    {
+        this.refType = refType;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -571,6 +653,9 @@ public class TaxBean implements Serializable
             .append("type = ")
             .append(this.type)
             .append(TAB)
+            .append("refType = ")
+            .append(this.refType)
+            .append(TAB)
             .append("status = ")
             .append(this.status)
             .append(TAB)
@@ -591,6 +676,15 @@ public class TaxBean implements Serializable
             .append(TAB)
             .append("staffer = ")
             .append(this.staffer)
+            .append(TAB)
+            .append("depot = ")
+            .append(this.depot)
+            .append(TAB)
+            .append("product = ")
+            .append(this.product)
+            .append(TAB)
+            .append("duty = ")
+            .append(this.duty)
             .append(TAB)
             .append(" )");
 
