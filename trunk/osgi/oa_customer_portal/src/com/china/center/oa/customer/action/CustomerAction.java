@@ -169,6 +169,8 @@ public class CustomerAction extends DispatchAction
 
     private static String QUERYCHECKAPPLYCUSTOMER = "queryCheckApplyCustomer";
 
+    private static String QUERYCHECKADDAPPLYCUSTOMER = "queryCheckAddApplyCustomer";
+
     /**
      * default constructor
      */
@@ -917,20 +919,57 @@ public class CustomerAction extends DispatchAction
                                                  HttpServletResponse response)
         throws ServletException
     {
+        User user = Helper.getUser(request);
+
         ConditionParse condtion = new ConditionParse();
 
         condtion.addWhereStr();
+
+        condtion.addIntCondition("CustomerApplyBean.opr", "<>", CustomerConstant.OPR_ADD);
 
         condtion.addIntCondition("CustomerApplyBean.opr", "<>", CustomerConstant.OPR_UPATE_CREDIT);
 
         condtion.addIntCondition("CustomerApplyBean.opr", "<>",
             CustomerConstant.OPR_UPATE_ASSIGNPER);
 
+        condtion.addCondition("CustomerApplyBean.locationId", "=", user.getLocationId());
+
         condtion.addIntCondition("CustomerApplyBean.status", "=", CustomerConstant.STATUS_APPLY);
 
         ActionTools.processJSONQueryCondition(QUERYCHECKAPPLYCUSTOMER, request, condtion);
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKAPPLYCUSTOMER, request,
+            condtion, this.customerApplyDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryCheckAddApplyCustomer
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryCheckAddApplyCustomer(ActionMapping mapping, ActionForm form,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        condtion.addIntCondition("CustomerApplyBean.opr", "=", CustomerConstant.OPR_ADD);
+
+        condtion.addIntCondition("CustomerApplyBean.status", "=", CustomerConstant.STATUS_APPLY);
+
+        ActionTools.processJSONQueryCondition(QUERYCHECKADDAPPLYCUSTOMER, request, condtion);
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKADDAPPLYCUSTOMER, request,
             condtion, this.customerApplyDAO);
 
         return JSONTools.writeResponse(response, jsonstr);

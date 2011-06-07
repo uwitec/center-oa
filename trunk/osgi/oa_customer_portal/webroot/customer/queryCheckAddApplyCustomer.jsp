@@ -19,7 +19,7 @@ function load()
 {
 	 guidMap = {
 		 title: '申请客户列表',
-		 url: '../customer/customer.do?method=queryCheckApplyCustomer',
+		 url: '../customer/customer.do?method=queryCheckAddApplyCustomer',
 		 colModel : [
 		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lname={name}>', width : 40, sortable : false, align: 'center'},
 		     {display: '客户', name : 'name', width : '20%', sortable : false, align: 'left'},
@@ -35,8 +35,9 @@ function load()
 		     name : {begin : '<a href=../customer/customer.do?method=findApplyCustomer&id={id}>', end : '</a>'}
 		 },
 		 buttons : [
-		     {id: 'pass', caption: '通过',bclass: 'pass', auth: '0220', onpress : doPass},
-		     {id: 'reject', caption: '驳回',bclass: 'reject', auth: '0220', onpress : doReject}
+		     {id: 'pass', caption: '通过',bclass: 'pass', auth: '0221', onpress : doPass},
+		     {id: 'reject', caption: '驳回',bclass: 'reject', auth: '0221', onpress : doReject},
+		     {id: 'search', caption: '查询现有客户', bclass: 'search', auth: '0221', onpress : selectCus}
 		     ],
 		 <p:conf callBack="loadForm" queryMode="0"/>
 	 };
