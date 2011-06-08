@@ -46,6 +46,7 @@ function load()
 			<p:cell title="录入人">${bean.createrName}</p:cell>
 			<p:cell title="录入时间" end="true">${bean.logTime}</p:cell>
 			<p:cell title="描述" end="true">${bean.description}</p:cell>
+			<p:cell title="总部核对" end="true">${bean.checks}</p:cell>
 		</p:table>
 	</p:subBody>
 	

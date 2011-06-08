@@ -232,6 +232,28 @@ public class TaxFacadeImpl extends AbstarctFacade implements TaxFacade
         }
     }
 
+    public boolean updateFinanceCheck(String userId, String id, String reason)
+        throws MYException
+    {
+        synchronized (CHECK_LOCK)
+        {
+            JudgeTools.judgeParameterIsNull(userId, id);
+
+            User user = userManager.findUser(userId);
+
+            checkUser(user);
+
+            if (containAuth(user, AuthConstant.FINANCE_CHECK))
+            {
+                return financeManager.updateFinanceCheck(user, id, reason);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
     /**
      * @return the taxManager
      */
@@ -282,4 +304,5 @@ public class TaxFacadeImpl extends AbstarctFacade implements TaxFacade
     {
         this.financeManager = financeManager;
     }
+
 }

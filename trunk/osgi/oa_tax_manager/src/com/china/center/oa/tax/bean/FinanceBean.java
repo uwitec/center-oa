@@ -92,6 +92,11 @@ public class FinanceBean implements Serializable
      */
     private String logTime = "";
 
+    /**
+     * 核对信息
+     */
+    private String checks = "";
+
     @Ignore
     private List<FinanceItemBean> itemList = null;
 
@@ -341,6 +346,23 @@ public class FinanceBean implements Serializable
     }
 
     /**
+     * @return the checks
+     */
+    public String getChecks()
+    {
+        return checks;
+    }
+
+    /**
+     * @param checks
+     *            the checks to set
+     */
+    public void setChecks(String checks)
+    {
+        this.checks = checks;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -393,6 +415,9 @@ public class FinanceBean implements Serializable
             .append(TAB)
             .append("logTime = ")
             .append(this.logTime)
+            .append(TAB)
+            .append("checks = ")
+            .append(this.checks)
             .append(TAB)
             .append("itemList = ")
             .append(this.itemList)

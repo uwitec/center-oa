@@ -41,7 +41,8 @@ function load()
          },
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1802'},
-             {id: 'update', bclass: 'update', onpress : updateBean, auth: '1601'},
+             {id: 'update', bclass: 'update', onpress : updateBean, auth: '1802'},
+             {id: 'pass', bclass: 'pass', caption: '总部核对', onpress : checkBean, auth: '1803'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1804'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
@@ -70,6 +71,23 @@ function delBean(opr, grid)
     {    
         if(window.confirm('确定删除?'))    
         $ajax(gurl + 'delete' + ukey + '&id=' + getRadioValue('checkb'), callBackFun);
+    }
+    else
+    $error('不能操作');
+}
+
+function checkBean()
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {   
+        $.messager.prompt('总部核对', '请核对说明', '', function(msg){
+                if (msg)
+                {
+                    $ajax2(gurl + 'checks&id=' + getRadioValue('checkb') + '&type=99', {'reason' : msg},  
+                        callBackFun);
+                }
+               
+            }, 2);
     }
     else
     $error('不能操作');

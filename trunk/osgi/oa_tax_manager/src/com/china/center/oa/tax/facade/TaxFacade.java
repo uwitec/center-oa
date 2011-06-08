@@ -47,4 +47,7 @@ public interface TaxFacade
 
     boolean checks2(String userId, String id, int type, String reason)
         throws MYException;
+
+    boolean updateFinanceCheck(String userId, String id, String reason)
+        throws MYException;
 }

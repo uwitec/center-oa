@@ -52,4 +52,7 @@ public interface FinanceManager
 
     boolean deleteChecks(User user, String id)
         throws MYException;
+
+    boolean updateFinanceCheck(User user, String id, String reason)
+        throws MYException;
 }

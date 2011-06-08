@@ -24,5 +24,5 @@ import com.china.center.oa.tax.vo.FinanceVO;
  */
 public interface FinanceDAO extends DAO<FinanceBean, FinanceVO>
 {
-
+    boolean updateCheck(String id, String reason);
 }

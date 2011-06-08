@@ -454,9 +454,15 @@ public class FinaAction extends DispatchAction
 
             User user = Helper.getUser(request);
 
-            if (type != 6)
+            if (type != 6 && type != 99)
             {
                 taxFacade.checks(user.getId(), id, "[" + user.getStafferName() + "]" + reason);
+            }
+            // 凭证核对
+            else if (type == 99)
+            {
+                taxFacade.updateFinanceCheck(user.getId(), id, "[" + user.getStafferName() + "]"
+                                                               + reason);
             }
             else
             {

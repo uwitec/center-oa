@@ -469,6 +469,17 @@ public class FinanceManagerImpl implements FinanceManager
     }
 
     @Transactional(rollbackFor = MYException.class)
+    public boolean updateFinanceCheck(User user, String id, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        financeDAO.updateCheck(id, reason);
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
     public boolean checks2(User user, String id, int type, String reason)
         throws MYException
     {

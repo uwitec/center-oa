@@ -9,8 +9,10 @@
 package com.china.center.oa.tax.dao.impl;
 
 
+import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.tax.bean.FinanceBean;
+import com.china.center.oa.tax.constanst.TaxConstanst;
 import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.oa.tax.vo.FinanceVO;
 
@@ -25,4 +27,12 @@ import com.china.center.oa.tax.vo.FinanceVO;
  */
 public class FinanceDAOImpl extends BaseDAO<FinanceBean, FinanceVO> implements FinanceDAO
 {
+    public boolean updateCheck(String id, String reason)
+    {
+        String sql = BeanTools.getUpdateHead(claz) + " set status = ?, checks = ? where id = ?";
+
+        this.jdbcOperation.update(sql, TaxConstanst.FINANCE_STATUS_CHECK, reason, id);
+
+        return true;
+    }
 }
