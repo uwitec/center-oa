@@ -135,4 +135,6 @@
 
 	<bean id="planManager" class="com.china.center.oa.publics.manager.impl.PlanManagerImpl" />
 
+	<bean id="publishMessage" class="com.china.center.oa.publics.message.impl.PublishMessageImpl" />
+
 </beans>

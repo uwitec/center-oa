@@ -118,4 +118,6 @@
 
 	<osgi:service ref="planManager" interface="com.china.center.oa.publics.manager.PlanManager" />
 
+	<osgi:service ref="publishMessage" interface="com.china.center.oa.publics.message.PublishMessage" />
+
 </beans>
