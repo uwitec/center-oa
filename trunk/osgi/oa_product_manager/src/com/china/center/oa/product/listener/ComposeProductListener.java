@@ -10,8 +10,9 @@ package com.china.center.oa.product.listener;
 
 
 import com.center.china.osgi.publics.ParentListener;
+import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
-import com.china.center.oa.product.vo.ComposeFeeDefinedVO;
+import com.china.center.oa.product.bean.ComposeProductBean;
 
 
 /**
@@ -24,11 +25,14 @@ import com.china.center.oa.product.vo.ComposeFeeDefinedVO;
  */
 public interface ComposeProductListener extends ParentListener
 {
+
     /**
-     * 查询合成定义
+     * 合成最终确认通知
      * 
-     * @param stafferId
+     * @param user
+     * @param bean
+     * @throws MYException
      */
-    void onFindComposeFeeDefinedVO(ComposeFeeDefinedVO vo)
+    void onConfirmCompose(User user, ComposeProductBean bean)
         throws MYException;
 }

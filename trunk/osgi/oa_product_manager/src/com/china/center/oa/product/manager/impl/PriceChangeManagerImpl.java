@@ -96,7 +96,13 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
 
             saveInner(bean);
 
-            // TODO_OSGI 生成调价凭证
+            // TAX_ADD 生成调价凭证
+            Collection<PriceChangeListener> listenerList = this.listenerMapValues();
+
+            for (PriceChangeListener priceChangeListener : listenerList)
+            {
+                priceChangeListener.onConfirmPriceChange(user, bean);
+            }
         }
         finally
         {
@@ -150,7 +156,13 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
             // 设置成回滚
             priceChangeDAO.updateStatus(id, PriceChangeConstant.STATUS_ROLLBACK);
 
-            // TODO_OSGI 生成调价凭证(回滚凭证)
+            // TAX_ADD 生成调价回滚凭证
+            Collection<PriceChangeListener> listenerList = this.listenerMapValues();
+
+            for (PriceChangeListener priceChangeListener : listenerList)
+            {
+                priceChangeListener.onRollbackPriceChange(user, bean);
+            }
         }
         finally
         {

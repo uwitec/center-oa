@@ -46,5 +46,7 @@
     <osgi:reference id="menuManager" interface="com.china.center.oa.publics.manager.MenuManager" />
     
     <osgi:reference id="orgManager" interface="com.china.center.oa.publics.manager.OrgManager" />
+    
+    <osgi:reference id="publishMessage" interface="com.china.center.oa.publics.message.PublishMessage" />
 
 </beans>

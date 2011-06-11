@@ -12,6 +12,7 @@ package com.china.center.oa.product.listener;
 import com.center.china.osgi.publics.ParentListener;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.product.bean.PriceChangeBean;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.vs.StorageRelationBean;
 
@@ -53,4 +54,24 @@ public interface PriceChangeListener extends ParentListener
      * @throws MYException
      */
     int onPriceChange3(User user, StorageRelationBean relation);
+
+    /**
+     * 调价确认
+     * 
+     * @param user
+     * @param bean
+     * @throws MYException
+     */
+    void onConfirmPriceChange(User user, PriceChangeBean bean)
+        throws MYException;
+
+    /**
+     * 调价回滚
+     * 
+     * @param user
+     * @param bean
+     * @throws MYException
+     */
+    void onRollbackPriceChange(User user, PriceChangeBean bean)
+        throws MYException;
 }

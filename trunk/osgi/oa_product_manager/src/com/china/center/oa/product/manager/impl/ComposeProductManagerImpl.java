@@ -11,6 +11,7 @@ package com.china.center.oa.product.manager.impl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +38,11 @@ import com.china.center.oa.product.vo.ComposeFeeDefinedVO;
 import com.china.center.oa.product.vo.ComposeProductVO;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.publics.message.MessageConstant;
+import com.china.center.oa.publics.message.PublishMessage;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.ListTools;
+import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -62,6 +66,8 @@ public class ComposeProductManagerImpl extends AbstractListenerManager<ComposePr
     private ComposeFeeDefinedDAO composeFeeDefinedDAO = null;
 
     private StorageRelationManager storageRelationManager = null;
+
+    private PublishMessage publishMessage = null;
 
     private CommonDAO commonDAO = null;
 
@@ -174,6 +180,14 @@ public class ComposeProductManagerImpl extends AbstractListenerManager<ComposePr
             processDecompose(user, bean);
         }
 
+        // TAX_ADD 产品合成-运营总监通过
+        Collection<ComposeProductListener> listenerMapValues = this.listenerMapValues();
+
+        for (ComposeProductListener composeProductListener : listenerMapValues)
+        {
+            composeProductListener.onConfirmCompose(user, bean);
+        }
+
         return true;
     }
 
@@ -260,12 +274,15 @@ public class ComposeProductManagerImpl extends AbstractListenerManager<ComposePr
             return vo;
         }
 
-        // 这里动态获取凭证信息
-        Collection<ComposeProductListener> listenerMapValues = this.listenerMapValues();
-
-        for (ComposeProductListener composeProductListener : listenerMapValues)
+        if ( !StringTools.isNullOrNone(vo.getTaxId()))
         {
-            composeProductListener.onFindComposeFeeDefinedVO(vo);
+            Map<String, String> result = publishMessage.publicP2PMessage(
+                MessageConstant.FINDCOMPOSEFEEDEFINEDVO, vo.getTaxId());
+
+            if (result.size() > 0)
+            {
+                vo.setTaxName(result.get(MessageConstant.RESULT));
+            }
         }
 
         return vo;
@@ -530,5 +547,22 @@ public class ComposeProductManagerImpl extends AbstractListenerManager<ComposePr
     public void setComposeFeeDefinedDAO(ComposeFeeDefinedDAO composeFeeDefinedDAO)
     {
         this.composeFeeDefinedDAO = composeFeeDefinedDAO;
+    }
+
+    /**
+     * @return the publishMessage
+     */
+    public PublishMessage getPublishMessage()
+    {
+        return publishMessage;
+    }
+
+    /**
+     * @param publishMessage
+     *            the publishMessage to set
+     */
+    public void setPublishMessage(PublishMessage publishMessage)
+    {
+        this.publishMessage = publishMessage;
     }
 }
