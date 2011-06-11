@@ -313,6 +313,9 @@ public class BillAction extends DispatchAction
 
             bean.setLock(FinanceConstant.BILL_LOCK_NO);
 
+            // 人工创建
+            bean.setCreateType(FinanceConstant.BILL_CREATETYPE_HAND);
+
             // TEMPIMPL 收款单在增加关联单据，给4月前的单据入库使用
             if ( !StringTools.isNullOrNone(bean.getOutId()))
             {
@@ -378,6 +381,9 @@ public class BillAction extends DispatchAction
             bean.setLocationId(user.getLocationId());
 
             bean.setLock(FinanceConstant.BILL_LOCK_NO);
+
+            // 人工创建
+            bean.setCreateType(FinanceConstant.BILL_CREATETYPE_HAND);
 
             financeFacade.addOutBillBean(user.getId(), bean);
 

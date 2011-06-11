@@ -834,7 +834,7 @@ public class FinanceAction extends DispatchAction
     }
 
     /**
-     * drawPayment3(销售单和付收款单的关联)
+     * drawPayment3(销售单和付收款单的关联,业务员勾款)
      * 
      * @param mapping
      * @param form
@@ -1159,7 +1159,7 @@ public class FinanceAction extends DispatchAction
     }
 
     /**
-     * 退领回款
+     * 业务员退领回款
      * 
      * @param mapping
      * @param form

@@ -228,6 +228,12 @@
             <type>select</type>
             <option>$inbillStatus</option>
         </condtion>
+        <condtion name="createType" caption="创建类型">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$billCreateType</option>
+        </condtion>
         <condtion name="lock" caption="锁定" filed="ulock">
             <opr>=</opr>
             <datatype>1</datatype>
@@ -296,6 +302,12 @@
             <datatype>1</datatype>
             <type>select</type>
             <option>$outbillPayType</option>
+        </condtion>
+        <condtion name="createType" caption="创建类型">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$billCreateType</option>
         </condtion>
         <condtion name="lock" caption="锁定" filed="ulock">
             <opr>=</opr>
