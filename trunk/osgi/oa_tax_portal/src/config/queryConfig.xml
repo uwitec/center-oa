@@ -52,6 +52,24 @@
             <type>select</type>
             <option>$taxCheck</option>
         </condtion>
+        <condtion name="depot" caption="辅助-仓库">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$taxCheck</option>
+        </condtion>
+        <condtion name="product" caption="辅助-产品">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$taxCheck</option>
+        </condtion>
+        <condtion name="duty" caption="辅助-纳税">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$taxCheck</option>
+        </condtion>
     </item>
     
     <item name="queryFinance" deaultpfix="FinanceBean">

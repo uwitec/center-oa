@@ -14,7 +14,6 @@ Export-Package:
  com.china.center.oa.tax.vo;version="1.0.0"
 Require-Bundle: 
  com.china.center.oa.finance.manager;bundle-version="1.0.0",
- com.china.center.oa.product.manager;bundle-version="1.0.0",
  com.china.center.oa.publics.manager;bundle-version="1.0.0",
  com.china.center.osgi.jdbc;bundle-version="1.0.0",
  com.china.center.osgi.tools;bundle-version="1.0.0",

@@ -35,13 +35,10 @@
 		</property>
 	</bean>
 	
-	<bean id="composeProductListenerTaxImpl" class="com.china.center.oa.tax.listener.impl.ComposeProductListenerTaxImpl" />
+	<bean id="composeProductListenerTaxImpl" class="com.china.center.oa.tax.listener.impl.ComposeProductRegisterP2PTaxImpl" />
     
-    <bean id="composeProductListener" class="com.center.china.osgi.publics.DefaultLoadListener">
-        <property name="listenerManager">
-            <ref bean="composeProductManager"/>
-        </property>
-        <property name="listenerList">
+    <bean id="registerMessageManager" class="com.china.center.oa.publics.message.RegisterMessageManager">
+        <property name="p2pList">
             <list>
                 <ref bean="composeProductListenerTaxImpl" />
             </list>

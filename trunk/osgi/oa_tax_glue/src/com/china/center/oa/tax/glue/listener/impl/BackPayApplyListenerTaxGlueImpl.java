@@ -1,5 +1,5 @@
 /**
- * File Name: PaymentApplyListenerTaxGlueImpl.java<br>
+ * File Name: BackPayApplyListenerTaxGlueImpl.java<br>
  * CopyRight: Copyright by www.center.china<br>
  * Description:<br>
  * CREATER: ZHUACHEN<br>
@@ -11,28 +11,28 @@ package com.china.center.oa.tax.glue.listener.impl;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
-import com.china.center.oa.finance.bean.PaymentApplyBean;
-import com.china.center.oa.finance.listener.PaymentApplyListener;
+import com.china.center.oa.finance.bean.BackPayApplyBean;
+import com.china.center.oa.finance.listener.BackPayApplyListener;
 
 
 /**
- * TODO_OSGI 回款转预收/销售单绑定(预收转应收)/预收转费用
+ * TODO_OSGI 销售退款/预收退款 通过
  * 
  * @author ZHUZHU
  * @version 2011-6-11
- * @see PaymentApplyListenerTaxGlueImpl
+ * @see BackPayApplyListenerTaxGlueImpl
  * @since 3.0
  */
-public class PaymentApplyListenerTaxGlueImpl implements PaymentApplyListener
+public class BackPayApplyListenerTaxGlueImpl implements BackPayApplyListener
 {
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.china.center.oa.finance.listener.PaymentApplyListener#onPassBean(com.center.china.osgi.publics.User,
-     *      com.china.center.oa.finance.bean.PaymentApplyBean)
+     * @see com.china.center.oa.finance.listener.BackPayApplyListener#onEndBackPayApplyBean(com.center.china.osgi.publics.User,
+     *      com.china.center.oa.finance.bean.BackPayApplyBean)
      */
-    public void onPassBean(User user, PaymentApplyBean bean)
+    public void onEndBackPayApplyBean(User user, BackPayApplyBean bean)
         throws MYException
     {
         // 
@@ -46,7 +46,7 @@ public class PaymentApplyListenerTaxGlueImpl implements PaymentApplyListener
      */
     public String getListenerType()
     {
-        return "PaymentApplyListener.TaxGlueImpl";
+        return "BackPayApplyListener.TaxGlueImpl";
     }
 
 }

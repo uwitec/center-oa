@@ -276,6 +276,9 @@ public class FinanceManagerImpl implements FinanceManager
 
         bean.setName(bean.getId());
 
+        // 标识成更改
+        bean.setUpdateFlag(TaxConstanst.FINANCE_UPDATEFLAG_YES);
+
         // 允许自己制定凭证日期
         if (StringTools.isNullOrNone(bean.getFinanceDate()))
         {

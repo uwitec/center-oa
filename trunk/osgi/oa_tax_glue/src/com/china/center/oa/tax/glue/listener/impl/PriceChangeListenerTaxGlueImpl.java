@@ -37,7 +37,7 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
     public void onConfirmPriceChange(User user, PriceChangeBean bean)
         throws MYException
     {
-        // TODO Auto-generated method stub
+        // 
 
     }
 
@@ -50,7 +50,7 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
     public void onPriceChange(User user, ProductBean bean)
         throws MYException
     {
-        // TODO Auto-generated method stub
+        // 
 
     }
 
@@ -62,7 +62,7 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
      */
     public int onPriceChange2(User user, StorageRelationBean relation)
     {
-        // TODO Auto-generated method stub
+        // 
         return 0;
     }
 
@@ -74,7 +74,7 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
      */
     public int onPriceChange3(User user, StorageRelationBean relation)
     {
-        // TODO Auto-generated method stub
+        // 
         return 0;
     }
 
@@ -91,7 +91,7 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
     public void onRollbackPriceChange(User user, PriceChangeBean bean)
         throws MYException
     {
-        // TODO Auto-generated method stub
+        // 
 
     }
 

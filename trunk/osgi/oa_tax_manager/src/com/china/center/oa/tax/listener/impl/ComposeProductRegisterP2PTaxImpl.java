@@ -9,9 +9,12 @@
 package com.china.center.oa.tax.listener.impl;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.china.center.common.MYException;
-import com.china.center.oa.product.listener.ComposeProductListener;
-import com.china.center.oa.product.vo.ComposeFeeDefinedVO;
+import com.china.center.oa.publics.message.MessageConstant;
+import com.china.center.oa.publics.message.RegisterP2P;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.tools.StringTools;
@@ -22,39 +25,38 @@ import com.china.center.tools.StringTools;
  * 
  * @author ZHUZHU
  * @version 2011-5-8
- * @see ComposeProductListenerTaxImpl
+ * @see ComposeProductRegisterP2PTaxImpl
  * @since 3.0
  */
-public class ComposeProductListenerTaxImpl implements ComposeProductListener
+public class ComposeProductRegisterP2PTaxImpl implements RegisterP2P
 {
     private TaxDAO taxDAO = null;
 
     /**
      * default constructor
      */
-    public ComposeProductListenerTaxImpl()
+    public ComposeProductRegisterP2PTaxImpl()
     {
     }
 
-    public void onFindComposeFeeDefinedVO(ComposeFeeDefinedVO vo)
+    public Map<String, String> publicP2PMessage(String msgId, String conent)
         throws MYException
     {
-        if (StringTools.isNullOrNone(vo.getTaxId()))
+        Map<String, String> result = new HashMap<String, String>();
+
+        if (StringTools.isNullOrNone(conent))
         {
-            return;
+            return result;
         }
 
-        TaxBean tax = taxDAO.find(vo.getTaxId());
+        TaxBean tax = taxDAO.find(conent);
 
         if (tax != null)
         {
-            vo.setTaxName(tax.getCode() + tax.getName());
+            result.put(MessageConstant.RESULT, tax.getCode() + tax.getName());
         }
-    }
 
-    public String getListenerType()
-    {
-        return "ComposeProductListener.TaxImpl";
+        return result;
     }
 
     /**
@@ -74,4 +76,13 @@ public class ComposeProductListenerTaxImpl implements ComposeProductListener
         this.taxDAO = taxDAO;
     }
 
+    public String getKey()
+    {
+        return "ComposeProductRegisterP2PTaxImpl.RegisterP2P";
+    }
+
+    public String getMessageType()
+    {
+        return MessageConstant.FINDCOMPOSEFEEDEFINEDVO;
+    }
 }

@@ -53,10 +53,10 @@
 	
 	<osgi:reference id="fatalNotify" interface="com.china.center.oa.publics.manager.FatalNotify" />
 	
+	<osgi:reference id="publishMessage" interface="com.china.center.oa.publics.message.PublishMessage" />
+	
 	<!-- ************************************************************************************** -->
 	
 	<osgi:reference id="bankManager" interface="com.china.center.oa.finance.manager.BankManager" />
-	
-	<osgi:reference id="composeProductManager" interface="com.china.center.oa.product.manager.ComposeProductManager" />
 
 </beans>

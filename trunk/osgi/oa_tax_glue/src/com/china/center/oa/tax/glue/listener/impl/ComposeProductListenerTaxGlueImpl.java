@@ -36,7 +36,7 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
     public void onConfirmCompose(User user, ComposeProductBean bean)
         throws MYException
     {
-        // TODO Auto-generated method stub
+        // 
 
     }
 
@@ -48,7 +48,7 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
     public void onFindComposeFeeDefinedVO(ComposeFeeDefinedVO vo)
         throws MYException
     {
-        // TODO Auto-generated method stub
+        // 
 
     }
 
@@ -59,7 +59,7 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
      */
     public String getListenerType()
     {
-        // TODO Auto-generated method stub
+        // 
         return "ComposeProductListener.TaxGlueImpl";
     }
 

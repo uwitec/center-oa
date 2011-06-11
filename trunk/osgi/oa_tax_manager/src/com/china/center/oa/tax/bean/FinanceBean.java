@@ -52,6 +52,11 @@ public class FinanceBean implements Serializable
     private int status = TaxConstanst.FINANCE_STATUS_NOCHECK;
 
     /**
+     * 更新标识
+     */
+    private int updateFlag = TaxConstanst.FINANCE_UPDATEFLAG_NO;
+
+    /**
      * 凭证创建的类型(0:手工创建 其他是系统创建/也有不同分类)
      */
     private int createType = TaxConstanst.FINANCE_CREATETYPE_HAND;
@@ -425,6 +430,23 @@ public class FinanceBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the updateFlag
+     */
+    public int getUpdateFlag()
+    {
+        return updateFlag;
+    }
+
+    /**
+     * @param updateFlag
+     *            the updateFlag to set
+     */
+    public void setUpdateFlag(int updateFlag)
+    {
+        this.updateFlag = updateFlag;
     }
 
 }

@@ -348,4 +348,16 @@ public interface TaxConstanst
      */
     @Defined(key = "taxRefType", value = "暂记户")
     int TAX_REFTYPE_BANKTEMP = 1;
+
+    /**
+     * 原始
+     */
+    @Defined(key = "financeUpdateFlag", value = "原始")
+    int FINANCE_UPDATEFLAG_NO = 0;
+
+    /**
+     * 更改
+     */
+    @Defined(key = "financeUpdateFlag", value = "更改")
+    int FINANCE_UPDATEFLAG_YES = 1;
 }

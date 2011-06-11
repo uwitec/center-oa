@@ -16,7 +16,7 @@ import com.china.center.oa.finance.listener.PaymentListener;
 
 
 /**
- * PaymentListenerTaxGlueImpl
+ * TODO_OSGI 回款认领/回款退领
  * 
  * @author ZHUZHU
  * @version 2011-6-8
@@ -35,7 +35,7 @@ public class PaymentListenerTaxGlueImpl implements PaymentListener
     public void onAddBean(User user, PaymentBean bean)
         throws MYException
     {
-        // TODO Auto-generated method stub
+        // 
 
     }
 
@@ -48,7 +48,7 @@ public class PaymentListenerTaxGlueImpl implements PaymentListener
     public void onDeleteBean(User user, PaymentBean bean)
         throws MYException
     {
-        // TODO Auto-generated method stub
+        // 
 
     }
 
@@ -65,7 +65,7 @@ public class PaymentListenerTaxGlueImpl implements PaymentListener
     public void onDropBean(User user, PaymentBean bean)
         throws MYException
     {
-        // TODO Auto-generated method stub
+        // 
 
     }
 
