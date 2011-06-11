@@ -11,6 +11,7 @@ package com.china.center.oa.sail.listener.impl;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.product.bean.PriceChangeBean;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.listener.PriceChangeListener;
 import com.china.center.oa.product.vs.StorageRelationBean;
@@ -111,5 +112,17 @@ public class PriceChangeListenerSailImpl implements PriceChangeListener
             .getFinanceEndDate());
 
         return sum;
+    }
+
+    public void onConfirmPriceChange(User user, PriceChangeBean bean)
+        throws MYException
+    {
+
+    }
+
+    public void onRollbackPriceChange(User user, PriceChangeBean bean)
+        throws MYException
+    {
+
     }
 }

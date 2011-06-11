@@ -892,7 +892,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         // CORE 修改库单(销售/入库)的状态(信用额度处理)
         int status = processOutStutus(fullId, user, outBean);
 
-        // 处理在途(销售无关)
+        // 处理在途(销售无关)/调入接受时
         int result = processOutInWay(user, fullId, outBean);
 
         // 在途改变状态
@@ -921,7 +921,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     {
         int result = -1;
 
-        // 调出直接变动库存 /回滚也是直接变动库存
+        // 调出直接变动库存 /回滚也是直接变动库存(CORE 这里特殊不产生任何凭证)
         if (OutHelper.isMoveOut(outBean) || OutHelper.isMoveRollBack(outBean))
         {
             List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(fullId);
@@ -1018,6 +1018,14 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
             // 结束调出的单据
             changeMoveOutToEnd(user, moveOut, "自动接收");
+
+            // TAX_ADD 入库单-调拨（调入接受时）
+            Collection<OutListener> listenerMapValues = listenerMapValues();
+
+            for (OutListener listener : listenerMapValues)
+            {
+                listener.onConfirmOutOrBuy(user, outBean);
+            }
         }
 
         // 如果是调出(调出提交)
@@ -1354,7 +1362,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             return;
         }
 
-        // 处理入库单的库存变动 采购入库/调拨(调出/回滚)/领样退货/销售退单
+        // 处理入库单的库存变动 采购入库/领样退货/销售退单
         if (outBean.getOutType() == OutConstant.OUTTYPE_IN_COMMON
             || outBean.getOutType() == OutConstant.OUTTYPE_IN_SWATCH
             || outBean.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK)
@@ -1386,6 +1394,14 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
 
             saveUnique(user, outBean);
+
+            // TAX_ADD 采购入库/领样退货/销售退单的通过
+            Collection<OutListener> listenerMapValues = listenerMapValues();
+
+            for (OutListener listener : listenerMapValues)
+            {
+                listener.onConfirmOutOrBuy(user, outBean);
+            }
         }
     }
 
@@ -1694,6 +1710,9 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         {
                             consignDAO.delConsign(fullId);
                         }
+
+                        // 取消坏账
+                        outDAO.modifyBadDebts(fullId, 0.0d);
                     }
 
                     // 如果是调出的驳回需要回滚
@@ -1975,7 +1994,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     }
 
     /**
-     * CORE 销售单变动库存
+     * CORE 销售单/入库单变动库存
      * 
      * @param user
      * @param outBean
@@ -2041,6 +2060,14 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             wrap.setType(type);
 
             storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, false);
+        }
+
+        // TAX_ADD 销售单和入库单通过
+        Collection<OutListener> listenerMapValues = listenerMapValues();
+
+        for (OutListener listener : listenerMapValues)
+        {
+            listener.onConfirmOutOrBuy(user, outBean);
         }
 
         saveUnique(user, outBean);
@@ -2651,7 +2678,6 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     public boolean payBaddebts(final User user, String fullId, double bad)
         throws MYException
     {
-        // 需要增加是否超期 flowId
         OutBean out = outDAO.find(fullId);
 
         if (out == null)
@@ -2671,6 +2697,16 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         // 付款的金额
         outDAO.modifyBadDebts(fullId, bad);
+
+        out.setBadDebts(bad);
+
+        // TAX_ADD 坏账的确认
+        Collection<OutListener> listenerMapValues = listenerMapValues();
+
+        for (OutListener listener : listenerMapValues)
+        {
+            listener.onConfirmBadDebts(user, out);
+        }
 
         return true;
     }
@@ -2911,6 +2947,14 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         addOutLog2(id, user, OutConstant.OUTBALANCE_STATUS_PASS, "库管通过", SailConstant.OPR_OUT_PASS,
             OutConstant.OUTBALANCE_STATUS_END);
+
+        // TAX_ADD 销售-结算单（审核通过）/销售-结算退货单（审核通过）
+        Collection<OutListener> listenerMapValues = listenerMapValues();
+
+        for (OutListener listener : listenerMapValues)
+        {
+            listener.onOutBalancePass(user, bean);
+        }
 
         notifyManager.notifyMessage(bean.getStafferId(), bean.getOutId() + "的结算清单已经被["
                                                          + user.getStafferName() + "]退库通过");
@@ -3902,8 +3946,6 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             {
                 throw new RuntimeException(e.getErrorContent());
             }
-
-            // TODO_OSGI 销售单是发货后产生管理凭证
         }
     }
 
@@ -3971,11 +4013,6 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             catch (MYException e)
             {
                 throw new RuntimeException(e.getErrorContent());
-            }
-
-            if (outBean.getOutType() == OutConstant.OUTTYPE_IN_DROP)
-            {
-                // TODO_OSGI 入库且是报废后是发货后产生管理凭证
             }
         }
     }

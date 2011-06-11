@@ -13,6 +13,7 @@ import com.center.china.osgi.publics.ParentListener;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.publics.wrap.ResultBean;
+import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
 
 
@@ -54,6 +55,25 @@ public interface OutListener extends ParentListener
         throws MYException;
 
     /**
+     * 库单对产品库存异动了(销售/入库包括调拨都在里面)
+     * 
+     * @param bean
+     * @throws MYException
+     */
+    void onConfirmOutOrBuy(User user, OutBean bean)
+        throws MYException;
+
+    /**
+     * 结算单/结算退货单 通过
+     * 
+     * @param user
+     * @param bean
+     * @throws MYException
+     */
+    void onOutBalancePass(User user, OutBalanceBean bean)
+        throws MYException;
+
+    /**
      * 总部核对监听
      * 
      * @param bean
@@ -70,6 +90,16 @@ public interface OutListener extends ParentListener
      * @throws MYException
      */
     void onCancleBadDebts(User user, OutBean bean)
+        throws MYException;
+
+    /**
+     * 确认坏账
+     * 
+     * @param user
+     * @param bean
+     * @throws MYException
+     */
+    void onConfirmBadDebts(User user, OutBean bean)
         throws MYException;
 
     /**

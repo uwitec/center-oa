@@ -27,7 +27,7 @@ import com.china.center.oa.stock.bean.StockItemBean;
 public interface StockListener extends ParentListener
 {
     /**
-     * 结束采购的事件通知(主要是生成入库单)
+     * 拿货事件通知(主要是生成入库单)
      * 
      * @param user
      * @param bean
