@@ -11,9 +11,11 @@ package com.china.center.oa.finance.manager;
 
 import java.util.List;
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.OutBillBean;
+import com.china.center.oa.finance.listener.StockPayApplyListener;
 
 
 /**
@@ -24,7 +26,7 @@ import com.china.center.oa.finance.bean.OutBillBean;
  * @see StockPayApplyManager
  * @since 3.0
  */
-public interface StockPayApplyManager
+public interface StockPayApplyManager extends ListenerManager<StockPayApplyListener>
 {
     /**
      * 提交(需要同步)

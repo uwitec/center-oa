@@ -9,9 +9,11 @@
 package com.china.center.oa.finance.manager;
 
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.PaymentApplyBean;
+import com.china.center.oa.finance.listener.PaymentApplyListener;
 
 
 /**
@@ -22,7 +24,7 @@ import com.china.center.oa.finance.bean.PaymentApplyBean;
  * @see PaymentApplyManager
  * @since 3.0
  */
-public interface PaymentApplyManager
+public interface PaymentApplyManager extends ListenerManager<PaymentApplyListener>
 {
     /**
      * 申请付款

@@ -137,7 +137,7 @@ public interface FinanceConstant
     int PAYAPPLY_STATUS_REJECT = 2;
 
     /**
-     * 回款转收款(就是回款落地)
+     * 回款转收款(就是回款转预收)
      */
     @Defined(key = "payApplyType", value = "回款转收款")
     int PAYAPPLY_TYPE_PAYMENT = 0;
@@ -206,6 +206,18 @@ public interface FinanceConstant
      */
     @Defined(key = "billLock", value = "锁定")
     int BILL_LOCK_YES = 1;
+
+    /**
+     * 自动
+     */
+    @Defined(key = "billCreateType", value = "自动")
+    int BILL_CREATETYPE_AUTO = 0;
+
+    /**
+     * 人工
+     */
+    @Defined(key = "billCreateType", value = "人工")
+    int BILL_CREATETYPE_HAND = 1;
 
     /**
      * 现金

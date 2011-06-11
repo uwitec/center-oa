@@ -9,9 +9,11 @@
 package com.china.center.oa.finance.listener.impl;
 
 
+import java.util.Collection;
 import java.util.Formatter;
 import java.util.List;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
@@ -20,6 +22,8 @@ import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.helper.BillHelper;
+import com.china.center.oa.finance.listener.BillListener;
+import com.china.center.oa.finance.manager.BillOutManager;
 import com.china.center.oa.publics.constant.PluginNameConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
@@ -44,7 +48,7 @@ import com.china.center.tools.TimeTools;
  * @see OutListenerFinanceImpl
  * @since 3.0
  */
-public class OutListenerFinanceImpl implements OutListener
+public class OutListenerFinanceImpl extends AbstractListenerManager<BillListener> implements OutListener, BillOutManager
 {
     private InBillDAO inBillDAO = null;
 
@@ -250,6 +254,14 @@ public class OutListenerFinanceImpl implements OutListener
             }
 
             inBillDAO.updateAllEntityBeans(list);
+
+            // TAX_ADD 销售单驳回后,应收转预收
+            Collection<BillListener> listenerMapValues = this.listenerMapValues();
+
+            for (BillListener listener : listenerMapValues)
+            {
+                listener.onRejectOut(user, bean, list);
+            }
         }
 
         // 清空已经付款
@@ -465,6 +477,12 @@ public class OutListenerFinanceImpl implements OutListener
         }
     }
 
+    public void onConfirmBadDebts(User user, OutBean bean)
+        throws MYException
+    {
+        // 在收款单的时候坏账是人工生成的,所以无实现
+    }
+
     public void onCheck(User user, OutBean bean)
         throws MYException
     {
@@ -479,6 +497,18 @@ public class OutListenerFinanceImpl implements OutListener
             }
         }
 
+    }
+
+    public void onConfirmOutOrBuy(User user, OutBean bean)
+        throws MYException
+    {
+        // do noting
+    }
+
+    public void onOutBalancePass(User user, OutBalanceBean bean)
+        throws MYException
+    {
+        // do noting
     }
 
     /*
@@ -592,4 +622,5 @@ public class OutListenerFinanceImpl implements OutListener
     {
         this.commonDAO = commonDAO;
     }
+
 }

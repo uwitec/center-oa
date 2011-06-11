@@ -9,6 +9,7 @@
 package com.china.center.oa.finance.manager.impl;
 
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
@@ -27,6 +29,7 @@ import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.dao.BackPayApplyDAO;
 import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
+import com.china.center.oa.finance.listener.BackPayApplyListener;
 import com.china.center.oa.finance.manager.BackPayApplyManager;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.publics.bean.FlowLogBean;
@@ -52,7 +55,7 @@ import com.china.center.tools.TimeTools;
  * @since 3.0
  */
 @Exceptional
-public class BackPayApplyManagerImpl implements BackPayApplyManager
+public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayApplyListener> implements BackPayApplyManager
 {
     private BackPayApplyDAO backPayApplyDAO = null;
 
@@ -418,6 +421,14 @@ public class BackPayApplyManagerImpl implements BackPayApplyManager
             newInBill.setDescription(newInBill.getDescription() + ";预收退款自动关联退款的付款单:" + outBillId);
 
             inBillDAO.updateEntityBean(newInBill);
+        }
+
+        // TAX_ADD 销售退款/预收退款
+        Collection<BackPayApplyListener> listenerMapValues = this.listenerMapValues();
+
+        for (BackPayApplyListener listener : listenerMapValues)
+        {
+            listener.onEndBackPayApplyBean(user, bean);
         }
 
         return true;

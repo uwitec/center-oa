@@ -10,11 +10,13 @@ package com.china.center.oa.finance.manager.impl;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.OutBillBean;
@@ -22,6 +24,7 @@ import com.china.center.oa.finance.bean.StockPayApplyBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.constant.StockPayApplyConstant;
 import com.china.center.oa.finance.dao.StockPayApplyDAO;
+import com.china.center.oa.finance.listener.StockPayApplyListener;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.StockPayApplyManager;
 import com.china.center.oa.publics.bean.FlowLogBean;
@@ -48,7 +51,7 @@ import com.china.center.tools.TimeTools;
  * @since 3.0
  */
 @Exceptional
-public class StockPayApplyManagerImpl implements StockPayApplyManager
+public class StockPayApplyManagerImpl extends AbstractListenerManager<StockPayApplyListener> implements StockPayApplyManager
 {
     private StockPayApplyDAO stockPayApplyDAO = null;
 
@@ -511,6 +514,14 @@ public class StockPayApplyManagerImpl implements StockPayApplyManager
 
         // 结束申请流程
         stockPayApplyDAO.updateEntityBean(apply);
+
+        // TAX_ADD 采购付款--会计付款
+        Collection<StockPayApplyListener> listenerMapValues = this.listenerMapValues();
+
+        for (StockPayApplyListener listener : listenerMapValues)
+        {
+            listener.onEndStockPayBySEC(user, apply);
+        }
 
         saveFlowLog(user, StockPayApplyConstant.APPLY_STATUS_SEC, apply, reason,
             PublicConstant.OPRMODE_PASS);

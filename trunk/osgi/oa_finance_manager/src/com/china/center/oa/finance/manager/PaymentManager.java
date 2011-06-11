@@ -11,9 +11,11 @@ package com.china.center.oa.finance.manager;
 
 import java.util.List;
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.PaymentBean;
+import com.china.center.oa.finance.listener.PaymentListener;
 
 
 /**
@@ -24,7 +26,7 @@ import com.china.center.oa.finance.bean.PaymentBean;
  * @see PaymentManager
  * @since 3.0
  */
-public interface PaymentManager
+public interface PaymentManager extends ListenerManager<PaymentListener>
 {
     boolean addBean(User user, PaymentBean bean)
         throws MYException;

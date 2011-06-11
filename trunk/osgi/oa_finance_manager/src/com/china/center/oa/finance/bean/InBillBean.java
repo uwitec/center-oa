@@ -52,6 +52,11 @@ public class InBillBean implements Serializable
     private int status = FinanceConstant.INBILL_STATUS_PAYMENTS;
 
     /**
+     * 0:自动 1:手工
+     */
+    private int createType = FinanceConstant.BILL_CREATETYPE_AUTO;
+
+    /**
      * 是否被统计锁定
      */
     @Column(name = "ulock")
@@ -488,6 +493,23 @@ public class InBillBean implements Serializable
     }
 
     /**
+     * @return the createType
+     */
+    public int getCreateType()
+    {
+        return createType;
+    }
+
+    /**
+     * @param createType
+     *            the createType to set
+     */
+    public void setCreateType(int createType)
+    {
+        this.createType = createType;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -510,6 +532,9 @@ public class InBillBean implements Serializable
             .append(TAB)
             .append("status = ")
             .append(this.status)
+            .append(TAB)
+            .append("createType = ")
+            .append(this.createType)
             .append(TAB)
             .append("lock = ")
             .append(this.lock)

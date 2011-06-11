@@ -11,10 +11,12 @@ package com.china.center.oa.finance.manager;
 
 import java.util.List;
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.BackPayApplyBean;
 import com.china.center.oa.finance.bean.OutBillBean;
+import com.china.center.oa.finance.listener.BackPayApplyListener;
 
 
 /**
@@ -25,7 +27,7 @@ import com.china.center.oa.finance.bean.OutBillBean;
  * @see BackPayApplyManager
  * @since 3.0
  */
-public interface BackPayApplyManager
+public interface BackPayApplyManager extends ListenerManager<BackPayApplyListener>
 {
     boolean addBackPayApplyBean(User user, BackPayApplyBean bean)
         throws MYException;

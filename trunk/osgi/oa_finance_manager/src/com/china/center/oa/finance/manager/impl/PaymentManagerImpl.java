@@ -9,11 +9,13 @@
 package com.china.center.oa.finance.manager.impl;
 
 
+import java.util.Collection;
 import java.util.List;
 
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
@@ -27,6 +29,7 @@ import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.dao.PaymentApplyDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.dao.PaymentVSOutDAO;
+import com.china.center.oa.finance.listener.PaymentListener;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.PaymentManager;
 import com.china.center.oa.finance.manager.StatBankManager;
@@ -47,7 +50,7 @@ import com.china.center.tools.TimeTools;
  * @since 3.0
  */
 @Exceptional
-public class PaymentManagerImpl implements PaymentManager
+public class PaymentManagerImpl extends AbstractListenerManager<PaymentListener> implements PaymentManager
 {
     private PaymentDAO paymentDAO = null;
 
@@ -88,7 +91,17 @@ public class PaymentManagerImpl implements PaymentManager
             bean.setDestStafferId("0");
         }
 
-        return paymentDAO.saveEntityBean(bean);
+        paymentDAO.saveEntityBean(bean);
+
+        // TAX_ADD 回款增加
+        Collection<PaymentListener> listenerMapValues = listenerMapValues();
+
+        for (PaymentListener listener : listenerMapValues)
+        {
+            listener.onAddBean(user, bean);
+        }
+
+        return true;
     }
 
     @Transactional(rollbackFor = MYException.class)
@@ -102,7 +115,20 @@ public class PaymentManagerImpl implements PaymentManager
             paymentBean.setLogTime(TimeTools.now());
         }
 
-        return paymentDAO.saveAllEntityBeans(beanList);
+        paymentDAO.saveAllEntityBeans(beanList);
+
+        for (PaymentBean paymentBean : beanList)
+        {
+            // TAX_ADD 回款导入
+            Collection<PaymentListener> listenerMapValues = listenerMapValues();
+
+            for (PaymentListener listener : listenerMapValues)
+            {
+                listener.onAddBean(user, paymentBean);
+            }
+        }
+
+        return true;
     }
 
     @Transactional(rollbackFor = MYException.class)
@@ -128,7 +154,17 @@ public class PaymentManagerImpl implements PaymentManager
             throw new MYException("帐户剩余[%.2f],当前删除回款总金额[%.2f],帐户金额不足", total, pay.getMoney());
         }
 
-        return paymentDAO.deleteEntityBean(id);
+        paymentDAO.deleteEntityBean(id);
+
+        // TAX_ADD 回款删除
+        Collection<PaymentListener> listenerMapValues = listenerMapValues();
+
+        for (PaymentListener listener : listenerMapValues)
+        {
+            listener.onDeleteBean(user, pay);
+        }
+
+        return true;
     }
 
     @Transactional(rollbackFor = MYException.class)
@@ -173,6 +209,17 @@ public class PaymentManagerImpl implements PaymentManager
 
         paymentDAO.deleteEntityBeansByCondition(con);
 
+        for (PaymentBean paymentBean : payList)
+        {
+            // TAX_ADD 回款批次删除
+            Collection<PaymentListener> listenerMapValues = listenerMapValues();
+
+            for (PaymentListener listener : listenerMapValues)
+            {
+                listener.onDeleteBean(user, paymentBean);
+            }
+        }
+
         return true;
     }
 
@@ -180,7 +227,8 @@ public class PaymentManagerImpl implements PaymentManager
     public boolean updateBean(User user, PaymentBean bean)
         throws MYException
     {
-        return paymentDAO.updateEntityBean(bean);
+        // return paymentDAO.updateEntityBean(bean);
+        return true;
     }
 
     @Transactional(rollbackFor = MYException.class)
@@ -334,7 +382,17 @@ public class PaymentManagerImpl implements PaymentManager
 
         pay.setUseall(FinanceConstant.PAYMENT_USEALL_INIT);
 
-        return paymentDAO.updateEntityBean(pay);
+        paymentDAO.updateEntityBean(pay);
+
+        // TAX_ADD 回款退领生成凭证
+        Collection<PaymentListener> listenerMapValues = this.listenerMapValues();
+
+        for (PaymentListener listener : listenerMapValues)
+        {
+            listener.onDropBean(user, pay);
+        }
+
+        return true;
     }
 
     /**

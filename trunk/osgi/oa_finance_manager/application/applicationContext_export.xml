@@ -55,5 +55,7 @@
 	<osgi:service ref="backPayApplyDAO" interface="com.china.center.oa.finance.dao.BackPayApplyDAO" />
 
 	<osgi:service ref="backPayApplyManager" interface="com.china.center.oa.finance.manager.BackPayApplyManager" />
+	
+	<osgi:service ref="outListenerFinanceImpl" interface="com.china.center.oa.finance.manager.BillOutManager" />
 
 </beans>

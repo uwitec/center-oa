@@ -9,6 +9,7 @@
 package com.china.center.oa.finance.manager.impl;
 
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
@@ -32,6 +34,7 @@ import com.china.center.oa.finance.dao.PaymentApplyDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.dao.PaymentVSOutDAO;
 import com.china.center.oa.finance.helper.BillHelper;
+import com.china.center.oa.finance.listener.PaymentApplyListener;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.PaymentApplyManager;
 import com.china.center.oa.finance.vs.PaymentVSOutBean;
@@ -63,7 +66,7 @@ import com.china.center.tools.TimeTools;
  * @since 3.0
  */
 @Exceptional
-public class PaymentApplyManagerImpl implements PaymentApplyManager
+public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentApplyListener> implements PaymentApplyManager
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
@@ -482,6 +485,9 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
         return true;
     }
 
+    /**
+     * CORE 回款认领等的审核通过(回款转预收/销售单绑定(预收转应收)/预收转费用)
+     */
     @Transactional(rollbackFor = MYException.class)
     public boolean passPaymentApply(User user, String id, String reason)
         throws MYException
@@ -501,6 +507,14 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
 
         // 更新回款单的状态和使用金额
         updatePayment(apply);
+
+        // TAX_ADD 回款转预收/销售单绑定(预收转应收)/预收转费用 通过
+        Collection<PaymentApplyListener> listenerMapValues = this.listenerMapValues();
+
+        for (PaymentApplyListener listener : listenerMapValues)
+        {
+            listener.onPassBean(user, apply);
+        }
 
         savePassLog(user, apply, reason);
 
@@ -527,7 +541,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
                 continue;
             }
 
-            // 生成收款单
+            // 生成收款单(回款转预收)
             if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_PAYMENT)
             {
                 // 回款转收款通过,增加收款单
@@ -565,7 +579,7 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
             }
             else
             {
-                // 绑定销售单
+                // 绑定销售单(回款转预收&&预收转应收)
                 InBillBean bill = inBillDAO.find(item.getBillId());
 
                 if (bill == null)
@@ -646,7 +660,6 @@ public class PaymentApplyManagerImpl implements PaymentApplyManager
                 }
             }
 
-            // 如果存在手续费先付款
             if (payment.getHandling() > 0)
             {
                 int maxFee = parameterDAO.getInt(SysConfigConstant.MAX_RECVIVE_FEE);
