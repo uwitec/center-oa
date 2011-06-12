@@ -70,6 +70,9 @@ public abstract class AbstractProviderBean implements Serializable
     @Html(title = "付费类型", type = Element.SELECT, must = true)
     private int type = 0;
 
+    @Html(title = "税点(‰)", must = true, type = Element.NUMBER, maxLength = 3)
+    private int dues = 0;
+
     private int mtype = 0;
 
     private int htype = 0;
@@ -385,5 +388,99 @@ public abstract class AbstractProviderBean implements Serializable
     public void setLocation(String location)
     {
         this.location = location;
+    }
+
+    /**
+     * @return the dues
+     */
+    public int getDues()
+    {
+        return dues;
+    }
+
+    /**
+     * @param dues
+     *            the dues to set
+     */
+    public void setDues(int dues)
+    {
+        this.dues = dues;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("AbstractProviderBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("name = ")
+            .append(this.name)
+            .append(TAB)
+            .append("code = ")
+            .append(this.code)
+            .append(TAB)
+            .append("connector = ")
+            .append(this.connector)
+            .append(TAB)
+            .append("address = ")
+            .append(this.address)
+            .append(TAB)
+            .append("phone = ")
+            .append(this.phone)
+            .append(TAB)
+            .append("tel = ")
+            .append(this.tel)
+            .append(TAB)
+            .append("fax = ")
+            .append(this.fax)
+            .append(TAB)
+            .append("qq = ")
+            .append(this.qq)
+            .append(TAB)
+            .append("email = ")
+            .append(this.email)
+            .append(TAB)
+            .append("bank = ")
+            .append(this.bank)
+            .append(TAB)
+            .append("accounts = ")
+            .append(this.accounts)
+            .append(TAB)
+            .append("location = ")
+            .append(this.location)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("dues = ")
+            .append(this.dues)
+            .append(TAB)
+            .append("mtype = ")
+            .append(this.mtype)
+            .append(TAB)
+            .append("htype = ")
+            .append(this.htype)
+            .append(TAB)
+            .append("bakId = ")
+            .append(this.bakId)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }
