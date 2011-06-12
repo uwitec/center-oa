@@ -12,5 +12,116 @@
 	  http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"
 	default-autowire="byName" default-init-method="init" default-destroy-method="destroy">
 	
+	<bean id="backPayApplyListenerTaxGlueImpl" class="com.china.center.oa.tax.glue.listener.impl.BackPayApplyListenerTaxGlueImpl" />
 	
+	<bean id="backPayApplyLoadListener"
+        class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="backPayApplyManager" />
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="backPayApplyListenerTaxGlueImpl" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="billListenerTaxGlueImpl" class="com.china.center.oa.tax.glue.listener.impl.BillListenerTaxGlueImpl" />
+    
+    <bean id="billLoadListener"
+        class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="billOutManager" />
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="billListenerTaxGlueImpl" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="composeProductListenerTaxGlueImpl" class="com.china.center.oa.tax.glue.listener.impl.ComposeProductListenerTaxGlueImpl" />
+    
+    <bean id="composeProductLoadListener"
+        class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="composeProductManager" />
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="composeProductListenerTaxGlueImpl" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="outListenerTaxGlueImpl" class="com.china.center.oa.tax.glue.listener.impl.OutListenerTaxGlueImpl" />
+    
+    <bean id="outLoadListener"
+        class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="outManager" />
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="outListenerTaxGlueImpl" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="paymentApplyListenerTaxGlueImpl" class="com.china.center.oa.tax.glue.listener.impl.PaymentApplyListenerTaxGlueImpl" />
+    
+    <bean id="paymentApplyLoadListener"
+        class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="paymentApplyManager" />
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="paymentApplyListenerTaxGlueImpl" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="paymentListenerTaxGlueImpl" class="com.china.center.oa.tax.glue.listener.impl.PaymentListenerTaxGlueImpl" />
+    
+    <bean id="paymentLoadListener"
+        class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="paymentManager" />
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="paymentListenerTaxGlueImpl" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="priceChangeListenerTaxGlueImpl" class="com.china.center.oa.tax.glue.listener.impl.PriceChangeListenerTaxGlueImpl" />
+    
+    <bean id="priceChangeLoadListener"
+        class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="priceChangeManager" />
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="paymentListenerTaxGlueImpl" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="fechProductListenerTaxGlueImpl" class="com.china.center.oa.tax.glue.listener.impl.FechProductListenerTaxGlueImpl" />
+    
+    <bean id="fechProductLoadListener"
+        class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="fechProductManager" />
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="fechProductListenerTaxGlueImpl" />
+            </list>
+        </property>
+    </bean>
+    
 </beans>

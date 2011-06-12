@@ -4,6 +4,9 @@ Bundle-Name: Oa_stockvssail_glue Plug-in
 Bundle-SymbolicName: com.china.center.oa.stockvssail.glue
 Bundle-Version: 1.0.0
 Bundle-Activator: com.china.center.oa.stockvssail.init.Activator
+Export-Package: 
+ com.china.center.oa.stockvssail.listener;version="1.0.0",
+ com.china.center.oa.stockvssail.manager;version="1.0.0"
 Require-Bundle: 
  com.china.center.oa.sail.manager;bundle-version="1.0.0",
  com.china.center.oa.product.manager;bundle-version="1.0.0",

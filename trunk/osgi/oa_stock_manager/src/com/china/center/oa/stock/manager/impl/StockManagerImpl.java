@@ -998,7 +998,6 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
         // 采购入库
         Collection<StockListener> listenerMapValues = this.listenerMapValues();
 
-        // TAX_ADD 采购到货后生成管理凭证和生成付款单申请
         for (StockListener stockListener : listenerMapValues)
         {
             stockListener.onEndStockItem(user, stock, item);

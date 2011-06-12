@@ -53,10 +53,41 @@
 	
 	<osgi:reference id="fatalNotify" interface="com.china.center.oa.publics.manager.FatalNotify" />
 	
+	<osgi:reference id="publishMessage" interface="com.china.center.oa.publics.message.PublishMessage" />
+	
 	<!-- ************************************************************************************** -->
 	
-	<osgi:reference id="bankManager" interface="com.china.center.oa.finance.manager.BankManager" />
+	<osgi:reference id="priceChangeManager" interface="com.china.center.oa.product.manager.PriceChangeManager" />
 	
 	<osgi:reference id="composeProductManager" interface="com.china.center.oa.product.manager.ComposeProductManager" />
+	
+	<osgi:reference id="fechProductManager" interface="com.china.center.oa.stockvssail.manager.FechProductManager" />
+	
+	<osgi:reference id="backPayApplyManager" interface="com.china.center.oa.finance.manager.BackPayApplyManager" />
+	
+	<osgi:reference id="billOutManager" interface="com.china.center.oa.finance.manager.BillOutManager" />
+	
+	<osgi:reference id="outManager" interface="com.china.center.oa.sail.manager.OutManager" />
+	
+	<osgi:reference id="paymentApplyManager" interface="com.china.center.oa.finance.manager.PaymentApplyManager" />
+	
+	<osgi:reference id="paymentManager" interface="com.china.center.oa.finance.manager.PaymentManager" />
+	
+	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+	
+	<osgi:reference id="financeManager" interface="com.china.center.oa.tax.manager.FinanceManager" />
+	
+	<osgi:reference id="financeDAO" interface="com.china.center.oa.tax.dao.FinanceDAO" />
+
+    <osgi:reference id="financeItemDAO" interface="com.china.center.oa.tax.dao.FinanceItemDAO" />
+    
+    <osgi:reference id="taxTypeDAO" interface="com.china.center.oa.tax.dao.TaxTypeDAO" />
+
+    <osgi:reference id="taxDAO" interface="com.china.center.oa.tax.dao.TaxDAO" />
+
+    <osgi:reference id="taxFacade" interface="com.china.center.oa.tax.facade.TaxFacade" />
+
+    <osgi:reference id="taxManager" interface="com.china.center.oa.tax.manager.TaxManager" />
+    
 
 </beans>

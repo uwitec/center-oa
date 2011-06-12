@@ -10,8 +10,10 @@ package com.china.center.oa.stockvssail.listener.impl;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.product.bean.DepotpartBean;
@@ -29,6 +31,8 @@ import com.china.center.oa.stock.dao.StockItemDAO;
 import com.china.center.oa.stock.listener.StockListener;
 import com.china.center.oa.stock.vo.StockItemVO;
 import com.china.center.oa.stock.vo.StockVO;
+import com.china.center.oa.stockvssail.listener.FechProductListener;
+import com.china.center.oa.stockvssail.manager.FechProductManager;
 import com.china.center.tools.TimeTools;
 
 
@@ -40,7 +44,7 @@ import com.china.center.tools.TimeTools;
  * @see StockListenerSailImpl
  * @since 3.0
  */
-public class StockListenerSailImpl implements StockListener
+public class StockListenerSailImpl extends AbstractListenerManager<FechProductListener> implements StockListener, FechProductManager
 {
     private OutManager outManager = null;
 
@@ -191,8 +195,18 @@ public class StockListenerSailImpl implements StockListener
 
             item.setRefOutId(fullId);
 
+            out.setFullId(fullId);
+
             // 修改采购项的属性
             stockItemDAO.updateEntityBean(item);
+
+            // TAX_ADD 采购到货后生成管理凭证
+            Collection<FechProductListener> listenerMapValues = this.listenerMapValues();
+
+            for (FechProductListener fechProductListener : listenerMapValues)
+            {
+                fechProductListener.onFechProduct(user, bean, each, out);
+            }
         }
     }
 
