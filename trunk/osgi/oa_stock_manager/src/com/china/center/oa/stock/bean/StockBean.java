@@ -111,6 +111,9 @@ public class StockBean implements Serializable
 
     private String logTime = "";
 
+    /**
+     * 部门
+     */
     @Html(title = "物流走向", must = true, type = Element.SELECT)
     private String flow = "";
 

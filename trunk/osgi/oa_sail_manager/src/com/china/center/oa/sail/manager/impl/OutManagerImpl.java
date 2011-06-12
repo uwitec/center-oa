@@ -2062,6 +2062,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, false);
         }
 
+        outBean.setBaseList(baseList);
+
         // TAX_ADD 销售单和入库单通过
         Collection<OutListener> listenerMapValues = listenerMapValues();
 

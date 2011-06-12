@@ -623,7 +623,7 @@ public class StockAction extends DispatchAction
             }
             catch (MYException e)
             {
-                _logger.warn(e);
+                _logger.warn(e, e);
 
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "拿货失败:" + e.getMessage());
             }
