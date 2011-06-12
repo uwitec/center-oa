@@ -22,6 +22,9 @@ import com.china.center.jdbc.annotation.Defined;
  */
 public interface DutyConstant
 {
+    /**
+     * 一般纳税人
+     */
     @Defined(key = "dutyType", value = "一般纳税人")
     int DUTY_TYPE_COMMON = 0;
 

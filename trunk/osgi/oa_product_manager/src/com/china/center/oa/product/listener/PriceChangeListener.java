@@ -56,7 +56,7 @@ public interface PriceChangeListener extends ParentListener
     int onPriceChange3(User user, StorageRelationBean relation);
 
     /**
-     * 调价确认
+     * 调价确认(凭证)
      * 
      * @param user
      * @param bean
@@ -66,7 +66,7 @@ public interface PriceChangeListener extends ParentListener
         throws MYException;
 
     /**
-     * 调价回滚
+     * 调价回滚(凭证)
      * 
      * @param user
      * @param bean
