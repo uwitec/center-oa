@@ -15,8 +15,7 @@ import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Relationship;
 import com.china.center.oa.tax.bean.FinanceBean;
-import com.china.center.oa.tax.constanst.TaxConstanst;
-import com.china.center.tools.MathTools;
+import com.china.center.oa.tax.helper.FinanceHelper;
 
 
 /**
@@ -114,9 +113,7 @@ public class FinanceVO extends FinanceBean
      */
     public String getShowInmoney()
     {
-        double inM = super.getInmoney() + 0.0d;
-
-        this.showInmoney = MathTools.formatNum(inM / TaxConstanst.DOUBLE_TO_INT);
+        this.showInmoney = FinanceHelper.longToString(super.getInmoney());
 
         return showInmoney;
     }
@@ -135,9 +132,7 @@ public class FinanceVO extends FinanceBean
      */
     public String getShowOutmoney()
     {
-        double outM = super.getOutmoney() + 0.0d;
-
-        this.showOutmoney = MathTools.formatNum(outM / TaxConstanst.DOUBLE_TO_INT);
+        this.showOutmoney = FinanceHelper.longToString(super.getOutmoney());
 
         return showOutmoney;
     }

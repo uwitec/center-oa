@@ -34,10 +34,10 @@ import com.china.center.oa.tax.dao.CheckViewDAO;
 import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.oa.tax.dao.FinanceItemDAO;
 import com.china.center.oa.tax.dao.TaxDAO;
+import com.china.center.oa.tax.helper.FinanceHelper;
 import com.china.center.oa.tax.helper.TaxHelper;
 import com.china.center.oa.tax.manager.FinanceManager;
 import com.china.center.tools.JudgeTools;
-import com.china.center.tools.MathTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
@@ -181,9 +181,8 @@ public class FinanceManagerImpl implements FinanceManager
 
         if (inTotal != outTotal)
         {
-            throw new MYException("总借[%s],总贷[%s]不等,凭证增加错误", MathTools
-                .formatNum(inTotal / (TaxConstanst.DOUBLE_TO_INT + 0.0d)), MathTools
-                .formatNum(outTotal / (TaxConstanst.DOUBLE_TO_INT + 0.0d)));
+            throw new MYException("总借[%s],总贷[%s]不等,凭证增加错误", FinanceHelper.longToString(inTotal),
+                FinanceHelper.longToString(outTotal));
         }
 
         // CORE 核对借贷必相等的原则
@@ -374,16 +373,14 @@ public class FinanceManagerImpl implements FinanceManager
 
         if (inTotal != outTotal)
         {
-            throw new MYException("总借[%s],总贷[%s]不等,凭证增加错误", MathTools
-                .formatNum(inTotal / (TaxConstanst.DOUBLE_TO_INT + 0.0d)), MathTools
-                .formatNum(outTotal / (TaxConstanst.DOUBLE_TO_INT + 0.0d)));
+            throw new MYException("总借[%s],总贷[%s]不等,凭证增加错误", FinanceHelper.longToString(inTotal),
+                FinanceHelper.longToString(outTotal));
         }
 
         if (bean.getInmoney() != old.getInmoney())
         {
-            throw new MYException("原单据金额[%s],当前金额[%s]不等,凭证增加错误", MathTools
-                .formatNum(bean.getInmoney() / (TaxConstanst.DOUBLE_TO_INT + 0.0d)), MathTools
-                .formatNum(old.getInmoney() / (TaxConstanst.DOUBLE_TO_INT + 0.0d)));
+            throw new MYException("原单据金额[%s],当前金额[%s]不等,凭证增加错误", FinanceHelper.longToString(bean
+                .getInmoney()), FinanceHelper.longToString(old.getInmoney()));
         }
 
         // CORE 核对借贷必相等的原则

@@ -63,6 +63,7 @@ import com.china.center.oa.tax.dao.FinanceItemDAO;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.dao.UnitDAO;
 import com.china.center.oa.tax.facade.TaxFacade;
+import com.china.center.oa.tax.helper.FinanceHelper;
 import com.china.center.oa.tax.manager.FinanceManager;
 import com.china.center.oa.tax.vo.CheckViewVO;
 import com.china.center.oa.tax.vo.FinanceItemVO;
@@ -888,11 +889,9 @@ public class FinaAction extends DispatchAction
 
             item.setPareId(pareId);
 
-            item
-                .setInmoney((long) (MathTools.parseDouble(inmoneys[i]) * TaxConstanst.DOUBLE_TO_INT));
+            item.setInmoney(FinanceHelper.doubleToLong(inmoneys[i]));
 
-            item
-                .setOutmoney((long) (MathTools.parseDouble(outmoneys[i]) * TaxConstanst.DOUBLE_TO_INT));
+            item.setOutmoney(FinanceHelper.doubleToLong(outmoneys[i]));
 
             inTotal += item.getInmoney();
 

@@ -10,6 +10,7 @@ Export-Package:
  com.china.center.oa.tax.constanst;version="1.0.0",
  com.china.center.oa.tax.dao;version="1.0.0",
  com.china.center.oa.tax.facade;version="1.0.0",
+ com.china.center.oa.tax.helper;version="1.0.0",
  com.china.center.oa.tax.manager;version="1.0.0",
  com.china.center.oa.tax.vo;version="1.0.0"
 Require-Bundle: 
