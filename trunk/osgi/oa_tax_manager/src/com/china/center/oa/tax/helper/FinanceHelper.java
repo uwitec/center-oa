@@ -11,6 +11,9 @@ package com.china.center.oa.tax.helper;
 
 import java.text.DecimalFormat;
 
+import com.china.center.oa.tax.bean.FinanceBean;
+import com.china.center.oa.tax.bean.FinanceItemBean;
+import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.constanst.TaxConstanst;
 import com.china.center.tools.MathTools;
 
@@ -76,5 +79,45 @@ public abstract class FinanceHelper
     public static String longToString(long val)
     {
         return MathTools.formatNum(val / (TaxConstanst.DOUBLE_TO_INT + 0.0d));
+    }
+
+    public static void copyTax(TaxBean tax, FinanceItemBean item)
+    {
+        item.setTaxId(tax.getId());
+
+        item.setTaxId0(tax.getParentId0());
+        item.setTaxId1(tax.getParentId1());
+        item.setTaxId2(tax.getParentId2());
+        item.setTaxId3(tax.getParentId3());
+        item.setTaxId4(tax.getParentId4());
+        item.setTaxId5(tax.getParentId5());
+        item.setTaxId6(tax.getParentId6());
+        item.setTaxId7(tax.getParentId7());
+        item.setTaxId8(tax.getParentId8());
+    }
+
+    /**
+     * FinanceBean->FinanceItemBean
+     * 
+     * @param financeBean
+     * @param item
+     */
+    public static void copyFinanceItem(FinanceBean financeBean, FinanceItemBean item)
+    {
+        item.setCreateType(financeBean.getCreateType());
+
+        item.setRefId(financeBean.getRefId());
+
+        item.setRefOut(financeBean.getRefOut());
+
+        item.setRefStock(financeBean.getRefStock());
+
+        item.setFinanceDate(financeBean.getFinanceDate());
+
+        item.setType(financeBean.getType());
+
+        item.setDutyId(financeBean.getDutyId());
+
+        item.setLogTime(financeBean.getLogTime());
     }
 }

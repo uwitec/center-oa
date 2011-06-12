@@ -9,8 +9,12 @@
 package com.china.center.oa.tax.helper;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.china.center.oa.tax.bean.FinanceItemBean;
 import com.china.center.oa.tax.bean.TaxBean;
+import com.china.center.tools.BeanUtil;
 
 
 /**
@@ -34,5 +38,13 @@ public abstract class TaxHelper
         financeItem.setTaxId6(tax.getParentId6());
         financeItem.setTaxId7(tax.getParentId7());
         financeItem.setTaxId8(tax.getParentId8());
+
+        String field = "taxId" + tax.getLevel();
+
+        Map temp = new HashMap();
+
+        temp.put(field, tax.getId());
+
+        BeanUtil.copyProperties(financeItem, temp);
     }
 }

@@ -113,6 +113,10 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
+        <condtion name="refId" caption="关联单据(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
 	</item>
 	
 	<item name="queryFinanceItem" deaultpfix="FinanceItemBean">
@@ -151,6 +155,18 @@
             <type>text</type>
         </condtion>
         <condtion name="taxCode3" filed="code" caption="四级编码(A)" pfix="TA3">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="refOut" caption="销售单(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="refBill" caption="收付款单(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="refStock" caption="采购单(A)">
             <opr>=</opr>
             <type>text</type>
         </condtion>

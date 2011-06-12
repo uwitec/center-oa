@@ -78,6 +78,12 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
         return 0;
     }
 
+    public void onRollbackPriceChange(User user, PriceChangeBean bean)
+        throws MYException
+    {
+        // 
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -87,12 +93,4 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
     {
         return "PriceChangeListener.TaxGlueImpl";
     }
-
-    public void onRollbackPriceChange(User user, PriceChangeBean bean)
-        throws MYException
-    {
-        // 
-
-    }
-
 }

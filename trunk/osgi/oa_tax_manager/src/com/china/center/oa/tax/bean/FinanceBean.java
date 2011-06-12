@@ -66,6 +66,12 @@ public class FinanceBean implements Serializable
      */
     private String refId = "";
 
+    private String refOut = "";
+
+    private String refBill = "";
+
+    private String refStock = "";
+
     /**
      * 管理凭证是不分纳税实体的(都在总部),税务凭证是分纳税实体的
      */
@@ -368,6 +374,74 @@ public class FinanceBean implements Serializable
     }
 
     /**
+     * @return the updateFlag
+     */
+    public int getUpdateFlag()
+    {
+        return updateFlag;
+    }
+
+    /**
+     * @param updateFlag
+     *            the updateFlag to set
+     */
+    public void setUpdateFlag(int updateFlag)
+    {
+        this.updateFlag = updateFlag;
+    }
+
+    /**
+     * @return the refOut
+     */
+    public String getRefOut()
+    {
+        return refOut;
+    }
+
+    /**
+     * @param refOut
+     *            the refOut to set
+     */
+    public void setRefOut(String refOut)
+    {
+        this.refOut = refOut;
+    }
+
+    /**
+     * @return the refBill
+     */
+    public String getRefBill()
+    {
+        return refBill;
+    }
+
+    /**
+     * @param refBill
+     *            the refBill to set
+     */
+    public void setRefBill(String refBill)
+    {
+        this.refBill = refBill;
+    }
+
+    /**
+     * @return the refStock
+     */
+    public String getRefStock()
+    {
+        return refStock;
+    }
+
+    /**
+     * @param refStock
+     *            the refStock to set
+     */
+    public void setRefStock(String refStock)
+    {
+        this.refStock = refStock;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -394,11 +468,23 @@ public class FinanceBean implements Serializable
             .append("status = ")
             .append(this.status)
             .append(TAB)
+            .append("updateFlag = ")
+            .append(this.updateFlag)
+            .append(TAB)
             .append("createType = ")
             .append(this.createType)
             .append(TAB)
             .append("refId = ")
             .append(this.refId)
+            .append(TAB)
+            .append("refOut = ")
+            .append(this.refOut)
+            .append(TAB)
+            .append("refBill = ")
+            .append(this.refBill)
+            .append(TAB)
+            .append("refStock = ")
+            .append(this.refStock)
             .append(TAB)
             .append("dutyId = ")
             .append(this.dutyId)
@@ -430,23 +516,6 @@ public class FinanceBean implements Serializable
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the updateFlag
-     */
-    public int getUpdateFlag()
-    {
-        return updateFlag;
-    }
-
-    /**
-     * @param updateFlag
-     *            the updateFlag to set
-     */
-    public void setUpdateFlag(int updateFlag)
-    {
-        this.updateFlag = updateFlag;
     }
 
 }

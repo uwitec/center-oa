@@ -89,7 +89,7 @@ function checks()
 		}
 	}
 	
-	if (inMoney != outMoney)
+	if (formatNum(inMoney, 2) != formatNum(outMoney, 2))
 	{
 		alert('借贷必相等,借方:' + inMoney + ',贷方:' + outMoney);
 				

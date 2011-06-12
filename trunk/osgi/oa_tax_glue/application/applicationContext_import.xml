@@ -89,5 +89,11 @@
 
     <osgi:reference id="taxManager" interface="com.china.center.oa.tax.manager.TaxManager" />
     
+    <osgi:reference id="dutyDAO" interface="com.china.center.oa.publics.dao.DutyDAO" />
+    
+    <osgi:reference id="providerDAO" interface="com.china.center.oa.product.dao.ProviderDAO" />
+    
+    <osgi:reference id="departmentDAO" interface="com.china.center.oa.publics.dao.DepartmentDAO" />
+    
 
 </beans>

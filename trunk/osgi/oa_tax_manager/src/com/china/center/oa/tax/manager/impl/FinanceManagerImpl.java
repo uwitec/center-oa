@@ -128,12 +128,9 @@ public class FinanceManagerImpl implements FinanceManager
 
             financeItemBean.setName(financeItemBean.getId());
 
+            FinanceHelper.copyFinanceItem(bean, financeItemBean);
+
             financeItemBean.setPid(bean.getId());
-
-            // 纳税实体
-            financeItemBean.setDutyId(bean.getDutyId());
-
-            financeItemBean.setLogTime(TimeTools.now());
 
             String taxId = financeItemBean.getTaxId();
 
@@ -270,10 +267,16 @@ public class FinanceManagerImpl implements FinanceManager
         bean.setType(old.getType());
         bean.setCreateType(old.getCreateType());
         bean.setStatus(old.getStatus());
+        bean.setChecks(old.getChecks());
         bean.setLogTime(old.getLogTime());
         bean.setCreaterId(old.getCreaterId());
+        bean.setName(old.getName());
 
-        bean.setName(bean.getId());
+        // 保存关联
+        bean.setRefId(old.getRefId());
+        bean.setRefOut(old.getRefOut());
+        bean.setRefBill(old.getRefBill());
+        bean.setRefStock(old.getRefStock());
 
         // 标识成更改
         bean.setUpdateFlag(TaxConstanst.FINANCE_UPDATEFLAG_YES);
@@ -316,14 +319,11 @@ public class FinanceManagerImpl implements FinanceManager
         {
             financeItemBean.setId(commonDAO.getSquenceString20());
 
-            financeItemBean.setFinanceDate(bean.getFinanceDate());
-
             financeItemBean.setName(financeItemBean.getId());
 
             financeItemBean.setPid(bean.getId());
 
-            // 纳税实体
-            financeItemBean.setDutyId(bean.getDutyId());
+            FinanceHelper.copyFinanceItem(bean, financeItemBean);
 
             financeItemBean.setLogTime(TimeTools.now());
 

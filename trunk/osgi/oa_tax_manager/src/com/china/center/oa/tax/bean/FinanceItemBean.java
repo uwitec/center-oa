@@ -19,6 +19,7 @@ import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.publics.constant.PublicConstant;
+import com.china.center.oa.tax.constanst.TaxConstanst;
 
 
 /**
@@ -45,17 +46,31 @@ public class FinanceItemBean implements Serializable
 
     private int type = 0;
 
-    private int forward = 0;
+    /**
+     * 凭证创建的类型(0:手工创建 其他是系统创建/也有不同分类)
+     */
+    private int createType = TaxConstanst.FINANCE_CREATETYPE_HAND;
+
+    private int forward = TaxConstanst.TAX_FORWARD_IN;
 
     /**
      * 主关联单据
      */
     private String refId = "";
 
+    /**
+     * 集成父类的,主要是预留查询
+     */
     private String refOut = "";
 
+    /**
+     * 集成父类的,主要是预留查询
+     */
     private String refBill = "";
 
+    /**
+     * 集成父类的,主要是预留查询
+     */
     private String refStock = "";
 
     /**
@@ -110,7 +125,7 @@ public class FinanceItemBean implements Serializable
     /**
      * 0:客户 1:供应商 2:纳税实体
      */
-    private int unitType = 0;
+    private int unitType = TaxConstanst.UNIT_TYPE_CUSTOMER;
 
     private String departmentId = "";
 
@@ -691,6 +706,23 @@ public class FinanceItemBean implements Serializable
     }
 
     /**
+     * @return the createType
+     */
+    public int getCreateType()
+    {
+        return createType;
+    }
+
+    /**
+     * @param createType
+     *            the createType to set
+     */
+    public void setCreateType(int createType)
+    {
+        this.createType = createType;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -719,6 +751,9 @@ public class FinanceItemBean implements Serializable
             .append(TAB)
             .append("type = ")
             .append(this.type)
+            .append(TAB)
+            .append("createType = ")
+            .append(this.createType)
             .append(TAB)
             .append("forward = ")
             .append(this.forward)

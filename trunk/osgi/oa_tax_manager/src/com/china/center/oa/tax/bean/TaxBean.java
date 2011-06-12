@@ -65,6 +65,9 @@ public class TaxBean implements Serializable
 
     private String parentId7 = "";
 
+    /**
+     * 递归节点(9级科目的)
+     */
     private String parentId8 = "";
 
     @Unique
