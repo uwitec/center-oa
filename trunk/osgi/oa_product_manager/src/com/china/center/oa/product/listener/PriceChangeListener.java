@@ -28,7 +28,7 @@ import com.china.center.oa.product.vs.StorageRelationBean;
 public interface PriceChangeListener extends ParentListener
 {
     /**
-     * onPriceChange
+     * 产品调价的时候检查产品是否可以调价
      * 
      * @param user
      * @param bean
