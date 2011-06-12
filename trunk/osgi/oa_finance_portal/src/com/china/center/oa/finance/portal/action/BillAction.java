@@ -728,6 +728,45 @@ public class BillAction extends DispatchAction
     }
 
     /**
+     * findBill
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward findBill(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        String id = request.getParameter("id");
+
+        InBillVO bean = inBillDAO.findVO(id);
+
+        if (bean == null)
+        {
+            OutBillVO outBill = outBillDAO.findVO(id);
+
+            if (outBill == null)
+            {
+                return ActionTools.toError("数据异常,请重新操作", mapping, request);
+            }
+
+            request.setAttribute("bean", bean);
+
+            return mapping.findForward("detailOutBill");
+        }
+
+        request.setAttribute("bean", bean);
+
+        return mapping.findForward("detailInBill");
+    }
+
+    /**
      * findOutBill
      * 
      * @param mapping
