@@ -27,23 +27,55 @@ function formatNum(num, length)
      }
 
      //超过 指定的四舍五入
-     var ins = parseFloat(num.substring(0, num.indexOf('.') + 1) + hou.substring(0, length));
+     var ins = num.substring(0, num.indexOf('.') + 1) + hou.substring(0, length);
 
      var last = parseInt(hou.charAt(length));
-     var add;
+     
+     var add = false;
 
      if (last >= 5)
      {
-        add = '0.' + getLength0(length - 1) + '1';
+        add = true;
      }
      else
      {
-        add = '0.' + getLength0(length);
+        add = false;
+     }
+     
+     if (add)
+     {
+        var goAdd = true;
+        
+        for (var i = ins.length - 1; i >= 0; i--)
+        {
+            if (ins.charAt(i) == '.')
+            {
+                continue;
+            }
+            
+            if (goAdd && parseInt(ins.charAt(i)) == 9)
+            {
+                goAdd = true;
+                
+                ins = ins.substring(0, i) + '0' + ins.substring(i + 1);
+            }
+            else
+            {
+                ins = ins.substring(0, i) + (parseInt(ins.charAt(i)) + 1) + ins.substring(i + 1);
+                
+                goAdd = false;
+                
+                break;
+            }
+        }
+        
+        if (goAdd && parseInt(ins.charAt(0)) == 0)
+        {
+            ins = '1' + ins;
+        }
      }
 
-     var result =  ins + parseFloat(add);
-
-     var sresult = result + '';
+     var sresult = ins + '';
      
      if (sresult.indexOf('.') == -1)
      {
