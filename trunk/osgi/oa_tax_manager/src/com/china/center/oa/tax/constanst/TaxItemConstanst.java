@@ -19,7 +19,7 @@ package com.china.center.oa.tax.constanst;
 public interface TaxItemConstanst
 {
     /**
-     * 库存商品
+     * 库存商品(产品/仓库)
      */
     String DEPOR_PRODUCT = "1243";
 

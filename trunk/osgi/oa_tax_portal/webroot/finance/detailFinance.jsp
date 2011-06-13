@@ -45,7 +45,16 @@ function load()
 			<p:cell title="总金额">${bean.showInmoney}</p:cell>
 			<p:cell title="录入人">${bean.createrName}</p:cell>
 			<p:cell title="录入时间">${bean.logTime}</p:cell>
-			<p:cell title="关联">${bean.refId}</p:cell>
+			<p:cell title="关联">
+			<c:choose>
+			    <c:when test="${bean.createType == 3 || bean.createType == 4}">
+			    <a href="../product/product.do?method=findCompose&id=${bean.refId}">${bean.refId}</a>
+			    </c:when>
+				<c:otherwise>
+				${bean.refId}
+				</c:otherwise>
+			</c:choose>
+			</p:cell>
 			<p:cell title="关联链接" end="true">
                 <c:if test="${my:length(bean.refOut) > 0}">
                 <a href="../sail/out.do?method=findOut&fow=99&outId=${bean.refOut}">${bean.refOut}</a>&nbsp;&nbsp;

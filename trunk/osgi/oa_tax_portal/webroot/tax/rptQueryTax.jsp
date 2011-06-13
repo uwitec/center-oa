@@ -120,6 +120,7 @@ function pop(obj)
 				<td align="center">选择</td>
 				<td align="center" class="td_class"><strong>名称</strong></td>
 				<td align="center" class="td_class"><strong>编码</strong></td>
+				<td align="center" class="td_class"><strong>辅助</strong></td>
 				<td align="center" class="td_class"><strong>节点</strong></td>
 				<td align="center" class="td_class"><strong>级别</strong></td>
 			</tr>
@@ -132,6 +133,7 @@ function pop(obj)
 						pcode="${item.code}" value="${item.id}"/></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.name}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.code}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.other}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('taxBottomFlag', item.bottomFlag)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">第${item.level + 1}级</td>
 				</tr>

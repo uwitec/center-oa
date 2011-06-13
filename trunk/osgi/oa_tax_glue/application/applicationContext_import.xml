@@ -95,5 +95,8 @@
     
     <osgi:reference id="departmentDAO" interface="com.china.center.oa.publics.dao.DepartmentDAO" />
     
+    <osgi:reference id="productDAO" interface="com.china.center.oa.product.dao.ProductDAO" />
+    
+    <osgi:reference id="composeFeeDefinedDAO" interface="com.china.center.oa.product.dao.ComposeFeeDefinedDAO" />
 
 </beans>
