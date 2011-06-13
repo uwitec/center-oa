@@ -180,7 +180,7 @@ public class ComposeProductManagerImpl extends AbstractListenerManager<ComposePr
             processDecompose(user, bean);
         }
 
-        // TAX_ADD 产品合成-运营总监通过
+        // TAX_ADD 产品合成/分解-运营总监通过
         Collection<ComposeProductListener> listenerMapValues = this.listenerMapValues();
 
         for (ComposeProductListener composeProductListener : listenerMapValues)

@@ -27,7 +27,7 @@ public interface ComposeProductListener extends ParentListener
 {
 
     /**
-     * 合成最终确认通知
+     * 合成/分解最终确认通知
      * 
      * @param user
      * @param bean
