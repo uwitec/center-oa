@@ -778,18 +778,26 @@ public class ConsignAction extends DispatchAction
 
             WritableCellFormat format = new WritableCellFormat(font);
 
+            // 销售单号-运输方式-发货单号-发货地-收货人-
+            // 备货人-检验人-打包人-打包时间-监控设备-包装件数-包装重量-到货时间-回访时间-运费-是否满意服务-收货类型-备注
+
             ws.addCell(new Label(j++ , i, "销售单号", format));
             ws.addCell(new Label(j++ , i, "运输方式", format));
             ws.addCell(new Label(j++ , i, "发货单号", format));
+            // 发货地
+            ws.addCell(new Label(j++ , i, "发货地", format));
+            ws.addCell(new Label(j++ , i, "收货人", format));
+
+            ws.addCell(new Label(j++ , i, "备货人", format));
             ws.addCell(new Label(j++ , i, "检验人", format));
             ws.addCell(new Label(j++ , i, "打包人", format));
             ws.addCell(new Label(j++ , i, "打包时间", format));
+
+            ws.addCell(new Label(j++ , i, "监控设备", format));
             ws.addCell(new Label(j++ , i, "包装件数", format));
             ws.addCell(new Label(j++ , i, "包装重量", format));
-            ws.addCell(new Label(j++ , i, "回访时间", format));
             ws.addCell(new Label(j++ , i, "到货时间", format));
-            ws.addCell(new Label(j++ , i, "备货人", format));
-            ws.addCell(new Label(j++ , i, "监控设备", format));
+            ws.addCell(new Label(j++ , i, "回访时间", format));
             ws.addCell(new Label(j++ , i, "运费", format));
             ws.addCell(new Label(j++ , i, "是否满意服务", format));
             ws.addCell(new Label(j++ , i, "收货类型", format));
@@ -814,15 +822,19 @@ public class ConsignAction extends DispatchAction
                 ws.addCell(new Label(j++ , i, element.getFullId()));
                 ws.addCell(new Label(j++ , i, tname));
                 ws.addCell(new Label(j++ , i, element.getTransportNo()));
+                ws.addCell(new Label(j++ , i, element.getSendPlace()));
+                ws.addCell(new Label(j++ , i, element.getReveiver()));
+
+                ws.addCell(new Label(j++ , i, element.getPreparer()));
                 ws.addCell(new Label(j++ , i, element.getChecker()));
                 ws.addCell(new Label(j++ , i, element.getPackager()));
                 ws.addCell(new Label(j++ , i, element.getPackageTime()));
+
+                ws.addCell(new Label(j++ , i, element.getMathine()));
                 ws.addCell(new Label(j++ , i, element.getPackageAmount()));
                 ws.addCell(new Label(j++ , i, element.getPackageWeight()));
-                ws.addCell(new Label(j++ , i, element.getVisitTime()));
                 ws.addCell(new Label(j++ , i, element.getArriveTime()));
-                ws.addCell(new Label(j++ , i, element.getPreparer()));
-                ws.addCell(new Label(j++ , i, element.getMathine()));
+                ws.addCell(new Label(j++ , i, element.getVisitTime()));
                 ws.addCell(new Label(j++ , i, element.getTransportFee()));
                 ws.addCell(new Label(j++ , i, ElTools.get("consignPromitType", element
                     .getPromitType())));

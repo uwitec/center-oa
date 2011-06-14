@@ -189,9 +189,19 @@ public class StockAction extends DispatchAction
             }
             else
             {
-                // 私人
-                bean.setOwerId(request.getParameter("stafferId"));
-                bean.setStafferId(request.getParameter("stafferId"));
+                String stafferId = request.getParameter("stafferId");
+
+                if (StringTools.isNullOrNone(stafferId))
+                {
+                    bean.setOwerId(user.getStafferId());
+                    bean.setStafferId(user.getStafferId());
+                }
+                else
+                {
+                    // 私人
+                    bean.setOwerId(request.getParameter("stafferId"));
+                    bean.setStafferId(request.getParameter("stafferId"));
+                }
             }
 
             bean.setExceptStatus(StockConstant.EXCEPTSTATUS_COMMON);

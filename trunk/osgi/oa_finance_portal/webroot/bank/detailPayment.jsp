@@ -135,7 +135,7 @@ function clearValues()
 					<td align="center">${item.bankName}</td>
 
 					<td align="center">${my:formatNum(item.moneys)}</td>
-					<td align="center">${item.outId}</td>
+					<td align="center"><a href="../sail/out.do?method=findOut&fow=99&outId=${item.outId}">${item.outId}</a></td>
 				</tr>
 			</c:forEach>
 
