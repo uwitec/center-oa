@@ -47,9 +47,22 @@ function load()
 			<p:cell title="录入时间">${bean.logTime}</p:cell>
 			<p:cell title="关联">
 			<c:choose>
+			    <c:when test="${bean.createType == 1}">
+                <a href="../stock/stock.do?method=findStock&id=${bean.refId}">${bean.refId}</a>
+                </c:when>
+                
 			    <c:when test="${bean.createType == 3 || bean.createType == 4}">
 			    <a href="../product/product.do?method=findCompose&id=${bean.refId}">${bean.refId}</a>
 			    </c:when>
+			    
+			    <c:when test="${bean.createType == 5 || bean.createType == 6}">
+                <a href="../product/product.do?method=findPriceChange&id=${bean.refId}">${bean.refId}</a>
+                </c:when>
+                
+                <c:when test="${bean.createType == 20 || bean.createType == 40}">
+                <a href="../sail/out.do?method=findOut&fow=99&outId=${bean.refId}">${bean.refId}</a>
+                </c:when>
+                
 				<c:otherwise>
 				${bean.refId}
 				</c:otherwise>
