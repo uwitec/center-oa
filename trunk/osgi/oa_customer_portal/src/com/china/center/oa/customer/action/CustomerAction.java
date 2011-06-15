@@ -1144,8 +1144,10 @@ public class CustomerAction extends DispatchAction
         condtion.addWhereStr();
 
         condtion.addCondition("CustomerBean.createTime", ">=", "2011-04-01 00:00:00");
+        condtion.addCondition("CustomerBean.createTime", "<=", "2011-06-11 00:00:00");
 
-        // condtion.addIntCondition("CustomerBean.status", "=", CustomerConstant.REAL_STATUS_IDLE);
+        // condtion.addIntCondition("CustomerBean.status", "=", CustomerConstant.REAL_STATUS_USED);
+        // condtion.addIntCondition("CustomerBean.selltype", "=", 0);
 
         OutputStream out = null;
 
@@ -1184,6 +1186,7 @@ public class CustomerAction extends DispatchAction
 
             ws.addCell(new Label(j++ , i, "客户名称", format2));
             ws.addCell(new Label(j++ , i, "客户编码", format));
+            ws.addCell(new Label(j++ , i, "分公司", format));
             ws.addCell(new Label(j++ , i, "公司", format));
             ws.addCell(new Label(j++ , i, "联系人", format));
             ws.addCell(new Label(j++ , i, "手机", format));
@@ -1204,6 +1207,19 @@ public class CustomerAction extends DispatchAction
 
                 ws.addCell(new Label(j++ , i, element.getName()));
                 ws.addCell(new Label(j++ , i, element.getCode()));
+
+                String locationId = element.getLocationId();
+
+                LocationBean location = locationDAO.find(locationId);
+
+                if (location != null)
+                {
+                    ws.addCell(new Label(j++ , i, location.getName()));
+                }
+                else
+                {
+                    ws.addCell(new Label(j++ , i, ""));
+                }
 
                 ws.addCell(new Label(j++ , i, element.getCompany()));
                 ws.addCell(new Label(j++ , i, element.getConnector()));
