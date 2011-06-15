@@ -135,6 +135,8 @@ public class FinanceItemBean implements Serializable
 
     private String productId = "";
 
+    private int productAmount = 0;
+
     private String duty2Id = "";
 
     /**
@@ -723,6 +725,23 @@ public class FinanceItemBean implements Serializable
     }
 
     /**
+     * @return the productAmount
+     */
+    public int getProductAmount()
+    {
+        return productAmount;
+    }
+
+    /**
+     * @param productAmount
+     *            the productAmount to set
+     */
+    public void setProductAmount(int productAmount)
+    {
+        this.productAmount = productAmount;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -835,6 +854,9 @@ public class FinanceItemBean implements Serializable
             .append(TAB)
             .append("productId = ")
             .append(this.productId)
+            .append(TAB)
+            .append("productAmount = ")
+            .append(this.productAmount)
             .append(TAB)
             .append("duty2Id = ")
             .append(this.duty2Id)

@@ -47,4 +47,9 @@ public interface TaxItemConstanst
      * 应收账款
      */
     String REVEIVE_PRODUCT = "1132";
+
+    /**
+     * 调价收入(部门)
+     */
+    String PRICECHANGE_REVEIVE = "5202";
 }
