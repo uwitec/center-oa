@@ -205,7 +205,7 @@ function trChange(index)
                         <td align="center">总数量</td>
                         <td width="5%" align="center">调价数量</td>
                         <td align="center">原价</td>
-                        <td align="center">新价</td>
+                        <td width="8%" align="center">新价</td>
                         <td align="center">选择</td>
                         <td align="center">在途</td>
                         <td align="center">位置</td>
