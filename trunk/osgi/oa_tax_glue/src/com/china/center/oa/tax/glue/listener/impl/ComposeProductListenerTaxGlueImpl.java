@@ -199,7 +199,7 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
 
         // 辅助核算 产品/仓库
         itemIn1.setProductId(compose.getProductId());
-
+        itemIn1.setProductAmount(compose.getAmount());
         itemIn1.setDepotId(compose.getDeportId());
 
         itemList.add(itemIn1);
@@ -228,7 +228,7 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
                 throw new MYException("合成费用缺少对应的科目,请确认操作");
             }
 
-            // 库存商品
+            // 合成费用
             String eachItemInTaxId = feeDefined.getTaxId();
 
             TaxBean eachItemInTax = taxDAO.find(eachItemInTaxId);
@@ -263,9 +263,6 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
             }
 
             eachItemIn.setDepartmentId(staffer.getDepartmentId());
-
-            eachItemIn.setProductId(compose.getProductId());
-            eachItemIn.setDepotId(compose.getDeportId());
 
             itemList.add(eachItemIn);
         }
@@ -316,6 +313,7 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
 
             // 辅助核算 产品/仓库
             itemOut1.setProductId(composeItemBean.getProductId());
+            itemOut1.setProductAmount(composeItemBean.getAmount());
             itemOut1.setDepotId(composeItemBean.getDeportId());
 
             itemList.add(itemOut1);

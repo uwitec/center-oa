@@ -24,6 +24,9 @@ import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
+import com.china.center.oa.sail.dao.BaseDAO;
+import com.china.center.oa.sail.dao.OutDAO;
+import com.china.center.oa.sail.helper.OutHelper;
 import com.china.center.oa.sail.listener.OutListener;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.FinanceItemBean;
@@ -57,6 +60,10 @@ public class OutListenerTaxGlueImpl implements OutListener
     private ProviderDAO providerDAO = null;
 
     private FinanceManager financeManager = null;
+
+    private OutDAO outDAO = null;
+
+    private BaseDAO baseDAO = null;
 
     /**
      * default constructor
@@ -107,6 +114,51 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             return;
         }
+
+        // 入库单-调拨（调入接受时）
+        if (OutHelper.isMoveIn(outBean))
+        {
+            processMoveIn(user, outBean);
+
+            return;
+        }
+    }
+
+    private void processMoveIn(User user, OutBean outBean)
+        throws MYException
+    {
+        // 库存商品
+        // 库存商品
+        FinanceBean financeBean = new FinanceBean();
+
+        String name = "入库单-调拨（调入接受）:" + outBean.getFullId() + '.';
+
+        financeBean.setName(name);
+
+        financeBean.setType(TaxConstanst.FINANCE_TYPE_MANAGER);
+
+        financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_BUY_OUT);
+
+        financeBean.setRefId(outBean.getFullId());
+
+        financeBean.setRefOut(outBean.getFullId());
+
+        financeBean.setDutyId(outBean.getDutyId());
+
+        financeBean.setDescription(financeBean.getName());
+
+        financeBean.setFinanceDate(TimeTools.now_short());
+
+        financeBean.setLogTime(TimeTools.now());
+
+        List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
+
+        // 库存商品/库存商品
+        createOutCommonItemMoveIn(user, outBean, financeBean, itemList);
+
+        financeBean.setItemList(itemList);
+
+        financeManager.addFinanceBeanWithoutTransactional(user, financeBean);
     }
 
     /**
@@ -360,9 +412,128 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemOut1.setProductId(baseBean.getProductId());
+            itemOut1.setProductAmount(baseBean.getAmount());
             itemOut1.setDepotId(outBean.getLocation());
 
             itemList.add(itemOut1);
+        }
+    }
+
+    /**
+     * 库存商品/库存商品
+     * 
+     * @param user
+     * @param outBean
+     *            接受的bean(数量是整数)
+     * @param financeBean
+     * @param itemList
+     * @throws MYException
+     */
+    private void createOutCommonItemMoveIn(User user, OutBean outBean, FinanceBean financeBean,
+                                           List<FinanceItemBean> itemList)
+        throws MYException
+    {
+
+        String name = "入库单-调拨:" + outBean.getFullId() + '.';
+
+        String pare = commonDAO.getSquenceString();
+
+        // 处理调出变动库存
+        String moveOutFullId = outBean.getRefOutFullId();
+
+        OutBean moveOut = outDAO.find(moveOutFullId);
+
+        if (moveOut == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        final List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
+
+        // 库存商品（成本价*数量）
+        for (BaseBean baseBean : baseList)
+        {
+            FinanceItemBean itemInEach = new FinanceItemBean();
+
+            itemInEach.setPareId(pare);
+
+            itemInEach.setName("库存商品调出(" + baseBean.getProductName() + "):" + name);
+
+            itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemInEach);
+
+            // 库存商品
+            String itemTaxIdOut1 = TaxItemConstanst.DEPOR_PRODUCT;
+
+            TaxBean outTax = taxDAO.findByUnique(itemTaxIdOut1);
+
+            if (outTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(outTax, itemInEach);
+
+            double outMoney = baseBean.getAmount() * baseBean.getCostPrice();
+
+            itemInEach.setInmoney(FinanceHelper.doubleToLong(outMoney));
+
+            itemInEach.setOutmoney(0);
+
+            itemInEach.setDescription(itemInEach.getName());
+
+            // 辅助核算 产品/仓库
+            itemInEach.setProductId(baseBean.getProductId());
+            itemInEach.setProductAmount(baseBean.getAmount());
+
+            // 调出的仓库
+            itemInEach.setDepotId(moveOut.getLocation());
+
+            itemList.add(itemInEach);
+        }
+
+        // 库存商品（成本价*数量）
+        for (BaseBean baseBean : baseList)
+        {
+            FinanceItemBean itemOutEach = new FinanceItemBean();
+
+            itemOutEach.setPareId(pare);
+
+            itemOutEach.setName("库存商品调入(" + baseBean.getProductName() + "):" + name);
+
+            itemOutEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
+
+            // 库存商品
+            String itemTaxIdOut1 = TaxItemConstanst.DEPOR_PRODUCT;
+
+            TaxBean outTax = taxDAO.findByUnique(itemTaxIdOut1);
+
+            if (outTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(outTax, itemOutEach);
+
+            double outMoney = baseBean.getAmount() * baseBean.getCostPrice();
+
+            itemOutEach.setInmoney(0);
+
+            itemOutEach.setOutmoney(FinanceHelper.doubleToLong(outMoney));
+
+            itemOutEach.setDescription(itemOutEach.getName());
+
+            // 辅助核算 产品/仓库
+            itemOutEach.setProductId(baseBean.getProductId());
+            itemOutEach.setProductAmount(baseBean.getAmount());
+            itemOutEach.setDepotId(outBean.getLocation());
+
+            itemList.add(itemOutEach);
         }
     }
 
@@ -576,5 +747,39 @@ public class OutListenerTaxGlueImpl implements OutListener
     public void setFinanceManager(FinanceManager financeManager)
     {
         this.financeManager = financeManager;
+    }
+
+    /**
+     * @return the outDAO
+     */
+    public OutDAO getOutDAO()
+    {
+        return outDAO;
+    }
+
+    /**
+     * @param outDAO
+     *            the outDAO to set
+     */
+    public void setOutDAO(OutDAO outDAO)
+    {
+        this.outDAO = outDAO;
+    }
+
+    /**
+     * @return the baseDAO
+     */
+    public BaseDAO getBaseDAO()
+    {
+        return baseDAO;
+    }
+
+    /**
+     * @param baseDAO
+     *            the baseDAO to set
+     */
+    public void setBaseDAO(BaseDAO baseDAO)
+    {
+        this.baseDAO = baseDAO;
     }
 }
