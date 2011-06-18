@@ -175,11 +175,11 @@ public interface TaxConstanst
     /**
      * 入库-其它入库
      */
-    @Defined(key = "financeCreateType", value = "入库-其它入库")
+    @Defined(key = "financeCreateType", value = "入库-库存中转")
     int FINANCE_CREATETYPE_BUY_OTHER = 24;
 
     /**
-     * 入库-个人领养退库
+     * 入库-个人领样退库
      */
     @Defined(key = "financeCreateType", value = "入库-个人领样退库")
     int FINANCE_CREATETYPE_OUT_SWATCHBACK = 25;

@@ -59,8 +59,21 @@ function load()
                 <a href="../product/product.do?method=findPriceChange&id=${bean.refId}">${bean.refId}</a>
                 </c:when>
                 
-                <c:when test="${bean.createType == 20 || bean.createType == 40}">
+                <c:when test="${bean.createType == 20 || bean.createType == 21 || bean.createType == 22 
+                            || bean.createType == 23
+                            || bean.createType == 24
+                            || bean.createType == 25
+                            || bean.createType == 26
+                            || bean.createType == 40
+                            || bean.createType == 41
+                            || bean.createType == 44
+                            || bean.createType == 47
+                            }">
                 <a href="../sail/out.do?method=findOut&fow=99&outId=${bean.refId}">${bean.refId}</a>
+                </c:when>
+                
+                <c:when test="${bean.createType == 45 || bean.createType == 46}">
+                <a href="../sail/out.do?method=findOutBalance&id=${bean.refId}">${bean.refId}</a>
                 </c:when>
                 
 				<c:otherwise>
