@@ -262,7 +262,7 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
                 throw new MYException("数据错误,请确认操作");
             }
 
-            eachItemIn.setDepartmentId(staffer.getDepartmentId());
+            eachItemIn.setDepartmentId(staffer.getPrincipalshipId());
 
             itemList.add(eachItemIn);
         }
@@ -442,7 +442,7 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
                 throw new MYException("数据错误,请确认操作");
             }
 
-            eachItemIn.setDepartmentId(staffer.getDepartmentId());
+            eachItemIn.setDepartmentId(staffer.getPrincipalshipId());
 
             eachItemIn.setProductId(compose.getProductId());
             eachItemIn.setDepotId(compose.getDeportId());

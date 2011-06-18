@@ -16,13 +16,14 @@ import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.product.dao.ProviderDAO;
-import com.china.center.oa.publics.bean.DepartmentBean;
 import com.china.center.oa.publics.bean.DutyBean;
+import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.DutyConstant;
 import com.china.center.oa.publics.constant.StafferConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
+import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.stock.bean.StockBean;
 import com.china.center.oa.stock.bean.StockItemBean;
@@ -57,6 +58,8 @@ public class FechProductListenerTaxGlueImpl implements FechProductListener
     private CommonDAO commonDAO = null;
 
     private ProviderDAO providerDAO = null;
+
+    private StafferDAO stafferDAO = null;
 
     private FinanceManager financeManager = null;
 
@@ -283,15 +286,15 @@ public class FechProductListenerTaxGlueImpl implements FechProductListener
 
         itemIn.setDescription("主营业务税金及附加");
 
-        DepartmentBean department = departmentDAO.findByUnique(stock.getFlow());
+        StafferBean staffer = stafferDAO.find(stock.getStafferId());
 
-        if (department == null)
+        if (staffer == null)
         {
-            throw new MYException("department数据错误,请确认操作");
+            throw new MYException("数据错误,请确认操作");
         }
 
-        // 辅助核算 部门
-        itemIn.setDepartmentId(department.getId());
+        // 辅助核算 部门(开单所在的部门)
+        itemIn.setDepartmentId(staffer.getPrincipalshipId());
 
         itemList.add(itemIn);
 
@@ -444,6 +447,23 @@ public class FechProductListenerTaxGlueImpl implements FechProductListener
     public void setDepartmentDAO(DepartmentDAO departmentDAO)
     {
         this.departmentDAO = departmentDAO;
+    }
+
+    /**
+     * @return the stafferDAO
+     */
+    public StafferDAO getStafferDAO()
+    {
+        return stafferDAO;
+    }
+
+    /**
+     * @param stafferDAO
+     *            the stafferDAO to set
+     */
+    public void setStafferDAO(StafferDAO stafferDAO)
+    {
+        this.stafferDAO = stafferDAO;
     }
 
 }

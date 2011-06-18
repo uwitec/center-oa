@@ -24,7 +24,7 @@ public interface TaxItemConstanst
     String DEPOR_PRODUCT = "1243";
 
     /**
-     * 主营业务税金及附加
+     * 主营业务税金及附加(部门)
      */
     String MAIN_TAX = "5402";
 

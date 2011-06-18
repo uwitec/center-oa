@@ -208,12 +208,9 @@ function callClick(obj, el)
          
          <td>
          <br>
-         <select name="departmentId" class="select_class" style="width: 85%;display: none;" title="选择部门" head="部门">
-         <option value="">选择部门</option>
-         <c:forEach var="item" items="${departmentBeanList}">
-             <option value="${item.id}">${item.name}</option>
-         </c:forEach>
-         </select>
+         <input type="text" style="width: 85%;display: none;cursor: pointer;color: gray;" onclick="selectPrin(this)" title="选择部门" head="部门" 
+                    name="departmentId" value="选择部门" readonly="readonly">
+         <input type="hidden" name="departmentId2" value=""> 
          <br>
          <input type="text" style="width: 85%;display: none;cursor: pointer;color: gray;" onclick="selectStaffer(this)" title="选择职员" head="职员" 
                     name="stafferId" value="选择职员" readonly="readonly">

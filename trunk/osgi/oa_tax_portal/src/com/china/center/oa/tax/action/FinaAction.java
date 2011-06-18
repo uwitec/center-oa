@@ -42,12 +42,12 @@ import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.publics.Helper;
-import com.china.center.oa.publics.bean.DepartmentBean;
 import com.china.center.oa.publics.bean.DutyBean;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.PublicConstant;
-import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
+import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.sail.dao.UnitViewDAO;
 import com.china.center.oa.sail.manager.OutManager;
@@ -100,7 +100,7 @@ public class FinaAction extends DispatchAction
 
     private FinanceManager financeManager = null;
 
-    private DepartmentDAO departmentDAO = null;
+    private PrincipalshipDAO principalshipDAO = null;
 
     private StafferDAO stafferDAO = null;
 
@@ -654,7 +654,7 @@ public class FinaAction extends DispatchAction
 
         if (tax.getDepartment() == TaxConstanst.TAX_CHECK_YES)
         {
-            DepartmentBean depart = departmentDAO.find(item.getDepartmentId());
+            PrincipalshipBean depart = principalshipDAO.find(item.getDepartmentId());
 
             if (depart != null)
             {
@@ -726,7 +726,7 @@ public class FinaAction extends DispatchAction
     private void setFinanceBean(FinanceBean bean, HttpServletRequest request)
         throws MYException
     {
-        String[] departmentIds = request.getParameterValues("departmentId");
+        String[] departmentIds = request.getParameterValues("departmentId2");
         String[] idescriptions = request.getParameterValues("idescription");
         String[] taxIds = request.getParameterValues("taxId2");
         String[] stafferId2s = request.getParameterValues("stafferId2");
@@ -958,10 +958,6 @@ public class FinaAction extends DispatchAction
 
         request.setAttribute("depotList", depotList);
 
-        List<DepartmentBean> departmentBeanList = departmentDAO.listEntityBeans();
-
-        request.setAttribute("departmentBeanList", departmentBeanList);
-
         JSONArray object = new JSONArray(taxList, false);
 
         request.setAttribute("taxListStr", object.toString());
@@ -1126,23 +1122,6 @@ public class FinaAction extends DispatchAction
     }
 
     /**
-     * @return the departmentDAO
-     */
-    public DepartmentDAO getDepartmentDAO()
-    {
-        return departmentDAO;
-    }
-
-    /**
-     * @param departmentDAO
-     *            the departmentDAO to set
-     */
-    public void setDepartmentDAO(DepartmentDAO departmentDAO)
-    {
-        this.departmentDAO = departmentDAO;
-    }
-
-    /**
      * @return the stafferDAO
      */
     public StafferDAO getStafferDAO()
@@ -1276,6 +1255,23 @@ public class FinaAction extends DispatchAction
     public void setProductDAO(ProductDAO productDAO)
     {
         this.productDAO = productDAO;
+    }
+
+    /**
+     * @return the principalshipDAO
+     */
+    public PrincipalshipDAO getPrincipalshipDAO()
+    {
+        return principalshipDAO;
+    }
+
+    /**
+     * @param principalshipDAO
+     *            the principalshipDAO to set
+     */
+    public void setPrincipalshipDAO(PrincipalshipDAO principalshipDAO)
+    {
+        this.principalshipDAO = principalshipDAO;
     }
 
 }

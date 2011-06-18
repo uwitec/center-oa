@@ -15,7 +15,6 @@ import java.util.List;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.product.dao.ProviderDAO;
-import com.china.center.oa.publics.bean.DepartmentBean;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
@@ -36,6 +35,7 @@ import com.china.center.oa.tax.constanst.TaxItemConstanst;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.helper.FinanceHelper;
 import com.china.center.oa.tax.manager.FinanceManager;
+import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -257,15 +257,8 @@ public class OutListenerTaxGlueImpl implements OutListener
 
         itemIn1.setDescription(itemIn1.getName());
 
-        DepartmentBean department = departmentDAO.findByUnique(outBean.getDepartment());
-
-        if (department == null)
-        {
-            throw new MYException("数据错误,请确认操作");
-        }
-
         // 辅助核算 客户，职员，部门
-        itemIn1.setDepartmentId(department.getId());
+        copyDepartment(outBean, itemIn1);
         itemIn1.setStafferId(outBean.getStafferId());
         itemIn1.setUnitId(outBean.getCustomerId());
         itemIn1.setUnitType(TaxConstanst.UNIT_TYPE_CUSTOMER);
@@ -305,10 +298,33 @@ public class OutListenerTaxGlueImpl implements OutListener
         itemOut1.setDescription(itemOut1.getName());
 
         // 辅助核算 部门/职员
-        itemOut1.setDepartmentId(itemIn1.getDepartmentId());
-        itemOut1.setStafferId(itemIn1.getStafferId());
+        copyDepartment(outBean, itemOut1);
+        itemOut1.setStafferId(outBean.getStafferId());
 
         itemList.add(itemOut1);
+    }
+
+    /**
+     * 部门辅助核算
+     * 
+     * @param outBean
+     * @param item
+     */
+    private void copyDepartment(OutBean outBean, FinanceItemBean item)
+    {
+        if ( !StringTools.isNullOrNone(outBean.getIndustryId2()))
+        {
+            item.setDepartmentId(outBean.getIndustryId2());
+
+            return;
+        }
+
+        if ( !StringTools.isNullOrNone(outBean.getIndustryId()))
+        {
+            item.setDepartmentId(outBean.getIndustryId());
+
+            return;
+        }
     }
 
     /**
@@ -361,15 +377,8 @@ public class OutListenerTaxGlueImpl implements OutListener
 
         itemIn1.setDescription(itemIn1.getName());
 
-        DepartmentBean department = departmentDAO.findByUnique(outBean.getDepartment());
-
-        if (department == null)
-        {
-            throw new MYException("数据错误,请确认操作");
-        }
-
         // 辅助核算 客户，职员，部门
-        itemIn1.setDepartmentId(department.getId());
+        copyDepartment(outBean, itemIn1);
         itemIn1.setStafferId(outBean.getStafferId());
 
         itemList.add(itemIn1);

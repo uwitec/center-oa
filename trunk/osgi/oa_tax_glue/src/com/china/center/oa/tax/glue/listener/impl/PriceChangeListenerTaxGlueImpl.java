@@ -28,6 +28,7 @@ import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.publics.dao.StafferVSPriDAO;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.FinanceItemBean;
 import com.china.center.oa.tax.bean.TaxBean;
@@ -62,6 +63,8 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
     private FinanceManager financeManager = null;
 
     private StafferDAO stafferDAO = null;
+
+    private StafferVSPriDAO stafferVSPriDAO = null;
 
     private ProductDAO productDAO = null;
 
@@ -191,7 +194,7 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
         }
 
         // 辅助核算 部门
-        itemIn1.setDepartmentId(staffer.getDepartmentId());
+        itemIn1.setDepartmentId(staffer.getPrincipalshipId());
 
         itemList.add(itemIn1);
 
@@ -374,7 +377,7 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
         }
 
         // 辅助核算 部门
-        itemIn1.setDepartmentId(staffer.getDepartmentId());
+        itemIn1.setDepartmentId(staffer.getPrincipalshipId());
 
         itemList.add(itemIn1);
 
@@ -708,5 +711,22 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
     public void setComposeFeeDefinedDAO(ComposeFeeDefinedDAO composeFeeDefinedDAO)
     {
         this.composeFeeDefinedDAO = composeFeeDefinedDAO;
+    }
+
+    /**
+     * @return the stafferVSPriDAO
+     */
+    public StafferVSPriDAO getStafferVSPriDAO()
+    {
+        return stafferVSPriDAO;
+    }
+
+    /**
+     * @param stafferVSPriDAO
+     *            the stafferVSPriDAO to set
+     */
+    public void setStafferVSPriDAO(StafferVSPriDAO stafferVSPriDAO)
+    {
+        this.stafferVSPriDAO = stafferVSPriDAO;
     }
 }

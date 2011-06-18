@@ -36,6 +36,8 @@
 	
 	<osgi:reference id="departmentDAO" interface="com.china.center.oa.publics.dao.DepartmentDAO" />
 	
+	<osgi:reference id="principalshipDAO" interface="com.china.center.oa.publics.dao.PrincipalshipDAO" />
+	
 	<osgi:reference id="flowLogDAO" interface="com.china.center.oa.publics.dao.FlowLogDAO" />
 	
 	<osgi:reference id="invoiceDAO" interface="com.china.center.oa.publics.dao.InvoiceDAO" />

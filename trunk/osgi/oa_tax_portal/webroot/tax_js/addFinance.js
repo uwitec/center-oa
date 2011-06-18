@@ -309,6 +309,13 @@ function selectProduct(obj)
     window.common.modal('../product/product.do?method=rptQueryProduct&load=1&selectMode=1&abstractType=0&status=0');
 }
 
+//选择职位
+function selectPrin(obj)
+{
+	current = obj;
+    window.common.modal('../admin/org.do?method=popOrg');
+}
+
 function getProduct(oos)
 {
     var obj = oos[0];
@@ -340,6 +347,20 @@ function getUnit(obj)
 	var hid = getNextInput(current.nextSibling);
     hid.value = obj.value;
     current.value = obj.pname;
+    current.style.color = '';
+}
+
+function setOrgFromPop(id, name, level, pname)
+{
+	if (pname)
+    current.value = pname + '->' + '[' + level + ']' + name;
+    else
+    current.value = '[' + level + ']' + name;
+    
+    var hid = getNextInput(current.nextSibling);
+    
+    hid.value = id;
+    
     current.style.color = '';
 }
 
