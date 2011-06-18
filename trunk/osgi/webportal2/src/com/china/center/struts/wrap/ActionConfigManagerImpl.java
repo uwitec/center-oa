@@ -25,41 +25,46 @@ public class ActionConfigManagerImpl implements ActionConfigManager
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
+    private static final Object LOCK = new Object();
+
     /**
      * @param config
      * @param server
      */
     public void addActionConfig(ActionConfigWrap config, Object server)
     {
-        ModuleConfig moduleConfig = getModuleConfig();
-
-        if (moduleConfig != null)
+        synchronized (ActionConfigManagerImpl.LOCK)
         {
-            ActionMapping sconfig = new ActionMapping();
+            ModuleConfig moduleConfig = getModuleConfig();
 
-            copyConfig(config, sconfig);
-
-            moduleConfig.addActionConfig(sconfig);
-
-            DelegatingRequestProcessor.extContext.put(config.getPath(), server);
-
-            _logger.info("begin register ActionConfig:" + config);
-        }
-        else
-        {
-            synchronized (WrapActionServlet.LOCK)
+            if (moduleConfig != null)
             {
-                try
-                {
-                    WrapActionServlet.LOCK.wait();
-                }
-                catch (InterruptedException e)
-                {
-                    _logger.error(e, e);
-                }
-            }
+                ActionMapping sconfig = new ActionMapping();
 
-            addActionConfig(config, server);
+                copyConfig(config, sconfig);
+
+                moduleConfig.addActionConfig(sconfig);
+
+                DelegatingRequestProcessor.extContext.put(config.getPath(), server);
+
+                _logger.info("begin register ActionConfig:" + config);
+            }
+            else
+            {
+                synchronized (WrapActionServlet.LOCK)
+                {
+                    try
+                    {
+                        WrapActionServlet.LOCK.wait();
+                    }
+                    catch (InterruptedException e)
+                    {
+                        _logger.error(e, e);
+                    }
+                }
+
+                addActionConfig(config, server);
+            }
         }
     }
 
@@ -93,16 +98,19 @@ public class ActionConfigManagerImpl implements ActionConfigManager
      */
     public void removeActionConfig(String path)
     {
-        ActionConfig config = getModuleConfig().findActionConfig(path);
-
-        if (config != null)
+        synchronized (ActionConfigManagerImpl.LOCK)
         {
-            getModuleConfig().removeActionConfig(config);
+            ActionConfig config = getModuleConfig().findActionConfig(path);
 
-            _logger.info("remove ActionConfig:" + config.getPath());
+            if (config != null)
+            {
+                getModuleConfig().removeActionConfig(config);
+
+                _logger.info("remove ActionConfig:" + config.getPath());
+            }
+
+            DelegatingRequestProcessor.extContext.remove(path);
         }
-
-        DelegatingRequestProcessor.extContext.remove(path);
     }
 
     public ModuleConfig getModuleConfig()
