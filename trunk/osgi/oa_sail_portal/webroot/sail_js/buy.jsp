@@ -307,15 +307,20 @@ function managerChange()
     }
     
     //报废
-    if ($$('outType') == 2)
+    if ($$('outType') == 2 || $$('outType') == 3)
     {
         showTr('duty_tr', true);
         showTr('invoice_tr', false);
     }
     
-    if ($$('outType') == 1 || $$('outType') == 3 || $$('outType') == 99)
+    if ($$('outType') == 1)
     {
          showTr('duty_tr', false);
+         showTr('invoice_tr', false);
+    }
+    
+    if ( $$('outType') == 99)
+    {
          showTr('invoice_tr', false);
     }
     

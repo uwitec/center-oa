@@ -401,7 +401,7 @@ function checkBean()
 						<td align="center"><input type="text" style="width: 100%" id="unPrice" value="${fristBase.price}"
 							maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
 
-						<td align="center"><input type="text" value="${fristBase.value}"
+						<td align="center"><input type="text" value="${my:formatNum(fristBase.value)}"
 							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
 						<td align="center"><input type="text" id="unDesciprt" readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
@@ -444,7 +444,7 @@ function checkBean()
                         <td align="center"><input type="text" style="width: 100%"  value="${my:formatNum(fristBase.price)}"
                             maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
 
-                        <td align="center"><input type="text" value="${fristBase.value}"
+                        <td align="center"><input type="text" value="${my:formatNum(fristBase.value)}"
                             value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
                         <td align="center"><input type="text"  readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"

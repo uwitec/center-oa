@@ -483,6 +483,11 @@ public class ParentOutAction extends DispatchAction
 
         request.setAttribute("invoiceList", invoiceList);
 
+        List<InvoiceBean> inInvoiceList = invoiceDAO.queryEntityBeansByCondition(
+            "where forward = ?", InvoiceConstant.INVOICE_FORWARD_IN);
+
+        request.setAttribute("inInvoiceList", inInvoiceList);
+
         List<DutyVSInvoiceBean> vsList = dutyVSInvoiceDAO.listEntityBeans();
 
         // 过滤

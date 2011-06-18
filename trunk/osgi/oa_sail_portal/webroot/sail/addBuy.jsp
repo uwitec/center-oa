@@ -140,9 +140,10 @@ function opens(obj)
 					<tr class="content2" id="pro_tr">
                         <td align="right" id="outd">供应商：</td>
                         <td colspan="3">
-                        <input type="text" name="customerName" maxlength="14" value="" size="60"
+                        <input type="text" name="customerName" maxlength="14" value="" size="60" oncheck="notNone;"
                             onclick="selectCustomer()" style="cursor: pointer;"
                             readonly="readonly">
+                            <font color="#FF0000">*</font>
                         </td>
                     </tr>
 
@@ -163,7 +164,7 @@ function opens(obj)
                         <td colspan="3">
                         <select name="invoiceId" class="select_class" head="发票类型" style="width: 400px">
                            <option value="">没有发票</option>
-                            <c:forEach items="${invoiceList}" var="item">
+                            <c:forEach items="${inInvoiceList}" var="item">
                             <option value="${item.id}">${item.fullName}</option>
                             </c:forEach>
                         </select>
