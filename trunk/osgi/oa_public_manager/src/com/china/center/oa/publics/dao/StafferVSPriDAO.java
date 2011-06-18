@@ -24,5 +24,11 @@ import com.china.center.oa.publics.vs.StafferVSPriBean;
  */
 public interface StafferVSPriDAO extends DAO<StafferVSPriBean, StafferVSPriVO>
 {
-
+    /**
+     * 查询职员的区域属性
+     * 
+     * @param stafferId
+     * @return
+     */
+    StafferVSPriVO findVOByStafferId(String stafferId);
 }

@@ -16,7 +16,7 @@ function addApplys()
 //选择职位
 function selectPrin()
 {
-    window.common.modal('../admin/org.do?method=popOrg');
+    window.common.modal('../admin/org.do?method=popOrg&addLocation=1');
 }
 
 function setOrgFromPop(id, name, level)

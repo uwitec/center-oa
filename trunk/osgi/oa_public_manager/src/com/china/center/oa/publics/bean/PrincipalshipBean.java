@@ -24,7 +24,7 @@ import com.china.center.oa.publics.vs.OrgBean;
 
 
 /**
- * 组织结构
+ * CORE 组织结构
  * 
  * @author ZHUZHU
  * @version 2008-11-2

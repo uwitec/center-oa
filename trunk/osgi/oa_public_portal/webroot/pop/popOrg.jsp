@@ -51,13 +51,13 @@ function sure()
         return;
     }
     
-    if (selectEle.parent.id != '2')
+    if (selectEle.parent.id != '2' && ('${addLocation}' == '1'))
     {
         alert('请选择大区下的三级组织');
         return;
     }
 
-    opener.setOrgFromPop(currentId ,currentName, currentLevel);
+    opener.setOrgFromPop(currentId ,currentName, currentLevel, selectEle.parent.sname);
 
     closes();
 }
