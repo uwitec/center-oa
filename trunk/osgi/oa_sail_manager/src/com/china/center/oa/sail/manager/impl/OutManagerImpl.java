@@ -1395,6 +1395,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
             saveUnique(user, outBean);
 
+            outBean.setBaseList(baseList);
+
             // TAX_ADD 采购入库/领样退货/销售退单的通过
             Collection<OutListener> listenerMapValues = listenerMapValues();
 
@@ -2860,6 +2862,22 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         addOutLog2(id, user, OutConstant.OUTBALANCE_STATUS_SUBMIT, "结算中心通过",
             SailConstant.OPR_OUT_PASS, OutConstant.OUTBALANCE_STATUS_PASS);
 
+        List<BaseBalanceBean> baseList = baseBalanceDAO.queryEntityBeansByFK(id);
+
+        bean.setBaseBalanceList(baseList);
+
+        // 这里结算单结束
+        if (bean.getType() == OutConstant.OUTBALANCE_TYPE_SAIL)
+        {
+            // TAX_ADD 销售-结算单（审核通过）
+            Collection<OutListener> listenerMapValues = listenerMapValues();
+
+            for (OutListener listener : listenerMapValues)
+            {
+                listener.onOutBalancePass(user, bean);
+            }
+        }
+
         notifyManager.notifyMessage(bean.getStafferId(), bean.getOutId() + "的结算清单已经被["
                                                          + user.getStafferName() + "]通过");
 
@@ -2950,12 +2968,17 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         addOutLog2(id, user, OutConstant.OUTBALANCE_STATUS_PASS, "库管通过", SailConstant.OPR_OUT_PASS,
             OutConstant.OUTBALANCE_STATUS_END);
 
-        // TAX_ADD 销售-结算单（审核通过）/销售-结算退货单（审核通过）
-        Collection<OutListener> listenerMapValues = listenerMapValues();
+        bean.setBaseBalanceList(baseList);
 
-        for (OutListener listener : listenerMapValues)
+        if (bean.getType() == OutConstant.OUTBALANCE_TYPE_BACK)
         {
-            listener.onOutBalancePass(user, bean);
+            // TAX_ADD 销售-结算退货单（审核通过）
+            Collection<OutListener> listenerMapValues = listenerMapValues();
+
+            for (OutListener listener : listenerMapValues)
+            {
+                listener.onOutBalancePass(user, bean);
+            }
         }
 
         notifyManager.notifyMessage(bean.getStafferId(), bean.getOutId() + "的结算清单已经被["

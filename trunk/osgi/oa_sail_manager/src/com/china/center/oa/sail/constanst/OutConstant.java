@@ -236,9 +236,9 @@ public interface OutConstant
     int OUTTYPE_IN_STOCK = 6;
 
     /**
-     * 其他入库
+     * 库存中转
      */
-    @Defined(key = "outType_in", value = "其他入库")
+    @Defined(key = "outType_in", value = "库存中转")
     int OUTTYPE_IN_OTHER = 99;
 
     /**
