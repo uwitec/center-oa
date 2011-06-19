@@ -900,7 +900,7 @@ function hrefAndSelect(obj)
 </table>
 
 </form>
-<div id="dlg" title="结算中心驳回" style="width:320px;height:300px">
+<div id="dlg" title="结算中心驳回" style="width:320px;height:300px;">
     <div style="padding:20px;height:200px;" id="dia_inner" title="">
     意见：<input type="text" name="passReason" id="passReason" value=""><br>
     <input type="radio" name="reasonRadio" value="批价错误" onclick="rchange()">批价错误<br>
