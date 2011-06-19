@@ -9,9 +9,12 @@
 package com.china.center.oa.finance.listener;
 
 
+import java.util.List;
+
 import com.center.china.osgi.publics.ParentListener;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.bean.StockPayApplyBean;
 
 
@@ -32,6 +35,6 @@ public interface StockPayApplyListener extends ParentListener
      * @param bean
      * @throws MYException
      */
-    void onEndStockPayBySEC(User user, StockPayApplyBean bean)
+    void onEndStockPayBySEC(User user, StockPayApplyBean bean, List<OutBillBean> outBillList)
         throws MYException;
 }

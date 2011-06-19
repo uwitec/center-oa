@@ -36,7 +36,7 @@ public interface PaymentListener extends ParentListener
         throws MYException;
 
     /**
-     * 回款导入和增加
+     * 回款删除
      * 
      * @param user
      * @param bean

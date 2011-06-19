@@ -756,7 +756,7 @@ public class BillAction extends DispatchAction
                 return ActionTools.toError("数据异常,请重新操作", mapping, request);
             }
 
-            request.setAttribute("bean", bean);
+            request.setAttribute("bean", outBill);
 
             return mapping.findForward("detailOutBill");
         }

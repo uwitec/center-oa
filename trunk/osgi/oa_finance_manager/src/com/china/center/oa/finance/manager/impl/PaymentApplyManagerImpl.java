@@ -660,6 +660,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
                 }
             }
 
+            // 手续费
             if (payment.getHandling() > 0)
             {
                 int maxFee = parameterDAO.getInt(SysConfigConstant.MAX_RECVIVE_FEE);
@@ -690,6 +691,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
                 billManager.addOutBillBeanWithoutTransaction(user, out);
             }
 
+            // 处理销售的回款和付款绑定的核心
             for (PaymentVSOutBean item : vsList)
             {
                 if (StringTools.isNullOrNone(item.getOutId()))
@@ -757,7 +759,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
     }
 
     /**
-     * CORE 处理销售的回款和付款绑定的核心
+     * CORE 处理销售的回款和付款绑定的核心(关联多个就是多次)
      * 
      * @param user
      * @param apply
@@ -805,7 +807,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
             outBalanceDAO.updateHadPay(outBal.getId(), hasOutBalancePay);
 
             // 如果全部支付就自动表示收款
-            if (outBal.getTotal() == hasOutBalancePay)
+            if (MathTools.equal2(outBal.getTotal(), hasOutBalancePay))
             {
                 outBalanceDAO.updateHadPay(outId, OutConstant.PAY_YES);
             }

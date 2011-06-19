@@ -134,6 +134,10 @@ function selectPublic()
 		<p:class value="com.china.center.oa.finance.bean.PaymentBean" />
 
 		<p:table cells="1">
+		
+		    <p:cell title="标识">
+               ${bean.id}
+            </p:cell>
 
 			<p:cell title="帐户">
                ${bean.bankName}

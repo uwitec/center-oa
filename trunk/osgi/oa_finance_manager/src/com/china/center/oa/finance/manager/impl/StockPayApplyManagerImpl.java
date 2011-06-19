@@ -520,7 +520,7 @@ public class StockPayApplyManagerImpl extends AbstractListenerManager<StockPayAp
 
         for (StockPayApplyListener listener : listenerMapValues)
         {
-            listener.onEndStockPayBySEC(user, apply);
+            listener.onEndStockPayBySEC(user, apply, outBillList);
         }
 
         saveFlowLog(user, StockPayApplyConstant.APPLY_STATUS_SEC, apply, reason,

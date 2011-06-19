@@ -47,7 +47,7 @@ function check()
     
     if ((pu + bad) < total)
     {
-        return window.confirm('付款单金额不足,确认当前只付款:' + pu + ',应付金额:' + total + ',坏账金额:' + bad);
+        return window.confirm('付款单金额不足,确认当前只付款:' + formatNum(pu, 2) + ',应付金额:' + total + ',坏账金额:' + bad);
     }
     
     if (pu > total && bad > 0)
