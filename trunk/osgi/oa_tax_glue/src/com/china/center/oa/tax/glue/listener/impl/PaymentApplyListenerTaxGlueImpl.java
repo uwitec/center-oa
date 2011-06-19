@@ -130,6 +130,11 @@ public class PaymentApplyListenerTaxGlueImpl implements PaymentApplyListener
                 throw new MYException("数据错误,请确认操作");
             }
 
+            if ( !TaxGlueHelper.bankGoon(payment.getBankId(), this.taxDAO))
+            {
+                return;
+            }
+
             // 手续费是一次性的
             if (payment.getHandling() > 0)
             {
