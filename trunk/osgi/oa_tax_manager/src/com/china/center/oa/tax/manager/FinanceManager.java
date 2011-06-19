@@ -44,6 +44,17 @@ public interface FinanceManager
     boolean deleteFinanceBean(User user, String id)
         throws MYException;
 
+    /**
+     * 没有事务的删除
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean deleteFinanceBeanWithoutTransactional(User user, String id)
+        throws MYException;
+
     boolean checks(User user, String id, String reason)
         throws MYException;
 

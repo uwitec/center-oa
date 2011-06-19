@@ -49,6 +49,11 @@ public interface TaxItemConstanst
     String PAY_PRODUCT = "2122-01";
 
     /**
+     * 预收账款(客户/职员/部门)
+     */
+    String PREREVEIVE_PRODUCT = "2131";
+
+    /**
      * 主营业务税金及附加(部门)
      */
     String MAIN_TAX = "5402";
@@ -72,6 +77,16 @@ public interface TaxItemConstanst
      * 营业费用-业务招待费(部门/职员)
      */
     String RECEIVE_COMMON = "5501-05";
+
+    /**
+     * 银行手续费-部门(部门/职员)
+     */
+    String HAND_BANK_DEPARTMENT = "5501-11";
+
+    /**
+     * 银行手续费-个人(部门/职员)
+     */
+    String HAND_BANK_PERSON = "5501-12";
 
     /**
      * 营业外支出(无)

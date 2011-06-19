@@ -51,6 +51,10 @@ function load()
                 <a href="../stock/stock.do?method=findStock&id=${bean.refId}">${bean.refId}</a>
                 </c:when>
                 
+                <c:when test="${bean.createType == 2}">
+                <a href="../finance/stock.do?method=findStockPayApply&id=${bean.refId}">${bean.refId}</a>
+                </c:when>
+                
 			    <c:when test="${bean.createType == 3 || bean.createType == 4}">
 			    <a href="../product/product.do?method=findCompose&id=${bean.refId}">${bean.refId}</a>
 			    </c:when>
@@ -76,6 +80,10 @@ function load()
                 <a href="../sail/out.do?method=findOutBalance&id=${bean.refId}">${bean.refId}</a>
                 </c:when>
                 
+                <c:when test="${bean.createType == 60 || bean.createType == 61 || bean.createType == 63}">
+                <a href="../finance/bank.do?method=findPayment&mode=2&id=${bean.refId}">${bean.refId}</a>
+                </c:when>
+                
 				<c:otherwise>
 				${bean.refId}
 				</c:otherwise>
@@ -83,15 +91,15 @@ function load()
 			</p:cell>
 			<p:cell title="关联链接" end="true">
                 <c:if test="${my:length(bean.refOut) > 0}">
-                <a href="../sail/out.do?method=findOut&fow=99&outId=${bean.refOut}">${bean.refOut}</a>&nbsp;&nbsp;
+                <a href="../sail/out.do?method=findOut&fow=99&outId=${bean.refOut}" title="点击查看销售入库详细">${bean.refOut}</a>&nbsp;&nbsp;
                 </c:if>
                 
                 <c:if test="${my:length(bean.refBill) > 0}">
-                <a href="../finance/bill.do?method=findBill&id=${bean.refBill}">${bean.refBill}</a>&nbsp;&nbsp;
+                <a href="../finance/bill.do?method=findBill&id=${bean.refBill}" title="点击查看收付款单详细">${bean.refBill}</a>&nbsp;&nbsp;
                 </c:if>
                 
                 <c:if test="${my:length(bean.refStock) > 0}">
-                <a href="../stock/stock.do?method=findStock&id=${bean.refStock}">${bean.refStock}</a>&nbsp;&nbsp;
+                <a href="../stock/stock.do?method=findStock&id=${bean.refStock}" title="点击查看采购单详细">${bean.refStock}</a>&nbsp;&nbsp;
                 </c:if>
 			</p:cell>
 			<p:cell title="描述" end="true">${bean.description}</p:cell>

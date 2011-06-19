@@ -24,5 +24,19 @@ import com.china.center.oa.tax.vo.TaxVO;
  */
 public interface TaxDAO extends DAO<TaxBean, TaxVO>
 {
+    /**
+     * 获取银行关联的科目
+     * 
+     * @param bankId
+     * @return
+     */
+    TaxBean findByBankId(String bankId);
 
+    /**
+     * 获取银行暂记户关联的科目
+     * 
+     * @param bankId
+     * @return
+     */
+    TaxBean findTempByBankId(String bankId);
 }

@@ -9,10 +9,15 @@
 package com.china.center.oa.tax.dao.impl;
 
 
+import java.util.List;
+
 import com.china.center.jdbc.inter.impl.BaseDAO;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.tax.bean.TaxBean;
+import com.china.center.oa.tax.constanst.TaxConstanst;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.vo.TaxVO;
+import com.china.center.tools.ListTools;
 
 
 /**
@@ -25,4 +30,43 @@ import com.china.center.oa.tax.vo.TaxVO;
  */
 public class TaxDAOImpl extends BaseDAO<TaxBean, TaxVO> implements TaxDAO
 {
+    public TaxBean findByBankId(String bankId)
+    {
+        ConditionParse conditionParse = new ConditionParse();
+
+        conditionParse.addWhereStr();
+
+        conditionParse.addCondition("refId", "=", bankId);
+
+        conditionParse.addIntCondition("refType", "=", TaxConstanst.TAX_REFTYPE_BANK);
+
+        List<TaxBean> list = this.queryEntityBeansByCondition(conditionParse);
+
+        if (ListTools.isEmptyOrNull(list))
+        {
+            return null;
+        }
+
+        return list.get(0);
+    }
+
+    public TaxBean findTempByBankId(String bankId)
+    {
+        ConditionParse conditionParse = new ConditionParse();
+
+        conditionParse.addWhereStr();
+
+        conditionParse.addCondition("refId", "=", bankId);
+
+        conditionParse.addIntCondition("refType", "=", TaxConstanst.TAX_REFTYPE_BANKTEMP);
+
+        List<TaxBean> list = this.queryEntityBeansByCondition(conditionParse);
+
+        if (ListTools.isEmptyOrNull(list))
+        {
+            return null;
+        }
+
+        return list.get(0);
+    }
 }

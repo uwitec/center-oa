@@ -90,8 +90,6 @@ public class FechProductListenerTaxGlueImpl implements FechProductListener
 
         financeBean.setRefId(stock.getId());
 
-        financeBean.setRefId(stock.getId());
-
         financeBean.setRefOut(out.getFullId());
 
         financeBean.setRefStock(stock.getId());

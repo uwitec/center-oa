@@ -124,4 +124,18 @@
         </property>
     </bean>
     
+    <bean id="stockPayApplyListenerTaxGlueImpl" class="com.china.center.oa.tax.glue.listener.impl.StockPayApplyListenerTaxGlueImpl" />
+    
+    <bean id="stockPayApplyLoadListener"
+        class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="stockPayApplyManager" />
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="stockPayApplyListenerTaxGlueImpl" />
+            </list>
+        </property>
+    </bean>
+    
 </beans>

@@ -112,6 +112,8 @@ public abstract class FinanceHelper
 
         item.setRefStock(financeBean.getRefStock());
 
+        item.setRefBill(financeBean.getRefBill());
+
         item.setFinanceDate(financeBean.getFinanceDate());
 
         item.setType(financeBean.getType());

@@ -434,6 +434,12 @@ public class FinanceManagerImpl implements FinanceManager
     public boolean deleteFinanceBean(User user, String id)
         throws MYException
     {
+        return deleteFinanceBeanWithoutTransactional(user, id);
+    }
+
+    public boolean deleteFinanceBeanWithoutTransactional(User user, String id)
+        throws MYException
+    {
         JudgeTools.judgeParameterIsNull(user, id);
 
         FinanceBean old = financeDAO.find(id);
@@ -441,11 +447,6 @@ public class FinanceManagerImpl implements FinanceManager
         if (old == null)
         {
             throw new MYException("数据错误,请重新操作");
-        }
-
-        if (old.getCreateType() != TaxConstanst.FINANCE_CREATETYPE_HAND)
-        {
-            throw new MYException("只能删除手工凭证,请重新操作");
         }
 
         if (old.getStatus() == TaxConstanst.FINANCE_STATUS_CHECK)

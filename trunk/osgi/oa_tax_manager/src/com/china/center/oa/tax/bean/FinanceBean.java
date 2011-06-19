@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Join;
@@ -64,6 +65,7 @@ public class FinanceBean implements Serializable
     /**
      * 主关联单据
      */
+    @FK
     private String refId = "";
 
     private String refOut = "";
