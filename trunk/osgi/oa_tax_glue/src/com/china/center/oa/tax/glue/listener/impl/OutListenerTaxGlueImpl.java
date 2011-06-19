@@ -2651,8 +2651,8 @@ public class OutListenerTaxGlueImpl implements OutListener
             itemInEach.setProductId(baseBean.getProductId());
             itemInEach.setProductAmount(baseBean.getAmount());
 
-            // 调出的仓库
-            itemInEach.setDepotId(moveOut.getLocation());
+            // 调入的仓库
+            itemInEach.setDepotId(outBean.getLocation());
 
             itemList.add(itemInEach);
         }
@@ -2694,7 +2694,9 @@ public class OutListenerTaxGlueImpl implements OutListener
             // 辅助核算 产品/仓库
             itemOutEach.setProductId(baseBean.getProductId());
             itemOutEach.setProductAmount(baseBean.getAmount());
-            itemOutEach.setDepotId(outBean.getLocation());
+
+            // 调出的仓库
+            itemOutEach.setDepotId(moveOut.getLocation());
 
             itemList.add(itemOutEach);
         }
