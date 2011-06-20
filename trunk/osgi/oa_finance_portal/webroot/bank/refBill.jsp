@@ -18,7 +18,7 @@ function addBean()
 function check()
 {
     //计算是否回款溢出
-    var total = ${lastMoney};
+    var total = ${my:formatNum(lastMoney)};
     
     var pu = 0.0;
     
@@ -45,19 +45,19 @@ function check()
     
     var bad = parseFloat($$('badMoney'));
     
-    if ((pu + bad) < total)
+    if (math_compare((pu + bad), total) == -1)
     {
-        return window.confirm('付款单金额不足,确认当前只付款:' + formatNum(pu, 2) + ',应付金额:' + total + ',坏账金额:' + bad);
+        return window.confirm('付款单金额不足,确认当前只付款:' + formatNum(pu, 2) + ',应付金额:' + formatNum(total, 2) + ',坏账金额:' + formatNum(bad, 2));
     }
     
-    if (pu > total && bad > 0)
+    if (math_compare(pu, total) == 1 && bad > 0)
     {
         alert('预收金额充足,不需要坏账');
         
         return false;
     }
     
-    if (parseFloat(formatNum((total - pu), 2)) - bad < 0 && bad != 0)
+    if (math_compare((total - pu), bad) == -1 && bad != 0)
     {
         alert('坏账金额过多,当前最多坏账金额:' + formatNum((total - pu), 2));
         
@@ -87,7 +87,7 @@ function check()
 <p:body width="98%">
 
 	<p:title>
-		<td class="caption"><strong>此单需付款金额:${lastMoney}</strong></td>
+		<td class="caption"><strong>此单需付款金额:${my:formatNum(lastMoney)}</strong></td>
 	</p:title>
 
 	<p:line flag="0" />
