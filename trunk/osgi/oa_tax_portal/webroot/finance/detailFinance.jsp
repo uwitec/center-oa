@@ -72,6 +72,7 @@ function load()
                             || bean.createType == 41
                             || bean.createType == 44
                             || bean.createType == 47
+                            || bean.createType == 48
                             }">
                 <a href="../sail/out.do?method=findOut&fow=99&outId=${bean.refId}">${bean.refId}</a>
                 </c:when>
@@ -80,7 +81,9 @@ function load()
                 <a href="../sail/out.do?method=findOutBalance&id=${bean.refId}">${bean.refId}</a>
                 </c:when>
                 
-                <c:when test="${bean.createType == 60 || bean.createType == 61 || bean.createType == 63}">
+                <c:when test="${bean.createType == 60 || bean.createType == 61 
+                            || bean.createType == 63
+                            || bean.createType == 67}">
                 <a href="../finance/bank.do?method=findPayment&mode=2&id=${bean.refId}">${bean.refId}</a>
                 </c:when>
                 

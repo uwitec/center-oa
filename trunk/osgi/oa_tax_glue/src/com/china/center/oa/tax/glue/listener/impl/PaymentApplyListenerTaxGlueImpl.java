@@ -15,6 +15,7 @@ import java.util.List;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.annosql.constant.AnoConstant;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.OutBillBean;
@@ -162,6 +163,13 @@ public class PaymentApplyListenerTaxGlueImpl implements PaymentApplyListener
         // 预收转费用
         else if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_CHANGEFEE)
         {
+            List<PaymentVSOutBean> vsList = apply.getVsList();
+
+            // 营业费用-运输费（负数）（5501-04）/预收账款
+            for (PaymentVSOutBean item : vsList)
+            {
+                preToFee(user, apply, item);
+            }
         }
         // 绑定销售单
         else
@@ -172,6 +180,19 @@ public class PaymentApplyListenerTaxGlueImpl implements PaymentApplyListener
             for (PaymentVSOutBean item : vsList)
             {
                 preToPay(user, apply, item);
+            }
+
+            // 存在坏账
+            if (apply.getBadMoney() > 0 && vsList.size() > 0)
+            {
+                OutBean outBean = outDAO.find(vsList.get(0).getOutId());
+
+                if (outBean == null)
+                {
+                    throw new MYException("数据错误,请确认操作");
+                }
+
+                mainFinanceInBadPay(user, apply, outBean);
             }
         }
     }
@@ -260,6 +281,49 @@ public class PaymentApplyListenerTaxGlueImpl implements PaymentApplyListener
         }
 
         mainFinanceInPreToPay(user, apply, item, payment, bank);
+    }
+
+    /**
+     * 预收转费用
+     * 
+     * @param user
+     * @param apply
+     * @param item
+     * @throws MYException
+     */
+    private void preToFee(User user, PaymentApplyBean apply, PaymentVSOutBean item)
+        throws MYException
+    {
+        String billId = item.getBillId();
+
+        InBillBean bill = inBillDAO.find(billId);
+
+        if (bill == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 这里的预收都是从回款单中出来的
+        PaymentBean payment = paymentDAO.find(bill.getPaymentId());
+
+        if (payment == null)
+        {
+            throw new MYException("预收不是从回款中来,数据错误,请确认操作");
+        }
+
+        if ( !TaxGlueHelper.bankGoon(bill.getBankId(), this.taxDAO))
+        {
+            return;
+        }
+
+        BankBean bank = bankDAO.find(bill.getBankId());
+
+        if (bank == null)
+        {
+            throw new MYException("银行不存在,请确认操作");
+        }
+
+        mainFinanceInPreToFee(user, payment, apply, item, bill, bank);
     }
 
     /**
@@ -463,6 +527,103 @@ public class PaymentApplyListenerTaxGlueImpl implements PaymentApplyListener
 
         // 预收账款/应收账款
         createAddItem4(user, payment, bank, apply, item, financeBean, itemList);
+
+        financeBean.setItemList(itemList);
+
+        financeManager.addFinanceBeanWithoutTransactional(user, financeBean);
+    }
+
+    /**
+     * 预收转费用(此单据全转)
+     * 
+     * @param user
+     * @param apply
+     * @param item
+     * @param bill
+     * @param bank
+     * @throws MYException
+     */
+    private void mainFinanceInPreToFee(User user, PaymentBean payment, PaymentApplyBean apply,
+                                       PaymentVSOutBean item, InBillBean bill, BankBean bank)
+        throws MYException
+    {
+        FinanceBean financeBean = new FinanceBean();
+
+        String name = user.getStafferName() + "通过预收转费用:" + item.getPaymentId() + '.';
+
+        financeBean.setName(name);
+
+        financeBean.setType(TaxConstanst.FINANCE_TYPE_MANAGER);
+
+        financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_BILL_TOFEE);
+
+        // 这里也是关联的回款单号
+        financeBean.setRefId(payment.getId());
+
+        financeBean.setRefBill(item.getBillId());
+
+        financeBean.setDutyId(bank.getDutyId());
+
+        financeBean.setCreaterId(user.getStafferId());
+
+        financeBean.setDescription(financeBean.getName());
+
+        financeBean.setFinanceDate(TimeTools.now_short());
+
+        financeBean.setLogTime(TimeTools.now());
+
+        List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
+
+        // 营业费用-运输费（负数）（5501-04）/预收账款
+        createAddItem7(user, payment, bank, bill, apply, item, financeBean, itemList);
+
+        financeBean.setItemList(itemList);
+
+        financeManager.addFinanceBeanWithoutTransactional(user, financeBean);
+    }
+
+    /**
+     * 其它应收-坏账(1133-16)/应收账款
+     * 
+     * @param user
+     * @param apply
+     * @param item
+     * @param payment
+     * @param bank
+     * @throws MYException
+     */
+    private void mainFinanceInBadPay(User user, PaymentApplyBean apply, OutBean outBean)
+        throws MYException
+    {
+        FinanceBean financeBean = new FinanceBean();
+
+        String name = user.getStafferName() + "通过预收转应收中确认坏账(销售单关联):" + outBean.getFullId() + '.';
+
+        financeBean.setName(name);
+
+        financeBean.setType(TaxConstanst.FINANCE_TYPE_MANAGER);
+
+        financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_SAIL_BADMONEY);
+
+        // 这里也是关联的回款单号
+        financeBean.setRefId(outBean.getFullId());
+
+        financeBean.setRefOut(outBean.getFullId());
+
+        financeBean.setDutyId(outBean.getDutyId());
+
+        financeBean.setCreaterId(user.getStafferId());
+
+        financeBean.setDescription(financeBean.getName());
+
+        financeBean.setFinanceDate(TimeTools.now_short());
+
+        financeBean.setLogTime(TimeTools.now());
+
+        List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
+
+        // 其它应收-坏账(1133-16)/应收账款
+        createAddItem5(user, apply, outBean, financeBean, itemList);
 
         financeBean.setItemList(itemList);
 
@@ -829,6 +990,337 @@ public class PaymentApplyListenerTaxGlueImpl implements PaymentApplyListener
         itemOut.setDepartmentId(staffer.getPrincipalshipId());
         itemOut.setStafferId(apply.getStafferId());
         itemOut.setUnitId(outBean.getCustomerId());
+        itemOut.setUnitType(TaxConstanst.UNIT_TYPE_CUSTOMER);
+
+        itemList.add(itemOut);
+    }
+
+    /**
+     * 其它应收-坏账(1133-16)/应收账款
+     * 
+     * @param user
+     * @param bean
+     * @param bank
+     * @param apply
+     * @param item
+     * @param financeBean
+     * @param itemList
+     * @throws MYException
+     */
+    private void createAddItem5(User user, PaymentApplyBean apply, OutBean outBean,
+                                FinanceBean financeBean, List<FinanceItemBean> itemList)
+        throws MYException
+    {
+        // 申请人
+        StafferBean staffer = stafferDAO.find(apply.getStafferId());
+
+        if (staffer == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        ConditionParse condition = new ConditionParse();
+
+        condition.addWhereStr();
+
+        condition.addIntCondition("createType", "=", TaxConstanst.FINANCE_CREATETYPE_SAIL_BADMONEY);
+
+        condition.addCondition("refId", "=", outBean.getFullId());
+
+        List<FinanceBean> oldFinanceList = financeDAO.queryEntityBeansByCondition(condition);
+
+        // 当天已经存在的坏账
+        long bad = 0L;
+
+        for (FinanceBean each : oldFinanceList)
+        {
+            bad += each.getInmoney();
+        }
+
+        if (bad != 0)
+        {
+            // 其它应收-坏账（负数）/应收账款（负数）
+            createAddItem6(user, apply, outBean, financeBean, itemList, bad);
+        }
+
+        String name = user.getStafferName() + "通过预收转应收中确认坏账(销售单关联):" + outBean.getFullId() + '.';
+
+        // 借方
+        FinanceItemBean itemIn = new FinanceItemBean();
+
+        String pareId = commonDAO.getSquenceString();
+
+        itemIn.setPareId(pareId);
+
+        itemIn.setName("其它应收-坏账:" + name);
+
+        itemIn.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+        FinanceHelper.copyFinanceItem(financeBean, itemIn);
+
+        TaxBean inTax = taxDAO.findByUnique(TaxItemConstanst.BAD_REVEIVE_PRODUCT);
+
+        if (inTax == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 科目拷贝
+        FinanceHelper.copyTax(inTax, itemIn);
+
+        // 当前发生额
+        double inMoney = apply.getBadMoney();
+
+        itemIn.setInmoney(FinanceHelper.doubleToLong(inMoney));
+
+        itemIn.setOutmoney(0);
+
+        itemIn.setDescription(itemIn.getName());
+
+        // 辅助核算 客户/职员/部门
+        itemIn.setDepartmentId(staffer.getPrincipalshipId());
+        itemIn.setStafferId(apply.getStafferId());
+        itemIn.setUnitId(outBean.getCustomerId());
+        itemIn.setUnitType(TaxConstanst.UNIT_TYPE_CUSTOMER);
+
+        itemList.add(itemIn);
+
+        // 贷方
+        FinanceItemBean itemOut = new FinanceItemBean();
+
+        itemOut.setPareId(pareId);
+
+        itemOut.setName("应收账款:" + name);
+
+        itemOut.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+        FinanceHelper.copyFinanceItem(financeBean, itemOut);
+
+        // 应收账款(客户/职员/部门)
+        TaxBean outTax = taxDAO.findByUnique(TaxItemConstanst.REVEIVE_PRODUCT);
+
+        if (outTax == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 科目拷贝
+        FinanceHelper.copyTax(outTax, itemOut);
+
+        double outMoney = apply.getBadMoney();
+
+        itemOut.setInmoney(0);
+
+        itemOut.setOutmoney(FinanceHelper.doubleToLong(outMoney));
+
+        itemOut.setDescription(itemOut.getName());
+
+        // 辅助核算 客户/职员/部门
+        itemOut.setDepartmentId(staffer.getPrincipalshipId());
+        itemOut.setStafferId(apply.getStafferId());
+        itemOut.setUnitId(outBean.getCustomerId());
+        itemOut.setUnitType(TaxConstanst.UNIT_TYPE_CUSTOMER);
+
+        itemList.add(itemOut);
+    }
+
+    /**
+     * 先取消坏账
+     * 
+     * @param user
+     * @param apply
+     * @param outBean
+     * @param financeBean
+     * @param itemList
+     * @throws MYException
+     */
+    private void createAddItem6(User user, PaymentApplyBean apply, OutBean outBean,
+                                FinanceBean financeBean, List<FinanceItemBean> itemList, long bad)
+        throws MYException
+    {
+        // 申请人
+        StafferBean staffer = stafferDAO.find(apply.getStafferId());
+
+        if (staffer == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        String name = "坏账生成前先取消已经存在的坏账:" + outBean.getFullId() + '.';
+
+        // 借方
+        FinanceItemBean itemIn = new FinanceItemBean();
+
+        String pareId = commonDAO.getSquenceString();
+
+        itemIn.setPareId(pareId);
+
+        itemIn.setName("其它应收-坏账:" + name);
+
+        itemIn.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+        FinanceHelper.copyFinanceItem(financeBean, itemIn);
+
+        TaxBean inTax = taxDAO.findByUnique(TaxItemConstanst.BAD_REVEIVE_PRODUCT);
+
+        if (inTax == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 科目拷贝
+        FinanceHelper.copyTax(inTax, itemIn);
+
+        itemIn.setInmoney( -bad);
+
+        itemIn.setOutmoney(0);
+
+        itemIn.setDescription(itemIn.getName());
+
+        // 辅助核算 客户/职员/部门
+        itemIn.setDepartmentId(staffer.getPrincipalshipId());
+        itemIn.setStafferId(apply.getStafferId());
+        itemIn.setUnitId(outBean.getCustomerId());
+        itemIn.setUnitType(TaxConstanst.UNIT_TYPE_CUSTOMER);
+
+        itemList.add(itemIn);
+
+        // 贷方
+        FinanceItemBean itemOut = new FinanceItemBean();
+
+        itemOut.setPareId(pareId);
+
+        itemOut.setName("应收账款:" + name);
+
+        itemOut.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+        FinanceHelper.copyFinanceItem(financeBean, itemOut);
+
+        // 应收账款(客户/职员/部门)
+        TaxBean outTax = taxDAO.findByUnique(TaxItemConstanst.REVEIVE_PRODUCT);
+
+        if (outTax == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 科目拷贝
+        FinanceHelper.copyTax(outTax, itemOut);
+
+        itemOut.setInmoney(0);
+
+        itemOut.setOutmoney( -bad);
+
+        itemOut.setDescription(itemOut.getName());
+
+        // 辅助核算 客户/职员/部门
+        itemOut.setDepartmentId(staffer.getPrincipalshipId());
+        itemOut.setStafferId(apply.getStafferId());
+        itemOut.setUnitId(outBean.getCustomerId());
+        itemOut.setUnitType(TaxConstanst.UNIT_TYPE_CUSTOMER);
+
+        itemList.add(itemOut);
+    }
+
+    /**
+     * 营业费用-运输费（负数）（5501-04）/预收账款
+     * 
+     * @param user
+     * @param bean
+     * @param bank
+     * @param apply
+     * @param item
+     * @param financeBean
+     * @param itemList
+     * @throws MYException
+     */
+    private void createAddItem7(User user, PaymentBean bean, BankBean bank, InBillBean bill,
+                                PaymentApplyBean apply, PaymentVSOutBean item,
+                                FinanceBean financeBean, List<FinanceItemBean> itemList)
+        throws MYException
+    {
+        // 申请人
+        StafferBean staffer = stafferDAO.find(apply.getStafferId());
+
+        if (staffer == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        String name = user.getStafferName() + "通过预收转费用:" + bean.getId() + '.';
+
+        // 银行对应的暂记户科目（没有手续费）/应收账款
+        FinanceItemBean itemIn = new FinanceItemBean();
+
+        String pareId = commonDAO.getSquenceString();
+
+        itemIn.setPareId(pareId);
+
+        itemIn.setName("营业费用-运输费:" + name);
+
+        itemIn.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+        FinanceHelper.copyFinanceItem(financeBean, itemIn);
+
+        TaxBean inTax = taxDAO.findByUnique(TaxItemConstanst.TRAN_FEE);
+
+        if (inTax == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 科目拷贝
+        FinanceHelper.copyTax(inTax, itemIn);
+
+        // 当前发生额
+        double inMoney = -bill.getMoneys();
+
+        itemIn.setInmoney(FinanceHelper.doubleToLong(inMoney));
+
+        itemIn.setOutmoney(0);
+
+        itemIn.setDescription(itemIn.getName());
+
+        // 辅助核算 部门/职员
+        itemIn.setDepartmentId(staffer.getPrincipalshipId());
+        itemIn.setStafferId(apply.getStafferId());
+
+        itemList.add(itemIn);
+
+        // 贷方
+        FinanceItemBean itemOut = new FinanceItemBean();
+
+        itemOut.setPareId(pareId);
+
+        itemOut.setName("预收账款:" + name);
+
+        itemOut.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+        FinanceHelper.copyFinanceItem(financeBean, itemOut);
+
+        // 应收账款(客户/职员/部门)
+        TaxBean outTax = taxDAO.findByUnique(TaxItemConstanst.PREREVEIVE_PRODUCT);
+
+        if (outTax == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 科目拷贝
+        FinanceHelper.copyTax(outTax, itemOut);
+
+        double outMoney = -bill.getMoneys();
+
+        itemOut.setInmoney(0);
+
+        itemOut.setOutmoney(FinanceHelper.doubleToLong(outMoney));
+
+        itemOut.setDescription(itemOut.getName());
+
+        // 辅助核算 客户/职员/部门
+        itemOut.setDepartmentId(staffer.getPrincipalshipId());
+        itemOut.setStafferId(apply.getStafferId());
+        itemOut.setUnitId(bill.getCustomerId());
         itemOut.setUnitType(TaxConstanst.UNIT_TYPE_CUSTOMER);
 
         itemList.add(itemOut);

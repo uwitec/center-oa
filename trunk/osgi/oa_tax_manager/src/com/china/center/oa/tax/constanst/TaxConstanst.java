@@ -245,9 +245,9 @@ public interface TaxConstanst
     int FINANCE_CREATETYPE_SAIL_BADMONEY = 48;
 
     /**
-     * 销售-坏账取消
+     * 销售-坏账取消(暂时取消)
      */
-    @Defined(key = "financeCreateType", value = "销售-坏账取消")
+    @Defined(key = "financeCreateType_temp", value = "销售-坏账取消")
     int FINANCE_CREATETYPE_SAIL_BADMONEY_BACK = 49;
 
     /**
@@ -265,7 +265,7 @@ public interface TaxConstanst
     /**
      * 资金-回款退领(暂时取消)
      */
-    @Defined(key = "financeCreateType", value = "资金-回款退领")
+    @Defined(key = "financeCreateType_temp", value = "资金-回款退领")
     int FINANCE_CREATETYPE_BILL_GETPAY_BACK = 62;
 
     /**

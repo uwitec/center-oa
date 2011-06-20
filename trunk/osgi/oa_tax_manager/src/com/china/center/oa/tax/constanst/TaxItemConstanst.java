@@ -24,6 +24,11 @@ public interface TaxItemConstanst
     String REVEIVE_PRODUCT = "1132";
 
     /**
+     * 其它应收-坏账(职员/部门)
+     */
+    String BAD_REVEIVE_PRODUCT = "1133-16";
+
+    /**
      * 其他应收款-样品(部门/职员/产品/仓库 )
      */
     String OTHER_REVEIVE_PRODUCT = "1133-20";
@@ -82,6 +87,11 @@ public interface TaxItemConstanst
      * 银行手续费-部门(部门/职员)
      */
     String HAND_BANK_DEPARTMENT = "5501-11";
+
+    /**
+     * 营业费用-运输费(部门/职员)
+     */
+    String TRAN_FEE = "5501-04";
 
     /**
      * 银行手续费-个人(部门/职员)
