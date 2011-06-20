@@ -307,7 +307,7 @@ function load()
                 </select>
          </td>
          <td width="20%" align="center"><input type="text" style="width: 100%"
-                    name="money" value="" oncheck="notNone;isFloat">
+                    name="money" value="0.0" oncheck="notNone;isFloat">
          </td>
          <td width="5%" align="center"><input type=button
             value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>

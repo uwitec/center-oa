@@ -644,6 +644,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
             String outBalanceId = vsList.get(0).getOutBalanceId();
 
+            // 可能存在坏账处理
             processOut(user, apply, outId, outBalanceId);
         }
 
@@ -703,6 +704,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
                 String outBalanceId = item.getOutBalanceId();
 
+                // 这里肯定是没有坏账的(从设计上就保证)
+                apply.setBadMoney(0);
                 processOut(user, apply, outId, outBalanceId);
             }
         }

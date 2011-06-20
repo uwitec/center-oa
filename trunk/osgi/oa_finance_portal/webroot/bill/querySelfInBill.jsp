@@ -40,7 +40,7 @@ function load()
          },
          buttons : [
              {id: 'update', bclass: 'update', caption: '申请预收退款', onpress : splitInBill},
-             {id: 'update1', bclass: 'update', caption: '预收转费用', onpress : splitInBill2, auth: '99999'},
+             {id: 'update1', bclass: 'update', caption: '预收转费用', onpress : splitInBill2},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
