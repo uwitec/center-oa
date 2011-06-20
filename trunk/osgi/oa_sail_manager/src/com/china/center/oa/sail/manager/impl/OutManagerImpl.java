@@ -1688,7 +1688,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             {
                 public Object doInTransaction(TransactionStatus arg0)
                 {
-                    // OSGI 驳回监听实现
+                    // TAX_ADD 驳回后坏账取消
                     Collection<OutListener> listenerMapValues = listenerMapValues();
 
                     for (OutListener listener : listenerMapValues)
