@@ -77,7 +77,7 @@ public abstract class MathTools
         int aa = (int)Math.round(a * 1000);
         int bb = (int)Math.round(b * 1000);
 
-        return Math.abs(aa - bb) <= 10;
+        return Math.abs(aa - bb) <= 4;
     }
 
     public static String formatNum(double d)
