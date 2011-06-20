@@ -147,6 +147,24 @@ function add(n1, n2)
     return (Number(s1) + Number(s2)) / Math.pow(10, oo);
 }
 
+function math_compare(a, b)
+{
+    var aa = Math.round(a * 1000);
+    var bb = Math.round(b * 1000);
+
+    if (Math.abs(aa - bb) <= 4)
+    {
+    	return 0;
+    }
+    
+    if (aa > bb)
+    {
+    	return 1;
+    }
+    
+    return -1;
+}
+
 /**
  * 验证字符串是否仅数字
  */
