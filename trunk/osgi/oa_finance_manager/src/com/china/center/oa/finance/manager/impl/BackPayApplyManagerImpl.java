@@ -428,7 +428,7 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
 
         for (BackPayApplyListener listener : listenerMapValues)
         {
-            listener.onEndBackPayApplyBean(user, bean);
+            listener.onEndBackPayApplyBean(user, bean, outBillList);
         }
 
         return true;
@@ -446,7 +446,7 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
     {
         if (bean.getChangePayment() > 0)
         {
-            // 找出预收,然后自动拆分
+            // 找出已收,然后自动拆分
             List<InBillBean> inList = inBillDAO.queryEntityBeansByFK(bean.getOutId());
 
             // 从大到小

@@ -132,6 +132,10 @@ function load()
 		<p:class value="com.china.center.oa.finance.bean.BackPayApplyBean" />
 
 		<p:table cells="2">
+		
+		    <p:cell title="标识" end="true">
+                ${bean.id}
+            </p:cell>
 
             <c:if test="${bean.type == 0}">
 			<p:cell title="销售标识">

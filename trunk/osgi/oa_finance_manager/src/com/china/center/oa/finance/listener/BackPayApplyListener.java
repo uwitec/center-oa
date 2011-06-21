@@ -9,10 +9,13 @@
 package com.china.center.oa.finance.listener;
 
 
+import java.util.List;
+
 import com.center.china.osgi.publics.ParentListener;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.BackPayApplyBean;
+import com.china.center.oa.finance.bean.OutBillBean;
 
 
 /**
@@ -32,6 +35,6 @@ public interface BackPayApplyListener extends ParentListener
      * @param bean
      * @throws MYException
      */
-    void onEndBackPayApplyBean(User user, BackPayApplyBean bean)
+    void onEndBackPayApplyBean(User user, BackPayApplyBean bean, List<OutBillBean> outBillList)
         throws MYException;
 }
