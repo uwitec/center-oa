@@ -94,6 +94,30 @@ public class OutListenerTaxGlueImpl implements OutListener
     public void onCancleBadDebts(User user, OutBean outBean)
         throws MYException
     {
+        // 先找到此销售单所有的坏账凭证,然后全部回滚,在生成坏账
+        ConditionParse condition = new ConditionParse();
+
+        condition.addWhereStr();
+
+        condition.addIntCondition("createType", "=", TaxConstanst.FINANCE_CREATETYPE_SAIL_BADMONEY);
+
+        condition.addCondition("refId", "=", outBean.getFullId());
+
+        List<FinanceBean> oldFinanceList = financeDAO.queryEntityBeansByCondition(condition);
+
+        // 当前已经存在的坏账
+        long bad = 0L;
+
+        for (FinanceBean each : oldFinanceList)
+        {
+            bad += each.getInmoney();
+        }
+
+        if (bad == 0)
+        {
+            return;
+        }
+
         FinanceBean financeBean = new FinanceBean();
 
         String name = user.getStafferName() + "往来核对或驳回中取消坏账:" + outBean.getFullId() + '.';
