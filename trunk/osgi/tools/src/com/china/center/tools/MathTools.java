@@ -77,7 +77,7 @@ public abstract class MathTools
         int aa = (int)Math.round(a * 1000);
         int bb = (int)Math.round(b * 1000);
 
-        return Math.abs(aa - bb) <= 4;
+        return Math.abs(aa - bb) <= 5;
     }
 
     public static String formatNum(double d)
@@ -92,5 +92,25 @@ public abstract class MathTools
         }
 
         return result;
+    }
+
+    /**
+     * 格式化
+     * 
+     * @param d
+     * @return
+     */
+    public static double round2(double d)
+    {
+        DecimalFormat df = new DecimalFormat("####0.00");
+
+        String result = df.format(d);
+
+        if (".00".equals(result))
+        {
+            result = "0" + result;
+        }
+
+        return Double.parseDouble(result);
     }
 }
