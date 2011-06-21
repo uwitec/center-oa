@@ -397,7 +397,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                             double outPrice = base.getPrice();
 
-                            double a = inputPrice * (1000 + duty.getDues()) / 1000.0d;
+                            double a = MathTools.round2(inputPrice * (1000 + duty.getDues())
+                                                        / 1000.0d);
 
                             double b = outPrice;
 
@@ -1699,7 +1700,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         }
                         catch (MYException e)
                         {
-                            throw new RuntimeException(e.getErrorContent());
+                            throw new RuntimeException(e.getErrorContent(), e);
                         }
                     }
 
