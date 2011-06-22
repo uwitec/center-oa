@@ -1551,7 +1551,7 @@ public class StorageAction extends DispatchAction
 
             write.openFile(out);
 
-            write.writeLine("日期,仓库,仓区,仓区属性,储位,产品名称,产品编码,产品数量,产品价格");
+            write.writeLine("日期,仓库,仓区,仓区属性,储位,产品名称,产品编码,产品数量,产品价格,归属");
 
             String now = TimeTools.now("yyyy-MM-dd");
 
@@ -1580,6 +1580,13 @@ public class StorageAction extends DispatchAction
                             code = "A" + code;
                         }
 
+                        String sname = each.getStafferName();
+
+                        if (StringTools.isNullOrNone(sname))
+                        {
+                            sname = "公共";
+                        }
+
                         write.writeLine(now
                                         + ','
                                         + locationBean.getName()
@@ -1593,7 +1600,7 @@ public class StorageAction extends DispatchAction
                                         + each.getProductName().replaceAll(",", " ").replaceAll(
                                             "\r\n", "") + ',' + code + ','
                                         + String.valueOf(each.getAmount()) + ','
-                                        + MathTools.formatNum(each.getPrice()));
+                                        + MathTools.formatNum(each.getPrice()) + ',' + sname);
                     }
                 }
 
@@ -1674,7 +1681,7 @@ public class StorageAction extends DispatchAction
 
             write.openFile(out);
 
-            write.writeLine("日期,仓库,仓区,仓区属性,产品名称,产品编码,产品数量");
+            write.writeLine("日期,仓库,仓区,仓区属性,产品名称,产品编码,产品数量,归属");
 
             String now = TimeTools.now("yyyy-MM-dd");
 
@@ -1697,6 +1704,15 @@ public class StorageAction extends DispatchAction
                             code = "A" + code;
                         }
 
+                        String sname = "公共";
+
+                        StafferBean sb = stafferDAO.find(each.getStafferId());
+
+                        if (sb != null)
+                        {
+                            sname = sb.getName();
+                        }
+
                         write.writeLine(now
                                         + ','
                                         + locationBean.getName()
@@ -1707,7 +1723,7 @@ public class StorageAction extends DispatchAction
                                         + ','
                                         + each.getProductName().replaceAll(",", " ").replaceAll(
                                             "\r\n", "") + ',' + code + ','
-                                        + String.valueOf(each.getTotal()));
+                                        + String.valueOf(each.getTotal()) + ',' + sname);
                     }
                 }
 
@@ -1788,7 +1804,7 @@ public class StorageAction extends DispatchAction
 
             write.openFile(out);
 
-            write.writeLine("日期,仓库,仓区,仓区属性,产品名称,产品编码,产品数量");
+            write.writeLine("日期,仓库,仓区,仓区属性,产品名称,产品编码,产品数量,归属");
 
             String now = TimeTools.now("yyyy-MM-dd");
 
@@ -1809,6 +1825,15 @@ public class StorageAction extends DispatchAction
                         code = "A" + code;
                     }
 
+                    String sname = "公共";
+
+                    StafferBean sb = stafferDAO.find(each.getStafferId());
+
+                    if (sb != null)
+                    {
+                        sname = sb.getName();
+                    }
+
                     write.writeLine(now
                                     + ','
                                     + depotpartBean.getLocationName()
@@ -1818,7 +1843,8 @@ public class StorageAction extends DispatchAction
                                     + typeName
                                     + ','
                                     + each.getProductName().replaceAll(",", " ").replaceAll("\r\n",
-                                        "") + ',' + code + ',' + String.valueOf(each.getTotal()));
+                                        "") + ',' + code + ',' + String.valueOf(each.getTotal())
+                                    + ',' + sname);
                 }
             }
 
