@@ -70,6 +70,7 @@ function load()
                             || bean.createType == 26
                             || bean.createType == 40
                             || bean.createType == 41
+                            || bean.createType == 42
                             || bean.createType == 44
                             || bean.createType == 47
                             || bean.createType == 48
