@@ -78,7 +78,7 @@ public class BillListenerTaxGlueImpl implements BillListener
     /**
      * 销售单驳回后,应收转预收(坏账取消)
      */
-    public void onRejectOut(User user, OutBean bean, List<InBillBean> list)
+    public void onFeeInReceiveToPre(User user, OutBean bean, List<InBillBean> list)
         throws MYException
     {
         for (InBillBean inBillBean : list)
@@ -104,7 +104,7 @@ public class BillListenerTaxGlueImpl implements BillListener
     {
         FinanceBean financeBean = new FinanceBean();
 
-        String name = "销售单驳回应收转预收:" + bean.getFullId() + '.';
+        String name = "销售单驳回/删除应收转预收:" + bean.getFullId() + '.';
 
         financeBean.setName(name);
 
@@ -162,7 +162,7 @@ public class BillListenerTaxGlueImpl implements BillListener
             throw new MYException("数据错误,请确认操作");
         }
 
-        String name = "销售单驳回应收转预收:" + outBean.getFullId() + '.';
+        String name = "销售单驳回/删除应收转预收:" + outBean.getFullId() + '.';
 
         // 预收账款（负数）/应收账款
         FinanceItemBean itemIn = new FinanceItemBean();

@@ -213,10 +213,19 @@ public class OutListenerTaxGlueImpl implements OutListener
         if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
             // 销售-销售出库
-            if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL
-                && outBean.getOutType() == OutConstant.OUTTYPE_OUT_COMMON)
+            if (outBean.getOutType() == OutConstant.OUTTYPE_OUT_COMMON
+                && !isSwatchToSail(outBean.getFullId()))
             {
                 processOutCommon(user, outBean);
+
+                return;
+            }
+
+            // 销售-个人领转销售
+            if (outBean.getOutType() == OutConstant.OUTTYPE_OUT_COMMON
+                && isSwatchToSail(outBean.getFullId()))
+            {
+                processOutCommon2(user, outBean);
 
                 return;
             }
@@ -321,6 +330,42 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             return;
         }
+    }
+
+    /**
+     * 是否领样转销售
+     * 
+     * @param fullId
+     * @return
+     */
+    private boolean isSwatchToSail(String fullId)
+    {
+        OutBean out = outDAO.find(fullId);
+
+        if (out == null)
+        {
+            return false;
+        }
+
+        if (StringTools.isNullOrNone(out.getRefOutFullId()))
+        {
+            return false;
+        }
+
+        OutBean src = outDAO.find(out.getRefOutFullId());
+
+        if (src == null)
+        {
+            return false;
+        }
+
+        if (src.getType() == OutConstant.OUT_TYPE_OUTBILL
+            && src.getOutType() == OutConstant.OUTTYPE_OUT_SWATCH)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private void processMoveIn(User user, OutBean outBean)
@@ -537,6 +582,49 @@ public class OutListenerTaxGlueImpl implements OutListener
 
         // 主营业务成本(5401)/库存商品（成本价*数量）
         createOutCommonItem2(user, outBean, financeBean, itemList);
+
+        financeBean.setItemList(itemList);
+
+        financeManager.addFinanceBeanWithoutTransactional(user, financeBean);
+    }
+
+    /**
+     * 应收账款（销售金额，含税价）/其他应收款
+     * 
+     * @param user
+     * @param outBean
+     * @throws MYException
+     */
+    private void processOutCommon2(User user, OutBean outBean)
+        throws MYException
+    {
+        // 应收账款（销售金额，含税价）/其他应收款
+        FinanceBean financeBean = new FinanceBean();
+
+        String name = "销售-个人领转销售:" + outBean.getFullId() + '.';
+
+        financeBean.setName(name);
+
+        financeBean.setType(TaxConstanst.FINANCE_TYPE_MANAGER);
+
+        financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_SAIL_SWATCHSAIL);
+
+        financeBean.setRefId(outBean.getFullId());
+
+        financeBean.setRefOut(outBean.getFullId());
+
+        financeBean.setDutyId(outBean.getDutyId());
+
+        financeBean.setDescription(financeBean.getName());
+
+        financeBean.setFinanceDate(TimeTools.now_short());
+
+        financeBean.setLogTime(TimeTools.now());
+
+        List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
+
+        // 应收账款（销售金额，含税价）/其他应收款
+        createOutCommonItem3(user, outBean, financeBean, itemList);
 
         financeBean.setItemList(itemList);
 
@@ -1153,6 +1241,111 @@ public class OutListenerTaxGlueImpl implements OutListener
         itemOut1.setStafferId(outBean.getStafferId());
 
         itemList.add(itemOut1);
+    }
+
+    /**
+     * 应收账款（销售金额，含税价）/其他应收款-样品
+     * 
+     * @param user
+     * @param outBean
+     * @param financeBean
+     * @param itemList
+     * @throws MYException
+     */
+    private void createOutCommonItem3(User user, OutBean outBean, FinanceBean financeBean,
+                                      List<FinanceItemBean> itemList)
+        throws MYException
+    {
+        String name = "销售-个人领转销售:" + outBean.getFullId() + '.';
+
+        // 借:库存商品 贷:应付账款-供应商
+        FinanceItemBean itemIn1 = new FinanceItemBean();
+
+        String pare1 = commonDAO.getSquenceString();
+
+        itemIn1.setPareId(pare1);
+
+        itemIn1.setName("应收账款:" + name);
+
+        itemIn1.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+        FinanceHelper.copyFinanceItem(financeBean, itemIn1);
+
+        // 库存商品
+        String itemInTaxId = TaxItemConstanst.REVEIVE_PRODUCT;
+
+        TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
+
+        if (itemInTax == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 科目拷贝
+        FinanceHelper.copyTax(itemInTax, itemIn1);
+
+        double money = outBean.getTotal();
+
+        itemIn1.setInmoney(FinanceHelper.doubleToLong(money));
+
+        itemIn1.setOutmoney(0);
+
+        itemIn1.setDescription(itemIn1.getName());
+
+        // 辅助核算 客户，职员，部门
+        copyDepartment(outBean, itemIn1);
+        itemIn1.setStafferId(outBean.getStafferId());
+        itemIn1.setUnitId(outBean.getCustomerId());
+        itemIn1.setUnitType(TaxConstanst.UNIT_TYPE_CUSTOMER);
+
+        itemList.add(itemIn1);
+
+        List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
+
+        // 其他应收款-样品（销售价*数量）
+        for (BaseBean baseBean : baseList)
+        {
+            FinanceItemBean itemOutEach = new FinanceItemBean();
+
+            itemOutEach.setPareId(pare1);
+
+            itemOutEach.setName("其他应收款-样品(" + baseBean.getProductName() + "):" + name);
+
+            itemOutEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
+
+            // 其他应收款-样品
+            String itemTaxIdIn = TaxItemConstanst.OTHER_REVEIVE_PRODUCT;
+
+            TaxBean outTax = taxDAO.findByUnique(itemTaxIdIn);
+
+            if (outTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(outTax, itemOutEach);
+
+            // 含税价
+            double outMoney = baseBean.getAmount() * baseBean.getPrice();
+
+            itemOutEach.setInmoney(0);
+
+            itemOutEach.setOutmoney(FinanceHelper.doubleToLong(outMoney));
+
+            itemOutEach.setDescription(itemOutEach.getName());
+
+            // 辅助核算 部门/职员/产品/仓库
+            copyDepartment(outBean, itemOutEach);
+            itemOutEach.setStafferId(outBean.getStafferId());
+            itemOutEach.setProductId(baseBean.getProductId());
+            itemOutEach.setProductAmount(baseBean.getAmount());
+            itemOutEach.setDepotId(outBean.getLocation());
+
+            itemList.add(itemOutEach);
+        }
     }
 
     /**
