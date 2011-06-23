@@ -1706,11 +1706,16 @@ public class StorageAction extends DispatchAction
 
                         String sname = "公共";
 
-                        StafferBean sb = stafferDAO.find(each.getStafferId());
-
-                        if (sb != null)
+                        if ( !StringTools.isNullOrNone(each.getStafferId())
+                            && !"0".equals(each.getStafferId()))
                         {
-                            sname = sb.getName();
+
+                            StafferBean sb = stafferDAO.find(each.getStafferId());
+
+                            if (sb != null)
+                            {
+                                sname = sb.getName();
+                            }
                         }
 
                         write.writeLine(now
@@ -1827,11 +1832,16 @@ public class StorageAction extends DispatchAction
 
                     String sname = "公共";
 
-                    StafferBean sb = stafferDAO.find(each.getStafferId());
-
-                    if (sb != null)
+                    if ( !StringTools.isNullOrNone(each.getStafferId())
+                        && !"0".equals(each.getStafferId()))
                     {
-                        sname = sb.getName();
+
+                        StafferBean sb = stafferDAO.find(each.getStafferId());
+
+                        if (sb != null)
+                        {
+                            sname = sb.getName();
+                        }
                     }
 
                     write.writeLine(now
