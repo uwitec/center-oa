@@ -44,12 +44,14 @@ import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
+import com.china.center.oa.publics.helper.LockHelper;
 import com.china.center.oa.publics.wrap.ResultBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
+import com.china.center.oa.sail.helper.OutHelper;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.MathTools;
@@ -592,45 +594,54 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
                     throw new MYException("收款单状态错误,请确认操作");
                 }
 
-                OutBean outBean = outDAO.find(item.getOutId());
-
-                if (outBean == null)
+                // 这里防止并行对销售单操作
+                synchronized (LockHelper.getLock(item.getOutId()))
                 {
-                    throw new MYException("数据错误,请确认操作");
+                    OutBean outBean = outDAO.find(item.getOutId());
+
+                    if (outBean == null)
+                    {
+                        throw new MYException("数据错误,请确认操作");
+                    }
+
+                    if ( !OutHelper.canFeeOpration(outBean))
+                    {
+                        throw new MYException("销售单状态错误,请确认操作");
+                    }
+
+                    if ( !StringTools.isNullOrNone(outBean.getChecks()))
+                    {
+                        bill.setDescription(bill.getDescription() + "<br>销售单核对信息:"
+                                            + outBean.getChecks() + "<br>审批意见:" + reason);
+                    }
+
+                    if (bill.getCheckStatus() == PublicConstant.CHECK_STATUS_END)
+                    {
+                        bill.setDescription(bill.getDescription() + "<br>与销售单关联付款所以重置核对状态,原核对信息:"
+                                            + bill.getChecks() + "<br>审批意见:" + reason);
+                    }
+                    else
+                    {
+                        bill.setDescription(bill.getDescription() + "<br>审批意见:" + reason);
+                    }
+
+                    if (BillHelper.isPreInBill(bill))
+                    {
+                        // 这里需要把收款单的状态变成未核对
+                        BillHelper.initInBillCheckStatus(bill);
+                    }
+
+                    bill.setOutId(item.getOutId());
+
+                    bill.setOutBalanceId(item.getOutBalanceId());
+
+                    bill.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
+
+                    // 谁审批的就是谁的单子
+                    bill.setStafferId(user.getStafferId());
+
+                    inBillDAO.updateEntityBean(bill);
                 }
-
-                if ( !StringTools.isNullOrNone(outBean.getChecks()))
-                {
-                    bill.setDescription(bill.getDescription() + "<br>销售单核对信息:"
-                                        + outBean.getChecks() + "<br>审批意见:" + reason);
-                }
-
-                if (bill.getCheckStatus() == PublicConstant.CHECK_STATUS_END)
-                {
-                    bill.setDescription(bill.getDescription() + "<br>与销售单关联付款所以重置核对状态,原核对信息:"
-                                        + bill.getChecks() + "<br>审批意见:" + reason);
-                }
-                else
-                {
-                    bill.setDescription(bill.getDescription() + "<br>审批意见:" + reason);
-                }
-
-                if (BillHelper.isPreInBill(bill))
-                {
-                    // 这里需要把收款单的状态变成未核对
-                    BillHelper.initInBillCheckStatus(bill);
-                }
-
-                bill.setOutId(item.getOutId());
-
-                bill.setOutBalanceId(item.getOutBalanceId());
-
-                bill.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
-
-                // 谁审批的就是谁的单子
-                bill.setStafferId(user.getStafferId());
-
-                inBillDAO.updateEntityBean(bill);
             }
         }
 
@@ -773,50 +784,53 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
     private void processOut(User user, PaymentApplyBean apply, String outId, String outBalanceId)
         throws MYException
     {
-        OutBean out = outDAO.find(outId);
-
-        // 看看销售单是否溢出
-        double hasPay = inBillDAO.sumByOutId(outId);
-
-        // 有坏账的存在
-        if (apply.getBadMoney() != 0)
+        synchronized (LockHelper.getLock(outId))
         {
-            out.setBadDebts(apply.getBadMoney());
+            OutBean out = outDAO.find(outId);
 
-            outDAO.modifyBadDebts(outId, apply.getBadMoney());
-        }
+            // 看看销售单是否溢出
+            double hasPay = inBillDAO.sumByOutId(outId);
 
-        out.setHadPay(hasPay);
-
-        // 更新已经支付的金额
-        outDAO.updateHadPay(outId, hasPay);
-
-        // 先把委托代销的全部搞定
-        if ( !StringTools.isNullOrNone(outBalanceId))
-        {
-            // 更新委托清单
-            OutBalanceBean outBal = outBalanceDAO.find(outBalanceId);
-
-            // 看看委托代销是否溢出
-            double hasOutBalancePay = inBillDAO.sumByOutBalanceId(outBal.getId());
-
-            // 发现支付的金额过多
-            if (hasOutBalancePay > outBal.getTotal())
+            // 有坏账的存在
+            if (apply.getBadMoney() != 0)
             {
-                throw new MYException("委托清单[%s]的总金额[%.2f],当前已付金额[%.2f]付款金额超出销售金额", outBal.getId(),
-                    outBal.getTotal(), hasOutBalancePay);
+                out.setBadDebts(apply.getBadMoney());
+
+                outDAO.modifyBadDebts(outId, apply.getBadMoney());
             }
 
-            outBalanceDAO.updateHadPay(outBal.getId(), hasOutBalancePay);
+            out.setHadPay(hasPay);
 
-            // 如果全部支付就自动表示收款
-            if (MathTools.equal2(outBal.getTotal(), hasOutBalancePay))
+            // 更新已经支付的金额
+            outDAO.updateHadPay(outId, hasPay);
+
+            // 先把委托代销的全部搞定
+            if ( !StringTools.isNullOrNone(outBalanceId))
             {
-                outBalanceDAO.updateHadPay(outId, OutConstant.PAY_YES);
-            }
-        }
+                // 更新委托清单
+                OutBalanceBean outBal = outBalanceDAO.find(outBalanceId);
 
-        tryUpdateOutPayStatus(user, out);
+                // 看看委托代销是否溢出
+                double hasOutBalancePay = inBillDAO.sumByOutBalanceId(outBal.getId());
+
+                // 发现支付的金额过多
+                if (hasOutBalancePay > outBal.getTotal())
+                {
+                    throw new MYException("委托清单[%s]的总金额[%.2f],当前已付金额[%.2f]付款金额超出销售金额", outBal
+                        .getId(), outBal.getTotal(), hasOutBalancePay);
+                }
+
+                outBalanceDAO.updateHadPay(outBal.getId(), hasOutBalancePay);
+
+                // 如果全部支付就自动表示收款
+                if (MathTools.equal2(outBal.getTotal(), hasOutBalancePay))
+                {
+                    outBalanceDAO.updateHadPay(outId, OutConstant.PAY_YES);
+                }
+            }
+
+            tryUpdateOutPayStatus(user, out);
+        }
     }
 
     /**

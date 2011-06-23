@@ -4506,6 +4506,24 @@ public class ParentOutAction extends DispatchAction
         request.setAttribute("refOutList", refList);
     }
 
+    protected void queryRefOut3(HttpServletRequest request, String outId)
+    {
+        // 验证ref
+        ConditionParse con = new ConditionParse();
+
+        con.addWhereStr();
+
+        con.addCondition("OutBean.refOutFullId", "=", outId);
+
+        con.addCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
+
+        con.addIntCondition("OutBean.outType", "=", OutConstant.OUTTYPE_IN_OTHER);
+
+        List<OutBean> refList = outDAO.queryEntityBeansByCondition(con);
+
+        request.setAttribute("refOutToBuyList", refList);
+    }
+
     /**
      * getDivs
      * 

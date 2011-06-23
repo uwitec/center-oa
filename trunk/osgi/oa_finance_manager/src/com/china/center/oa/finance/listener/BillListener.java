@@ -29,13 +29,13 @@ import com.china.center.oa.sail.bean.OutBean;
 public interface BillListener extends ParentListener
 {
     /**
-     * 销售单驳回后,应收转预收
+     * 销售单驳回/删除后,应收转预收
      * 
      * @param user
      * @param bean
      * @param list
      * @throws MYException
      */
-    void onRejectOut(User user, OutBean bean, List<InBillBean> list)
+    void onFeeInReceiveToPre(User user, OutBean bean, List<InBillBean> list)
         throws MYException;
 }

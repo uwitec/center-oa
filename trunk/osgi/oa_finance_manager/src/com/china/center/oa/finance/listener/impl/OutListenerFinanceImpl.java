@@ -232,37 +232,7 @@ public class OutListenerFinanceImpl extends AbstractListenerManager<BillListener
     public void onReject(User user, OutBean bean)
         throws MYException
     {
-        List<InBillBean> list = inBillDAO.queryEntityBeansByFK(bean.getFullId());
-
-        if (list.size() > 0)
-        {
-            for (InBillBean inBillBean : list)
-            {
-                inBillBean.setOutId("");
-
-                inBillBean.setOutBalanceId("");
-
-                inBillBean.setStatus(FinanceConstant.INBILL_STATUS_NOREF);
-
-                if (inBillBean.getCheckStatus() == PublicConstant.CHECK_STATUS_END)
-                {
-                    inBillBean.setDescription(inBillBean.getDescription()
-                                              + "<br>销售单被驳回,重置收款单的核对状态.");
-
-                    BillHelper.initInBillCheckStatus(inBillBean);
-                }
-            }
-
-            inBillDAO.updateAllEntityBeans(list);
-
-            // TAX_ADD 销售单驳回后,应收转预收
-            Collection<BillListener> listenerMapValues = this.listenerMapValues();
-
-            for (BillListener listener : listenerMapValues)
-            {
-                listener.onRejectOut(user, bean, list);
-            }
-        }
+        receiveToPre(user, bean);
 
         // 清空已经付款
         outDAO.updateHadPay(bean.getFullId(), 0.0d);
@@ -422,18 +392,48 @@ public class OutListenerFinanceImpl extends AbstractListenerManager<BillListener
     public void onDelete(User user, OutBean bean)
         throws MYException
     {
+        receiveToPre(user, bean);
+    }
+
+    /**
+     * 已收转预收
+     * 
+     * @param user
+     * @param bean
+     * @throws MYException
+     */
+    private void receiveToPre(User user, OutBean bean)
+        throws MYException
+    {
         List<InBillBean> list = inBillDAO.queryEntityBeansByFK(bean.getFullId());
 
         if (list.size() > 0)
         {
+            // 已收转预算
             for (InBillBean inBillBean : list)
             {
                 inBillBean.setOutId("");
 
                 inBillBean.setStatus(FinanceConstant.INBILL_STATUS_NOREF);
+
+                if (inBillBean.getCheckStatus() == PublicConstant.CHECK_STATUS_END)
+                {
+                    inBillBean.setDescription(inBillBean.getDescription()
+                                              + "<br>销售单被驳回/删除,重置收款单的核对状态.");
+
+                    BillHelper.initInBillCheckStatus(inBillBean);
+                }
             }
 
             inBillDAO.updateAllEntityBeans(list);
+
+            // TAX_ADD 销售单驳回/删除后,应收转预收
+            Collection<BillListener> listenerMapValues = this.listenerMapValues();
+
+            for (BillListener listener : listenerMapValues)
+            {
+                listener.onFeeInReceiveToPre(user, bean, list);
+            }
         }
     }
 

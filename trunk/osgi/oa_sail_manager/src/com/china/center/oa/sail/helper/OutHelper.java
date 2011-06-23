@@ -114,6 +114,26 @@ public abstract class OutHelper
         }
     }
 
+    /**
+     * 是否可以fee操作
+     * 
+     * @param outBean
+     * @return
+     */
+    public static boolean canFeeOpration(OutBean outBean)
+    {
+        int status = outBean.getStatus();
+
+        if (status == OutConstant.STATUS_SAVE || status == OutConstant.STATUS_REJECT)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
     public static boolean isSailEnd(OutBean outBean)
     {
         int status = outBean.getStatus();

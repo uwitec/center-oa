@@ -2021,6 +2021,14 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
             saveUnique(user, outBean);
 
+            // TAX_ADD 领样转销售通过
+            Collection<OutListener> listenerMapValues = listenerMapValues();
+
+            for (OutListener listener : listenerMapValues)
+            {
+                listener.onConfirmOutOrBuy(user, outBean);
+            }
+
             return;
         }
 
@@ -2120,6 +2128,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         newInBean.setStatus(OutConstant.BUY_STATUS_PASS);
 
+        // 对冲单据
         newInBean.setRefOutFullId(outBean.getRefOutFullId());
 
         newInBean.setCustomerId(CustomerConstant.PUBLIC_CUSTOMER_ID);
@@ -2400,7 +2409,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         }
                         catch (MYException e)
                         {
-                            throw new RuntimeException(e.getErrorContent());
+                            throw new RuntimeException(e.getErrorContent(), e);
                         }
                     }
 
@@ -3900,7 +3909,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
             catch (MYException e)
             {
-                throw new RuntimeException(e.getErrorContent());
+                throw new RuntimeException(e.getErrorContent(), e);
             }
         }
 
@@ -3922,7 +3931,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
             catch (MYException e)
             {
-                throw new RuntimeException(e.getErrorContent());
+                throw new RuntimeException(e.getErrorContent(), e);
             }
         }
 
@@ -3948,7 +3957,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
             catch (MYException e)
             {
-                throw new RuntimeException(e.getErrorContent());
+                throw new RuntimeException(e.getErrorContent(), e);
             }
         }
 
@@ -3970,7 +3979,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
             catch (MYException e)
             {
-                throw new RuntimeException(e.getErrorContent());
+                throw new RuntimeException(e.getErrorContent(), e);
             }
         }
     }
@@ -4003,7 +4012,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
             catch (MYException e)
             {
-                throw new RuntimeException(e.getErrorContent());
+                throw new RuntimeException(e.getErrorContent(), e);
             }
         }
 
@@ -4016,7 +4025,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
             catch (MYException e)
             {
-                throw new RuntimeException(e.getErrorContent());
+                throw new RuntimeException(e.getErrorContent(), e);
             }
         }
 
@@ -4038,7 +4047,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
             catch (MYException e)
             {
-                throw new RuntimeException(e.getErrorContent());
+                throw new RuntimeException(e.getErrorContent(), e);
             }
         }
     }
@@ -4242,7 +4251,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         {
             _logger.error(e, e);
 
-            throw new RuntimeException(e.getErrorContent());
+            throw new RuntimeException(e.getErrorContent(), e);
         }
     }
 

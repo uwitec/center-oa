@@ -57,6 +57,7 @@ import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.ShowDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
+import com.china.center.oa.publics.helper.LockHelper;
 import com.china.center.oa.publics.manager.AuthManager;
 import com.china.center.oa.publics.manager.FatalNotify;
 import com.china.center.oa.publics.manager.StafferManager;
@@ -1155,128 +1156,103 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public synchronized ActionForward modifyOutStatus(ActionMapping mapping, ActionForm form,
-                                                      HttpServletRequest request,
-                                                      HttpServletResponse reponse)
+    public ActionForward modifyOutStatus(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         long begin = System.currentTimeMillis();
 
-        try
+        String fullId = request.getParameter("outId");
+
+        // 动态锁
+        synchronized (LockHelper.getLock(fullId))
         {
-            String fullId = request.getParameter("outId");
-
-            User user = (User)request.getSession().getAttribute("user");
-
-            int statuss = Integer.parseInt(request.getParameter("statuss"));
-
-            String oldStatus = request.getParameter("oldStatus");
-
-            if (StringTools.isNullOrNone(oldStatus))
+            try
             {
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "没有历史状态,请重新操作!");
 
-                return mapping.findForward("error");
-            }
+                User user = (User)request.getSession().getAttribute("user");
 
-            int ioldStatus = Integer.parseInt(oldStatus);
+                int statuss = Integer.parseInt(request.getParameter("statuss"));
 
-            String reason = request.getParameter("reason");
+                String oldStatus = request.getParameter("oldStatus");
 
-            String selfQuery = request.getParameter("selfQuery");
-
-            String depotpartId = request.getParameter("depotpartId");
-
-            importLog.info(fullId + ":" + user.getStafferName() + ";oldStatus:" + oldStatus);
-
-            importLog.info(fullId + ":" + user.getStafferName() + ";nextStatus:" + statuss);
-
-            CommonTools.saveParamers(request);
-
-            OutBean out = null;
-
-            out = outDAO.find(fullId);
-
-            if (out.getStatus() == statuss)
-            {
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "请重新操作!");
-
-                return mapping.findForward("error");
-            }
-
-            if (out == null)
-            {
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不存在，请重新操作!");
-
-                return mapping.findForward("error");
-            }
-
-            if (out.getStatus() != ioldStatus)
-            {
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "单据已经被审批,请重新操作!");
-
-                return mapping.findForward("error");
-            }
-
-            int resultStatus = -1;
-
-            // 入库单的提交(调拨)
-            if (out.getType() == OutConstant.OUT_TYPE_INBILL
-                && statuss == OutConstant.STATUS_SUBMIT
-                && ! (out.getOutType() == OutConstant.OUTTYPE_IN_SWATCH || out.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK))
-            {
-                try
+                if (StringTools.isNullOrNone(oldStatus))
                 {
-                    resultStatus = outManager.submit(out.getFullId(), user,
-                        StorageConstant.OPR_STORAGE_OUTBILLIN);
-
-                    request.setAttribute(KeyConstant.MESSAGE, out.getFullId() + "库单成功提交!");
-                }
-                catch (MYException e)
-                {
-                    _logger.warn(e, e);
-
-                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理异常：" + e.getErrorContent());
-
-                    return mapping.findForward("error");
-                }
-            }
-            // 领样退库或者是销售退库的事业部审批
-            else if (out.getType() == OutConstant.OUT_TYPE_INBILL
-                     && (out.getOutType() == OutConstant.OUTTYPE_IN_SWATCH || out.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK))
-            {
-                try
-                {
-                    resultStatus = outManager.pass(fullId, user, OutConstant.BUY_STATUS_SUBMIT,
-                        reason, depotpartId);
-                }
-                catch (MYException e)
-                {
-                    _logger.warn(e, e);
-
-                    request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
-
-                    return mapping.findForward("error");
-                }
-            }
-            // 进入库单 库管--分经理--总裁--董事长
-            else if (out.getType() == OutConstant.OUT_TYPE_INBILL
-                     && statuss != OutConstant.STATUS_SUBMIT)
-            {
-                if (out.getOutType() == OutConstant.OUTTYPE_IN_COMMON
-                    || out.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT)
-                {
-                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "采购入库和调拨没有此操作");
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "没有历史状态,请重新操作!");
 
                     return mapping.findForward("error");
                 }
 
-                // 进入待总裁审批
-                if (statuss == OutConstant.BUY_STATUS_CEO_CHECK)
+                int ioldStatus = Integer.parseInt(oldStatus);
+
+                String reason = request.getParameter("reason");
+
+                String selfQuery = request.getParameter("selfQuery");
+
+                String depotpartId = request.getParameter("depotpartId");
+
+                importLog.info(fullId + ":" + user.getStafferName() + ";oldStatus:" + oldStatus);
+
+                importLog.info(fullId + ":" + user.getStafferName() + ";nextStatus:" + statuss);
+
+                CommonTools.saveParamers(request);
+
+                OutBean out = null;
+
+                out = outDAO.find(fullId);
+
+                if (out.getStatus() == statuss)
+                {
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "请重新操作!");
+
+                    return mapping.findForward("error");
+                }
+
+                if (out == null)
+                {
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不存在，请重新操作!");
+
+                    return mapping.findForward("error");
+                }
+
+                if (out.getStatus() != ioldStatus)
+                {
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "单据已经被审批,请重新操作!");
+
+                    return mapping.findForward("error");
+                }
+
+                int resultStatus = -1;
+
+                // 入库单的提交(调拨)
+                if (out.getType() == OutConstant.OUT_TYPE_INBILL
+                    && statuss == OutConstant.STATUS_SUBMIT
+                    && ! (out.getOutType() == OutConstant.OUTTYPE_IN_SWATCH || out.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK))
                 {
                     try
                     {
-                        resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_CEO_CHECK,
+                        resultStatus = outManager.submit(out.getFullId(), user,
+                            StorageConstant.OPR_STORAGE_OUTBILLIN);
+
+                        request.setAttribute(KeyConstant.MESSAGE, out.getFullId() + "库单成功提交!");
+                    }
+                    catch (MYException e)
+                    {
+                        _logger.warn(e, e);
+
+                        request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理异常："
+                                                                        + e.getErrorContent());
+
+                        return mapping.findForward("error");
+                    }
+                }
+                // 领样退库或者是销售退库的事业部审批
+                else if (out.getType() == OutConstant.OUT_TYPE_INBILL
+                         && (out.getOutType() == OutConstant.OUTTYPE_IN_SWATCH || out.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK))
+                {
+                    try
+                    {
+                        resultStatus = outManager.pass(fullId, user, OutConstant.BUY_STATUS_SUBMIT,
                             reason, depotpartId);
                     }
                     catch (MYException e)
@@ -1288,228 +1264,260 @@ public class OutAction extends ParentOutAction
                         return mapping.findForward("error");
                     }
                 }
-
-                // 进入待董事长审批
-                if (statuss == OutConstant.BUY_STATUS_CHAIRMA_CHECK)
+                // 进入库单 库管--分经理--总裁--董事长
+                else if (out.getType() == OutConstant.OUT_TYPE_INBILL
+                         && statuss != OutConstant.STATUS_SUBMIT)
                 {
-                    try
+                    if (out.getOutType() == OutConstant.OUTTYPE_IN_COMMON
+                        || out.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT)
                     {
-                        resultStatus = outManager.pass(fullId, user,
-                            OutConstant.STATUS_CHAIRMA_CHECK, reason, depotpartId);
-                    }
-                    catch (MYException e)
-                    {
-                        _logger.warn(e, e);
-
-                        request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+                        request.setAttribute(KeyConstant.ERROR_MESSAGE, "采购入库和调拨没有此操作");
 
                         return mapping.findForward("error");
                     }
-                }
 
-                // 进入库管发货(结束了)
-                if (statuss == OutConstant.BUY_STATUS_PASS)
-                {
-                    try
-                    {
-                        resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_PASS,
-                            reason, depotpartId);
-                    }
-                    catch (MYException e)
-                    {
-                        _logger.warn(e, e);
-
-                        request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
-
-                        return mapping.findForward("error");
-                    }
-                }
-
-                // 驳回
-                if (statuss == OutConstant.BUY_STATUS_REJECT)
-                {
-                    try
-                    {
-                        resultStatus = outManager.reject(fullId, user, reason);
-                    }
-                    catch (MYException e)
-                    {
-                        _logger.warn(e, e);
-
-                        request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
-
-                        return mapping.findForward("error");
-                    }
-                }
-            }
-            // 销售单的审批流程
-            else
-            {
-                // 业务员提交销售单
-                if (statuss == OutConstant.STATUS_SUBMIT)
-                {
-                    try
-                    {
-                        resultStatus = outManager.submit(fullId, user,
-                            StorageConstant.OPR_STORAGE_OUTBILL);
-                    }
-                    catch (MYException e)
-                    {
-                        _logger.warn(e, e);
-
-                        request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
-
-                        return mapping.findForward("error");
-                    }
-                }
-
-                // 区域总经理信用审核通过
-                if (statuss == OutConstant.STATUS_TEMP)
-                {
-                    try
-                    {
-                        resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_SUBMIT,
-                            reason, depotpartId);
-                    }
-                    catch (MYException e)
-                    {
-                        _logger.warn(e, e);
-
-                        request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
-
-                        return mapping.findForward("error");
-                    }
-                }
-
-                // 结算中心通过 物流管理员 库管通过 总裁通过
-                if (statuss == OutConstant.STATUS_MANAGER_PASS
-                    || statuss == OutConstant.STATUS_FLOW_PASS
-                    || statuss == OutConstant.STATUS_PASS)
-                {
-                    // 这里需要计算客户的信用金额-是否报送物流中心经理审批
-                    boolean outCredit = parameterDAO.getBoolean(SysConfigConstant.OUT_CREDIT);
-
-                    // 如果是黑名单的客户(且没有付款)
-                    if (outCredit && out.getReserve3() == OutConstant.OUT_SAIL_TYPE_MONEY
-                        && out.getType() == OutConstant.OUT_TYPE_OUTBILL
-                        && out.getPay() == OutConstant.PAY_NOT)
+                    // 进入待总裁审批
+                    if (statuss == OutConstant.BUY_STATUS_CEO_CHECK)
                     {
                         try
                         {
-                            outManager.payOut(user, fullId, "结算中心确定已经回款");
+                            resultStatus = outManager.pass(fullId, user,
+                                OutConstant.STATUS_CEO_CHECK, reason, depotpartId);
                         }
                         catch (MYException e)
                         {
+                            _logger.warn(e, e);
+
                             request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
 
                             return mapping.findForward("error");
                         }
+                    }
 
-                        OutBean newOut = outDAO.find(fullId);
-
-                        if (newOut.getPay() == OutConstant.PAY_NOT)
+                    // 进入待董事长审批
+                    if (statuss == OutConstant.BUY_STATUS_CHAIRMA_CHECK)
+                    {
+                        try
                         {
-                            request.setAttribute(KeyConstant.ERROR_MESSAGE,
-                                "只有结算中心确定已经回款后才可以审批此销售单");
+                            resultStatus = outManager.pass(fullId, user,
+                                OutConstant.STATUS_CHAIRMA_CHECK, reason, depotpartId);
+                        }
+                        catch (MYException e)
+                        {
+                            _logger.warn(e, e);
+
+                            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
 
                             return mapping.findForward("error");
                         }
                     }
 
-                    try
+                    // 进入库管发货(结束了)
+                    if (statuss == OutConstant.BUY_STATUS_PASS)
                     {
-                        resultStatus = outManager.pass(fullId, user, statuss, reason, depotpartId);
+                        try
+                        {
+                            resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_PASS,
+                                reason, depotpartId);
+                        }
+                        catch (MYException e)
+                        {
+                            _logger.warn(e, e);
+
+                            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+                            return mapping.findForward("error");
+                        }
                     }
-                    catch (MYException e)
+
+                    // 驳回
+                    if (statuss == OutConstant.BUY_STATUS_REJECT)
                     {
-                        _logger.warn(e, e);
+                        try
+                        {
+                            resultStatus = outManager.reject(fullId, user, reason);
+                        }
+                        catch (MYException e)
+                        {
+                            _logger.warn(e, e);
 
-                        request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+                            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
 
-                        return mapping.findForward("error");
+                            return mapping.findForward("error");
+                        }
                     }
                 }
-
-                // 驳回
-                if (statuss == OutConstant.STATUS_REJECT)
+                // 销售单的审批流程
+                else
                 {
-                    try
+                    // 业务员提交销售单
+                    if (statuss == OutConstant.STATUS_SUBMIT)
                     {
-                        resultStatus = outManager.reject(fullId, user, reason);
+                        try
+                        {
+                            resultStatus = outManager.submit(fullId, user,
+                                StorageConstant.OPR_STORAGE_OUTBILL);
+                        }
+                        catch (MYException e)
+                        {
+                            _logger.warn(e, e);
+
+                            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+                            return mapping.findForward("error");
+                        }
                     }
-                    catch (MYException e)
+
+                    // 区域总经理信用审核通过
+                    if (statuss == OutConstant.STATUS_TEMP)
                     {
-                        _logger.warn(e, e);
+                        try
+                        {
+                            resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_SUBMIT,
+                                reason, depotpartId);
+                        }
+                        catch (MYException e)
+                        {
+                            _logger.warn(e, e);
 
-                        request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+                            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
 
-                        return mapping.findForward("error");
+                            return mapping.findForward("error");
+                        }
+                    }
+
+                    // 结算中心通过 物流管理员 库管通过 总裁通过
+                    if (statuss == OutConstant.STATUS_MANAGER_PASS
+                        || statuss == OutConstant.STATUS_FLOW_PASS
+                        || statuss == OutConstant.STATUS_PASS)
+                    {
+                        // 这里需要计算客户的信用金额-是否报送物流中心经理审批
+                        boolean outCredit = parameterDAO.getBoolean(SysConfigConstant.OUT_CREDIT);
+
+                        // 如果是黑名单的客户(且没有付款)
+                        if (outCredit && out.getReserve3() == OutConstant.OUT_SAIL_TYPE_MONEY
+                            && out.getType() == OutConstant.OUT_TYPE_OUTBILL
+                            && out.getPay() == OutConstant.PAY_NOT)
+                        {
+                            try
+                            {
+                                outManager.payOut(user, fullId, "结算中心确定已经回款");
+                            }
+                            catch (MYException e)
+                            {
+                                request
+                                    .setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+                                return mapping.findForward("error");
+                            }
+
+                            OutBean newOut = outDAO.find(fullId);
+
+                            if (newOut.getPay() == OutConstant.PAY_NOT)
+                            {
+                                request.setAttribute(KeyConstant.ERROR_MESSAGE,
+                                    "只有结算中心确定已经回款后才可以审批此销售单");
+
+                                return mapping.findForward("error");
+                            }
+                        }
+
+                        try
+                        {
+                            resultStatus = outManager.pass(fullId, user, statuss, reason,
+                                depotpartId);
+                        }
+                        catch (MYException e)
+                        {
+                            _logger.warn(e, e);
+
+                            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+                            return mapping.findForward("error");
+                        }
+                    }
+
+                    // 驳回
+                    if (statuss == OutConstant.STATUS_REJECT)
+                    {
+                        try
+                        {
+                            resultStatus = outManager.reject(fullId, user, reason);
+                        }
+                        catch (MYException e)
+                        {
+                            _logger.warn(e, e);
+
+                            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+                            return mapping.findForward("error");
+                        }
                     }
                 }
-            }
 
-            // 核对状态方式发生异常
-            OutBean realOut = outDAO.findRealOut(fullId);
+                // 核对状态方式发生异常
+                OutBean realOut = outDAO.findRealOut(fullId);
 
-            if (realOut != null && realOut.getStatus() != resultStatus)
-            {
-                String msg = "严重错误,当前单据的状态应该是:" + OutHelper.getStatus(resultStatus) + ",而不是"
-                             + OutHelper.getStatus(realOut.getStatus()) + ".请联系管理员确认此单的正确状态!";
-
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, msg);
-
-                loggerError(fullId + ":" + msg);
-
-                return mapping.findForward("error");
-
-            }
-
-            importLog.info(fullId + ":" + user.getStafferName() + ";form:" + oldStatus + ";to"
-                           + resultStatus + "(SUCCESS)");
-
-            RequestTools.actionInitQuery(request);
-
-            if (realOut.getType() == OutConstant.OUT_TYPE_OUTBILL)
-            {
-                request.setAttribute(KeyConstant.MESSAGE, "单据["
-                                                          + fullId
-                                                          + "]操作成功,下一步是:"
-                                                          + OutHelper
-                                                              .getStatus(realOut.getStatus()));
-            }
-            else
-            {
-                request.setAttribute(KeyConstant.MESSAGE, "单据["
-                                                          + fullId
-                                                          + "]操作成功,下一步是:"
-                                                          + OutHelper.getStatus2(realOut
-                                                              .getStatus()));
-            }
-
-            if (realOut.getType() == OutConstant.OUT_TYPE_OUTBILL)
-            {
-                if ("1".equals(selfQuery))
+                if (realOut != null && realOut.getStatus() != resultStatus)
                 {
-                    return querySelfOut(mapping, form, request, reponse);
+                    String msg = "严重错误,当前单据的状态应该是:" + OutHelper.getStatus(resultStatus) + ",而不是"
+                                 + OutHelper.getStatus(realOut.getStatus()) + ".请联系管理员确认此单的正确状态!";
+
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, msg);
+
+                    loggerError(fullId + ":" + msg);
+
+                    return mapping.findForward("error");
+
                 }
 
-                return queryOut(mapping, form, request, reponse);
-            }
-            else
-            {
-                if (StringTools.isNullOrNone(request.getParameter("queryType")))
+                importLog.info(fullId + ":" + user.getStafferName() + ";form:" + oldStatus + ";to"
+                               + resultStatus + "(SUCCESS)");
+
+                RequestTools.actionInitQuery(request);
+
+                if (realOut.getType() == OutConstant.OUT_TYPE_OUTBILL)
                 {
-                    return querySelfBuy(mapping, form, request, reponse);
+                    request.setAttribute(KeyConstant.MESSAGE, "单据["
+                                                              + fullId
+                                                              + "]操作成功,下一步是:"
+                                                              + OutHelper.getStatus(realOut
+                                                                  .getStatus()));
+                }
+                else
+                {
+                    request.setAttribute(KeyConstant.MESSAGE, "单据["
+                                                              + fullId
+                                                              + "]操作成功,下一步是:"
+                                                              + OutHelper.getStatus2(realOut
+                                                                  .getStatus()));
                 }
 
-                return queryBuy(mapping, form, request, reponse);
-            }
-        }
-        finally
-        {
-            long end = System.currentTimeMillis();
+                if (realOut.getType() == OutConstant.OUT_TYPE_OUTBILL)
+                {
+                    if ("1".equals(selfQuery))
+                    {
+                        return querySelfOut(mapping, form, request, reponse);
+                    }
 
-            _logger.info("modifyOutStatus cost:" + (end - begin));
+                    return queryOut(mapping, form, request, reponse);
+                }
+                else
+                {
+                    if (StringTools.isNullOrNone(request.getParameter("queryType")))
+                    {
+                        return querySelfBuy(mapping, form, request, reponse);
+                    }
+
+                    return queryBuy(mapping, form, request, reponse);
+                }
+            }
+            finally
+            {
+                long end = System.currentTimeMillis();
+
+                _logger.info("modifyOutStatus cost:" + (end - begin));
+            }
         }
     }
 
@@ -2040,11 +2048,14 @@ public class OutAction extends ParentOutAction
                 request.setAttribute("balanceList", balanceList);
             }
 
+            // 个人领样
             if (bean.getOutType() == OutConstant.OUTTYPE_OUT_SWATCH)
             {
                 queryRefOut(request, outId);
 
                 queryRefOut2(request, outId);
+
+                queryRefOut3(request, outId);
             }
 
             // 退单
