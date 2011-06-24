@@ -226,6 +226,16 @@ public interface OutDAO extends DAO<OutBean, OutVO>
     double sumNoPayAndAvouchBusinessByStafferId(String stafferId, String industryId,
                                                 String beginDate, String endDate);
 
+    /**
+     * 被担保的金额
+     * 
+     * @param stafferId
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    double sumNoPayAndAvouchBusinessByManagerId3(String stafferId, String beginDate, String endDate);
+
     int countCustomerInOut(String customerId);
 
     /**

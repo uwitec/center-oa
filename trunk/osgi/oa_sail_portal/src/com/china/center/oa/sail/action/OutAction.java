@@ -1,6 +1,8 @@
 package com.china.center.oa.sail.action;
 
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import com.center.china.osgi.publics.User;
+import com.center.china.osgi.publics.file.writer.WriteFile;
+import com.center.china.osgi.publics.file.writer.WriteFileFactory;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.PageSeparateTools;
@@ -432,13 +436,17 @@ public class OutAction extends ParentOutAction
 
         StafferBean staffer = Helper.getStaffer(request);
 
-        // 查询是否
+        // 自己使用
+        double st = outDAO.sumNoPayAndAvouchBusinessByStafferId(staffer.getId(), staffer
+            .getIndustryId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
+
+        // 担保
         double mt = outDAO.sumNoPayAndAvouchBusinessByManagerId2(staffer.getId(), YYTools
             .getStatBeginDate(), YYTools.getStatEndDate());
 
-        // 这个不应该
-        double st = outDAO.sumNoPayAndAvouchBusinessByStafferId(staffer.getId(), staffer
-            .getIndustryId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
+        // 被担保
+        double bei = outDAO.sumNoPayAndAvouchBusinessByManagerId3(staffer.getId(), YYTools
+            .getStatBeginDate(), YYTools.getStatEndDate());
 
         double total = staffer.getCredit() * staffer.getLever();
 
@@ -458,9 +466,10 @@ public class OutAction extends ParentOutAction
         String msg01 = "信用杠杆:" + staffer.getLever() + "<br>";
         String msg1 = "开单使用额度:" + MathTools.formatNum(st) + "<br>";
         String msg2 = "担保使用额度:" + MathTools.formatNum(mt) + "<br>";
+        String msg22 = "被担保额度:" + MathTools.formatNum(bei) + "<br>";
         String msg3 = "剩余额度:" + MathTools.formatNum(total - st - mt);
 
-        ajax.setSuccess(msg0 + msg00 + msg01 + buffer + msg1 + msg2 + msg3);
+        ajax.setSuccess(msg0 + msg00 + msg01 + buffer + msg1 + msg2 + msg22 + msg3);
 
         return JSONTools.writeResponse(response, ajax);
     }
@@ -2395,6 +2404,81 @@ public class OutAction extends ParentOutAction
         condtion.addIntCondition("OutBalanceBean.status", "=", OutConstant.OUTBALANCE_STATUS_PASS);
 
         condtion.addCondition("order by OutBalanceBean.logTime desc");
+    }
+
+    /**
+     * 导出所有职员信用明细
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportAllStafferCredit(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
+                                                HttpServletResponse reponse)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        String filenName = "StafferCredit_" + TimeTools.now("yyyyMMddHHmm") + ".csv";
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        List<StafferBean> stafferList = stafferDAO.listCommonEntityBeans();
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            // 获取统计
+            outManager.writeStafferCredit(write, stafferList);
+
+            write.close();
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
     }
 
     /**

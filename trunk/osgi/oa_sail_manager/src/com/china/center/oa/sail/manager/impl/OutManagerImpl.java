@@ -9,6 +9,9 @@
 package com.china.center.oa.sail.manager.impl;
 
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -27,8 +30,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.center.china.osgi.config.ConfigLoader;
 import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
+import com.center.china.osgi.publics.file.writer.WriteFile;
+import com.center.china.osgi.publics.file.writer.WriteFileFactory;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
@@ -74,6 +80,7 @@ import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.manager.FatalNotify;
 import com.china.center.oa.publics.manager.NotifyManager;
+import com.china.center.oa.publics.vo.InvoiceCreditVO;
 import com.china.center.oa.publics.wrap.ResultBean;
 import com.china.center.oa.sail.bean.BaseBalanceBean;
 import com.china.center.oa.sail.bean.BaseBean;
@@ -104,6 +111,7 @@ import com.china.center.tools.ParamterMap;
 import com.china.center.tools.RandomTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
+import com.china.center.tools.WriteFileBuffer;
 
 
 /**
@@ -119,6 +127,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     private final Log _logger = LogFactory.getLog(getClass());
 
     private final Log importLog = LogFactory.getLog("sec");
+
+    private final Log triggerLog = LogFactory.getLog("trigger");
 
     private LocationDAO locationDAO = null;
 
@@ -4358,6 +4368,126 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         result[1] = fail;
 
         return result;
+    }
+
+    public void exportAllStafferCredit()
+    {
+        triggerLog.info("begin exportAllStafferCredit...");
+
+        WriteFile write = null;
+
+        OutputStream out = null;
+
+        try
+        {
+            out = new FileOutputStream(getStafferCreditStorePath() + "/StafferCredit_"
+                                       + TimeTools.now("yyyyMMddHHmmss") + ".csv");
+
+            List<StafferBean> stafferList = stafferDAO.listCommonEntityBeans();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            writeStafferCredit(write, stafferList);
+
+            write.close();
+
+        }
+        catch (Throwable e)
+        {
+            triggerLog.error(e, e);
+        }
+        finally
+        {
+            if (write != null)
+            {
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        triggerLog.info("end exportAllStafferCredit...");
+    }
+
+    public void writeStafferCredit(WriteFile write, List<StafferBean> stafferList)
+        throws IOException
+    {
+        write.writeLine("日期,职员,总信用额度,原始信用,信用杠杆,开单使用额度,担保使用额度,被担保额度,剩余额度,其他");
+
+        String now = TimeTools.now("yyyy-MM-dd");
+
+        WriteFileBuffer line = new WriteFileBuffer(write);
+
+        for (StafferBean staffer : stafferList)
+        {
+            if (staffer.getCredit() <= 0)
+            {
+                continue;
+            }
+
+            // 自己使用
+            double st = outDAO.sumNoPayAndAvouchBusinessByStafferId(staffer.getId(), staffer
+                .getIndustryId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
+
+            // 担保
+            double mt = outDAO.sumNoPayAndAvouchBusinessByManagerId2(staffer.getId(), YYTools
+                .getStatBeginDate(), YYTools.getStatEndDate());
+
+            // 被担保
+            double bei = outDAO.sumNoPayAndAvouchBusinessByManagerId3(staffer.getId(), YYTools
+                .getStatBeginDate(), YYTools.getStatEndDate());
+
+            double total = staffer.getCredit() * staffer.getLever();
+
+            StringBuffer buffer = new StringBuffer();
+
+            List<InvoiceCreditVO> vsList = invoiceCreditDAO.queryEntityVOsByFK(staffer.getId());
+
+            for (InvoiceCreditVO invoiceCreditVO : vsList)
+            {
+                buffer.append(invoiceCreditVO.getInvoiceName()).append("下的信用额度:").append(
+                    MathTools.formatNum(invoiceCreditVO.getCredit() * staffer.getLever())).append(
+                    ".");
+            }
+
+            line.writeColumn(now);
+            line.writeColumn(staffer.getName());
+            line.writeColumn(total);
+            line.writeColumn(staffer.getCredit());
+            line.writeColumn(staffer.getLever());
+            line.writeColumn(st);
+            line.writeColumn(mt);
+            line.writeColumn(bei);
+            line.writeColumn(total - st - mt);
+            line.writeColumn(buffer.toString());
+
+            line.writeLine();
+        }
+    }
+
+    /**
+     * @return the mailAttchmentPath
+     */
+    public String getStafferCreditStorePath()
+    {
+        return ConfigLoader.getProperty("stafferCreditStore");
     }
 
 }

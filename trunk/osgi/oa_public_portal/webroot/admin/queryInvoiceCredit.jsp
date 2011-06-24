@@ -34,6 +34,7 @@ function load()
          },
          buttons : [
              {id: 'update', bclass: 'update', caption: '更新信用', onpress : updateBean, auth: '0102'},
+             {id: 'export', bclass: 'replied',  caption: '导出所有职员信用', onpress : exports},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
              
@@ -68,6 +69,12 @@ function updateBean()
 	}
 	else
 	$error('不能操作');
+}
+
+function exports()
+{
+    if (window.confirm('确定导出导出所有职员信用明细?'))
+    document.location.href = '../sail/out.do?method=exportAllStafferCredit';
 }
 
 function doSearch()

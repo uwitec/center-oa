@@ -261,6 +261,7 @@ public class BankManagerImpl extends AbstractListenerManager<BankListener> imple
         StatBankBean stat = statBankDAO.findByBankIdAndTimeKey(bank.getId(), parameterDAO
             .getString(SysConfigConstant.BANK_STAT_POINT));
 
+        // TEMPLATE 导出CSV工具
         WriteFileBuffer line = new WriteFileBuffer(write);
 
         // 期初导出

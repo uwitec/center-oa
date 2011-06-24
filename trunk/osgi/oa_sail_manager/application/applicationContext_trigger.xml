@@ -25,11 +25,25 @@
         <property name="cronExpression" value="0 0 0/1 * * ?" />
     </bean>
     
+     <bean id="exportAllStafferCreditJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="outManager" />
+        <property name="targetMethod" value="exportAllStafferCredit" />
+        <property name="concurrent" value="false" />
+    </bean>
+    
+    <bean id="exportAllStafferCreditTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="exportAllStafferCreditJob" />
+        <property name="cronExpression" value="0 58 23 * * ?" />
+    </bean>
+    
     <bean
         class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
                 <ref bean="synTrigger" />
+                <ref bean="exportAllStafferCreditTrigger" />
             </list>
         </property>
     </bean>

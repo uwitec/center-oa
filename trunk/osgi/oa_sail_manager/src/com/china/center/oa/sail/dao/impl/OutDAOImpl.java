@@ -257,6 +257,26 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         return (Double)max;
     }
 
+    public double sumNoPayAndAvouchBusinessByManagerId3(String stafferId, String beginDate,
+                                                        String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("stafferId", stafferId);
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("endDate", endDate);
+
+        Object max = getIbatisDaoSupport().queryForObject(
+            "OutDAO.sumNoPayAndAvouchBusinessByManagerId3", paramterMap);
+
+        if (max == null)
+        {
+            return 0.0d;
+        }
+
+        return (Double)max;
+    }
+
     public double sumNoPayBusiness(String cid, String beginDate, String endDate)
     {
         Map<String, String> paramterMap = new HashMap();

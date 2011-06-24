@@ -9,11 +9,15 @@
 package com.china.center.oa.sail.manager;
 
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
+import com.center.china.osgi.publics.file.writer.WriteFile;
 import com.china.center.common.MYException;
+import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.wrap.ResultBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
@@ -326,4 +330,12 @@ public interface OutManager extends ListenerManager<OutListener>
      * @return
      */
     int[] initPriceKey();
+
+    /**
+     * 导出信用
+     */
+    void exportAllStafferCredit();
+
+    void writeStafferCredit(WriteFile write, List<StafferBean> stafferList)
+        throws IOException;
 }
