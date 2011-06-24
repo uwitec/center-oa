@@ -103,7 +103,7 @@ public class InvoiceinsBean implements Serializable
 
     private String refIds = "";
 
-    @Html(title = "备注", maxLength = 200, type = Element.TEXTAREA)
+    @Html(title = "备注", maxLength = 500, type = Element.TEXTAREA)
     private String description = "";
 
     @Ignore
