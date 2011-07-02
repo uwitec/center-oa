@@ -28,6 +28,9 @@ public class StafferVSCustomerVO extends StafferVSCustomerBean
     @Relationship(tagField = "name", relationField = "customerId")
     private String customerName = "";
 
+    @Relationship(tagField = "name", relationField = "stafferId")
+    private String stafferName = "";
+
     @Relationship(tagField = "code", relationField = "customerId")
     private String customerCode = "";
 
@@ -70,5 +73,40 @@ public class StafferVSCustomerVO extends StafferVSCustomerBean
     public void setCustomerCode(String customerCode)
     {
         this.customerCode = customerCode;
+    }
+
+    /**
+     * @return the stafferName
+     */
+    public String getStafferName()
+    {
+        return stafferName;
+    }
+
+    /**
+     * @param stafferName
+     *            the stafferName to set
+     */
+    public void setStafferName(String stafferName)
+    {
+        this.stafferName = stafferName;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuffer retValue = new StringBuffer();
+
+        retValue.append("StafferVSCustomerVO ( ").append(super.toString()).append(TAB).append("customerName = ").append(
+            this.customerName).append(TAB).append("stafferName = ").append(this.stafferName).append(TAB).append(
+            "customerCode = ").append(this.customerCode).append(TAB).append(" )");
+
+        return retValue.toString();
     }
 }
