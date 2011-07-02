@@ -319,6 +319,11 @@ function showDiv(id)
 	tooltip.showTable(jmap[id]);
 }
 
+function dialog_open()
+{
+    $v('dia_inner', true);
+}
+
 function load()
 {
 	loadForm();
@@ -626,7 +631,7 @@ function load()
 </form>
 
 <div id="dlg" title="选择发票类型" style="width:400px;">
-    <div style="padding:20px;height:200px;" id="dia_inner" title="">
+    <div style="padding:20px;height:200px;display: none;" id="dia_inner" title="">
     <c:forEach items="${invoiceList}" var="item">
     <p id="s_${item.id}"><input type="radio" name="invoices" value="${item.id}">${item.fullName}<br></p>
     </c:forEach>

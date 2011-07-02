@@ -135,6 +135,11 @@ function showDiv(id)
 	tooltip.showTable(jmap[id]);
 }
 
+function dialog_open()
+{
+    $v('dia_inner', true);
+}
+
 function load()
 {
     var ll = document.getElementsByName('fullId');
@@ -901,7 +906,7 @@ function hrefAndSelect(obj)
 
 </form>
 <div id="dlg" title="结算中心驳回" style="width:320px;height:300px;">
-    <div style="padding:20px;height:200px;" id="dia_inner" title="">
+    <div style="padding:20px;height:200px;display:none" id="dia_inner" title="" >
     意见：<input type="text" name="passReason" id="passReason" value=""><br>
     <input type="radio" name="reasonRadio" value="批价错误" onclick="rchange()">批价错误<br>
     <input type="radio" name="reasonRadio" value="帐期错误" onclick="rchange()">帐期错误<br>
