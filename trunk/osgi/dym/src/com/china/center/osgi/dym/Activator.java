@@ -4,29 +4,39 @@ package com.china.center.osgi.dym;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import com.center.china.osgi.publics.dym.DynamicApplicationContextTools;
 
+
+/**
+ * Activator
+ * 
+ * @author ZHUZHU
+ * @version 2011-7-1
+ * @see Activator
+ * @since 1.0
+ */
 public class Activator implements BundleActivator
 {
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-     */
+    private OSGIApplicationContextImpl impl = new OSGIApplicationContextImpl();
+
     public void start(BundleContext context)
         throws Exception
     {
         DynamicBundleTools.setBundleContext(context);
+
+        this.impl.setBundleContext(context);
+
+        DynamicApplicationContextTools.setOsgiApplicationContext(this.impl);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-     */
     public void stop(BundleContext context)
         throws Exception
     {
         DynamicBundleTools.removeBundleContext(context);
+
+        this.impl.removeBundleContext(context);
+
+        DynamicApplicationContextTools.setOsgiApplicationContext(null);
     }
 
 }
