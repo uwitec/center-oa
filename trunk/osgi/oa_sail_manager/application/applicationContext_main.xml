@@ -35,7 +35,7 @@
 			<value>com.china.center.oa.sail.manager.OutManager</value>
 		</property>
 		<property name="serverName">
-			<value>com.china.center.oa.sail.inner.outManager</value>
+			<value>inner_outManager</value>
 		</property>
 	</bean>
 

@@ -10,8 +10,21 @@
 	  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 	  http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
 	  http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"
-	default-autowire="byName" default-init-method="init" default-destroy-method="destroy">
+	default-autowire="byName" default-init-method="init"
+	default-destroy-method="destroy">
 
-	<bean id="outManager" class="com.china.center.oa.sail.manager.impl.OutManagerImpl" />
+	<bean id="outManager"
+		class="com.china.center.oa.sail.manager.impl.OutManagerImpl" />
+
+	<bean id="redirectRegisterManager"
+		class="com.center.china.osgi.publics.factory.RedirectRegisterManager">
+		<property name="registerMap">
+			<map>
+				<entry key="inner_outManager">
+					<ref bean="outManager" />
+				</entry>
+			</map>
+		</property>
+	</bean>
 
 </beans>
