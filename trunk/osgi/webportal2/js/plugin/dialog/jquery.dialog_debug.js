@@ -12,6 +12,11 @@ var BUTTON_CANCEL = Res._Button['Cancel'];
         var state = $.data(target, 'dialog');
         var options = state.options;
         
+        if (typeof(dialog_open) != 'undefined' && dialog_open)
+        {
+            dialog_open();
+        }
+        
         switch(options.showType) {
             case null:
                 state.dialog.css('display', 'block');
