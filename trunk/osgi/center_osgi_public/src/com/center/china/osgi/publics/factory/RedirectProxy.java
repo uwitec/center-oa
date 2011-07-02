@@ -30,6 +30,8 @@ public class RedirectProxy
 
     private Object proxy = null;
 
+    private RedirectInvocationHandler handler = new RedirectInvocationHandler();
+
     /**
      * default constructor
      */
@@ -44,8 +46,6 @@ public class RedirectProxy
 
     public Object getServerProxy()
     {
-        RedirectInvocationHandler handler = new RedirectInvocationHandler();
-
         handler.setServerName(this.serverName);
 
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
@@ -114,5 +114,13 @@ public class RedirectProxy
     public Object getProxy()
     {
         return proxy;
+    }
+
+    /**
+     * @return the handler
+     */
+    public RedirectInvocationHandler getHandler()
+    {
+        return handler;
     }
 }

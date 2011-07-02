@@ -13,7 +13,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 import com.center.china.osgi.publics.NoServiceFoundException;
-import com.center.china.osgi.publics.tools.LookupService;
 
 
 /**
@@ -44,7 +43,7 @@ public class RedirectInvocationHandler implements InvocationHandler
      */
     public Object getTarget()
     {
-        Object findService = LookupService.findService(this.serverName);
+        Object findService = RedirectRegisterManager.findService(this.serverName);
 
         if (findService == null)
         {
@@ -70,5 +69,4 @@ public class RedirectInvocationHandler implements InvocationHandler
     {
         this.serverName = serverName;
     }
-
 }
