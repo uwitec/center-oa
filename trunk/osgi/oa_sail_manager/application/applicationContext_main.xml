@@ -18,8 +18,6 @@
 
 	<bean id="outUniqueDAO" class="com.china.center.oa.sail.dao.impl.OutUniqueDAOImpl" />
 
-	<bean id="outManager" class="com.china.center.oa.sail.manager.impl.OutManagerImpl" />
-
 	<bean id="consignDAO" class="com.china.center.oa.sail.dao.impl.ConsignDAOImpl" />
 
 	<bean id="consignManager" class="com.china.center.oa.sail.manager.impl.ConsignManagerImpl" />
@@ -31,5 +29,14 @@
 	<bean id="outQueryDAO" class="com.china.center.oa.sail.dao.impl.OutQueryDAOImpl" />
 
 	<bean id="unitViewDAO" class="com.china.center.oa.sail.dao.impl.UnitViewDAOImpl" />
+	
+	<bean id="outManager" class="com.center.china.osgi.publics.factory.RedirectFactoryBean">
+		<property name="interfaceName">
+			<value>com.china.center.oa.sail.manager.OutManager</value>
+		</property>
+		<property name="serverName">
+			<value>com.china.center.oa.sail.inner.outManager</value>
+		</property>
+	</bean>
 
 </beans>
