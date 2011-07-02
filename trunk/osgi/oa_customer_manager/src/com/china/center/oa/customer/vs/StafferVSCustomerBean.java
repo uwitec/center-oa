@@ -18,6 +18,7 @@ import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.Unique;
+import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.publics.bean.StafferBean;
 
@@ -38,7 +39,7 @@ public class StafferVSCustomerBean implements Serializable
     private String id = "";
 
     @FK
-    @Join(tagClass = StafferBean.class)
+    @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
     private String stafferId = "";
 
     @Unique
