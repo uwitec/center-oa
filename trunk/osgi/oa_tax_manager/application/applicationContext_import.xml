@@ -58,5 +58,7 @@
 	<!-- ************************************************************************************** -->
 	
 	<osgi:reference id="bankManager" interface="com.china.center.oa.finance.manager.BankManager" />
+	
+	<osgi:reference id="billManager" interface="com.china.center.oa.finance.manager.BillManager" />
 
 </beans>

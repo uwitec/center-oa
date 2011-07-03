@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.publics.constant.IDPrefixConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
@@ -65,6 +66,8 @@ public class FinanceManagerImpl implements FinanceManager
     private FinanceItemDAO financeItemDAO = null;
 
     private TaxDAO taxDAO = null;
+
+    private BillManager billManager = null;
 
     /**
      * default constructor
@@ -189,6 +192,14 @@ public class FinanceManagerImpl implements FinanceManager
         financeDAO.saveEntityBean(bean);
 
         financeItemDAO.saveAllEntityBeans(itemList);
+
+        // 手工增加增加成功后需要更新
+        if (bean.getCreateType() == TaxConstanst.FINANCE_CREATETYPE_HAND
+            && !StringTools.isNullOrNone(bean.getRefId()))
+        {
+            billManager.updateBillBeanChecksWithoutTransactional(user, bean.getRefId(),
+                "增加手工凭证自动更新收款单核对状态:" + FinanceHelper.createFinanceLink(bean.getId()));
+        }
 
         return true;
     }
@@ -640,5 +651,22 @@ public class FinanceManagerImpl implements FinanceManager
     public void setTaxDAO(TaxDAO taxDAO)
     {
         this.taxDAO = taxDAO;
+    }
+
+    /**
+     * @return the billManager
+     */
+    public BillManager getBillManager()
+    {
+        return billManager;
+    }
+
+    /**
+     * @param billManager
+     *            the billManager to set
+     */
+    public void setBillManager(BillManager billManager)
+    {
+        this.billManager = billManager;
     }
 }

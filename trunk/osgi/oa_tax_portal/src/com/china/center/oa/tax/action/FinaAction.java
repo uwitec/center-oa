@@ -936,6 +936,8 @@ public class FinaAction extends DispatchAction
 
     private void preInner(HttpServletRequest request)
     {
+        CommonTools.saveParamers(request);
+
         List<TaxBean> taxList = taxDAO.listEntityBeans("order by TaxBean.code asc");
 
         for (Iterator iterator = taxList.iterator(); iterator.hasNext();)

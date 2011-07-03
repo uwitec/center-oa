@@ -122,4 +122,9 @@ public abstract class FinanceHelper
 
         item.setLogTime(financeBean.getLogTime());
     }
+
+    public static String createFinanceLink(String id)
+    {
+        return "<a href='../finance/finance.do?method=findFinance&id=" + id + "'>" + id + "</a>";
+    }
 }

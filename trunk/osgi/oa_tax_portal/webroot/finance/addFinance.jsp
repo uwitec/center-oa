@@ -8,6 +8,7 @@
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/json.js"></script>
+<script language="JavaScript" src="../js/math.js"></script>
 <script language="JavaScript" src="../tax_js/autosuggest_debug.js"></script>
 <script language="JavaScript" src="../tax_js/addTax.js"></script>
 <script language="JavaScript" src="../tax_js/addFinance.js"></script>
@@ -116,8 +117,8 @@ function callClick(obj, el)
 </head>
 <body class="body_class" onload="load()">
 <form name="formEntry" action="../finance/finance.do" method="post">
-<input
-	type="hidden" name="method" value="addFinance"> 
+<input type="hidden" name="method" value="addFinance"> 
+<input type="hidden" name="refId" value="${refId}"> 
 
 <p:navigation height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
