@@ -25,7 +25,7 @@
             and t1.status in (3, 4)
             and t1.outTime >= #outTime# 
             and t3.id = t2.creditLevelId
-            GROUP by t1.customerId 
+            GROUP by t1.customerId having sum(t1.total) > 0
             ORDER by notPay desc
         ]]>
     </select>
