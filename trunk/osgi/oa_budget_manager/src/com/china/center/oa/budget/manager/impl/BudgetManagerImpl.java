@@ -33,6 +33,7 @@ import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.publics.bean.LogBean;
 import com.china.center.oa.publics.bean.PlanBean;
+import com.china.center.oa.publics.constant.IDPrefixConstant;
 import com.china.center.oa.publics.constant.ModuleConstant;
 import com.china.center.oa.publics.constant.OperationConstant;
 import com.china.center.oa.publics.constant.PlanConstant;
@@ -92,7 +93,7 @@ public class BudgetManagerImpl implements BudgetManager
 
         checkAddBean(bean);
 
-        bean.setId(commonDAO.getSquenceString20());
+        bean.setId(commonDAO.getSquenceString20(IDPrefixConstant.ID_BUDGET_PREFIX));
 
         setTotalAndSaveSubItem(bean);
 

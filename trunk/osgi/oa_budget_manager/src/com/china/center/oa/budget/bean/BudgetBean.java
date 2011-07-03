@@ -29,7 +29,7 @@ import com.china.center.oa.publics.bean.StafferBean;
 /**
  * BudgetBean
  * 
- * @author zhuzhu
+ * @author ZHUZHU
  * @version 2008-12-2
  * @see BudgetBean
  * @since 1.0

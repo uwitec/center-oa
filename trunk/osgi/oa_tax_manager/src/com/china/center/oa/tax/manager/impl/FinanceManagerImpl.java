@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.publics.constant.IDPrefixConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.tax.bean.CheckViewBean;
@@ -77,7 +78,7 @@ public class FinanceManagerImpl implements FinanceManager
     {
         JudgeTools.judgeParameterIsNull(user, bean, bean.getItemList());
 
-        bean.setId(commonDAO.getSquenceString20());
+        bean.setId(commonDAO.getSquenceString20(IDPrefixConstant.ID_FINANCE_PREFIX));
 
         bean.setName(bean.getId());
 
