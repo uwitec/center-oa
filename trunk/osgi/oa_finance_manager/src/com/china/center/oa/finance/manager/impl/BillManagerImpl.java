@@ -24,6 +24,7 @@ import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.StatBankManager;
+import com.china.center.oa.publics.constant.IDPrefixConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.sail.bean.OutBean;
@@ -88,14 +89,14 @@ public class BillManagerImpl implements BillManager
     {
         synchronized (LOCK)
         {
-            bean.setId(commonDAO.getSquenceString20());
+            bean.setId(commonDAO.getSquenceString20(IDPrefixConstant.ID_BILL_PREFIX));
 
             if (StringTools.isNullOrNone(bean.getLogTime()))
             {
                 bean.setLogTime(TimeTools.now());
             }
 
-            // 验证销售单绑定策略
+            // 验证销售单绑定策略(非坏账)
             if ( !StringTools.isNullOrNone(bean.getOutId())
                 && bean.getType() != FinanceConstant.INBILL_TYPE_BADOUT)
             {
@@ -248,7 +249,7 @@ public class BillManagerImpl implements BillManager
             throw new MYException("帐户剩余[%.2f],当前付款金额[%.2f],金额不足", total, bean.getMoneys());
         }
 
-        bean.setId(commonDAO.getSquenceString20());
+        bean.setId(commonDAO.getSquenceString20(IDPrefixConstant.ID_BILL_PREFIX));
 
         bean.setLogTime(TimeTools.now());
 
@@ -402,7 +403,7 @@ public class BillManagerImpl implements BillManager
         // 生成收款单
         InBillBean inbill = new InBillBean();
 
-        inbill.setId(commonDAO.getSquenceString20());
+        inbill.setId(commonDAO.getSquenceString20(IDPrefixConstant.ID_BILL_PREFIX));
 
         inbill.setBankId(bean.getDestBankId());
 
@@ -464,7 +465,7 @@ public class BillManagerImpl implements BillManager
             // 锁定了生成一个自己的收款单
             InBillBean inbill = new InBillBean();
 
-            inbill.setId(commonDAO.getSquenceString20());
+            inbill.setId(commonDAO.getSquenceString20(IDPrefixConstant.ID_BILL_PREFIX));
 
             inbill.setBankId(bean.getBankId());
 
@@ -536,7 +537,7 @@ public class BillManagerImpl implements BillManager
         inBillDAO.updateEntityBean(bill);
 
         // 分拆后时间不能变(锁定状态不能变)
-        bill.setId(commonDAO.getSquenceString20());
+        bill.setId(commonDAO.getSquenceString20(IDPrefixConstant.ID_BILL_PREFIX));
 
         bill.setMoneys(newMoney);
 

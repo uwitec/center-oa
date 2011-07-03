@@ -39,6 +39,7 @@ import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.PaymentApplyManager;
 import com.china.center.oa.finance.vs.PaymentVSOutBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
+import com.china.center.oa.publics.constant.IDPrefixConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
@@ -111,7 +112,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
         checkAdd(user, bean);
 
-        bean.setId(commonDAO.getSquenceString20());
+        bean.setId(commonDAO.getSquenceString20(IDPrefixConstant.ID_PAYMENTAPPLY_PREFIX));
 
         bean.setLogTime(TimeTools.now());
 
@@ -724,10 +725,9 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
     private void saveBillInner(User user, PaymentApplyBean apply, PaymentBean payment,
                                PaymentVSOutBean item, String reason)
+        throws MYException
     {
         InBillBean inBean = new InBillBean();
-
-        inBean.setId(commonDAO.getSquenceString20());
 
         inBean.setBankId(payment.getBankId());
 
@@ -767,7 +767,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
         inBean.setType(FinanceConstant.INBILL_TYPE_SAILOUT);
 
-        inBillDAO.saveEntityBean(inBean);
+        billManager.addInBillBeanWithoutTransaction(user, inBean);
 
         item.setBillId(inBean.getId());
     }

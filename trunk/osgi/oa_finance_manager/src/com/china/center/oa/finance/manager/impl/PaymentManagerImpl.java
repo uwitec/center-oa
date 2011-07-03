@@ -33,6 +33,7 @@ import com.china.center.oa.finance.listener.PaymentListener;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.PaymentManager;
 import com.china.center.oa.finance.manager.StatBankManager;
+import com.china.center.oa.publics.constant.IDPrefixConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
@@ -81,7 +82,7 @@ public class PaymentManagerImpl extends AbstractListenerManager<PaymentListener>
     public boolean addBean(User user, PaymentBean bean)
         throws MYException
     {
-        bean.setId(commonDAO.getSquenceString20());
+        bean.setId(commonDAO.getSquenceString20(IDPrefixConstant.ID_PAYMENT_PREFIX));
 
         bean.setLogTime(TimeTools.now());
 
@@ -110,7 +111,7 @@ public class PaymentManagerImpl extends AbstractListenerManager<PaymentListener>
     {
         for (PaymentBean paymentBean : beanList)
         {
-            paymentBean.setId(commonDAO.getSquenceString20());
+            paymentBean.setId(commonDAO.getSquenceString20(IDPrefixConstant.ID_PAYMENT_PREFIX));
 
             paymentBean.setLogTime(TimeTools.now());
         }
