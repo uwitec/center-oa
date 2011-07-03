@@ -574,6 +574,28 @@ public class BillManagerImpl implements BillManager
         return true;
     }
 
+    public boolean updateBillBeanChecksWithoutTransactional(User user, String id, String checks)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        InBillBean inBill = inBillDAO.find(id);
+
+        if (inBill != null && inBill.getCheckStatus() == PublicConstant.CHECK_STATUS_INIT)
+        {
+            return updateInBillBeanChecks(user, id, checks);
+        }
+
+        OutBillBean bill = outBillDAO.find(id);
+
+        if (bill != null && bill.getCheckStatus() == PublicConstant.CHECK_STATUS_INIT)
+        {
+            return updateOutBillBeanChecks(user, id, checks);
+        }
+
+        return true;
+    }
+
     @Transactional(rollbackFor = MYException.class)
     public boolean updateOutBillBeanChecks(User user, String id, String checks)
         throws MYException

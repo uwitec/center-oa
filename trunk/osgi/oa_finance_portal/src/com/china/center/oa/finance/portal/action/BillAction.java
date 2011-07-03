@@ -307,6 +307,8 @@ public class BillAction extends DispatchAction
 
             bean.setStafferId(user.getStafferId());
 
+            bean.setOwnerId(user.getStafferId());
+
             bean.setLocationId(user.getLocationId());
 
             bean.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
@@ -377,6 +379,8 @@ public class BillAction extends DispatchAction
             User user = Helper.getUser(request);
 
             bean.setStafferId(user.getStafferId());
+
+            bean.setOwnerId(user.getStafferId());
 
             bean.setLocationId(user.getLocationId());
 

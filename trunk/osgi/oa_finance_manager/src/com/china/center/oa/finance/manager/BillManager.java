@@ -56,6 +56,18 @@ public interface BillManager
     boolean updateOutBillBeanChecks(User user, String id, String checks)
         throws MYException;
 
+    /**
+     * 更新核对状态(包括收付款)
+     * 
+     * @param user
+     * @param id
+     * @param checks
+     * @return
+     * @throws MYException
+     */
+    boolean updateBillBeanChecksWithoutTransactional(User user, String id, String checks)
+        throws MYException;
+
     boolean deleteInBillBean(User user, String id)
         throws MYException;
 

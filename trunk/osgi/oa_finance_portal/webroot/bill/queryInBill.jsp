@@ -32,7 +32,7 @@ function load()
          title: '收款单列表',
          url: gurl + 'query' + ukey,
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} llock={lock}>', width : 40, align: 'center'},
+             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} lcheck={checkStatus} llock={lock} lctype={createType}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},
              {display: '帐号', name : 'bankName', width : '20%'},
              {display: '类型', name : 'type', cc: 'inbillType', width : '5%'},
@@ -49,6 +49,7 @@ function load()
          },
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1603'},
+             {id: 'add2', bclass: 'add', caption: '创建关联凭证', onpress : addFinance, auth: '1802'},
              //{id: 'update', bclass: 'update', caption: '分拆预收', auth: '1603', onpress : splitInBill},
              {id: 'update2', bclass: 'update', caption: '总部核对', auth: '1803', onpress : updateInBillBeanChecks},
              {id: 'del', bclass: 'delete', auth: '1603', onpress : delBean},
@@ -72,6 +73,18 @@ function addBean(opr, grid)
 {
     $l(gurl + 'preForAdd' + ukey);
     //$l(addUrl);
+}
+
+function addFinance(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb') 
+        && getRadio('checkb').lctype == 1 
+        && getRadio('checkb').lcheck == 0)
+    {
+        $l('../finance/finance.do?method=preForAddFinance&refId=' + getRadioValue('checkb'));
+    }
+    else
+    $error('只有手工创建的单据且未核对才能操作');
 }
 
 function delBean(opr, grid)
