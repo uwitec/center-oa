@@ -92,7 +92,6 @@
     
     <osgi:reference id="outBillDAO" interface="com.china.center.oa.finance.dao.OutBillDAO" />
     
-    <osgi:reference id="outQueryDAO" interface="com.china.center.oa.sail.dao.OutQueryDAO" />
-	
+    <osgi:reference id="outQueryDAO" interface="com.china.center.oa.customervssail.dao.OutQueryDAO" />
 	
 </beans>
