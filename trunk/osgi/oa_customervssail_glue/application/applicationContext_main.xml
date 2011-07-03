@@ -16,4 +16,6 @@
 
 	<bean id="curOutManager" class="com.china.center.oa.customervssail.manager.impl.CurOutManagerImpl" />
 
+	<bean id="outQueryDAO" class="com.china.center.oa.customervssail.dao.impl.OutQueryDAOImpl" />
+
 </beans>

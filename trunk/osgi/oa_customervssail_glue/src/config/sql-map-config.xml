@@ -8,4 +8,5 @@
 		maxSessions="150" maxTransactions="60" useStatementNamespaces="true" />
 
 	<sqlMap resource="ibatisSqlConf/OutStatDAOImpl.xml" />
+	<sqlMap resource="ibatisSqlConf/OutQueryDAOImpl.xml" />
 </sqlMapConfig>

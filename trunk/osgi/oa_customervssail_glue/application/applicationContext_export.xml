@@ -15,4 +15,6 @@
 
 	<osgi:service ref="curOutManager" interface="com.china.center.oa.customervssail.manager.CurOutManager" />
 
+	<osgi:service ref="outQueryDAO" interface="com.china.center.oa.customervssail.dao.OutQueryDAO" />
+
 </beans>
