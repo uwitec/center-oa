@@ -80,6 +80,22 @@ public class StringTools
         return "A1" + TimeTools.now("yyyyMMdd") + formatString(name);
     }
 
+    public static String formatString20(String pfix, String name)
+    {
+        if (isNullOrNone(pfix))
+        {
+            return formatString20(name);
+        }
+        else if (pfix.length() == 1)
+        {
+            return pfix + "1" + TimeTools.now("yyyyMMdd") + formatString(name);
+        }
+        else
+        {
+            return pfix.substring(0, 2) + TimeTools.now("yyyyMMdd") + formatString(name);
+        }
+    }
+
     /**
      * 获得系统的字符集
      * 
