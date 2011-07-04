@@ -49,6 +49,9 @@ public class TokenVSOperationBean implements Serializable
      */
     private int rejectParent = FlowConstant.OPERATION_NO;
 
+    /**
+     * 驳回到初始
+     */
     private int rejectAll = FlowConstant.OPERATION_NO;
 
     private int ends = FlowConstant.OPERATION_NO;
@@ -64,7 +67,8 @@ public class TokenVSOperationBean implements Serializable
      * default constructor
      */
     public TokenVSOperationBean()
-    {}
+    {
+    }
 
     /**
      * @return the id
