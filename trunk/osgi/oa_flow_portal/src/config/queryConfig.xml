@@ -31,6 +31,12 @@
 			<type>select</type>
 			<option>$112</option>
 		</condtion>
+		<condtion name="stafferId" caption="创建人">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$staffer</option>
+        </condtion>
 	</item>
 	
 	<item name="queryFlowDefine2" deaultpfix="FlowDefineBean">
