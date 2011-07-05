@@ -83,7 +83,7 @@ function addBean()
                         
                         <td align="center">${fristBase.inway}</td>
                         
-                        <td align="center"><input type="text"  style="width: 100%" name="amount" oncheck="notNone;isInt;range(0, ${fristBase.unit})"></td>
+                        <td align="center"><input type="text"  style="width: 100%" name="amount" oncheck="notNone;isNumber;range(0, ${fristBase.unit})"></td>
                         
                         <td align="center"><input type="text"  style="width: 100%" name="price" oncheck="notNone;isFloat" value="${my:formatNum(fristBase.price)}" readonly="readonly"></td>
                     </tr>
@@ -105,7 +105,7 @@ function addBean()
                         
                         <td align="center">${fristBase.inway}</td>
                         
-                        <td align="center"><input type="text" value="${fristBase.unit}" readonly="readonly"  style="width: 100%" name="amount" oncheck="notNone;isInt;range(0, ${fristBase.unit})"></td>
+                        <td align="center"><input type="text" value="${fristBase.unit}" readonly="readonly"  style="width: 100%" name="amount" oncheck="notNone;isNumber;range(0, ${fristBase.unit})"></td>
                         
                         <td align="center"><input type="text" value="${my:formatNum(fristBase.price)}" readonly="readonly" style="width: 100%" name="price" oncheck="notNone;isFloat"></td>
                     </tr>

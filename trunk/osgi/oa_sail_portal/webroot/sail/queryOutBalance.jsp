@@ -117,7 +117,7 @@ function load()
 
 function reject()
 {
-    if (getRadio('fullId').statuss == 1)
+    if (getRadio('fullId').statuss == 0 || getRadio('fullId').statuss == 1)
     {
         $.messager.prompt('驳回', '请输入驳回原因', '', function(r){
                 if (r)
