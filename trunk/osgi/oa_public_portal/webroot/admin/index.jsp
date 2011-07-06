@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core"%>
 <html>
 <head>
-<title>-=SKY·OA系统[V3.00.20100703]=-</title>
+<title>-=SKY·OA系统[V3.00.20110703]=-</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <style type="text/css">
 a:link {
@@ -111,7 +111,8 @@ function VerifyInput()
         return;
 	}
 	
-    if (isUseActive && !isActive && is_ie)
+	//暂时不校验了
+    if (false && isUseActive && !isActive && is_ie)
     {
         alert('安全控件初始化失败,请下载安全控件或者请插入加密锁');
         return;
@@ -148,7 +149,7 @@ function VerifyInput()
         
         var keyRand = $$('rand').toUpperCase();
         
-        if (is_ie && isUseActive && !checkEnc(keyRand))
+        if (is_ie && isActive && !checkEnc(keyRand))
         {
             return;
         }
