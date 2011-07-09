@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+	  http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	  http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+	  http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"
+	default-autowire="byName" default-init-method="init" default-destroy-method="destroy">
+
+	<bean id="assignApplyDAO" class="com.china.center.oa.customer.dao.impl.AssignApplyDAOImpl" />
+
+	<bean id="changeLogDAO" class="com.china.center.oa.customer.dao.impl.ChangeLogDAOImpl" />
+
+	<bean id="customerApplyDAO" class="com.china.center.oa.customer.dao.impl.CustomerApplyDAOImpl" />
+
+	<bean id="customerCheckDAO" class="com.china.center.oa.customer.dao.impl.CustomerCheckDAOImpl" />
+
+	<bean id="customerCheckItemDAO" class="com.china.center.oa.customer.dao.impl.CustomerCheckItemDAOImpl" />
+
+	<bean id="customerDAO" class="com.china.center.oa.customer.dao.impl.CustomerDAOImpl" />
+
+	<bean id="customerHisDAO" class="com.china.center.oa.customer.dao.impl.CustomerHisDAOImpl" />
+
+	<bean id="stafferVSCustomerDAO" class="com.china.center.oa.customer.dao.impl.StafferVSCustomerDAOImpl" />
+
+	<bean id="customerCheckManager" class="com.china.center.oa.customer.manager.impl.CustomerCheckManagerImpl" />
+
+	<bean id="customerManager" class="com.china.center.oa.customer.manager.impl.CustomerManagerImpl" />
+
+	<bean id="creditCoreDAO" class="com.china.center.oa.credit.dao.impl.CreditCoreDAOImpl" />
+
+	<bean id="creditItemDAO" class="com.china.center.oa.credit.dao.impl.CreditItemDAOImpl" />
+
+	<bean id="creditItemSecDAO" class="com.china.center.oa.credit.dao.impl.CreditItemSecDAOImpl" />
+
+	<bean id="creditItemThrDAO" class="com.china.center.oa.credit.dao.impl.CreditItemThrDAOImpl" />
+
+	<bean id="creditLevelDAO" class="com.china.center.oa.credit.dao.impl.CreditLevelDAOImpl" />
+
+	<bean id="creditlogDAO" class="com.china.center.oa.credit.dao.impl.CreditlogDAOImpl" />
+
+	<bean id="curOutDAO" class="com.china.center.oa.credit.dao.impl.CurOutDAOImpl" />
+
+	<bean id="customerCreditApplyDAO" class="com.china.center.oa.credit.dao.impl.CustomerCreditApplyDAOImpl" />
+
+	<bean id="customerCreditDAO" class="com.china.center.oa.credit.dao.impl.CustomerCreditDAOImpl" />
+
+	<bean id="creditItemManager" class="com.china.center.oa.credit.manager.impl.CreditItemManagerImpl" />
+
+	<bean id="customerCreditManager" class="com.china.center.oa.credit.manager.impl.CustomerCreditManagerImpl" />
+	
+	<bean id="customerFacade" class="com.china.center.oa.customer.facade.impl.CustomerFacadeImpl" />
+
+</beans>
