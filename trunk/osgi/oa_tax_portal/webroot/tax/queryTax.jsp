@@ -37,7 +37,7 @@ function load()
              {display: '辅助核算型', name : 'other', width : 'auto'}
              ],
          extAtt: {
-             //name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
+             name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1601'},

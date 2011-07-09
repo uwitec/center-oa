@@ -257,7 +257,7 @@ public class TaxAction extends DispatchAction
     {
         String id = request.getParameter("id");
 
-        // String update = request.getParameter("update");
+        String update = request.getParameter("update");
 
         TaxVO bean = taxDAO.findVO(id);
 
@@ -270,7 +270,20 @@ public class TaxAction extends DispatchAction
 
         request.setAttribute("bean", bean);
 
-        return mapping.findForward("updateTax");
+        if ("1".equals(update))
+        {
+            return mapping.findForward("updateTax");
+        }
+
+        List<TaxTypeBean> taxTypeList = taxTypeDAO.listEntityBeans();
+
+        request.setAttribute("taxTypeList", taxTypeList);
+
+        List<BankBean> bankList = bankDAO.listEntityBeans("order by name");
+
+        request.setAttribute("bankList", bankList);
+
+        return mapping.findForward("detailTax");
     }
 
     /**

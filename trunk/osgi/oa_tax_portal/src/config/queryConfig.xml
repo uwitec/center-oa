@@ -34,6 +34,12 @@
             <type>select</type>
             <option>$taxForward</option>
         </condtion>
+        <condtion name="checkStaffer" caption="计算提成">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$taxCheckStaffer</option>
+        </condtion>
         <condtion name="unit" caption="辅助-单位">
             <opr>=</opr>
             <datatype>1</datatype>

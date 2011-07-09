@@ -26,12 +26,12 @@ public interface TaxItemConstanst
     /**
      * 其它应收-坏账(职员/部门)
      */
-    String BAD_REVEIVE_PRODUCT = "1133-16";
+    String BAD_REVEIVE_PRODUCT = "1133-10";
 
     /**
      * 其他应收款-样品(部门/职员/产品/仓库 )
      */
-    String OTHER_REVEIVE_PRODUCT = "1133-20";
+    String OTHER_REVEIVE_PRODUCT = "1133-14";
 
     /**
      * 库存商品(产品/仓库)
@@ -41,7 +41,7 @@ public interface TaxItemConstanst
     /**
      * 库存商品-中转(产品/仓库)
      */
-    String DEPOR_PRODUCT_TEMP = "1244";
+    String DEPOR_PRODUCT_TEMP = "1245";
 
     /**
      * 委托代销商品(产品/仓库)
@@ -79,24 +79,24 @@ public interface TaxItemConstanst
     String PRICECHANGE_REVEIVE = "5202";
 
     /**
-     * 营业费用-业务招待费(部门/职员)
+     * 业务招待费-招待应酬费(部门/职员)
      */
-    String RECEIVE_COMMON = "5501-05";
+    String RECEIVE_COMMON = "5504-21-02";
 
     /**
      * 银行手续费-部门(部门/职员)
      */
-    String HAND_BANK_DEPARTMENT = "5501-11";
-
-    /**
-     * 营业费用-运输费(部门/职员)
-     */
-    String TRAN_FEE = "5501-04";
+    String HAND_BANK_DEPARTMENT = "5504-22-01";
 
     /**
      * 银行手续费-个人(部门/职员)
      */
-    String HAND_BANK_PERSON = "5501-12";
+    String HAND_BANK_PERSON = "5504-22-02";
+
+    /**
+     * 营业费用-运输费(部门/职员)
+     */
+    String TRAN_FEE = "5505-05";
 
     /**
      * 营业外支出(无)

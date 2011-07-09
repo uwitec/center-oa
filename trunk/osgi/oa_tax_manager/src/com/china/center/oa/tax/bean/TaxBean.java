@@ -114,6 +114,12 @@ public class TaxBean implements Serializable
     @Html(title = "余额方向", must = true, type = Element.SELECT)
     private int forward = TaxConstanst.TAX_FORWARD_IN;
 
+    /**
+     * 计算业务员提成
+     */
+    @Html(title = "计算业务员提成", must = true, type = Element.SELECT)
+    private int checkStaffer = TaxConstanst.TAX_CHECKSTAFFER_NO;
+
     // 6大辅助核算
     private int unit = TaxConstanst.TAX_CHECK_NO;
 
@@ -594,6 +600,23 @@ public class TaxBean implements Serializable
     }
 
     /**
+     * @return the checkStaffer
+     */
+    public int getCheckStaffer()
+    {
+        return checkStaffer;
+    }
+
+    /**
+     * @param checkStaffer
+     *            the checkStaffer to set
+     */
+    public void setCheckStaffer(int checkStaffer)
+    {
+        this.checkStaffer = checkStaffer;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -670,6 +693,9 @@ public class TaxBean implements Serializable
             .append(TAB)
             .append("forward = ")
             .append(this.forward)
+            .append(TAB)
+            .append("checkStaffer = ")
+            .append(this.checkStaffer)
             .append(TAB)
             .append("unit = ")
             .append(this.unit)

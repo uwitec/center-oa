@@ -53,6 +53,18 @@ public interface TaxConstanst
     int TAX_FORWARD_IN = 0;
 
     /**
+     * 不计算
+     */
+    @Defined(key = "taxCheckStaffer", value = "不计算")
+    int TAX_CHECKSTAFFER_NO = 0;
+
+    /**
+     * 计算
+     */
+    @Defined(key = "taxCheckStaffer", value = "计算")
+    int TAX_CHECKSTAFFER_YES = 1;
+
+    /**
      * 贷方
      */
     @Defined(key = "taxForward", value = "贷方")

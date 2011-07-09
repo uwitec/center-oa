@@ -7,6 +7,7 @@
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
+<script language="JavaScript" src="../js/key.js"></script>
 <script language="javascript">
 function addBean()
 {
@@ -53,13 +54,11 @@ function load()
 
 </head>
 <body class="body_class" onload="load()">
-<form name="formEntry" action="../tax/tax.do" method="post"><input
-	type="hidden" name="method" value="addTax">
+<form name="formEntry" action="../tax/tax.do" method="post">
 <input type="hidden" name="parentId" value="">
 <p:navigation
 	height="22">
-	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javascript:history.go(-1)">科目管理</span> &gt;&gt; 增加科目</td>
+	<td width="550" class="navigation">科目明细</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -72,17 +71,13 @@ function load()
 	<p:line flag="0" />
 
 	<p:subBody width="100%">
-		<p:class value="com.china.center.oa.tax.bean.TaxBean" />
+		<p:class value="com.china.center.oa.tax.bean.TaxBean" opr="2"/>
 
 		<p:table cells="1">
 
 			<p:pro field="name" innerString="size=60"/>
 			
-			<p:pro field="parentId" innerString="readonly=true size=60">
-                <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectTax()">&nbsp;
-                <input type="button" value="&nbsp;高级配置&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectBank()">&nbsp;&nbsp;
+			<p:pro field="parentId" value="${bean.parentName}">
             </p:pro>
             
 			<p:pro field="code" innerString="size=60"/>
@@ -114,14 +109,13 @@ function load()
             <p:pro field="checkStaffer">
                 <p:option type="taxCheckStaffer"/>
             </p:pro>
+            
+            <p:cell title="级别">
+              第${bean.level}级
+            </p:cell>
 
 			<p:cell title="辅助核算项">
-			<input type="checkbox" name="unit" value="1">单位<br>
-			<input type="checkbox" name="department" value="1">部门<br>
-			<input type="checkbox" name="staffer" value="1">职员<br>
-			<input type="checkbox" name="depot" value="1">仓库<br>
-			<input type="checkbox" name="product" value="1">产品<br>
-			<input type="checkbox" name="duty" value="1">纳税实体
+			${bean.other}
 			</p:cell>
 
 		</p:table>

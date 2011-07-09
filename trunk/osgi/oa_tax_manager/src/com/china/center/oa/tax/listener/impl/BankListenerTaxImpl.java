@@ -79,7 +79,7 @@ public class BankListenerTaxImpl implements BankListener
 
         // 增加暂记户
         bean.setId("");
-        bean.setName(bank.getName() + "_暂记户");
+        bean.setName("其他应付款-暂记户-" + bank.getName());
         bean.setCode(bank.getCode2());
         bean.setParentId(bank.getParentTaxId2());
         bean.setRefType(TaxConstanst.TAX_REFTYPE_BANKTEMP);
