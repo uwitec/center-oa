@@ -86,7 +86,8 @@ public class Expression
 
                 value.setName(each.substring(1));
 
-                value.setValue(getPropertyValue(this.dataBean, each.substring(1)).toString().trim());
+                value
+                    .setValue(getPropertyValue(this.dataBean, each.substring(1)).toString().trim());
 
                 Field field = BeanTools.getFieldIgnoreCase(value.getName(), dataBean.getClass());
 
@@ -196,7 +197,10 @@ public class Expression
                 condition.addWhereStr();
                 for (ValueBean valueBean : valueList)
                 {
-                    condition.addCondition(valueBean.getColumnName(), "=", valueBean.getValue().toString());
+                    condition.addCondition(valueBean.getColumnName(), "=", valueBean
+                        .getValue()
+                        .toString()
+                        .trim());
                 }
 
                 DAO dao = daoList.get(0);
@@ -220,7 +224,10 @@ public class Expression
 
                     condition.addWhereStr();
 
-                    condition.addCondition(valueBean.getColumnName(), "=", valueBean.getValue().toString());
+                    condition.addCondition(valueBean.getColumnName(), "=", valueBean
+                        .getValue()
+                        .toString()
+                        .trim());
 
                     DAO dao = daoList.get(0);
 
@@ -257,7 +264,10 @@ public class Expression
 
                 for (ValueBean valueBean : valueList)
                 {
-                    condition.addCondition(valueBean.getColumnName(), "=", valueBean.getValue().toString());
+                    condition.addCondition(valueBean.getColumnName(), "=", valueBean
+                        .getValue()
+                        .toString()
+                        .trim());
                 }
 
                 DAO dao = daoList.get(0);
@@ -283,7 +293,9 @@ public class Expression
 
                     condition.addCondition(idColumn, "<>", id);
 
-                    condition.addCondition(valueBean.getColumnName(), "=", valueBean.getValue().toString());
+                    condition.addCondition(valueBean.getColumnName(), "=", valueBean
+                        .getValue()
+                        .toString());
 
                     DAO dao = daoList.get(0);
 
@@ -315,7 +327,10 @@ public class Expression
 
                     condition.addWhereStr();
 
-                    condition.addCondition(valueBean.getColumnName(), "=", valueBean.getValue().toString());
+                    condition.addCondition(valueBean.getColumnName(), "=", valueBean
+                        .getValue()
+                        .toString()
+                        .trim());
 
                     int count = dao.countByCondition(condition.toString());
 
@@ -338,7 +353,10 @@ public class Expression
 
                     condition.addWhereStr();
 
-                    condition.addCondition(valueBean.getColumnName(), "=", valueBean.getValue().toString());
+                    condition.addCondition(valueBean.getColumnName(), "=", valueBean
+                        .getValue()
+                        .toString()
+                        .trim());
 
                     int count = dao.countByCondition(condition.toString());
 
@@ -368,7 +386,10 @@ public class Expression
 
                     condition.addWhereStr();
 
-                    condition.addCondition(valueBean.getColumnName(), "=", valueBean.getValue().toString());
+                    condition.addCondition(valueBean.getColumnName(), "=", valueBean
+                        .getValue()
+                        .toString()
+                        .trim());
 
                     int count = dao.countByCondition(condition.toString());
 
@@ -390,7 +411,10 @@ public class Expression
 
                     condition.addWhereStr();
 
-                    condition.addCondition(valueBean.getColumnName(), "=", valueBean.getValue().toString());
+                    condition.addCondition(valueBean.getColumnName(), "=", valueBean
+                        .getValue()
+                        .toString()
+                        .trim());
 
                     int count = dao.countByCondition(condition.toString());
 
