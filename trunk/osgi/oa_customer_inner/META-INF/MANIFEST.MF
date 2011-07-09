@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Oa_customer_manager Plug-in
+Bundle-Name: com.china.center.oa.customer.inner
 Bundle-SymbolicName: com.china.center.oa.customer.inner
 Bundle-Version: 1.0.0
 Bundle-Activator: com.china.center.oa.customer.inner.Activator
