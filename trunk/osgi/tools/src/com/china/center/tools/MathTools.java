@@ -80,6 +80,24 @@ public abstract class MathTools
         return Math.abs(aa - bb) <= 10;
     }
 
+    public static int compare(double a, double b)
+    {
+        int aa = (int)Math.round(a * 1000);
+        int bb = (int)Math.round(b * 1000);
+
+        if (Math.abs(aa - bb) <= 10)
+        {
+            return 0;
+        }
+
+        if (aa > bb)
+        {
+            return 1;
+        }
+
+        return -1;
+    }
+
     public static String formatNum(double d)
     {
         DecimalFormat df = new DecimalFormat("####0.00");
