@@ -87,7 +87,7 @@ function load()
                 <table width="100%" border="0" cellspacing='1' id="tables">
                     <tr align="center" class="content0">
                         <td width="20%" align="center">(当前)预算项</td>
-                        <td width="15%" align="center">预算金额</td>
+                        <td width="15%" align="center">预算金额(当前/更新后)</td>
                         <td width="15%" align="center">使用金额</td>
                         <td width="15%" align="center">预用金额</td>
                         <td width="50%" align="center">描述</td>
@@ -95,26 +95,26 @@ function load()
 
                     <c:forEach items="${bean.itemVOs}" var="item" varStatus="vs">
                         <tr class="content2" id="trCopy${vs.index}">
-                            <td width="20%"><input type="text" name="item_name"
+                            <td width="20%" align="center"><input type="text" name="item_name"
                                 id="f_item_name" maxlength="20" value="${item.feeItemName}" oncheck="notNone" head="预算项名称"
                                 style="width: 100%;"></td>
 
-                            <td width="20%" align="left"><input type="text"
+                            <td width="30%" align="center"><input type="text"
                                 id="f_item_budget" style="width: 100%;" oncheck="isFloat"
-                                head="预算金额" value="${item.sbudget}" maxlength="12"
+                                head="预算金额" value="${item.sbudget}/${item.schangeMonery}" maxlength="12"
                                 name="item_budget"></td>
                                 
-                            <td width="15%" align="left"><input type="text"
+                            <td width="15%" align="center"><input type="text"
                                 id="f_item_budget" style="width: 100%;" oncheck="isFloat"
                                 head="预算金额" value="${item.srealMonery}" maxlength="12"
                                 name="item_budget"></td>
                                 
-                            <td width="15%" align="left"><input type="text"
+                            <td width="15%" align="center"><input type="text"
                                 id="f_item_budget" style="width: 100%;" oncheck="isFloat"
                                 head="预用金额" value="${item.suseMonery}" maxlength="12"
                                 name="item_budget"></td>
 
-                            <td width="40%" align="left"><textarea
+                            <td width="30%" align="center"><textarea
                                 name="item_description" rows="2" style="width: 100%;"
                                 id="f_item_description" oncheck="maxLength(200)">${item.description}</textarea></td>
                         </tr>
@@ -137,23 +137,23 @@ function load()
 				<td>
 				<table width="100%" border="0" cellspacing='1' id="tables1">
 					<tr align="center" class="content0">
-						<td width="20%" align="center">(变更后)预算项</td>
+						<td width="20%" align="center">(变更后新增)预算项</td>
 						<td width="15%" align="center">预算金额</td>
 						<td width="50%" align="center">描述</td>
 					</tr>
 
 					<c:forEach items="${items}" var="item" varStatus="vs">
 						<tr class="content2" id="trCopy${vs.index}">
-							<td width="20%"><input type="text" name="item_name"
+							<td width="20%" align="center"><input type="text" name="item_name"
 								id="f_item_name" maxlength="20" value="${item.feeItemName}" oncheck="notNone" head="预算项名称"
 								style="width: 100%;"></td>
 
-							<td width="20%" align="left"><input type="text"
+							<td width="20%" align="center"><input type="text"
 								id="f_item_budget" style="width: 100%;" oncheck="isFloat"
 								head="预算金额" value="${item.sbudget}" maxlength="12"
 								name="item_budget"></td>
 
-							<td width="40%" align="left"><textarea
+							<td width="40%" align="center"><textarea
 								name="item_description" rows="2" style="width: 100%;"
 								id="f_item_description" oncheck="maxLength(200)">${item.description}</textarea></td>
 						</tr>

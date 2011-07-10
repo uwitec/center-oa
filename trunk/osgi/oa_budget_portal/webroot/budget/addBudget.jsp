@@ -2,7 +2,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="增加预算" />
+<p:link title="增加预算" guid="true"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/cnchina.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
@@ -26,17 +26,54 @@ function clears()
     document.getElementById('f_item_description').value = '';
 }
 
+//选择职位
+function selectPrin()
+{
+    window.common.modal('../admin/org.do?method=popOrg');
+}
+
 function load()
 {
 }
+
+function setOrgFromPop(id, name, level)
+{
+    $O('budgetDepartment').value = id;
+    
+    $O('budgetDepartmentName').value = name;
+}
+
+function selectStaffer()
+{
+    window.common.modal('../admin/pop.do?method=rptQueryStaffer&load=1&selectMode=1');
+}
+
+function getStaffers(oos)
+{
+    var oo = oos[0];
+    
+    $O('signerName').value = oo.pname;
+    $O('signer').value = oo.value;
+}
+
 
 </script>
 
 </head>
 <body class="body_class" onload="load()">
 <form name="formEntry" action="../budget/budget.do" method="post"><input
-	type="hidden" name="method" value="addBudget"> <input
-    type="hidden" name="parentId" value="${parentId}"> 
+	type="hidden" name="method" value="addBudget"> 
+<input type="hidden" name="parentId" value="${parentId}">
+
+<c:if test="${nextLevel == 2}"> 
+<input type="hidden" name="budgetDepartment" value="${pbean.budgetDepartment}">
+</c:if> 
+
+<c:if test="${nextLevel != 2}"> 
+<input type="hidden" name="budgetDepartment" value="">
+</c:if> 
+
+<input type="hidden" name="signer" value=""> 
 	<input
     type="hidden" name="opr" value="0"> <p:navigation
 	height="22">
@@ -57,7 +94,11 @@ function load()
 		<p:class value="com.china.center.oa.budget.bean.BudgetBean" />
 
 		<p:table cells="2">
-		    <p:cells title="父级预算" celspan="2">${pbean.name}</p:cells>
+		    <p:cells title="父级预算" celspan="2">
+		    <a href="../budget/budget.do?method=findBudget&update=1&id=${pbean.id}">
+		    ${pbean.name}</a>
+		    </p:cells>
+		    
 			<p:pro field="name" cell="2" innerString="size=60"/>
 			
 			<p:pro field="type" value="${type}" innerString="readonly=true">
@@ -68,38 +109,61 @@ function load()
             <p:option type="budgetLevel"></p:option>
             </p:pro>
             
-            <p:pro field="budgetDepartment" />
+            <c:if test="${nextLevel == 2}">
+	            <p:pro field="budgetDepartment" value="${pbean.budgetDepartmentName}">
+	            </p:pro>
+            </c:if>
+            
+             <c:if test="${nextLevel != 2}">
+                <p:pro field="budgetDepartment">
+                      <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                        class="button_class" onclick="selectPrin()">&nbsp;
+                </p:pro>
+            </c:if>
+            
+            <p:pro field="signer">
+                  <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectStaffer()">&nbsp;
+            </p:pro>
             
             <c:if test="${type == 0}">
-            <p:pro field="year" cell="1">
+            <p:pro field="year" cell="2">
                 <option value="">--</option>
-                <c:forEach begin="2001" end="2100" var="item">
+                <c:forEach begin="2010" end="2100" var="item">
                     <option value="${item}">${item}</option>
                 </c:forEach>
             </p:pro>
             </c:if>
             
             <c:if test="${type != 0}">
-            <p:pro field="year" cell="1" value="${pbean.year}" innerString="readonly=true">
+            <p:pro field="year" cell="2" value="${pbean.year}" innerString="readonly=true">
                 <option value="">--</option>
-                <c:forEach begin="2001" end="2100" var="item">
+                <c:forEach begin="2010" end="2100" var="item">
                     <option value="${item}">${item}</option>
                 </c:forEach>
             </p:pro>
             </c:if>
             
+			<c:if test="${type == 0 || nextLevel == 2}">
+			<p:pro field="beginDate"/>
+			<p:pro field="endDate"/>
+			</c:if>
 			
-			<p:pro field="beginDate" />
-			<p:pro field="endDate" />
+			<c:if test="${type != 0 && nextLevel != 2}">
+            <p:pro field="beginDate" value="${pbean.beginDate}"/>
+            <p:pro field="endDate" value="${pbean.endDate}"/>
+            </c:if>
 			
-			<p:pro field="sail" />
-			<p:pro field="orgProfit" />
-			
-			<p:pro field="realProfit" />
-			<p:pro field="outSave" />
-			
-			<p:pro field="outMoney" />
-			<p:pro field="inMoney" />
+			<c:if test="${nextLevel != 2 && type != 2}">
+				<p:pro field="sail" />
+				<p:pro field="orgProfit" />
+				
+				<p:pro field="realProfit" />
+				<p:pro field="outSave" />
+				
+				<p:pro field="outMoney" />
+				<p:pro field="inMoney"/>
+			</c:if>
 			
 			<p:pro field="description" cell="2" innerString="rows=4 cols=60"/>
 		</p:table>

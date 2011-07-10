@@ -1,29 +1,14 @@
 var gobal_opr = 0;
 
-function doReject(opr)
+function doRejectApply(opr)
 {
-    if ($c())
-    {
-    	gobal_opr = opr;
-        $.blockUI({ message: $('#rejectReson') ,css:{width: '40%'} });
-    }
-    else
-    {
-        $error();
-    }
+    $.blockUI({ message: $('#rejectReson') ,css:{width: '40%'} });
 }
 
-function doPass(opr)
+function doPassApply(opr)
 {
-    if ($c())
-    {
-        if (window.confirm('核准预算变更:' +  getRadio('checkb').lname))
-        $ajax('../budget/budget.do?method=auditingBudgetApply&opr=0&mode=' + opr + '&id=' + getRadioValue('checkb'), callBackFun);
-    }
-    else
-    {
-        $error();
-    }
+    if (window.confirm('核准预算变更:' +  getRadio('checkb').lname))
+        $ajax('../budget/budget.do?method=auditingBudgetApply&opr=0&id=' + getRadioValue('checkb'), callBackFun);
 }
 
 
@@ -34,9 +19,9 @@ function $cancle()
 
 function $ok()
 {
-    if (eCheck([$O('preason')]) && window.confirm('确定驳回?'))
+    if (eCheck([$O('preason')]))
     {
-        $ajax('../budget/budget.do?method=auditingBudgetApply&opr=1&mode=' + gobal_opr + '&id=' + getRadioValue('checkb') + '&reason=' + $$('preason'), callBackFun);
+        $ajax2('../budget/budget.do?method=auditingBudgetApply&opr=1&id=' + getRadioValue('checkb'), {'reason' : $$('preason')}, callBackFun);
         
         $.unblockUI();
         

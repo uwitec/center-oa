@@ -19,6 +19,25 @@
         </condtion>
     </item>
     
+    <item name="queryBudgetForApprove" deaultpfix="BudgetBean">
+        <condtion name="name" caption="预算名称">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="stafferId" caption="提交人">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$staffer</option>
+        </condtion>
+        <condtion name="status" caption="预算状态">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$budgetStatus</option>
+        </condtion>
+    </item>
+    
     <item name="queryBudgetLog" deaultpfix="BudgetLogBean">
         <condtion name="alogTime" filed="logTime" caption="开始时间">
             <opr>&gt;=</opr>

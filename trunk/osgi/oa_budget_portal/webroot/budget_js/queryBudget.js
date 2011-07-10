@@ -39,13 +39,40 @@ function doSearch1()
 
 function addBean(opr, grid)
 {
-    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').status1 == 3)
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').status1 == 3 && getRadio('checkb').etype == 0)
     {
         $l('../budget/budget.do?method=preForAddBudget&type=1&parentId=' + getRadioValue('checkb'));
     }
     else
     {
-        $error('请选择已经通过的预算');
+        $error('请选择已经通过的预算且公司预算');
+    }
+}
+
+function addDepartmentBean(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').status1 == 3 && getRadio('checkb').etype == 1)
+    {
+        $l('../budget/budget.do?method=preForAddBudget&type=2&parentId=' + getRadioValue('checkb'));
+    }
+    else
+    {
+        $error('请选择已经通过的预算且是事业部预算');
+    }
+}
+
+function addMonthDepartmentBean(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb') 
+        && getRadio('checkb').status1 == 3 
+        && getRadio('checkb').llevel == 0 
+        && getRadio('checkb').etype == 2)
+    {
+        $l('../budget/budget.do?method=preForAddBudget&nextLevel=2&type=2&parentId=' + getRadioValue('checkb'));
+    }
+    else
+    {
+        $error('请选择已经通过的预算且是部门年度预算');
     }
 }
 
@@ -56,7 +83,7 @@ function addRootBean(opr, grid)
 
 function updateBean(opr, grid)
 {
-    if (getRadio('checkb') && getRadioValue('checkb') && (getRadio('checkb').status1 == 0 || getRadio('checkb').status1 == 3))
+    if (getRadio('checkb') && getRadioValue('checkb') && (getRadio('checkb').status1 == 0 || getRadio('checkb').status1 == 1))
     {
         $l('../budget/budget.do?method=findBudget&update=1&id=' + getRadioValue('checkb'));
     }
@@ -100,6 +127,18 @@ function doReject1()
     }
 }
 
+function doReject2()
+{
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').status1 == 2 && getRadio('checkb').etype == 2)
+    {
+        $.blockUI({ message: $('#rejectReson') ,css:{width: '40%'} });
+    }
+    else
+    {
+        $error();
+    }
+}
+
 function doPass()
 {
     if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').status1 == 2 && getRadio('checkb').etype == 1)
@@ -118,6 +157,19 @@ function doPass1()
     if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').status1 == 2 && getRadio('checkb').etype == 0)
     {
         if (window.confirm('确定审批通过预算:' +  getRadio('checkb').lname))
+        $ajax('../budget/budget.do?method=auditingBudget&opr=0&id=' + getRadioValue('checkb'), callBackFun);
+    }
+    else
+    {
+        $error();
+    }
+}
+
+function doPass2()
+{
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').status1 == 2 && getRadio('checkb').etype == 2)
+    {
+        if (window.confirm('确定审批通过部门预算:' +  getRadio('checkb').lname))
         $ajax('../budget/budget.do?method=auditingBudget&opr=0&id=' + getRadioValue('checkb'), callBackFun);
     }
     else

@@ -2,8 +2,10 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="增加预算项" />
+<p:link title="增加预算项" guid="true"/>
 <script language="JavaScript" src="../js/JCheck.js"></script>
+<script language="JavaScript" src="../js/common.js"></script>
+<script language="JavaScript" src="../js/public.js"></script>
 <script language="javascript">
 
 var g_title = '预算项';
@@ -37,13 +39,36 @@ function load()
     }
 }
 
+function selectTax()
+{
+    window.common.modal('../tax/tax.do?method=rptQueryTax&load=1&selectMode=1');
+}
+
+function getTax(oos)
+{
+    var obj = oos[0];
+    
+    if (obj.pbottomflag == 1)
+    {
+        alert('只能选择父级科目');
+        
+        return false;
+    }
+    
+    $("input[name='taxId']").val(obj.value);
+    
+    $("input[name='taxName']").val(obj.pname);
+}
+
 </script>
 
 </head>
 <body class="body_class" onload="load()">
 <form name="formEntry" action="../budget/budget.do"><input
-	type="hidden" name="method" value="addOrUpdateFeeItem"><input id="id"
-    type="hidden" name="id" value="${bean.id}"> <p:navigation
+	type="hidden" name="method" value="addOrUpdateFeeItem">
+<input id="id" type="hidden" name="id" value="${bean.id}"> 
+<input id="taxId" type="hidden" name="taxId" value="${bean.taxId}"> 
+<p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
 		onclick="javascript:history.go(-1)">预算项管理</span> &gt;&gt; <font id="navigation">增加预算项</font></td>
@@ -63,8 +88,16 @@ function load()
 
 		<p:table cells="1">
 
-			<p:pro field="name" />
-			<input type=text style="display: none;" size="1">
+			<p:pro field="name" innerString="size=60"/>
+			
+			<p:pro field="type">
+			    <p:option type="feeItemType"></p:option>
+			</p:pro>
+			
+			<p:pro field="taxId" innerString="readonly=true size=60" value="${bean.taxName}">
+			     <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectTax()">&nbsp;
+			</p:pro>
 
 		</p:table>
 	</p:subBody>

@@ -46,33 +46,33 @@ function load()
 <p:body width="100%">
 
 	<p:title>
-		<td class="caption"><strong>预算基本信息：</strong></td>
+		<td class="caption"><strong>预算基本信息：(变更后的预算金额不能比变更前大)</strong></td>
 	</p:title>
 
 	<p:line flag="0" />
 
 	<p:subBody width="98%">
-		<p:class value="com.china.center.oa.budget.vo.BudgetVO" opr="1" />
+		<p:class value="com.china.center.oa.budget.vo.BudgetVO" opr="2" />
 
 		<p:table cells="2" id="infoTable">
-		    <p:cells title="父级预算" celspan="2">${pbean.name}</p:cells>
-		    
-			<p:pro field="name" cell="2" innerString="size=60"/>
+		    <p:pro field="name" cell="2" innerString="size=60"/>
             
-            <p:pro field="type" innerString="readonly=true">
+            <p:pro field="type">
             <p:option type="budgetType"></p:option>
             </p:pro>
-            <p:pro field="level" innerString="readonly=true">
+            <p:pro field="level">
             <p:option type="budgetLevel"></p:option>
             </p:pro>
             
-            
-            <p:pro field="budgetDepartment" />
-            <p:pro field="year" cell="1" innerString="readonly=true">
+            <p:pro field="year">
                 <option value="">--</option>
                 <c:forEach begin="2000" end="2100" var="item">
                     <option value="${item}">${item}</option>
                 </c:forEach>
+            </p:pro>
+            
+            <p:pro field="status">
+                <p:option type="budgetStatus"></p:option>
             </p:pro>
             
             <p:pro field="beginDate" />
@@ -86,6 +86,14 @@ function load()
             
             <p:pro field="outMoney" />
             <p:pro field="inMoney" />
+            
+            <p:cell title="预算合计">
+               ${my:formatNum(bean.total)}
+            </p:cell>
+            
+            <p:cell title="权签人">
+               ${bean.signerName}
+            </p:cell>
             
             <p:pro field="description" cell="2" innerString="rows=4 cols=60"/>
             

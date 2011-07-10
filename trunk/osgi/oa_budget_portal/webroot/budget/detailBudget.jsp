@@ -22,8 +22,7 @@ function load()
 	type="hidden" name="method" value="updateBudget"> <input
 	type="hidden" name="opr" value="0"> <input type="hidden"
 	name="id" value="${bean.id}"> <p:navigation height="22">
-	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javaScript:window.history.go(-1);">预算管理</span> &gt;&gt; 预算详细</td>
+	<td width="550" class="navigation">预算详细</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -70,6 +69,14 @@ function load()
             
             <p:pro field="outMoney" />
             <p:pro field="inMoney" />
+            
+            <p:cell title="预算合计">
+               ${my:formatNum(bean.total)}
+            </p:cell>
+            
+            <p:cell title="权签人">
+               ${bean.signerName}
+            </p:cell>
             
             <p:pro field="description" cell="2" innerString="rows=4 cols=60"/>
 		</p:table>

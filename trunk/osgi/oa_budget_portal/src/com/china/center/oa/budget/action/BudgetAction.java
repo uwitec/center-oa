@@ -10,6 +10,7 @@ package com.china.center.oa.budget.action;
 
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -96,13 +97,17 @@ public class BudgetAction extends DispatchAction
 
     private static String QUERYBUDGET = "queryBudget";
 
+    private static String QUERYBUDGETFORAPPROVE = "queryBudgetForApprove";
+
     private static String QUERYBUDGETLOG = "queryBudgetLog";
 
     private static String QUERYRUNBUDGET = "queryRunBudget";
 
-    private static String QUERYBUDGETAPPLY = "queryBudgetApply";
+    private static String QUERYSELFBUDGETAPPLY = "querySelfBudgetApply";
 
     private static String QUERYFEEITEM = "queryFeeItem";
+
+    private static String QUERYBUDGETAPPLYFORAPPROVE = "queryBudgetApplyForApprove";
 
     /**
      * default constructor
@@ -131,27 +136,12 @@ public class BudgetAction extends DispatchAction
 
         User user = Helper.getUser(request);
 
-        // 没有check，没有根权限只能看到自己的或者通过的（除了根预算）
-        if ( !userManager.containAuth(user, AuthConstant.BUDGET_CHECK)
-            && !userManager.containAuth(user, AuthConstant.BUDGET_OPRROOT))
-        {
-            condtion.addCondition("and (BudgetBean.stafferId = '" + user.getStafferId()
-                                  + "' or BudgetBean.status = " + BudgetConstant.BUDGET_STATUS_PASS
-                                  + ")");
-
-            // condtion.addIntCondition("BudgetBean.type", "!=", BudgetConstant.BUDGET_TYPE_COMPANY);
-        }
-
-        // 没有check，但有根权限只能看到自己的或者通过的(包括根预算)
-        if ( !userManager.containAuth(user, AuthConstant.BUDGET_CHECK)
-            && userManager.containAuth(user, AuthConstant.BUDGET_OPRROOT))
-        {
-            condtion.addCondition("and (BudgetBean.stafferId = '" + user.getStafferId()
-                                  + "' or BudgetBean.status = " + BudgetConstant.BUDGET_STATUS_PASS
-                                  + ")");
-        }
-
         ActionTools.processJSONQueryCondition(QUERYBUDGET, request, condtion);
+
+        // 查询自己的或者通过的
+        condtion.addCondition("and (BudgetBean.stafferId = '" + user.getStafferId()
+                              + "' or BudgetBean.status = " + BudgetConstant.BUDGET_STATUS_PASS
+                              + ")");
 
         condtion.addCondition("order by BudgetBean.logTime desc");
 
@@ -163,6 +153,154 @@ public class BudgetAction extends DispatchAction
                     BudgetHelper.formatBudgetVO(obj);
                 }
             });
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryBudgetForApprove
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryBudgetForApprove(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
+                                               HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        User user = Helper.getUser(request);
+
+        String fowardType = request.getParameter("fowardType");
+
+        // 根预算审批审批
+        if ("0".equals(fowardType))
+        {
+            if (userManager.containAuth(user, AuthConstant.BUDGET_ROOT_CHECK))
+            {
+                condtion.addIntCondition("BudgetBean.status", "=",
+                    BudgetConstant.BUDGET_STATUS_SUBMIT);
+
+                condtion
+                    .addIntCondition("BudgetBean.type", "=", BudgetConstant.BUDGET_TYPE_COMPANY);
+            }
+        }
+        // 事业部预算审批
+        else if ("1".equals(fowardType))
+        {
+            if (userManager.containAuth(user, AuthConstant.BUDGET_LOCATION_CHECK))
+            {
+                condtion.addIntCondition("BudgetBean.status", "=",
+                    BudgetConstant.BUDGET_STATUS_SUBMIT);
+
+                condtion.addIntCondition("BudgetBean.type", "=",
+                    BudgetConstant.BUDGET_TYPE_LOCATION);
+            }
+        }
+        // 部门预算审批
+        else if ("2".equals(fowardType))
+        {
+            if (userManager.containAuth(user, AuthConstant.BUDGET_DEPARTMENT_CHECK))
+            {
+                condtion.addIntCondition("BudgetBean.status", "=",
+                    BudgetConstant.BUDGET_STATUS_SUBMIT);
+
+                condtion.addIntCondition("BudgetBean.type", "=",
+                    BudgetConstant.BUDGET_TYPE_DEPARTMENT);
+            }
+        }
+        else
+        {
+            condtion.addFlaseCondition();
+        }
+
+        ActionTools.processJSONQueryCondition(QUERYBUDGETFORAPPROVE, request, condtion);
+
+        condtion.addCondition("order by BudgetBean.logTime desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYBUDGETFORAPPROVE, request,
+            condtion, this.budgetDAO, new HandleResult<BudgetVO>()
+            {
+                public void handle(BudgetVO obj)
+                {
+                    BudgetHelper.formatBudgetVO(obj);
+                }
+            });
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryBudgetApplyForApprove
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryBudgetApplyForApprove(ActionMapping mapping, ActionForm form,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        User user = Helper.getUser(request);
+
+        String fowardType = request.getParameter("fowardType");
+
+        // 公司预算变更审批
+        if ("0".equals(fowardType))
+        {
+            if (userManager.containAuth(user, AuthConstant.BUDGET_ROOT_CHECK))
+            {
+                condtion
+                    .addIntCondition("BudgetBean.type", "=", BudgetConstant.BUDGET_TYPE_COMPANY);
+            }
+        }
+        // 事业部预算变更审批
+        else if ("1".equals(fowardType))
+        {
+            if (userManager.containAuth(user, AuthConstant.BUDGET_LOCATION_CHECK))
+            {
+                condtion.addIntCondition("BudgetBean.type", "=",
+                    BudgetConstant.BUDGET_TYPE_LOCATION);
+            }
+        }
+        // 部门预算变更审批
+        else if ("2".equals(fowardType))
+        {
+            if (userManager.containAuth(user, AuthConstant.BUDGET_DEPARTMENT_CHECK))
+            {
+                condtion.addIntCondition("BudgetBean.type", "=",
+                    BudgetConstant.BUDGET_TYPE_DEPARTMENT);
+            }
+        }
+        else
+        {
+            condtion.addFlaseCondition();
+        }
+
+        ActionTools.processJSONQueryCondition(QUERYBUDGETAPPLYFORAPPROVE, request, condtion);
+
+        condtion.addIntCondition("BudgetApplyBean.status", "=",
+            BudgetConstant.BUDGET_APPLY_STATUS_WAIT_APPROVE);
+
+        condtion.addCondition("order by BudgetApplyBean.logTime desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYBUDGETAPPLYFORAPPROVE, request,
+            condtion, this.budgetApplyDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -245,7 +383,7 @@ public class BudgetAction extends DispatchAction
     }
 
     /**
-     * queryBudgetApply
+     * 我的申请
      * 
      * @param mapping
      * @param form
@@ -254,8 +392,9 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryBudgetApply(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse response)
+    public ActionForward querySelfBudgetApply(ActionMapping mapping, ActionForm form,
+                                              HttpServletRequest request,
+                                              HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -264,23 +403,14 @@ public class BudgetAction extends DispatchAction
 
         User user = Helper.getUser(request);
 
-        if (userManager.containAuth(user, AuthConstant.BUDGET_CHANGE_APPROVE_CFO,
-            AuthConstant.BUDGET_CHANGE_APPROVE_COO, AuthConstant.BUDGET_CHANGE_APPROVE_CEO))
-        {
-            condtion.addIntCondition("BudgetApplyBean.status", ">=",
-                BudgetConstant.BUDGET_APPLY_STATUS_WAIT_CFO);
-        }
-        else
-        {
-            condtion.addCondition("BudgetApplyBean.stafferId", "=", user.getStafferId());
-        }
+        condtion.addCondition("BudgetApplyBean.stafferId", "=", user.getStafferId());
 
-        ActionTools.processJSONQueryCondition(QUERYBUDGETAPPLY, request, condtion);
+        ActionTools.processJSONQueryCondition(QUERYSELFBUDGETAPPLY, request, condtion);
 
         condtion.addCondition("order by BudgetApplyBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYBUDGETAPPLY, request, condtion,
-            this.budgetApplyDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFBUDGETAPPLY, request,
+            condtion, this.budgetApplyDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -329,6 +459,8 @@ public class BudgetAction extends DispatchAction
 
         String parentId = request.getParameter("parentId");
 
+        String nextLevelStr = request.getParameter("nextLevel");
+
         String type = request.getParameter("type");
 
         BudgetBean parentBean = budgetDAO.find(parentId);
@@ -336,6 +468,12 @@ public class BudgetAction extends DispatchAction
         if (parentBean == null)
         {
             return ActionTools.toError("父预算不存在", QUERYBUDGET, mapping, request);
+        }
+
+        // 月度预算
+        if ("2".equals(nextLevelStr))
+        {
+            parentBean = budgetDAO.findVO(parentId);
         }
 
         parentBean.setItems(budgetItemDAO.queryEntityBeansByFK(parentId));
@@ -564,6 +702,7 @@ public class BudgetAction extends DispatchAction
 
             bean.setType(CommonTools.parseInt(oprType));
 
+            // 子项
             bean.setItems(getBudgetItem(request));
 
             bean.setLogTime(TimeTools.now());
@@ -1005,10 +1144,26 @@ public class BudgetAction extends DispatchAction
         // 变更后的
         List<BudgetItemVO> items = budgetItemDAO.queryEntityVOsByFK(id);
 
+        List<BudgetItemVO> itemVOs = vo.getItemVOs();
+
         // format
-        for (BudgetItemVO budgetItemVO : items)
+        for (Iterator iterator = items.iterator(); iterator.hasNext();)
         {
+            BudgetItemVO budgetItemVO = (BudgetItemVO)iterator.next();
+
             BudgetHelper.formatBudgetItem(budgetItemVO);
+
+            for (BudgetItemVO each : itemVOs)
+            {
+                if (each.getFeeItemId().equals(budgetItemVO.getFeeItemId()))
+                {
+                    each.setSchangeMonery(budgetItemVO.getSbudget());
+
+                    iterator.remove();
+
+                    break;
+                }
+            }
         }
 
         request.setAttribute("items", items);
@@ -1035,7 +1190,7 @@ public class BudgetAction extends DispatchAction
         FeeItemBean bean = null;
         try
         {
-            bean = feeItemDAO.find(id);
+            bean = feeItemDAO.findVO(id);
 
             if (bean == null)
             {

@@ -42,8 +42,8 @@ function load()
 		     parentName : {begin : '<a href=../budget/budget.do?method=findBudget&update=1&id={parentId}>', end : '</a>'}
 		 },
 		 buttons : [
-		     {id: 'update', bclass: 'update', caption: '变更预算', onpress : updateBean2, auth: '050601'},
-		     {id: 'update', bclass: 'update', caption: '追加预算', onpress : updateBean3, auth: '050601'},
+		     {id: 'update', bclass: 'update', caption: '变更预算', onpress : updateBean2, auth: '0506'},
+		     {id: 'update', bclass: 'update', caption: '追加预算', onpress : updateBean3, auth: '0506'},
 		     {id: 'search', bclass: 'search', onpress : doSearch1}
 		     ],
 		 <p:conf/>

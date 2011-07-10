@@ -2,7 +2,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="修改预算" />
+<p:link title="修改预算" guid="true"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/cnchina.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
@@ -26,6 +26,36 @@ function clears()
     document.getElementById('f_item_description').value = '';
 }
 
+//选择职位
+function selectPrin()
+{
+    window.common.modal('../admin/org.do?method=popOrg');
+}
+
+function load()
+{
+}
+
+function setOrgFromPop(id, name, level)
+{
+    $O('budgetDepartment').value = id;
+    
+    $O('budgetDepartmentName').value = name;
+}
+
+function selectStaffer()
+{
+    window.common.modal('../admin/pop.do?method=rptQueryStaffer&load=1&selectMode=1');
+}
+
+function getStaffers(oos)
+{
+    var oo = oos[0];
+    
+    $O('signerName').value = oo.pname;
+    $O('signer').value = oo.value;
+}
+
 </script>
 
 </head>
@@ -34,7 +64,10 @@ function clears()
 	type="hidden" name="method" value="updateBudget"> <input
 	type="hidden" name="opr" value="0"> <input type="hidden"
 	name="id" value="${bean.id}"> <input type="hidden"
-    name="parentId" value="${bean.parentId}"><p:navigation height="22">
+    name="parentId" value="${bean.parentId}">
+<input type="hidden" name="budgetDepartment" value="${bean.budgetDepartment}">
+<input type="hidden" name="signer" value="${bean.signer}">
+<p:navigation height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
 		onclick="javaScript:window.history.go(-1);">预算管理</span> &gt;&gt; 修改预算</td>
 	<td width="85"></td>
@@ -64,10 +97,19 @@ function clears()
             </p:pro>
             
             
-            <p:pro field="budgetDepartment" />
-            <p:pro field="year" cell="1" innerString="readonly=true">
+            <p:pro field="budgetDepartment" value="${bean.budgetDepartmentName}">
+                  <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectPrin()">&nbsp;
+            </p:pro>
+            
+            <p:pro field="signer" value="${bean.signerName}">
+                  <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectStaffer()">&nbsp;
+            </p:pro>
+            
+            <p:pro field="year" cell="2" innerString="readonly=true">
                 <option value="">--</option>
-                <c:forEach begin="2000" end="2100" var="item">
+                <c:forEach begin="2010" end="2100" var="item">
                     <option value="${item}">${item}</option>
                 </c:forEach>
             </p:pro>
@@ -75,14 +117,16 @@ function clears()
             <p:pro field="beginDate" />
             <p:pro field="endDate" />
             
-            <p:pro field="sail" />
-            <p:pro field="orgProfit" />
-            
-            <p:pro field="realProfit" />
-            <p:pro field="outSave" />
-            
-            <p:pro field="outMoney" />
-            <p:pro field="inMoney" />
+            <c:if test="${bean.level != 2 && bean.type != 2}">
+	            <p:pro field="sail" />
+	            <p:pro field="orgProfit" />
+	            
+	            <p:pro field="realProfit" />
+	            <p:pro field="outSave" />
+	            
+	            <p:pro field="outMoney" />
+	            <p:pro field="inMoney" cell="1"/>
+            </c:if>
             
             <p:pro field="description" cell="2" innerString="rows=4 cols=60"/>
 		</p:table>
