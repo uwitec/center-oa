@@ -169,23 +169,28 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
             // 检查是否超出父级预算
             checkLegality(apply, budget);
 
-            Collection<BudgetListener> listenerMapValues = this.listenerMapValues();
-
-            // CORE 预算变更的核心检查
-            for (BudgetItemBean budgetItemBean : currentItemList)
+            // 末级预算需要验证额外的金额
+            if (budget.getType() == BudgetConstant.BUDGET_TYPE_DEPARTMENT
+                && budget.getLevel() == BudgetConstant.BUDGET_LEVEL_MONTH)
             {
-                double itemTotal = 0.0d;
+                Collection<BudgetListener> listenerMapValues = this.listenerMapValues();
 
-                for (BudgetListener budgetListener : listenerMapValues)
+                // CORE 预算变更的核心检查
+                for (BudgetItemBean budgetItemBean : currentItemList)
                 {
-                    itemTotal += budgetListener.onSumPreAndUseInEachBudgetItemChange(user, apply,
-                        budgetItemBean);
-                }
+                    double itemTotal = 0.0d;
 
-                if (MathTools.compare(itemTotal, budgetItemBean.getBudget()) > 0)
-                {
-                    throw new MYException("当前的预算项已经使用和预占的金额达到[%.2f],而更新后的预算只有[%.2f],请确认",
-                        itemTotal, budgetItemBean.getBudget());
+                    for (BudgetListener budgetListener : listenerMapValues)
+                    {
+                        itemTotal += budgetListener.onSumPreAndUseInEachBudgetItemChange(user,
+                            apply, budgetItemBean);
+                    }
+
+                    if (MathTools.compare(itemTotal, budgetItemBean.getBudget()) > 0)
+                    {
+                        throw new MYException("当前的预算项已经使用和预占的金额达到[%.2f],而更新后的预算只有[%.2f],请确认",
+                            itemTotal, budgetItemBean.getBudget());
+                    }
                 }
             }
 
