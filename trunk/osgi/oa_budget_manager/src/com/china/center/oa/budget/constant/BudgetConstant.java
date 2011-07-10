@@ -82,18 +82,39 @@ public interface BudgetConstant
     @Defined(key = "budgetCarry", value = "节约")
     int BUDGET_CARRY_LESS = 4;
 
+    /**
+     * 公司预算
+     */
     @Defined(key = "budgetType", value = "公司预算")
     int BUDGET_TYPE_COMPANY = 0;
 
-    @Defined(key = "budgetType", value = "部门预算")
-    int BUDGET_TYPE_DEPARTMENT = 1;
+    /**
+     * 事业部预算
+     */
+    @Defined(key = "budgetType", value = "事业部预算")
+    int BUDGET_TYPE_LOCATION = 1;
 
+    /**
+     * 部门预算
+     */
+    @Defined(key = "budgetType", value = "部门预算")
+    int BUDGET_TYPE_DEPARTMENT = 2;
+
+    /**
+     * 年度预算
+     */
     @Defined(key = "budgetLevel", value = "年度预算")
     int BUDGET_LEVEL_YEAR = 0;
 
+    /**
+     * 暂时没有季度预算
+     */
     @Defined(key = "budgetLevel", value = "季度预算")
     int BUDGET_LEVEL_QUARTER = 1;
 
+    /**
+     * 月度预算
+     */
     @Defined(key = "budgetLevel", value = "月度预算")
     int BUDGET_LEVEL_MONTH = 2;
 
@@ -134,8 +155,8 @@ public interface BudgetConstant
     /**
      * 提交
      */
-    @Defined(key = "budgetApplyStatus", value = "待财务总监核准")
-    int BUDGET_APPLY_STATUS_WAIT_CFO = 2;
+    @Defined(key = "budgetApplyStatus", value = "待审批")
+    int BUDGET_APPLY_STATUS_WAIT_APPROVE = 2;
 
     /**
      * 财务总监通过
@@ -159,4 +180,22 @@ public interface BudgetConstant
      * 预算详细URL
      */
     String BUDGET_DETAIL_URL = "../budget/budget.do?method=findBudget&update=1&id=";
+
+    /**
+     * 预算项属性
+     */
+    @Defined(key = "feeItemType", value = "固定费用预算")
+    int FEEITEM_TYPE_REGULARFEE = 0;
+
+    /**
+     * 固定资产投入预算
+     */
+    @Defined(key = "feeItemType", value = "固定资产投入预算")
+    int FEEITEM_TYPE_REGULARBUDGET = 1;
+
+    /**
+     * 可变费用预算
+     */
+    @Defined(key = "feeItemType", value = "可变费用预算")
+    int FEEITEM_TYPE_VARIABLE = 2;
 }

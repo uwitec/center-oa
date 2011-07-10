@@ -46,11 +46,18 @@ public class BudgetItemBean implements Serializable
 
     private int carryStatus = BudgetConstant.BUDGET_CARRY_INIT;
 
+    /**
+     * 预算金额
+     */
     private double budget = 0.0d;
 
+    /**
+     * 实际使用金额
+     */
     private double realMonery = 0.0d;
 
     /**
+     * 当前使用金额<br>
      * define the use money.befor the BudgetItem is end,the useMonery equals budget<br>
      * but after the BudgetItem ending useMonery will equals realMonery
      */

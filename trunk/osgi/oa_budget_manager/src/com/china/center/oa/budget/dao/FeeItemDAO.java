@@ -11,6 +11,7 @@ package com.china.center.oa.budget.dao;
 
 import com.china.center.jdbc.inter.DAO;
 import com.china.center.oa.budget.bean.FeeItemBean;
+import com.china.center.oa.budget.vo.FeeItemVO;
 
 
 /**
@@ -21,7 +22,7 @@ import com.china.center.oa.budget.bean.FeeItemBean;
  * @see FeeItemDAO
  * @since 3.0
  */
-public interface FeeItemDAO extends DAO<FeeItemBean, FeeItemBean>
+public interface FeeItemDAO extends DAO<FeeItemBean, FeeItemVO>
 {
 
 }

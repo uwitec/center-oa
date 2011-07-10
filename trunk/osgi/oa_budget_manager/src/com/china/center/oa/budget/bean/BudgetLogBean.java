@@ -35,14 +35,27 @@ public class BudgetLogBean implements Serializable
     @Id(autoIncrement = true)
     private String id = "";
 
+    /**
+     * 使用人
+     */
     @Join(tagClass = StafferBean.class)
     private String stafferId = "";
 
-    @FK
+    /**
+     * 预算
+     */
     @Join(tagClass = BudgetBean.class)
     private String budgetId = "";
 
+    /**
+     * 关联bill
+     */
     private String billId = "";
+
+    /**
+     * 关联ID
+     */
+    private String refId = "";
 
     private double beforemonery = 0.0d;
 
@@ -55,6 +68,7 @@ public class BudgetLogBean implements Serializable
 
     private String logTime = "";
 
+    @FK
     private String budgetItemId = "";
 
     @Join(tagClass = FeeItemBean.class)
@@ -271,5 +285,22 @@ public class BudgetLogBean implements Serializable
     public void setFeeItemId(String feeItemId)
     {
         this.feeItemId = feeItemId;
+    }
+
+    /**
+     * @return the refId
+     */
+    public String getRefId()
+    {
+        return refId;
+    }
+
+    /**
+     * @param refId
+     *            the refId to set
+     */
+    public void setRefId(String refId)
+    {
+        this.refId = refId;
     }
 }

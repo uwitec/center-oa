@@ -23,6 +23,7 @@ import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.oa.budget.constant.BudgetConstant;
 import com.china.center.oa.publics.bean.LocationBean;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
 
 
@@ -52,21 +53,29 @@ public class BudgetBean implements Serializable
     @Join(tagClass = StafferBean.class)
     private String stafferId = "";
 
+    /**
+     * 权签人
+     */
+    @Html(title = "权签人", name = "signerName", must = true, readonly = true)
+    @Join(tagClass = StafferBean.class, alias = "SIGN")
+    private String signer = "";
+
     @Join(tagClass = LocationBean.class)
     private String locationId = "";
 
     private String logTime = "";
 
-    @Html(title = "预算部门", must = true)
+    @Html(title = "预算部门", name = "budgetDepartmentName", must = true, readonly = true)
+    @Join(tagClass = PrincipalshipBean.class)
     private String budgetDepartment = "";
 
     @Html(title = "预算年度", must = true, type = Element.SELECT)
     private String year = "";
 
-    @Html(title = "开始时间", must = true, type = Element.DATE)
+    @Html(title = "开始日期", must = true, type = Element.DATE)
     private String beginDate = "";
 
-    @Html(title = "结束时间", must = true, type = Element.DATE)
+    @Html(title = "结束日期", must = true, type = Element.DATE)
     private String endDate = "";
 
     @Html(title = "状态", must = true, type = Element.SELECT)
@@ -100,6 +109,9 @@ public class BudgetBean implements Serializable
     @Html(title = "最小收款", must = true, maxLength = 20, oncheck = JCheck.ONLY_FLOAT)
     private double inMoney = 0.0d;
 
+    /**
+     * 实际使用金额（在结束的时候会统计）
+     */
     private double realMonery = 0.0d;
 
     @Html(title = "描述", type = Element.TEXTAREA, maxLength = 200)
@@ -518,5 +530,117 @@ public class BudgetBean implements Serializable
     public void setBudgetDepartment(String budgetDepartment)
     {
         this.budgetDepartment = budgetDepartment;
+    }
+
+    /**
+     * @return the signer
+     */
+    public String getSigner()
+    {
+        return signer;
+    }
+
+    /**
+     * @param signer
+     *            the signer to set
+     */
+    public void setSigner(String signer)
+    {
+        this.signer = signer;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("BudgetBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("name = ")
+            .append(this.name)
+            .append(TAB)
+            .append("parentId = ")
+            .append(this.parentId)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("signer = ")
+            .append(this.signer)
+            .append(TAB)
+            .append("locationId = ")
+            .append(this.locationId)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("budgetDepartment = ")
+            .append(this.budgetDepartment)
+            .append(TAB)
+            .append("year = ")
+            .append(this.year)
+            .append(TAB)
+            .append("beginDate = ")
+            .append(this.beginDate)
+            .append(TAB)
+            .append("endDate = ")
+            .append(this.endDate)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("carryStatus = ")
+            .append(this.carryStatus)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("level = ")
+            .append(this.level)
+            .append(TAB)
+            .append("total = ")
+            .append(this.total)
+            .append(TAB)
+            .append("sail = ")
+            .append(this.sail)
+            .append(TAB)
+            .append("orgProfit = ")
+            .append(this.orgProfit)
+            .append(TAB)
+            .append("realProfit = ")
+            .append(this.realProfit)
+            .append(TAB)
+            .append("outSave = ")
+            .append(this.outSave)
+            .append(TAB)
+            .append("outMoney = ")
+            .append(this.outMoney)
+            .append(TAB)
+            .append("inMoney = ")
+            .append(this.inMoney)
+            .append(TAB)
+            .append("realMonery = ")
+            .append(this.realMonery)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("items = ")
+            .append(this.items)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }

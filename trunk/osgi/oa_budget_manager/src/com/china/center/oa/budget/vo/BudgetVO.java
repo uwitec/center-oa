@@ -31,11 +31,17 @@ public class BudgetVO extends BudgetBean
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
 
+    @Relationship(relationField = "signer")
+    private String signerName = "";
+
     @Relationship(relationField = "locationId")
     private String locationName = "";
 
     @Relationship(relationField = "parentId")
     private String parentName = "";
+
+    @Relationship(relationField = "budgetDepartment")
+    private String budgetDepartmentName = "";
 
     @Ignore
     private String stotal = "";
@@ -150,5 +156,83 @@ public class BudgetVO extends BudgetBean
     public void setSrealMonery(String srealMonery)
     {
         this.srealMonery = srealMonery;
+    }
+
+    /**
+     * @return the budgetDepartmentName
+     */
+    public String getBudgetDepartmentName()
+    {
+        return budgetDepartmentName;
+    }
+
+    /**
+     * @param budgetDepartmentName
+     *            the budgetDepartmentName to set
+     */
+    public void setBudgetDepartmentName(String budgetDepartmentName)
+    {
+        this.budgetDepartmentName = budgetDepartmentName;
+    }
+
+    /**
+     * @return the signerName
+     */
+    public String getSignerName()
+    {
+        return signerName;
+    }
+
+    /**
+     * @param signerName
+     *            the signerName to set
+     */
+    public void setSignerName(String signerName)
+    {
+        this.signerName = signerName;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("BudgetVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("stafferName = ")
+            .append(this.stafferName)
+            .append(TAB)
+            .append("signerName = ")
+            .append(this.signerName)
+            .append(TAB)
+            .append("locationName = ")
+            .append(this.locationName)
+            .append(TAB)
+            .append("parentName = ")
+            .append(this.parentName)
+            .append(TAB)
+            .append("budgetDepartmentName = ")
+            .append(this.budgetDepartmentName)
+            .append(TAB)
+            .append("stotal = ")
+            .append(this.stotal)
+            .append(TAB)
+            .append("srealMonery = ")
+            .append(this.srealMonery)
+            .append(TAB)
+            .append("itemVOs = ")
+            .append(this.itemVOs)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }

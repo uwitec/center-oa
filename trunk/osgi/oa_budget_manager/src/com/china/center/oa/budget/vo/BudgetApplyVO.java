@@ -15,6 +15,7 @@ import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Relationship;
 import com.china.center.oa.budget.bean.BudgetApplyBean;
+import com.china.center.oa.budget.constant.BudgetConstant;
 
 
 /**
@@ -33,6 +34,12 @@ public class BudgetApplyVO extends BudgetApplyBean
 
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
+
+    /**
+     * 预算分类
+     */
+    @Relationship(relationField = "budgetId", tagField = "type")
+    private int budgetType = BudgetConstant.BUDGET_TYPE_COMPANY;
 
     @Ignore
     private List<BudgetItemVO> itemVOs = null;
@@ -93,5 +100,41 @@ public class BudgetApplyVO extends BudgetApplyBean
     public void setStafferName(String stafferName)
     {
         this.stafferName = stafferName;
+    }
+
+    /**
+     * @return the budgetType
+     */
+    public int getBudgetType()
+    {
+        return budgetType;
+    }
+
+    /**
+     * @param budgetType
+     *            the budgetType to set
+     */
+    public void setBudgetType(int budgetType)
+    {
+        this.budgetType = budgetType;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue.append("BudgetApplyVO ( ").append(super.toString()).append(TAB).append(
+            "budgetName = ").append(this.budgetName).append(TAB).append("stafferName = ").append(
+            this.stafferName).append(TAB).append("budgetType = ").append(this.budgetType).append(
+            TAB).append("itemVOs = ").append(this.itemVOs).append(TAB).append(" )");
+
+        return retValue.toString();
     }
 }

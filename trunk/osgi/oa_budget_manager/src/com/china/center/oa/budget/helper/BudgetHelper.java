@@ -52,34 +52,7 @@ public abstract class BudgetHelper
      */
     public static int getNextApplyStatus(BudgetBean budget, BudgetApplyBean apply)
     {
-        if (apply.getStatus() == BudgetConstant.BUDGET_APPLY_STATUS_WAIT_CEO)
-        {
-            return BudgetConstant.BUDGET_APPLY_STATUS_END;
-        }
-
-        if (apply.getStatus() < BudgetConstant.BUDGET_APPLY_STATUS_WAIT_CFO)
-        {
-            return BudgetConstant.BUDGET_APPLY_STATUS_INIT;
-        }
-
-        // 财务ok后，总经理必须ok
-        if (apply.getStatus() == BudgetConstant.BUDGET_APPLY_STATUS_WAIT_CFO)
-        {
-            return BudgetConstant.BUDGET_APPLY_STATUS_WAIT_COO;
-        }
-
-        // 总经理下一个就复杂一点了 部门的直接结束，公司的还需要董事长
-        if (apply.getStatus() == BudgetConstant.BUDGET_APPLY_STATUS_WAIT_COO)
-        {
-            if (budget.getType() == BudgetConstant.BUDGET_TYPE_COMPANY)
-            {
-                return BudgetConstant.BUDGET_APPLY_STATUS_WAIT_CEO;
-            }
-
-            return BudgetConstant.BUDGET_APPLY_STATUS_END;
-        }
-
-        return BudgetConstant.BUDGET_APPLY_STATUS_INIT;
+        return BudgetConstant.BUDGET_APPLY_STATUS_END;
     }
 
     /**

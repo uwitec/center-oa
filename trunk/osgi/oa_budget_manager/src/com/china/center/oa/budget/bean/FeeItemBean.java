@@ -14,8 +14,12 @@ import java.io.Serializable;
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Html;
 import com.china.center.jdbc.annotation.Id;
+import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.Unique;
+import com.china.center.jdbc.annotation.enums.Element;
+import com.china.center.oa.budget.constant.BudgetConstant;
+import com.china.center.oa.tax.bean.TaxBean;
 
 
 /**
@@ -36,6 +40,19 @@ public class FeeItemBean implements Serializable
     @Unique
     @Html(title = "预算项", must = true, maxLength = 100)
     private String name = "";
+
+    /**
+     * 关联的费用科目(二级)
+     */
+    @Join(tagClass = TaxBean.class)
+    @Html(title = "费用科目", name = "taxName", must = true, maxLength = 100)
+    private String taxId = "";
+
+    /**
+     * 预算项属性
+     */
+    @Html(title = "类型", must = true, type = Element.SELECT)
+    private int type = BudgetConstant.FEEITEM_TYPE_REGULARFEE;
 
     public FeeItemBean()
     {
@@ -73,5 +90,71 @@ public class FeeItemBean implements Serializable
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    /**
+     * @return the taxId
+     */
+    public String getTaxId()
+    {
+        return taxId;
+    }
+
+    /**
+     * @param taxId
+     *            the taxId to set
+     */
+    public void setTaxId(String taxId)
+    {
+        this.taxId = taxId;
+    }
+
+    /**
+     * @return the type
+     */
+    public int getType()
+    {
+        return type;
+    }
+
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(int type)
+    {
+        this.type = type;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("FeeItemBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("name = ")
+            .append(this.name)
+            .append(TAB)
+            .append("taxId = ")
+            .append(this.taxId)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }

@@ -9,9 +9,11 @@
 package com.china.center.oa.budget.manager;
 
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.budget.bean.BudgetApplyBean;
+import com.china.center.oa.budget.listener.BudgetListener;
 
 
 /**
@@ -22,7 +24,7 @@ import com.china.center.oa.budget.bean.BudgetApplyBean;
  * @see BudgetApplyManager
  * @since 3.0
  */
-public interface BudgetApplyManager
+public interface BudgetApplyManager extends ListenerManager<BudgetListener>
 {
     boolean addBean(User user, BudgetApplyBean bean)
         throws MYException;

@@ -41,6 +41,9 @@ public class BudgetItemVO extends BudgetItemBean
     @Ignore
     private String sremainMonery = "";
 
+    @Ignore
+    private String schangeMonery = "";
+
     public BudgetItemVO()
     {
     }
@@ -121,5 +124,60 @@ public class BudgetItemVO extends BudgetItemBean
     public void setSremainMonery(String sremainMonery)
     {
         this.sremainMonery = sremainMonery;
+    }
+
+    /**
+     * @return the schangeMonery
+     */
+    public String getSchangeMonery()
+    {
+        return schangeMonery;
+    }
+
+    /**
+     * @param schangeMonery
+     *            the schangeMonery to set
+     */
+    public void setSchangeMonery(String schangeMonery)
+    {
+        this.schangeMonery = schangeMonery;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("BudgetItemVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("feeItemName = ")
+            .append(this.feeItemName)
+            .append(TAB)
+            .append("sbudget = ")
+            .append(this.sbudget)
+            .append(TAB)
+            .append("srealMonery = ")
+            .append(this.srealMonery)
+            .append(TAB)
+            .append("suseMonery = ")
+            .append(this.suseMonery)
+            .append(TAB)
+            .append("sremainMonery = ")
+            .append(this.sremainMonery)
+            .append(TAB)
+            .append("schangeMonery = ")
+            .append(this.schangeMonery)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }
