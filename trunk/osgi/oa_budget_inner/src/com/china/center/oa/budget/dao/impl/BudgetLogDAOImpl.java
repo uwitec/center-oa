@@ -9,6 +9,7 @@
 package com.china.center.oa.budget.dao.impl;
 
 
+import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.budget.bean.BudgetLogBean;
 import com.china.center.oa.budget.dao.BudgetLogDAO;
@@ -25,5 +26,11 @@ import com.china.center.oa.budget.vo.BudgetLogVO;
  */
 public class BudgetLogDAOImpl extends BaseDAO<BudgetLogBean, BudgetLogVO> implements BudgetLogDAO
 {
+    public double sumBudgetLogByBudgetItemId(String budgetItemId)
+    {
+        String sql = BeanTools.getSumHead(this.claz, "monery") + "where budgetItemId = ?";
+
+        return this.jdbcOperation.queryForDouble(sql, budgetItemId);
+    }
 
 }

@@ -9,7 +9,9 @@
 package com.china.center.oa.budget.manager.impl;
 
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +43,7 @@ import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.LogDAO;
 import com.china.center.oa.publics.dao.PlanDAO;
+import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.TimeTools;
@@ -69,6 +72,8 @@ public class BudgetManagerImpl implements BudgetManager
 
     private LogDAO logDAO = null;
 
+    private OrgManager orgManager = null;
+
     private OutBillDAO outBillDAO = null;
 
     private PlanDAO planDAO = null;
@@ -89,9 +94,12 @@ public class BudgetManagerImpl implements BudgetManager
     public boolean addBean(User user, BudgetBean bean)
         throws MYException
     {
-        JudgeTools.judgeParameterIsNull(user, bean);
+        JudgeTools.judgeParameterIsNull(user, bean, bean.getSigner());
 
         checkAddBean(bean);
+
+        // 如果是月度预算需要校验时间(不能重合)
+        checkContain(bean);
 
         bean.setId(commonDAO.getSquenceString20(IDPrefixConstant.ID_BUDGET_PREFIX));
 
@@ -325,6 +333,98 @@ public class BudgetManagerImpl implements BudgetManager
     private void checkSubmit(BudgetBean bean)
         throws MYException
     {
+        if (bean.getBeginDate().compareTo(bean.getEndDate()) >= 0)
+        {
+            throw new MYException("预算起始日期不符合要求");
+        }
+
+        // 预算项不能重复
+        List<BudgetItemBean> items = bean.getItems();
+
+        Set<String> itemSet = new HashSet();
+
+        for (BudgetItemBean each : items)
+        {
+            if (itemSet.contains(each.getFeeItemId()))
+            {
+                throw new MYException("预算项不能相同");
+            }
+
+            itemSet.add(each.getFeeItemId());
+        }
+
+        // 检查子预算不能和其他的子预算部门重复
+        if (bean.getType() == BudgetConstant.BUDGET_TYPE_LOCATION
+            || bean.getType() == BudgetConstant.BUDGET_TYPE_DEPARTMENT)
+        {
+            if (bean.getLevel() == BudgetConstant.BUDGET_LEVEL_YEAR)
+            {
+                List<BudgetBean> subList = budgetDAO.queryEntityBeansByFK(bean.getParentId());
+
+                Set<String> set = new HashSet();
+
+                set.add(bean.getBudgetDepartment());
+
+                for (BudgetBean each : subList)
+                {
+                    if ( !each.getId().equals(bean.getId()))
+                    {
+                        if (set.contains(each.getBudgetDepartment()))
+                        {
+                            throw new MYException("子预算的部门不能相同");
+                        }
+
+                        set.add(each.getBudgetDepartment());
+                    }
+                }
+            }
+
+            // 检查递归级别orgManager
+            BudgetBean parentBudget = budgetDAO.find(bean.getParentId());
+
+            if (parentBudget == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 预算选择的组织不是上下级别的关系
+            if (bean.getLevel() == BudgetConstant.BUDGET_LEVEL_YEAR)
+            {
+                if ( !orgManager.isSubPrincipalship(parentBudget.getBudgetDepartment(), bean
+                    .getBudgetDepartment()))
+                {
+                    throw new MYException("预算选择的组织不是上下级别的关系,请确认操作");
+                }
+            }
+
+            // 年度预算的时间继承
+            if (bean.getLevel() == BudgetConstant.BUDGET_LEVEL_YEAR)
+            {
+                bean.setBeginDate(parentBudget.getBeginDate());
+
+                bean.setEndDate(parentBudget.getEndDate());
+            }
+
+            // 月度预算继承年度预算的部门
+            if (bean.getLevel() == BudgetConstant.BUDGET_LEVEL_MONTH)
+            {
+                if (parentBudget.getLevel() != BudgetConstant.BUDGET_LEVEL_YEAR
+                    || parentBudget.getType() != BudgetConstant.BUDGET_TYPE_DEPARTMENT)
+                {
+                    throw new MYException("月度预算的父级必须是部门的年度预算,请确认操作");
+                }
+
+                bean.setBudgetDepartment(parentBudget.getBudgetDepartment());
+            }
+
+            // 校验权签人
+            if ( !orgManager.isStafferBelongOrg(bean.getSigner(), bean.getBudgetDepartment()))
+            {
+                throw new MYException("权签人不属于选择的部门,请确认操作");
+            }
+        }
+
+        // 预算项的角和
         if (bean.getStatus() == BudgetConstant.BUDGET_STATUS_SUBMIT)
         {
             if (ListTools.isEmptyOrNull(bean.getItems()))
@@ -424,7 +524,7 @@ public class BudgetManagerImpl implements BudgetManager
     public boolean updateBean(User user, BudgetBean bean)
         throws MYException
     {
-        JudgeTools.judgeParameterIsNull(user, bean);
+        JudgeTools.judgeParameterIsNull(user, bean, bean.getSigner());
 
         checkupdateBean(bean);
 
@@ -574,7 +674,19 @@ public class BudgetManagerImpl implements BudgetManager
 
         BudgetBean bean = checkPassBean(id);
 
+        // 校验是否有权限审批部门预算
+        if (bean.getType() == BudgetConstant.BUDGET_TYPE_DEPARTMENT)
+        {
+            if ( !orgManager.isOrgBelongStaffer(user.getStafferId(), bean.getBudgetDepartment()))
+            {
+                throw new MYException("部门预算必须都是所属事业部经理审批");
+            }
+        }
+
         checkTotal(bean);
+
+        // 如果是月度预算需要校验时间(不能重合)
+        checkContain(bean);
 
         budgetDAO.updateStatus(id, BudgetConstant.BUDGET_STATUS_PASS);
 
@@ -584,6 +696,85 @@ public class BudgetManagerImpl implements BudgetManager
         createPlan(bean);
 
         return true;
+    }
+
+    /**
+     * checkContain
+     * 
+     * @param bean
+     * @throws MYException
+     */
+    private void checkContain(BudgetBean bean)
+        throws MYException
+    {
+        if (bean.getLevel() == BudgetConstant.BUDGET_LEVEL_MONTH)
+        {
+            BudgetBean parent = budgetDAO.find(bean.getParentId());
+
+            if (parent == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            int b = bean.getBeginDate().compareTo(parent.getBeginDate());
+
+            if (b < 0)
+            {
+                throw new MYException("月份和年度预算有冲突,年度预算[%s]-[%s]", parent.getBeginDate(), parent
+                    .getEndDate());
+            }
+
+            int e = bean.getEndDate().compareTo(parent.getEndDate());
+
+            if (e > 0)
+            {
+                throw new MYException("月份和年度预算有冲突,年度预算[%s]-[%s]", parent.getBeginDate(), parent
+                    .getEndDate());
+            }
+
+            List<BudgetBean> subList = budgetDAO.queryEntityBeansByFK(bean.getParentId());
+
+            for (BudgetBean each : subList)
+            {
+                if (each.getId().equals(bean.getId()))
+                {
+                    continue;
+                }
+
+                if (each.getStatus() != BudgetConstant.BUDGET_STATUS_PASS)
+                {
+                    continue;
+                }
+
+                int bcompare = each.getBeginDate().compareTo(bean.getBeginDate());
+
+                int ecompare = each.getEndDate().compareTo(bean.getBeginDate());
+
+                if (bcompare * ecompare <= 0)
+                {
+                    throw new MYException("月份有重叠处,已经存在[%s]-[%s]", each.getBeginDate(), each
+                        .getEndDate());
+                }
+
+                int bcompare1 = each.getBeginDate().compareTo(bean.getEndDate());
+
+                int ecompare1 = each.getEndDate().compareTo(bean.getEndDate());
+
+                if (bcompare1 * ecompare1 <= 0)
+                {
+                    throw new MYException("月份有重叠处,已经存在[%s]-[%s]", each.getBeginDate(), each
+                        .getEndDate());
+                }
+
+                // 包含关系的
+                if (bcompare * bcompare1 < 0)
+                {
+                    throw new MYException("月份有重叠处,已经存在[%s]-[%s]", each.getBeginDate(), each
+                        .getEndDate());
+                }
+
+            }
+        }
     }
 
     /**
@@ -612,7 +803,11 @@ public class BudgetManagerImpl implements BudgetManager
 
         plan.setBeginTime(item.getBeginDate() + " 00:00:00");
 
-        plan.setEndTime(item.getEndDate() + " 23:59:59");
+        // 推后15天
+        String endTime = TimeTools.getSpecialDateStringByDays(item.getEndDate() + " 23:59:59", 15);
+
+        // 结束应该是推后
+        plan.setEndTime(endTime);
 
         plan.setCarryTime(plan.getEndTime());
 
@@ -963,5 +1158,22 @@ public class BudgetManagerImpl implements BudgetManager
     public void setPlanDAO(PlanDAO planDAO)
     {
         this.planDAO = planDAO;
+    }
+
+    /**
+     * @return the orgManager
+     */
+    public OrgManager getOrgManager()
+    {
+        return orgManager;
+    }
+
+    /**
+     * @param orgManager
+     *            the orgManager to set
+     */
+    public void setOrgManager(OrgManager orgManager)
+    {
+        this.orgManager = orgManager;
     }
 }

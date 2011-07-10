@@ -16,6 +16,8 @@ import com.china.center.oa.budget.bean.BudgetBean;
 import com.china.center.oa.budget.bean.BudgetItemBean;
 import com.china.center.oa.budget.bean.FeeItemBean;
 import com.china.center.oa.budget.constant.BudgetConstant;
+import com.china.center.oa.budget.dao.BudgetApplyDAO;
+import com.china.center.oa.budget.dao.BudgetDAO;
 import com.china.center.oa.budget.facade.BudgetFacade;
 import com.china.center.oa.budget.manager.BudgetApplyManager;
 import com.china.center.oa.budget.manager.BudgetManager;
@@ -41,6 +43,10 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
     private BudgetApplyManager budgetApplyManager = null;
 
     private UserManager userManager = null;
+
+    private BudgetApplyDAO budgetApplyDAO = null;
+
+    private BudgetDAO budgetDAO = null;
 
     private FeeItemManager feeItemManager = null;
 
@@ -68,14 +74,24 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
 
         checkUser(user);
 
-        String opr = AuthConstant.BUDGET_OPR;
+        String auth = AuthConstant.BUDGET_LOCATION_OPR;
 
-        if (BudgetConstant.BUDGET_ROOT.equals(bean.getParentId()))
+        if (bean.getType() == BudgetConstant.BUDGET_TYPE_COMPANY)
         {
-            opr = AuthConstant.BUDGET_ADDROOT;
+            auth = AuthConstant.BUDGET_ROOT_OPR;
         }
 
-        if (containAuth(user, opr))
+        if (bean.getType() == BudgetConstant.BUDGET_TYPE_LOCATION)
+        {
+            auth = AuthConstant.BUDGET_LOCATION_OPR;
+        }
+
+        if (bean.getType() == BudgetConstant.BUDGET_TYPE_DEPARTMENT)
+        {
+            auth = AuthConstant.BUDGET_DEPARTMENT_OPR;
+        }
+
+        if (containAuth(user, auth))
         {
             return budgetManager.addBean(user, bean);
         }
@@ -102,8 +118,8 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
 
         checkUser(user);
 
-        if (containAuth(user, AuthConstant.BUDGET_OPR)
-            || containAuth(user, AuthConstant.BUDGET_ADDROOT))
+        if (containAuth(user, AuthConstant.BUDGET_LOCATION_OPR)
+            || containAuth(user, AuthConstant.BUDGET_ROOT_OPR))
         {
             return budgetManager.delBean(user, cid);
         }
@@ -130,14 +146,24 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
 
         checkUser(user);
 
-        String opr = AuthConstant.BUDGET_OPR;
+        String auth = AuthConstant.BUDGET_LOCATION_OPR;
 
-        if (BudgetConstant.BUDGET_ROOT.equals(bean.getParentId()))
+        if (bean.getType() == BudgetConstant.BUDGET_TYPE_COMPANY)
         {
-            opr = AuthConstant.BUDGET_ADDROOT;
+            auth = AuthConstant.BUDGET_ROOT_OPR;
         }
 
-        if (containAuth(user, opr))
+        if (bean.getType() == BudgetConstant.BUDGET_TYPE_LOCATION)
+        {
+            auth = AuthConstant.BUDGET_LOCATION_OPR;
+        }
+
+        if (bean.getType() == BudgetConstant.BUDGET_TYPE_DEPARTMENT)
+        {
+            auth = AuthConstant.BUDGET_DEPARTMENT_OPR;
+        }
+
+        if (containAuth(user, auth))
         {
             return budgetManager.updateBean(user, bean);
         }
@@ -164,7 +190,7 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
 
         checkUser(user);
 
-        if (containAuth(user, AuthConstant.BUDGET_OPR))
+        if (containAuth(user, AuthConstant.BUDGET_LOCATION_OPR))
         {
             return budgetManager.updateItemBean(user, bean, reason);
         }
@@ -191,7 +217,7 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
 
         checkUser(user);
 
-        if (containAuth(user, AuthConstant.BUDGET_OPR))
+        if (containAuth(user, AuthConstant.BUDGET_LOCATION_OPR))
         {
             return budgetManager.delItemBean(user, id);
         }
@@ -218,11 +244,21 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
 
         checkUser(user);
 
-        String auth = AuthConstant.BUDGET_CHECK;
+        String auth = AuthConstant.BUDGET_LOCATION_CHECK;
 
         if (isRootBudget(cid))
         {
-            auth = AuthConstant.BUDGET_OPRROOT;
+            auth = AuthConstant.BUDGET_ROOT_CHECK;
+        }
+
+        if (isLocationBudget(cid))
+        {
+            auth = AuthConstant.BUDGET_LOCATION_CHECK;
+        }
+
+        if (isDepartmentBudget(cid))
+        {
+            auth = AuthConstant.BUDGET_DEPARTMENT_CHECK;
         }
 
         if (containAuth(user, auth))
@@ -252,11 +288,21 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
 
         checkUser(user);
 
-        String auth = AuthConstant.BUDGET_CHECK;
+        String auth = AuthConstant.BUDGET_LOCATION_CHECK;
 
         if (isRootBudget(cid))
         {
-            auth = AuthConstant.BUDGET_OPRROOT;
+            auth = AuthConstant.BUDGET_ROOT_CHECK;
+        }
+
+        if (isLocationBudget(cid))
+        {
+            auth = AuthConstant.BUDGET_LOCATION_CHECK;
+        }
+
+        if (isDepartmentBudget(cid))
+        {
+            auth = AuthConstant.BUDGET_DEPARTMENT_CHECK;
         }
 
         if (containAuth(user, auth))
@@ -286,9 +332,9 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
 
         checkUser(user);
 
-        String auth = whetherAuth(user, mode);
+        String auth = whetherAuth(user, mode, cid);
 
-        if (containAuth(user, auth))
+        if (containAllAuth(user, auth, AuthConstant.BUDGET_CHANGE))
         {
             return budgetApplyManager.passBean(user, cid);
         }
@@ -316,9 +362,9 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
 
         checkUser(user);
 
-        String auth = whetherAuth(user, mode);
+        String auth = whetherAuth(user, mode, cid);
 
-        if (containAuth(user, auth))
+        if (containAllAuth(user, auth, AuthConstant.BUDGET_CHANGE))
         {
             return budgetApplyManager.rejectBean(user, cid, reson);
         }
@@ -334,24 +380,40 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
      * @param user
      * @param mode
      * @return
+     * @throws MYException
      */
-    private String whetherAuth(User user, String mode)
+    private String whetherAuth(User user, String mode, String cid)
+        throws MYException
     {
-        String auth = AuthConstant.BUDGET_CHANGE_APPROVE_CFO;
+        BudgetApplyBean apply = budgetApplyDAO.find(cid);
 
-        if ("0".equals(mode))
+        if (apply == null)
         {
-            auth = AuthConstant.BUDGET_CHANGE_APPROVE_CFO;
+            throw new MYException("数据错误,请确认操作");
         }
 
-        if ("1".equals(mode))
+        BudgetBean budget = budgetDAO.find(apply.getBudgetId());
+
+        if (budget == null)
         {
-            auth = AuthConstant.BUDGET_CHANGE_APPROVE_COO;
+            throw new MYException("数据错误,请确认操作");
         }
 
-        if ("2".equals(mode))
+        String auth = AuthConstant.BUDGET_LOCATION_OPR;
+
+        if (budget.getType() == BudgetConstant.BUDGET_TYPE_COMPANY)
         {
-            auth = AuthConstant.BUDGET_CHANGE_APPROVE_CEO;
+            auth = AuthConstant.BUDGET_ROOT_OPR;
+        }
+
+        if (budget.getType() == BudgetConstant.BUDGET_TYPE_LOCATION)
+        {
+            auth = AuthConstant.BUDGET_LOCATION_OPR;
+        }
+
+        if (budget.getType() == BudgetConstant.BUDGET_TYPE_DEPARTMENT)
+        {
+            auth = AuthConstant.BUDGET_DEPARTMENT_OPR;
         }
 
         return auth;
@@ -374,7 +436,7 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
 
         checkUser(user);
 
-        if (containAuth(user, AuthConstant.BUDGET_OPR))
+        if (containAuth(user, AuthConstant.BUDGET_LOCATION_OPR))
         {
             return feeItemManager.addBean(user, bean);
         }
@@ -401,7 +463,7 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
 
         checkUser(user);
 
-        if (containAuth(user, AuthConstant.BUDGET_OPR))
+        if (containAuth(user, AuthConstant.BUDGET_LOCATION_OPR))
         {
             return feeItemManager.updateBean(user, bean);
         }
@@ -428,7 +490,7 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
 
         checkUser(user);
 
-        if (containAuth(user, AuthConstant.BUDGET_OPR))
+        if (containAuth(user, AuthConstant.BUDGET_LOCATION_OPR))
         {
             return feeItemManager.deleteBean(user, id);
         }
@@ -455,7 +517,31 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
 
         checkUser(user);
 
-        if (containAuth(user, AuthConstant.BUDGET_CHANGE_APPLY))
+        BudgetBean budget = budgetDAO.find(bean.getBudgetId());
+
+        if (budget == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        String auth = AuthConstant.BUDGET_LOCATION_OPR;
+
+        if (budget.getType() == BudgetConstant.BUDGET_TYPE_COMPANY)
+        {
+            auth = AuthConstant.BUDGET_ROOT_OPR;
+        }
+
+        if (budget.getType() == BudgetConstant.BUDGET_TYPE_LOCATION)
+        {
+            auth = AuthConstant.BUDGET_LOCATION_OPR;
+        }
+
+        if (budget.getType() == BudgetConstant.BUDGET_TYPE_DEPARTMENT)
+        {
+            auth = AuthConstant.BUDGET_DEPARTMENT_OPR;
+        }
+
+        if (containAllAuth(user, auth, AuthConstant.BUDGET_CHANGE))
         {
             return budgetApplyManager.addBean(user, bean);
         }
@@ -475,7 +561,33 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
             throw new MYException("预算不存在");
         }
 
-        return BudgetConstant.BUDGET_ROOT.equals(bean.getParentId());
+        return bean.getType() == BudgetConstant.BUDGET_TYPE_COMPANY;
+    }
+
+    private boolean isLocationBudget(String id)
+        throws MYException
+    {
+        BudgetBean bean = this.budgetManager.findBudget(id);
+
+        if (bean == null)
+        {
+            throw new MYException("预算不存在");
+        }
+
+        return bean.getType() == BudgetConstant.BUDGET_TYPE_LOCATION;
+    }
+
+    private boolean isDepartmentBudget(String id)
+        throws MYException
+    {
+        BudgetBean bean = this.budgetManager.findBudget(id);
+
+        if (bean == null)
+        {
+            throw new MYException("预算不存在");
+        }
+
+        return bean.getType() == BudgetConstant.BUDGET_TYPE_DEPARTMENT;
     }
 
     /**
@@ -544,5 +656,39 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
     public void setBudgetApplyManager(BudgetApplyManager budgetApplyManager)
     {
         this.budgetApplyManager = budgetApplyManager;
+    }
+
+    /**
+     * @return the budgetApplyDAO
+     */
+    public BudgetApplyDAO getBudgetApplyDAO()
+    {
+        return budgetApplyDAO;
+    }
+
+    /**
+     * @param budgetApplyDAO
+     *            the budgetApplyDAO to set
+     */
+    public void setBudgetApplyDAO(BudgetApplyDAO budgetApplyDAO)
+    {
+        this.budgetApplyDAO = budgetApplyDAO;
+    }
+
+    /**
+     * @return the budgetDAO
+     */
+    public BudgetDAO getBudgetDAO()
+    {
+        return budgetDAO;
+    }
+
+    /**
+     * @param budgetDAO
+     *            the budgetDAO to set
+     */
+    public void setBudgetDAO(BudgetDAO budgetDAO)
+    {
+        this.budgetDAO = budgetDAO;
     }
 }

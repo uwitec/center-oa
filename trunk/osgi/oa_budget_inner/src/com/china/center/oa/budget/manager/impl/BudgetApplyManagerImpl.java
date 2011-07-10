@@ -10,11 +10,13 @@ package com.china.center.oa.budget.manager.impl;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.budget.bean.BudgetApplyBean;
@@ -27,6 +29,7 @@ import com.china.center.oa.budget.dao.BudgetDAO;
 import com.china.center.oa.budget.dao.BudgetItemDAO;
 import com.china.center.oa.budget.dao.FeeItemDAO;
 import com.china.center.oa.budget.helper.BudgetHelper;
+import com.china.center.oa.budget.listener.BudgetListener;
 import com.china.center.oa.budget.manager.BudgetApplyManager;
 import com.china.center.oa.budget.vo.BudgetItemVO;
 import com.china.center.oa.publics.bean.LogBean;
@@ -36,6 +39,7 @@ import com.china.center.oa.publics.constant.OperationConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.LogDAO;
 import com.china.center.oa.publics.manager.NotifyManager;
+import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
@@ -51,7 +55,7 @@ import com.china.center.tools.TimeTools;
  * @since 1.0
  */
 @Exceptional
-public class BudgetApplyManagerImpl implements BudgetApplyManager
+public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListener> implements BudgetApplyManager
 {
     private BudgetDAO budgetDAO = null;
 
@@ -66,6 +70,8 @@ public class BudgetApplyManagerImpl implements BudgetApplyManager
     private BudgetApplyDAO budgetApplyDAO = null;
 
     private LogDAO logDAO = null;
+
+    private OrgManager orgManager = null;
 
     /**
      * default constructor
@@ -135,9 +141,53 @@ public class BudgetApplyManagerImpl implements BudgetApplyManager
             List<BudgetItemBean> currentItemList = budgetItemDAO.queryEntityBeansByFK(apply
                 .getBudgetId());
 
+            BudgetBean budget = budgetDAO.find(apply.getBudgetId());
+
+            if (budget == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 校验是否有权限审批部门预算
+            if (budget.getType() == BudgetConstant.BUDGET_TYPE_DEPARTMENT)
+            {
+                if ( !orgManager.isOrgBelongStaffer(user.getStafferId(), budget
+                    .getBudgetDepartment()))
+                {
+                    throw new MYException("部门预算必须都是所属事业部经理审批");
+                }
+            }
+
+            apply.setItems(applyItemList);
+
+            budget.setItems(currentItemList);
+
             // NOTE if BUDGET_APPLY_STATUS_END,copy budget and delete apply
             List<BudgetItemBean> newList = compareItemListAndModifyCurrentItemListReturnNewItemList(
                 apply.getBudgetId(), applyItemList, currentItemList);
+
+            // 检查是否超出父级预算
+            checkLegality(apply, budget);
+
+            Collection<BudgetListener> listenerMapValues = this.listenerMapValues();
+
+            // CORE 预算变更的核心检查
+            for (BudgetItemBean budgetItemBean : currentItemList)
+            {
+                double itemTotal = 0.0d;
+
+                for (BudgetListener budgetListener : listenerMapValues)
+                {
+                    itemTotal += budgetListener.onSumPreAndUseInEachBudgetItemChange(user, apply,
+                        budgetItemBean);
+                }
+
+                if (MathTools.compare(itemTotal, budgetItemBean.getBudget()) > 0)
+                {
+                    throw new MYException("当前的预算项已经使用和预占的金额达到[%.2f],而更新后的预算只有[%.2f],请确认",
+                        itemTotal, budgetItemBean.getBudget());
+                }
+            }
 
             // copy apply to current
             budgetItemDAO.updateAllEntityBeans(currentItemList);
@@ -173,6 +223,22 @@ public class BudgetApplyManagerImpl implements BudgetApplyManager
         if (apply == null)
         {
             throw new MYException("申请不存在");
+        }
+
+        BudgetBean budget = budgetDAO.find(apply.getBudgetId());
+
+        if (budget == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 校验是否有权限审批部门预算
+        if (budget.getType() == BudgetConstant.BUDGET_TYPE_DEPARTMENT)
+        {
+            if ( !orgManager.isOrgBelongStaffer(user.getStafferId(), budget.getBudgetDepartment()))
+            {
+                throw new MYException("部门预算必须都是所属事业部经理审批");
+            }
         }
 
         deleteApply(id);
@@ -278,7 +344,7 @@ public class BudgetApplyManagerImpl implements BudgetApplyManager
             throw new MYException("预算已经结束,不能进行变更");
         }
 
-        if (apply.getStatus() < BudgetConstant.BUDGET_APPLY_STATUS_WAIT_CFO)
+        if (apply.getStatus() < BudgetConstant.BUDGET_APPLY_STATUS_WAIT_APPROVE)
         {
             throw new MYException("不能审批");
         }
@@ -355,6 +421,8 @@ public class BudgetApplyManagerImpl implements BudgetApplyManager
     }
 
     /**
+     * 合法检查
+     * 
      * @param bean
      * @param budget
      * @throws MYException
@@ -636,7 +704,7 @@ public class BudgetApplyManagerImpl implements BudgetApplyManager
 
         NotifyBean notify = new NotifyBean();
 
-        notify.setMessage("预算申请/审批:" + reson + ".操作人:" + user.getStafferName());
+        notify.setMessage("预算申请" + operation + ":" + reson + ".操作人:" + user.getStafferName());
 
         notify.setUrl(BudgetConstant.BUDGET_DETAIL_URL + bean.getBudgetId());
 
@@ -760,5 +828,22 @@ public class BudgetApplyManagerImpl implements BudgetApplyManager
     public void setNotifyManager(NotifyManager notifyManager)
     {
         this.notifyManager = notifyManager;
+    }
+
+    /**
+     * @return the orgManager
+     */
+    public OrgManager getOrgManager()
+    {
+        return orgManager;
+    }
+
+    /**
+     * @param orgManager
+     *            the orgManager to set
+     */
+    public void setOrgManager(OrgManager orgManager)
+    {
+        this.orgManager = orgManager;
     }
 }
