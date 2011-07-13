@@ -47,8 +47,8 @@ function selectBank()
 
 function load()
 {
-    $v('refId_TR', false);
-    $v('refType_TR', false);
+    //$v('refId_TR', false);
+    //$v('refType_TR', false);
 }
 </script>
 
@@ -82,13 +82,15 @@ function load()
             
 			<p:pro field="code" innerString="size=60"/>
 			
-            <p:pro field="refId" innerString="style='width:400px'">
-                <p:option type="bankList" empty="true"/>
-            </p:pro>
-            
-            <p:pro field="refType">
-                <p:option type="taxRefType" empty="true"/>
-            </p:pro>
+			<c:if test="${my:length(bean.refId) != 0}">
+	            <p:pro field="refId" innerString="style='width:400px'">
+	                <p:option type="bankList" empty="true"/>
+	            </p:pro>
+	            
+	            <p:pro field="refType">
+	                <p:option type="taxRefType" empty="true"/>
+	            </p:pro>
+            </c:if>
 			
 			<p:pro field="bottomFlag">
                 <p:option type="taxBottomFlag"/>
