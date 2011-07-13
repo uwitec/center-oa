@@ -9,6 +9,9 @@
 package com.china.center.oa.tax.glue.listener.impl;
 
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.dao.TaxDAO;
 
@@ -23,6 +26,8 @@ import com.china.center.oa.tax.dao.TaxDAO;
  */
 public abstract class TaxGlueHelper
 {
+    private static final Log badLog = LogFactory.getLog("bad");
+
     /**
      * TODO 统一兼容性处理
      * 
@@ -37,6 +42,8 @@ public abstract class TaxGlueHelper
 
         if (inTax == null)
         {
+            badLog.error("Miss Bakn tax:" + bankId);
+
             return false;
         }
 
@@ -44,6 +51,8 @@ public abstract class TaxGlueHelper
 
         if (outTax == null)
         {
+            badLog.error("Miss Temp tax:" + bankId);
+
             return false;
         }
 
