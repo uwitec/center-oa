@@ -1008,16 +1008,14 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
             {
                 InBillBean bill = inBillDAO.find(item.getBillId());
 
-                if (bill == null)
+                if (bill != null)
                 {
-                    throw new MYException("数据错误,请确认操作");
+                    bill.setOutId("");
+
+                    bill.setStatus(FinanceConstant.INBILL_STATUS_NOREF);
+
+                    inBillDAO.updateEntityBean(bill);
                 }
-
-                bill.setOutId("");
-
-                bill.setStatus(FinanceConstant.INBILL_STATUS_NOREF);
-
-                inBillDAO.updateEntityBean(bill);
             }
         }
 
