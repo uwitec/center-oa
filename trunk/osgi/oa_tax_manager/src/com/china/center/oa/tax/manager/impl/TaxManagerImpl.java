@@ -63,7 +63,8 @@ public class TaxManagerImpl implements TaxManager
     {
         JudgeTools.judgeParameterIsNull(user, bean);
 
-        bean.setId(commonDAO.getSquenceString20());
+        // ID和code相同
+        bean.setId(bean.getCode());
 
         // 设置默认值
         if (StringTools.isNullOrNone(bean.getRefId()))
@@ -284,8 +285,6 @@ public class TaxManagerImpl implements TaxManager
 
         // 只能更新name和code
         old.setName(bean.getName());
-
-        old.setCode(bean.getCode());
 
         Expression exp = new Expression(old, this);
 
