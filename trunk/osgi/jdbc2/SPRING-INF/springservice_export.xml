@@ -22,6 +22,8 @@
 	
 	<osgi:service ref="exceptionalManager" interface="org.china.center.spring.ex.annotation.ExceptionalManager" />
 	
+	<osgi:service ref="integrationAOPManager" interface="org.china.center.spring.iaop.annotation.IntegrationAOPManager" />
+	
 	<osgi:service ref="convertEncode" interface="com.china.center.jdbc.inter.Convert" />
 	
 	<osgi:service ref="dataSource" interface="javax.sql.DataSource" />

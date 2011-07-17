@@ -114,6 +114,13 @@
 			<value>com.china.center.common.MYException</value>
 		</property>
 	</bean>
+	
+	<bean id="integrationAOPManager"
+        class="com.china.center.common.ex.MyIntegrationAOPManager">
+        <property name="unifyException">
+            <value>com.china.center.common.MYException</value>
+        </property>
+    </bean>
 
 	<bean id="dynamicJdbcOperation"
 		class="com.china.center.jdbc.inter.impl.MyDynamicJdbcOperationImpl">

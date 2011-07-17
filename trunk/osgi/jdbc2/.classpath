@@ -77,5 +77,13 @@
 	<classpathentry kind="lib" path="/jar_depend/lib/spring-osgi-web.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.0.5-bin.jar"/>
 	<classpathentry kind="lib" path="lib/commons-dbcp.jar"/>
+	<classpathentry kind="lib" path="/jar_depend/lib/catalina.configuration-1.2.0.jar"/>
+	<classpathentry kind="lib" path="/jar_depend/lib/catalina.start.osgi.jar"/>
+	<classpathentry kind="lib" path="/jar_depend/lib/com.springsource.com.caucho-3.1.6.jar"/>
+	<classpathentry kind="lib" path="/jar_depend/lib/com.springsource.org.apache.commons.httpclient-3.1.0.jar"/>
+	<classpathentry kind="lib" path="/jar_depend/lib/log4j.configuration-1.2.0.jar"/>
+	<classpathentry kind="lib" path="/jar_depend/lib/org.eclipse.osgi_3.3.2.R33x_v20080105.jar"/>
+	<classpathentry kind="lib" path="/jar_depend/lib/org.eclipse.osgi.services_3.1.200.v20070605.jar"/>
+	<classpathentry kind="lib" path="/jar_depend/lib/spring-iaop-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
