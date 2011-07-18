@@ -118,7 +118,7 @@ public class PriceAskAction extends DispatchAction
 
             QueryTools.setJustQuery(request);
 
-            return queryPriceAsk(mapping, form, request, reponse);
+            return mapping.findForward("error");
         }
 
         ProductBean product = productDAO.find(bean.getProductId());
@@ -129,7 +129,7 @@ public class PriceAskAction extends DispatchAction
 
             QueryTools.setJustQuery(request);
 
-            return queryPriceAsk(mapping, form, request, reponse);
+            return mapping.findForward("error");
         }
 
         request.setAttribute("product", product);
