@@ -22,6 +22,7 @@ import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
+import com.china.center.oa.finance.dao.PaymentVSOutDAO;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.StatBankManager;
 import com.china.center.oa.publics.constant.IDPrefixConstant;
@@ -61,6 +62,8 @@ public class BillManagerImpl implements BillManager
     private PaymentDAO paymentDAO = null;
 
     private StockManager stockManager = null;
+
+    private PaymentVSOutDAO paymentVSOutDAO = null;
 
     private StockItemDAO stockItemDAO = null;
 
@@ -187,6 +190,13 @@ public class BillManagerImpl implements BillManager
         if ( !StringTools.isNullOrNone(bill.getPaymentId()))
         {
             throw new MYException("单据已经和回款绑定,只能通过退领删除收款,请确认操作", bill.getOutId());
+        }
+
+        int countByBill = paymentVSOutDAO.countByBill(id);
+
+        if (countByBill > 0)
+        {
+            throw new MYException("收付款单被申请绑定(可能被驳回的单据关联),请确认操作");
         }
 
         // 帐户余额
@@ -338,6 +348,13 @@ public class BillManagerImpl implements BillManager
         if (bill.getLock() == FinanceConstant.BILL_LOCK_YES)
         {
             throw new MYException("单据已经被统计固化,请确认操作");
+        }
+
+        int countByBill = paymentVSOutDAO.countByBill(id);
+
+        if (countByBill > 0)
+        {
+            throw new MYException("收付款单被申请绑定(可能被驳回的单据关联),请确认操作");
         }
 
         outBillDAO.deleteEntityBean(id);
@@ -752,5 +769,22 @@ public class BillManagerImpl implements BillManager
     public void setStockItemDAO(StockItemDAO stockItemDAO)
     {
         this.stockItemDAO = stockItemDAO;
+    }
+
+    /**
+     * @return the paymentVSOutDAO
+     */
+    public PaymentVSOutDAO getPaymentVSOutDAO()
+    {
+        return paymentVSOutDAO;
+    }
+
+    /**
+     * @param paymentVSOutDAO
+     *            the paymentVSOutDAO to set
+     */
+    public void setPaymentVSOutDAO(PaymentVSOutDAO paymentVSOutDAO)
+    {
+        this.paymentVSOutDAO = paymentVSOutDAO;
     }
 }

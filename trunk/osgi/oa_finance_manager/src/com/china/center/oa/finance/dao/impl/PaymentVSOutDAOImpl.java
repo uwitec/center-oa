@@ -9,6 +9,7 @@
 package com.china.center.oa.finance.dao.impl;
 
 
+import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.finance.dao.PaymentVSOutDAO;
 import com.china.center.oa.finance.vo.PaymentVSOutVO;
@@ -25,5 +26,11 @@ import com.china.center.oa.finance.vs.PaymentVSOutBean;
  */
 public class PaymentVSOutDAOImpl extends BaseDAO<PaymentVSOutBean, PaymentVSOutVO> implements PaymentVSOutDAO
 {
+    public int countByBill(String billId)
+    {
+        String sql = BeanTools.getCountHead(claz) + "where billId = ?";
+
+        return this.jdbcOperation.queryForInt(sql, billId);
+    }
 
 }

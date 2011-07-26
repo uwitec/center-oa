@@ -24,5 +24,5 @@ import com.china.center.oa.finance.vs.PaymentVSOutBean;
  */
 public interface PaymentVSOutDAO extends DAO<PaymentVSOutBean, PaymentVSOutVO>
 {
-
+    int countByBill(String billId);
 }

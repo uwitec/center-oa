@@ -371,6 +371,11 @@ public class PriceAskManagerImpl implements PriceAskManager
 
         PriceAskBeanVO vo = priceAskDAO.findVO(id);
 
+        if (vo == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
         List<PriceAskProviderBeanVO> items = priceAskProviderDAO.queryEntityVOsByFK(id);
 
         vo.setItemVO(items);
