@@ -126,16 +126,18 @@ function load()
                  <td width="25%" align="center">辅助(部门/职员/单位/产品/仓区/纳税实体)</td>
                  <td width="8%" align="center">借方金额</td>
                  <td width="8%" align="center">贷方金额</td>
+                 <td width="8%" align="center">产品借/贷</td>
 			</tr>
 			
-			<c:forEach items="${bean.itemVOList}" var="item">
-			<tr align="center" class="content1">
+			<c:forEach items="${bean.itemVOList}" var="item" varStatus="vs">
+			<tr align="center" class="content${(vs.index + 1) % 2}">
 				<td align="center">${item.pareId}</td>
 				<td align="center">${item.description}</td>
 				<td align="center">${item.taxName}</td>
 				<td align="center">${item.departmentName}/${item.stafferName}/${item.unitName}/${item.productName}/${item.depotName}/${item.duty2Name}</td>
 				<td align="center">${item.showInmoney}</td>
 				<td align="center">${item.showOutmoney}</td>
+				<td align="center">${item.productAmountIn}/${item.productAmountOut}</td>
 			</tr>
 			</c:forEach>
 		</p:table>

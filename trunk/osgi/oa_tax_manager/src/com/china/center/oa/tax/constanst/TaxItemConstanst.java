@@ -64,12 +64,12 @@ public interface TaxItemConstanst
     String MAIN_TAX = "5402";
 
     /**
-     * 主营业务收入(部门/职员)
+     * 主营业务收入(部门/职员/产品/仓区)
      */
     String MAIN_RECEIVE = "5101";
 
     /**
-     * 主营业务成本(部门/职员)
+     * 主营业务成本(部门/职员/产品/仓区)
      */
     String MAIN_COST = "5401";
 

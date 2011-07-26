@@ -109,6 +109,8 @@
     
     <osgi:reference id="outBillDAO" interface="com.china.center.oa.finance.dao.OutBillDAO" />
     
+    <osgi:reference id="baseBalanceDAO" interface="com.china.center.oa.sail.dao.BaseBalanceDAO" />
+    
     <osgi:reference id="stockPayApplyManager" interface="com.china.center.oa.finance.manager.StockPayApplyManager" />
     
     <osgi:reference id="composeFeeDefinedDAO" interface="com.china.center.oa.product.dao.ComposeFeeDefinedDAO" />

@@ -199,7 +199,7 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
 
         // 辅助核算 产品/仓库
         itemIn1.setProductId(compose.getProductId());
-        itemIn1.setProductAmount(compose.getAmount());
+        itemIn1.setProductAmountIn(compose.getAmount());
         itemIn1.setDepotId(compose.getDeportId());
 
         itemList.add(itemIn1);
@@ -252,10 +252,10 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
 
             eachItemIn.setDescription(eachItemIn.getName());
 
-            // 辅助核算 动态的就是全部
-            eachItemIn.setStafferId(user.getStafferId());
+            // 辅助核算 动态的就是全部(合成的费用人员是申请人)
+            eachItemIn.setStafferId(compose.getStafferId());
 
-            StafferBean staffer = stafferDAO.find(user.getStafferId());
+            StafferBean staffer = stafferDAO.find(compose.getStafferId());
 
             if (staffer == null)
             {
@@ -313,7 +313,7 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
 
             // 辅助核算 产品/仓库
             itemOut1.setProductId(composeItemBean.getProductId());
-            itemOut1.setProductAmount(composeItemBean.getAmount());
+            itemOut1.setProductAmountOut(composeItemBean.getAmount());
             itemOut1.setDepotId(composeItemBean.getDeportId());
 
             itemList.add(itemOut1);

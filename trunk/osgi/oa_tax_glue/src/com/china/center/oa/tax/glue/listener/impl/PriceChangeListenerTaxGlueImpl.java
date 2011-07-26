@@ -242,7 +242,7 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
 
             // 辅助核算 产品/仓库
             eachItemIn.setProductId(newEach.getProductId());
-            eachItemIn.setProductAmount(newEach.getAmount());
+            eachItemIn.setProductAmountIn(newEach.getAmount());
             eachItemIn.setDepotId(newEach.getDeportId());
 
             itemList.add(eachItemIn);
@@ -291,7 +291,7 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
 
             // 辅助核算 产品/仓库
             itemOut1.setProductId(srcEach.getProductId());
-            itemOut1.setProductAmount(srcEach.getAmount());
+            itemOut1.setProductAmountOut(srcEach.getAmount());
             itemOut1.setDepotId(srcEach.getDeportId());
 
             itemList.add(itemOut1);
@@ -425,7 +425,7 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
 
             // 辅助核算 产品/仓库
             eachItemIn.setProductId(newEach.getProductId());
-            eachItemIn.setProductAmount( -newEach.getAmount());
+            eachItemIn.setProductAmountIn( -newEach.getAmount());
             eachItemIn.setDepotId(newEach.getDeportId());
 
             itemList.add(eachItemIn);
@@ -474,7 +474,7 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
 
             // 辅助核算 产品/仓库
             itemOutEach.setProductId(srcEach.getProductId());
-            itemOutEach.setProductAmount( -srcEach.getAmount());
+            itemOutEach.setProductAmountOut( -srcEach.getAmount());
             itemOutEach.setDepotId(srcEach.getDeportId());
 
             itemList.add(itemOutEach);

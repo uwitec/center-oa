@@ -135,7 +135,9 @@ public class FinanceItemBean implements Serializable
 
     private String productId = "";
 
-    private int productAmount = 0;
+    private int productAmountIn = 0;
+
+    private int productAmountOut = 0;
 
     private String duty2Id = "";
 
@@ -725,20 +727,37 @@ public class FinanceItemBean implements Serializable
     }
 
     /**
-     * @return the productAmount
+     * @return the productAmountIn
      */
-    public int getProductAmount()
+    public int getProductAmountIn()
     {
-        return productAmount;
+        return productAmountIn;
     }
 
     /**
-     * @param productAmount
-     *            the productAmount to set
+     * @param productAmountIn
+     *            the productAmountIn to set
      */
-    public void setProductAmount(int productAmount)
+    public void setProductAmountIn(int productAmountIn)
     {
-        this.productAmount = productAmount;
+        this.productAmountIn = productAmountIn;
+    }
+
+    /**
+     * @return the productAmountOut
+     */
+    public int getProductAmountOut()
+    {
+        return productAmountOut;
+    }
+
+    /**
+     * @param productAmountOut
+     *            the productAmountOut to set
+     */
+    public void setProductAmountOut(int productAmountOut)
+    {
+        this.productAmountOut = productAmountOut;
     }
 
     /**
@@ -855,8 +874,11 @@ public class FinanceItemBean implements Serializable
             .append("productId = ")
             .append(this.productId)
             .append(TAB)
-            .append("productAmount = ")
-            .append(this.productAmount)
+            .append("productAmountIn = ")
+            .append(this.productAmountIn)
+            .append(TAB)
+            .append("productAmountOut = ")
+            .append(this.productAmountOut)
             .append(TAB)
             .append("duty2Id = ")
             .append(this.duty2Id)

@@ -277,7 +277,7 @@ public interface TaxConstanst
     /**
      * 资金-回款退领(暂时取消)
      */
-    @Defined(key = "financeCreateType_temp", value = "资金-回款退领")
+    // @Defined(key = "financeCreateType_temp", value = "资金-回款退领")
     int FINANCE_CREATETYPE_BILL_GETPAY_BACK = 62;
 
     /**

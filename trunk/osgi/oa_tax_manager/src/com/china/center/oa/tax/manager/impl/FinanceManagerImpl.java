@@ -93,7 +93,7 @@ public class FinanceManagerImpl implements FinanceManager
             bean.setFinanceDate(TimeTools.now_short());
         }
 
-        // 校验凭证时间不能大于当前时间,也不能小于最近的结算时间
+        // 校验凭证时间不能大于当前时间, TODO 也不能小于最近的结算时间
         if (bean.getFinanceDate().compareTo(TimeTools.now_short()) > 0)
         {
             throw new MYException("凭证时间不能大于[%s]", TimeTools.now_short());

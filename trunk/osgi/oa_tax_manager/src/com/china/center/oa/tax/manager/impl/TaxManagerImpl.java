@@ -18,10 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.jdbc.expression.Expression;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.constanst.TaxConstanst;
+import com.china.center.oa.tax.dao.FinanceItemDAO;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.manager.TaxManager;
 import com.china.center.oa.tax.vo.TaxVO;
@@ -44,6 +46,15 @@ public class TaxManagerImpl implements TaxManager
     private TaxDAO taxDAO = null;
 
     private CommonDAO commonDAO = null;
+
+    private FinanceItemDAO financeItemDAO = null;
+
+    /**
+     * default constructor
+     */
+    public TaxManagerImpl()
+    {
+    }
 
     /*
      * (non-Javadoc)
@@ -257,7 +268,13 @@ public class TaxManagerImpl implements TaxManager
             throw new MYException("关联银行不能删除,请确认操作");
         }
 
-        // TODO 如果科目被使用是不能删除的
+        // 如果科目被使用是不能删除的
+        int count = financeItemDAO.countByFK(id, AnoConstant.FK_FIRST);
+
+        if (count > 0)
+        {
+            throw new MYException("科目已经被使用,请确认操作");
+        }
 
         taxDAO.deleteEntityBean(id);
 
@@ -367,5 +384,22 @@ public class TaxManagerImpl implements TaxManager
     public void setCommonDAO(CommonDAO commonDAO)
     {
         this.commonDAO = commonDAO;
+    }
+
+    /**
+     * @return the financeItemDAO
+     */
+    public FinanceItemDAO getFinanceItemDAO()
+    {
+        return financeItemDAO;
+    }
+
+    /**
+     * @param financeItemDAO
+     *            the financeItemDAO to set
+     */
+    public void setFinanceItemDAO(FinanceItemDAO financeItemDAO)
+    {
+        this.financeItemDAO = financeItemDAO;
     }
 }

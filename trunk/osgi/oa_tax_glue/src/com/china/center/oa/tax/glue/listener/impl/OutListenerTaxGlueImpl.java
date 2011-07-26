@@ -12,6 +12,9 @@ package com.china.center.oa.tax.glue.listener.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
@@ -28,6 +31,7 @@ import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
+import com.china.center.oa.sail.dao.BaseBalanceDAO;
 import com.china.center.oa.sail.dao.BaseDAO;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.helper.OutHelper;
@@ -56,6 +60,8 @@ import com.china.center.tools.TimeTools;
  */
 public class OutListenerTaxGlueImpl implements OutListener
 {
+    private final Log _logger = LogFactory.getLog("bad");
+
     private DutyDAO dutyDAO = null;
 
     private DepartmentDAO departmentDAO = null;
@@ -77,6 +83,8 @@ public class OutListenerTaxGlueImpl implements OutListener
     private FinanceItemDAO financeItemDAO = null;
 
     private StafferDAO stafferDAO = null;
+
+    private BaseBalanceDAO baseBalanceDAO = null;
 
     /**
      * default constructor
@@ -1011,43 +1019,70 @@ public class OutListenerTaxGlueImpl implements OutListener
 
         itemList.add(itemIn);
 
-        // 贷方
-        FinanceItemBean itemOut1 = new FinanceItemBean();
+        // 获取结算项
+        List<BaseBalanceBean> baseList = baseBalanceDAO.queryEntityBeansByFK(bean.getId());
 
-        itemOut1.setPareId(pare1);
+        long outTotal = 0L;
 
-        itemOut1.setName("主营业务收入:" + name);
-
-        itemOut1.setForward(TaxConstanst.TAX_FORWARD_OUT);
-
-        FinanceHelper.copyFinanceItem(financeBean, itemOut1);
-
-        // 库存商品
-        String itemTaxIdOut1 = TaxItemConstanst.MAIN_RECEIVE;
-
-        TaxBean outTax = taxDAO.findByUnique(itemTaxIdOut1);
-
-        if (outTax == null)
+        for (BaseBalanceBean baseBalanceBean : baseList)
         {
-            throw new MYException("数据错误,请确认操作");
+            BaseBean base = baseDAO.find(baseBalanceBean.getBaseId());
+
+            if (base == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 贷方
+            FinanceItemBean itemOutEach = new FinanceItemBean();
+
+            itemOutEach.setPareId(pare1);
+
+            itemOutEach.setName("主营业务收入:" + name + ".产品:" + base.getProductName());
+
+            itemOutEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
+
+            // 库存商品
+            String itemTaxIdOut1 = TaxItemConstanst.MAIN_RECEIVE;
+
+            TaxBean outTax = taxDAO.findByUnique(itemTaxIdOut1);
+
+            if (outTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(outTax, itemOutEach);
+
+            double outMoney = baseBalanceBean.getAmount() * baseBalanceBean.getSailPrice();
+
+            itemOutEach.setInmoney(0);
+
+            itemOutEach.setOutmoney(FinanceHelper.doubleToLong(outMoney));
+
+            outTotal += itemOutEach.getOutmoney();
+
+            itemOutEach.setDescription(itemOutEach.getName());
+
+            // 辅助核算 部门/职员
+            copyDepartment(outBean, itemOutEach);
+            itemOutEach.setStafferId(outBean.getStafferId());
+            itemOutEach.setProductId(base.getProductId());
+            itemOutEach.setDepotId(base.getLocationId());
+            itemOutEach.setProductAmountOut(baseBalanceBean.getAmount());
+
+            itemList.add(itemOutEach);
         }
 
-        // 科目拷贝
-        FinanceHelper.copyTax(outTax, itemOut1);
+        if (Math.abs(outTotal - itemIn.getInmoney()) > 10)
+        {
+            _logger.error("Inmoney not equal outMonet:" + itemIn.getInmoney() + "/" + outTotal);
+        }
 
-        double outMoney = bean.getTotal();
-
-        itemOut1.setInmoney(0);
-
-        itemOut1.setOutmoney(FinanceHelper.doubleToLong(outMoney));
-
-        itemOut1.setDescription(itemOut1.getName());
-
-        // 辅助核算 部门/职员
-        copyDepartment(outBean, itemOut1);
-        itemOut1.setStafferId(outBean.getStafferId());
-
-        itemList.add(itemOut1);
+        itemIn.setInmoney(outTotal);
     }
 
     /**
@@ -1063,70 +1098,77 @@ public class OutListenerTaxGlueImpl implements OutListener
                                        FinanceBean financeBean, List<FinanceItemBean> itemList)
         throws MYException
     {
-
-        String name = "委托销售-结算单:" + outBean.getFullId() + '.';
-
-        // 借:库存商品 贷:应付账款-供应商
-        FinanceItemBean itemIn1 = new FinanceItemBean();
-
-        String pare1 = commonDAO.getSquenceString();
-
-        itemIn1.setPareId(pare1);
-
-        itemIn1.setName("主营业务成本:" + name);
-
-        itemIn1.setForward(TaxConstanst.TAX_FORWARD_IN);
-
-        FinanceHelper.copyFinanceItem(financeBean, itemIn1);
-
-        // 主营业务成本(部门/职员)
-        String itemInTaxId = TaxItemConstanst.MAIN_COST;
-
-        TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
-
-        if (itemInTax == null)
-        {
-            throw new MYException("数据错误,请确认操作");
-        }
-
-        // 科目拷贝
-        FinanceHelper.copyTax(itemInTax, itemIn1);
-
-        double money = getOutBalanceCost(bean, outBean);
-
-        itemIn1.setInmoney(FinanceHelper.doubleToLong(money));
-
-        itemIn1.setOutmoney(0);
-
-        itemIn1.setDescription(itemIn1.getName());
-
-        // 辅助核算 客户，职员，部门
-        copyDepartment(outBean, itemIn1);
-        itemIn1.setStafferId(outBean.getStafferId());
-
-        itemList.add(itemIn1);
+        List<BaseBalanceBean> baseBalanceList = bean.getBaseBalanceList();
 
         List<BaseBean> baseList = outBean.getBaseList();
 
-        List<BaseBalanceBean> baseBalanceList = bean.getBaseBalanceList();
+        String name = "委托销售-结算单:" + outBean.getFullId() + '.';
+
+        String pare1 = commonDAO.getSquenceString();
+
+        for (BaseBalanceBean baseBalanceBean : baseBalanceList)
+        {
+            BaseBean baseBean = getBaseBean(baseBalanceBean, baseList);
+
+            // 主营业务成本/委托代销商品
+            FinanceItemBean itemInEach = new FinanceItemBean();
+
+            itemInEach.setPareId(pare1);
+
+            itemInEach.setName("主营业务成本:" + name + ".产品:" + baseBean.getProductName());
+
+            itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemInEach);
+
+            // 主营业务成本(部门/职员)
+            String itemInTaxId = TaxItemConstanst.MAIN_COST;
+
+            TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
+
+            if (itemInTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(itemInTax, itemInEach);
+
+            double money = baseBalanceBean.getAmount() * baseBean.getCostPrice();
+
+            itemInEach.setInmoney(FinanceHelper.doubleToLong(money));
+
+            itemInEach.setOutmoney(0);
+
+            itemInEach.setDescription(itemInEach.getName());
+
+            // 辅助核算 客户，职员，部门
+            copyDepartment(outBean, itemInEach);
+            itemInEach.setStafferId(outBean.getStafferId());
+            itemInEach.setProductId(baseBean.getProductId());
+            itemInEach.setDepotId(baseBean.getLocationId());
+            itemInEach.setProductAmountIn(baseBalanceBean.getAmount());
+
+            itemList.add(itemInEach);
+        }
 
         // 库存商品（成本价*数量）
         for (BaseBalanceBean baseBalanceBean : baseBalanceList)
         {
             BaseBean baseBean = getBaseBean(baseBalanceBean, baseList);
 
-            FinanceItemBean itemOut1 = new FinanceItemBean();
+            FinanceItemBean itemOut = new FinanceItemBean();
 
-            itemOut1.setPareId(pare1);
+            itemOut.setPareId(pare1);
 
-            itemOut1.setName("委托代销商品(" + baseBean.getProductName() + "):" + name);
+            itemOut.setName("委托代销商品(" + baseBean.getProductName() + "):" + name);
 
-            itemOut1.setForward(TaxConstanst.TAX_FORWARD_OUT);
+            itemOut.setForward(TaxConstanst.TAX_FORWARD_OUT);
 
-            FinanceHelper.copyFinanceItem(financeBean, itemOut1);
+            FinanceHelper.copyFinanceItem(financeBean, itemOut);
 
-            // 库存商品-中转
-            String itemTaxIdOut1 = TaxItemConstanst.DEPOR_PRODUCT_TEMP;
+            // 委托代销商品
+            String itemTaxIdOut1 = TaxItemConstanst.CONSIGN_PRODUCT;
 
             TaxBean outTax = taxDAO.findByUnique(itemTaxIdOut1);
 
@@ -1136,23 +1178,23 @@ public class OutListenerTaxGlueImpl implements OutListener
             }
 
             // 科目拷贝
-            FinanceHelper.copyTax(outTax, itemOut1);
+            FinanceHelper.copyTax(outTax, itemOut);
 
             // 成本*数量
             double outMoney = baseBalanceBean.getAmount() * baseBean.getCostPrice();
 
-            itemOut1.setInmoney(0);
+            itemOut.setInmoney(0);
 
-            itemOut1.setOutmoney(FinanceHelper.doubleToLong(outMoney));
+            itemOut.setOutmoney(FinanceHelper.doubleToLong(outMoney));
 
-            itemOut1.setDescription(itemOut1.getName());
+            itemOut.setDescription(itemOut.getName());
 
             // 辅助核算 产品/仓库
-            itemOut1.setProductId(baseBean.getProductId());
-            itemOut1.setProductAmount(baseBalanceBean.getAmount());
-            itemOut1.setDepotId(outBean.getLocation());
+            itemOut.setProductId(baseBean.getProductId());
+            itemOut.setProductAmountOut(baseBalanceBean.getAmount());
+            itemOut.setDepotId(outBean.getLocation());
 
-            itemList.add(itemOut1);
+            itemList.add(itemOut);
         }
     }
 
@@ -1175,7 +1217,7 @@ public class OutListenerTaxGlueImpl implements OutListener
 
         FinanceHelper.copyFinanceItem(financeBean, itemIn1);
 
-        // 库存商品
+        // 应收账款(客户/职员/部门)
         String itemInTaxId = TaxItemConstanst.REVEIVE_PRODUCT;
 
         TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
@@ -1204,43 +1246,63 @@ public class OutListenerTaxGlueImpl implements OutListener
 
         itemList.add(itemIn1);
 
-        // 贷方
-        FinanceItemBean itemOut1 = new FinanceItemBean();
+        List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
 
-        itemOut1.setPareId(pare1);
+        long outTotal = 0L;
 
-        itemOut1.setName("主营业务收入:" + name);
-
-        itemOut1.setForward(TaxConstanst.TAX_FORWARD_OUT);
-
-        FinanceHelper.copyFinanceItem(financeBean, itemOut1);
-
-        // 库存商品
-        String itemTaxIdOut1 = TaxItemConstanst.MAIN_RECEIVE;
-
-        TaxBean outTax = taxDAO.findByUnique(itemTaxIdOut1);
-
-        if (outTax == null)
+        // 主营业务收入
+        for (BaseBean baseBean : baseList)
         {
-            throw new MYException("数据错误,请确认操作");
+            // 贷方
+            FinanceItemBean itemOutEach = new FinanceItemBean();
+
+            itemOutEach.setPareId(pare1);
+
+            itemOutEach.setName("主营业务收入:" + name + ".产品:" + baseBean.getProductName());
+
+            itemOutEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
+
+            // 库存商品
+            String itemTaxIdOut1 = TaxItemConstanst.MAIN_RECEIVE;
+
+            TaxBean outTax = taxDAO.findByUnique(itemTaxIdOut1);
+
+            if (outTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(outTax, itemOutEach);
+
+            double outMoney = baseBean.getAmount() * baseBean.getPrice();
+
+            itemOutEach.setInmoney(0);
+
+            itemOutEach.setOutmoney(FinanceHelper.doubleToLong(outMoney));
+
+            outTotal += itemOutEach.getOutmoney();
+
+            itemOutEach.setDescription(itemOutEach.getName());
+
+            // 辅助核算 部门/职员
+            copyDepartment(outBean, itemOutEach);
+            itemOutEach.setStafferId(outBean.getStafferId());
+            itemOutEach.setProductId(baseBean.getProductId());
+            itemOutEach.setDepotId(baseBean.getLocationId());
+            itemOutEach.setProductAmountOut(baseBean.getAmount());
+
+            itemList.add(itemOutEach);
         }
 
-        // 科目拷贝
-        FinanceHelper.copyTax(outTax, itemOut1);
+        if (Math.abs(outTotal - itemIn1.getInmoney()) > 10)
+        {
+            _logger.error("Inmoney not equal outMonet:" + itemIn1.getInmoney() + "/" + outTotal);
+        }
 
-        double outMoney = outBean.getTotal();
-
-        itemOut1.setInmoney(0);
-
-        itemOut1.setOutmoney(FinanceHelper.doubleToLong(outMoney));
-
-        itemOut1.setDescription(itemOut1.getName());
-
-        // 辅助核算 部门/职员
-        copyDepartment(outBean, itemOut1);
-        itemOut1.setStafferId(outBean.getStafferId());
-
-        itemList.add(itemOut1);
+        itemIn1.setInmoney(outTotal);
     }
 
     /**
@@ -1341,7 +1403,7 @@ public class OutListenerTaxGlueImpl implements OutListener
             copyDepartment(outBean, itemOutEach);
             itemOutEach.setStafferId(outBean.getStafferId());
             itemOutEach.setProductId(baseBean.getProductId());
-            itemOutEach.setProductAmount(baseBean.getAmount());
+            itemOutEach.setProductAmountOut(baseBean.getAmount());
             itemOutEach.setDepotId(outBean.getLocation());
 
             itemList.add(itemOutEach);
@@ -1406,44 +1468,62 @@ public class OutListenerTaxGlueImpl implements OutListener
 
         itemList.add(itemIn1);
 
-        // 贷方
-        FinanceItemBean itemOut1 = new FinanceItemBean();
+        List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
 
-        itemOut1.setPareId(pare1);
+        long outTotal = 0L;
 
-        itemOut1.setName("主营业务收入:" + name);
-
-        itemOut1.setForward(TaxConstanst.TAX_FORWARD_OUT);
-
-        FinanceHelper.copyFinanceItem(financeBean, itemOut1);
-
-        // 库存商品
-        String itemTaxIdOut1 = TaxItemConstanst.MAIN_RECEIVE;
-
-        TaxBean outTax = taxDAO.findByUnique(itemTaxIdOut1);
-
-        if (outTax == null)
+        // 主营业务收入
+        for (BaseBean baseBean : baseList)
         {
-            throw new MYException("数据错误,请确认操作");
+            // 贷方
+            FinanceItemBean itemOutEach = new FinanceItemBean();
+
+            itemOutEach.setPareId(pare1);
+
+            itemOutEach.setName("主营业务收入:" + name + ".产品:" + baseBean.getProductName());
+
+            itemOutEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
+
+            // 库存商品
+            String itemTaxIdOut1 = TaxItemConstanst.MAIN_RECEIVE;
+
+            TaxBean outTax = taxDAO.findByUnique(itemTaxIdOut1);
+
+            if (outTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(outTax, itemOutEach);
+
+            // 销售价
+            double outMoney = baseBean.getAmount() * baseBean.getPrice();
+
+            itemOutEach.setInmoney(0);
+
+            itemOutEach.setOutmoney(FinanceHelper.doubleToLong(outMoney));
+
+            itemOutEach.setDescription(itemOutEach.getName());
+
+            // 辅助核算 部门/职员
+            copyDepartment(outBean, itemOutEach);
+            itemOutEach.setStafferId(outBean.getStafferId());
+            itemOutEach.setProductId(baseBean.getProductId());
+            itemOutEach.setDepotId(baseBean.getLocationId());
+            itemOutEach.setProductAmountOut(baseBean.getAmount());
+
+            itemList.add(itemOutEach);
         }
 
-        // 科目拷贝
-        FinanceHelper.copyTax(outTax, itemOut1);
+        if (Math.abs(outTotal - itemIn1.getInmoney()) > 10)
+        {
+            _logger.error("Inmoney not equal outMonet:" + itemIn1.getInmoney() + "/" + outTotal);
+        }
 
-        // 总销售价
-        double outMoney = outBean.getTotal();
-
-        itemOut1.setInmoney(0);
-
-        itemOut1.setOutmoney(FinanceHelper.doubleToLong(outMoney));
-
-        itemOut1.setDescription(itemOut1.getName());
-
-        // 辅助核算 部门/职员
-        copyDepartment(outBean, itemOut1);
-        itemOut1.setStafferId(outBean.getStafferId());
-
-        itemList.add(itemOut1);
+        itemIn1.setInmoney(outTotal);
     }
 
     /**
@@ -1505,50 +1585,56 @@ public class OutListenerTaxGlueImpl implements OutListener
             copyDepartment(outBean, itemInEach);
             itemInEach.setStafferId(outBean.getStafferId());
             itemInEach.setProductId(baseBean.getProductId());
-            itemInEach.setProductAmount(baseBean.getAmount());
+            itemInEach.setProductAmountIn(baseBean.getAmount());
             itemInEach.setDepotId(outBean.getLocation());
 
             itemList.add(itemInEach);
         }
 
-        // 贷方
-        FinanceItemBean itemOut1 = new FinanceItemBean();
-
-        itemOut1.setPareId(pare1);
-
-        itemOut1.setName("主营业务收入:" + name);
-
-        itemOut1.setForward(TaxConstanst.TAX_FORWARD_OUT);
-
-        FinanceHelper.copyFinanceItem(financeBean, itemOut1);
-
-        // 库存商品
-        String itemTaxIdOut1 = TaxItemConstanst.MAIN_RECEIVE;
-
-        TaxBean outTax = taxDAO.findByUnique(itemTaxIdOut1);
-
-        if (outTax == null)
+        for (BaseBean baseBean : baseList)
         {
-            throw new MYException("数据错误,请确认操作");
+            // 贷方
+            FinanceItemBean itemOutEach = new FinanceItemBean();
+
+            itemOutEach.setPareId(pare1);
+
+            itemOutEach.setName("主营业务收入:" + name + ".产品:" + baseBean.getProductName());
+
+            itemOutEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
+
+            // 库存商品
+            String itemTaxIdOutEach = TaxItemConstanst.MAIN_RECEIVE;
+
+            TaxBean outTax = taxDAO.findByUnique(itemTaxIdOutEach);
+
+            if (outTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(outTax, itemOutEach);
+
+            // 销售价
+            double outMoney = baseBean.getAmount() * baseBean.getPrice();
+
+            itemOutEach.setInmoney(0);
+
+            itemOutEach.setOutmoney(FinanceHelper.doubleToLong(outMoney));
+
+            itemOutEach.setDescription(itemOutEach.getName());
+
+            // 辅助核算 部门/职员
+            copyDepartment(outBean, itemOutEach);
+            itemOutEach.setStafferId(outBean.getStafferId());
+            itemOutEach.setProductId(baseBean.getProductId());
+            itemOutEach.setDepotId(baseBean.getLocationId());
+            itemOutEach.setProductAmountOut(baseBean.getAmount());
+
+            itemList.add(itemOutEach);
         }
-
-        // 科目拷贝
-        FinanceHelper.copyTax(outTax, itemOut1);
-
-        // 总销售价
-        double outMoney = outBean.getTotal();
-
-        itemOut1.setInmoney(0);
-
-        itemOut1.setOutmoney(FinanceHelper.doubleToLong(outMoney));
-
-        itemOut1.setDescription(itemOut1.getName());
-
-        // 辅助核算 部门/职员
-        copyDepartment(outBean, itemOut1);
-        itemOut1.setStafferId(outBean.getStafferId());
-
-        itemList.add(itemOut1);
     }
 
     /**
@@ -1610,50 +1696,57 @@ public class OutListenerTaxGlueImpl implements OutListener
             copyDepartment(outBean, itemInEach);
             itemInEach.setStafferId(outBean.getStafferId());
             itemInEach.setProductId(baseBean.getProductId());
-            itemInEach.setProductAmount( -baseBean.getAmount());
+            itemInEach.setProductAmountIn( -baseBean.getAmount());
             itemInEach.setDepotId(outBean.getLocation());
 
             itemList.add(itemInEach);
         }
 
-        // 贷方
-        FinanceItemBean itemOut1 = new FinanceItemBean();
-
-        itemOut1.setPareId(pare1);
-
-        itemOut1.setName("主营业务收入:" + name);
-
-        itemOut1.setForward(TaxConstanst.TAX_FORWARD_OUT);
-
-        FinanceHelper.copyFinanceItem(financeBean, itemOut1);
-
-        // 库存商品
-        String itemTaxIdOut1 = TaxItemConstanst.MAIN_RECEIVE;
-
-        TaxBean outTax = taxDAO.findByUnique(itemTaxIdOut1);
-
-        if (outTax == null)
+        // 主营业务收入
+        for (BaseBean baseBean : baseList)
         {
-            throw new MYException("数据错误,请确认操作");
+            // 贷方
+            FinanceItemBean itemOut1 = new FinanceItemBean();
+
+            itemOut1.setPareId(pare1);
+
+            itemOut1.setName("主营业务收入:" + name + ".产品:" + baseBean.getProductName());
+
+            itemOut1.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemOut1);
+
+            // 库存商品
+            String itemTaxIdOut1 = TaxItemConstanst.MAIN_RECEIVE;
+
+            TaxBean outTax = taxDAO.findByUnique(itemTaxIdOut1);
+
+            if (outTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(outTax, itemOut1);
+
+            // 总销售价
+            double outMoney = -baseBean.getAmount() * baseBean.getPrice();
+
+            itemOut1.setInmoney(0);
+
+            itemOut1.setOutmoney(FinanceHelper.doubleToLong(outMoney));
+
+            itemOut1.setDescription(itemOut1.getName());
+
+            // 辅助核算 部门/职员
+            copyDepartment(outBean, itemOut1);
+            itemOut1.setStafferId(outBean.getStafferId());
+            itemOut1.setProductId(baseBean.getProductId());
+            itemOut1.setDepotId(baseBean.getLocationId());
+            itemOut1.setProductAmountOut( -baseBean.getAmount());
+
+            itemList.add(itemOut1);
         }
-
-        // 科目拷贝
-        FinanceHelper.copyTax(outTax, itemOut1);
-
-        // 总销售价
-        double outMoney = -outBean.getTotal();
-
-        itemOut1.setInmoney(0);
-
-        itemOut1.setOutmoney(FinanceHelper.doubleToLong(outMoney));
-
-        itemOut1.setDescription(itemOut1.getName());
-
-        // 辅助核算 部门/职员
-        copyDepartment(outBean, itemOut1);
-        itemOut1.setStafferId(outBean.getStafferId());
-
-        itemList.add(itemOut1);
     }
 
     /**
@@ -1713,44 +1806,65 @@ public class OutListenerTaxGlueImpl implements OutListener
 
         itemList.add(itemIn);
 
-        // 贷方
-        FinanceItemBean itemOut1 = new FinanceItemBean();
+        List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
 
-        itemOut1.setPareId(pare1);
+        long outTotal = 0L;
 
-        itemOut1.setName("主营业务收入:" + name);
-
-        itemOut1.setForward(TaxConstanst.TAX_FORWARD_OUT);
-
-        FinanceHelper.copyFinanceItem(financeBean, itemOut1);
-
-        // 库存商品
-        String itemTaxIdOut1 = TaxItemConstanst.MAIN_RECEIVE;
-
-        TaxBean outTax = taxDAO.findByUnique(itemTaxIdOut1);
-
-        if (outTax == null)
+        // 主营业务收入
+        for (BaseBean baseBean : baseList)
         {
-            throw new MYException("数据错误,请确认操作");
+            // 贷方
+            FinanceItemBean itemOut1 = new FinanceItemBean();
+
+            itemOut1.setPareId(pare1);
+
+            itemOut1.setName("主营业务收入:" + name + ".产品:" + baseBean.getProductName());
+
+            itemOut1.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemOut1);
+
+            // 库存商品
+            String itemTaxIdOut1 = TaxItemConstanst.MAIN_RECEIVE;
+
+            TaxBean outTax = taxDAO.findByUnique(itemTaxIdOut1);
+
+            if (outTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(outTax, itemOut1);
+
+            // 总销售价
+            double outMoney = -baseBean.getAmount() * baseBean.getPrice();
+
+            itemOut1.setInmoney(0);
+
+            itemOut1.setOutmoney(FinanceHelper.doubleToLong(outMoney));
+
+            outTotal += itemOut1.getOutmoney();
+
+            itemOut1.setDescription(itemOut1.getName());
+
+            // 辅助核算 部门/职员
+            copyDepartment(outBean, itemOut1);
+            itemOut1.setStafferId(outBean.getStafferId());
+            itemOut1.setProductId(baseBean.getProductId());
+            itemOut1.setDepotId(baseBean.getLocationId());
+            itemOut1.setProductAmountOut( -baseBean.getAmount());
+
+            itemList.add(itemOut1);
         }
 
-        // 科目拷贝
-        FinanceHelper.copyTax(outTax, itemOut1);
+        // TEMPLATE 说明存在差异
+        if (Math.abs(outTotal - itemIn.getInmoney()) > 10)
+        {
+            _logger.error("Inmoney not equal outMonet:" + itemIn.getInmoney() + "/" + outTotal);
+        }
 
-        // 总销售价
-        double outMoney = -outBean.getTotal();
-
-        itemOut1.setInmoney(0);
-
-        itemOut1.setOutmoney(FinanceHelper.doubleToLong(outMoney));
-
-        itemOut1.setDescription(itemOut1.getName());
-
-        // 辅助核算 部门/职员
-        copyDepartment(outBean, itemOut1);
-        itemOut1.setStafferId(outBean.getStafferId());
-
-        itemList.add(itemOut1);
+        itemIn.setInmoney(outTotal);
     }
 
     /**
@@ -1789,50 +1903,55 @@ public class OutListenerTaxGlueImpl implements OutListener
                                       List<FinanceItemBean> itemList)
         throws MYException
     {
+        List<BaseBean> baseList = outBean.getBaseList();
 
         String name = "销售出库:" + outBean.getFullId() + '.';
 
-        // 借:库存商品 贷:应付账款-供应商
-        FinanceItemBean itemIn1 = new FinanceItemBean();
-
         String pare1 = commonDAO.getSquenceString();
 
-        itemIn1.setPareId(pare1);
-
-        itemIn1.setName("主营业务成本:" + name);
-
-        itemIn1.setForward(TaxConstanst.TAX_FORWARD_IN);
-
-        FinanceHelper.copyFinanceItem(financeBean, itemIn1);
-
-        // 主营业务成本(部门/职员)
-        String itemInTaxId = TaxItemConstanst.MAIN_COST;
-
-        TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
-
-        if (itemInTax == null)
+        for (BaseBean baseBean : baseList)
         {
-            throw new MYException("数据错误,请确认操作");
+            // 借:库存商品 贷:应付账款-供应商
+            FinanceItemBean itemInEach = new FinanceItemBean();
+
+            itemInEach.setPareId(pare1);
+
+            itemInEach.setName("主营业务成本:" + name + ".产品:" + baseBean.getProductName());
+
+            itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemInEach);
+
+            // 主营业务成本(部门/职员)
+            String itemInTaxId = TaxItemConstanst.MAIN_COST;
+
+            TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
+
+            if (itemInTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(itemInTax, itemInEach);
+
+            double money = baseBean.getAmount() * baseBean.getCostPrice();
+
+            itemInEach.setInmoney(FinanceHelper.doubleToLong(money));
+
+            itemInEach.setOutmoney(0);
+
+            itemInEach.setDescription(itemInEach.getName());
+
+            // 辅助核算 客户，职员，部门
+            copyDepartment(outBean, itemInEach);
+            itemInEach.setStafferId(outBean.getStafferId());
+            itemInEach.setProductId(baseBean.getProductId());
+            itemInEach.setDepotId(baseBean.getLocationId());
+            itemInEach.setProductAmountIn(baseBean.getAmount());
+
+            itemList.add(itemInEach);
         }
-
-        // 科目拷贝
-        FinanceHelper.copyTax(itemInTax, itemIn1);
-
-        double money = getOutCost(outBean);
-
-        itemIn1.setInmoney(FinanceHelper.doubleToLong(money));
-
-        itemIn1.setOutmoney(0);
-
-        itemIn1.setDescription(itemIn1.getName());
-
-        // 辅助核算 客户，职员，部门
-        copyDepartment(outBean, itemIn1);
-        itemIn1.setStafferId(outBean.getStafferId());
-
-        itemList.add(itemIn1);
-
-        List<BaseBean> baseList = outBean.getBaseList();
 
         // 库存商品（成本价*数量）
         for (BaseBean baseBean : baseList)
@@ -1870,7 +1989,7 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemOut1.setProductId(baseBean.getProductId());
-            itemOut1.setProductAmount(baseBean.getAmount());
+            itemOut1.setProductAmountOut(baseBean.getAmount());
             itemOut1.setDepotId(outBean.getLocation());
 
             itemList.add(itemOut1);
@@ -1933,7 +2052,7 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemInEach.setProductId(baseBean.getProductId());
-            itemInEach.setProductAmount(baseBean.getAmount());
+            itemInEach.setProductAmountIn(baseBean.getAmount());
             itemInEach.setDepotId(outBean.getLocation());
 
             itemList.add(itemInEach);
@@ -1974,7 +2093,7 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemOut1.setProductId(baseBean.getProductId());
-            itemOut1.setProductAmount(baseBean.getAmount());
+            itemOut1.setProductAmountOut(baseBean.getAmount());
             itemOut1.setDepotId(outBean.getLocation());
 
             itemList.add(itemOut1);
@@ -2042,7 +2161,7 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemInEach.setProductId(baseBean.getProductId());
-            itemInEach.setProductAmount( -baseBalanceBean.getAmount());
+            itemInEach.setProductAmountIn( -baseBalanceBean.getAmount());
             itemInEach.setDepotId(outBean.getLocation());
 
             itemList.add(itemInEach);
@@ -2085,60 +2204,75 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemOut1.setProductId(baseBean.getProductId());
-            itemOut1.setProductAmount( -baseBalanceBean.getAmount());
+            itemOut1.setProductAmountOut( -baseBalanceBean.getAmount());
             itemOut1.setDepotId(outBean.getLocation());
 
             itemList.add(itemOut1);
         }
     }
 
+    /**
+     * 主营业务成本/库存商品
+     * 
+     * @param user
+     * @param outBean
+     * @param financeBean
+     * @param itemList
+     * @throws MYException
+     */
     private void createOutRetailItem2(User user, OutBean outBean, FinanceBean financeBean,
                                       List<FinanceItemBean> itemList)
         throws MYException
     {
-        String name = "销售-零售:" + outBean.getFullId() + '.';
+        List<BaseBean> baseList = outBean.getBaseList();
 
-        // 借:库存商品 贷:应付账款-供应商
-        FinanceItemBean itemIn1 = new FinanceItemBean();
+        String name = "销售-零售:" + outBean.getFullId() + '.';
 
         String pare1 = commonDAO.getSquenceString();
 
-        itemIn1.setPareId(pare1);
-
-        itemIn1.setName("主营业务成本:" + name);
-
-        itemIn1.setForward(TaxConstanst.TAX_FORWARD_IN);
-
-        FinanceHelper.copyFinanceItem(financeBean, itemIn1);
-
-        // 主营业务成本(部门/职员)
-        String itemInTaxId = TaxItemConstanst.MAIN_COST;
-
-        TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
-
-        if (itemInTax == null)
+        for (BaseBean baseBean : baseList)
         {
-            throw new MYException("数据错误,请确认操作");
+            // 借:库存商品 贷:应付账款-供应商
+            FinanceItemBean itemInEach = new FinanceItemBean();
+
+            itemInEach.setPareId(pare1);
+
+            itemInEach.setName("主营业务成本:" + name + ".产品:" + baseBean.getProductName());
+
+            itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemInEach);
+
+            // 主营业务成本(部门/职员)
+            String itemInTaxId = TaxItemConstanst.MAIN_COST;
+
+            TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
+
+            if (itemInTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(itemInTax, itemInEach);
+
+            double money = baseBean.getAmount() * baseBean.getCostPrice();
+
+            itemInEach.setInmoney(FinanceHelper.doubleToLong(money));
+
+            itemInEach.setOutmoney(0);
+
+            itemInEach.setDescription(itemInEach.getName());
+
+            // 辅助核算 职员/部门
+            copyDepartment(outBean, itemInEach);
+            itemInEach.setStafferId(outBean.getStafferId());
+            itemInEach.setProductId(baseBean.getProductId());
+            itemInEach.setDepotId(baseBean.getLocationId());
+            itemInEach.setProductAmountIn(baseBean.getAmount());
+
+            itemList.add(itemInEach);
         }
-
-        // 科目拷贝
-        FinanceHelper.copyTax(itemInTax, itemIn1);
-
-        double money = getOutCost(outBean);
-
-        itemIn1.setInmoney(FinanceHelper.doubleToLong(money));
-
-        itemIn1.setOutmoney(0);
-
-        itemIn1.setDescription(itemIn1.getName());
-
-        // 辅助核算 职员/部门
-        copyDepartment(outBean, itemIn1);
-        itemIn1.setStafferId(outBean.getStafferId());
-
-        itemList.add(itemIn1);
-
-        List<BaseBean> baseList = outBean.getBaseList();
 
         // 库存商品（成本价*数量）
         for (BaseBean baseBean : baseList)
@@ -2177,7 +2311,7 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemOut1.setProductId(baseBean.getProductId());
-            itemOut1.setProductAmount(baseBean.getAmount());
+            itemOut1.setProductAmountOut(baseBean.getAmount());
             itemOut1.setDepotId(outBean.getLocation());
 
             itemList.add(itemOut1);
@@ -2278,7 +2412,7 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemOut1.setProductId(baseBean.getProductId());
-            itemOut1.setProductAmount(baseBean.getAmount());
+            itemOut1.setProductAmountOut(baseBean.getAmount());
             itemOut1.setDepotId(outBean.getLocation());
 
             itemList.add(itemOut1);
@@ -2289,50 +2423,55 @@ public class OutListenerTaxGlueImpl implements OutListener
                                       List<FinanceItemBean> itemList)
         throws MYException
     {
+        List<BaseBean> baseList = outBean.getBaseList();
 
         String name = "个人领样:" + outBean.getFullId() + '.';
 
-        // 借:库存商品 贷:应付账款-供应商
-        FinanceItemBean itemIn1 = new FinanceItemBean();
-
         String pare1 = commonDAO.getSquenceString();
 
-        itemIn1.setPareId(pare1);
-
-        itemIn1.setName("主营业务成本:" + name);
-
-        itemIn1.setForward(TaxConstanst.TAX_FORWARD_IN);
-
-        FinanceHelper.copyFinanceItem(financeBean, itemIn1);
-
-        // 主营业务成本(部门/职员)
-        String itemInTaxId = TaxItemConstanst.MAIN_COST;
-
-        TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
-
-        if (itemInTax == null)
+        for (BaseBean baseBean : baseList)
         {
-            throw new MYException("数据错误,请确认操作");
+            // 借:库存商品 贷:应付账款-供应商
+            FinanceItemBean itemInEach = new FinanceItemBean();
+
+            itemInEach.setPareId(pare1);
+
+            itemInEach.setName("主营业务成本:" + name + ".产品:" + baseBean.getProductName());
+
+            itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemInEach);
+
+            // 主营业务成本(部门/职员)
+            String itemInTaxId = TaxItemConstanst.MAIN_COST;
+
+            TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
+
+            if (itemInTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(itemInTax, itemInEach);
+
+            double money = baseBean.getAmount() * baseBean.getCostPrice();
+
+            itemInEach.setInmoney(FinanceHelper.doubleToLong(money));
+
+            itemInEach.setOutmoney(0);
+
+            itemInEach.setDescription(itemInEach.getName());
+
+            // 辅助核算 职员/部门
+            copyDepartment(outBean, itemInEach);
+            itemInEach.setStafferId(outBean.getStafferId());
+            itemInEach.setProductId(baseBean.getProductId());
+            itemInEach.setDepotId(baseBean.getLocationId());
+            itemInEach.setProductAmountIn(baseBean.getAmount());
+
+            itemList.add(itemInEach);
         }
-
-        // 科目拷贝
-        FinanceHelper.copyTax(itemInTax, itemIn1);
-
-        double money = getOutCost(outBean);
-
-        itemIn1.setInmoney(FinanceHelper.doubleToLong(money));
-
-        itemIn1.setOutmoney(0);
-
-        itemIn1.setDescription(itemIn1.getName());
-
-        // 辅助核算 职员/部门
-        copyDepartment(outBean, itemIn1);
-        itemIn1.setStafferId(outBean.getStafferId());
-
-        itemList.add(itemIn1);
-
-        List<BaseBean> baseList = outBean.getBaseList();
 
         // 库存商品（成本价*数量）
         for (BaseBean baseBean : baseList)
@@ -2371,7 +2510,7 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemOut1.setProductId(baseBean.getProductId());
-            itemOut1.setProductAmount(baseBean.getAmount());
+            itemOut1.setProductAmountOut(baseBean.getAmount());
             itemOut1.setDepotId(outBean.getLocation());
 
             itemList.add(itemOut1);
@@ -2391,50 +2530,54 @@ public class OutListenerTaxGlueImpl implements OutListener
                                       List<FinanceItemBean> itemList)
         throws MYException
     {
+        List<BaseBean> baseList = outBean.getBaseList();
 
         String name = "个人领样退库:" + outBean.getFullId() + '.';
 
-        // 借:库存商品 贷:应付账款-供应商
-        FinanceItemBean itemIn1 = new FinanceItemBean();
-
         String pare1 = commonDAO.getSquenceString();
 
-        itemIn1.setPareId(pare1);
-
-        itemIn1.setName("主营业务成本:" + name);
-
-        itemIn1.setForward(TaxConstanst.TAX_FORWARD_IN);
-
-        FinanceHelper.copyFinanceItem(financeBean, itemIn1);
-
-        // 主营业务成本(部门/职员)
-        String itemInTaxId = TaxItemConstanst.MAIN_COST;
-
-        TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
-
-        if (itemInTax == null)
+        for (BaseBean baseBean : baseList)
         {
-            throw new MYException("数据错误,请确认操作");
+            FinanceItemBean itemInEach = new FinanceItemBean();
+
+            itemInEach.setPareId(pare1);
+
+            itemInEach.setName("主营业务成本:" + name + ".产品:" + baseBean.getProductName());
+
+            itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemInEach);
+
+            // 主营业务成本(部门/职员)
+            String itemInTaxId = TaxItemConstanst.MAIN_COST;
+
+            TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
+
+            if (itemInTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(itemInTax, itemInEach);
+
+            double money = -baseBean.getAmount() * baseBean.getCostPrice();
+
+            itemInEach.setInmoney(FinanceHelper.doubleToLong(money));
+
+            itemInEach.setOutmoney(0);
+
+            itemInEach.setDescription(itemInEach.getName());
+
+            // 辅助核算 职员/部门
+            copyDepartment(outBean, itemInEach);
+            itemInEach.setStafferId(outBean.getStafferId());
+            itemInEach.setProductId(baseBean.getProductId());
+            itemInEach.setDepotId(baseBean.getLocationId());
+            itemInEach.setProductAmountIn( -baseBean.getAmount());
+
+            itemList.add(itemInEach);
         }
-
-        // 科目拷贝
-        FinanceHelper.copyTax(itemInTax, itemIn1);
-
-        double money = -getOutCost(outBean);
-
-        itemIn1.setInmoney(FinanceHelper.doubleToLong(money));
-
-        itemIn1.setOutmoney(0);
-
-        itemIn1.setDescription(itemIn1.getName());
-
-        // 辅助核算 职员/部门
-        copyDepartment(outBean, itemIn1);
-        itemIn1.setStafferId(outBean.getStafferId());
-
-        itemList.add(itemIn1);
-
-        List<BaseBean> baseList = outBean.getBaseList();
 
         // 库存商品（成本价*数量）
         for (BaseBean baseBean : baseList)
@@ -2473,7 +2616,7 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemOut1.setProductId(baseBean.getProductId());
-            itemOut1.setProductAmount( -baseBean.getAmount());
+            itemOut1.setProductAmountOut( -baseBean.getAmount());
             itemOut1.setDepotId(outBean.getLocation());
 
             itemList.add(itemOut1);
@@ -2484,50 +2627,55 @@ public class OutListenerTaxGlueImpl implements OutListener
                                           List<FinanceItemBean> itemList)
         throws MYException
     {
+        List<BaseBean> baseList = outBean.getBaseList();
 
         String name = "入库-销售退库:" + outBean.getFullId() + '.';
 
-        // 借:库存商品 贷:应付账款-供应商
-        FinanceItemBean itemIn1 = new FinanceItemBean();
-
         String pare1 = commonDAO.getSquenceString();
 
-        itemIn1.setPareId(pare1);
-
-        itemIn1.setName("主营业务成本:" + name);
-
-        itemIn1.setForward(TaxConstanst.TAX_FORWARD_IN);
-
-        FinanceHelper.copyFinanceItem(financeBean, itemIn1);
-
-        // 主营业务成本(部门/职员)
-        String itemInTaxId = TaxItemConstanst.MAIN_COST;
-
-        TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
-
-        if (itemInTax == null)
+        for (BaseBean baseBean : baseList)
         {
-            throw new MYException("数据错误,请确认操作");
+            // 借:库存商品 贷:应付账款-供应商
+            FinanceItemBean itemInEach = new FinanceItemBean();
+
+            itemInEach.setPareId(pare1);
+
+            itemInEach.setName("主营业务成本:" + name + ".产品:" + baseBean.getProductName());
+
+            itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemInEach);
+
+            // 主营业务成本(部门/职员/产品/仓区)
+            String itemInTaxId = TaxItemConstanst.MAIN_COST;
+
+            TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
+
+            if (itemInTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(itemInTax, itemInEach);
+
+            double money = -baseBean.getAmount() * baseBean.getCostPrice();
+
+            itemInEach.setInmoney(FinanceHelper.doubleToLong(money));
+
+            itemInEach.setOutmoney(0);
+
+            itemInEach.setDescription(itemInEach.getName());
+
+            // 辅助核算 职员/部门/产品/仓库
+            copyDepartment(outBean, itemInEach);
+            itemInEach.setStafferId(outBean.getStafferId());
+            itemInEach.setProductId(baseBean.getProductId());
+            itemInEach.setDepotId(baseBean.getLocationId());
+            itemInEach.setProductAmountIn( -baseBean.getAmount());
+
+            itemList.add(itemInEach);
         }
-
-        // 科目拷贝
-        FinanceHelper.copyTax(itemInTax, itemIn1);
-
-        double money = -getOutCost(outBean);
-
-        itemIn1.setInmoney(FinanceHelper.doubleToLong(money));
-
-        itemIn1.setOutmoney(0);
-
-        itemIn1.setDescription(itemIn1.getName());
-
-        // 辅助核算 职员/部门
-        copyDepartment(outBean, itemIn1);
-        itemIn1.setStafferId(outBean.getStafferId());
-
-        itemList.add(itemIn1);
-
-        List<BaseBean> baseList = outBean.getBaseList();
 
         // 库存商品（成本价*数量）
         for (BaseBean baseBean : baseList)
@@ -2566,7 +2714,7 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemOut1.setProductId(baseBean.getProductId());
-            itemOut1.setProductAmount( -baseBean.getAmount());
+            itemOut1.setProductAmountOut( -baseBean.getAmount());
             itemOut1.setDepotId(outBean.getLocation());
 
             itemList.add(itemOut1);
@@ -2665,7 +2813,7 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemOut1.setProductId(baseBean.getProductId());
-            itemOut1.setProductAmount( -baseBean.getAmount());
+            itemOut1.setProductAmountOut( -baseBean.getAmount());
             itemOut1.setDepotId(outBean.getLocation());
 
             itemList.add(itemOut1);
@@ -2729,7 +2877,7 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemInEach.setProductId(baseBean.getProductId());
-            itemInEach.setProductAmount(baseBean.getAmount());
+            itemInEach.setProductAmountIn(baseBean.getAmount());
             itemInEach.setDepotId(outBean.getLocation());
 
             itemList.add(itemInEach);
@@ -2830,7 +2978,7 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemInEach.setProductId(baseBean.getProductId());
-            itemInEach.setProductAmount(baseBean.getAmount());
+            itemInEach.setProductAmountIn(baseBean.getAmount());
             itemInEach.setDepotId(outBean.getLocation());
 
             itemList.add(itemInEach);
@@ -2872,7 +3020,7 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemOutEach.setProductId(baseBean.getProductId());
-            itemOutEach.setProductAmount(baseBean.getAmount());
+            itemOutEach.setProductAmountOut(baseBean.getAmount());
             itemOutEach.setDepotId(outBean.getLocation());
 
             itemList.add(itemOutEach);
@@ -2946,7 +3094,7 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemInEach.setProductId(baseBean.getProductId());
-            itemInEach.setProductAmount(baseBean.getAmount());
+            itemInEach.setProductAmountIn(baseBean.getAmount());
 
             // 调入的仓库
             itemInEach.setDepotId(outBean.getLocation());
@@ -2990,7 +3138,7 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             // 辅助核算 产品/仓库
             itemOutEach.setProductId(baseBean.getProductId());
-            itemOutEach.setProductAmount(baseBean.getAmount());
+            itemOutEach.setProductAmountOut(baseBean.getAmount());
 
             // 调出的仓库
             itemOutEach.setDepotId(moveOut.getLocation());
@@ -3027,7 +3175,7 @@ public class OutListenerTaxGlueImpl implements OutListener
      * @return
      * @throws MYException
      */
-    private double getOutBalanceCost(OutBalanceBean bean, OutBean outBean)
+    protected double getOutBalanceCost(OutBalanceBean bean, OutBean outBean)
         throws MYException
     {
         double total = 0.0d;
@@ -3637,5 +3785,22 @@ public class OutListenerTaxGlueImpl implements OutListener
     public void setStafferDAO(StafferDAO stafferDAO)
     {
         this.stafferDAO = stafferDAO;
+    }
+
+    /**
+     * @return the baseBalanceDAO
+     */
+    public BaseBalanceDAO getBaseBalanceDAO()
+    {
+        return baseBalanceDAO;
+    }
+
+    /**
+     * @param baseBalanceDAO
+     *            the baseBalanceDAO to set
+     */
+    public void setBaseBalanceDAO(BaseBalanceDAO baseBalanceDAO)
+    {
+        this.baseBalanceDAO = baseBalanceDAO;
     }
 }
