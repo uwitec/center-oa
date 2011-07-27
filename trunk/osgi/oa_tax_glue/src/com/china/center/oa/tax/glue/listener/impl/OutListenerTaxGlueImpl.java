@@ -1506,6 +1506,8 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             itemOutEach.setOutmoney(FinanceHelper.doubleToLong(outMoney));
 
+            outTotal += itemOutEach.getOutmoney();
+
             itemOutEach.setDescription(itemOutEach.getName());
 
             // 辅助核算 部门/职员
