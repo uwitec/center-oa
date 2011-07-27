@@ -42,10 +42,11 @@ function load()
 			<p:cell title="类型">${my:get('financeType', bean.type)}</p:cell>
 			<p:cell title="创建类型">${my:get('financeCreateType', bean.createType)}</p:cell>
 			<p:cell title="状态">${my:get('financeStatus', bean.status)}</p:cell>
+			<p:cell title="锁定">${my:get('financeLock', bean.locks)}</p:cell>
 			<p:cell title="总金额">${bean.showInmoney}</p:cell>
 			<p:cell title="录入人">${bean.createrName}</p:cell>
 			<p:cell title="录入时间">${bean.logTime}</p:cell>
-			<p:cell title="关联">
+			<p:cell title="关联" end="true">
 			<c:choose>
 			    <c:when test="${bean.createType == 1}">
                 <a href="../stock/stock.do?method=findStock&id=${bean.refId}">${bean.refId}</a>

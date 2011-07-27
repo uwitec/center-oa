@@ -48,9 +48,14 @@ public class FinanceBean implements Serializable
     private int type = TaxConstanst.FINANCE_TYPE_MANAGER;
 
     /**
-     * 0:未人工核对 1:已核对(锁定)
+     * 0:未人工核对 1:已核对
      */
     private int status = TaxConstanst.FINANCE_STATUS_NOCHECK;
+
+    /**
+     * 锁定(结转后就锁定)
+     */
+    private int locks = TaxConstanst.FINANCE_LOCK_NO;
 
     /**
      * 更新标识
@@ -444,6 +449,23 @@ public class FinanceBean implements Serializable
     }
 
     /**
+     * @return the locks
+     */
+    public int getLocks()
+    {
+        return locks;
+    }
+
+    /**
+     * @param locks
+     *            the locks to set
+     */
+    public void setLocks(int locks)
+    {
+        this.locks = locks;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -469,6 +491,9 @@ public class FinanceBean implements Serializable
             .append(TAB)
             .append("status = ")
             .append(this.status)
+            .append(TAB)
+            .append("locks = ")
+            .append(this.locks)
             .append(TAB)
             .append("updateFlag = ")
             .append(this.updateFlag)

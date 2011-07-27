@@ -350,6 +350,18 @@ public interface TaxConstanst
     int FINANCE_STATUS_CHECK = 1;
 
     /**
+     * 未锁定
+     */
+    @Defined(key = "financeLock", value = "未锁定")
+    int FINANCE_LOCK_NO = 0;
+
+    /**
+     * 已锁定
+     */
+    @Defined(key = "financeLock", value = "已锁定")
+    int FINANCE_LOCK_YES = 1;
+
+    /**
      * 银行
      */
     @Defined(key = "taxRefType", value = "银行")

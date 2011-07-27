@@ -271,7 +271,8 @@ public class FinanceManagerImpl implements FinanceManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        if (old.getStatus() == TaxConstanst.FINANCE_STATUS_CHECK)
+        if (old.getStatus() == TaxConstanst.FINANCE_STATUS_CHECK
+            || old.getLocks() == TaxConstanst.FINANCE_LOCK_YES)
         {
             throw new MYException("已经被核对(锁定)不能修改,请重新操作");
         }
@@ -463,7 +464,12 @@ public class FinanceManagerImpl implements FinanceManager
 
         if (old.getStatus() == TaxConstanst.FINANCE_STATUS_CHECK)
         {
-            throw new MYException("已经被核对(锁定)不能删除,请重新操作");
+            throw new MYException("已经被核对,不能删除,请重新操作");
+        }
+
+        if (old.getLocks() == TaxConstanst.FINANCE_LOCK_YES)
+        {
+            throw new MYException("已经被锁定,不能删除,请重新操作");
         }
 
         // 获取凭证项
