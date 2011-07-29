@@ -160,43 +160,10 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
         // 原价
         List<PriceChangeSrcItemBean> srcList = priceChange.getSrcList();
 
-        double oldTotal = 0.0d;
-
-        for (PriceChangeSrcItemBean oldEach : srcList)
-        {
-            oldTotal += oldEach.getAmount() * oldEach.getPrice();
-        }
-
         // 现价
         List<PriceChangeNewItemBean> newList = priceChange.getNewList();
 
-        double newTotal = 0.0d;
-
-        for (PriceChangeNewItemBean newEach : newList)
-        {
-            newTotal += newEach.getAmount() * newEach.getPrice();
-        }
-
-        // 在借方是负数
-        double money = - (newTotal - oldTotal);
-
-        itemIn1.setInmoney(FinanceHelper.doubleToLong(money));
-
-        itemIn1.setOutmoney(0);
-
-        itemIn1.setDescription(itemIn1.getName());
-
-        StafferBean staffer = stafferDAO.find(user.getStafferId());
-
-        if (staffer == null)
-        {
-            throw new MYException("数据错误,请确认操作");
-        }
-
-        // 辅助核算 部门
-        itemIn1.setDepartmentId(staffer.getPrincipalshipId());
-
-        itemList.add(itemIn1);
+        long inTotal = 0L;
 
         for (PriceChangeNewItemBean newEach : newList)
         {
@@ -236,6 +203,8 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
 
             eachItemIn.setInmoney(FinanceHelper.doubleToLong(eachMoney));
 
+            inTotal += eachItemIn.getInmoney();
+
             eachItemIn.setOutmoney(0);
 
             eachItemIn.setDescription(eachItemIn.getName());
@@ -248,6 +217,7 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
             itemList.add(eachItemIn);
         }
 
+        long outnTotal = 0L;
         // 贷方:库存商品（调价前的商品）
         for (PriceChangeSrcItemBean srcEach : srcList)
         {
@@ -287,6 +257,8 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
 
             itemOut1.setOutmoney(FinanceHelper.doubleToLong(outMoney));
 
+            outnTotal += itemOut1.getOutmoney();
+
             itemOut1.setDescription(itemOut1.getName());
 
             // 辅助核算 产品/仓库
@@ -297,6 +269,24 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
             itemList.add(itemOut1);
         }
 
+        // 在借方是负数
+        itemIn1.setInmoney(outnTotal - inTotal);
+
+        itemIn1.setOutmoney(0);
+
+        itemIn1.setDescription(itemIn1.getName());
+
+        StafferBean staffer = stafferDAO.find(user.getStafferId());
+
+        if (staffer == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 辅助核算 部门
+        itemIn1.setDepartmentId(staffer.getPrincipalshipId());
+
+        itemList.add(0, itemIn1);
     }
 
     /**
