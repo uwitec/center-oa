@@ -198,6 +198,35 @@ public class TimeTools
     }
 
     /**
+     * 获取指定时间后的时间(格式指定)
+     * 
+     * @param org
+     * @param days
+     * @param format
+     * @return
+     */
+    public static String getStringByOrgAndDaysAndFormat(String org, int days, String format)
+    {
+        return getStringByFormat(new Date(getDateByFormat(org, format).getTime() + days * DAY_MS),
+            format);
+    }
+
+    /**
+     * 格式转
+     * 
+     * @param org
+     * @param oldFormat
+     * @param newFormat
+     * @return
+     */
+    public static String changeFormat(String org, String oldFormat, String newFormat)
+    {
+        Date date = getDateByFormat(org, oldFormat);
+
+        return getStringByFormat(date, newFormat);
+    }
+
+    /**
      * 获得指定的时间
      * 
      * @param days
@@ -234,6 +263,13 @@ public class TimeTools
 
         return getStringByFormat(new Date(dateByFormat.getTime() + DAY_MS * days),
             TimeTools.LONG_FORMAT);
+    }
+
+    public static String getSpecialDateStringByDays(String date, int days, String fomat)
+    {
+        Date dateByFormat = getDateByFormat(date, fomat);
+
+        return getStringByFormat(new Date(dateByFormat.getTime() + DAY_MS * days), fomat);
     }
 
     /**
@@ -480,6 +516,25 @@ public class TimeTools
         return getStringByFormat(new Date(cal.getTime().getTime()), SHORT_FORMAT);
     }
 
+    /**
+     * 给出月初的日期获得月末日期
+     * 
+     * @param monthBeginDateString
+     * @return
+     */
+    public static String getMonthEnd(String monthBeginDateString)
+    {
+        Calendar cal = Calendar.getInstance();
+
+        // 本月时间
+        cal.setTime(TimeTools.getDateByFormat(monthBeginDateString, SHORT_FORMAT));
+
+        // 下个月的1号
+        cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) + 1);
+
+        return getStringByFormat(new Date(cal.getTime().getTime() - DAY_MS), SHORT_FORMAT);
+    }
+
     public static String getLastestMonthBegin()
     {
         Calendar cal = Calendar.getInstance();
@@ -493,18 +548,6 @@ public class TimeTools
 
     public static void main(String[] args)
     {
-        System.out.println(getFormatDateTimeStr("2009-1-12 2:45:1"));
-
-        Calendar cal = Calendar.getInstance();
-
-        cal.set(Calendar.YEAR, 2009);
-
-        cal.set(Calendar.DAY_OF_YEAR, 67);
-
-        int week = cal.get(Calendar.DAY_OF_WEEK);
-
-        System.out.println(week);
-
-        System.out.println(getShortString(cal.getTimeInMillis()));
+        System.out.println(getMonthEnd("2011-07-01"));
     }
 }
