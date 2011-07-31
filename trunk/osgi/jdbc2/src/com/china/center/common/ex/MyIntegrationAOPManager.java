@@ -12,6 +12,8 @@ package com.china.center.common.ex;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.logging.Log;
@@ -38,10 +40,36 @@ public class MyIntegrationAOPManager implements IntegrationAOPManager
     private Constructor con = null;
 
     /**
+     * 全局静态锁
+     */
+    private static Map<String, Object> LOCKMAP = new HashMap<String, Object>();
+
+    /**
      * default constructor
      */
     public MyIntegrationAOPManager()
     {
+    }
+
+    public Object getLockObject(String key)
+    {
+        if (key == null || "".equals(key))
+        {
+            return null;
+        }
+
+        Object object = LOCKMAP.get(key);
+
+        if (object != null)
+        {
+            return object;
+        }
+
+        object = new Object();
+
+        LOCKMAP.put(key, object);
+
+        return object;
     }
 
     public Throwable processSensitiveException(int switchFlag, Throwable ex, Method method,
