@@ -53,6 +53,7 @@ import com.china.center.oa.sail.dao.UnitViewDAO;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.FinanceItemBean;
+import com.china.center.oa.tax.bean.FinanceTurnBean;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.bean.UnitBean;
 import com.china.center.oa.tax.constanst.CheckConstant;
@@ -60,6 +61,8 @@ import com.china.center.oa.tax.constanst.TaxConstanst;
 import com.china.center.oa.tax.dao.CheckViewDAO;
 import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.oa.tax.dao.FinanceItemDAO;
+import com.china.center.oa.tax.dao.FinanceMonthDAO;
+import com.china.center.oa.tax.dao.FinanceTurnDAO;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.dao.UnitDAO;
 import com.china.center.oa.tax.facade.TaxFacade;
@@ -67,7 +70,10 @@ import com.china.center.oa.tax.helper.FinanceHelper;
 import com.china.center.oa.tax.manager.FinanceManager;
 import com.china.center.oa.tax.vo.CheckViewVO;
 import com.china.center.oa.tax.vo.FinanceItemVO;
+import com.china.center.oa.tax.vo.FinanceMonthVO;
+import com.china.center.oa.tax.vo.FinanceTurnVO;
 import com.china.center.oa.tax.vo.FinanceVO;
+import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.MathTools;
@@ -116,7 +122,15 @@ public class FinaAction extends DispatchAction
 
     private ProductDAO productDAO = null;
 
+    private FinanceTurnDAO financeTurnDAO = null;
+
+    private FinanceMonthDAO financeMonthDAO = null;
+
     private static final String QUERYFINANCE = "queryFinance";
+
+    private static final String QUERYFINANCEMONTH = "queryFinanceMonth";
+
+    private static final String QUERYFINANCETURN = "queryFinanceTurn";
 
     private static final String QUERYFINANCEITEM = "queryFinanceItem";
 
@@ -164,6 +178,73 @@ public class FinaAction extends DispatchAction
                     obj.getShowOutmoney();
                 }
             });
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryFinanceMonth
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryFinanceMonth(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        ActionTools.processJSONQueryCondition(QUERYFINANCEMONTH, request, condtion);
+
+        condtion.addCondition("order by FinanceMonthBean.monthKey desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCEMONTH, request, condtion,
+            this.financeMonthDAO, new HandleResult<FinanceMonthVO>()
+            {
+                public void handle(FinanceMonthVO obj)
+                {
+                    obj.getShowInmoneyAllTotal();
+                    obj.getShowInmoneyTotal();
+                    obj.getShowLastAllTotal();
+                    obj.getShowLastTotal();
+                    obj.getShowOutmoneyAllTotal();
+                    obj.getShowOutmoneyTotal();
+                }
+            });
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryFinanceTurn
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryFinanceTurn(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        ActionTools.processJSONQueryCondition(QUERYFINANCETURN, request, condtion);
+
+        condtion.addCondition("order by FinanceTurnBean.monthKey desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCETURN, request, condtion,
+            this.financeTurnDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -351,6 +432,44 @@ public class FinaAction extends DispatchAction
         CommonTools.removeParamers(request);
 
         return mapping.findForward(QUERYFINANCE);
+    }
+
+    /**
+     * 增加结转
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward addFinanceTurn(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        FinanceTurnBean bean = new FinanceTurnBean();
+
+        try
+        {
+            BeanUtil.getBean(bean, request);
+
+            User user = Helper.getUser(request);
+
+            financeManager.addFinanceTurnBean(user, bean);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        return mapping.findForward(QUERYFINANCETURN);
     }
 
     /**
@@ -934,6 +1053,98 @@ public class FinaAction extends DispatchAction
         return mapping.findForward("addFinance");
     }
 
+    /**
+     * 凭证结转做准备
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     */
+    public ActionForward preForAddFinanceTurn(ActionMapping mapping, ActionForm form,
+                                              HttpServletRequest request,
+                                              HttpServletResponse response)
+    {
+        // 这里由于有初始化数据必然存在
+        FinanceTurnVO findLastVO = financeTurnDAO.findLastVO();
+
+        if (findLastVO == null)
+        {
+            return ActionTools.toError("没有默认的结转,请联系管理员设置", mapping, request);
+        }
+
+        String nextKey = TimeTools.getStringByOrgAndDaysAndFormat(findLastVO.getMonthKey(), 32,
+            "yyyyMM");
+
+        request.setAttribute("nextKey", nextKey);
+
+        String changeFormat = TimeTools.changeFormat(nextKey, "yyyyMM", "yyyy-MM");
+
+        String monthEnd = TimeTools.getMonthEnd(changeFormat + "-01");
+
+        if (TimeTools.now_short().compareTo(monthEnd) < 0)
+        {
+            return ActionTools.toError("结转只能在月末或者下月发生,不能提前结转", mapping, request);
+        }
+
+        List<TaxBean> taxList = taxDAO.listEntityBeans("order by id");
+
+        List<FinanceMonthVO> monthList = new ArrayList<FinanceMonthVO>();
+
+        for (TaxBean taxBean : taxList)
+        {
+            if (taxBean.getBottomFlag() == TaxConstanst.TAX_BOTTOMFLAG_ROOT)
+            {
+                continue;
+            }
+
+            ConditionParse condition = new ConditionParse();
+
+            condition.addWhereStr();
+
+            condition.addCondition("financeDate", ">=", changeFormat + "-01");
+            condition.addCondition("financeDate", "<=", changeFormat + "-31");
+
+            condition.addCondition("taxId", "=", taxBean.getId());
+
+            long inMonetTotal = financeItemDAO.sumInByCondition(condition);
+
+            long outMonetTotal = financeItemDAO.sumOutByCondition(condition);
+
+            FinanceMonthVO fmb = new FinanceMonthVO();
+
+            fmb.setMonthKey(nextKey);
+
+            FinanceHelper.copyTax(taxBean, fmb);
+
+            fmb.setTaxName(taxBean.getName());
+
+            fmb.setForwardName(ElTools.get("taxForward", taxBean.getForward()));
+
+            fmb.setInmoneyTotal(inMonetTotal);
+
+            fmb.setOutmoneyTotal(outMonetTotal);
+
+            if (taxBean.getForward() == TaxConstanst.TAX_FORWARD_IN)
+            {
+                fmb.setLastTotal(inMonetTotal - outMonetTotal);
+            }
+            else
+            {
+                fmb.setLastTotal(outMonetTotal - inMonetTotal);
+            }
+
+            fmb.setLogTime(TimeTools.now());
+
+            monthList.add(fmb);
+        }
+
+        request.setAttribute("monthList", monthList);
+
+        return mapping.findForward("addFinanceTurn");
+    }
+
     private void preInner(HttpServletRequest request)
     {
         CommonTools.saveParamers(request);
@@ -1274,6 +1485,40 @@ public class FinaAction extends DispatchAction
     public void setPrincipalshipDAO(PrincipalshipDAO principalshipDAO)
     {
         this.principalshipDAO = principalshipDAO;
+    }
+
+    /**
+     * @return the financeTurnDAO
+     */
+    public FinanceTurnDAO getFinanceTurnDAO()
+    {
+        return financeTurnDAO;
+    }
+
+    /**
+     * @param financeTurnDAO
+     *            the financeTurnDAO to set
+     */
+    public void setFinanceTurnDAO(FinanceTurnDAO financeTurnDAO)
+    {
+        this.financeTurnDAO = financeTurnDAO;
+    }
+
+    /**
+     * @return the financeMonthDAO
+     */
+    public FinanceMonthDAO getFinanceMonthDAO()
+    {
+        return financeMonthDAO;
+    }
+
+    /**
+     * @param financeMonthDAO
+     *            the financeMonthDAO to set
+     */
+    public void setFinanceMonthDAO(FinanceMonthDAO financeMonthDAO)
+    {
+        this.financeMonthDAO = financeMonthDAO;
     }
 
 }

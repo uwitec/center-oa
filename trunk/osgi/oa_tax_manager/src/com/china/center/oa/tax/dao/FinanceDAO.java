@@ -25,4 +25,13 @@ import com.china.center.oa.tax.vo.FinanceVO;
 public interface FinanceDAO extends DAO<FinanceBean, FinanceVO>
 {
     boolean updateCheck(String id, String reason);
+
+    /**
+     * updateLockToEnd
+     * 
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    int updateLockToEnd(String beginTime, String endTime);
 }

@@ -17,28 +17,36 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.china.center.spring.ex.annotation.Exceptional;
+import org.china.center.spring.iaop.annotation.IntegrationAOP;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.finance.manager.BillManager;
+import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.IDPrefixConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.tax.bean.CheckViewBean;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.FinanceItemBean;
+import com.china.center.oa.tax.bean.FinanceMonthBean;
+import com.china.center.oa.tax.bean.FinanceTurnBean;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.constanst.CheckConstant;
 import com.china.center.oa.tax.constanst.TaxConstanst;
+import com.china.center.oa.tax.constanst.TaxItemConstanst;
 import com.china.center.oa.tax.dao.CheckViewDAO;
 import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.oa.tax.dao.FinanceItemDAO;
+import com.china.center.oa.tax.dao.FinanceMonthDAO;
+import com.china.center.oa.tax.dao.FinanceTurnDAO;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.helper.FinanceHelper;
 import com.china.center.oa.tax.helper.TaxHelper;
 import com.china.center.oa.tax.manager.FinanceManager;
+import com.china.center.oa.tax.vo.FinanceTurnVO;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
@@ -52,7 +60,7 @@ import com.china.center.tools.TimeTools;
  * @see FinanceManagerImpl
  * @since 1.0
  */
-@Exceptional
+@IntegrationAOP
 public class FinanceManagerImpl implements FinanceManager
 {
     private final Log operationLog = LogFactory.getLog("opr");
@@ -67,7 +75,16 @@ public class FinanceManagerImpl implements FinanceManager
 
     private TaxDAO taxDAO = null;
 
+    private FinanceTurnDAO financeTurnDAO = null;
+
+    private FinanceMonthDAO financeMonthDAO = null;
+
     private BillManager billManager = null;
+
+    /**
+     * 是否锁定凭证增加
+     */
+    private static boolean LOCK_FINANCE = false;
 
     /**
      * default constructor
@@ -93,11 +110,7 @@ public class FinanceManagerImpl implements FinanceManager
             bean.setFinanceDate(TimeTools.now_short());
         }
 
-        // 校验凭证时间不能大于当前时间, TODO 也不能小于最近的结算时间
-        if (bean.getFinanceDate().compareTo(TimeTools.now_short()) > 0)
-        {
-            throw new MYException("凭证时间不能大于[%s]", TimeTools.now_short());
-        }
+        checkTime(bean);
 
         // 入库时间
         bean.setLogTime(TimeTools.now());
@@ -116,6 +129,13 @@ public class FinanceManagerImpl implements FinanceManager
         }
 
         List<FinanceItemBean> itemList = bean.getItemList();
+
+        boolean isTurn = FinanceHelper.isTurnFinance(itemList);
+
+        if (isLOCK_FINANCE() && !isTurn)
+        {
+            throw new MYException("被锁定结转,不能增加凭证");
+        }
 
         Map<String, List<FinanceItemBean>> pareMap = new HashMap<String, List<FinanceItemBean>>();
 
@@ -150,8 +170,11 @@ public class FinanceManagerImpl implements FinanceManager
                 throw new MYException("科目不存在,请确认操作");
             }
 
-            // 检查辅助核算项
-            checkItem(financeItemBean, tax);
+            // 不是结转需要检查辅助核算项
+            if ( !isTurn)
+            {
+                checkItem(financeItemBean, tax);
+            }
 
             // 拷贝凭证的父级ID
             TaxHelper.copyParent(financeItemBean, tax);
@@ -189,9 +212,9 @@ public class FinanceManagerImpl implements FinanceManager
         // CORE 核对借贷必相等的原则
         checkPare(pareMap);
 
-        financeDAO.saveEntityBean(bean);
-
         financeItemDAO.saveAllEntityBeans(itemList);
+
+        financeDAO.saveEntityBean(bean);
 
         // 手工增加增加成功后需要更新
         if (bean.getCreateType() == TaxConstanst.FINANCE_CREATETYPE_HAND
@@ -202,6 +225,506 @@ public class FinanceManagerImpl implements FinanceManager
         }
 
         return true;
+    }
+
+    /**
+     * 结转
+     */
+    @IntegrationAOP(auth = AuthConstant.FINANCE_TURN, lock = TaxConstanst.FINANCETURN_OPR_LOCK)
+    @Transactional(rollbackFor = MYException.class)
+    public boolean addFinanceTurnBean(User user, FinanceTurnBean bean)
+        throws MYException
+    {
+        try
+        {
+            JudgeTools.judgeParameterIsNull(user, bean);
+
+            // 锁定
+            setLOCK_FINANCE(true);
+
+            // 时间校验
+            checkTurnTime(bean);
+
+            bean.setId(commonDAO.getSquenceString20());
+
+            bean.setStafferId(user.getStafferId());
+
+            String changeFormat = TimeTools.changeFormat(bean.getMonthKey(), "yyyyMM", "yyyy-MM");
+
+            // 设置起止时间
+            bean.setStartTime(changeFormat + "-01 00:00:00");
+            bean.setEndTime(changeFormat + "-31 23:59:59");
+
+            // 损益结转
+            List<FinanceItemBean> itemList = createTurnFinance(user, bean, changeFormat);
+
+            // 利润结转
+            createProfitFinance(user, bean, changeFormat, itemList);
+
+            // 产生月结数据(科目/借总额/贷总额/KEY/LOGTIME)
+            createMonthData(user, bean, changeFormat);
+
+            // 锁定凭证,不能修改和删除
+            int amount = financeDAO.updateLockToEnd(changeFormat + "-01", changeFormat + "-31");
+
+            bean.setAmount(amount);
+
+            bean.setLogTime(TimeTools.now());
+
+            // 保存后本月的凭证就不能增加了
+            financeTurnDAO.saveEntityBean(bean);
+
+            operationLog.info(user.getStafferName() + "进行了" + bean.getMonthKey() + "的结转(操作成功)");
+
+            return true;
+        }
+        finally
+        {
+            // 解锁
+            setLOCK_FINANCE(false);
+        }
+    }
+
+    /**
+     * 产生月结数据
+     * 
+     * @param user
+     * @param bean
+     * @param changeFormat
+     */
+    private void createMonthData(User user, FinanceTurnBean bean, String changeFormat)
+    {
+        List<TaxBean> taxList = taxDAO.listEntityBeans("order by id");
+
+        for (TaxBean taxBean : taxList)
+        {
+            if (taxBean.getBottomFlag() == TaxConstanst.TAX_BOTTOMFLAG_ROOT)
+            {
+                continue;
+            }
+
+            ConditionParse condition = new ConditionParse();
+
+            condition.addWhereStr();
+
+            condition.addCondition("financeDate", ">=", changeFormat + "-01");
+            condition.addCondition("financeDate", "<=", changeFormat + "-31");
+
+            condition.addCondition("taxId", "=", taxBean.getId());
+
+            long inMonetTotal = financeItemDAO.sumInByCondition(condition);
+
+            long outMonetTotal = financeItemDAO.sumOutByCondition(condition);
+
+            FinanceMonthBean fmb = new FinanceMonthBean();
+
+            fmb.setId(commonDAO.getSquenceString20());
+
+            fmb.setStafferId(user.getStafferId());
+
+            fmb.setMonthKey(bean.getMonthKey());
+
+            FinanceHelper.copyTax(taxBean, fmb);
+
+            fmb.setInmoneyTotal(inMonetTotal);
+
+            fmb.setOutmoneyTotal(outMonetTotal);
+
+            if (taxBean.getForward() == TaxConstanst.TAX_FORWARD_IN)
+            {
+                fmb.setLastTotal(inMonetTotal - outMonetTotal);
+            }
+            else
+            {
+                fmb.setLastTotal(outMonetTotal - inMonetTotal);
+            }
+
+            // 获取最近的一个月
+            FinanceTurnVO lastTurn = financeTurnDAO.findLastVO();
+
+            FinanceMonthBean lastMonth = financeMonthDAO.findByUnique(taxBean.getId(), lastTurn
+                .getMonthKey());
+
+            if (lastMonth != null)
+            {
+                // 累加之前所有的值
+                fmb.setInmoneyAllTotal(lastMonth.getInmoneyTotal() + inMonetTotal);
+
+                fmb.setOutmoneyAllTotal(lastMonth.getOutmoneyAllTotal() + outMonetTotal);
+            }
+            else
+            {
+                // 没有作为初始值
+                fmb.setInmoneyAllTotal(inMonetTotal);
+
+                fmb.setOutmoneyAllTotal(outMonetTotal);
+            }
+
+            if (taxBean.getForward() == TaxConstanst.TAX_FORWARD_IN)
+            {
+                fmb.setLastAllTotal(fmb.getInmoneyAllTotal() - fmb.getOutmoneyAllTotal());
+            }
+            else
+            {
+                fmb.setLastAllTotal(fmb.getOutmoneyAllTotal() - fmb.getInmoneyAllTotal());
+            }
+
+            fmb.setLogTime(TimeTools.now());
+
+            financeMonthDAO.saveEntityBean(fmb);
+        }
+    }
+
+    /**
+     * checkTurnTime
+     * 
+     * @param bean
+     * @throws MYException
+     */
+    private void checkTurnTime(FinanceTurnBean bean)
+        throws MYException
+    {
+        FinanceTurnVO topTurn = financeTurnDAO.findLastVO();
+
+        if (topTurn != null)
+        {
+            // 2011017
+            String monthKey = topTurn.getMonthKey();
+
+            String nextKey = TimeTools.getStringByOrgAndDaysAndFormat(monthKey, 32, "yyyyMM");
+
+            if ( !nextKey.equals(bean.getMonthKey()))
+            {
+                throw new MYException("上次结转的是[%s],本次结转的是[%s],应该结转的是[%s],请确认操作", monthKey, bean
+                    .getMonthKey(), nextKey);
+            }
+        }
+
+        // 结转时间不能小于当前时间
+        String changeFormat = TimeTools.changeFormat(bean.getMonthKey(), "yyyyMM", "yyyy-MM");
+
+        String monthEnd = TimeTools.getMonthEnd(changeFormat + "-01");
+
+        if (TimeTools.now_short().compareTo(monthEnd) < 0)
+        {
+            throw new MYException("结转只能在月末或者下月发生,不能提前结转");
+        }
+    }
+
+    /**
+     * 结转凭证
+     * 
+     * @param user
+     * @param bean
+     * @param changeFormat
+     * @throws MYException
+     */
+    private List<FinanceItemBean> createTurnFinance(User user, FinanceTurnBean bean,
+                                                    String changeFormat)
+        throws MYException
+    {
+        // 产生凭证(结转/利润结转)
+        List<TaxBean> taxList = taxDAO.queryEntityBeansByFK(TaxConstanst.TAX_PTYPE_LOSS);
+
+        FinanceBean financeBean = new FinanceBean();
+
+        String name = user.getStafferName() + "损益结转" + bean.getMonthKey();
+
+        financeBean.setName(name);
+
+        financeBean.setType(TaxConstanst.FINANCE_TYPE_MANAGER);
+
+        financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TURN);
+
+        financeBean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
+
+        financeBean.setCreaterId(user.getStafferId());
+
+        financeBean.setDescription(financeBean.getName());
+
+        // 这里的日期是本月最后一天哦
+        financeBean.setFinanceDate(TimeTools.getMonthEnd(changeFormat + "-01"));
+
+        financeBean.setLogTime(TimeTools.now());
+
+        List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
+
+        String pare = commonDAO.getSquenceString();
+
+        // 本年利润
+        String itemTaxId = TaxItemConstanst.YEAR_PROFIT;
+
+        TaxBean yearTax = taxDAO.findByUnique(itemTaxId);
+
+        if (yearTax == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        for (TaxBean taxBean : taxList)
+        {
+            if (taxBean.getBottomFlag() == TaxConstanst.TAX_BOTTOMFLAG_ROOT)
+            {
+                continue;
+            }
+
+            ConditionParse condition = new ConditionParse();
+
+            condition.addWhereStr();
+
+            condition.addCondition("financeDate", ">=", changeFormat + "-01");
+            condition.addCondition("financeDate", "<=", changeFormat + "-31");
+
+            condition.addCondition("taxId", "=", taxBean.getId());
+
+            long inMonetTotal = financeItemDAO.sumInByCondition(condition);
+
+            long outMonetTotal = financeItemDAO.sumOutByCondition(condition);
+
+            if (inMonetTotal == 0 && outMonetTotal == 0)
+            {
+                continue;
+            }
+
+            // 空的删除
+            if ( (inMonetTotal == outMonetTotal) && (itemList.size() != 0))
+            {
+                continue;
+            }
+
+            // 借方(损益每月都结转的,所以损益的期初都是0)(借:本年利润 贷损益,这里的辅助核算型可以为空的)
+            if (taxBean.getForward() == TaxConstanst.TAX_FORWARD_IN)
+            {
+                String eachName = "借:本年利润,贷:" + taxBean.getName();
+
+                // 借:本年利润 贷:损益科目
+                FinanceItemBean itemInEach = new FinanceItemBean();
+
+                itemInEach.setPareId(pare);
+
+                itemInEach.setName(eachName);
+
+                itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+                FinanceHelper.copyFinanceItem(financeBean, itemInEach);
+
+                // 科目拷贝
+                FinanceHelper.copyTax(yearTax, itemInEach);
+
+                itemInEach.setInmoney(inMonetTotal - outMonetTotal);
+
+                itemInEach.setOutmoney(0);
+
+                itemInEach.setDescription(eachName);
+
+                itemList.add(itemInEach);
+
+                FinanceItemBean itemOutEach = new FinanceItemBean();
+
+                itemOutEach.setPareId(pare);
+
+                itemOutEach.setName(eachName);
+
+                itemOutEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+                FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
+
+                // 科目拷贝
+                FinanceHelper.copyTax(taxBean, itemOutEach);
+
+                itemOutEach.setInmoney(0);
+
+                itemOutEach.setOutmoney(inMonetTotal - outMonetTotal);
+
+                itemOutEach.setDescription(eachName);
+
+                itemList.add(itemOutEach);
+            }
+            else
+            {
+                String eachName = "借:" + taxBean.getName() + ",贷:本年利润";
+
+                // 借:损益科目 贷:本年利润
+                FinanceItemBean itemInEach = new FinanceItemBean();
+
+                itemInEach.setPareId(pare);
+
+                itemInEach.setName(eachName);
+
+                itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+                FinanceHelper.copyFinanceItem(financeBean, itemInEach);
+
+                // 科目拷贝
+                FinanceHelper.copyTax(taxBean, itemInEach);
+
+                itemInEach.setInmoney(outMonetTotal - inMonetTotal);
+
+                itemInEach.setOutmoney(0);
+
+                itemInEach.setDescription(eachName);
+
+                itemList.add(itemInEach);
+
+                // 贷方
+                FinanceItemBean itemOutEach = new FinanceItemBean();
+
+                itemOutEach.setPareId(pare);
+
+                itemOutEach.setName(eachName);
+
+                itemOutEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+                FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
+
+                // 科目拷贝
+                FinanceHelper.copyTax(yearTax, itemOutEach);
+
+                itemOutEach.setInmoney(0);
+
+                itemOutEach.setOutmoney(outMonetTotal - inMonetTotal);
+
+                itemOutEach.setDescription(eachName);
+
+                itemList.add(itemOutEach);
+            }
+        }
+
+        financeBean.setItemList(itemList);
+
+        // 入库
+        addFinanceBeanWithoutTransactional(user, financeBean);
+
+        return itemList;
+    }
+
+    /**
+     * 利润结转
+     * 
+     * @param user
+     * @param bean
+     * @param changeFormat
+     * @return
+     * @throws MYException
+     */
+    private List<FinanceItemBean> createProfitFinance(User user, FinanceTurnBean bean,
+                                                      String changeFormat,
+                                                      List<FinanceItemBean> itemNearList)
+        throws MYException
+    {
+        // 利润结转
+        long profit = 0L;
+
+        for (FinanceItemBean financeItemBean : itemNearList)
+        {
+            if (financeItemBean.getTaxId().equals(TaxItemConstanst.YEAR_PROFIT)
+                && financeItemBean.getForward() == TaxConstanst.TAX_FORWARD_IN)
+            {
+                profit = profit - financeItemBean.getInmoney();
+            }
+
+            if (financeItemBean.getTaxId().equals(TaxItemConstanst.YEAR_PROFIT)
+                && financeItemBean.getForward() == TaxConstanst.TAX_FORWARD_OUT)
+            {
+                profit = profit + financeItemBean.getInmoney();
+            }
+        }
+
+        FinanceBean financeBean = new FinanceBean();
+
+        String name = user.getStafferName() + "利润结转:" + bean.getMonthKey();
+
+        financeBean.setName(name);
+
+        financeBean.setType(TaxConstanst.FINANCE_TYPE_MANAGER);
+
+        financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_PROFIT);
+
+        financeBean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
+
+        financeBean.setCreaterId(user.getStafferId());
+
+        financeBean.setDescription(financeBean.getName());
+
+        // 这里的日期是本月最后一天哦
+        financeBean.setFinanceDate(TimeTools.getMonthEnd(changeFormat + "-01"));
+
+        financeBean.setLogTime(TimeTools.now());
+
+        List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
+
+        // 凭证对
+        String pare = commonDAO.getSquenceString();
+
+        // 本年利润
+        String itemTaxId = TaxItemConstanst.YEAR_PROFIT;
+
+        TaxBean yearTax = taxDAO.findByUnique(itemTaxId);
+
+        if (yearTax == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 未分配利润
+        TaxBean noProfit = taxDAO.findByUnique(TaxItemConstanst.NO_PROFIT);
+
+        if (noProfit == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        String eachName = "借:本年利润,贷:未分配利润";
+
+        // 借:本年利润 贷:损益科目
+        FinanceItemBean itemInEach = new FinanceItemBean();
+
+        itemInEach.setPareId(pare);
+
+        itemInEach.setName(eachName);
+
+        itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+        FinanceHelper.copyFinanceItem(financeBean, itemInEach);
+
+        // 科目拷贝
+        FinanceHelper.copyTax(yearTax, itemInEach);
+
+        itemInEach.setInmoney(profit);
+
+        itemInEach.setOutmoney(0);
+
+        itemInEach.setDescription(eachName);
+
+        itemList.add(itemInEach);
+
+        FinanceItemBean itemOutEach = new FinanceItemBean();
+
+        itemOutEach.setPareId(pare);
+
+        itemOutEach.setName(eachName);
+
+        itemOutEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+        FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
+
+        // 科目拷贝
+        FinanceHelper.copyTax(noProfit, itemOutEach);
+
+        itemOutEach.setInmoney(0);
+
+        itemOutEach.setOutmoney(profit);
+
+        itemOutEach.setDescription(eachName);
+
+        itemList.add(itemOutEach);
+
+        financeBean.setItemList(itemList);
+
+        // 入库
+        addFinanceBeanWithoutTransactional(user, financeBean);
+
+        return itemList;
     }
 
     /**
@@ -300,11 +823,7 @@ public class FinanceManagerImpl implements FinanceManager
             bean.setFinanceDate(TimeTools.now_short());
         }
 
-        // 校验凭证时间不能大于当前时间,也不能小于最近的结算时间
-        if (bean.getFinanceDate().compareTo(TimeTools.now_short()) > 0)
-        {
-            throw new MYException("凭证时间不能大于[%s]", TimeTools.now_short());
-        }
+        checkTime(bean);
 
         // 默认纳税实体
         if (bean.getType() == TaxConstanst.FINANCE_TYPE_MANAGER
@@ -320,6 +839,13 @@ public class FinanceManagerImpl implements FinanceManager
         }
 
         List<FinanceItemBean> itemList = bean.getItemList();
+
+        boolean isTurn = FinanceHelper.isTurnFinance(itemList);
+
+        if (isLOCK_FINANCE() && !isTurn)
+        {
+            throw new MYException("被锁定结转,不能修改凭证");
+        }
 
         Map<String, List<FinanceItemBean>> pareMap = new HashMap<String, List<FinanceItemBean>>();
 
@@ -354,8 +880,11 @@ public class FinanceManagerImpl implements FinanceManager
                 throw new MYException("科目不存在,请确认操作");
             }
 
-            // 检查辅助核算项
-            checkItem(financeItemBean, tax);
+            // 不是结转需要检查辅助核算项
+            if ( !isTurn)
+            {
+                checkItem(financeItemBean, tax);
+            }
 
             // 拷贝凭证的父级ID
             TaxHelper.copyParent(financeItemBean, tax);
@@ -407,6 +936,37 @@ public class FinanceManagerImpl implements FinanceManager
         financeItemDAO.saveAllEntityBeans(itemList);
 
         return true;
+    }
+
+    /**
+     * 校验时间
+     * 
+     * @param bean
+     * @throws MYException
+     */
+    private void checkTime(FinanceBean bean)
+        throws MYException
+    {
+        // 校验凭证时间不能大于当前时间,也不能小于最近的结算时间
+        if (bean.getFinanceDate().compareTo(TimeTools.now_short()) > 0)
+        {
+            throw new MYException("凭证时间不能大于[%s]", TimeTools.now_short());
+        }
+
+        String monthKey = TimeTools.changeFormat(bean.getFinanceDate(), TimeTools.SHORT_FORMAT,
+            "yyyyMM");
+
+        List<FinanceTurnBean> turnList = financeTurnDAO.listEntityBeans("order by monthKey desc");
+
+        if (turnList.size() > 0)
+        {
+            FinanceTurnBean topTurn = turnList.get(0);
+
+            if (monthKey.compareTo(topTurn.getMonthKey()) <= 0)
+            {
+                throw new MYException("[%s]已经结转,不能增加此月的凭证", topTurn.getMonthKey());
+            }
+        }
     }
 
     /**
@@ -470,6 +1030,13 @@ public class FinanceManagerImpl implements FinanceManager
         if (old.getLocks() == TaxConstanst.FINANCE_LOCK_YES)
         {
             throw new MYException("已经被锁定,不能删除,请重新操作");
+        }
+
+        // 结转的凭证不能删除
+        if (old.getCreateType() == TaxConstanst.FINANCE_CREATETYPE_TURN
+            || old.getCreateType() == TaxConstanst.FINANCE_CREATETYPE_PROFIT)
+        {
+            throw new MYException("结转的凭证不能被删除的,请重新操作");
         }
 
         // 获取凭证项
@@ -674,5 +1241,56 @@ public class FinanceManagerImpl implements FinanceManager
     public void setBillManager(BillManager billManager)
     {
         this.billManager = billManager;
+    }
+
+    /**
+     * @return the financeTurnDAO
+     */
+    public FinanceTurnDAO getFinanceTurnDAO()
+    {
+        return financeTurnDAO;
+    }
+
+    /**
+     * @param financeTurnDAO
+     *            the financeTurnDAO to set
+     */
+    public void setFinanceTurnDAO(FinanceTurnDAO financeTurnDAO)
+    {
+        this.financeTurnDAO = financeTurnDAO;
+    }
+
+    /**
+     * @return the financeMonthDAO
+     */
+    public FinanceMonthDAO getFinanceMonthDAO()
+    {
+        return financeMonthDAO;
+    }
+
+    /**
+     * @param financeMonthDAO
+     *            the financeMonthDAO to set
+     */
+    public void setFinanceMonthDAO(FinanceMonthDAO financeMonthDAO)
+    {
+        this.financeMonthDAO = financeMonthDAO;
+    }
+
+    /**
+     * @return the lOCK_FINANCE
+     */
+    public synchronized static boolean isLOCK_FINANCE()
+    {
+        return LOCK_FINANCE;
+    }
+
+    /**
+     * @param lock_finance
+     *            the lOCK_FINANCE to set
+     */
+    public synchronized static void setLOCK_FINANCE(boolean lock_finance)
+    {
+        LOCK_FINANCE = lock_finance;
     }
 }

@@ -80,4 +80,8 @@
 	
 	<osgi:reference id="productDAO" interface="com.china.center.oa.product.dao.ProductDAO" />
 	
+	<osgi:reference id="financeTurnDAO" interface="com.china.center.oa.tax.dao.FinanceTurnDAO" />
+
+    <osgi:reference id="financeMonthDAO" interface="com.china.center.oa.tax.dao.FinanceMonthDAO" />
+	
 </beans>

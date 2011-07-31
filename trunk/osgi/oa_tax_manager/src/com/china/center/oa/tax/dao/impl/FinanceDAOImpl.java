@@ -29,10 +29,18 @@ public class FinanceDAOImpl extends BaseDAO<FinanceBean, FinanceVO> implements F
 {
     public boolean updateCheck(String id, String reason)
     {
-        String sql = BeanTools.getUpdateHead(claz) + " set status = ?, checks = ? where id = ?";
+        String sql = BeanTools.getUpdateHead(claz) + "set status = ?, checks = ? where id = ?";
 
         this.jdbcOperation.update(sql, TaxConstanst.FINANCE_STATUS_CHECK, reason, id);
 
         return true;
+    }
+
+    public int updateLockToEnd(String beginTime, String endTime)
+    {
+        String sql = BeanTools.getUpdateHead(claz)
+                     + "set locks = ? where financeDate >= ? and financeDate <= ?";
+
+        return this.jdbcOperation.update(sql, TaxConstanst.FINANCE_LOCK_YES, beginTime, endTime);
     }
 }

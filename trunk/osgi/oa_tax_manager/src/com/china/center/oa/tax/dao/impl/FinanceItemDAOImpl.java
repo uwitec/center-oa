@@ -9,7 +9,9 @@
 package com.china.center.oa.tax.dao.impl;
 
 
+import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.impl.BaseDAO;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.tax.bean.FinanceItemBean;
 import com.china.center.oa.tax.dao.FinanceItemDAO;
 import com.china.center.oa.tax.vo.FinanceItemVO;
@@ -25,4 +27,17 @@ import com.china.center.oa.tax.vo.FinanceItemVO;
  */
 public class FinanceItemDAOImpl extends BaseDAO<FinanceItemBean, FinanceItemVO> implements FinanceItemDAO
 {
+    public long sumInByCondition(ConditionParse condition)
+    {
+        String sql = BeanTools.getSumHead(claz, "inmoney") + condition.toString();
+
+        return this.jdbcOperation.queryForLong(sql);
+    }
+
+    public long sumOutByCondition(ConditionParse condition)
+    {
+        String sql = BeanTools.getSumHead(claz, "outmoney") + condition.toString();
+
+        return this.jdbcOperation.queryForLong(sql);
+    }
 }

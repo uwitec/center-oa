@@ -26,31 +26,37 @@ public interface TaxConstanst
      * 资产
      */
     @Defined(key = "taxPtype", value = "资产")
-    String TAX_PTYPE_PROPERTY = "90000000000000000001";
+    String TAX_PTYPE_PROPERTY = "A1110000000000000001";
 
     /**
      * 负债
      */
     @Defined(key = "taxPtype", value = "负债")
-    String TAX_PTYPE_OBLIGATION = "90000000000000000002";
+    String TAX_PTYPE_OBLIGATION = "A1110000000000000002";
 
     /**
      * 权益
      */
     @Defined(key = "taxPtype", value = "权益")
-    String TAX_PTYPE_EQUITY = "90000000000000000003";
+    String TAX_PTYPE_EQUITY = "A1110000000000000003";
 
     /**
      * 损益
      */
     @Defined(key = "taxPtype", value = "损益")
-    String TAX_PTYPE_LOSS = "90000000000000000004";
+    String TAX_PTYPE_LOSS = "A1110000000000000004";
 
     /**
      * 借方
      */
     @Defined(key = "taxForward", value = "借方")
     int TAX_FORWARD_IN = 0;
+
+    /**
+     * 贷方
+     */
+    @Defined(key = "taxForward", value = "贷方")
+    int TAX_FORWARD_OUT = 1;
 
     /**
      * 不计算
@@ -63,12 +69,6 @@ public interface TaxConstanst
      */
     @Defined(key = "taxCheckStaffer", value = "计算")
     int TAX_CHECKSTAFFER_YES = 1;
-
-    /**
-     * 贷方
-     */
-    @Defined(key = "taxForward", value = "贷方")
-    int TAX_FORWARD_OUT = 1;
 
     @Defined(key = "taxCheck", value = "不核算")
     int TAX_CHECK_NO = 0;
@@ -311,6 +311,18 @@ public interface TaxConstanst
     int FINANCE_CREATETYPE_BILL_TOFEE = 67;
 
     /**
+     * 损益结转
+     */
+    @Defined(key = "financeCreateType", value = "损益结转")
+    int FINANCE_CREATETYPE_TURN = 998;
+
+    /**
+     * 利润结转
+     */
+    @Defined(key = "financeCreateType", value = "利润结转")
+    int FINANCE_CREATETYPE_PROFIT = 999;
+
+    /**
      * 客户
      */
     @Defined(key = "unitType", value = "客户")
@@ -384,4 +396,9 @@ public interface TaxConstanst
      */
     @Defined(key = "financeUpdateFlag", value = "更改")
     int FINANCE_UPDATEFLAG_YES = 1;
+
+    /**
+     * 结转的LOCK
+     */
+    String FINANCETURN_OPR_LOCK = "FINANCETURN_OPR_LOCK";
 }

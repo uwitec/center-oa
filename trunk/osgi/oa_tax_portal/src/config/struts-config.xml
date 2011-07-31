@@ -25,6 +25,8 @@
 			<forward name="queryOutBill" path="/bill/queryOutBill.jsp" />
 			<forward name="queryPriceChange" path="/product/queryPriceChange.jsp" />
 			<forward name="queryCompose" path="/product/queryCompose.jsp?foward=3" />
+			<forward name="addFinanceTurn" path="/finance/addFinanceTurn.jsp" />
+			<forward name="queryFinanceTurn" path="/finance/queryFinanceTurn.jsp" />
 		</action>
 		
 	</action-mappings>

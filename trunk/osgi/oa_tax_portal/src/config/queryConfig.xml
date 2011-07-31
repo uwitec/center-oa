@@ -212,5 +212,23 @@
             <type>text</type>
         </condtion>
     </item>
+    
+    <item name="queryFinanceTurn" deaultpfix="FinanceTurnBean">
+        <condtion name="monthKey" caption="统计月份(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+    </item>
+    
+    <item name="queryFinanceMonth" deaultpfix="FinanceMonthBean">
+        <condtion name="monthKey" caption="统计月份(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="taxId" caption="科目编码">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+    </item>
 	
 </query>

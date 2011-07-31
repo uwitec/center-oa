@@ -102,4 +102,14 @@ public interface TaxItemConstanst
      * 营业外支出(无)
      */
     String OTHER_PAY = "5601";
+
+    /**
+     * 本年利润(无)
+     */
+    String YEAR_PROFIT = "3131";
+
+    /**
+     * 未分配利润（无）
+     */
+    String NO_PROFIT = "3141-12";
 }

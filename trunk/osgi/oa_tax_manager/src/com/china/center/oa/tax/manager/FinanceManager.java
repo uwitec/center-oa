@@ -12,6 +12,7 @@ package com.china.center.oa.tax.manager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.tax.bean.FinanceBean;
+import com.china.center.oa.tax.bean.FinanceTurnBean;
 
 
 /**
@@ -25,6 +26,17 @@ import com.china.center.oa.tax.bean.FinanceBean;
 public interface FinanceManager
 {
     boolean addFinanceBean(User user, FinanceBean bean)
+        throws MYException;
+
+    /**
+     * 结转
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    boolean addFinanceTurnBean(User user, FinanceTurnBean bean)
         throws MYException;
 
     boolean updateFinanceBean(User user, FinanceBean bean)

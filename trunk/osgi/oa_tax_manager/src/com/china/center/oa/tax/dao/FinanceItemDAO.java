@@ -10,6 +10,7 @@ package com.china.center.oa.tax.dao;
 
 
 import com.china.center.jdbc.inter.DAO;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.tax.bean.FinanceItemBean;
 import com.china.center.oa.tax.vo.FinanceItemVO;
 
@@ -24,5 +25,19 @@ import com.china.center.oa.tax.vo.FinanceItemVO;
  */
 public interface FinanceItemDAO extends DAO<FinanceItemBean, FinanceItemVO>
 {
+    /**
+     * 借方总额
+     * 
+     * @param condition
+     * @return
+     */
+    long sumInByCondition(ConditionParse condition);
 
+    /**
+     * 贷方总额
+     * 
+     * @param condition
+     * @return
+     */
+    long sumOutByCondition(ConditionParse condition);
 }

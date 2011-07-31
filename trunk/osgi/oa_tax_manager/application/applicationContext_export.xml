@@ -29,4 +29,8 @@
 
 	<osgi:service ref="checkViewDAO" interface="com.china.center.oa.tax.dao.CheckViewDAO" />
 
+	<osgi:service ref="financeTurnDAO" interface="com.china.center.oa.tax.dao.FinanceTurnDAO" />
+
+	<osgi:service ref="financeMonthDAO" interface="com.china.center.oa.tax.dao.FinanceMonthDAO" />
+
 </beans>

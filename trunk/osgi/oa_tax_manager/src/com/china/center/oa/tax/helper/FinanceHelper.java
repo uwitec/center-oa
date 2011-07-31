@@ -10,11 +10,14 @@ package com.china.center.oa.tax.helper;
 
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.FinanceItemBean;
+import com.china.center.oa.tax.bean.FinanceMonthBean;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.constanst.TaxConstanst;
+import com.china.center.oa.tax.constanst.TaxItemConstanst;
 import com.china.center.tools.MathTools;
 
 
@@ -96,6 +99,21 @@ public abstract class FinanceHelper
         item.setTaxId8(tax.getParentId8());
     }
 
+    public static void copyTax(TaxBean tax, FinanceMonthBean item)
+    {
+        item.setTaxId(tax.getId());
+
+        item.setTaxId0(tax.getParentId0());
+        item.setTaxId1(tax.getParentId1());
+        item.setTaxId2(tax.getParentId2());
+        item.setTaxId3(tax.getParentId3());
+        item.setTaxId4(tax.getParentId4());
+        item.setTaxId5(tax.getParentId5());
+        item.setTaxId6(tax.getParentId6());
+        item.setTaxId7(tax.getParentId7());
+        item.setTaxId8(tax.getParentId8());
+    }
+
     /**
      * FinanceBean->FinanceItemBean
      * 
@@ -126,5 +144,24 @@ public abstract class FinanceHelper
     public static String createFinanceLink(String id)
     {
         return "<a href='../finance/finance.do?method=findFinance&id=" + id + "'>" + id + "</a>";
+    }
+
+    /**
+     * 是否是结转的凭证
+     * 
+     * @param itemList
+     * @return
+     */
+    public static boolean isTurnFinance(List<FinanceItemBean> itemList)
+    {
+        for (FinanceItemBean financeItemBean : itemList)
+        {
+            if (financeItemBean.getTaxId().equals(TaxItemConstanst.YEAR_PROFIT))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

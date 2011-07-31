@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.china.center.spring.ex.annotation.Exceptional;
+import org.china.center.spring.iaop.annotation.IntegrationAOP;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
@@ -40,7 +40,7 @@ import com.china.center.tools.StringTools;
  * @see TaxManagerImpl
  * @since 1.0
  */
-@Exceptional
+@IntegrationAOP
 public class TaxManagerImpl implements TaxManager
 {
     private TaxDAO taxDAO = null;
