@@ -2361,6 +2361,10 @@ public class OutListenerTaxGlueImpl implements OutListener
         // 科目拷贝
         FinanceHelper.copyTax(itemInTax, itemIn);
 
+        final List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
+
+        outBean.setBaseList(baseList);
+
         double money = getOutCost(outBean);
 
         itemIn.setInmoney(FinanceHelper.doubleToLong(money));
@@ -2374,8 +2378,6 @@ public class OutListenerTaxGlueImpl implements OutListener
         itemIn.setStafferId(outBean.getStafferId());
 
         itemList.add(itemIn);
-
-        List<BaseBean> baseList = outBean.getBaseList();
 
         // 库存商品（成本价*数量）
         for (BaseBean baseBean : baseList)
