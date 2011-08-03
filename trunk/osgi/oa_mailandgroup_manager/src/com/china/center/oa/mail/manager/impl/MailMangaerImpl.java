@@ -97,7 +97,7 @@ public class MailMangaerImpl implements MailMangaer
 
         if (reveivers.size() == 0)
         {
-            throw new MYException("收件人为空");
+            return true;
         }
 
         for (String eachItem : reveivers)
