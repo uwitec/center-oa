@@ -369,8 +369,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL
                             && !nameList[i].trim().equals(product.getName().trim()))
                         {
-                            throw new RuntimeException("产品名不匹配,请重新操作.申请:" + nameList[i].trim() + ".实际:"
-                                                       + product.getName());
+                            throw new RuntimeException("产品名不匹配,请重新操作.申请:" + nameList[i].trim()
+                                                       + ".实际:" + product.getName());
                         }
 
                         // 产品名称来源于数据库
@@ -407,7 +407,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                             double outPrice = base.getPrice();
 
-                            double a = MathTools.round2(inputPrice * (1000 + duty.getDues()) / 1000.0d);
+                            double a = MathTools.round2(inputPrice * (1000 + duty.getDues())
+                                                        / 1000.0d);
 
                             double b = outPrice;
 
@@ -449,12 +450,14 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             && outBean.getOutType() == OutConstant.OUTTYPE_IN_OTHER)
                         {
                             base.setCostPrice(MathTools.parseDouble(desList[i]));
-                            base.setCostPriceKey(StorageRelationHelper.getPriceKey(base.getCostPrice()));
+                            base.setCostPriceKey(StorageRelationHelper.getPriceKey(base
+                                .getCostPrice()));
 
                             base.setOwner("0");
 
                             // 默认仓区
-                            DepotpartBean defaultOKDepotpart = depotpartDAO.findDefaultOKDepotpart(outBean.getLocation());
+                            DepotpartBean defaultOKDepotpart = depotpartDAO
+                                .findDefaultOKDepotpart(outBean.getLocation());
 
                             if (defaultOKDepotpart == null)
                             {
@@ -476,7 +479,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             // 寻找具体的产品价格位置
                             base.setCostPrice(MathTools.parseDouble(coreList[1]));
 
-                            base.setCostPriceKey(StorageRelationHelper.getPriceKey(base.getCostPrice()));
+                            base.setCostPriceKey(StorageRelationHelper.getPriceKey(base
+                                .getCostPrice()));
 
                             base.setOwner(coreList[2]);
 
@@ -485,7 +489,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                         // 这里需要核对价格 调拨
                         if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
-                            && (outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT || outBean.getOutType() == OutConstant.OUTTYPE_IN_DROP))
+                            && (outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT || outBean
+                                .getOutType() == OutConstant.OUTTYPE_IN_DROP))
                         {
                             if ( !MathTools.equal(base.getPrice(), base.getCostPrice()))
                             {
@@ -517,6 +522,11 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         if (deport != null)
                         {
                             base.setDepotpartName(deport.getName());
+
+                            if ( !deport.getLocationId().equals(outBean.getLocation()))
+                            {
+                                throw new RuntimeException("单据必须在一个仓库下面");
+                            }
                         }
 
                         base.setLocationId(outBean.getLocation());
@@ -754,7 +764,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         }
 
         // 退货入库的逻辑
-        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL && outBean.getOutType() == OutConstant.OUTTYPE_IN_SWATCH)
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.OUTTYPE_IN_SWATCH)
         {
             // 查询是否被关联
             ConditionParse con = new ConditionParse();
@@ -1066,7 +1077,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         outDAO.updataInWay(moveOut.getFullId(), OutConstant.IN_WAY_OVER);
 
         // 操作日志
-        addOutLog(moveOut.getFullId(), user, moveOut, reason, SailConstant.OPR_OUT_PASS, moveOut.getStatus());
+        addOutLog(moveOut.getFullId(), user, moveOut, reason, SailConstant.OPR_OUT_PASS, moveOut
+            .getStatus());
 
         importLog.info(moveOut.getFullId() + "的在途状态改变成在途结束");
     }
@@ -1086,7 +1098,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
-            importLog.info(fullId + ":" + user.getStafferName() + ":" + 1 + ":redrectFrom:" + outBean.getStatus());
+            importLog.info(fullId + ":" + user.getStafferName() + ":" + 1 + ":redrectFrom:"
+                           + outBean.getStatus());
 
             // 销售单处理
             try
@@ -1129,7 +1142,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                 }
 
                 // 进行逻辑处理(必须是货到收款才能有此逻辑) 此逻辑已经废除
-                if (outCredit && cbean != null && !StringTools.isNullOrNone(cbean.getCreditLevelId())
+                if (outCredit && cbean != null
+                    && !StringTools.isNullOrNone(cbean.getCreditLevelId())
                     && outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_COMMON)
                 {
                     throw new MYException("不支持此类型,请重新操作");
@@ -1137,7 +1151,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                 // 使用业务员的信用额度(或者是事业部经理的)
                 if (outCredit
-                    && (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_CREDIT_AND_CUR || outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER))
+                    && (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_CREDIT_AND_CUR || outBean
+                        .getReserve3() == OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER))
                 {
                     StafferBean sb2 = stafferDAO.find(outBean.getStafferId());
 
@@ -1157,8 +1172,9 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         YYTools.getFinanceBeginDate(), YYTools.getFinanceEndDate());
 
                     // 自己担保的+替人担保的(这里应该区分不同的事业部)
-                    double noPayBusiness = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(outBean.getStafferId(),
-                        outBean.getIndustryId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
+                    double noPayBusiness = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(outBean
+                        .getStafferId(), outBean.getIndustryId(), YYTools.getStatBeginDate(),
+                        YYTools.getStatEndDate());
 
                     double remainInCur = clevel.getMoney() - noPayBusinessInCur;
 
@@ -1177,10 +1193,15 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                             outDAO.updateStaffcredit(fullId, 0.0d);
 
-                            outBean.setReserve6("客户信用最大额度是:" + MathTools.formatNum(clevel.getMoney())
-                                                + ".当前客户未付款金额(不包括此单):" + MathTools.formatNum(noPayBusinessInCur)
-                                                + ".职员信用额度是:" + MathTools.formatNum(sb2.getCredit() * sb2.getLever())
-                                                + ".职员信用已经使用额度是:" + MathTools.formatNum(noPayBusiness)
+                            outBean.setReserve6("客户信用最大额度是:"
+                                                + MathTools.formatNum(clevel.getMoney())
+                                                + ".当前客户未付款金额(不包括此单):"
+                                                + MathTools.formatNum(noPayBusinessInCur)
+                                                + ".职员信用额度是:"
+                                                + MathTools.formatNum(sb2.getCredit()
+                                                                      * sb2.getLever())
+                                                + ".职员信用已经使用额度是:"
+                                                + MathTools.formatNum(noPayBusiness)
                                                 + ".信用未超支,不需要事业部经理担保");
                         }
                     }
@@ -1189,7 +1210,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                     double staffCredit = sb2.getCredit() * sb2.getLever();
 
                     // 一半使用客户,一半使用职员的(且不是公共客户的)
-                    if (remainInCur < outBean.getTotal() && !cbean.getId().equals(CustomerConstant.PUBLIC_CUSTOMER_ID))
+                    if (remainInCur < outBean.getTotal()
+                        && !cbean.getId().equals(CustomerConstant.PUBLIC_CUSTOMER_ID))
                     {
                         // 全部使用客户的信用等级
                         outDAO.updateCurcredit(fullId, remainInCur);
@@ -1202,11 +1224,14 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         {
                             double lastNeed = (noPayBusiness + remainInStaff) - staffCredit;
 
-                            outBean.setReserve6("客户信用最大额度是:" + MathTools.formatNum(clevel.getMoney())
-                                                + ".当前客户未付款金额(不包括此单):" + MathTools.formatNum(noPayBusinessInCur)
-                                                + ".职员信用额度是:" + MathTools.formatNum(staffCredit) + ".职员信用已经使用额度是:"
-                                                + MathTools.formatNum(noPayBusiness) + ".信用超支(包括此单):"
-                                                + (MathTools.formatNum(lastNeed)));
+                            outBean.setReserve6("客户信用最大额度是:"
+                                                + MathTools.formatNum(clevel.getMoney())
+                                                + ".当前客户未付款金额(不包括此单):"
+                                                + MathTools.formatNum(noPayBusinessInCur)
+                                                + ".职员信用额度是:" + MathTools.formatNum(staffCredit)
+                                                + ".职员信用已经使用额度是:"
+                                                + MathTools.formatNum(noPayBusiness)
+                                                + ".信用超支(包括此单):" + (MathTools.formatNum(lastNeed)));
 
                             // 这里如果不使用分公司经理直接不允许提交此单据
                             if (outBean.getReserve3() != OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER)
@@ -1216,7 +1241,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                             isCreditOutOf = true;
 
-                            outDAO.updateOutReserve(fullId, OutConstant.OUT_CREDIT_OVER, outBean.getReserve6());
+                            outDAO.updateOutReserve(fullId, OutConstant.OUT_CREDIT_OVER, outBean
+                                .getReserve6());
 
                             // 把剩余的信用全部给此单据
                             outDAO.updateStaffcredit(fullId, (staffCredit - noPayBusiness));
@@ -1239,9 +1265,10 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         {
                             double lastNeed = (noPayBusiness + remainInStaff) - staffCredit;
 
-                            outBean.setReserve6("职员信用额度是:" + MathTools.formatNum(staffCredit) + ".职员信用已经使用额度是:"
-                                                + MathTools.formatNum(noPayBusiness) + ".信用超支(包括此单):"
-                                                + (MathTools.formatNum(lastNeed)));
+                            outBean.setReserve6("职员信用额度是:" + MathTools.formatNum(staffCredit)
+                                                + ".职员信用已经使用额度是:"
+                                                + MathTools.formatNum(noPayBusiness)
+                                                + ".信用超支(包括此单):" + (MathTools.formatNum(lastNeed)));
 
                             // 这里如果不使用分公司经理直接不允许提交此单据
                             if (outBean.getReserve3() != OutConstant.OUT_SAIL_TYPE_LOCATION_MANAGER)
@@ -1251,7 +1278,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                             isCreditOutOf = true;
 
-                            outDAO.updateOutReserve(fullId, OutConstant.OUT_CREDIT_OVER, outBean.getReserve6());
+                            outDAO.updateOutReserve(fullId, OutConstant.OUT_CREDIT_OVER, outBean
+                                .getReserve6());
 
                             // 把剩余的信用全部给此单据
                             outDAO.updateStaffcredit(fullId, (staffCredit - noPayBusiness));
@@ -1267,7 +1295,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                 // 信用没有受限检查产品价格是否为0
                 if ( !isCreditOutOf)
                 {
-                    outDAO.updateOutReserve(fullId, OutConstant.OUT_CREDIT_COMMON, outBean.getReserve6());
+                    outDAO.updateOutReserve(fullId, OutConstant.OUT_CREDIT_COMMON, outBean
+                        .getReserve6());
                 }
 
                 // 修改人工干预,重新置人工干预信用为0
@@ -1324,8 +1353,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
 
             // 入库直接通过
-            importLog.info(fullId + ":" + user.getStafferName() + ":" + nextStatus + ":redrectFrom:"
-                           + outBean.getStatus());
+            importLog.info(fullId + ":" + user.getStafferName() + ":" + nextStatus
+                           + ":redrectFrom:" + outBean.getStatus());
         }
 
         return result;
@@ -1339,7 +1368,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
      * @param baseList
      * @throws MYException
      */
-    private void processBaseList(final User user, final OutBean outBean, final List<BaseBean> baseList, int type)
+    private void processBaseList(final User user, final OutBean outBean,
+                                 final List<BaseBean> baseList, int type)
         throws MYException
     {
         // 入库单提交后就直接移动库存了,销售需要在库管通过后生成发货单前才会变动库存
@@ -1451,7 +1481,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         final List<BaseBean> baseList = checkCoreStorage(outBean, false);
 
         // 如果是入库的调入，验证是否在途
-        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT
             && outBean.getReserve1() == OutConstant.MOVEOUT_OUT)
         {
             OutBean out = outDAO.find(fullId);
@@ -1463,7 +1494,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         }
 
         // 如果是入库的调入，验证是否在途
-        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT
             && outBean.getReserve1() == OutConstant.MOVEOUT_IN)
         {
             String ofullid = outBean.getRefOutFullId();
@@ -1487,12 +1519,14 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         }
 
         // 验证 销售退库
-        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL && outBean.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK)
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK)
         {
             List<OutBean> refBuyList = queryRefOut(outBean.getRefOutFullId());
 
             // 原单据的base
-            List<BaseBean> lastList = OutHelper.trimBaseList2(baseDAO.queryEntityBeansByFK(outBean.getRefOutFullId()));
+            List<BaseBean> lastList = OutHelper.trimBaseList2(baseDAO.queryEntityBeansByFK(outBean
+                .getRefOutFullId()));
 
             for (BaseBean baseBean : lastList)
             {
@@ -1515,7 +1549,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                 if (hasBack > baseBean.getAmount())
                 {
-                    throw new MYException("退货数量溢出，可退数量合计:[%d],当前退货数量(含本单):[%d]", baseBean.getAmount(), hasBack);
+                    throw new MYException("退货数量溢出，可退数量合计:[%d],当前退货数量(含本单):[%d]", baseBean
+                        .getAmount(), hasBack);
                 }
             }
         }
@@ -1654,8 +1689,9 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
      * @param deportId
      * @throws MYException
      */
-    private void doReject(final String fullId, final User user, final String reason, final OutBean outBean,
-                          final List<BaseBean> baseList, final String deportId)
+    private void doReject(final String fullId, final User user, final String reason,
+                          final OutBean outBean, final List<BaseBean> baseList,
+                          final String deportId)
         throws MYException
     {
         checkReject(outBean, baseList, deportId);
@@ -1706,7 +1742,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         {
                             outDAO.modifyChecks(outBean.getFullId(), "调拨回滚后原单据还未核对,系统自动核对原调拨单");
 
-                            outDAO.modifyOutStatus(outBean.getFullId(), OutConstant.STATUS_SEC_PASS);
+                            outDAO
+                                .modifyOutStatus(outBean.getFullId(), OutConstant.STATUS_SEC_PASS);
                         }
 
                         // 操作日志
@@ -1715,8 +1752,9 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                     }
                     else
                     {
-                        importLog.info(fullId + ":" + user.getStafferName() + ":" + OutConstant.STATUS_REJECT
-                                       + ":redrectFrom:" + outBean.getStatus());
+                        importLog.info(fullId + ":" + user.getStafferName() + ":"
+                                       + OutConstant.STATUS_REJECT + ":redrectFrom:"
+                                       + outBean.getStatus());
 
                         outDAO.modifyOutStatus(outBean.getFullId(), OutConstant.STATUS_REJECT);
 
@@ -1727,7 +1765,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         outDAO.updatePay(fullId, OutConstant.PAY_NOT);
 
                         // 操作日志
-                        addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_REJECT, OutConstant.STATUS_REJECT);
+                        addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_REJECT,
+                            OutConstant.STATUS_REJECT);
                     }
 
                     notifyOut(outBean, user, 1);
@@ -1763,7 +1802,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
      * @param locationId
      * @throws MYException
      */
-    private void checkReject(final OutBean outBean, final List<BaseBean> baseList, final String deportId)
+    private void checkReject(final OutBean outBean, final List<BaseBean> baseList,
+                             final String deportId)
         throws MYException
     {
         if (outBean == null)
@@ -1787,8 +1827,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
      * @return
      * @throws Exception
      */
-    public synchronized int pass(final String fullId, final User user, final int nextStatus, final String reason,
-                                 final String depotpartId)
+    public synchronized int pass(final String fullId, final User user, final int nextStatus,
+                                 final String reason, final String depotpartId)
         throws MYException
     {
         final OutBean outBean = outDAO.find(fullId);
@@ -1822,8 +1862,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             }
                         }
 
-                        importLog.info(outBean.getFullId() + ":" + user.getStafferName() + ":" + newNextStatus
-                                       + ":redrectFrom:" + oldStatus);
+                        importLog.info(outBean.getFullId() + ":" + user.getStafferName() + ":"
+                                       + newNextStatus + ":redrectFrom:" + oldStatus);
 
                         // 修改状态
                         outDAO.modifyOutStatus(outBean.getFullId(), newNextStatus);
@@ -1837,7 +1877,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             handerPassBuy(fullId, user, outBean, newNextStatus);
                         }
 
-                        addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_PASS, newNextStatus);
+                        addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_PASS,
+                            newNextStatus);
 
                         // 把状态放到最新的out里面
                         outBean.setStatus(newNextStatus);
@@ -1904,7 +1945,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         }
 
         // 需要发货单先通过(只有中心仓库才有物流哦)
-        if (nextStatus == OutConstant.STATUS_FLOW_PASS && depot.getType() == DepotConstant.DEPOT_TYPE_CENTER)
+        if (nextStatus == OutConstant.STATUS_FLOW_PASS
+            && depot.getType() == DepotConstant.DEPOT_TYPE_CENTER)
         {
             ConsignBean consignBean = consignDAO.findDefaultConsignByFullId(outBean.getFullId());
 
@@ -1948,7 +1990,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         }
         else
         {
-            if (outBean.getStatus() == OutConstant.STATUS_SAVE || outBean.getStatus() == OutConstant.STATUS_REJECT)
+            if (outBean.getStatus() == OutConstant.STATUS_SAVE
+                || outBean.getStatus() == OutConstant.STATUS_REJECT)
             {
                 throw new MYException("状态不可以通过!");
             }
@@ -1977,11 +2020,13 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
      * @param logList
      * @throws MYException
      */
-    private void processPass(final User user, final OutBean outBean, final List<BaseBean> baseList, int type)
+    private void processPass(final User user, final OutBean outBean, final List<BaseBean> baseList,
+                             int type)
         throws MYException
     {
         // 领样转销售时,库存无变动
-        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL && isSwatchToSail(outBean.getFullId()))
+        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL
+            && isSwatchToSail(outBean.getFullId()))
         {
             // 检查是否溢出
             checkSwithToSail(outBean.getRefOutFullId());
@@ -2166,7 +2211,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         newInBean.setStatus(0);
 
-        addOutLog(fullId, user, newInBean, "提交", SailConstant.OPR_OUT_PASS, OutConstant.BUY_STATUS_PASS);
+        addOutLog(fullId, user, newInBean, "提交", SailConstant.OPR_OUT_PASS,
+            OutConstant.BUY_STATUS_PASS);
 
         saveUnique(user, newInBean);
     }
@@ -2221,7 +2267,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         }
                     }
 
-                    addOutLog(fullId, user, outBean, "核对", SailConstant.OPR_OUT_PASS, OutConstant.STATUS_SEC_PASS);
+                    addOutLog(fullId, user, outBean, "核对", SailConstant.OPR_OUT_PASS,
+                        OutConstant.STATUS_SEC_PASS);
 
                     notifyOut(outBean, user, 3);
 
@@ -2324,7 +2371,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
             && (outBean.getOutType() == OutConstant.OUTTYPE_IN_SWATCH || outBean.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK))
         {
-            if ( ! (outBean.getStatus() == OutConstant.STATUS_SAVE || outBean.getStatus() == OutConstant.STATUS_REJECT || outBean.getStatus() == OutConstant.BUY_STATUS_SUBMIT))
+            if ( ! (outBean.getStatus() == OutConstant.STATUS_SAVE
+                    || outBean.getStatus() == OutConstant.STATUS_REJECT || outBean.getStatus() == OutConstant.BUY_STATUS_SUBMIT))
             {
                 throw new MYException("单据不能被删除,请确认操作");
             }
@@ -2359,8 +2407,11 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                     if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
                         && outBean.getOutType() == OutConstant.OUTTYPE_IN_SWATCH)
                     {
-                        notifyManager.notifyMessage(outBean.getStafferId(), outBean.getRefOutFullId() + "的领样退货申请已经被["
-                                                                            + user.getStafferName() + "]驳回,申请自动删除");
+                        notifyManager.notifyMessage(outBean.getStafferId(), outBean
+                            .getRefOutFullId()
+                                                                            + "的领样退货申请已经被["
+                                                                            + user.getStafferName()
+                                                                            + "]驳回,申请自动删除");
                     }
 
                     Collection<OutListener> listenerMapValues = listenerMapValues();
@@ -2582,7 +2633,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         if (result.getResult() != 0)
         {
-            addOutLog(fullId, user, out, reason + ",但是系统核算后没有完全付款", SailConstant.OPR_OUT_PASS, out.getStatus());
+            addOutLog(fullId, user, out, reason + ",但是系统核算后没有完全付款", SailConstant.OPR_OUT_PASS, out
+                .getStatus());
 
             // 不能完全回款
             return outDAO.modifyPay(fullId, OutConstant.PAY_NOT);
@@ -2787,12 +2839,14 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             throw new MYException("数据错误,请确认操作");
         }
 
-        if (out.getType() != OutConstant.OUT_TYPE_OUTBILL || out.getOutType() != OutConstant.OUTTYPE_OUT_CONSIGN)
+        if (out.getType() != OutConstant.OUT_TYPE_OUTBILL
+            || out.getOutType() != OutConstant.OUTTYPE_OUT_CONSIGN)
         {
             throw new MYException("不是委托代销的销售单,请确认操作");
         }
 
-        if (out.getStatus() != OutConstant.STATUS_PASS && out.getStatus() != OutConstant.STATUS_SEC_PASS)
+        if (out.getStatus() != OutConstant.STATUS_PASS
+            && out.getStatus() != OutConstant.STATUS_SEC_PASS)
         {
             throw new MYException("数据错误,请确认操作");
         }
@@ -2830,8 +2884,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         outBalanceDAO.updateEntityBean(bean);
 
-        addOutLog2(id, user, OutConstant.OUTBALANCE_STATUS_SUBMIT, "结算中心通过", SailConstant.OPR_OUT_PASS,
-            OutConstant.OUTBALANCE_STATUS_PASS);
+        addOutLog2(id, user, OutConstant.OUTBALANCE_STATUS_SUBMIT, "结算中心通过",
+            SailConstant.OPR_OUT_PASS, OutConstant.OUTBALANCE_STATUS_PASS);
 
         List<BaseBalanceBean> baseList = baseBalanceDAO.queryEntityBeansByFK(id);
 
@@ -2849,7 +2903,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
         }
 
-        notifyManager.notifyMessage(bean.getStafferId(), bean.getOutId() + "的结算清单已经被[" + user.getStafferName() + "]通过");
+        notifyManager.notifyMessage(bean.getStafferId(), bean.getOutId() + "的结算清单已经被["
+                                                         + user.getStafferName() + "]通过");
 
         return true;
     }
@@ -2871,7 +2926,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         DepotpartBean defaultOKDepotpart = null;
 
-        if (bean.getType() == OutConstant.OUTBALANCE_TYPE_BACK && !StringTools.isNullOrNone(bean.getDirDepot()))
+        if (bean.getType() == OutConstant.OUTBALANCE_TYPE_BACK
+            && !StringTools.isNullOrNone(bean.getDirDepot()))
         {
             useDefaultDepotpart = false;
 
@@ -2950,8 +3006,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
         }
 
-        notifyManager.notifyMessage(bean.getStafferId(), bean.getOutId() + "的结算清单已经被[" + user.getStafferName()
-                                                         + "]退库通过");
+        notifyManager.notifyMessage(bean.getStafferId(), bean.getOutId() + "的结算清单已经被["
+                                                         + user.getStafferName() + "]退库通过");
 
         return true;
     }
@@ -3007,7 +3063,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             return false;
         }
 
-        if (src.getType() == OutConstant.OUT_TYPE_OUTBILL && src.getOutType() == OutConstant.OUTTYPE_OUT_SWATCH)
+        if (src.getType() == OutConstant.OUT_TYPE_OUTBILL
+            && src.getOutType() == OutConstant.OUTTYPE_OUT_SWATCH)
         {
             return true;
         }
@@ -3079,7 +3136,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             BaseBean baseBean = baseDAO.find(baseBalanceBean.getBaseId());
 
             int total = baseBalanceBean.getAmount();
-            List<BaseBalanceVO> hasPassBaseList = baseBalanceDAO.queryPassBaseBalance(baseBalanceBean.getBaseId());
+            List<BaseBalanceVO> hasPassBaseList = baseBalanceDAO
+                .queryPassBaseBalance(baseBalanceBean.getBaseId());
 
             for (BaseBalanceBean pss : hasPassBaseList)
             {
@@ -3134,9 +3192,11 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         outBalanceDAO.updateEntityBean(bean);
 
-        addOutLog2(id, user, old, "驳回", SailConstant.OPR_OUT_REJECT, OutConstant.OUTBALANCE_STATUS_REJECT);
+        addOutLog2(id, user, old, "驳回", SailConstant.OPR_OUT_REJECT,
+            OutConstant.OUTBALANCE_STATUS_REJECT);
 
-        notifyManager.notifyMessage(bean.getStafferId(), bean.getOutId() + "的结算清单已经被[" + user.getStafferName() + "]驳回");
+        notifyManager.notifyMessage(bean.getStafferId(), bean.getOutId() + "的结算清单已经被["
+                                                         + user.getStafferName() + "]驳回");
 
         return true;
     }
@@ -3303,7 +3363,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         if (false)
         {
             // 0:保存 1:提交 2:驳回 3:发货 4:会计审核通过 6:总经理审核通过
-            if (out.getStatus() == OutConstant.STATUS_SAVE || out.getStatus() == OutConstant.STATUS_REJECT
+            if (out.getStatus() == OutConstant.STATUS_SAVE
+                || out.getStatus() == OutConstant.STATUS_REJECT
                 || out.getStatus() == OutConstant.STATUS_SEC_PASS)
             {
                 return;
@@ -3324,7 +3385,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
 
             // 发送短信给库管审核(非总部)
-            if (out.getStatus() == OutConstant.STATUS_MANAGER_PASS && !"0".equals(out.getLocation()))
+            if (out.getStatus() == OutConstant.STATUS_MANAGER_PASS
+                && !"0".equals(out.getLocation()))
             {
                 ConditionParse condtition = new ConditionParse();
 
@@ -3347,9 +3409,11 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
      * @param user
      * @param condtition
      */
-    private void queryUserToSendSMS(OutBean out, User user, ConditionParse condtition, String tokenName)
+    private void queryUserToSendSMS(OutBean out, User user, ConditionParse condtition,
+                                    String tokenName)
     {
-        List<UserBean> userList = ListTools.distinct(userDAO.queryEntityBeansByCondition(condtition));
+        List<UserBean> userList = ListTools.distinct(userDAO
+            .queryEntityBeansByCondition(condtition));
 
         for (UserBean baseUser : userList)
         {
@@ -3384,7 +3448,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             return;
         }
 
-        ShortMessageTaskDAO shortMessageTaskDAO = DynamicBundleTools.getService(ShortMessageTaskDAO.class);
+        ShortMessageTaskDAO shortMessageTaskDAO = DynamicBundleTools
+            .getService(ShortMessageTaskDAO.class);
 
         if (shortMessageTaskDAO == null)
         {
@@ -3408,9 +3473,10 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         sms.setFktoken(String.valueOf(out.getStatus()));
 
-        sms.setMessage(realStaffer.getName() + "发起销售单[" + out.getDescription() + "(回款天数:" + out.getReday() + ";总金额:"
-                       + MathTools.formatNum(out.getTotal()) + ")]" + "需您审批(" + tokenName + ").0通过,1驳回.回复格式["
-                       + sms.getHandId() + ":0]或[" + sms.getHandId() + ":1:理由]");
+        sms.setMessage(realStaffer.getName() + "发起销售单[" + out.getDescription() + "(回款天数:"
+                       + out.getReday() + ";总金额:" + MathTools.formatNum(out.getTotal()) + ")]"
+                       + "需您审批(" + tokenName + ").0通过,1驳回.回复格式[" + sms.getHandId() + ":0]或["
+                       + sms.getHandId() + ":1:理由]");
 
         sms.setReceiver(sb.getHandphone());
 
@@ -3448,8 +3514,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
      * @param user
      * @param outBean
      */
-    private void addOutLog(final String fullId, final User user, final OutBean outBean, String des, int mode,
-                           int astatus)
+    private void addOutLog(final String fullId, final User user, final OutBean outBean, String des,
+                           int mode, int astatus)
     {
         FlowLogBean log = new FlowLogBean();
 
@@ -3467,7 +3533,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         flowLogDAO.saveEntityBean(log);
     }
 
-    private void addOutLog2(final String fullId, final User user, final int preStatus, String des, int mode, int astatus)
+    private void addOutLog2(final String fullId, final User user, final int preStatus, String des,
+                            int mode, int astatus)
     {
         FlowLogBean log = new FlowLogBean();
 
@@ -3795,8 +3862,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
      * @param depot
      * @param newNextStatus
      */
-    private void handerPassOut(final String fullId, final User user, final OutBean outBean, final DepotBean depot,
-                               int newNextStatus)
+    private void handerPassOut(final String fullId, final User user, final OutBean outBean,
+                               final DepotBean depot, int newNextStatus)
     {
         // 从分公司经理审核通过到提交
         if (newNextStatus == OutConstant.STATUS_SUBMIT)
@@ -3805,8 +3872,9 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             if (outBean.getReserve2() == OutConstant.OUT_CREDIT_OVER)
             {
                 // 加入审批人的信用(是自己使用的信用+担保的信用)
-                double noPayBusinessByManager = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(user.getStafferId(),
-                    outBean.getIndustryId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
+                double noPayBusinessByManager = outDAO.sumAllNoPayAndAvouchBusinessByStafferId(user
+                    .getStafferId(), outBean.getIndustryId(), YYTools.getStatBeginDate(), YYTools
+                    .getStatEndDate());
 
                 StafferBean staffer = stafferDAO.find(user.getStafferId());
 
@@ -3817,31 +3885,37 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                 }
 
                 // 事业部经理的信用
-                double industryIdCredit = getIndustryIdCredit(outBean.getIndustryId(), staffer.getId())
+                double industryIdCredit = getIndustryIdCredit(outBean.getIndustryId(), staffer
+                    .getId())
                                           * staffer.getLever();
 
                 // 这里分公司总经理的信用已经使用结束了,此时直接抛出异常
                 if (noPayBusinessByManager > industryIdCredit)
                 {
-                    throw new RuntimeException("您的信用额度已经全部占用[使用了" + MathTools.formatNum(noPayBusinessByManager)
+                    throw new RuntimeException("您的信用额度已经全部占用[使用了"
+                                               + MathTools.formatNum(noPayBusinessByManager)
                                                + "],不能再担保业务员的销售");
                 }
 
                 // 本次需要担保的信用
-                double lastCredit = outBean.getTotal() - outBean.getStaffcredit() - outBean.getCurcredit();
+                double lastCredit = outBean.getTotal() - outBean.getStaffcredit()
+                                    - outBean.getCurcredit();
 
                 if ( (lastCredit + noPayBusinessByManager) > industryIdCredit)
                 {
-                    throw new RuntimeException("您杠杆后的信用额度是[" + MathTools.formatNum(industryIdCredit) + "],已经使用了["
-                                               + MathTools.formatNum(noPayBusinessByManager) + "],本单需要您担保的额度是["
-                                               + MathTools.formatNum(lastCredit) + "],加上本单已经超出您的最大额度,不能再担保业务员的销售");
+                    throw new RuntimeException("您杠杆后的信用额度是["
+                                               + MathTools.formatNum(industryIdCredit) + "],已经使用了["
+                                               + MathTools.formatNum(noPayBusinessByManager)
+                                               + "],本单需要您担保的额度是[" + MathTools.formatNum(lastCredit)
+                                               + "],加上本单已经超出您的最大额度,不能再担保业务员的销售");
                 }
 
                 // 这里使用分公司经理信用担保
                 outDAO.updateManagercredit(outBean.getFullId(), user.getStafferId(), lastCredit);
 
                 // 此时信用不超支了
-                outDAO.updateOutReserve(fullId, OutConstant.OUT_CREDIT_COMMON, outBean.getReserve6());
+                outDAO.updateOutReserve(fullId, OutConstant.OUT_CREDIT_COMMON, outBean
+                    .getReserve6());
             }
 
             try
@@ -3860,7 +3934,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             outDAO.modifyManagerTime(outBean.getFullId(), TimeTools.now());
 
             // 验证是否是款到发货
-            if (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_MONEY && outBean.getPay() != OutConstant.PAY_YES)
+            if (outBean.getReserve3() == OutConstant.OUT_SAIL_TYPE_MONEY
+                && outBean.getPay() != OutConstant.PAY_YES)
             {
                 throw new RuntimeException("此单据是款到发货,当前此单未付款,不能通过");
             }
@@ -3876,7 +3951,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         }
 
         // 结算中心审核通过后/总裁通过，中心仓库的销售单转到物流管理员，同时自动生成发货单
-        if (newNextStatus == OutConstant.STATUS_MANAGER_PASS && depot.getType() == DepotConstant.DEPOT_TYPE_CENTER)
+        if (newNextStatus == OutConstant.STATUS_MANAGER_PASS
+            && depot.getType() == DepotConstant.DEPOT_TYPE_CENTER)
         {
             ConsignBean bean = new ConsignBean();
 
@@ -3906,7 +3982,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             long add = outBean.getReday() * 24 * 3600 * 1000L;
 
             // 这里需要把出库单的回款日期修改
-            outDAO.modifyReDate(fullId, TimeTools.getStringByFormat(new Date(new Date().getTime() + add), "yyyy-MM-dd"));
+            outDAO.modifyReDate(fullId, TimeTools.getStringByFormat(new Date(new Date().getTime()
+                                                                             + add), "yyyy-MM-dd"));
 
             List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
 
@@ -3930,7 +4007,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
      * @param outBean
      * @param newNextStatus
      */
-    private void handerPassBuy(final String fullId, final User user, final OutBean outBean, int newNextStatus)
+    private void handerPassBuy(final String fullId, final User user, final OutBean outBean,
+                               int newNextStatus)
     {
         // 退库-事业部经理审批
         if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
@@ -3972,7 +4050,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             long add = outBean.getReday() * 24 * 3600 * 1000L;
 
             // 这里需要把出库单的回款日期修改
-            outDAO.modifyReDate(fullId, TimeTools.getStringByFormat(new Date(new Date().getTime() + add), "yyyy-MM-dd"));
+            outDAO.modifyReDate(fullId, TimeTools.getStringByFormat(new Date(new Date().getTime()
+                                                                             + add), "yyyy-MM-dd"));
 
             List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
 
@@ -4175,7 +4254,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         // 直接入库
         try
         {
-            coloneOutAndSubmitWithOutAffair(newOut, user, StorageConstant.OPR_STORAGE_REDEPLOY_ROLLBACK);
+            coloneOutAndSubmitWithOutAffair(newOut, user,
+                StorageConstant.OPR_STORAGE_REDEPLOY_ROLLBACK);
 
             if (outBean.getCheckStatus() == PublicConstant.CHECK_STATUS_INIT)
             {
@@ -4242,21 +4322,23 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                 if (product == null)
                 {
-                    _logger.error("BASE:" + each.getId() + ",product is null:" + each.getProductId());
+                    _logger.error("BASE:" + each.getId() + ",product is null:"
+                                  + each.getProductId());
                 }
 
                 if (product != null && !product.getName().equals(each.getProductName()))
                 {
-                    _logger.error("BASE:" + each.getId() + ",product is name error:" + each.getProductName()
-                                  + ", real is:" + product.getName() + ",fullid is:" + each.getOutId());
+                    _logger.error("BASE:" + each.getId() + ",product is name error:"
+                                  + each.getProductName() + ", real is:" + product.getName()
+                                  + ",fullid is:" + each.getOutId());
                 }
 
                 String priceKey = StorageRelationHelper.getPriceKey(each.getCostPrice());
 
                 if ( !priceKey.equals(each.getCostPriceKey()))
                 {
-                    _logger.info(each + "||old CostPriceKey:" + each.getCostPriceKey() + ";new CostPriceKey:"
-                                 + priceKey);
+                    _logger.info(each + "||old CostPriceKey:" + each.getCostPriceKey()
+                                 + ";new CostPriceKey:" + priceKey);
 
                     each.setCostPriceKey(priceKey);
 
@@ -4366,16 +4448,16 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
 
             // 自己使用
-            double st = outDAO.sumNoPayAndAvouchBusinessByStafferId(staffer.getId(), staffer.getIndustryId(),
-                YYTools.getStatBeginDate(), YYTools.getStatEndDate());
+            double st = outDAO.sumNoPayAndAvouchBusinessByStafferId(staffer.getId(), staffer
+                .getIndustryId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
 
             // 担保
-            double mt = outDAO.sumNoPayAndAvouchBusinessByManagerId2(staffer.getId(), YYTools.getStatBeginDate(),
-                YYTools.getStatEndDate());
+            double mt = outDAO.sumNoPayAndAvouchBusinessByManagerId2(staffer.getId(), YYTools
+                .getStatBeginDate(), YYTools.getStatEndDate());
 
             // 被担保
-            double bei = outDAO.sumNoPayAndAvouchBusinessByManagerId3(staffer.getId(), YYTools.getStatBeginDate(),
-                YYTools.getStatEndDate());
+            double bei = outDAO.sumNoPayAndAvouchBusinessByManagerId3(staffer.getId(), YYTools
+                .getStatBeginDate(), YYTools.getStatEndDate());
 
             double total = staffer.getCredit() * staffer.getLever();
 
@@ -4386,7 +4468,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             for (InvoiceCreditVO invoiceCreditVO : vsList)
             {
                 buffer.append(invoiceCreditVO.getInvoiceName()).append("下的信用额度:").append(
-                    MathTools.formatNum(invoiceCreditVO.getCredit() * staffer.getLever())).append(".");
+                    MathTools.formatNum(invoiceCreditVO.getCredit() * staffer.getLever())).append(
+                    ".");
             }
 
             line.writeColumn(now);
