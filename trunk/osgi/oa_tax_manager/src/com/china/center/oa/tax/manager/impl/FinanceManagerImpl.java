@@ -348,7 +348,7 @@ public class FinanceManagerImpl implements FinanceManager
             if (lastMonth != null)
             {
                 // 累加之前所有的值
-                fmb.setInmoneyAllTotal(lastMonth.getInmoneyTotal() + inMonetTotal);
+                fmb.setInmoneyAllTotal(lastMonth.getInmoneyAllTotal() + inMonetTotal);
 
                 fmb.setOutmoneyAllTotal(lastMonth.getOutmoneyAllTotal() + outMonetTotal);
             }

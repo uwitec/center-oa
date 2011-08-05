@@ -9,6 +9,8 @@
 package com.china.center.oa.tax.action;
 
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -23,6 +25,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
 import com.center.china.osgi.publics.User;
+import com.center.china.osgi.publics.file.writer.WriteFile;
+import com.center.china.osgi.publics.file.writer.WriteFileFactory;
 import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
@@ -43,9 +47,12 @@ import com.china.center.oa.tax.dao.TaxTypeDAO;
 import com.china.center.oa.tax.facade.TaxFacade;
 import com.china.center.oa.tax.manager.TaxManager;
 import com.china.center.oa.tax.vo.TaxVO;
+import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.StringTools;
+import com.china.center.tools.TimeTools;
+import com.china.center.tools.WriteFileBuffer;
 
 
 /**
@@ -358,6 +365,94 @@ public class TaxAction extends DispatchAction
         }
 
         return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * exportTax
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportTax(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        String filenName = "Tax_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            write.writeLine("编码,名称,分类,借贷,类型,级别,辅助核算");
+
+            List<TaxVO> voList = this.taxDAO.listEntityVOs("order by id");
+
+            for (TaxVO each : voList)
+            {
+                WriteFileBuffer line = new WriteFileBuffer(write);
+
+                line.writeColumn("[" + each.getCode() + "]");
+                line.writeColumn(each.getName());
+                line.writeColumn(each.getPtypeName());
+                line.writeColumn(ElTools.get("taxForward", each.getForward()));
+                line.writeColumn(ElTools.get("taxType", each.getType()));
+                line.writeColumn(ElTools.get("taxBottomFlag", each.getBottomFlag()));
+                line.writeColumn(each.getOther());
+
+                line.writeLine();
+            }
+            write.close();
+
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
     }
 
     /**

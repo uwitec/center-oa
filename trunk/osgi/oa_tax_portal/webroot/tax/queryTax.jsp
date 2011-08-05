@@ -43,6 +43,7 @@ function load()
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1601'},
              {id: 'update', bclass: 'update', onpress : updateBean, auth: '1601'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1601'},
+             {id: 'export', bclass: 'replied',  caption: '导出科目', onpress : exports},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -83,6 +84,12 @@ function updateBean()
 	else
 	$error('不能操作');
 }
+
+function exports()
+{
+    document.location.href = gurl + 'exportTax';
+}
+
 
 function doSearch()
 {
