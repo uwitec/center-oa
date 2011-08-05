@@ -519,16 +519,21 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                         DepotpartBean deport = depotpartDAO.find(base.getDepotpartId());
 
-                        if (deport != null)
+                        if (deport == null)
                         {
-                            base.setDepotpartName(deport.getName());
-
-                            if ( !deport.getLocationId().equals(outBean.getLocation()))
-                            {
-                                throw new RuntimeException("单据必须在一个仓库下面");
-                            }
+                            throw new RuntimeException("仓区不存在,请确认操作");
                         }
 
+                        base.setDepotpartName(deport.getName());
+
+                        // 销售单的时候仓库必须一致
+                        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL
+                            && !deport.getLocationId().equals(outBean.getLocation()))
+                        {
+                            throw new RuntimeException("销售必须在一个仓库下面");
+                        }
+
+                        // TODO 调拨的时候有bug啊
                         base.setLocationId(outBean.getLocation());
 
                         // 其实也是成本
