@@ -28,7 +28,7 @@ function load()
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
              {display: '凭证', name : 'pid', width : '15%'},
              {display: '索引', name : 'pareId', width : '10%'},
-             {display: '科目', name : 'taxName',  width : '15%'},
+             {display: '科目', name : 'taxName', content: '{taxId}{taxName}', width : '15%'},
              {display: '借贷', name : 'showMoney', content: '{showInmoney}/{showOutmoney}', width : '10%'},
              {display: '辅助', name : 'helpItem', content: '{departmentName}/{stafferName}/{unitName}/{productName}/{depotName}/{duty2Name}', width : '20%'},
              {display: '凭证日期', name : 'financeDate', sortable : true, width : '10%'},
@@ -38,7 +38,8 @@ function load()
              pid : {begin : '<a title=点击查看明细 href=' + gurl + 'findFinance&id={pid}>', end : '</a>'}
          },
          buttons : [
-             {id: 'search', bclass: 'search', onpress : doSearch}
+             {id: 'search', bclass: 'search', onpress : doSearch},
+             {id: 'export', bclass: 'replied',  caption: '导出明细', onpress : exports}
              ],
         <p:conf/>
      };
@@ -49,6 +50,11 @@ function load()
 function $callBack()
 {
     loadForm();
+}
+
+function exports()
+{
+    document.location.href = gurl + 'exportFinanceItem';
 }
 
 function doSearch()
@@ -64,5 +70,5 @@ function doSearch()
 </form>
 <p:message/>
 <table id="mainTable" style="display: none"></table>
-<p:query/>
+<p:query height="300px"/>
 </body>

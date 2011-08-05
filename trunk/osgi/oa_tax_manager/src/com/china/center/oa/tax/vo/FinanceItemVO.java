@@ -58,6 +58,9 @@ public class FinanceItemVO extends FinanceItemBean
     private String productName = "";
 
     @Ignore
+    private String productCode = "";
+
+    @Ignore
     private String duty2Name = "";
 
     /**
@@ -305,6 +308,23 @@ public class FinanceItemVO extends FinanceItemBean
     }
 
     /**
+     * @return the productCode
+     */
+    public String getProductCode()
+    {
+        return productCode;
+    }
+
+    /**
+     * @param productCode
+     *            the productCode to set
+     */
+    public void setProductCode(String productCode)
+    {
+        this.productCode = productCode;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -348,6 +368,9 @@ public class FinanceItemVO extends FinanceItemBean
             .append(TAB)
             .append("productName = ")
             .append(this.productName)
+            .append(TAB)
+            .append("productCode = ")
+            .append(this.productCode)
             .append(TAB)
             .append("duty2Name = ")
             .append(this.duty2Name)

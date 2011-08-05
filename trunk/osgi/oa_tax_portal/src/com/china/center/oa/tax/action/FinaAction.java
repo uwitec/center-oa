@@ -9,6 +9,8 @@
 package com.china.center.oa.tax.action;
 
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,7 +29,10 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
 import com.center.china.osgi.publics.User;
+import com.center.china.osgi.publics.file.writer.WriteFile;
+import com.center.china.osgi.publics.file.writer.WriteFileFactory;
 import com.china.center.actionhelper.common.ActionTools;
+import com.china.center.actionhelper.common.JSONPageSeparateTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.PageSeparateTools;
@@ -80,6 +85,7 @@ import com.china.center.tools.MathTools;
 import com.china.center.tools.SequenceTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
+import com.china.center.tools.WriteFileBuffer;
 
 
 /**
@@ -283,6 +289,124 @@ public class FinaAction extends DispatchAction
             });
 
         return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * exportFinanceItem
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportFinanceItem(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        String filenName = "FinanceItem_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        response.setContentType("application/x-dbf");
+
+        response.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        ConditionParse condtion = JSONPageSeparateTools.getCondition(request, QUERYFINANCEITEM);
+
+        int count = financeItemDAO.countVOByCondition(condtion.toString());
+
+        if (count > 65535)
+        {
+            return ActionTools.toError("导出数量大于65535,请重新选择时间段导出", mapping, request);
+        }
+
+        try
+        {
+            out = response.getOutputStream();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            write.writeLine("日期,凭证,摘要,科目编码,科目名称,借方金额,贷方金额,产品借,产品贷,部门,职员,单位,产品,仓区,纳税实体");
+
+            PageSeparate page = new PageSeparate();
+
+            page.reset2(count, 2000);
+
+            WriteFileBuffer line = new WriteFileBuffer(write);
+
+            while (page.nextPage())
+            {
+                List<FinanceItemVO> voList = financeItemDAO.queryEntityVOsByCondition(condtion,
+                    page);
+
+                for (FinanceItemVO financeItemVO : voList)
+                {
+                    fillItemVO(financeItemVO);
+
+                    line.reset();
+
+                    line.writeColumn("[" + financeItemVO.getFinanceDate() + "]");
+                    line.writeColumn(financeItemVO.getPid());
+                    line.writeColumn(StringTools.getExportString(financeItemVO.getDescription()));
+                    line.writeColumn(financeItemVO.getTaxId());
+                    line.writeColumn(financeItemVO.getTaxName());
+
+                    line.writeColumn(financeItemVO.getShowInmoney());
+                    line.writeColumn(financeItemVO.getShowOutmoney());
+
+                    line.writeColumn(financeItemVO.getProductAmountIn());
+                    line.writeColumn(financeItemVO.getProductAmountOut());
+
+                    line.writeColumn(financeItemVO.getDepartmentName());
+                    line.writeColumn(financeItemVO.getStafferName());
+                    line.writeColumn(financeItemVO.getUnitName());
+                    line.writeColumn(financeItemVO.getProductName());
+                    line.writeColumn(financeItemVO.getDepotName());
+                    line.writeColumn(financeItemVO.getDuty2Name());
+
+                    line.writeLine();
+                }
+            }
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -769,8 +893,6 @@ public class FinaAction extends DispatchAction
 
         item.setForward(tax.getForward());
 
-        item.setTaxName(tax.getCode() + tax.getName());
-
         if (tax.getDepartment() == TaxConstanst.TAX_CHECK_YES)
         {
             PrincipalshipBean depart = principalshipDAO.find(item.getDepartmentId());
@@ -808,6 +930,7 @@ public class FinaAction extends DispatchAction
             if (product != null)
             {
                 item.setProductName(product.getName());
+                item.setProductCode(product.getCode());
             }
         }
 
