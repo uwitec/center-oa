@@ -144,6 +144,8 @@ function load()
 	loadForm();
 	tooltip.init();
 	
+	bingTable("mainTable");
+	
 	highlights($("#mainTable").get(0), ['驳回'], 'red');
 }
 

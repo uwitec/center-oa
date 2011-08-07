@@ -330,6 +330,8 @@ function load()
 	
 	tooltip.init();
 	
+	bingTable("mainTable");
+	
 	highlights($("#mainTable").get(0), ['驳回'], 'red');
 	
 	highlights($("#mainTable").get(0), ['结束'], 'blue');
