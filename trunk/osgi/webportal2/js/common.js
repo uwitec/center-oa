@@ -1241,6 +1241,47 @@ function getAllDef()
 	return window.top.topFrame.allDef;
 }
 
+/**
+ * 绑定鼠标经过
+ */
+function bingTable(id)
+{
+    senfe(id,"#f7fcff","#fff","#cfc","#FFFF00");
+}
+
+/**
+ * a 背景色1 b 背景色2 c鼠标经过色 d点击色
+ */
+function senfe(o,a,b,c,d)
+{
+    var t=document.getElementById(o).getElementsByTagName("tr");
+    
+    if (t.length == 0)
+    {
+    	return;
+    }
+    
+    for(var i=1;i<t.length;i++){
+        t[i].style.backgroundColor=(t[i].sectionRowIndex%2==0)?a:b;
+        t[i].onclick=function(){
+            if(this.x!="1"){
+                this.x="1";//本来打算直接用背景色判断，FF获取到的背景是RGB值，不好判断
+                this.style.backgroundColor=d;
+            }else{
+                this.x="0";
+                this.style.backgroundColor=(this.sectionRowIndex%2==0)?a:b;
+            }
+        }
+        t[i].onmouseover=function(){
+            if(this.x!="1")this.style.backgroundColor=c;
+        }
+        t[i].onmouseout=function(){
+            if(this.x!="1")this.style.backgroundColor=(this.sectionRowIndex%2==0)?a:b;
+        }
+    }
+}
+
+
 if (window.addEventCommon)
 window.addEventCommon(window, 'load', loadForm);
 
