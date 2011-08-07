@@ -24,4 +24,10 @@
 
 	<bean id="travelApplyPayDAO" class="com.china.center.oa.tcp.dao.impl.TravelApplyPayDAOImpl" />
 
+	<bean id="tcpFlowDAO" class="com.china.center.oa.tcp.dao.impl.TcpFlowDAOImpl" />
+
+	<bean id="travelApplyManager" class="com.china.center.oa.tcp.manager.impl.TravelApplyManagerImpl" />
+
+	<bean id="tcpApproveDAO" class="com.china.center.oa.tcp.dao.impl.TcpApproveDAOImpl" />
+
 </beans>

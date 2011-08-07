@@ -66,14 +66,26 @@ public class TravelApplyBean implements Serializable
      */
     private int borrow = TcpConstanst.TRAVELAPPLY_BORROW_NO;
 
+    /**
+     * 准确到分
+     */
     private long total = 0L;
 
+    /**
+     * 费用子项
+     */
     @Ignore
     private List<TravelApplyItemBean> itemList = null;
 
+    /**
+     * 付款列表
+     */
     @Ignore
     private List<TravelApplyPayBean> payList = null;
 
+    /**
+     * 分担列表
+     */
     @Ignore
     private List<TcpShareBean> shareList = null;
 

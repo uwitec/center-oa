@@ -23,4 +23,10 @@
 
 	<osgi:service ref="travelApplyPayDAO" interface="com.china.center.oa.tcp.dao.TravelApplyPayDAO" />
 
+	<osgi:service ref="tcpFlowDAO" interface="com.china.center.oa.tcp.dao.TcpFlowDAO" />
+
+	<osgi:service ref="travelApplyManager" interface="com.china.center.oa.tcp.manager.TravelApplyManager" />
+
+	<osgi:service ref="tcpApproveDAO" interface="com.china.center.oa.tcp.dao.TcpApproveDAO" />
+
 </beans>

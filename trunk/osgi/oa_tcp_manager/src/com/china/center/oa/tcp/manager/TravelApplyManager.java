@@ -24,6 +24,25 @@ import com.china.center.oa.tcp.bean.TravelApplyBean;
  */
 public interface TravelApplyManager
 {
+    /**
+     * 增加差旅费申请及借款
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
     boolean addTravelApplyBean(User user, TravelApplyBean bean)
+        throws MYException;
+
+    /**
+     * 修改差旅费申请及借款
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    boolean updateTravelApplyBean(User user, TravelApplyBean bean)
         throws MYException;
 }

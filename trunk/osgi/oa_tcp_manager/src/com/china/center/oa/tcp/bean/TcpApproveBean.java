@@ -20,16 +20,16 @@ import com.china.center.oa.tcp.constanst.TcpConstanst;
 
 
 /**
- * 申请总表
+ * 处理总表
  * 
  * @author ZHUZHU
  * @version 2011-7-10
- * @see TcpApplyBean
+ * @see TcpApproveBean
  * @since 3.0
  */
 @Entity
-@Table(name = "T_CENTER_TCPAPPLY")
-public class TcpApplyBean implements Serializable
+@Table(name = "T_CENTER_TCPAPPROVE")
+public class TcpApproveBean implements Serializable
 {
     @Id
     private String id = "";
@@ -50,6 +50,12 @@ public class TcpApplyBean implements Serializable
     private String applyerId = "";
 
     /**
+     * 审批人
+     */
+    @Join(tagClass = StafferBean.class, alias = "APPROVER")
+    private String approverId = "";
+
+    /**
      * 差旅费申请及借款、业务招待费申请及借款、日常办公和固定资产采购申请及借款、对公业务申请及借款
      */
     private int type = TcpConstanst.TCP_TYPE_TRAVEL;
@@ -65,7 +71,7 @@ public class TcpApplyBean implements Serializable
     /**
      * default constructor
      */
-    public TcpApplyBean()
+    public TcpApproveBean()
     {
     }
 
@@ -135,6 +141,23 @@ public class TcpApplyBean implements Serializable
     public void setApplyerId(String applyerId)
     {
         this.applyerId = applyerId;
+    }
+
+    /**
+     * @return the approverId
+     */
+    public String getApproverId()
+    {
+        return approverId;
+    }
+
+    /**
+     * @param approverId
+     *            the approverId to set
+     */
+    public void setApproverId(String approverId)
+    {
+        this.approverId = approverId;
     }
 
     /**
@@ -268,6 +291,9 @@ public class TcpApplyBean implements Serializable
             .append(TAB)
             .append("applyerId = ")
             .append(this.applyerId)
+            .append(TAB)
+            .append("approverId = ")
+            .append(this.approverId)
             .append(TAB)
             .append("type = ")
             .append(this.type)

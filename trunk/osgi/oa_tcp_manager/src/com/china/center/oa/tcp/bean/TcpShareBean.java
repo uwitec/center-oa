@@ -13,7 +13,7 @@ import com.china.center.oa.publics.bean.StafferBean;
 
 
 /**
- * TcpShareBean
+ * 费用分担
  * 
  * @author ZHUZHU
  * @version 2011-7-10
