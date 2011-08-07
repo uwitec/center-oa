@@ -76,6 +76,15 @@ public class FinanceItemVO extends FinanceItemBean
     private String showOutmoney = "";
 
     /**
+     * 余额
+     */
+    @Ignore
+    private String showLastmoney = "";
+
+    @Ignore
+    private String forwardName = "";
+
+    /**
      * default constructor
      */
     public FinanceItemVO()
@@ -325,6 +334,40 @@ public class FinanceItemVO extends FinanceItemBean
     }
 
     /**
+     * @return the showLastmoney
+     */
+    public String getShowLastmoney()
+    {
+        return showLastmoney;
+    }
+
+    /**
+     * @param showLastmoney
+     *            the showLastmoney to set
+     */
+    public void setShowLastmoney(String showLastmoney)
+    {
+        this.showLastmoney = showLastmoney;
+    }
+
+    /**
+     * @return the forwardName
+     */
+    public String getForwardName()
+    {
+        return forwardName;
+    }
+
+    /**
+     * @param forwardName
+     *            the forwardName to set
+     */
+    public void setForwardName(String forwardName)
+    {
+        this.forwardName = forwardName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -380,6 +423,12 @@ public class FinanceItemVO extends FinanceItemBean
             .append(TAB)
             .append("showOutmoney = ")
             .append(this.showOutmoney)
+            .append(TAB)
+            .append("showLastmoney = ")
+            .append(this.showLastmoney)
+            .append(TAB)
+            .append("forwardName = ")
+            .append(this.forwardName)
             .append(TAB)
             .append(" )");
 

@@ -21,12 +21,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.actions.DispatchAction;
 
 import com.center.china.osgi.publics.User;
 import com.center.china.osgi.publics.file.writer.WriteFile;
@@ -48,7 +45,6 @@ import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.DutyBean;
-import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.DutyDAO;
@@ -96,54 +92,8 @@ import com.china.center.tools.WriteFileBuffer;
  * @see FinaAction
  * @since 1.0
  */
-public class FinaAction extends DispatchAction
+public class FinaAction extends ParentQueryFinaAction
 {
-    private final Log _logger = LogFactory.getLog(getClass());
-
-    private TaxFacade taxFacade = null;
-
-    private TaxDAO taxDAO = null;
-
-    private DutyDAO dutyDAO = null;
-
-    private UnitDAO unitDAO = null;
-
-    private OutManager outManager = null;
-
-    private FinanceManager financeManager = null;
-
-    private PrincipalshipDAO principalshipDAO = null;
-
-    private StafferDAO stafferDAO = null;
-
-    private FinanceDAO financeDAO = null;
-
-    private UnitViewDAO unitViewDAO = null;
-
-    private CheckViewDAO checkViewDAO = null;
-
-    private FinanceItemDAO financeItemDAO = null;
-
-    private DepotDAO depotDAO = null;
-
-    private ProductDAO productDAO = null;
-
-    private FinanceTurnDAO financeTurnDAO = null;
-
-    private FinanceMonthDAO financeMonthDAO = null;
-
-    private static final String QUERYFINANCE = "queryFinance";
-
-    private static final String QUERYFINANCEMONTH = "queryFinanceMonth";
-
-    private static final String QUERYFINANCETURN = "queryFinanceTurn";
-
-    private static final String QUERYFINANCEITEM = "queryFinanceItem";
-
-    private static final String QUERYCHECKVIEW = "queryCheckView";
-
-    private static String RPTQUERYUNIT = "rptQueryUnit";
-
     /**
      * default constructor
      */
@@ -288,6 +238,8 @@ public class FinaAction extends DispatchAction
                 }
             });
 
+        request.getSession().setAttribute("EXPORT_FINANCEITE_KEY", QUERYFINANCEITEM);
+
         return JSONTools.writeResponse(response, jsonstr);
     }
 
@@ -315,7 +267,9 @@ public class FinaAction extends DispatchAction
 
         WriteFile write = null;
 
-        ConditionParse condtion = JSONPageSeparateTools.getCondition(request, QUERYFINANCEITEM);
+        Object key = request.getSession().getAttribute("EXPORT_FINANCEITE_KEY");
+
+        ConditionParse condtion = JSONPageSeparateTools.getCondition(request, key.toString());
 
         int count = financeItemDAO.countVOByCondition(condtion.toString());
 
@@ -332,7 +286,7 @@ public class FinaAction extends DispatchAction
 
             write.openFile(out);
 
-            write.writeLine("日期,凭证,摘要,科目编码,科目名称,借方金额,贷方金额,产品借,产品贷,部门,职员,单位,产品,仓区,纳税实体");
+            write.writeLine("日期,凭证,摘要,科目编码,科目名称,借方金额,贷方金额,借/贷,余额,产品借,产品贷,部门,职员,单位,产品,仓区,纳税实体");
 
             PageSeparate page = new PageSeparate();
 
@@ -359,6 +313,8 @@ public class FinaAction extends DispatchAction
 
                     line.writeColumn(financeItemVO.getShowInmoney());
                     line.writeColumn(financeItemVO.getShowOutmoney());
+                    line.writeColumn(financeItemVO.getForwardName());
+                    line.writeColumn(financeItemVO.getShowLastmoney());
 
                     line.writeColumn(financeItemVO.getProductAmountIn());
                     line.writeColumn(financeItemVO.getProductAmountOut());
@@ -373,6 +329,8 @@ public class FinaAction extends DispatchAction
                     line.writeLine();
                 }
             }
+
+            write.close();
         }
         catch (Throwable e)
         {
@@ -883,82 +841,6 @@ public class FinaAction extends DispatchAction
     }
 
     /**
-     * fillItemVO
-     * 
-     * @param item
-     */
-    private void fillItemVO(FinanceItemVO item)
-    {
-        TaxBean tax = taxDAO.find(item.getTaxId());
-
-        item.setForward(tax.getForward());
-
-        if (tax.getDepartment() == TaxConstanst.TAX_CHECK_YES)
-        {
-            PrincipalshipBean depart = principalshipDAO.find(item.getDepartmentId());
-
-            if (depart != null)
-            {
-                item.setDepartmentName(depart.getName());
-            }
-        }
-
-        if (tax.getStaffer() == TaxConstanst.TAX_CHECK_YES)
-        {
-            StafferBean sb = stafferDAO.find(item.getStafferId());
-
-            if (sb != null)
-            {
-                item.setStafferName(sb.getName());
-            }
-        }
-
-        if (tax.getUnit() == TaxConstanst.TAX_CHECK_YES)
-        {
-            UnitBean unit = unitDAO.find(item.getUnitId());
-
-            if (unit != null)
-            {
-                item.setUnitName(unit.getName());
-            }
-        }
-
-        if (tax.getProduct() == TaxConstanst.TAX_CHECK_YES)
-        {
-            ProductBean product = productDAO.find(item.getProductId());
-
-            if (product != null)
-            {
-                item.setProductName(product.getName());
-                item.setProductCode(product.getCode());
-            }
-        }
-
-        if (tax.getDepot() == TaxConstanst.TAX_CHECK_YES)
-        {
-            DepotBean depot = depotDAO.find(item.getDepotId());
-
-            if (depot != null)
-            {
-                item.setDepotName(depot.getName());
-            }
-        }
-
-        if (tax.getDuty() == TaxConstanst.TAX_CHECK_YES)
-        {
-            DutyBean duty2 = dutyDAO.find(item.getDuty2Id());
-
-            if (duty2 != null)
-            {
-                item.setDuty2Name(duty2.getName());
-            }
-        }
-
-        item.getShowInmoney();
-        item.getShowOutmoney();
-    }
-
-    /**
      * setFinanceBean
      * 
      * @param bean
@@ -1217,11 +1099,6 @@ public class FinaAction extends DispatchAction
 
         for (TaxBean taxBean : taxList)
         {
-            if (taxBean.getBottomFlag() == TaxConstanst.TAX_BOTTOMFLAG_ROOT)
-            {
-                continue;
-            }
-
             ConditionParse condition = new ConditionParse();
 
             condition.addWhereStr();
@@ -1229,7 +1106,7 @@ public class FinaAction extends DispatchAction
             condition.addCondition("financeDate", ">=", changeFormat + "-01");
             condition.addCondition("financeDate", "<=", changeFormat + "-31");
 
-            condition.addCondition("taxId", "=", taxBean.getId());
+            condition.addCondition("taxId" + taxBean.getLevel(), "=", taxBean.getId());
 
             long inMonetTotal = financeItemDAO.sumInByCondition(condition);
 

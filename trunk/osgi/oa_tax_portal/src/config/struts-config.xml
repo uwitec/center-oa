@@ -27,6 +27,10 @@
 			<forward name="queryCompose" path="/product/queryCompose.jsp?foward=3" />
 			<forward name="addFinanceTurn" path="/finance/addFinanceTurn.jsp" />
 			<forward name="queryFinanceTurn" path="/finance/queryFinanceTurn.jsp" />
+			<forward name="queryTaxFinance1" path="/finance/queryTaxFinance1.jsp" />
+			<forward name="queryTaxFinance2" path="/finance/queryTaxFinance2.jsp" />
+			<forward name="queryTaxFinance3" path="/finance/queryTaxFinance3.jsp" />
+			<forward name="queryTaxFinance4" path="/finance/queryTaxFinance4.jsp" />
 		</action>
 		
 	</action-mappings>

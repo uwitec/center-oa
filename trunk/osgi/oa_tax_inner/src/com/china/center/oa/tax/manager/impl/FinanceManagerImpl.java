@@ -298,11 +298,6 @@ public class FinanceManagerImpl implements FinanceManager
 
         for (TaxBean taxBean : taxList)
         {
-            if (taxBean.getBottomFlag() == TaxConstanst.TAX_BOTTOMFLAG_ROOT)
-            {
-                continue;
-            }
-
             ConditionParse condition = new ConditionParse();
 
             condition.addWhereStr();
@@ -310,7 +305,8 @@ public class FinanceManagerImpl implements FinanceManager
             condition.addCondition("financeDate", ">=", changeFormat + "-01");
             condition.addCondition("financeDate", "<=", changeFormat + "-31");
 
-            condition.addCondition("taxId", "=", taxBean.getId());
+            // 所有的科目都月结
+            condition.addCondition("taxId" + taxBean.getLevel(), "=", taxBean.getId());
 
             long inMonetTotal = financeItemDAO.sumInByCondition(condition);
 
