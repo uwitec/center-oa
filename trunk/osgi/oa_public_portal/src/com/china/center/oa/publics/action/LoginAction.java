@@ -175,7 +175,7 @@ public class LoginAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        StafferBean stafferBean = stafferDAO.find(user.getStafferId());
+        StafferBean stafferBean = stafferDAO.findVO(user.getStafferId());
 
         if (stafferBean == null)
         {
