@@ -13,10 +13,13 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.Html;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.annotation.enums.Element;
+import com.china.center.oa.publics.bean.AttachmentBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.tcp.constanst.TcpConstanst;
@@ -41,22 +44,29 @@ public class TravelApplyBean implements Serializable
 
     private String flowKey = "";
 
+    @Html(title = "申请人", name = "stafferName", must = true, maxLength = 40, readonly = true)
     @Join(tagClass = StafferBean.class)
     private String stafferId = "";
 
+    @Html(title = "部门", name = "departmentName", must = true, maxLength = 40, readonly = true)
     @Join(tagClass = PrincipalshipBean.class)
     private String departmentId = "";
 
     private String logTime = "";
 
+    @Html(title = "出发城市", must = true)
     private String srcCity = "";
 
+    @Html(title = "目的城市", must = true)
     private String destCity = "";
 
+    @Html(title = "开始日期", must = true, type = Element.DATE)
     private String beginDate = "";
 
+    @Html(title = "结束日期", must = true, type = Element.DATE)
     private String endDate = "";
 
+    @Html(title = "申请事由", maxLength = 200, must = true, type = Element.TEXTAREA)
     private String description = "";
 
     private int status = TcpConstanst.TCP_STATUS_INIT;
@@ -64,6 +74,7 @@ public class TravelApplyBean implements Serializable
     /**
      * 是否借款
      */
+    @Html(title = "借款", must = true, type = Element.SELECT)
     private int borrow = TcpConstanst.TRAVELAPPLY_BORROW_NO;
 
     /**
@@ -88,6 +99,12 @@ public class TravelApplyBean implements Serializable
      */
     @Ignore
     private List<TcpShareBean> shareList = null;
+
+    /**
+     * 附件列表
+     */
+    @Ignore
+    private List<AttachmentBean> attachmentList = null;
 
     /**
      * default constructor
@@ -454,6 +471,23 @@ public class TravelApplyBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the attachmentList
+     */
+    public List<AttachmentBean> getAttachmentList()
+    {
+        return attachmentList;
+    }
+
+    /**
+     * @param attachmentList
+     *            the attachmentList to set
+     */
+    public void setAttachmentList(List<AttachmentBean> attachmentList)
+    {
+        this.attachmentList = attachmentList;
     }
 
 }

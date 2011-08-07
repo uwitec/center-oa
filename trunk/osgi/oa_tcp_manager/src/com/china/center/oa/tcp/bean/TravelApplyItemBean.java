@@ -46,6 +46,8 @@ public class TravelApplyItemBean implements Serializable
 
     private long moneys = 0L;
 
+    private String description = "";
+
     /**
      * default constructor
      */
@@ -156,6 +158,23 @@ public class TravelApplyItemBean implements Serializable
     }
 
     /**
+     * @return the description
+     */
+    public String getDescription()
+    {
+        return description;
+    }
+
+    /**
+     * @param description
+     *            the description to set
+     */
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -187,6 +206,9 @@ public class TravelApplyItemBean implements Serializable
             .append(TAB)
             .append("moneys = ")
             .append(this.moneys)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
             .append(TAB)
             .append(" )");
 

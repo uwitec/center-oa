@@ -101,16 +101,16 @@ public interface TcpConstanst
     int TCP_STATUS_WAIT_END = 99;
 
     /**
-     * 不借款
-     */
-    @Defined(key = "travelApplyBorrow", value = "不借款")
-    int TRAVELAPPLY_BORROW_NO = 0;
-
-    /**
      * 借款
      */
     @Defined(key = "travelApplyBorrow", value = "借款")
     int TRAVELAPPLY_BORROW_YES = 1;
+
+    /**
+     * 不借款
+     */
+    @Defined(key = "travelApplyBorrow", value = "不借款")
+    int TRAVELAPPLY_BORROW_NO = 0;
 
     /**
      * 现金
