@@ -286,6 +286,8 @@ public class BudgetManagerImpl implements BudgetManager
         {
             for (BudgetItemBean budgetItemBean : items)
             {
+                budgetItemBean.setId(commonDAO.getSquenceString20());
+
                 budgetItemBean.setBudgetId(bean.getId());
 
                 total += budgetItemBean.getBudget();

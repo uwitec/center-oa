@@ -32,7 +32,7 @@ import com.china.center.oa.budget.constant.BudgetConstant;
 @Table(name = "T_CENTER_BUDGETITEM")
 public class BudgetItemBean implements Serializable
 {
-    @Id(autoIncrement = true)
+    @Id
     private String id = "";
 
     @FK(index = AnoConstant.FK_FIRST)

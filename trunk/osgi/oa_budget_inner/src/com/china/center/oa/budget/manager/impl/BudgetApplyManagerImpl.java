@@ -303,6 +303,8 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
 
             if ( !isContain)
             {
+                apply.setId(commonDAO.getSquenceString20());
+
                 apply.setBudgetId(budgetId);
 
                 // set appltItem to save
@@ -391,6 +393,7 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
 
         for (BudgetItemBean budgetItemBean : itemList)
         {
+            budgetItemBean.setId(commonDAO.getSquenceString20());
             budgetItemBean.setBudgetId(bean.getId());
         }
 
