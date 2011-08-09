@@ -90,7 +90,7 @@ function pagePrint()
 					<td align="center">${item.productName}(${item.productCode})</td>
 					<td align="center">${item.amount}</td>
 					<td align="center">${my:formatNum(item.price)}</td>
-					<td align="center">${item.deportName} --> ${item.depotpartName}</td>
+					<td align="center">${item.deportName} --> ${item.depotpartName} --> ${item.storageName}</td>
 					<td align="center">${item.stafferName}</td>
 				</tr>
 				<c:forEach items="${map[item.refId]}" var="inner">
@@ -99,7 +99,7 @@ function pagePrint()
 						<td align="center">${inner.productName}(${inner.productCode})</td>
 						<td align="center">${inner.amount}</td>
 						<td align="center">${my:formatNum(inner.price)}</td>
-						<td align="center">${inner.deportName} --> ${inner.depotpartName}</td>
+						<td align="center">${inner.deportName} --> ${inner.depotpartName} --> ${inner.storageName}</td>
 						<td align="center">${inner.stafferName}</td>
 					</tr>
 				</c:forEach>

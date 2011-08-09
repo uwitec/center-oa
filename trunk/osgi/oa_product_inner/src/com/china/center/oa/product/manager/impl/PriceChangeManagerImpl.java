@@ -325,6 +325,9 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
                 eachWrap.setStafferId(newItemBean.getStafferId());
                 eachWrap.setChange(newItemBean.getAmount());
                 eachWrap.setDepotpartId(newItemBean.getDepotpartId());
+
+                // 这里新的产品需要指定储位
+                eachWrap.setStorageId(newItemBean.getStorageId());
                 eachWrap.setDescription("产品调价(后增加产品):" + bean.getId());
                 eachWrap.setPrice(newItemBean.getPrice());
                 eachWrap.setProductId(newItemBean.getProductId());
