@@ -264,4 +264,42 @@ public interface OutDAO extends DAO<OutBean, OutVO>
      * @return
      */
     List<BaseBean> queryInwayOut();
+
+    /**
+     * 查询自己未付的单据(信用是自己承担的)
+     * 
+     * @param stafferId
+     * @param industryId
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    List<CreditWrap> queryNoPayAndAvouchBusinessByStafferId(String stafferId, String industryId,
+                                                            String beginDate, String endDate);
+
+    /**
+     * 查询共计担保他人
+     * 
+     * @param stafferId
+     * @param industryId
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    List<CreditWrap> queryNoPayAndAvouchBusinessByManagerId2(String stafferId, String beginDate,
+                                                             String endDate);
+
+    /**
+     * 查询被担保
+     * 
+     * @param stafferId
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    List<CreditWrap> queryNoPayAndAvouchBusinessByManagerId3(String stafferId, String beginDate,
+                                                             String endDate);
+
+    List<CreditWrap> queryNoPayAndAvouchBusinessByManagerId(String stafferId, String industryId,
+                                                            String beginDate, String endDate);
 }

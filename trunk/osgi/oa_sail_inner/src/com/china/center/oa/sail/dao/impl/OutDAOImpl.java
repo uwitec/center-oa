@@ -163,6 +163,15 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         return (Double)max;
     }
 
+    /**
+     * 查询自己未付款的单据(industryId暂时忽略)
+     * 
+     * @param stafferId
+     * @param industryId
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
     public List<CreditWrap> queryNoPayAndAvouchBusinessByStafferId(String stafferId,
                                                                    String industryId,
                                                                    String beginDate, String endDate)
@@ -171,11 +180,40 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
 
         paramterMap.put("stafferId", stafferId);
         paramterMap.put("beginDate", beginDate);
-        paramterMap.put("industryId", industryId);
         paramterMap.put("endDate", endDate);
 
         List<CreditWrap> result = getIbatisDaoSupport().queryForList(
             "OutDAO.queryNoPayAndAvouchBusinessByStafferId", paramterMap);
+
+        return result;
+    }
+
+    public List<CreditWrap> queryNoPayAndAvouchBusinessByManagerId2(String stafferId,
+                                                                    String beginDate, String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("stafferId", stafferId);
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("endDate", endDate);
+
+        List<CreditWrap> result = getIbatisDaoSupport().queryForList(
+            "OutDAO.queryNoPayAndAvouchBusinessByManagerId2", paramterMap);
+
+        return result;
+    }
+
+    public List<CreditWrap> queryNoPayAndAvouchBusinessByManagerId3(String stafferId,
+                                                                    String beginDate, String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("stafferId", stafferId);
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("endDate", endDate);
+
+        List<CreditWrap> result = getIbatisDaoSupport().queryForList(
+            "OutDAO.queryNoPayAndAvouchBusinessByManagerId3", paramterMap);
 
         return result;
     }
@@ -697,5 +735,4 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
 
         return backTotal;
     }
-
 }

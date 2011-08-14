@@ -336,6 +336,13 @@ public interface OutManager extends ListenerManager<OutListener>
      */
     void exportAllStafferCredit();
 
+    /**
+     * 职员信用导出
+     * 
+     * @param write
+     * @param stafferList
+     * @throws IOException
+     */
     void writeStafferCredit(WriteFile write, List<StafferBean> stafferList)
         throws IOException;
 }

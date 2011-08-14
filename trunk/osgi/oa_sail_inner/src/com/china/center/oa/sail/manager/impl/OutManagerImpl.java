@@ -102,6 +102,7 @@ import com.china.center.oa.sail.listener.OutListener;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.sail.vo.BaseBalanceVO;
 import com.china.center.oa.sail.vo.OutVO;
+import com.china.center.oa.sail.wrap.CreditWrap;
 import com.china.center.osgi.dym.DynamicBundleTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.JudgeTools;
@@ -4439,7 +4440,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     public void writeStafferCredit(WriteFile write, List<StafferBean> stafferList)
         throws IOException
     {
-        write.writeLine("日期,职员,总信用额度,原始信用,信用杠杆,开单使用额度,担保使用额度,被担保额度,剩余额度,其他");
+        write.writeLine("日期,类别,职员,总信用额度,单据,原始信用,信用杠杆,开单使用额度,担保使用额度,被担保额度,剩余额度,其他");
 
         String now = TimeTools.now("yyyy-MM-dd");
 
@@ -4452,11 +4453,11 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                 continue;
             }
 
-            // 自己使用
+            // 自己信用
             double st = outDAO.sumNoPayAndAvouchBusinessByStafferId(staffer.getId(), staffer
                 .getIndustryId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
 
-            // 担保
+            // 担保他人
             double mt = outDAO.sumNoPayAndAvouchBusinessByManagerId2(staffer.getId(), YYTools
                 .getStatBeginDate(), YYTools.getStatEndDate());
 
@@ -4464,6 +4465,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             double bei = outDAO.sumNoPayAndAvouchBusinessByManagerId3(staffer.getId(), YYTools
                 .getStatBeginDate(), YYTools.getStatEndDate());
 
+            // 总信用
             double total = staffer.getCredit() * staffer.getLever();
 
             StringBuffer buffer = new StringBuffer();
@@ -4478,8 +4480,10 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
 
             line.writeColumn(now);
+            line.writeColumn("合计");
             line.writeColumn(staffer.getName());
             line.writeColumn(total);
+            line.writeColumn("");
             line.writeColumn(staffer.getCredit());
             line.writeColumn(staffer.getLever());
             line.writeColumn(st);
@@ -4488,6 +4492,63 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             line.writeColumn(total - st - mt);
             line.writeColumn(buffer.toString());
 
+            line.writeLine();
+
+            // 自己信用使用明细
+            List<CreditWrap> creditList = outDAO.queryNoPayAndAvouchBusinessByStafferId(staffer
+                .getId(), staffer.getIndustryId(), YYTools.getStatBeginDate(), YYTools
+                .getStatEndDate());
+
+            for (CreditWrap creditWrap : creditList)
+            {
+                if (creditWrap.getCredit() > 0)
+                {
+                    line.writeColumn(creditWrap.getOutTime());
+                    line.writeColumn("自己使用");
+                    line.writeColumn(staffer.getName());
+                    line.writeColumn("");
+                    line.writeColumn(creditWrap.getFullId());
+                    line.writeColumn("");
+                    line.writeColumn("");
+                    line.writeColumn(creditWrap.getCredit());
+                    line.writeLine();
+                }
+            }
+
+            creditList = outDAO.queryNoPayAndAvouchBusinessByManagerId2(staffer.getId(), YYTools
+                .getStatBeginDate(), YYTools.getStatEndDate());
+
+            for (CreditWrap creditWrap : creditList)
+            {
+                line.writeColumn(creditWrap.getOutTime());
+                line.writeColumn("担保他人");
+                line.writeColumn(staffer.getName());
+                line.writeColumn("");
+                line.writeColumn(creditWrap.getFullId());
+                line.writeColumn("");
+                line.writeColumn("");
+                line.writeColumn("");
+                line.writeColumn(creditWrap.getCredit());
+                line.writeLine();
+            }
+
+            creditList = outDAO.queryNoPayAndAvouchBusinessByManagerId3(staffer.getId(), YYTools
+                .getStatBeginDate(), YYTools.getStatEndDate());
+
+            for (CreditWrap creditWrap : creditList)
+            {
+                line.writeColumn(creditWrap.getOutTime());
+                line.writeColumn("被担保");
+                line.writeColumn(staffer.getName());
+                line.writeColumn("");
+                line.writeColumn(creditWrap.getFullId());
+                line.writeColumn("");
+                line.writeColumn("");
+                line.writeColumn("");
+                line.writeColumn("");
+                line.writeColumn(creditWrap.getCredit());
+                line.writeLine();
+            }
             line.writeLine();
         }
     }

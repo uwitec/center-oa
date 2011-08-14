@@ -32,6 +32,8 @@ public class CreditWrap implements Serializable
 
     private double hadPay = 0.0d;
 
+    private double credit = 0.0d;
+
     private String outTime = "";
 
     /**
@@ -144,6 +146,23 @@ public class CreditWrap implements Serializable
     }
 
     /**
+     * @return the credit
+     */
+    public double getCredit()
+    {
+        return credit;
+    }
+
+    /**
+     * @param credit
+     *            the credit to set
+     */
+    public void setCredit(double credit)
+    {
+        this.credit = credit;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -172,6 +191,9 @@ public class CreditWrap implements Serializable
             .append(TAB)
             .append("hadPay = ")
             .append(this.hadPay)
+            .append(TAB)
+            .append("credit = ")
+            .append(this.credit)
             .append(TAB)
             .append("outTime = ")
             .append(this.outTime)
