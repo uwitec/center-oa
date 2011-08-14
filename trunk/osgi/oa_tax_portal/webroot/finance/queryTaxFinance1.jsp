@@ -90,6 +90,18 @@ function resetAll()
     $("input[name='stafferName']").val('');
     $("input[name='departmentName']").val('');
 }
+
+function clearStaffer()
+{
+    $("input[name='stafferId']").val('');
+    $("input[name='stafferName']").val('');
+}
+
+function clearDepartment()
+{
+    $("input[name='departmentId']").val('');
+    $("input[name='departmentName']").val('');
+}
 </script>
 
 </head>
@@ -141,15 +153,19 @@ function resetAll()
             
             <tr class="content1">
                 <td width="15%" align="center">职员</td>
-                <td align="left" colspan="1"><input type="text" name="stafferName" style="width: 80%" value="${stafferName}" readonly="readonly">
+                <td align="left" colspan="1"><input type="text" name="stafferName" style="width: 70%" value="${stafferName}" readonly="readonly">
                 <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectStaffer()">&nbsp;&nbsp;
+                    class="button_class" onclick="selectStaffer()">&nbsp;
+                <input type="button" value="&nbsp;C&nbsp;" name="qout_c" id="qout_c"
+                    class="button_class" onclick="clearStaffer()">
                 </td>
                 
                 <td width="15%" align="center">部门</td>
-                <td align="left" colspan="1"><input type="text" name="departmentName" style="width: 80%" value="${departmentName}" readonly="readonly">
+                <td align="left" colspan="1"><input type="text" name="departmentName" style="width: 70%" value="${departmentName}" readonly="readonly">
                 <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectDepartment()">&nbsp;&nbsp;
+                    class="button_class" onclick="selectDepartment()">&nbsp;
+                <input type="button" value="&nbsp;C&nbsp;" name="qout_c1" id="qout_c1"
+                    class="button_class" onclick="clearDepartment()">
                 </td>
             </tr>
 

@@ -84,6 +84,9 @@ public class FinanceItemVO extends FinanceItemBean
     @Ignore
     private String forwardName = "";
 
+    @Ignore
+    private long lastmoney = 0;
+
     /**
      * default constructor
      */
@@ -368,6 +371,23 @@ public class FinanceItemVO extends FinanceItemBean
     }
 
     /**
+     * @return the lastmoney
+     */
+    public long getLastmoney()
+    {
+        return lastmoney;
+    }
+
+    /**
+     * @param lastmoney
+     *            the lastmoney to set
+     */
+    public void setLastmoney(long lastmoney)
+    {
+        this.lastmoney = lastmoney;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -429,6 +449,9 @@ public class FinanceItemVO extends FinanceItemBean
             .append(TAB)
             .append("forwardName = ")
             .append(this.forwardName)
+            .append(TAB)
+            .append("lastmoney = ")
+            .append(this.lastmoney)
             .append(TAB)
             .append(" )");
 

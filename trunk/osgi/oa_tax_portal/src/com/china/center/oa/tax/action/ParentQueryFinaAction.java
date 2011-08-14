@@ -25,6 +25,7 @@ import org.apache.struts.actions.DispatchAction;
 import com.center.china.osgi.publics.User;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.OldPageSeparateTools;
+import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
@@ -140,27 +141,48 @@ public class ParentQueryFinaAction extends DispatchAction
 
         CommonTools.saveParamers(request);
 
+        FinanceItemVO head = null;
+        FinanceItemVO currentTotal = null;
+        FinanceItemVO allTotal = null;
+
         try
         {
-            if (OldPageSeparateTools.isFirstLoad(request))
+            if (PageSeparateTools.isFirstLoad(request))
             {
-                ConditionParse condtion = getQueryCondition(request, user);
+                ConditionParse condtion = getQueryCondition(request, user, 0);
 
                 int tatol = financeItemDAO.countVOByCondition(condtion.toString());
 
-                PageSeparate page = new PageSeparate(tatol, 100);
+                PageSeparate page = new PageSeparate(tatol, 50);
 
                 OldPageSeparateTools.initPageSeparate(condtion, page, request, QUERYTAXFINANCE1);
 
                 list = financeItemDAO.queryEntityVOsByCondition(condtion, page);
+
+                // 结转
+                head = sumHead(request, user);
+
+                // 当期合计
+                currentTotal = sumCurrentTotal(request, user, condtion);
+
+                // 当前累计
+                allTotal = sumAllTotal(request, user);
             }
             else
             {
-                OldPageSeparateTools.processSeparate(request, QUERYTAXFINANCE1);
+                PageSeparateTools.processSeparate(request, QUERYTAXFINANCE1);
 
                 list = financeItemDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(
                     request, QUERYTAXFINANCE1), OldPageSeparateTools.getPageSeparate(request,
                     QUERYTAXFINANCE1));
+
+                head = (FinanceItemVO)request.getSession().getAttribute("queryTaxFinance1_head");
+
+                currentTotal = (FinanceItemVO)request.getSession().getAttribute(
+                    "queryTaxFinance1_currentTotal");
+
+                allTotal = (FinanceItemVO)request.getSession().getAttribute(
+                    "queryTaxFinance1_allTotal");
             }
         }
         catch (Exception e)
@@ -172,28 +194,215 @@ public class ParentQueryFinaAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        for (FinanceItemVO financeItemVO : list)
+        String queryType = request.getParameter("queryType");
+
+        // 明细
+        if ("0".equals(queryType))
         {
-            fillItemVO(financeItemVO);
+            for (FinanceItemVO financeItemVO : list)
+            {
+                fillItemVO(financeItemVO);
+            }
         }
+        else
+        {
+            // 总帐
+            list.clear();
+        }
+
+        // 放入合计统计
+        list.add(0, head);
+
+        list.add(currentTotal);
+
+        list.add(allTotal);
 
         request.setAttribute("resultList", list);
 
         return mapping.findForward(QUERYTAXFINANCE1);
     }
 
-    protected ConditionParse getQueryCondition(HttpServletRequest request, User user)
+    /**
+     * 合计出结转结余(辅助)
+     * 
+     * @param request
+     * @param user
+     * @return
+     * @throws MYException
+     */
+    private FinanceItemVO sumHead(HttpServletRequest request, User user)
+        throws MYException
+    {
+        // 计算出开始日期前的结余(开始日期前扫描)
+        ConditionParse preQueryCondition = getQueryCondition(request, user, 1);
+
+        TaxVO tax = (TaxVO)request.getAttribute("tax");
+
+        // 借方
+        long[] sumMoneryByCondition = financeItemDAO.sumMoneryByCondition(preQueryCondition);
+
+        FinanceItemVO head = new FinanceItemVO();
+
+        long last = 0L;
+
+        if (tax.getForward() == TaxConstanst.TAX_FORWARD_IN)
+        {
+            last = sumMoneryByCondition[0] - sumMoneryByCondition[1];
+        }
+        else
+        {
+            last = sumMoneryByCondition[1] - sumMoneryByCondition[10];
+        }
+
+        String beginDate = request.getParameter("beginDate");
+
+        head.setTaxId(tax.getId());
+
+        head.setDescription("结余(" + beginDate + "之前)");
+
+        fillItemVO(head);
+
+        // 开始日期前累计余额
+        head.setLastmoney(last);
+
+        head.setShowLastmoney(FinanceHelper.longToString(last));
+
+        request.getSession().setAttribute("queryTaxFinance1_head", head);
+        return head;
+    }
+
+    /**
+     * 当期合计(查询条件重复使用)
+     * 
+     * @param request
+     * @param user
+     * @param condtion
+     * @return
+     * @throws MYException
+     */
+    private FinanceItemVO sumCurrentTotal(HttpServletRequest request, User user,
+                                          ConditionParse condtion)
+        throws MYException
+    {
+        TaxVO tax = (TaxVO)request.getAttribute("tax");
+
+        // 借方
+        long[] sumMoneryByCondition = financeItemDAO.sumMoneryByCondition(condtion);
+
+        FinanceItemVO currentTotal = new FinanceItemVO();
+
+        currentTotal.setTaxId(tax.getId());
+
+        currentTotal.setDescription("当期合计");
+
+        currentTotal.setInmoney(sumMoneryByCondition[0]);
+
+        currentTotal.setOutmoney(sumMoneryByCondition[1]);
+
+        fillItemVO(currentTotal);
+
+        request.getSession().setAttribute("queryTaxFinance1_currentTotal", currentTotal);
+
+        return currentTotal;
+    }
+
+    /**
+     * 当前累计（借方：从当年1月到选择的结束日期的借方和，贷一样，但是余额是从帐册开始到结束时间的余额，支持辅助核算的过滤）
+     * 
+     * @param request
+     * @param user
+     * @param condtion
+     * @return
+     * @throws MYException
+     */
+    private FinanceItemVO sumAllTotal(HttpServletRequest request, User user)
+        throws MYException
+    {
+        // 从当年1月到选择的结束日期
+        ConditionParse condtion = getQueryCondition(request, user, 2);
+
+        TaxVO tax = (TaxVO)request.getAttribute("tax");
+
+        // 借方
+        long[] sumMoneryByCondition = financeItemDAO.sumMoneryByCondition(condtion);
+
+        FinanceItemVO allTotal = new FinanceItemVO();
+
+        allTotal.setTaxId(tax.getId());
+
+        allTotal.setDescription("当前累计");
+
+        allTotal.setInmoney(sumMoneryByCondition[0]);
+
+        allTotal.setOutmoney(sumMoneryByCondition[1]);
+
+        fillItemVO(allTotal);
+
+        FinanceItemVO curremt = (FinanceItemVO)request.getSession().getAttribute(
+            "queryTaxFinance1_currentTotal");
+
+        // 累计的需要叠加
+        FinanceItemVO head = (FinanceItemVO)request.getSession().getAttribute(
+            "queryTaxFinance1_head");
+
+        // 重新计算
+        allTotal.setLastmoney(head.getLastmoney() + curremt.getLastmoney());
+
+        allTotal.setShowLastmoney(FinanceHelper.longToString(allTotal.getLastmoney()));
+
+        request.getSession().setAttribute("queryTaxFinance1_allTotal", allTotal);
+
+        return allTotal;
+    }
+
+    /**
+     * getQueryCondition
+     * 
+     * @param request
+     * @param user
+     * @param type
+     * @return
+     * @throws MYException
+     */
+    protected ConditionParse getQueryCondition(HttpServletRequest request, User user, int type)
         throws MYException
     {
         ConditionParse condtion = new ConditionParse();
 
         condtion.addWhereStr();
 
-        String beginDate = request.getParameter("beginDate");
-        condtion.addCondition("FinanceItemBean.financeDate", ">=", beginDate);
+        if (type == 0)
+        {
+            String beginDate = request.getParameter("beginDate");
+            condtion.addCondition("FinanceItemBean.financeDate", ">=", beginDate);
 
-        String endDate = request.getParameter("endDate");
-        condtion.addCondition("FinanceItemBean.financeDate", "<=", endDate);
+            String endDate = request.getParameter("endDate");
+            condtion.addCondition("FinanceItemBean.financeDate", "<=", endDate);
+        }
+
+        // 结转 开始日期前的结余(整个表查询哦)
+        if (type == 1)
+        {
+            // 开始日期前的结余
+            String beginDate = request.getParameter("beginDate");
+
+            // 这里的时间是默认的
+            condtion.addCondition("FinanceItemBean.financeDate", ">", "2011-05-01");
+
+            condtion.addCondition("FinanceItemBean.financeDate", "<", beginDate);
+        }
+
+        // 当前累计(从当年1月到选择的结束日期)
+        if (type == 2)
+        {
+            String endDate = request.getParameter("endDate");
+
+            // 从当年1月
+            condtion.addCondition("FinanceItemBean.financeDate", ">=", endDate.substring(0, 4)
+                                                                       + "-01-01");
+
+            condtion.addCondition("FinanceItemBean.financeDate", "<=", endDate);
+        }
 
         String taxId = request.getParameter("taxId");
 
@@ -252,7 +461,7 @@ public class ParentQueryFinaAction extends DispatchAction
         {
             if (OldPageSeparateTools.isFirstLoad(request))
             {
-                ConditionParse condtion = getQueryCondition(request, user);
+                ConditionParse condtion = getQueryCondition(request, user, 0);
 
                 int tatol = financeItemDAO.countVOByCondition(condtion.toString());
 
@@ -377,6 +586,8 @@ public class ParentQueryFinaAction extends DispatchAction
             last = item.getOutmoney() - item.getInmoney();
             item.setForwardName("贷");
         }
+
+        item.setLastmoney(last);
 
         item.setShowLastmoney(FinanceHelper.longToString(last));
     }

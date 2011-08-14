@@ -40,4 +40,6 @@ public interface FinanceItemDAO extends DAO<FinanceItemBean, FinanceItemVO>
      * @return
      */
     long sumOutByCondition(ConditionParse condition);
+
+    long[] sumMoneryByCondition(ConditionParse condition);
 }
