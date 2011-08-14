@@ -28,7 +28,8 @@ public class PageFormTurning extends BodyTagCenterSupport
      * 默认构建器
      */
     public PageFormTurning()
-    {}
+    {
+    }
 
     public int doStartTag()
         throws JspException
@@ -109,10 +110,14 @@ public class PageFormTurning extends BodyTagCenterSupport
             dis2 = "color: gray;";
         }
 
-        buffer.append("<input type='hidden' id=page name=page>").append(
-            "<input type='button' id=preButton style='cursor: pointer;" + dis1
-                + "' class='button_class' accesskey='B' value='&nbsp;上一页&nbsp;'").append(
-            preButtonD).append(line);
+        buffer
+            .append("<input type='hidden' id=page name=page>")
+            .append("<input type='hidden' id=go_page name=go_page>")
+            .append(
+                "<input type='button' id=preButton style='cursor: pointer;" + dis1
+                    + "' class='button_class' accesskey='B' value='&nbsp;上一页&nbsp;'")
+            .append(preButtonD)
+            .append(line);
         // previous
         buffer.append("onclick='" + getJS("previous") + "'>").append(line);
 
@@ -122,6 +127,25 @@ public class PageFormTurning extends BodyTagCenterSupport
             nextButtonD).append(line);
 
         buffer.append("onclick='" + getJS("next") + "'>").append(line);
+
+        if (page.getPageCount() > 0)
+        {
+            buffer.append("跳转:<select name='pageSelect' onchange='" + goPage() + "'>").append(line);
+
+            for (int i = 1; i <= page.getPageCount(); i++ )
+            {
+                if (page.getNowPage() == i)
+                {
+                    buffer.append("<option value='" + i + "' selected>" + i + "</option>").append(
+                        line);
+                }
+                else
+                {
+                    buffer.append("<option value='" + i + "'>" + i + "</option>").append(line);
+                }
+            }
+            buffer.append("</select>").append(line);
+        }
 
         buffer.append("</tr></table>").append(line);
     }
@@ -143,6 +167,8 @@ public class PageFormTurning extends BodyTagCenterSupport
             js += this.form + ".method.value = \"" + this.method + "\";";
         }
 
+        js += this.form + ".go_page.value =\"\";";
+
         js += this.form + ".page.value = \"" + page + "\";if(window.$Dbuttons){$Dbuttons(true);";
 
         js += this.form + ".submit();}else{" + this.form + ".submit();}";
@@ -150,8 +176,31 @@ public class PageFormTurning extends BodyTagCenterSupport
         return js;
     }
 
+    private String goPage()
+    {
+        String js = "javaScript:";
+        if (isNullOrNone(this.method))
+        {
+            js += this.form + ".action = \"" + this.action + "\";";
+        }
+        else
+        {
+            js += this.form + ".method.value = \"" + this.method + "\";";
+        }
+
+        js += this.form + ".page.value =\"\";";
+
+        js += this.form
+              + ".go_page.value = $$(\"pageSelect\");if(window.$Dbuttons){$Dbuttons(true);";
+
+        js += this.form + ".submit();}else{" + this.form + ".submit();}";
+
+        return js;
+    }
+
     private void writeEnd(StringBuffer buffer)
-    {}
+    {
+    }
 
     /**
      * @return the form

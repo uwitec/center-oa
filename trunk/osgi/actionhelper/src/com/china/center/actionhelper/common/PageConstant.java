@@ -42,6 +42,8 @@ public interface PageConstant
 
     String PAGE = "page";
 
+    String GO_PAGE = "go_page";
+
     String GMENU = "f_menu";
 
     String MENU = "menu";

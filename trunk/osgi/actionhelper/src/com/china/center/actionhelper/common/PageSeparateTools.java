@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
+import com.china.center.tools.CommonTools;
 import com.china.center.tools.StringTools;
 
 
@@ -99,6 +100,8 @@ public abstract class PageSeparateTools extends AbstractPage
         // 具备优先性
         String page = request.getParameter(PAGE);
 
+        String goPage = request.getParameter(GO_PAGE);
+
         String memory = request.getParameter(MEMORY);
 
         Object o1 = request.getAttribute(MEMORY);
@@ -108,7 +111,8 @@ public abstract class PageSeparateTools extends AbstractPage
             return false;
         }
 
-        if ( !StringTools.isNullOrNone(page) || !StringTools.isNullOrNone(memory))
+        if ( !StringTools.isNullOrNone(page) || !StringTools.isNullOrNone(goPage)
+            || !StringTools.isNullOrNone(memory))
         {
             return false;
         }
@@ -312,17 +316,30 @@ public abstract class PageSeparateTools extends AbstractPage
 
         String page = request.getParameter(PAGE);
 
-        if ("next".equals(page))
+        if ( !StringTools.isNullOrNone(page))
         {
-            pageS.nextPage();
-            request.setAttribute("next", pageS.hasNextPage());
-            request.setAttribute("pre", pageS.hasPrevPage());
-            return true;
-        }
-        else if ("previous".equals(page))
-        {
-            pageS.prevPage();
+            if ("next".equals(page))
+            {
+                pageS.nextPage();
+                request.setAttribute("next", pageS.hasNextPage());
+                request.setAttribute("pre", pageS.hasPrevPage());
+                return true;
+            }
+            else if ("previous".equals(page))
+            {
+                pageS.prevPage();
 
+                request.setAttribute("next", pageS.hasNextPage());
+                request.setAttribute("pre", pageS.hasPrevPage());
+                return true;
+            }
+        }
+
+        String goPage = request.getParameter(GO_PAGE);
+
+        if ( !StringTools.isNullOrNone(goPage))
+        {
+            pageS.setNowPage(CommonTools.parseInt(goPage));
             request.setAttribute("next", pageS.hasNextPage());
             request.setAttribute("pre", pageS.hasPrevPage());
             return true;
