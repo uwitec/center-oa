@@ -9,10 +9,12 @@
 package com.china.center.oa.product.manager;
 
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.product.bean.ProviderUserBean;
+import com.china.center.oa.product.listener.ProviderListener;
 
 
 /**
@@ -23,7 +25,7 @@ import com.china.center.oa.product.bean.ProviderUserBean;
  * @see ProviderManager
  * @since 1.0
  */
-public interface ProviderManager
+public interface ProviderManager extends ListenerManager<ProviderListener>
 {
     boolean addBean(User user, ProviderBean bean)
         throws MYException;

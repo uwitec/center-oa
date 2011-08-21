@@ -9,9 +9,12 @@
 package com.china.center.oa.product.manager.impl;
 
 
+import java.util.Collection;
+
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.product.bean.ProviderBean;
@@ -22,6 +25,7 @@ import com.china.center.oa.product.dao.ProductTypeVSCustomerDAO;
 import com.china.center.oa.product.dao.ProviderDAO;
 import com.china.center.oa.product.dao.ProviderHisDAO;
 import com.china.center.oa.product.dao.ProviderUserDAO;
+import com.china.center.oa.product.listener.ProviderListener;
 import com.china.center.oa.product.manager.ProviderManager;
 import com.china.center.oa.product.vs.ProductTypeVSCustomer;
 import com.china.center.oa.publics.dao.CommonDAO;
@@ -41,7 +45,7 @@ import com.china.center.tools.TimeTools;
  * @since 1.0
  */
 @Exceptional
-public class ProviderManagerImpl implements ProviderManager
+public class ProviderManagerImpl extends AbstractListenerManager<ProviderListener> implements ProviderManager
 {
     private ProviderDAO providerDAO = null;
 
@@ -257,7 +261,15 @@ public class ProviderManagerImpl implements ProviderManager
     {
         JudgeTools.judgeParameterIsNull(user, id);
 
-        checkdelBean(id);
+        ProviderBean bean = checkDelBean(id);
+
+        // 这里供应商的删除应该是全局监听
+        Collection<ProviderListener> listenerMapValues = this.listenerMapValues();
+
+        for (ProviderListener providerListener : listenerMapValues)
+        {
+            providerListener.onDelete(bean);
+        }
 
         providerDAO.deleteEntityBean(id);
 
@@ -332,13 +344,17 @@ public class ProviderManagerImpl implements ProviderManager
         }
     }
 
-    private void checkdelBean(String id)
+    private ProviderBean checkDelBean(String id)
         throws MYException
     {
-        if (providerDAO.countProviderInOut(id) > 0)
+        ProviderBean bean = providerDAO.find(id);
+
+        if (bean == null)
         {
-            throw new MYException("供应商已经被使用不能删除");
+            throw new MYException("数据错误,请确认操作");
         }
+
+        return bean;
     }
 
     /**
