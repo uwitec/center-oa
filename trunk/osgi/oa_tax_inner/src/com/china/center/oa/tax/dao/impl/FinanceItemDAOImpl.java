@@ -10,9 +10,12 @@ package com.china.center.oa.tax.dao.impl;
 
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.china.center.jdbc.annosql.tools.BeanTools;
+import com.china.center.jdbc.inter.IbatisDaoSupport;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.tax.bean.FinanceItemBean;
@@ -30,6 +33,15 @@ import com.china.center.oa.tax.vo.FinanceItemVO;
  */
 public class FinanceItemDAOImpl extends BaseDAO<FinanceItemBean, FinanceItemVO> implements FinanceItemDAO
 {
+    private IbatisDaoSupport ibatisDaoSupport = null;
+
+    /**
+     * default constructor
+     */
+    public FinanceItemDAOImpl()
+    {
+    }
+
     public long sumInByCondition(ConditionParse condition)
     {
         String sql = BeanTools.getSumHead(claz, "inmoney") + condition.toString();
@@ -72,5 +84,37 @@ public class FinanceItemDAOImpl extends BaseDAO<FinanceItemBean, FinanceItemVO> 
         }
 
         return result;
+    }
+
+    public List<String> queryDistinctUnitByStafferId(String stafferId, String beginDate,
+                                                     String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("stafferId", stafferId);
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("endDate", endDate);
+
+        List<String> result = getIbatisDaoSupport().queryForList(
+            "FinanceItemDAOImpl.queryDistinctUnitByStafferId", paramterMap);
+
+        return result;
+    }
+
+    /**
+     * @return the ibatisDaoSupport
+     */
+    public IbatisDaoSupport getIbatisDaoSupport()
+    {
+        return ibatisDaoSupport;
+    }
+
+    /**
+     * @param ibatisDaoSupport
+     *            the ibatisDaoSupport to set
+     */
+    public void setIbatisDaoSupport(IbatisDaoSupport ibatisDaoSupport)
+    {
+        this.ibatisDaoSupport = ibatisDaoSupport;
     }
 }

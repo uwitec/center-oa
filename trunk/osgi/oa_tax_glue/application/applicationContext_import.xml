@@ -114,5 +114,9 @@
     <osgi:reference id="stockPayApplyManager" interface="com.china.center.oa.finance.manager.StockPayApplyManager" />
     
     <osgi:reference id="composeFeeDefinedDAO" interface="com.china.center.oa.product.dao.ComposeFeeDefinedDAO" />
+    
+    <osgi:reference id="customerManager" interface="com.china.center.oa.customer.manager.CustomerManager" />
+    
+    <osgi:reference id="providerManager" interface="com.china.center.oa.product.manager.ProviderManager" />
 
 </beans>

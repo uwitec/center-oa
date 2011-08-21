@@ -18,6 +18,7 @@ function load()
 {
 	loadForm();
 	
+	if ($O('senfe') != null)
 	bingTable("senfe");
 }
 
@@ -63,33 +64,39 @@ function getStaffers(oos)
     $("input[name='stafferName']").val(obj.pname);
 }
 
-function selectDepartment()
+function selectUnit(obj)
 {
-    window.common.modal('../admin/org.do?method=popOrg');
+    window.common.modal('../finance/finance.do?method=rptQueryUnit&load=1');
 }
 
-function setOrgFromPop(id, name, level, pname)
+function getUnit(obj)
 {
-    var showName = '';
-    
-    if (pname)
-    showName = pname + '->' + '[' + level + ']' + name;
-    else
-    showName = '[' + level + ']' + name;
-    
-    $("input[name='departmentId']").val(id);
-    $("input[name='departmentName']").val(showName);
+    $("input[name='unitId']").val(obj.value);
+    $("input[name='unitName']").val(obj.pname);
 }
 
 function resetAll()
 {
     $("input[name='taxId']").val('');
     $("input[name='stafferId']").val('');
-    $("input[name='departmentId']").val('');
+    $("input[name='unitId']").val('');
     $("input[name='taxName']").val('');
     $("input[name='stafferName']").val('');
-    $("input[name='departmentName']").val('');
+    $("input[name='unitName']").val('');
 }
+
+function clearStaffer()
+{
+    $("input[name='stafferId']").val('');
+    $("input[name='stafferName']").val('');
+}
+
+function clearUnit()
+{
+    $("input[name='unitId']").val('');
+    $("input[name='unitName']").val('');
+}
+
 </script>
 
 </head>
@@ -99,7 +106,7 @@ function resetAll()
 <input type="hidden" value="1" name="firstLoad">
 <input type="hidden" name="taxId" value="${taxId}"> 
 <input type="hidden" name="stafferId" value="${stafferId}"> 
-<input type="hidden" name="departmentId" value="${departmentId}"> 
+<input type="hidden" name="unitId" value="${unitId}"> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">科目余额</td>
@@ -122,6 +129,24 @@ function resetAll()
 				<font color="#FF0000">*</font>
 				</td>
 			</tr>
+			
+			<tr class="content1">
+                <td width="15%" align="center">职员</td>
+                <td align="left" colspan="1"><input type="text" name="stafferName" style="width: 70%" value="${stafferName}" readonly="readonly">
+                <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectStaffer()">&nbsp;
+                <input type="button" value="&nbsp;C&nbsp;" name="qout_c" id="qout_c"
+                    class="button_class" onclick="clearStaffer()">
+                </td>
+                
+                <td width="15%" align="center">单位</td>
+                <td align="left" colspan="1"><input type="text" name="unitName" style="width: 70%" value="${unitName}" readonly="readonly">
+                <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectUnit()">&nbsp;
+                <input type="button" value="&nbsp;C&nbsp;" name="qout_c1" id="qout_c1"
+                    class="button_class" onclick="clearUnit()">
+                </td>
+            </tr>
 
 			<tr class="content2">
                 <td width="15%" align="center">科目</td>
@@ -131,8 +156,15 @@ function resetAll()
                 <font color="#FF0000">*</font>
                 </td>
                 
-                <td width="15%" align="center"></td>
-                <td align="left" colspan="1"></td>
+                <td width="15%" align="center">类型:</td>
+                <td align="left" colspan="1">
+                <select name="queryType"
+                    class="select_class" values="${queryType}" style="width: 80%">
+                    <option value="0">科目查询</option>
+                    <option value="1">职员查询</option>
+                    <option value="2">单位查询</option>
+                </select>
+                </td>
             </tr>
 
 			<tr class="content1">
@@ -152,36 +184,36 @@ function resetAll()
 	<p:line flag="0" />
 
 	<p:subBody width="98%">
-		<table width="100%" align="center" cellspacing='1' class="table0" id="senfe">
-			<tr align=center class="content0">
-				<td align="center" width="8%" class="td_class" onclick="tableSort(this)"><strong>日期</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this)"><strong>凭证</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this)"><strong>科目</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this)"><strong>摘要</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>借方金额</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>贷方金额</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this)"><strong>借/贷</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>余额</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this)"><strong>辅助</strong></td>
-			</tr>
-
-			<c:forEach items="${resultList}" var="item"
-				varStatus="vs">
-				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
-					<td align="left" width="8%"  onclick="hrefAndSelect(this)">${item.financeDate}</td>
-					<td align="left" onclick="hrefAndSelect(this)">
-					<a href="../finance/finance.do?method=findFinance&id=${item.pid}">${item.pid}</a>
-					</td>
-					<td align="left" onclick="hrefAndSelect(this)">${item.taxId} ${item.taxName}</td>
-					<td align="left" onclick="hrefAndSelect(this)">${item.description}</td>
-					<td align="left" width="8%" onclick="hrefAndSelect(this)" >${item.showInmoney}</td>
-					<td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showOutmoney}</td>
-					<td align="left" onclick="hrefAndSelect(this)">${item.forwardName}</td>
-					<td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showLastmoney}</td>
-					<td align="left" onclick="hrefAndSelect(this)">${item.departmentName}/${item.stafferName}/${item.unitName}/${item.productName}/${item.depotName}/${item.duty2Name}</td>
+	    <c:if test="${queryType == '0'}">
+			<table width="100%" align="center" cellspacing='1' class="table0" id="senfe">
+				<tr align=center class="content0">
+					<td align="center" width="8%" class="td_class" onclick="tableSort(this)"><strong>科目编码</strong></td>
+					<td align="center" class="td_class" onclick="tableSort(this)"><strong>科目名称</strong></td>
+					<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>期初余额</strong></td>
+					<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>本期借方</strong></td>
+					<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>本期贷方</strong></td>
+					<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>借方累计</strong></td>
+					<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>贷方累计</strong></td>
+					<td align="center" class="td_class" onclick="tableSort(this)"><strong>方向</strong></td>
+					<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>期末余额</strong></td>
 				</tr>
-			</c:forEach>
-		</table>
+	
+				<c:forEach items="${resultList}" var="item"
+					varStatus="vs">
+					<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
+						<td align="left" width="8%"  onclick="hrefAndSelect(this)">${item.taxId}</td>
+						<td align="left" width="25%" onclick="hrefAndSelect(this)">${item.taxName}</td>
+						<td align="left" onclick="hrefAndSelect(this)">${item.showBeginAllmoney}</td>
+						<td align="left" width="8%" onclick="hrefAndSelect(this)" >${item.showCurrInmoney}</td>
+						<td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showCurrOutmoney}</td>
+						<td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showAllInmoney}</td>
+						<td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showAllOutmoney}</td>
+						<td align="left" width="4%" onclick="hrefAndSelect(this)">${item.forwardName}</td>
+						<td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showLastmoney}</td>
+					</tr>
+				</c:forEach>
+			</table>
+		</c:if>
 		
 	</p:subBody>
 

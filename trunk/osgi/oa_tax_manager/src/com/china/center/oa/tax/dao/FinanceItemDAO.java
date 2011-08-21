@@ -9,6 +9,8 @@
 package com.china.center.oa.tax.dao;
 
 
+import java.util.List;
+
 import com.china.center.jdbc.inter.DAO;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.tax.bean.FinanceItemBean;
@@ -42,4 +44,14 @@ public interface FinanceItemDAO extends DAO<FinanceItemBean, FinanceItemVO>
     long sumOutByCondition(ConditionParse condition);
 
     long[] sumMoneryByCondition(ConditionParse condition);
+
+    /**
+     * 查询指定时间内发生凭证的单位
+     * 
+     * @param stafferId
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    List<String> queryDistinctUnitByStafferId(String stafferId, String beginDate, String endDate);
 }

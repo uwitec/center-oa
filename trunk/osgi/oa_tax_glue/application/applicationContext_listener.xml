@@ -138,4 +138,30 @@
         </property>
     </bean>
     
+    <bean id="customerListenerTaxImpl" class="com.china.center.oa.tax.glue.listener.impl.CustomerListenerTaxImpl" />
+    
+    <bean id="customerLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="customerManager"/>
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="customerListenerTaxImpl" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="providerListenerTaxImpl" class="com.china.center.oa.tax.glue.listener.impl.ProviderListenerTaxImpl" />
+    
+    <bean id="providerLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="providerManager"/>
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="providerListenerTaxImpl" />
+            </list>
+        </property>
+    </bean>
+    
 </beans>

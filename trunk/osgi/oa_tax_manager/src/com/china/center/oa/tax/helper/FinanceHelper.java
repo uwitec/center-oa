@@ -81,7 +81,23 @@ public abstract class FinanceHelper
      */
     public static String longToString(long val)
     {
-        return MathTools.formatNum(val / (TaxConstanst.DOUBLE_TO_INT + 0.0d));
+        String formatNum = formatNum(val / (TaxConstanst.DOUBLE_TO_INT + 0.0d));
+
+        return formatNum;
+    }
+
+    public static String formatNum(double d)
+    {
+        DecimalFormat df = new DecimalFormat("###,###.00");
+
+        String result = df.format(d);
+
+        if (".00".equals(result))
+        {
+            result = "0" + result;
+        }
+
+        return result;
     }
 
     public static void copyTax(TaxBean tax, FinanceItemBean item)
@@ -144,6 +160,18 @@ public abstract class FinanceHelper
     public static String createFinanceLink(String id)
     {
         return "<a href='../finance/finance.do?method=findFinance&id=" + id + "'>" + id + "</a>";
+    }
+
+    public static String getForwardName(TaxBean taxBean)
+    {
+        if (taxBean.getForward() == TaxConstanst.TAX_FORWARD_IN)
+        {
+            return "借";
+        }
+        else
+        {
+            return "贷";
+        }
     }
 
     /**
