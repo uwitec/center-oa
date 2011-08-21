@@ -101,6 +101,19 @@ public class FinanceItemDAOImpl extends BaseDAO<FinanceItemBean, FinanceItemVO> 
         return result;
     }
 
+    public List<String> queryDistinctStafferId(String beginDate, String endDate)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("beginDate", beginDate);
+        paramterMap.put("endDate", endDate);
+
+        List<String> result = getIbatisDaoSupport().queryForList(
+            "FinanceItemDAOImpl.queryDistinctStafferId", paramterMap);
+
+        return result;
+    }
+
     /**
      * @return the ibatisDaoSupport
      */

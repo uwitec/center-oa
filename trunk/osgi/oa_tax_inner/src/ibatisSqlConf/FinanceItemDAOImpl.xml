@@ -13,4 +13,13 @@
             and t1.financeDate <= #endDate#
         ]]>
     </select>
+    
+     <!-- 查询指定时间内发生凭证的职员-->
+    <select id="queryDistinctStafferId" parameterClass="java.util.Map" resultClass="java.lang.String">
+        <![CDATA[
+            select distinct(t1.stafferId) from T_CENTER_FINANCEITEM t1
+            where t1.financeDate >= #beginDate# 
+            and t1.financeDate <= #endDate#
+        ]]>
+    </select>
 </sqlMap>

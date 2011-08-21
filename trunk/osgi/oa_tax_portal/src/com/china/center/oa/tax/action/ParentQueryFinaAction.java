@@ -528,6 +528,8 @@ public class ParentQueryFinaAction extends DispatchAction
 
         request.getSession().setAttribute("EXPORT_FINANCEITE_KEY", QUERYTAXFINANCE2);
 
+        request.getSession().setAttribute("EXPORT_FINANCEITE_QUERYTYPE", queryType);
+
         CommonTools.saveParamers(request);
 
         try
@@ -547,15 +549,21 @@ public class ParentQueryFinaAction extends DispatchAction
                 processTaxLastQuery(request, user, tax);
             }
 
+            // 职员查询
+            if ("1".equals(queryType))
+            {
+                processStafferLastQuery(request, user, tax);
+            }
+
             // 单位查询
             if ("2".equals(queryType))
             {
                 processUnitLastQuery(request, user, tax);
             }
         }
-        catch (Exception e)
+        catch (MYException e)
         {
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "查询失败");
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
 
             _logger.error(e, e);
 
@@ -696,8 +704,8 @@ public class ParentQueryFinaAction extends DispatchAction
             String beginDate = request.getParameter("beginDate");
 
             String endDate = request.getParameter("endDate");
-            // 先查询出本期发生的单位
 
+            // 先查询出本期发生的单位
             unitList.addAll(financeItemDAO.queryDistinctUnitByStafferId(stafferId, beginDate,
                 endDate));
         }
@@ -710,6 +718,11 @@ public class ParentQueryFinaAction extends DispatchAction
         // 查询每个单位
         for (String eachUnitId : unitList)
         {
+            if (StringTools.isNullOrNone(eachUnitId))
+            {
+                continue;
+            }
+
             // 查询
             FinanceShowVO show = new FinanceShowVO(2);
 
@@ -735,7 +748,7 @@ public class ParentQueryFinaAction extends DispatchAction
 
             show.setCurrInmoney(sumCurrMoneryByCondition[0]);
             show.setShowCurrInmoney(FinanceHelper.longToString(sumCurrMoneryByCondition[0]));
-            show.setCurrOutmone(sumCurrMoneryByCondition[1]);
+            show.setCurrOutmoney(sumCurrMoneryByCondition[1]);
             show.setShowCurrOutmoney(FinanceHelper.longToString(sumCurrMoneryByCondition[1]));
 
             // 期初余额
@@ -776,6 +789,179 @@ public class ParentQueryFinaAction extends DispatchAction
             showList.add(show);
         }
 
+        // 合计
+        FinanceShowVO total = new FinanceShowVO();
+
+        total.setTaxId("合计");
+
+        total.setForwardName(FinanceHelper.getForwardName(taxBean));
+
+        for (FinanceShowVO financeShowVO : showList)
+        {
+            total.setBeginAllmoney(financeShowVO.getBeginAllmoney() + total.getBeginAllmoney());
+
+            total.setCurrInmoney(financeShowVO.getCurrInmoney() + total.getCurrInmoney());
+            total.setCurrOutmoney(financeShowVO.getCurrOutmoney() + total.getCurrOutmoney());
+
+            total.setAllInmoney(financeShowVO.getAllInmoney() + total.getAllInmoney());
+            total.setAllOutmoney(financeShowVO.getAllOutmoney() + total.getAllOutmoney());
+
+            total.setLastmoney(financeShowVO.getLastmoney() + total.getLastmoney());
+        }
+
+        total.setShowBeginAllmoney(FinanceHelper.longToString(total.getBeginAllmoney()));
+        total.setShowCurrInmoney(FinanceHelper.longToString(total.getCurrInmoney()));
+        total.setShowCurrOutmoney(FinanceHelper.longToString(total.getCurrOutmoney()));
+
+        total.setShowAllInmoney(FinanceHelper.longToString(total.getAllInmoney()));
+        total.setShowAllOutmoney(FinanceHelper.longToString(total.getAllOutmoney()));
+
+        total.setShowLastmoney(FinanceHelper.longToString(total.getLastmoney()));
+
+        showList.add(total);
+    }
+
+    /**
+     * processStafferLastQuery
+     * 
+     * @param request
+     * @param user
+     * @param taxBean
+     * @throws MYException
+     */
+    private void processStafferLastQuery(HttpServletRequest request, User user, TaxVO taxBean)
+        throws MYException
+    {
+        List<FinanceShowVO> showList = new ArrayList();
+
+        request.setAttribute("resultList", showList);
+
+        // 这里的查询分为职员下所有单位的查询,或者查询指定的一个单位
+
+        String stafferId = request.getParameter("stafferId");
+
+        List<String> stafferList = new ArrayList();
+
+        // 查询名下所有的单位(过滤掉查询范围内没有出现的单位)
+        if (StringTools.isNullOrNone(stafferId))
+        {
+            String beginDate = request.getParameter("beginDate");
+
+            String endDate = request.getParameter("endDate");
+
+            // 先查询出本期发生的单位
+            stafferList.addAll(financeItemDAO.queryDistinctStafferId(beginDate, endDate));
+        }
+        else
+        {
+            // 只有一个单位
+            stafferList.add(stafferId);
+        }
+
+        // 查询每个职员
+        for (String eachStafferId : stafferList)
+        {
+            if (StringTools.isNullOrNone(eachStafferId))
+            {
+                continue;
+            }
+
+            // 查询
+            FinanceShowVO show = new FinanceShowVO(1);
+
+            show.setTaxId(taxBean.getId());
+
+            show.setTaxName(taxBean.getName());
+
+            show.setForwardName(FinanceHelper.getForwardName(taxBean));
+
+            StafferBean staffer = stafferDAO.find(eachStafferId);
+
+            if (staffer != null)
+            {
+                show.setStafferName(staffer.getName());
+            }
+
+            // 本期借方/贷方
+            ConditionParse condtion = getQueryCondition2(request, user, 0);
+            createStafferCondition(taxBean, eachStafferId, condtion);
+
+            long[] sumCurrMoneryByCondition = financeItemDAO.sumMoneryByCondition(condtion);
+
+            show.setCurrInmoney(sumCurrMoneryByCondition[0]);
+            show.setShowCurrInmoney(FinanceHelper.longToString(sumCurrMoneryByCondition[0]));
+
+            show.setCurrOutmoney(sumCurrMoneryByCondition[1]);
+            show.setShowCurrOutmoney(FinanceHelper.longToString(sumCurrMoneryByCondition[1]));
+
+            // 期初余额
+            condtion = getQueryCondition2(request, user, 1);
+            createStafferCondition(taxBean, eachStafferId, condtion);
+
+            FinanceItemVO head = sumHeadInner(condtion, taxBean);
+
+            show.setBeginAllmoney(head.getLastmoney());
+            show.setShowBeginAllmoney(FinanceHelper.longToString(head.getLastmoney()));
+
+            // 当前累计(从当年1月到选择的结束日期)
+            condtion = getQueryCondition2(request, user, 2);
+            createStafferCondition(taxBean, eachStafferId, condtion);
+
+            long[] sumAllMoneryByCondition = financeItemDAO.sumMoneryByCondition(condtion);
+
+            show.setAllInmoney(sumAllMoneryByCondition[0]);
+            show.setShowAllInmoney(FinanceHelper.longToString(sumAllMoneryByCondition[0]));
+            show.setAllOutmoney(sumAllMoneryByCondition[1]);
+            show.setShowAllOutmoney(FinanceHelper.longToString(sumAllMoneryByCondition[1]));
+
+            // 期末余额
+            long currentLast = 0L;
+
+            if (taxBean.getForward() == TaxConstanst.TAX_FORWARD_IN)
+            {
+                currentLast = sumCurrMoneryByCondition[0] - sumCurrMoneryByCondition[1];
+            }
+            else
+            {
+                currentLast = sumCurrMoneryByCondition[1] - sumCurrMoneryByCondition[0];
+            }
+
+            show.setLastmoney(head.getLastmoney() + currentLast);
+            show.setShowLastmoney(FinanceHelper.longToString(head.getLastmoney() + currentLast));
+
+            showList.add(show);
+        }
+
+        // 合计
+        FinanceShowVO total = new FinanceShowVO();
+
+        total.setTaxId("合计");
+
+        total.setForwardName(FinanceHelper.getForwardName(taxBean));
+
+        for (FinanceShowVO financeShowVO : showList)
+        {
+            total.setBeginAllmoney(financeShowVO.getBeginAllmoney() + total.getBeginAllmoney());
+
+            total.setCurrInmoney(financeShowVO.getCurrInmoney() + total.getCurrInmoney());
+            total.setCurrOutmoney(financeShowVO.getCurrOutmoney() + total.getCurrOutmoney());
+
+            total.setAllInmoney(financeShowVO.getAllInmoney() + total.getAllInmoney());
+            total.setAllOutmoney(financeShowVO.getAllOutmoney() + total.getAllOutmoney());
+
+            total.setLastmoney(financeShowVO.getLastmoney() + total.getLastmoney());
+        }
+
+        total.setShowBeginAllmoney(FinanceHelper.longToString(total.getBeginAllmoney()));
+        total.setShowCurrInmoney(FinanceHelper.longToString(total.getCurrInmoney()));
+        total.setShowCurrOutmoney(FinanceHelper.longToString(total.getCurrOutmoney()));
+
+        total.setShowAllInmoney(FinanceHelper.longToString(total.getAllInmoney()));
+        total.setShowAllOutmoney(FinanceHelper.longToString(total.getAllOutmoney()));
+
+        total.setShowLastmoney(FinanceHelper.longToString(total.getLastmoney()));
+
+        showList.add(total);
     }
 
     /**
@@ -790,6 +976,20 @@ public class ParentQueryFinaAction extends DispatchAction
         condtion.addCondition("FinanceItemBean.taxId" + taxBean.getLevel(), "=", taxBean.getId());
 
         condtion.addCondition("FinanceItemBean.unitId", "=", eachUnitId);
+    }
+
+    /**
+     * createStafferCondition
+     * 
+     * @param taxBean
+     * @param stafferId
+     * @param condtion
+     */
+    private void createStafferCondition(TaxVO taxBean, String stafferId, ConditionParse condtion)
+    {
+        condtion.addCondition("FinanceItemBean.taxId" + taxBean.getLevel(), "=", taxBean.getId());
+
+        condtion.addCondition("FinanceItemBean.stafferId", "=", stafferId);
     }
 
     /**

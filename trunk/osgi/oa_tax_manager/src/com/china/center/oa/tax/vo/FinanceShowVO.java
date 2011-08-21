@@ -47,7 +47,7 @@ public class FinanceShowVO implements Serializable
 
     private String showCurrOutmoney = "";
 
-    private long currOutmone = 0L;
+    private long currOutmoney = 0L;
 
     private String showAllOutmoney = "";
 
@@ -69,6 +69,11 @@ public class FinanceShowVO implements Serializable
      * 单位名称
      */
     private String unitName = "";
+
+    /**
+     * 职员
+     */
+    private String stafferName = "";
 
     /**
      * 0:科目 1:职员 2:单位
@@ -326,20 +331,20 @@ public class FinanceShowVO implements Serializable
     }
 
     /**
-     * @return the currOutmone
+     * @return the currOutmoney
      */
-    public long getCurrOutmone()
+    public long getCurrOutmoney()
     {
-        return currOutmone;
+        return currOutmoney;
     }
 
     /**
-     * @param currOutmone
-     *            the currOutmone to set
+     * @param currOutmoney
+     *            the currOutmoney to set
      */
-    public void setCurrOutmone(long currOutmone)
+    public void setCurrOutmoney(long currOutmoney)
     {
-        this.currOutmone = currOutmone;
+        this.currOutmoney = currOutmoney;
     }
 
     /**
@@ -374,6 +379,23 @@ public class FinanceShowVO implements Serializable
     public void setLastmoney(long lastmoney)
     {
         this.lastmoney = lastmoney;
+    }
+
+    /**
+     * @return the stafferName
+     */
+    public String getStafferName()
+    {
+        return stafferName;
+    }
+
+    /**
+     * @param stafferName
+     *            the stafferName to set
+     */
+    public void setStafferName(String stafferName)
+    {
+        this.stafferName = stafferName;
     }
 
     /**
@@ -418,8 +440,8 @@ public class FinanceShowVO implements Serializable
             .append("showCurrOutmoney = ")
             .append(this.showCurrOutmoney)
             .append(TAB)
-            .append("currOutmone = ")
-            .append(this.currOutmone)
+            .append("currOutmoney = ")
+            .append(this.currOutmoney)
             .append(TAB)
             .append("showAllOutmoney = ")
             .append(this.showAllOutmoney)
@@ -438,6 +460,9 @@ public class FinanceShowVO implements Serializable
             .append(TAB)
             .append("unitName = ")
             .append(this.unitName)
+            .append(TAB)
+            .append("stafferName = ")
+            .append(this.stafferName)
             .append(TAB)
             .append("type = ")
             .append(this.type)

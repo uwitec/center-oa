@@ -54,4 +54,14 @@ public interface FinanceItemDAO extends DAO<FinanceItemBean, FinanceItemVO>
      * @return
      */
     List<String> queryDistinctUnitByStafferId(String stafferId, String beginDate, String endDate);
+
+    /**
+     * 查询指定时间内发生凭证的职员
+     * 
+     * @param stafferId
+     * @param beginDate
+     * @param endDate
+     * @return
+     */
+    List<String> queryDistinctStafferId(String beginDate, String endDate);
 }

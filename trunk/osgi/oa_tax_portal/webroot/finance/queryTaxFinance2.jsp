@@ -187,8 +187,7 @@ function clearUnit()
 	    <c:if test="${queryType == '0'}">
 			<table width="100%" align="center" cellspacing='1' class="table0" id="senfe">
 				<tr align=center class="content0">
-					<td align="center" width="8%" class="td_class" onclick="tableSort(this)"><strong>科目编码</strong></td>
-					<td align="center" class="td_class" onclick="tableSort(this)"><strong>科目名称</strong></td>
+					<td align="center" width="20%" class="td_class" onclick="tableSort(this)"><strong>科目</strong></td>
 					<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>期初余额</strong></td>
 					<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>本期借方</strong></td>
 					<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>本期贷方</strong></td>
@@ -201,9 +200,8 @@ function clearUnit()
 				<c:forEach items="${resultList}" var="item"
 					varStatus="vs">
 					<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
-						<td align="left" width="8%"  onclick="hrefAndSelect(this)">${item.taxId}</td>
-						<td align="left" width="25%" onclick="hrefAndSelect(this)">${item.taxName}</td>
-						<td align="left" onclick="hrefAndSelect(this)">${item.showBeginAllmoney}</td>
+						<td align="left" width="20%" onclick="hrefAndSelect(this)">${item.taxId} ${item.taxName}</td>
+						<td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showBeginAllmoney}</td>
 						<td align="left" width="8%" onclick="hrefAndSelect(this)" >${item.showCurrInmoney}</td>
 						<td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showCurrOutmoney}</td>
 						<td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showAllInmoney}</td>
@@ -214,6 +212,66 @@ function clearUnit()
 				</c:forEach>
 			</table>
 		</c:if>
+		
+		<c:if test="${queryType == '1'}">
+            <table width="100%" align="center" cellspacing='1' class="table0" id="senfe">
+                <tr align=center class="content0">
+                    <td align="center" width="20%" class="td_class" onclick="tableSort(this)"><strong>科目</strong></td>
+                    <td align="center" class="td_class" onclick="tableSort(this)"><strong>职员</strong></td>
+                    <td align="center" class="td_class" onclick="tableSort(this, true)"><strong>期初余额</strong></td>
+                    <td align="center" class="td_class" onclick="tableSort(this, true)"><strong>本期借方</strong></td>
+                    <td align="center" class="td_class" onclick="tableSort(this, true)"><strong>本期贷方</strong></td>
+                    <td align="center" class="td_class" onclick="tableSort(this, true)"><strong>借/贷累计</strong></td>
+                    <td align="center" class="td_class" onclick="tableSort(this)"><strong>方向</strong></td>
+                    <td align="center" class="td_class" onclick="tableSort(this, true)"><strong>期末余额</strong></td>
+                </tr>
+    
+                <c:forEach items="${resultList}" var="item"
+                    varStatus="vs">
+                    <tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
+                        <td align="left" width="20%"  onclick="hrefAndSelect(this)">${item.taxId} ${item.taxName}</td>
+                        <td align="left" width="15%" onclick="hrefAndSelect(this)">${item.stafferName}</td>
+                        <td align="left" width="8% onclick="hrefAndSelect(this)">${item.showBeginAllmoney}</td>
+                        <td align="left" width="8%" onclick="hrefAndSelect(this)" >${item.showCurrInmoney}</td>
+                        <td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showCurrOutmoney}</td>
+                        <td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showAllInmoney}/${item.showAllOutmoney}</td>
+                        <td align="left" width="4%" onclick="hrefAndSelect(this)">${item.forwardName}</td>
+                        <td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showLastmoney}</td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </c:if>
+		
+		
+		<c:if test="${queryType == '2'}">
+            <table width="100%" align="center" cellspacing='1' class="table0" id="senfe">
+                <tr align=center class="content0">
+                    <td align="center" width="20%" class="td_class" onclick="tableSort(this)"><strong>科目</strong></td>
+                    <td align="center" class="td_class" onclick="tableSort(this)"><strong>单位名称</strong></td>
+                    <td align="center" class="td_class" onclick="tableSort(this, true)"><strong>期初余额</strong></td>
+                    <td align="center" class="td_class" onclick="tableSort(this, true)"><strong>本期借方</strong></td>
+                    <td align="center" class="td_class" onclick="tableSort(this, true)"><strong>本期贷方</strong></td>
+                    <td align="center" class="td_class" onclick="tableSort(this, true)"><strong>借/贷累计</strong></td>
+                    <td align="center" class="td_class" onclick="tableSort(this)"><strong>方向</strong></td>
+                    <td align="center" class="td_class" onclick="tableSort(this, true)"><strong>期末余额</strong></td>
+                </tr>
+    
+                <c:forEach items="${resultList}" var="item"
+                    varStatus="vs">
+                    <tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
+                        <td align="left" width="20%"  onclick="hrefAndSelect(this)">${item.taxId} ${item.taxName}</td>
+                        <td align="left" width="15%" onclick="hrefAndSelect(this)">${item.unitName}</td>
+                        <td align="left" width="8% onclick="hrefAndSelect(this)">${item.showBeginAllmoney}</td>
+                        <td align="left" width="8%" onclick="hrefAndSelect(this)" >${item.showCurrInmoney}</td>
+                        <td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showCurrOutmoney}</td>
+                        <td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showAllInmoney}/${item.showAllOutmoney}</td>
+                        <td align="left" width="4%" onclick="hrefAndSelect(this)">${item.forwardName}</td>
+                        <td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showLastmoney}</td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </c:if>
+		
 		
 	</p:subBody>
 
