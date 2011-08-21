@@ -274,7 +274,7 @@ public class StockPayApplyManagerImpl extends AbstractListenerManager<StockPayAp
             throw new MYException("付款的最早时间还没有到,请确认操作");
         }
 
-        if (apply.getMoneys() < payMoney)
+        if (MathTools.compare(apply.getMoneys(), payMoney) > 0)
         {
             throw new MYException("申请付款金额溢出,最大付款金额[%.2f],请确认操作", apply.getMoneys());
         }
