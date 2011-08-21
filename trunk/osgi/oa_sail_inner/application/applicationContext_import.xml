@@ -84,5 +84,7 @@
 	<osgi:reference id="priceChangeManager" interface="com.china.center.oa.product.manager.PriceChangeManager" />
 	
 	<osgi:reference id="invoiceCreditDAO" interface="com.china.center.oa.publics.dao.InvoiceCreditDAO" />
+	
+	<osgi:reference id="providerManager" interface="com.china.center.oa.product.manager.ProviderManager" />
 
 </beans>

@@ -63,5 +63,18 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="providerListenerSailImpl" class="com.china.center.oa.sail.listener.impl.ProviderListenerSailImpl" />
+    
+    <bean id="providerLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="providerManager"/>
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="providerListenerSailImpl" />
+            </list>
+        </property>
+    </bean>
 	
 </beans>

@@ -302,4 +302,6 @@ public interface OutDAO extends DAO<OutBean, OutVO>
 
     List<CreditWrap> queryNoPayAndAvouchBusinessByManagerId(String stafferId, String industryId,
                                                             String beginDate, String endDate);
+
+    int countProviderInOut(String providerId);
 }

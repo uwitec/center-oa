@@ -735,4 +735,17 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
 
         return backTotal;
     }
+
+    /**
+     * 是否供应商在out里面被引用
+     * 
+     * @param providerId
+     * @return
+     */
+    public int countProviderInOut(String providerId)
+    {
+        String sql = "select count(1) from t_center_out where type = 1 and customerId = ?";
+
+        return this.jdbcOperation.queryForInt(sql, providerId);
+    }
 }
