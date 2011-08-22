@@ -121,6 +121,8 @@ public class ParentQueryFinaAction extends DispatchAction
 
     protected static final String QUERYTAXFINANCE2 = "queryTaxFinance2";
 
+    protected static final String QUERYTAXFINANCE3 = "queryTaxFinance3";
+
     protected static String RPTQUERYUNIT = "rptQueryUnit";
 
     /**
@@ -224,6 +226,82 @@ public class ParentQueryFinaAction extends DispatchAction
         request.setAttribute("resultList", list);
 
         return mapping.findForward(QUERYTAXFINANCE1);
+    }
+
+    /**
+     * 三大费用
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryTaxFinance3(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        User user = Helper.getUser(request);
+
+        request.getSession().setAttribute("EXPORT_FINANCEITE_KEY", QUERYTAXFINANCE3);
+
+        List<FinanceItemVO> list = null;
+
+        CommonTools.saveParamers(request);
+
+        FinanceItemVO currentTotal = null;
+
+        String parentTax = request.getParameter("parentTax");
+
+        try
+        {
+            if (PageSeparateTools.isFirstLoad(request))
+            {
+                ConditionParse condtion = getQueryCondition3(request, user, 0, parentTax);
+
+                int tatol = financeItemDAO.countVOByCondition(condtion.toString());
+
+                PageSeparate page = new PageSeparate(tatol, 50);
+
+                OldPageSeparateTools.initPageSeparate(condtion, page, request, QUERYTAXFINANCE3);
+
+                list = financeItemDAO.queryEntityVOsByCondition(condtion, page);
+
+                // 当期合计
+                currentTotal = sumCurrentTotal(request, user, condtion);
+            }
+            else
+            {
+                PageSeparateTools.processSeparate(request, QUERYTAXFINANCE3);
+
+                list = financeItemDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(
+                    request, QUERYTAXFINANCE3), OldPageSeparateTools.getPageSeparate(request,
+                    QUERYTAXFINANCE3));
+
+                currentTotal = (FinanceItemVO)request.getSession().getAttribute(
+                    "queryTaxFinance1_currentTotal");
+            }
+        }
+        catch (Exception e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "查询失败");
+
+            _logger.error(e, e);
+
+            return mapping.findForward("error");
+        }
+
+        for (FinanceItemVO financeItemVO : list)
+        {
+            fillItemVO(financeItemVO);
+        }
+
+        list.add(currentTotal);
+
+        request.setAttribute("resultList", list);
+
+        return mapping.findForward(QUERYTAXFINANCE3);
     }
 
     /**
@@ -398,6 +476,11 @@ public class ParentQueryFinaAction extends DispatchAction
 
             String endDate = request.getParameter("endDate");
             condtion.addCondition("FinanceItemBean.financeDate", "<=", endDate);
+
+            if ( !beginDate.substring(0, 4).equals(endDate.substring(0, 4)))
+            {
+                throw new MYException("查询不能跨年");
+            }
         }
 
         // 结转 开始日期前的结余(整个表查询哦)
@@ -456,6 +539,69 @@ public class ParentQueryFinaAction extends DispatchAction
     }
 
     /**
+     * getQueryCondition3
+     * 
+     * @param request
+     * @param user
+     * @param type
+     * @return
+     * @throws MYException
+     */
+    protected ConditionParse getQueryCondition3(HttpServletRequest request, User user, int type,
+                                                String parentTax)
+        throws MYException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        if (type == 0)
+        {
+            String year = request.getParameter("year");
+            String month = request.getParameter("month");
+
+            condtion.addCondition("FinanceItemBean.financeDate", ">=", year + "-" + month + "-01");
+
+            condtion.addCondition("FinanceItemBean.financeDate", "<=", year + "-" + month + "-31");
+        }
+
+        String taxId = request.getParameter("taxId");
+
+        if (StringTools.isNullOrNone(taxId))
+        {
+            taxId = parentTax;
+        }
+
+        TaxVO tax = taxDAO.findVO(taxId);
+
+        if (tax == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        request.setAttribute("tax", tax);
+
+        // 动态级别的查询
+        condtion.addCondition("FinanceItemBean.taxId" + tax.getLevel(), "=", taxId);
+
+        String stafferId = request.getParameter("stafferId");
+
+        if ( !StringTools.isNullOrNone(stafferId))
+        {
+            condtion.addCondition("FinanceItemBean.stafferId", "=", stafferId);
+        }
+
+        String departmentId = request.getParameter("departmentId");
+
+        if ( !StringTools.isNullOrNone(departmentId))
+        {
+            condtion.addCondition("FinanceItemBean.departmentId", "=", departmentId);
+        }
+
+        return condtion;
+    }
+
+    /**
      * 科目的查询条件
      * 
      * @param request
@@ -479,6 +625,11 @@ public class ParentQueryFinaAction extends DispatchAction
 
             String endDate = request.getParameter("endDate");
             condtion.addCondition("FinanceItemBean.financeDate", "<=", endDate);
+
+            if ( !beginDate.substring(0, 4).equals(endDate.substring(0, 4)))
+            {
+                throw new MYException("查询不能跨年");
+            }
         }
 
         // 结转 开始日期前的结余(整个表查询哦)

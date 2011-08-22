@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="分类账" cal="true" guid="true"/>
+<p:link title="经营费用" cal="true" guid="true"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
@@ -23,18 +23,6 @@ function load()
 
 function cc()
 {
-	if (compareDays($$('beginDate'), $$('endDate')) > 90)
-	{
-		alert('跨度不能大于90天');
-		return false;
-	}
-	
-	if ($$('beginDate').substring(0, 4) != $$('endDate').substring(0, 4))
-	{
-	    alert('查询条件不能跨年');
-        return false;
-	}
-	
 	return true;
 }
 
@@ -113,14 +101,14 @@ function clearDepartment()
 </head>
 <body class="body_class" onload="load()">
 <form name="formEntry" action="../finance/finance.do">
-<input type="hidden" name="method" value="queryTaxFinance1"> 
+<input type="hidden" name="method" value="queryTaxFinance3"> 
 <input type="hidden" value="1" name="firstLoad">
 <input type="hidden" name="taxId" value="${taxId}"> 
 <input type="hidden" name="stafferId" value="${stafferId}"> 
 <input type="hidden" name="departmentId" value="${departmentId}"> 
 <p:navigation
 	height="22">
-	<td width="550" class="navigation">分类账</td>
+	<td width="550" class="navigation">费用账</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -129,31 +117,46 @@ function clearDepartment()
 	<p:subBody width="98%">
 		<table width="100%" align="center" cellspacing='1' class="table0">
 			<tr class="content1">
-				<td width="15%" align="center">开始日期</td>
+				<td width="15%" align="center">选择年</td>
 				<td align="left">
-				<p:plugin name="beginDate" size="20" value="${beginDate}"  oncheck="notNone"/>
+				<select name="year" values="${year}" class="select_class" oncheck="notNone">
+				    <p:option type="[2011,2100]"></p:option>
+				</select>
 				<font color="#FF0000">*</font>
 				</td>
-				<td width="15%" align="center">结束日期</td>
+				<td width="15%" align="center">选择月</td>
 				<td align="left">
-				<p:plugin name="endDate" size="20" value="${endDate}"  oncheck="notNone"/>
+				<select name="month" values="${month}" class="select_class" oncheck="notNone">
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
 				<font color="#FF0000">*</font>
 				</td>
 			</tr>
 
 			<tr class="content2">
 			    <td width="15%" align="center">类型:</td>
-                <td align="left" colspan="1"><select name="queryType"
-                    class="select_class" values="${queryType}" style="width: 80%">
-                    <option value="0">明细帐</option>
-                    <option value="1">总帐</option>
+                <td align="left" colspan="1"><select name="parentTax"
+                    class="select_class" values="${param.parentTax}${parentTax}" style="width: 80%" readonly="true">
+                    <option value="5504">经营费用</option>
+                    <option value="5505">管理费用</option>
+                    <option value="5506">财务费用</option>
                 </select></td>
                 
                 <td width="15%" align="center">科目</td>
-                <td align="left" colspan="1"><input type="text" name="taxName" style="width: 80%" value="${taxName}" oncheck="notNone;" readonly="readonly">
+                <td align="left" colspan="1"><input type="text" name="taxName" style="width: 80%" value="${taxName}" readonly="readonly">
                 <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
                     class="button_class" onclick="selectTax()">
-                <font color="#FF0000">*</font>
                 </td>
             </tr>
             
@@ -186,7 +189,7 @@ function clearDepartment()
 	</p:subBody>
 
 	<p:title>
-		<td class="caption"><strong>分类账：</strong></td>
+		<td class="caption"><strong>费用账：</strong></td>
 	</p:title>
 
 	<p:line flag="0" />
@@ -223,7 +226,7 @@ function clearDepartment()
 			</c:forEach>
 		</table>
 		
-		<p:formTurning form="formEntry" method="queryTaxFinance1"></p:formTurning>
+		<p:formTurning form="formEntry" method="queryTaxFinance3"></p:formTurning>
 
 	</p:subBody>
 
