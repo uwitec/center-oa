@@ -23,6 +23,19 @@ function load()
 
 function cc()
 {
+    var pp = $$('parentTax');
+    
+    
+    if ($$('taxId') != '')
+    {
+        if ($$('taxId').indexOf('pp') != 0)
+        {
+            alert('必须是' + pp + '下的科目');
+            
+            return false;
+        }
+    }
+    
 	return true;
 }
 
