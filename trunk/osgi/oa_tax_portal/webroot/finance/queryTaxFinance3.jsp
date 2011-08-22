@@ -120,7 +120,7 @@ function clearTax()
 
 </head>
 <body class="body_class" onload="load()">
-<form name="formEntry" action="../finance/finance.do">
+<form name="formEntry" action="../finance/finance.do" method="post">
 <input type="hidden" name="method" value="queryTaxFinance3"> 
 <input type="hidden" value="1" name="firstLoad">
 <input type="hidden" name="taxId" value="${taxId}"> 
@@ -167,7 +167,7 @@ function clearTax()
 			<tr class="content2">
 			    <td width="15%" align="center">类型:</td>
                 <td align="left" colspan="1"><select name="parentTax"
-                    class="select_class" values="${param.parentTax}${parentTax}" style="width: 80%" readonly="true">
+                    class="select_class" values="${param.parentTax}" style="width: 80%" readonly="true">
                     <option value="5504">经营费用</option>
                     <option value="5505">管理费用</option>
                     <option value="5506">财务费用</option>
