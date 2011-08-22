@@ -109,6 +109,13 @@ function clearDepartment()
     $("input[name='departmentId']").val('');
     $("input[name='departmentName']").val('');
 }
+
+function clearTax()
+{
+    $("input[name='taxId']").val('');
+    $("input[name='taxName']").val('');
+}
+
 </script>
 
 </head>
@@ -169,7 +176,9 @@ function clearDepartment()
                 <td width="15%" align="center">科目</td>
                 <td align="left" colspan="1"><input type="text" name="taxName" style="width: 80%" value="${taxName}" readonly="readonly">
                 <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectTax()">
+                    class="button_class" onclick="selectTax()">&nbsp;
+                <input type="button" value="&nbsp;C&nbsp;" name="qout_c2" id="qout_c2"
+                    class="button_class" onclick="clearTax()">
                 </td>
             </tr>
             
