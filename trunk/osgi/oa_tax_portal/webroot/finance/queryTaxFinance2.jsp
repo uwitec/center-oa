@@ -9,9 +9,9 @@
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/tableSort.js"></script>
 <script language="javascript">
-function exports()
+function exportTaxQuery()
 {
-	document.location.href = '../finance/finance.do?method=exportFinanceItem';
+	document.location.href = '../finance/finance.do?method=exportTaxQuery';
 }
 
 function load()
@@ -232,7 +232,7 @@ function clearTax()
 					<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>期末余额</strong></td>
 				</tr>
 	
-				<c:forEach items="${resultList}" var="item"
+				<c:forEach items="${resultList_2}" var="item"
 					varStatus="vs">
 					<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
 						<td align="left" width="20%" onclick="hrefAndSelect(this)">${item.taxId} ${item.taxName}</td>
@@ -261,7 +261,7 @@ function clearTax()
                     <td align="center" class="td_class" onclick="tableSort(this, true)"><strong>期末余额</strong></td>
                 </tr>
     
-                <c:forEach items="${resultList}" var="item"
+                <c:forEach items="${resultList_2}" var="item"
                     varStatus="vs">
                     <tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
                         <td align="left" width="20%"  onclick="hrefAndSelect(this)">${item.taxId} ${item.taxName}</td>
@@ -291,12 +291,12 @@ function clearTax()
                     <td align="center" class="td_class" onclick="tableSort(this, true)"><strong>期末余额</strong></td>
                 </tr>
     
-                <c:forEach items="${resultList}" var="item"
+                <c:forEach items="${resultList_2}" var="item"
                     varStatus="vs">
                     <tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
                         <td align="left" width="20%"  onclick="hrefAndSelect(this)">${item.taxId} ${item.taxName}</td>
                         <td align="left" width="15%" onclick="hrefAndSelect(this)">${item.unitName}</td>
-                        <td align="left" width="8% onclick="hrefAndSelect(this)">${item.showBeginAllmoney}</td>
+                        <td align="left" width="8%   onclick="hrefAndSelect(this)">${item.showBeginAllmoney}</td>
                         <td align="left" width="8%" onclick="hrefAndSelect(this)" >${item.showCurrInmoney}</td>
                         <td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showCurrOutmoney}</td>
                         <td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showAllInmoney}/${item.showAllOutmoney}</td>
@@ -314,7 +314,7 @@ function clearTax()
 	
 	<p:button leftWidth="98%" rightWidth="2%">
         <div align="right"><input type="button" class="button_class"
-            value="&nbsp;&nbsp;导出明细&nbsp;&nbsp;" onclick="exports()">&nbsp;&nbsp;
+            value="&nbsp;&nbsp;导出明细&nbsp;&nbsp;" onclick="exportTaxQuery()">&nbsp;&nbsp;
         </div>
     </p:button>
 

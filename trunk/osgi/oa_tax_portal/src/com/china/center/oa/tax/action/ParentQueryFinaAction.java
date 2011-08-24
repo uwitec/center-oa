@@ -9,6 +9,8 @@
 package com.china.center.oa.tax.action;
 
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +26,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
 import com.center.china.osgi.publics.User;
+import com.center.china.osgi.publics.file.writer.WriteFile;
+import com.center.china.osgi.publics.file.writer.WriteFileFactory;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.OldPageSeparateTools;
 import com.china.center.actionhelper.common.PageSeparateTools;
@@ -61,6 +65,8 @@ import com.china.center.oa.tax.vo.FinanceShowVO;
 import com.china.center.oa.tax.vo.TaxVO;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.StringTools;
+import com.china.center.tools.TimeTools;
+import com.china.center.tools.WriteFileBuffer;
 
 
 /**
@@ -539,6 +545,167 @@ public class ParentQueryFinaAction extends DispatchAction
     }
 
     /**
+     * 科目余额的导出
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportTaxQuery(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        String filenName = "Tax_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            request.getSession().setAttribute("EXPORT_FINANCEITE_KEY", QUERYTAXFINANCE2);
+
+            String type = request.getSession().getAttribute("EXPORT_FINANCEITE_KEY").toString();
+
+            if (type.equals(QUERYTAXFINANCE2))
+            {
+
+                String queryType = request
+                    .getSession()
+                    .getAttribute("EXPORT_FINANCEITE_QUERYTYPE")
+                    .toString();
+
+                List<FinanceShowVO> showList = (List<FinanceShowVO>)request
+                    .getSession()
+                    .getAttribute("resultList_2");
+
+                if ("0".equals(queryType))
+                {
+                    write.writeLine("编码,名称,期初余额,本期借方,本期贷方,借方累计,贷方累计,方向,期末余额");
+
+                    for (FinanceShowVO each : showList)
+                    {
+                        WriteFileBuffer line = new WriteFileBuffer(write);
+
+                        line.writeColumn("[" + each.getTaxId() + "]");
+                        line.writeColumn(each.getTaxName());
+                        line.writeColumn(changeString(each.getShowBeginAllmoney()));
+                        line.writeColumn(changeString(each.getShowCurrInmoney()));
+                        line.writeColumn(changeString(each.getShowCurrOutmoney()));
+                        line.writeColumn(changeString(each.getShowAllInmoney()));
+                        line.writeColumn(changeString(each.getShowAllOutmoney()));
+                        line.writeColumn(changeString(each.getForwardName()));
+                        line.writeColumn(changeString(each.getShowLastmoney()));
+
+                        line.writeLine();
+                    }
+                }
+
+                if ("1".equals(queryType))
+                {
+                    write.writeLine("编码,名称,职员,期初余额,本期借方,本期贷方,借方累计,贷方累计,方向,期末余额");
+
+                    for (FinanceShowVO each : showList)
+                    {
+                        WriteFileBuffer line = new WriteFileBuffer(write);
+
+                        line.writeColumn("[" + each.getTaxId() + "]");
+                        line.writeColumn(each.getTaxName());
+                        line.writeColumn(each.getStafferName());
+                        line.writeColumn(changeString(each.getShowBeginAllmoney()));
+                        line.writeColumn(changeString(each.getShowCurrInmoney()));
+                        line.writeColumn(changeString(each.getShowCurrOutmoney()));
+                        line.writeColumn(changeString(each.getShowAllInmoney()));
+                        line.writeColumn(changeString(each.getShowAllOutmoney()));
+                        line.writeColumn(changeString(each.getForwardName()));
+                        line.writeColumn(changeString(each.getShowLastmoney()));
+
+                        line.writeLine();
+                    }
+                }
+
+                if ("2".equals(queryType))
+                {
+                    write.writeLine("编码,名称,单位,期初余额,本期借方,本期贷方,借方累计,贷方累计,方向,期末余额");
+
+                    for (FinanceShowVO each : showList)
+                    {
+                        WriteFileBuffer line = new WriteFileBuffer(write);
+
+                        line.writeColumn("[" + each.getTaxId() + "]");
+                        line.writeColumn(each.getTaxName());
+                        line.writeColumn(each.getUnitName());
+                        line.writeColumn(changeString(each.getShowBeginAllmoney()));
+                        line.writeColumn(changeString(each.getShowCurrInmoney()));
+                        line.writeColumn(changeString(each.getShowCurrOutmoney()));
+                        line.writeColumn(changeString(each.getShowAllInmoney()));
+                        line.writeColumn(changeString(each.getShowAllOutmoney()));
+                        line.writeColumn(changeString(each.getForwardName()));
+                        line.writeColumn(changeString(each.getShowLastmoney()));
+
+                        line.writeLine();
+                    }
+                }
+            }
+
+            write.close();
+
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+        }
+
+        return null;
+    }
+
+    private String changeString(String str)
+    {
+        return str.replaceAll(",", "");
+    }
+
+    /**
      * getQueryCondition3
      * 
      * @param request
@@ -807,7 +974,7 @@ public class ParentQueryFinaAction extends DispatchAction
 
         List<FinanceShowVO> showList = new ArrayList();
 
-        request.setAttribute("resultList", showList);
+        request.getSession().setAttribute("resultList_2", showList);
 
         // 查询
         for (TaxBean taxBean : taxList)
@@ -906,7 +1073,7 @@ public class ParentQueryFinaAction extends DispatchAction
     {
         List<FinanceShowVO> showList = new ArrayList();
 
-        request.setAttribute("resultList", showList);
+        request.getSession().setAttribute("resultList_2", showList);
 
         // 这里的查询分为职员下所有单位的查询,或者查询指定的一个单位
 
@@ -914,23 +1081,23 @@ public class ParentQueryFinaAction extends DispatchAction
 
         String unitId = request.getParameter("unitId");
 
-        if (StringTools.isNullOrNone(stafferId) && StringTools.isNullOrNone(unitId))
-        {
-            throw new MYException("单位查询职员和单位必须存在一个查询条件");
-        }
-
         List<String> unitList = new ArrayList();
+
+        String beginDate = request.getParameter("beginDate");
+
+        String endDate = request.getParameter("endDate");
 
         // 查询名下所有的单位(过滤掉查询范围内没有出现的单位)
         if ( !StringTools.isNullOrNone(stafferId) && StringTools.isNullOrNone(unitId))
         {
-            String beginDate = request.getParameter("beginDate");
-
-            String endDate = request.getParameter("endDate");
-
             // 先查询出本期发生的单位
             unitList.addAll(financeItemDAO.queryDistinctUnitByStafferId(stafferId, beginDate,
                 endDate));
+        }
+        else if (StringTools.isNullOrNone(stafferId) && StringTools.isNullOrNone(unitId))
+        {
+            // 先查询出本期发生的单位
+            unitList.addAll(financeItemDAO.queryDistinctUnit(beginDate, endDate));
         }
         else
         {
@@ -1057,7 +1224,7 @@ public class ParentQueryFinaAction extends DispatchAction
     {
         List<FinanceShowVO> showList = new ArrayList();
 
-        request.setAttribute("resultList", showList);
+        request.getSession().setAttribute("resultList_2", showList);
 
         // 这里的查询分为职员下所有单位的查询,或者查询指定的一个单位
 
