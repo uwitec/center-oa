@@ -30,6 +30,34 @@ function cc()
 		return false;
 	}
 	
+	//科目查询
+	if ($$('queryType') == 0)
+	{
+	   if ($$('stafferId') != '' && $$('unitId') != '')
+	   {
+	       alert('科目余额查询不能同时有职员和单位');
+           return false;
+	   }
+	}
+	
+	if ($$('queryType') == 1)
+    {
+       if ($$('taxId') == '')
+       {
+           alert('缺少科目');
+           return false;
+       }
+    }
+    
+    if ($$('queryType') == 2)
+    {
+       if ($$('taxId') == '')
+       {
+           alert('缺少科目');
+           return false;
+       }
+    }
+    
 	return true;
 }
 
@@ -97,6 +125,12 @@ function clearUnit()
     $("input[name='unitName']").val('');
 }
 
+function clearTax()
+{
+    $("input[name='taxId']").val('');
+    $("input[name='taxName']").val('');
+}
+
 </script>
 
 </head>
@@ -150,10 +184,11 @@ function clearUnit()
 
 			<tr class="content2">
                 <td width="15%" align="center">科目</td>
-                <td align="left" colspan="1"><input type="text" name="taxName" style="width: 80%" value="${taxName}" oncheck="notNone;" readonly="readonly">
+                <td align="left" colspan="1"><input type="text" name="taxName" style="width: 80%" value="${taxName}" readonly="readonly">
                 <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectTax()">
-                <font color="#FF0000">*</font>
+                    class="button_class" onclick="selectTax()">&nbsp;
+                <input type="button" value="&nbsp;C&nbsp;" name="qout_c2" id="qout_c2"
+                    class="button_class" onclick="clearTax()">
                 </td>
                 
                 <td width="15%" align="center">类型:</td>

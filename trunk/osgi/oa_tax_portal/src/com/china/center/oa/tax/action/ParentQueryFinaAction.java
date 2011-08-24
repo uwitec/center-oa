@@ -687,11 +687,11 @@ public class ParentQueryFinaAction extends DispatchAction
         {
             String taxId = request.getParameter("taxId");
 
-            TaxVO tax = taxDAO.findVO(taxId);
+            TaxVO tax = null;
 
-            if (tax == null)
+            if ( !StringTools.isNullOrNone(taxId))
             {
-                throw new MYException("数据错误,请确认操作");
+                tax = taxDAO.findVO(taxId);
             }
 
             // 科目查询
@@ -703,12 +703,22 @@ public class ParentQueryFinaAction extends DispatchAction
             // 职员查询
             if ("1".equals(queryType))
             {
+                if (tax == null)
+                {
+                    throw new MYException("缺少科目");
+                }
+
                 processStafferLastQuery(request, user, tax);
             }
 
             // 单位查询
             if ("2".equals(queryType))
             {
+                if (tax == null)
+                {
+                    throw new MYException("缺少科目");
+                }
+
                 processUnitLastQuery(request, user, tax);
             }
         }
@@ -735,25 +745,64 @@ public class ParentQueryFinaAction extends DispatchAction
     private void processTaxLastQuery(HttpServletRequest request, User user, TaxVO tax)
         throws MYException
     {
+        String stafferId = request.getParameter("stafferId");
+
+        String unitId = request.getParameter("unitId");
+
+        if ( !StringTools.isNullOrNone(stafferId) && !StringTools.isNullOrNone(unitId))
+        {
+            throw new MYException("科目余额查询不能同时有职员和单位");
+        }
+
         List<TaxBean> taxList = null;
 
-        if (tax.getBottomFlag() == TaxConstanst.TAX_BOTTOMFLAG_ROOT)
+        if (tax == null)
         {
-            // 查询所有的
-            // 动态级别的查询
-            ConditionParse taxCondition = new ConditionParse();
-            taxCondition.addWhereStr();
-            taxCondition.addCondition("parentId" + tax.getLevel(), "=", tax.getId());
+            if ( !StringTools.isNullOrNone(stafferId))
+            {
+                // 辅助核算
+                ConditionParse con = new ConditionParse();
+                con.addWhereStr();
 
-            taxList = taxDAO.queryEntityBeansByCondition(taxCondition.toString());
+                con.addIntCondition("staffer", "=", TaxConstanst.TAX_CHECK_YES);
 
-            taxList.add(0, tax);
+                taxList = taxDAO.queryEntityBeansByCondition(con.toString());
+            }
+            else if ( !StringTools.isNullOrNone(unitId))
+            {
+                // 辅助核算
+                ConditionParse con = new ConditionParse();
+                con.addWhereStr();
+
+                con.addIntCondition("unit", "=", TaxConstanst.TAX_CHECK_YES);
+
+                taxList = taxDAO.queryEntityBeansByCondition(con.toString());
+            }
+            else
+            {
+                taxList = taxDAO.listEntityBeans("order by id");
+            }
         }
         else
         {
-            taxList = new ArrayList();
+            if (tax.getBottomFlag() == TaxConstanst.TAX_BOTTOMFLAG_ROOT)
+            {
+                // 查询所有的
+                // 动态级别的查询
+                ConditionParse taxCondition = new ConditionParse();
+                taxCondition.addWhereStr();
+                taxCondition.addCondition("parentId" + tax.getLevel(), "=", tax.getId());
 
-            taxList.add(tax);
+                taxList = taxDAO.queryEntityBeansByCondition(taxCondition.toString());
+
+                taxList.add(0, tax);
+            }
+            else
+            {
+                taxList = new ArrayList();
+
+                taxList.add(tax);
+            }
         }
 
         List<FinanceShowVO> showList = new ArrayList();
@@ -774,8 +823,7 @@ public class ParentQueryFinaAction extends DispatchAction
             // 本期借方/贷方
             ConditionParse condtion = getQueryCondition2(request, user, 0);
 
-            condtion.addCondition("FinanceItemBean.taxId" + taxBean.getLevel(), "=", taxBean
-                .getId());
+            createTaxQuery(request, taxBean, condtion);
 
             long[] sumCurrMoneryByCondition = financeItemDAO.sumMoneryByCondition(condtion);
 
@@ -785,8 +833,7 @@ public class ParentQueryFinaAction extends DispatchAction
             // 期初余额
             condtion = getQueryCondition2(request, user, 1);
 
-            condtion.addCondition("FinanceItemBean.taxId" + taxBean.getLevel(), "=", taxBean
-                .getId());
+            createTaxQuery(request, taxBean, condtion);
 
             FinanceItemVO head = sumHeadInner(condtion, taxBean);
 
@@ -795,8 +842,7 @@ public class ParentQueryFinaAction extends DispatchAction
             // 当前累计(从当年1月到选择的结束日期)
             condtion = getQueryCondition2(request, user, 2);
 
-            condtion.addCondition("FinanceItemBean.taxId" + taxBean.getLevel(), "=", taxBean
-                .getId());
+            createTaxQuery(request, taxBean, condtion);
 
             long[] sumAllMoneryByCondition = financeItemDAO.sumMoneryByCondition(condtion);
 
@@ -818,6 +864,32 @@ public class ParentQueryFinaAction extends DispatchAction
             show.setShowLastmoney(FinanceHelper.longToString(head.getLastmoney() + currentLast));
 
             showList.add(show);
+        }
+    }
+
+    /**
+     * createTaxQuery
+     * 
+     * @param request
+     * @param taxBean
+     * @param condtion
+     */
+    private void createTaxQuery(HttpServletRequest request, TaxBean taxBean, ConditionParse condtion)
+    {
+        condtion.addCondition("FinanceItemBean.taxId" + taxBean.getLevel(), "=", taxBean.getId());
+
+        String stafferId = request.getParameter("stafferId");
+
+        if ( !StringTools.isNullOrNone(stafferId))
+        {
+            condtion.addCondition("FinanceItemBean.stafferId", "=", stafferId);
+        }
+
+        String unitId = request.getParameter("unitId");
+
+        if ( !StringTools.isNullOrNone(unitId))
+        {
+            condtion.addCondition("FinanceItemBean.unitId", "=", unitId);
         }
     }
 

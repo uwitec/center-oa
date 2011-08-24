@@ -88,7 +88,7 @@ public abstract class FinanceHelper
 
     public static String formatNum(double d)
     {
-        DecimalFormat df = new DecimalFormat("###,###.00");
+        DecimalFormat df = new DecimalFormat("####,##0.00");
 
         String result = df.format(d);
 
