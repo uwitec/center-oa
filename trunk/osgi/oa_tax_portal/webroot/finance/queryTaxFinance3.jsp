@@ -28,7 +28,7 @@ function cc()
     
     if ($$('taxId') != '')
     {
-        if ($$('taxId').indexOf('pp') != 0)
+        if ($$('taxId').indexOf(pp) != 0)
         {
             alert('必须是' + pp + '下的科目');
             
