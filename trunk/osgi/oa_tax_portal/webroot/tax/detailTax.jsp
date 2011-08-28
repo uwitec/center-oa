@@ -126,10 +126,10 @@ function load()
 	<p:line flag="1" />
 
 	<p:button leftWidth="100%" rightWidth="0%">
-		<div align="right"><input type="button" class="button_class" id="ok_b"
-			style="cursor: pointer" value="&nbsp;&nbsp;确 定&nbsp;&nbsp;"
-			onclick="addBean()"></div>
-	</p:button>
+        <div align="right"><input type="button" class="button_class"
+            id="ok_b" style="cursor: pointer" value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"
+            onclick="javaScript:window.history.go(-1);"></div>
+    </p:button>
 
 	<p:message2 />
 </p:body></form>
