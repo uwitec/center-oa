@@ -1064,6 +1064,35 @@ function getTrObject(obj)
     return par;
 }
 
+function getInputInTr(tr, name)
+{
+    var eles = tr.getElementsByTagName('input');
+    
+    for (var i = 0; i < eles.length; i++)
+    {
+        if (eles[i].name == name)
+        {
+            return eles[i];
+        }
+    }
+    
+    return null;
+}
+
+function setInputValueInTr(tr, name, value)
+{
+    var eles = tr.getElementsByTagName('input');
+    
+    for (var i = 0; i < eles.length; i++)
+    {
+        if (eles[i].name == name)
+        {
+            eles[i].value = value;
+        }
+    }
+}
+
+
 function $duplicate(arr)
 {
 	var map = {};
