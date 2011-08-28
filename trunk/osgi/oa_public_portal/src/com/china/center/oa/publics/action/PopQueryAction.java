@@ -35,6 +35,7 @@ import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.constant.StafferConstant;
+import com.china.center.oa.publics.dao.CityDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.LogDAO;
 import com.china.center.oa.publics.dao.PrincipalshipDAO;
@@ -42,6 +43,7 @@ import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.StafferVSPriDAO;
 import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.manager.RoleManager;
+import com.china.center.oa.publics.vo.CityVO;
 import com.china.center.oa.publics.vo.LogVO;
 import com.china.center.oa.publics.vo.RoleVO;
 import com.china.center.oa.publics.vo.StafferVO;
@@ -69,6 +71,8 @@ public class PopQueryAction extends DispatchAction
 
     private UserDAO userDAO = null;
 
+    private CityDAO cityDAO = null;
+
     private RoleManager roleManager = null;
 
     private StafferVSPriDAO stafferVSPriDAO = null;
@@ -76,6 +80,8 @@ public class PopQueryAction extends DispatchAction
     private PrincipalshipDAO principalshipDAO = null;
 
     private static String RPTQUERYSTAFFER = "rptQueryStaffer";
+
+    private static String RPTQUERYCITY = "rptQueryCity";
 
     private static String RPTQUERYUSER = "rptQueryUser";
 
@@ -132,6 +138,29 @@ public class PopQueryAction extends DispatchAction
     }
 
     /**
+     * setCityInnerCondition
+     * 
+     * @param request
+     * @param condtion
+     */
+    private void setCityInnerCondition(HttpServletRequest request, ConditionParse condtion)
+    {
+        String name = request.getParameter("name");
+
+        String sname = request.getParameter("sname");
+
+        if ( !StringTools.isNullOrNone(name))
+        {
+            condtion.addCondition("CityBean.name", "like", name);
+        }
+
+        if ( !StringTools.isNullOrNone(sname))
+        {
+            condtion.addCondition("ProvinceBean.name", "like", sname);
+        }
+    }
+
+    /**
      * 职员的查询
      * 
      * @param mapping
@@ -141,8 +170,8 @@ public class PopQueryAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryStaffer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse reponse)
+    public ActionForward rptQueryStaffer(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -174,8 +203,8 @@ public class PopQueryAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYSTAFFER);
 
-            list = stafferDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, RPTQUERYSTAFFER),
-                PageSeparateTools.getPageSeparate(request, RPTQUERYSTAFFER));
+            list = stafferDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                RPTQUERYSTAFFER), PageSeparateTools.getPageSeparate(request, RPTQUERYSTAFFER));
         }
 
         request.setAttribute("beanList", list);
@@ -195,8 +224,8 @@ public class PopQueryAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryUser(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse reponse)
+    public ActionForward rptQueryUser(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -223,8 +252,8 @@ public class PopQueryAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYSTAFFER);
 
-            list = userDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, RPTQUERYUSER),
-                PageSeparateTools.getPageSeparate(request, RPTQUERYUSER));
+            list = userDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                RPTQUERYUSER), PageSeparateTools.getPageSeparate(request, RPTQUERYUSER));
         }
 
         for (UserVO userVO : list)
@@ -261,6 +290,55 @@ public class PopQueryAction extends DispatchAction
     }
 
     /**
+     * rptQueryCity
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryCity(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        List<CityVO> list = null;
+
+        String cacheKey = RPTQUERYCITY;
+
+        if (PageSeparateTools.isFirstLoad(request))
+        {
+            ConditionParse condtion = new ConditionParse();
+
+            condtion.addWhereStr();
+
+            setCityInnerCondition(request, condtion);
+
+            int total = cityDAO.countVOByCondition(condtion.toString());
+
+            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+
+            PageSeparateTools.initPageSeparate(condtion, page, request, cacheKey);
+
+            list = cityDAO.queryEntityVOsByCondition(condtion, page);
+        }
+        else
+        {
+            PageSeparateTools.processSeparate(request, cacheKey);
+
+            list = cityDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                cacheKey), PageSeparateTools.getPageSeparate(request, cacheKey));
+        }
+
+        request.setAttribute("beanList", list);
+
+        return mapping.findForward("rptQueryCity");
+    }
+
+    /**
      * rptQuerySuperiorStaffer(查询上级)
      * 
      * @param mapping
@@ -270,7 +348,8 @@ public class PopQueryAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQuerySuperiorStaffer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward rptQuerySuperiorStaffer(ActionMapping mapping, ActionForm form,
+                                                 HttpServletRequest request,
                                                  HttpServletResponse reponse)
         throws ServletException
     {
@@ -295,7 +374,8 @@ public class PopQueryAction extends DispatchAction
 
             String parentId = pri.getParentId();
 
-            List<StafferVSPriBean> svsp = stafferVSPriDAO.queryEntityBeansByFK(parentId, AnoConstant.FK_FIRST);
+            List<StafferVSPriBean> svsp = stafferVSPriDAO.queryEntityBeansByFK(parentId,
+                AnoConstant.FK_FIRST);
 
             for (StafferVSPriBean each : svsp)
             {
@@ -318,8 +398,8 @@ public class PopQueryAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryLog(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse reponse)
+    public ActionForward rptQueryLog(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -459,5 +539,22 @@ public class PopQueryAction extends DispatchAction
     public void setRoleManager(RoleManager roleManager)
     {
         this.roleManager = roleManager;
+    }
+
+    /**
+     * @return the cityDAO
+     */
+    public CityDAO getCityDAO()
+    {
+        return cityDAO;
+    }
+
+    /**
+     * @param cityDAO
+     *            the cityDAO to set
+     */
+    public void setCityDAO(CityDAO cityDAO)
+    {
+        this.cityDAO = cityDAO;
     }
 }
