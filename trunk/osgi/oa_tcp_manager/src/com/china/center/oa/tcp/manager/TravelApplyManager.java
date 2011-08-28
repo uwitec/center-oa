@@ -12,6 +12,7 @@ package com.china.center.oa.tcp.manager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.tcp.bean.TravelApplyBean;
+import com.china.center.oa.tcp.vo.TravelApplyVO;
 
 
 /**
@@ -45,4 +46,23 @@ public interface TravelApplyManager
      */
     boolean updateTravelApplyBean(User user, TravelApplyBean bean)
         throws MYException;
+
+    /**
+     * 删除
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean deleteTravelApplyBean(User user, String id)
+        throws MYException;
+
+    /**
+     * findVO
+     * 
+     * @param id
+     * @return
+     */
+    TravelApplyVO findVO(String id);
 }

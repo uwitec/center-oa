@@ -4,6 +4,7 @@ package com.china.center.oa.tcp.bean;
 import java.io.Serializable;
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
@@ -27,6 +28,7 @@ public class TcpShareBean implements Serializable
     @Id
     private String id = "";
 
+    @FK
     private String refId = "";
 
     @Join(tagClass = BudgetBean.class)

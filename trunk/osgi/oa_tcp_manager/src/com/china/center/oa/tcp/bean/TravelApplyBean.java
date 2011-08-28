@@ -54,10 +54,10 @@ public class TravelApplyBean implements Serializable
 
     private String logTime = "";
 
-    @Html(title = "出发城市", must = true)
+    @Html(title = "出发城市", must = true, readonly = true)
     private String srcCity = "";
 
-    @Html(title = "目的城市", must = true)
+    @Html(title = "目的城市", must = true, readonly = true)
     private String destCity = "";
 
     @Html(title = "开始日期", must = true, type = Element.DATE)
@@ -78,9 +78,41 @@ public class TravelApplyBean implements Serializable
     private int borrow = TcpConstanst.TRAVELAPPLY_BORROW_NO;
 
     /**
+     * 飞机票-其他费用二需要合计到差旅费里面
+     */
+    @Html(title = "飞机票", must = true, type = Element.DOUBLE)
+    private long airplaneCharges = 0L;
+
+    @Html(title = "火车票", must = true, type = Element.DOUBLE)
+    private long trainCharges = 0L;
+
+    @Html(title = "汽车票", must = true, type = Element.DOUBLE)
+    private long busCharges = 0L;
+
+    @Html(title = "住宿费", must = true, type = Element.DOUBLE)
+    private long hotelCharges = 0L;
+
+    @Html(title = "业务招待费", must = true, type = Element.DOUBLE)
+    private long entertainCharges = 0L;
+
+    @Html(title = "补贴", must = true, type = Element.DOUBLE)
+    private long allowanceCharges = 0L;
+
+    @Html(title = "其他费用一", must = true, type = Element.DOUBLE)
+    private long other1Charges = 0L;
+
+    @Html(title = "其他费用二", must = true, type = Element.DOUBLE)
+    private long other2Charges = 0L;
+
+    /**
      * 准确到分
      */
     private long total = 0L;
+
+    /**
+     * 借款总金额
+     */
+    private long borrowTotal = 0L;
 
     /**
      * 费用子项
@@ -403,6 +435,176 @@ public class TravelApplyBean implements Serializable
     }
 
     /**
+     * @return the attachmentList
+     */
+    public List<AttachmentBean> getAttachmentList()
+    {
+        return attachmentList;
+    }
+
+    /**
+     * @param attachmentList
+     *            the attachmentList to set
+     */
+    public void setAttachmentList(List<AttachmentBean> attachmentList)
+    {
+        this.attachmentList = attachmentList;
+    }
+
+    /**
+     * @return the airplaneCharges
+     */
+    public long getAirplaneCharges()
+    {
+        return airplaneCharges;
+    }
+
+    /**
+     * @param airplaneCharges
+     *            the airplaneCharges to set
+     */
+    public void setAirplaneCharges(long airplaneCharges)
+    {
+        this.airplaneCharges = airplaneCharges;
+    }
+
+    /**
+     * @return the trainCharges
+     */
+    public long getTrainCharges()
+    {
+        return trainCharges;
+    }
+
+    /**
+     * @param trainCharges
+     *            the trainCharges to set
+     */
+    public void setTrainCharges(long trainCharges)
+    {
+        this.trainCharges = trainCharges;
+    }
+
+    /**
+     * @return the busCharges
+     */
+    public long getBusCharges()
+    {
+        return busCharges;
+    }
+
+    /**
+     * @param busCharges
+     *            the busCharges to set
+     */
+    public void setBusCharges(long busCharges)
+    {
+        this.busCharges = busCharges;
+    }
+
+    /**
+     * @return the hotelCharges
+     */
+    public long getHotelCharges()
+    {
+        return hotelCharges;
+    }
+
+    /**
+     * @param hotelCharges
+     *            the hotelCharges to set
+     */
+    public void setHotelCharges(long hotelCharges)
+    {
+        this.hotelCharges = hotelCharges;
+    }
+
+    /**
+     * @return the entertainCharges
+     */
+    public long getEntertainCharges()
+    {
+        return entertainCharges;
+    }
+
+    /**
+     * @param entertainCharges
+     *            the entertainCharges to set
+     */
+    public void setEntertainCharges(long entertainCharges)
+    {
+        this.entertainCharges = entertainCharges;
+    }
+
+    /**
+     * @return the allowanceCharges
+     */
+    public long getAllowanceCharges()
+    {
+        return allowanceCharges;
+    }
+
+    /**
+     * @param allowanceCharges
+     *            the allowanceCharges to set
+     */
+    public void setAllowanceCharges(long allowanceCharges)
+    {
+        this.allowanceCharges = allowanceCharges;
+    }
+
+    /**
+     * @return the other1Charges
+     */
+    public long getOther1Charges()
+    {
+        return other1Charges;
+    }
+
+    /**
+     * @param other1Charges
+     *            the other1Charges to set
+     */
+    public void setOther1Charges(long other1Charges)
+    {
+        this.other1Charges = other1Charges;
+    }
+
+    /**
+     * @return the other2Charges
+     */
+    public long getOther2Charges()
+    {
+        return other2Charges;
+    }
+
+    /**
+     * @param other2Charges
+     *            the other2Charges to set
+     */
+    public void setOther2Charges(long other2Charges)
+    {
+        this.other2Charges = other2Charges;
+    }
+
+    /**
+     * @return the borrowTotal
+     */
+    public long getBorrowTotal()
+    {
+        return borrowTotal;
+    }
+
+    /**
+     * @param borrowTotal
+     *            the borrowTotal to set
+     */
+    public void setBorrowTotal(long borrowTotal)
+    {
+        this.borrowTotal = borrowTotal;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -456,8 +658,35 @@ public class TravelApplyBean implements Serializable
             .append("borrow = ")
             .append(this.borrow)
             .append(TAB)
+            .append("airplaneCharges = ")
+            .append(this.airplaneCharges)
+            .append(TAB)
+            .append("trainCharges = ")
+            .append(this.trainCharges)
+            .append(TAB)
+            .append("busCharges = ")
+            .append(this.busCharges)
+            .append(TAB)
+            .append("hotelCharges = ")
+            .append(this.hotelCharges)
+            .append(TAB)
+            .append("entertainCharges = ")
+            .append(this.entertainCharges)
+            .append(TAB)
+            .append("allowanceCharges = ")
+            .append(this.allowanceCharges)
+            .append(TAB)
+            .append("other1Charges = ")
+            .append(this.other1Charges)
+            .append(TAB)
+            .append("other2Charges = ")
+            .append(this.other2Charges)
+            .append(TAB)
             .append("total = ")
             .append(this.total)
+            .append(TAB)
+            .append("borrowTotal = ")
+            .append(this.borrowTotal)
             .append(TAB)
             .append("itemList = ")
             .append(this.itemList)
@@ -468,26 +697,12 @@ public class TravelApplyBean implements Serializable
             .append("shareList = ")
             .append(this.shareList)
             .append(TAB)
+            .append("attachmentList = ")
+            .append(this.attachmentList)
+            .append(TAB)
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the attachmentList
-     */
-    public List<AttachmentBean> getAttachmentList()
-    {
-        return attachmentList;
-    }
-
-    /**
-     * @param attachmentList
-     *            the attachmentList to set
-     */
-    public void setAttachmentList(List<AttachmentBean> attachmentList)
-    {
-        this.attachmentList = attachmentList;
     }
 
 }

@@ -9,8 +9,13 @@
 package com.china.center.oa.tcp.helper;
 
 
+import java.text.DecimalFormat;
+
 import com.china.center.oa.tcp.bean.TravelApplyBean;
+import com.china.center.oa.tcp.constanst.TcpConstanst;
 import com.china.center.oa.tcp.constanst.TcpFlowConstant;
+import com.china.center.oa.tcp.vo.TravelApplyVO;
+import com.china.center.tools.MathTools;
 
 
 /**
@@ -57,5 +62,73 @@ public abstract class TCPHelper
 
             return;
         }
+    }
+
+    /**
+     * doubleToLong(到分)
+     * 
+     * @param value
+     * @return
+     */
+    public static long doubleToLong2(String value)
+    {
+        // 先格式转成double
+        double parseDouble = MathTools.parseDouble(value);
+
+        return (long)Math.round(MathTools.parseDouble(formatNum2(parseDouble)) * 100);
+    }
+
+    public static long doubleToLong2(double value)
+    {
+        return (long)Math.round(MathTools.parseDouble(formatNum2(value)) * 100);
+    }
+
+    public static void chageVO(TravelApplyVO vo)
+    {
+        vo.setShowTotal(formatNum2(vo.getTotal() / 100.0d));
+        vo.setShowBorrowTotal(formatNum2(vo.getBorrowTotal() / 100.0d));
+
+        vo.setShowAirplaneCharges(formatNum2(vo.getAirplaneCharges() / 100.0d));
+        vo.setShowTrainCharges(formatNum2(vo.getTrainCharges() / 100.0d));
+
+        vo.setShowBusCharges(formatNum2(vo.getBusCharges() / 100.0d));
+        vo.setShowHotelCharges(formatNum2(vo.getHotelCharges() / 100.0d));
+
+        vo.setShowEntertainCharges(formatNum2(vo.getEntertainCharges() / 100.0d));
+        vo.setShowAllowanceCharges(formatNum2(vo.getAllowanceCharges() / 100.0d));
+
+        vo.setShowOther1Charges(formatNum2(vo.getOther1Charges() / 100.0d));
+        vo.setShowOther2Charges(formatNum2(vo.getOther2Charges() / 100.0d));
+    }
+
+    /**
+     * 是否可以删除
+     * 
+     * @param bean
+     * @return
+     */
+    public static boolean canTravelApplyDelete(TravelApplyBean bean)
+    {
+        if (bean.getStatus() == TcpConstanst.TCP_STATUS_INIT
+            || bean.getStatus() == TcpConstanst.TCP_STATUS_REJECT)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static String formatNum2(double d)
+    {
+        DecimalFormat df = new DecimalFormat("####0.00");
+
+        String result = df.format(d);
+
+        if (".00".equals(result))
+        {
+            result = "0" + result;
+        }
+
+        return result;
     }
 }

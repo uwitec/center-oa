@@ -36,6 +36,8 @@
 	
 	<osgi:reference id="commonDAO" interface="com.china.center.oa.publics.dao.CommonDAO" />
 	
+	<osgi:reference id="orgManager" interface="com.china.center.oa.publics.manager.OrgManager" />
+	
 	<osgi:reference id="userManager" interface="com.china.center.oa.publics.manager.UserManager" />
 	
 	<osgi:reference id="stafferDAO" interface="com.china.center.oa.publics.dao.StafferDAO" />
@@ -53,6 +55,8 @@
 	<osgi:reference id="stafferManager" interface="com.china.center.oa.publics.manager.StafferManager" />
 	
 	<osgi:reference id="flowLogDAO" interface="com.china.center.oa.publics.dao.FlowLogDAO" />
+	
+	<osgi:reference id="attachmentDAO" interface="com.china.center.oa.publics.dao.AttachmentDAO" />
 	
 	<osgi:reference id="fatalNotify" interface="com.china.center.oa.publics.manager.FatalNotify" />
 	
