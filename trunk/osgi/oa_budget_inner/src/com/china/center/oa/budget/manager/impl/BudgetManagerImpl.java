@@ -13,11 +13,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.budget.bean.BudgetBean;
 import com.china.center.oa.budget.bean.BudgetItemBean;
 import com.china.center.oa.budget.bean.BudgetLogBean;
@@ -60,6 +63,8 @@ import com.china.center.tools.TimeTools;
 @Exceptional
 public class BudgetManagerImpl implements BudgetManager
 {
+    private final Log triggerLog = LogFactory.getLog("trigger");
+
     private BudgetDAO budgetDAO = null;
 
     private BudgetItemDAO budgetItemDAO = null;
@@ -635,6 +640,33 @@ public class BudgetManagerImpl implements BudgetManager
         return true;
     }
 
+    @Transactional(rollbackFor = MYException.class)
+    public void initCarryStatus()
+    {
+        triggerLog.info("开始执行预算的执行状态的变更...");
+
+        ConditionParse condition = new ConditionParse();
+
+        condition.addWhereStr();
+
+        condition.addIntCondition("carryStatus", "=", BudgetConstant.BUDGET_CARRY_INIT);
+
+        condition.addCondition("beginDate", "<=", TimeTools.now_short());
+
+        condition.addIntCondition("status", "=", BudgetConstant.BUDGET_STATUS_PASS);
+
+        List<BudgetBean> budgetList = budgetDAO.queryEntityBeansByCondition(condition);
+
+        for (BudgetBean budgetBean : budgetList)
+        {
+            budgetDAO.updateCarryStatus(budgetBean.getId(), BudgetConstant.BUDGET_CARRY_DOING);
+
+            triggerLog.info("预算变更为执行:" + budgetBean);
+        }
+
+        triggerLog.info("结束执行预算的执行状态的变更...");
+    }
+
     /**
      * delBean
      * 
@@ -1178,4 +1210,5 @@ public class BudgetManagerImpl implements BudgetManager
     {
         this.orgManager = orgManager;
     }
+
 }

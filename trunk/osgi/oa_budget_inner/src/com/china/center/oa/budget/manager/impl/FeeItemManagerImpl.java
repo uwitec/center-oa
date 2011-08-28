@@ -18,6 +18,7 @@ import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.oa.budget.bean.FeeItemBean;
+import com.china.center.oa.budget.constant.BudgetConstant;
 import com.china.center.oa.budget.dao.BudgetItemDAO;
 import com.china.center.oa.budget.dao.FeeItemDAO;
 import com.china.center.oa.budget.manager.FeeItemManager;
@@ -161,6 +162,11 @@ public class FeeItemManagerImpl implements FeeItemManager
     private void checkDeleteBean(User user, Serializable id)
         throws MYException
     {
+        if (BudgetConstant.FEE_ITEM_TRAVELLING.equals(id))
+        {
+            throw new MYException("初始化的差旅费不能删除");
+        }
+
         // ref other
         int countByFK = budgetItemDAO.countByFK(id, AnoConstant.FK_FIRST);
 

@@ -56,4 +56,9 @@ public interface BudgetManager
 
     BudgetBean findBudget(String id)
         throws MYException;
+
+    /**
+     * 配置预算的开始
+     */
+    void initCarryStatus();
 }

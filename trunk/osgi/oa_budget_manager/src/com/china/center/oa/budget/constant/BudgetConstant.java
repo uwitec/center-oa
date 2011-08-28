@@ -124,7 +124,7 @@ public interface BudgetConstant
     String BUDGET_ROOT = "0";
 
     /**
-     * 预算的执行任务从200开始到299
+     * 预算的执行任务从200开始到299(结束预算)
      */
     int BUGFET_PLAN_TYPE = 201;
 
@@ -182,7 +182,7 @@ public interface BudgetConstant
     String BUDGET_DETAIL_URL = "../budget/budget.do?method=findBudget&update=1&id=";
 
     /**
-     * 预算项属性
+     * 固定费用预算
      */
     @Defined(key = "feeItemType", value = "固定费用预算")
     int FEEITEM_TYPE_REGULARFEE = 0;
@@ -198,4 +198,9 @@ public interface BudgetConstant
      */
     @Defined(key = "feeItemType", value = "可变费用预算")
     int FEEITEM_TYPE_VARIABLE = 2;
+
+    /**
+     * 差旅费
+     */
+    String FEE_ITEM_TRAVELLING = "A9201108070000000001";
 }

@@ -49,12 +49,16 @@ function load()
             <p:option type="budgetLevel"></p:option>
             </p:pro>
             
-            <p:pro field="year" cell="2">
+            <p:pro field="year" cell="1">
                 <option value="">--</option>
                 <c:forEach begin="2000" end="2100" var="item">
                     <option value="${item}">${item}</option>
                 </c:forEach>
             </p:pro>
+            
+            <p:cells celspan="1" title="预算部门">
+            ${bean.budgetFullDepartmentName}
+            </p:cells>
             
             <p:pro field="beginDate" />
             <p:pro field="endDate" />
@@ -98,11 +102,17 @@ function load()
                             <td width="20%" align="center"><input type="text" name="item_name"
                                 id="f_item_name" maxlength="20" value="${item.feeItemName}" oncheck="notNone" head="预算项名称"
                                 style="width: 100%;"></td>
-
+                            
+                            <c:if test="${item.sbudget != item.schangeMonery}">
+                            <td width="30%" align="center"><font color="red">${item.sbudget}/${item.schangeMonery}</font></td>
+                            </c:if>
+                            
+                            <c:if test="${item.sbudget == item.schangeMonery}">
                             <td width="30%" align="center"><input type="text"
                                 id="f_item_budget" style="width: 100%;" oncheck="isFloat"
                                 head="预算金额" value="${item.sbudget}/${item.schangeMonery}" maxlength="12"
                                 name="item_budget"></td>
+                            </c:if>
                                 
                             <td width="15%" align="center"><input type="text"
                                 id="f_item_budget" style="width: 100%;" oncheck="isFloat"

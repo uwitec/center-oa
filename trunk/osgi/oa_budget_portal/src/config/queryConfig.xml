@@ -5,6 +5,24 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
+        <condtion name="type" caption="预算类型">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$budgetType</option>
+        </condtion>
+        <condtion name="level" caption="预算周期">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$budgetLevel</option>
+        </condtion>
+        <condtion name="carryStatus" caption="执行状态">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$budgetCarry</option>
+        </condtion>
         <condtion name="stafferId" caption="提交人">
             <opr>=</opr>
             <datatype>0</datatype>

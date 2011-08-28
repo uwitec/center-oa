@@ -52,7 +52,7 @@ public class BudgetItemBean implements Serializable
     private double budget = 0.0d;
 
     /**
-     * 实际使用金额
+     * 实际使用金额(预算结束的时候产生)
      */
     private double realMonery = 0.0d;
 

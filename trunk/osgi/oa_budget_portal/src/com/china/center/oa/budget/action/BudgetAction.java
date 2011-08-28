@@ -28,10 +28,12 @@ import com.center.china.osgi.publics.User;
 import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
+import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.budget.bean.BudgetApplyBean;
 import com.china.center.oa.budget.bean.BudgetBean;
 import com.china.center.oa.budget.bean.BudgetItemBean;
@@ -51,9 +53,11 @@ import com.china.center.oa.budget.vo.BudgetLogVO;
 import com.china.center.oa.budget.vo.BudgetVO;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.LocationHelper;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.LogDAO;
+import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.publics.vo.LogVO;
 import com.china.center.tools.BeanUtil;
@@ -87,6 +91,8 @@ public class BudgetAction extends DispatchAction
 
     private BudgetDAO budgetDAO = null;
 
+    private OrgManager orgManager = null;
+
     private BudgetLogDAO budgetLogDAO = null;
 
     private FeeItemDAO feeItemDAO = null;
@@ -106,6 +112,8 @@ public class BudgetAction extends DispatchAction
     private static String QUERYSELFBUDGETAPPLY = "querySelfBudgetApply";
 
     private static String QUERYFEEITEM = "queryFeeItem";
+
+    private static String RPTQUERYRUNDEPARTMENTBUDGET = "rptQueryRunDepartmentBudget";
 
     private static String QUERYBUDGETAPPLYFORAPPROVE = "queryBudgetApplyForApprove";
 
@@ -150,11 +158,106 @@ public class BudgetAction extends DispatchAction
             {
                 public void handle(BudgetVO obj)
                 {
-                    BudgetHelper.formatBudgetVO(obj);
+                    warpBudgetVO(obj);
                 }
             });
 
         return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * rptQueryRunDepartmentBudget
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryRunDepartmentBudget(ActionMapping mapping, ActionForm form,
+                                                     HttpServletRequest request,
+                                                     HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        List<BudgetVO> list = null;
+
+        String cacheKey = RPTQUERYRUNDEPARTMENTBUDGET;
+
+        if (PageSeparateTools.isFirstLoad(request))
+        {
+            ConditionParse condtion = new ConditionParse();
+
+            condtion.addWhereStr();
+
+            setQueryRunDepartmentBudgetCondition(request, condtion);
+
+            int total = budgetDAO.countVOByCondition(condtion.toString());
+
+            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+
+            PageSeparateTools.initPageSeparate(condtion, page, request, cacheKey);
+
+            list = budgetDAO.queryEntityVOsByCondition(condtion, page);
+        }
+        else
+        {
+            PageSeparateTools.processSeparate(request, cacheKey);
+
+            list = budgetDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                cacheKey), PageSeparateTools.getPageSeparate(request, cacheKey));
+        }
+
+        for (BudgetVO budgetVO : list)
+        {
+            warpBudgetVO(budgetVO);
+        }
+
+        request.setAttribute("beanList", list);
+
+        return mapping.findForward(cacheKey);
+    }
+
+    /**
+     * setQueryRunDepartmentBudgetCondition
+     * 
+     * @param request
+     * @param condition
+     */
+    private void setQueryRunDepartmentBudgetCondition(HttpServletRequest request,
+                                                      ConditionParse condition)
+    {
+        String name = request.getParameter("name");
+
+        String departmentName = request.getParameter("departmentName");
+
+        // 权签人
+        String stafferName = request.getParameter("stafferName");
+
+        if ( !StringTools.isNullOrNone(name))
+        {
+            condition.addCondition("BudgetBean.name", "like", name);
+        }
+
+        if ( !StringTools.isNullOrNone(departmentName))
+        {
+            condition.addCondition("PrincipalshipBean.name", "like", departmentName);
+        }
+
+        if ( !StringTools.isNullOrNone(stafferName))
+        {
+            condition.addCondition("SIGN.name", "like", stafferName);
+        }
+
+        condition.addIntCondition("BudgetBean.carryStatus", "=", BudgetConstant.BUDGET_CARRY_DOING);
+
+        condition.addIntCondition("BudgetBean.type", "=", BudgetConstant.BUDGET_TYPE_DEPARTMENT);
+
+        condition.addIntCondition("BudgetBean.level", "=", BudgetConstant.BUDGET_LEVEL_MONTH);
+
+        condition.addIntCondition("BudgetBean.status", "=", BudgetConstant.BUDGET_STATUS_PASS);
     }
 
     /**
@@ -230,7 +333,7 @@ public class BudgetAction extends DispatchAction
             {
                 public void handle(BudgetVO obj)
                 {
-                    BudgetHelper.formatBudgetVO(obj);
+                    warpBudgetVO(obj);
                 }
             });
 
@@ -1007,6 +1110,13 @@ public class BudgetAction extends DispatchAction
                 return mapping.findForward(QUERYBUDGET);
             }
 
+            PrincipalshipBean org = orgManager.findPrincipalshipById(vo.getBudgetDepartment());
+
+            if (org != null)
+            {
+                vo.setBudgetFullDepartmentName(org.getFullName());
+            }
+
             request.setAttribute("bean", vo);
 
             List<LogVO> logs = logDAO.queryEntityVOsByFK(id);
@@ -1113,6 +1223,13 @@ public class BudgetAction extends DispatchAction
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "预算不存在");
 
                 return mapping.findForward(QUERYBUDGET);
+            }
+
+            PrincipalshipBean org = orgManager.findPrincipalshipById(vo.getBudgetDepartment());
+
+            if (org != null)
+            {
+                vo.setBudgetFullDepartmentName(org.getFullName());
             }
 
             request.setAttribute("bean", vo);
@@ -1313,6 +1430,23 @@ public class BudgetAction extends DispatchAction
     }
 
     /**
+     * 组织VO
+     * 
+     * @param obj
+     */
+    private void warpBudgetVO(BudgetVO obj)
+    {
+        BudgetHelper.formatBudgetVO(obj);
+
+        PrincipalshipBean org = orgManager.findPrincipalshipById(obj.getBudgetDepartment());
+
+        if (org != null)
+        {
+            obj.setBudgetFullDepartmentName(org.getFullName());
+        }
+    }
+
+    /**
      * @return the userManager
      */
     public UserManager getUserManager()
@@ -1480,6 +1614,23 @@ public class BudgetAction extends DispatchAction
     public void setBudgetLogDAO(BudgetLogDAO budgetLogDAO)
     {
         this.budgetLogDAO = budgetLogDAO;
+    }
+
+    /**
+     * @return the orgManager
+     */
+    public OrgManager getOrgManager()
+    {
+        return orgManager;
+    }
+
+    /**
+     * @param orgManager
+     *            the orgManager to set
+     */
+    public void setOrgManager(OrgManager orgManager)
+    {
+        this.orgManager = orgManager;
     }
 
 }

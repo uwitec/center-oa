@@ -200,6 +200,21 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
             // add new item to newList
             budgetItemDAO.saveAllEntityBeans(newList);
 
+            double newTotal = 0L;
+
+            for (BudgetItemBean each : currentItemList)
+            {
+                newTotal += each.getBudget();
+            }
+
+            for (BudgetItemBean each : newList)
+            {
+                newTotal += each.getBudget();
+            }
+
+            // update budget total
+            budgetDAO.updateTotal(apply.getBudgetId(), newTotal);
+
             deleteApply(id);
         }
 

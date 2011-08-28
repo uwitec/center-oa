@@ -18,6 +18,7 @@
             <forward name="queryBudgetApply" path="/budget/queryApplyBudget.jsp" />
             <forward name="detailBudgetApply" path="/budget/detailBudgetApply.jsp" />
             <forward name="queryRunBudget" path="/budget/queryRunBudget.jsp" />
+            <forward name="rptQueryRunDepartmentBudget" path="/budget/rptQueryRunDepartmentBudget.jsp" />
         </action>
 		
 	</action-mappings>

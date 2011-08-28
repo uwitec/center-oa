@@ -28,7 +28,7 @@ public interface BudgetDAO extends DAO<BudgetBean, BudgetVO>
 {
     boolean updateStatus(String id, int status);
 
-    boolean updateCarryStatus(String id, String carryStatus);
+    boolean updateCarryStatus(String id, int carryStatus);
 
     List<BudgetBean> querySubmitBudgetByParentId(String parentId);
 

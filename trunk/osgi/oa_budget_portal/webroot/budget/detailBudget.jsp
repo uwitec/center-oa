@@ -58,6 +58,14 @@ function load()
                 <p:option type="budgetStatus"></p:option>
             </p:pro>
             
+             <p:pro field="carryStatus">
+                <p:option type="budgetCarry"></p:option>
+            </p:pro>
+            
+            <p:cells celspan="1" title="预算部门">
+            ${bean.budgetFullDepartmentName}
+            </p:cells>
+            
             <p:pro field="beginDate" />
             <p:pro field="endDate" />
             
@@ -67,7 +75,7 @@ function load()
             <p:pro field="realProfit" />
             <p:pro field="outSave" />
             
-            <p:pro field="outMoney" />
+            <p:pro field="outMoney"/>
             <p:pro field="inMoney" />
             
             <p:cell title="预算合计">
@@ -77,6 +85,10 @@ function load()
             <p:cell title="权签人">
                ${bean.signerName}
             </p:cell>
+            
+            <p:cells celspan="2" title="提交人">
+            ${bean.stafferName}
+            </p:cells>
             
             <p:pro field="description" cell="2" innerString="rows=4 cols=60"/>
 		</p:table>

@@ -81,6 +81,10 @@ public class BudgetBean implements Serializable
     @Html(title = "状态", must = true, type = Element.SELECT)
     private int status = BudgetConstant.BUDGET_STATUS_INIT;
 
+    /**
+     * 预算使用控制
+     */
+    @Html(title = "执行状态", must = true, type = Element.SELECT)
     private int carryStatus = BudgetConstant.BUDGET_CARRY_INIT;
 
     @Html(title = "预算类型", must = true, type = Element.SELECT)

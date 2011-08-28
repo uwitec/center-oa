@@ -42,7 +42,7 @@ public class BudgetDAOImpl extends BaseDAO<BudgetBean, BudgetVO> implements Budg
         return true;
     }
 
-    public boolean updateCarryStatus(String id, String carryStatus)
+    public boolean updateCarryStatus(String id, int carryStatus)
     {
         this.jdbcOperation.updateField("carryStatus", carryStatus, id, claz);
 

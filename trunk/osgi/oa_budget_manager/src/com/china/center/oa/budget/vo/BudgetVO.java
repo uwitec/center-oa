@@ -44,6 +44,9 @@ public class BudgetVO extends BudgetBean
     private String budgetDepartmentName = "";
 
     @Ignore
+    private String budgetFullDepartmentName = "";
+
+    @Ignore
     private String stotal = "";
 
     @Ignore
@@ -193,6 +196,23 @@ public class BudgetVO extends BudgetBean
     }
 
     /**
+     * @return the budgetFullDepartmentName
+     */
+    public String getBudgetFullDepartmentName()
+    {
+        return budgetFullDepartmentName;
+    }
+
+    /**
+     * @param budgetFullDepartmentName
+     *            the budgetFullDepartmentName to set
+     */
+    public void setBudgetFullDepartmentName(String budgetFullDepartmentName)
+    {
+        this.budgetFullDepartmentName = budgetFullDepartmentName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -221,6 +241,9 @@ public class BudgetVO extends BudgetBean
             .append(TAB)
             .append("budgetDepartmentName = ")
             .append(this.budgetDepartmentName)
+            .append(TAB)
+            .append("budgetFullDepartmentName = ")
+            .append(this.budgetFullDepartmentName)
             .append(TAB)
             .append("stotal = ")
             .append(this.stotal)
