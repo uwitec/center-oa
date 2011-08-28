@@ -7,6 +7,7 @@ package com.china.center.tools;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +31,8 @@ public class RequestDataStream implements Serializable
     private HttpServletRequest request = null;
 
     private Map<String, String> parmterMap = new HashMap<String, String>();
+
+    private Map<String, List<String>> parmtersMap = new HashMap<String, List<String>>();
 
     private Map<String, String> fileNameMap = new HashMap<String, String>();
 
@@ -124,8 +127,23 @@ public class RequestDataStream implements Serializable
 
                 if (fi.isFormField())
                 {
-                    parmterMap
-                        .put(fi.getFieldName(), StringTools.getStringBySet(fi.getString(), "ISO8859-1", encoding));
+                    String value = StringTools
+                        .getStringBySet(fi.getString(), "ISO8859-1", encoding);
+
+                    if (parmtersMap.containsKey(fi.getFieldName()))
+                    {
+                        parmtersMap.get(fi.getFieldName()).add(value);
+                    }
+                    else
+                    {
+                        List<String> valueList = new ArrayList();
+
+                        valueList.add(value);
+
+                        parmtersMap.put(fi.getFieldName(), valueList);
+                    }
+
+                    parmterMap.put(fi.getFieldName(), value);
                 }
                 else
                 {
@@ -198,6 +216,11 @@ public class RequestDataStream implements Serializable
     public String getParameter(String key)
     {
         return parmterMap.get(key);
+    }
+
+    public List<String> getParameters(String key)
+    {
+        return parmtersMap.get(key);
     }
 
     /**
