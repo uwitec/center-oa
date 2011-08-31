@@ -82,8 +82,8 @@ public abstract class MathTools
 
     public static int compare(double a, double b)
     {
-        int aa = (int)Math.round(a * 1000);
-        int bb = (int)Math.round(b * 1000);
+        long aa = (long)Math.round(a * 1000);
+        long bb = (long)Math.round(b * 1000);
 
         if (Math.abs(aa - bb) <= 10)
         {
