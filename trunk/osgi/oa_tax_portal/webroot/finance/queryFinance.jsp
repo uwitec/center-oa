@@ -44,7 +44,8 @@ function load()
              {id: 'update', bclass: 'update', onpress : updateBean, auth: '1802'},
              {id: 'pass', bclass: 'pass', caption: '总部核对', onpress : checkBean, auth: '1803'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1804'},
-             {id: 'search', bclass: 'search', onpress : doSearch}
+             {id: 'search', bclass: 'search', onpress : doSearch},
+             {id: 'export', bclass: 'replied',  caption: '导出明细', onpress : exports}
              ],
         <p:conf/>
      };
@@ -57,6 +58,11 @@ function $callBack()
     loadForm();
     
     highlights($("#mainTable").get(0), ['未核对'], 'red');
+}
+
+function exports()
+{
+    document.location.href = gurl + 'exportFinance';
 }
 
 function addBean(opr, grid)

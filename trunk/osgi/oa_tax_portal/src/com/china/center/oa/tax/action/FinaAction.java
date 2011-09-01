@@ -367,6 +367,134 @@ public class FinaAction extends ParentQueryFinaAction
         return null;
     }
 
+    /**
+     * exportFinance
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportFinance(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        String filenName = "Finance_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        response.setContentType("application/x-dbf");
+
+        response.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        ConditionParse condtion = JSONPageSeparateTools.getCondition(request, QUERYFINANCE);
+
+        int count = financeDAO.countVOByCondition(condtion.toString());
+
+        if (count > 20000)
+        {
+            return ActionTools.toError("导出数量大于20000,请重新选择时间段导出", mapping, request);
+        }
+
+        try
+        {
+            out = response.getOutputStream();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            write.writeLine("日期,凭证,摘要,科目编码,科目名称,借方金额,贷方金额,借/贷,余额,产品借,产品贷,部门,职员,单位,产品,仓区,纳税实体");
+
+            PageSeparate page = new PageSeparate();
+
+            page.reset2(count, 2000);
+
+            WriteFileBuffer line = new WriteFileBuffer(write);
+
+            while (page.nextPage())
+            {
+                List<FinanceVO> voFList = financeDAO.queryEntityVOsByCondition(condtion, page);
+
+                for (FinanceVO financeVO : voFList)
+                {
+                    List<FinanceItemVO> voList = financeItemDAO.queryEntityVOsByFK(financeVO
+                        .getId());
+
+                    for (FinanceItemVO financeItemVO : voList)
+                    {
+                        fillItemVO(financeItemVO);
+
+                        line.reset();
+
+                        line.writeColumn("[" + financeItemVO.getFinanceDate() + "]");
+                        line.writeColumn(financeItemVO.getPid());
+                        line.writeColumn(StringTools
+                            .getExportString(financeItemVO.getDescription()));
+                        line.writeColumn(financeItemVO.getTaxId());
+                        line.writeColumn(financeItemVO.getTaxName());
+
+                        line.writeColumn(changeString(financeItemVO.getShowInmoney()));
+                        line.writeColumn(changeString(financeItemVO.getShowOutmoney()));
+                        line.writeColumn(financeItemVO.getForwardName());
+                        line.writeColumn(changeString(financeItemVO.getShowLastmoney()));
+
+                        line.writeColumn(financeItemVO.getProductAmountIn());
+                        line.writeColumn(financeItemVO.getProductAmountOut());
+
+                        line.writeColumn(financeItemVO.getDepartmentName());
+                        line.writeColumn(financeItemVO.getStafferName());
+                        line.writeColumn(financeItemVO.getUnitName());
+                        line.writeColumn(financeItemVO.getProductName());
+                        line.writeColumn(financeItemVO.getDepotName());
+                        line.writeColumn(financeItemVO.getDuty2Name());
+
+                        line.writeLine();
+                    }
+                }
+            }
+
+            write.close();
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
+    }
+
     private String changeString(String str)
     {
         return str.replaceAll(",", "");
