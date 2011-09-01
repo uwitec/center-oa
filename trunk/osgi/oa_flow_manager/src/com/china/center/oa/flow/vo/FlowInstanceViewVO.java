@@ -35,10 +35,7 @@ public class FlowInstanceViewVO extends FlowInstanceViewBean
     @Ignore
     private String tokenName = "";
 
-    @Relationship(relationField = "instanceId", tagField = "stafferId")
-    private String createId = "";
-
-    @Ignore
+    @Relationship(relationField = "createId")
     private String stafferName = "";
 
     /**
@@ -117,20 +114,35 @@ public class FlowInstanceViewVO extends FlowInstanceViewBean
     }
 
     /**
-     * @return the createId
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
      */
-    public String getCreateId()
+    public String toString()
     {
-        return createId;
-    }
+        final String TAB = ",";
 
-    /**
-     * @param createId
-     *            the createId to set
-     */
-    public void setCreateId(String createId)
-    {
-        this.createId = createId;
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("FlowInstanceViewVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("title = ")
+            .append(this.title)
+            .append(TAB)
+            .append("flowName = ")
+            .append(this.flowName)
+            .append(TAB)
+            .append("tokenName = ")
+            .append(this.tokenName)
+            .append(TAB)
+            .append("stafferName = ")
+            .append(this.stafferName)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 
 }

@@ -131,11 +131,9 @@
             <type>date</type>
             <inner></inner>
         </condtion>
-        <condtion name="stafferId" caption="提交人">
-            <opr>=</opr>
-            <datatype>0</datatype>
-            <type>select</type>
-            <option>$staffer</option>
+        <condtion name="sname" filed="name" caption="提交人" pfix="StafferBean">
+            <opr>like</opr>
+            <type>text</type>
         </condtion>
         <condtion name="name" caption="流程定义" pfix="FlowDefineBean">
             <opr>like</opr>

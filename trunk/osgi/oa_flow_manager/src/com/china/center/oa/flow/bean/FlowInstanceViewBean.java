@@ -17,7 +17,9 @@ import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.Unique;
+import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.flow.constant.FlowConstant;
+import com.china.center.oa.publics.bean.StafferBean;
 
 
 /**
@@ -37,6 +39,9 @@ public class FlowInstanceViewBean implements Serializable
 
     @FK(index = FlowConstant.FK_INDEX_USERID)
     private String viewer = "";
+
+    @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
+    private String createId = "";
 
     @Join(tagClass = FlowDefineBean.class)
     private String flowId = "";
@@ -157,5 +162,63 @@ public class FlowInstanceViewBean implements Serializable
     public void setType(int type)
     {
         this.type = type;
+    }
+
+    /**
+     * @return the createId
+     */
+    public String getCreateId()
+    {
+        return createId;
+    }
+
+    /**
+     * @param createId
+     *            the createId to set
+     */
+    public void setCreateId(String createId)
+    {
+        this.createId = createId;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("FlowInstanceViewBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("viewer = ")
+            .append(this.viewer)
+            .append(TAB)
+            .append("createId = ")
+            .append(this.createId)
+            .append(TAB)
+            .append("flowId = ")
+            .append(this.flowId)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("instanceId = ")
+            .append(this.instanceId)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }
