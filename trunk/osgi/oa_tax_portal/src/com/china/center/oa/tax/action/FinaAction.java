@@ -311,10 +311,10 @@ public class FinaAction extends ParentQueryFinaAction
                     line.writeColumn(financeItemVO.getTaxId());
                     line.writeColumn(financeItemVO.getTaxName());
 
-                    line.writeColumn(financeItemVO.getShowInmoney());
-                    line.writeColumn(financeItemVO.getShowOutmoney());
+                    line.writeColumn(changeString(financeItemVO.getShowInmoney()));
+                    line.writeColumn(changeString(financeItemVO.getShowOutmoney()));
                     line.writeColumn(financeItemVO.getForwardName());
-                    line.writeColumn(financeItemVO.getShowLastmoney());
+                    line.writeColumn(changeString(financeItemVO.getShowLastmoney()));
 
                     line.writeColumn(financeItemVO.getProductAmountIn());
                     line.writeColumn(financeItemVO.getProductAmountOut());
@@ -365,6 +365,11 @@ public class FinaAction extends ParentQueryFinaAction
         }
 
         return null;
+    }
+
+    private String changeString(String str)
+    {
+        return str.replaceAll(",", "");
     }
 
     /**
