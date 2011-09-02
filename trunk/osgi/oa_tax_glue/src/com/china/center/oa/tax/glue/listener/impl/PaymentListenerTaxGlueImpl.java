@@ -258,7 +258,8 @@ public class PaymentListenerTaxGlueImpl implements PaymentListener
 
         double inMoney = bean.getHandling();
 
-        itemIn.setInmoney(FinanceHelper.doubleToLong(inMoney));
+        // 导入回款手续费银行科目的金额减少
+        itemIn.setInmoney( -FinanceHelper.doubleToLong(inMoney));
 
         itemIn.setOutmoney(0);
 
@@ -292,7 +293,7 @@ public class PaymentListenerTaxGlueImpl implements PaymentListener
 
         itemOut.setInmoney(0);
 
-        itemOut.setOutmoney(FinanceHelper.doubleToLong(outMoney));
+        itemOut.setOutmoney( -FinanceHelper.doubleToLong(outMoney));
 
         itemOut.setDescription(itemOut.getName());
 
