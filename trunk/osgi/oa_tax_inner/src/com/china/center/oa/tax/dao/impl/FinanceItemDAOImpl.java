@@ -16,8 +16,10 @@ import java.util.Map;
 
 import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.IbatisDaoSupport;
+import com.china.center.jdbc.inter.Query;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.tax.bean.FinanceItemBean;
 import com.china.center.oa.tax.dao.FinanceItemDAO;
 import com.china.center.oa.tax.vo.FinanceItemVO;
@@ -86,6 +88,47 @@ public class FinanceItemDAOImpl extends BaseDAO<FinanceItemBean, FinanceItemVO> 
         return result;
     }
 
+    public long[] sumVOMoneryByCondition(ConditionParse condition, PageSeparate newPage)
+    {
+        long[] result = new long[2];
+
+        Query query = this.jdbcOperation.createQueryByCondtitionAndPageSeparate(condition
+            .toString(), newPage, this.clazVO);
+
+        String sql = query.getLastSqlByHead("sum(INMONEY) as INMONEY, sum(OUTMONEY) as OUTMONEY");
+
+        Map queryForMap = this.jdbcOperation.queryForMap(sql);
+
+        if (queryForMap.size() == 0)
+        {
+            return result;
+        }
+
+        Object object = queryForMap.get("INMONEY");
+
+        if (object == null)
+        {
+            result[0] = 0;
+        }
+        else
+        {
+            result[0] = ((BigDecimal)object).longValue();
+        }
+
+        object = queryForMap.get("OUTMONEY");
+
+        if (object == null)
+        {
+            result[1] = 0;
+        }
+        else
+        {
+            result[1] = ((BigDecimal)object).longValue();
+        }
+
+        return result;
+    }
+
     public List<String> queryDistinctUnitByStafferId(String stafferId, String beginDate,
                                                      String endDate)
     {
@@ -143,5 +186,4 @@ public class FinanceItemDAOImpl extends BaseDAO<FinanceItemBean, FinanceItemVO> 
     {
         this.ibatisDaoSupport = ibatisDaoSupport;
     }
-
 }

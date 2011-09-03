@@ -59,10 +59,12 @@ import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.dao.UnitDAO;
 import com.china.center.oa.tax.facade.TaxFacade;
 import com.china.center.oa.tax.helper.FinanceHelper;
+import com.china.center.oa.tax.helper.TaxHelper;
 import com.china.center.oa.tax.manager.FinanceManager;
 import com.china.center.oa.tax.vo.FinanceItemVO;
 import com.china.center.oa.tax.vo.FinanceShowVO;
 import com.china.center.oa.tax.vo.TaxVO;
+import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
@@ -211,19 +213,72 @@ public class ParentQueryFinaAction extends DispatchAction
         // 明细
         if ("0".equals(queryType))
         {
+            // 这里的分类账有个特点就是余额需要递增
+            PageSeparate pageSeparate = OldPageSeparateTools.getPageSeparate(request,
+                QUERYTAXFINANCE1);
+
+            TaxBean tax = (TaxBean)request.getSession().getAttribute("queryTaxFinance1_tax");
+
+            long ptotal = 0L;
+
+            if (pageSeparate.getNowPage() != 1)
+            {
+                PageSeparate newPage = new PageSeparate();
+                newPage.setRowCount( (pageSeparate.getNowPage() - 1) * pageSeparate.getPageSize());
+                newPage.setPageSize(newPage.getRowCount());
+
+                long[] sumVOn = financeItemDAO.sumVOMoneryByCondition(OldPageSeparateTools
+                    .getCondition(request, QUERYTAXFINANCE1), newPage);
+
+                // 余额
+                ptotal = TaxHelper.getLastMoney(tax, sumVOn);
+            }
+
+            // 合计出本次展现的开始金额
+            long lastmoney = head.getLastmoney() + ptotal;
+
+            long oldLastmoney = lastmoney;
+
             for (FinanceItemVO financeItemVO : list)
             {
                 fillItemVO(financeItemVO);
+
+                lastmoney = financeItemVO.getLastmoney() + lastmoney;
+
+                financeItemVO.setLastmoney(lastmoney);
+
+                financeItemVO.setShowLastmoney(FinanceHelper.longToString(lastmoney));
+            }
+
+            if (pageSeparate.getNowPage() == 1)
+            {
+                // 放入合计统计
+                list.add(0, head);
+            }
+            else
+            {
+                FinanceItemVO newHead = new FinanceItemVO();
+
+                BeanUtil.copyProperties(newHead, head);
+
+                newHead.setLastmoney(oldLastmoney);
+
+                newHead.setDescription("转上页累计余额");
+
+                newHead.setShowLastmoney(FinanceHelper.longToString(oldLastmoney));
+
+                // 放入合计统计
+                list.add(0, newHead);
             }
         }
         else
         {
             // 总帐
             list.clear();
-        }
 
-        // 放入合计统计
-        list.add(0, head);
+            // 放入合计统计
+            list.add(0, head);
+        }
 
         list.add(currentTotal);
 
@@ -523,6 +578,7 @@ public class ParentQueryFinaAction extends DispatchAction
         }
 
         request.setAttribute("tax", tax);
+        request.getSession().setAttribute("queryTaxFinance1_tax", tax);
 
         // 动态级别的查询
         condtion.addCondition("FinanceItemBean.taxId" + tax.getLevel(), "=", taxId);

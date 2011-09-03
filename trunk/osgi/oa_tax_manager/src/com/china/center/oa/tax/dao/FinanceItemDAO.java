@@ -13,6 +13,7 @@ import java.util.List;
 
 import com.china.center.jdbc.inter.DAO;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.tax.bean.FinanceItemBean;
 import com.china.center.oa.tax.vo.FinanceItemVO;
 
@@ -44,6 +45,15 @@ public interface FinanceItemDAO extends DAO<FinanceItemBean, FinanceItemVO>
     long sumOutByCondition(ConditionParse condition);
 
     long[] sumMoneryByCondition(ConditionParse condition);
+
+    /**
+     * 通过条件和分页获取
+     * 
+     * @param condition
+     * @param newPage
+     * @return
+     */
+    long[] sumVOMoneryByCondition(ConditionParse condition, PageSeparate newPage);
 
     /**
      * 查询指定时间内发生凭证的单位

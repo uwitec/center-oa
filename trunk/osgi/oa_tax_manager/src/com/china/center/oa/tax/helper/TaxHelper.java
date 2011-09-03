@@ -14,6 +14,7 @@ import java.util.Map;
 
 import com.china.center.oa.tax.bean.FinanceItemBean;
 import com.china.center.oa.tax.bean.TaxBean;
+import com.china.center.oa.tax.constanst.TaxConstanst;
 import com.china.center.tools.BeanUtil;
 
 
@@ -46,5 +47,33 @@ public abstract class TaxHelper
         temp.put(field, tax.getId());
 
         BeanUtil.copyProperties(financeItem, temp);
+    }
+
+    /**
+     * 获取余额
+     * 
+     * @param tax
+     * @param sums
+     * @return
+     */
+    public static long getLastMoney(TaxBean tax, long[] sums)
+    {
+        long ptotal = 0L;
+
+        if (tax.getForward() == TaxConstanst.TAX_FORWARD_IN)
+        {
+            ptotal = sums[0] - sums[1];
+        }
+        else
+        {
+            ptotal = sums[1] - sums[0];
+        }
+
+        return ptotal;
+    }
+
+    public static long getLastMoney(TaxBean tax, long sumIn, long sumOut)
+    {
+        return getLastMoney(tax, new long[] {sumIn, sumOut});
     }
 }
