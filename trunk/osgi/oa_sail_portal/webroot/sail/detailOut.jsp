@@ -375,6 +375,16 @@ function checkBean()
                        ${checkOutPayStatus.message}
                        </td>
                     </tr>
+                    
+                     <tr class="content2">
+                        <td align="right">关联凭证：</td>
+                        <td colspan="3">
+                       <c:forEach items="${financeBeanList}" var="item">
+                       <a href="../finance/finance.do?method=findFinance&id=${item.id}">${item.id}</a>
+                       &nbsp;
+                       </c:forEach>
+                       </td>
+                    </tr>
 
 				</table>
 				</td>
@@ -782,6 +792,45 @@ function checkBean()
                             <td align="center">${my:formatNum(item.total)}</td>
                             <td align="center">${item.outTime}</td>
 
+                        </tr>
+                    </c:forEach>
+                </table>
+                </td>
+            </tr>
+        </table>
+        </div>
+        </td>
+    </tr>
+    
+    </c:if>
+    
+    <c:if test="${my:length(insList) > 0}">
+    
+    <tr>
+        <td height="10" colspan='2'></td>
+    </tr>
+
+    <tr>
+        <td background="../images/dot_line.gif" colspan='2'></td>
+    </tr>
+    
+    <tr>
+        <td colspan='2' align='center'>
+        <div id="desc4" style="display: block;">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0"
+            class="border">
+            <tr>
+                <td>
+                <table width="100%" border="0" cellspacing='1' id="tables">
+                    <tr align="center" class="content0">
+                        <td width="10%" align="center">开票</td>
+                        <td width="10%" align="center">金额</td>
+                    </tr>
+
+                    <c:forEach items="${insList}" var="item" varStatus="vs">
+                        <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
+                            <td align="center"><a href="../finance/invoiceins.do?method=findInvoiceins&id=${item.insId}">${item.id}</a></td>
+                            <td align="center">${my:formatNum(item.moneys)}</td>
                         </tr>
                     </c:forEach>
                 </table>

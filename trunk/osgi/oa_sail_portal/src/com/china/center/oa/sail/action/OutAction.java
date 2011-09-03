@@ -28,9 +28,11 @@ import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.customer.dao.CustomerDAO;
 import com.china.center.oa.customervssail.dao.OutQueryDAO;
 import com.china.center.oa.finance.dao.InBillDAO;
+import com.china.center.oa.finance.dao.InsVSOutDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.vo.InBillVO;
 import com.china.center.oa.finance.vo.OutBillVO;
+import com.china.center.oa.finance.vs.InsVSOutBean;
 import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.DepotDAO;
@@ -65,6 +67,7 @@ import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.helper.LockHelper;
 import com.china.center.oa.publics.manager.AuthManager;
 import com.china.center.oa.publics.manager.FatalNotify;
+import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.publics.manager.StafferManager;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.publics.vo.FlowLogVO;
@@ -86,6 +89,8 @@ import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.sail.vo.OutBalanceVO;
 import com.china.center.oa.sail.vo.OutVO;
 import com.china.center.oa.sail.wrap.CreditWrap;
+import com.china.center.oa.tax.bean.FinanceBean;
+import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
@@ -1748,6 +1753,15 @@ public class OutAction extends ParentOutAction
             request.setAttribute("shiye", shiye);
 
             request.setAttribute("logList", voList);
+
+            // 关联的
+            List<FinanceBean> financeBeanList = financeDAO.queryRefFinanceItemByOutId(outId);
+
+            request.setAttribute("financeBeanList", financeBeanList);
+
+            List<InsVSOutBean> insList = insVSOutDAO.queryEntityBeansByFK(outId);
+
+            request.setAttribute("insList", insList);
         }
         catch (Exception e)
         {
@@ -1769,6 +1783,7 @@ public class OutAction extends ParentOutAction
         }
         catch (MYException e)
         {
+            _logger.warn(e, e);
         }
 
         if ( !StringTools.isNullOrNone(radioIndex))
@@ -3040,5 +3055,56 @@ public class OutAction extends ParentOutAction
     public void setPrincipalshipDAO(PrincipalshipDAO principalshipDAO)
     {
         this.principalshipDAO = principalshipDAO;
+    }
+
+    /**
+     * @return the orgManager
+     */
+    public OrgManager getOrgManager()
+    {
+        return orgManager;
+    }
+
+    /**
+     * @param orgManager
+     *            the orgManager to set
+     */
+    public void setOrgManager(OrgManager orgManager)
+    {
+        this.orgManager = orgManager;
+    }
+
+    /**
+     * @return the financeDAO
+     */
+    public FinanceDAO getFinanceDAO()
+    {
+        return financeDAO;
+    }
+
+    /**
+     * @param financeDAO
+     *            the financeDAO to set
+     */
+    public void setFinanceDAO(FinanceDAO financeDAO)
+    {
+        this.financeDAO = financeDAO;
+    }
+
+    /**
+     * @return the insVSOutDAO
+     */
+    public InsVSOutDAO getInsVSOutDAO()
+    {
+        return insVSOutDAO;
+    }
+
+    /**
+     * @param insVSOutDAO
+     *            the insVSOutDAO to set
+     */
+    public void setInsVSOutDAO(InsVSOutDAO insVSOutDAO)
+    {
+        this.insVSOutDAO = insVSOutDAO;
     }
 }

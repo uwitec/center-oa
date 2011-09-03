@@ -133,6 +133,13 @@ function showDiv(id)
             <p:cells celspan="2" title="核对">
             ${bean.checks}
             </p:cells>
+            
+            <p:cells celspan="2" title="关联凭证">
+            <c:forEach items="${financeBeanList}" var="item">
+	            <a href="../finance/finance.do?method=findFinance&id=${item.id}">${item.id}</a>
+	            &nbsp;
+            </c:forEach>
+            </p:cells>
 
 		</p:table>
 	</p:subBody>

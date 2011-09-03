@@ -48,6 +48,7 @@ import com.china.center.oa.customer.dao.CustomerDAO;
 import com.china.center.oa.customer.wrap.NotPayWrap;
 import com.china.center.oa.customervssail.dao.OutQueryDAO;
 import com.china.center.oa.finance.dao.InBillDAO;
+import com.china.center.oa.finance.dao.InsVSOutDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
@@ -113,6 +114,7 @@ import com.china.center.oa.sail.helper.YYTools;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.sail.vo.OutBalanceVO;
 import com.china.center.oa.sail.vo.OutVO;
+import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -168,6 +170,11 @@ public class ParentOutAction extends DispatchAction
 
     protected StorageDAO storageDAO = null;
 
+    /**
+     * 发票
+     */
+    protected InsVSOutDAO insVSOutDAO = null;
+
     protected DepotDAO depotDAO = null;
 
     protected InBillDAO inBillDAO = null;
@@ -176,7 +183,7 @@ public class ParentOutAction extends DispatchAction
 
     protected ShowDAO showDAO = null;
 
-    private OrgManager orgManager = null;
+    protected OrgManager orgManager = null;
 
     protected UserManager userManager = null;
 
@@ -185,6 +192,8 @@ public class ParentOutAction extends DispatchAction
     protected FlowLogDAO flowLogDAO = null;
 
     protected OutDAO outDAO = null;
+
+    protected FinanceDAO financeDAO = null;
 
     protected DutyDAO dutyDAO = null;
 
@@ -4575,22 +4584,5 @@ public class ParentOutAction extends DispatchAction
         }
 
         request.setAttribute("divMap", divMap);
-    }
-
-    /**
-     * @return the orgManager
-     */
-    public OrgManager getOrgManager()
-    {
-        return orgManager;
-    }
-
-    /**
-     * @param orgManager
-     *            the orgManager to set
-     */
-    public void setOrgManager(OrgManager orgManager)
-    {
-        this.orgManager = orgManager;
     }
 }

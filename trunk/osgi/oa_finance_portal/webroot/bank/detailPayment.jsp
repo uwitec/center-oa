@@ -108,6 +108,13 @@ function clearValues()
             </p:cell>
 
 			<p:pro field="description" cell="2" />
+			
+			<p:cells celspan="2" title="关联凭证">
+            <c:forEach items="${financeBeanList}" var="item">
+                <a href="../finance/finance.do?method=findFinance&id=${item.id}">${item.id}</a>
+                &nbsp;
+            </c:forEach>
+            </p:cells>
 
 		</p:table>
 	</p:subBody>

@@ -290,6 +290,16 @@ function checkBean()
                        ${bean.checks}
                        </td>
                     </tr>
+                    
+                    <tr class="content2">
+                        <td align="right">关联凭证：</td>
+                        <td colspan="3">
+                       <c:forEach items="${financeBeanList}" var="item">
+                       <a href="../finance/finance.do?method=findFinance&id=${item.id}">${item.id}</a>
+                       &nbsp;
+                       </c:forEach>
+                       </td>
+                    </tr>
 
 				</table>
 				</td>

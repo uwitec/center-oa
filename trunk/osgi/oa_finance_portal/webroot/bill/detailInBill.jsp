@@ -120,6 +120,13 @@ function pagePrint()
             <p:cell title="核对信息" end="true">
                ${bean.checks}
             </p:cell>
+            
+            <p:cells celspan="2" title="关联凭证">
+            <c:forEach items="${financeBeanList}" var="item">
+                <a href="../finance/finance.do?method=findFinance&id=${item.id}">${item.id}</a>
+                &nbsp;
+            </c:forEach>
+            </p:cells>
 
 		</p:table>
 

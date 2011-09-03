@@ -5,6 +5,7 @@ Bundle-SymbolicName: com.china.center.oa.finance.portal
 Bundle-Version: 1.0.0
 Bundle-Activator: com.china.center.oa.finance.portal.init.Activator
 Require-Bundle: 
+ com.china.center.oa.tax.manager;bundle-version="1.0.0",
  com.china.center.oa.sail.manager;bundle-version="1.0.0",
  com.china.center.oa.finance.manager;bundle-version="1.0.0",
  com.china.center.oa.publics.manager;bundle-version="1.0.0",

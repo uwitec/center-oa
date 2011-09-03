@@ -53,6 +53,8 @@ import com.china.center.oa.publics.manager.AuthManager;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.dao.OutDAO;
+import com.china.center.oa.tax.bean.FinanceBean;
+import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.MathTools;
@@ -93,6 +95,8 @@ public class BillAction extends DispatchAction
     private ParameterDAO parameterDAO = null;
 
     private PaymentDAO paymentDAO = null;
+
+    private FinanceDAO financeDAO = null;
 
     private static final String QUERYINBILL = "queryInBill";
 
@@ -728,6 +732,11 @@ public class BillAction extends DispatchAction
 
         request.setAttribute("bean", bean);
 
+        // 关联的
+        List<FinanceBean> financeBeanList = financeDAO.queryRefFinanceItemByBillId(id);
+
+        request.setAttribute("financeBeanList", financeBeanList);
+
         return mapping.findForward("detailInBill");
     }
 
@@ -750,6 +759,11 @@ public class BillAction extends DispatchAction
         String id = request.getParameter("id");
 
         InBillVO bean = inBillDAO.findVO(id);
+
+        // 关联的
+        List<FinanceBean> financeBeanList = financeDAO.queryRefFinanceItemByBillId(id);
+
+        request.setAttribute("financeBeanList", financeBeanList);
 
         if (bean == null)
         {
@@ -796,6 +810,11 @@ public class BillAction extends DispatchAction
         }
 
         request.setAttribute("bean", bean);
+
+        // 关联的
+        List<FinanceBean> financeBeanList = financeDAO.queryRefFinanceItemByBillId(id);
+
+        request.setAttribute("financeBeanList", financeBeanList);
 
         return mapping.findForward("detailOutBill");
     }
@@ -1251,5 +1270,22 @@ public class BillAction extends DispatchAction
     public void setPaymentDAO(PaymentDAO paymentDAO)
     {
         this.paymentDAO = paymentDAO;
+    }
+
+    /**
+     * @return the financeDAO
+     */
+    public FinanceDAO getFinanceDAO()
+    {
+        return financeDAO;
+    }
+
+    /**
+     * @param financeDAO
+     *            the financeDAO to set
+     */
+    public void setFinanceDAO(FinanceDAO financeDAO)
+    {
+        this.financeDAO = financeDAO;
     }
 }

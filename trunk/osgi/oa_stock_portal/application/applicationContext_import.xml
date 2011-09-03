@@ -66,4 +66,6 @@
 	<osgi:reference id="stockManager" interface="com.china.center.oa.stock.manager.StockManager" />
 	
 	<osgi:reference id="depotpartDAO" interface="com.china.center.oa.product.dao.DepotpartDAO" />
+	
+	<osgi:reference id="financeDAO" interface="com.china.center.oa.tax.dao.FinanceDAO" />
 </beans>

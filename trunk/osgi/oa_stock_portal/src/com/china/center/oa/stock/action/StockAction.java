@@ -84,6 +84,8 @@ import com.china.center.oa.stock.manager.StockManager;
 import com.china.center.oa.stock.vo.PriceAskProviderBeanVO;
 import com.china.center.oa.stock.vo.StockItemVO;
 import com.china.center.oa.stock.vo.StockVO;
+import com.china.center.oa.tax.bean.FinanceBean;
+import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -119,6 +121,8 @@ public class StockAction extends DispatchAction
     private StorageRelationDAO storageRelationDAO = null;
 
     private FlowLogDAO flowLogDAO = null;
+
+    private FinanceDAO financeDAO = null;
 
     private UserDAO userDAO = null;
 
@@ -1099,6 +1103,11 @@ public class StockAction extends DispatchAction
             request.setAttribute("out", 1);
         }
 
+        // 关联的
+        List<FinanceBean> financeBeanList = financeDAO.queryRefFinanceItemByStockId(id);
+
+        request.setAttribute("financeBeanList", financeBeanList);
+
         return mapping.findForward("detailStock");
     }
 
@@ -1611,7 +1620,7 @@ public class StockAction extends DispatchAction
 
                 int total = stockDAO.countVOByCondition(condtion.toString());
 
-                PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+                PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_SIZE);
 
                 OldPageSeparateTools.initPageSeparate(condtion, page, request, "queryStock");
 
@@ -2530,5 +2539,22 @@ public class StockAction extends DispatchAction
     public void setDepotpartDAO(DepotpartDAO depotpartDAO)
     {
         this.depotpartDAO = depotpartDAO;
+    }
+
+    /**
+     * @return the financeDAO
+     */
+    public FinanceDAO getFinanceDAO()
+    {
+        return financeDAO;
+    }
+
+    /**
+     * @param financeDAO
+     *            the financeDAO to set
+     */
+    public void setFinanceDAO(FinanceDAO financeDAO)
+    {
+        this.financeDAO = financeDAO;
     }
 }

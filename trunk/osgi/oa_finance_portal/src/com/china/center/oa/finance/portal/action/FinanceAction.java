@@ -84,6 +84,8 @@ import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.manager.OutManager;
+import com.china.center.oa.tax.bean.FinanceBean;
+import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.MathTools;
@@ -115,6 +117,8 @@ public class FinanceAction extends DispatchAction
     private InBillDAO inBillDAO = null;
 
     private OutDAO outDAO = null;
+
+    private FinanceDAO financeDAO = null;
 
     private OutBalanceDAO outBalanceDAO = null;
 
@@ -1753,6 +1757,11 @@ public class FinanceAction extends DispatchAction
 
             request.setAttribute("outBillList", outBillList);
 
+            // 关联的
+            List<FinanceBean> financeBeanList = financeDAO.queryRefFinanceItemByRefId(id);
+
+            request.setAttribute("financeBeanList", financeBeanList);
+
             return mapping.findForward("detailPayment");
         }
 
@@ -2335,6 +2344,23 @@ public class FinanceAction extends DispatchAction
     public void setBankManager(BankManager bankManager)
     {
         this.bankManager = bankManager;
+    }
+
+    /**
+     * @return the financeDAO
+     */
+    public FinanceDAO getFinanceDAO()
+    {
+        return financeDAO;
+    }
+
+    /**
+     * @param financeDAO
+     *            the financeDAO to set
+     */
+    public void setFinanceDAO(FinanceDAO financeDAO)
+    {
+        this.financeDAO = financeDAO;
     }
 
 }
