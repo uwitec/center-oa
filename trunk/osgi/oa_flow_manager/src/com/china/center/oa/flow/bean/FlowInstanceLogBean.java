@@ -48,6 +48,12 @@ public class FlowInstanceLogBean implements Serializable
 
     private int oprMode = FlowConstant.OPERATION_SUBMIT;
 
+    /**
+     * 创建人
+     */
+    @Join(tagClass = StafferBean.class, type = JoinType.LEFT, alias = "sf3")
+    private String createId = "";
+
     @Join(tagClass = StafferBean.class, type = JoinType.LEFT, alias = "sf1")
     private String stafferId = "";
 
@@ -231,5 +237,75 @@ public class FlowInstanceLogBean implements Serializable
     public void setNextStafferId(String nextStafferId)
     {
         this.nextStafferId = nextStafferId;
+    }
+
+    /**
+     * @return the createId
+     */
+    public String getCreateId()
+    {
+        return createId;
+    }
+
+    /**
+     * @param createId
+     *            the createId to set
+     */
+    public void setCreateId(String createId)
+    {
+        this.createId = createId;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("FlowInstanceLogBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("instanceId = ")
+            .append(this.instanceId)
+            .append(TAB)
+            .append("flowId = ")
+            .append(this.flowId)
+            .append(TAB)
+            .append("tokenId = ")
+            .append(this.tokenId)
+            .append(TAB)
+            .append("nextTokenId = ")
+            .append(this.nextTokenId)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("oprMode = ")
+            .append(this.oprMode)
+            .append(TAB)
+            .append("createId = ")
+            .append(this.createId)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("nextStafferId = ")
+            .append(this.nextStafferId)
+            .append(TAB)
+            .append("opinion = ")
+            .append(this.opinion)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }

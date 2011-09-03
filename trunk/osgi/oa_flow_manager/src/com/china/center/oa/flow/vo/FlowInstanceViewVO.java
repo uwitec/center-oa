@@ -36,7 +36,7 @@ public class FlowInstanceViewVO extends FlowInstanceViewBean
     private String tokenName = "";
 
     @Relationship(relationField = "createId")
-    private String stafferName = "";
+    private String createName = "";
 
     /**
      * default constructor
@@ -97,20 +97,20 @@ public class FlowInstanceViewVO extends FlowInstanceViewBean
     }
 
     /**
-     * @return the stafferName
+     * @return the createName
      */
-    public String getStafferName()
+    public String getCreateName()
     {
-        return stafferName;
+        return createName;
     }
 
     /**
-     * @param stafferName
-     *            the stafferName to set
+     * @param createName
+     *            the createName to set
      */
-    public void setStafferName(String stafferName)
+    public void setCreateName(String createName)
     {
-        this.stafferName = stafferName;
+        this.createName = createName;
     }
 
     /**
@@ -137,8 +137,8 @@ public class FlowInstanceViewVO extends FlowInstanceViewBean
             .append("tokenName = ")
             .append(this.tokenName)
             .append(TAB)
-            .append("stafferName = ")
-            .append(this.stafferName)
+            .append("createName = ")
+            .append(this.createName)
             .append(TAB)
             .append(" )");
 

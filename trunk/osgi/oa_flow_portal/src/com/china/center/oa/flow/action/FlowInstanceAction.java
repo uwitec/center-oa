@@ -39,7 +39,6 @@ import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.json.AjaxResult;
-import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.flow.bean.FlowInstanceBean;
@@ -67,12 +66,10 @@ import com.china.center.oa.flow.vo.FlowBelongVO;
 import com.china.center.oa.flow.vo.FlowDefineVO;
 import com.china.center.oa.flow.vo.FlowInstanceLogVO;
 import com.china.center.oa.flow.vo.FlowInstanceVO;
-import com.china.center.oa.flow.vo.FlowInstanceViewVO;
 import com.china.center.oa.flow.vo.FlowTokenVO;
 import com.china.center.oa.flow.vo.TokenVSTemplateVO;
 import com.china.center.oa.flow.vs.FlowVSTemplateBean;
 import com.china.center.oa.publics.Helper;
-import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.tools.BeanUtil;
@@ -204,18 +201,7 @@ public class FlowInstanceAction extends DispatchAction
             ActionTools.processJSONQueryCondition(QUERYFLOWINSTANCE2, request, condtion);
 
             jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFLOWINSTANCE2, request, condtion,
-                this.flowInstanceViewDAO, new HandleResult<FlowInstanceViewVO>()
-                {
-                    public void handle(FlowInstanceViewVO obj)
-                    {
-                        StafferBean sb = stafferDAO.find(obj.getCreateId());
-
-                        if (sb != null)
-                        {
-                            obj.setStafferName(sb.getName());
-                        }
-                    }
-                });
+                this.flowInstanceViewDAO);
         }
 
         // query instance which i had handle

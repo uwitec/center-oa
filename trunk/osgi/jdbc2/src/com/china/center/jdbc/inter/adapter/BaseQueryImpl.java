@@ -161,6 +161,11 @@ public abstract class BaseQueryImpl implements Query
 
     public abstract String getLastSql();
 
+    public String getLastSqlByHead(String head)
+    {
+        return "select " + head + " from (" + getLastSql() + ") t_ano_last_wrap";
+    }
+
     public Map uniqueResult()
     {
         List<Map> list = this.jdbcOperation.queryForList(getLastSql(), paramters);

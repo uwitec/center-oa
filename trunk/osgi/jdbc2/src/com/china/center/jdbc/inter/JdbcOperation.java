@@ -191,6 +191,33 @@ public interface JdbcOperation
                                            Object... args)
         throws DataAccessException;
 
+    /**
+     * 通过条件和分页获取Query
+     * 
+     * @param <T>
+     * @param condtition
+     * @param page
+     * @param claz
+     * @param args
+     * @return
+     * @throws DataAccessException
+     */
+    <T> Query createQueryByCondtitionAndPageSeparate(String condtition, PageSeparate page,
+                                                     Class<T> claz, Object... args)
+        throws DataAccessException;
+
+    /**
+     * queryObjectsBySqlAndPageSeparate
+     * 
+     * @param <T>
+     * @param sql
+     *            整个SQL
+     * @param page
+     * @param claz
+     * @param args
+     * @return
+     * @throws DataAccessException
+     */
     <T> List<T> queryObjectsBySqlAndPageSeparate(String sql, PageSeparate page, Class<T> claz,
                                                  Object... args)
         throws DataAccessException;

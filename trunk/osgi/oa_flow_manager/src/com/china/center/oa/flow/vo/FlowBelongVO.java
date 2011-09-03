@@ -26,6 +26,9 @@ public class FlowBelongVO extends FlowBelongBean
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
 
+    @Relationship(relationField = "createId")
+    private String createName = "";
+
     @Relationship(relationField = "tokenId")
     private String tokenName = "";
 
@@ -36,7 +39,8 @@ public class FlowBelongVO extends FlowBelongBean
      *
      */
     public FlowBelongVO()
-    {}
+    {
+    }
 
     /**
      * @return the title
@@ -104,5 +108,57 @@ public class FlowBelongVO extends FlowBelongBean
     public void setFlowName(String flowName)
     {
         this.flowName = flowName;
+    }
+
+    /**
+     * @return the createName
+     */
+    public String getCreateName()
+    {
+        return createName;
+    }
+
+    /**
+     * @param createName
+     *            the createName to set
+     */
+    public void setCreateName(String createName)
+    {
+        this.createName = createName;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("FlowBelongVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("title = ")
+            .append(this.title)
+            .append(TAB)
+            .append("stafferName = ")
+            .append(this.stafferName)
+            .append(TAB)
+            .append("createName = ")
+            .append(this.createName)
+            .append(TAB)
+            .append("tokenName = ")
+            .append(this.tokenName)
+            .append(TAB)
+            .append("flowName = ")
+            .append(this.flowName)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }

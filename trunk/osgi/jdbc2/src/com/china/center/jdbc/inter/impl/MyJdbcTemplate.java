@@ -1766,7 +1766,15 @@ public class MyJdbcTemplate implements JdbcOperation
                                                   Class<T> claz, Object... args)
         throws DataAccessException
     {
+        return createQueryByCondtitionAndPageSeparate(condtition, page, claz, args).list(claz);
+    }
+
+    public <T> Query createQueryByCondtitionAndPageSeparate(String condtition, PageSeparate page,
+                                                            Class<T> claz, Object... args)
+        throws DataAccessException
+    {
         int max = page.getPageSize();
+
         if (page.getSectionFoot() + page.getPageSize() > page.getRowCount())
         {
             max = page.getRowCount() - page.getSectionFoot();
@@ -1775,8 +1783,7 @@ public class MyJdbcTemplate implements JdbcOperation
         return this
             .queryObjects(condtition, claz, args)
             .setFirstResult(page.getSectionFoot())
-            .setMaxResults(max)
-            .list(claz);
+            .setMaxResults(max);
     }
 
     /**

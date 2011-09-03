@@ -601,7 +601,7 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
             process.add(bean.getStafferId());
         }
 
-        processBelong(bean.getId(), preOrders, process);
+        processBelong(bean, preOrders, process);
 
         // update status and currentTokenId
         flowInstanceDAO.updateCurrentTokenId(bean.getId(), preOrders.getId());
@@ -1031,7 +1031,7 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
         }
         else
         {
-            processBelong(bean.getId(), next, processers);
+            processBelong(bean, next, processers);
 
             if (FlowHelper.isSubInstance(bean))
             {
@@ -1272,7 +1272,7 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        processBelong(parentBean.getId(), pct, processers);
+        processBelong(parentBean, pct, processers);
 
         // 递归处理归属,一直到主流程
         if (FlowHelper.isSubInstance(parentBean))
@@ -1545,6 +1545,8 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
 
         log.setInstanceId(bean.getId());
 
+        log.setCreateId(bean.getStafferId());
+
         log.setStafferId(user.getStafferId());
 
         log.setLogTime(TimeTools.now());
@@ -1611,23 +1613,26 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
      * @param token
      * @throws MYException
      */
-    private void processBelong(String instanceId, FlowTokenBean token, List<String> processers)
+    private void processBelong(FlowInstanceBean instance, FlowTokenBean token,
+                               List<String> processers)
         throws MYException
     {
         // delete old belongs
-        flowBelongDAO.deleteEntityBeansByFK(instanceId);
+        flowBelongDAO.deleteEntityBeansByFK(instance.getId());
 
         for (String eitem : processers)
         {
             FlowBelongBean bean = new FlowBelongBean();
 
-            bean.setInstanceId(instanceId);
+            bean.setInstanceId(instance.getId());
 
             bean.setFlowId(token.getFlowId());
 
             bean.setTokenId(token.getId());
 
             bean.setStafferId(eitem);
+
+            bean.setCreateId(instance.getStafferId());
 
             bean.setLogTime(TimeTools.now());
 

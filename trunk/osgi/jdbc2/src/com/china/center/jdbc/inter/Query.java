@@ -13,10 +13,9 @@ import java.util.List;
 import java.util.Map;
 
 
-
 /**
  * 查询结果
- *
+ * 
  * @author ZHUZHU
  * @version 2008-3-2
  * @see
@@ -25,12 +24,12 @@ import java.util.Map;
 public interface Query
 {
     String FROM = " from ";
-    
+
     String LIMIT = " limit ";
-    
+
     /**
      * 获得查询结果
-     *
+     * 
      * @return
      */
     <T> List<T> list(Class<T> claz);
@@ -39,7 +38,7 @@ public interface Query
 
     /**
      * get unique result
-     *
+     * 
      * @param <T>
      * @param claz
      * @return
@@ -50,7 +49,7 @@ public interface Query
 
     /**
      * set max results in query
-     *
+     * 
      * @param maxResults
      * @return
      */
@@ -58,7 +57,7 @@ public interface Query
 
     /**
      * set range results in query
-     *
+     * 
      * @param begin
      * @param end
      * @return
@@ -67,7 +66,7 @@ public interface Query
 
     /**
      * set the first which begin in query
-     *
+     * 
      * @param firstResult
      * @return
      */
@@ -83,12 +82,20 @@ public interface Query
 
     /**
      * 获得操作
-     *
+     * 
      * @param jdbcOperation
      */
     void setJdbcOperation(JdbcOperation jdbcOperation);
 
     String getLastSql();
+
+    /**
+     * 自动能够以查询条件的综合查询
+     * 
+     * @param head
+     * @return
+     */
+    String getLastSqlByHead(String head);
 
     int getCount();
 

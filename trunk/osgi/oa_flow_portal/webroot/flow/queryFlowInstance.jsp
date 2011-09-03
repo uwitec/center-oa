@@ -17,6 +17,8 @@ var titleMap = {"0" : "我的实例", "1" : "我的任务", "2" : "我的查阅"
 
 var sMap = {"0" : "创建人", "1" : "处理人", "2" : "创建人", "3" : "创建/处理人"};
 
+var cMap = {"0" : "{stafferName}", "1" : "{createName}", "2" : "{createName}", "3" : "{createName}/{stafferName}"};
+
 var buttonsMap = 
 {
     "0" : 
@@ -54,7 +56,7 @@ function load()
 		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={instanceId} sstatus={status}>', width : 40, align: 'center'},
 		     {display: '标识', name : 'instanceId', width : '15%'},
 		     {display: '主题', name : 'title', width : '30%'},
-		     {display: sMap['${param.operation}'], name : 'stafferName', sortable : false, width : '8%'},
+		     {display: sMap['${param.operation}'], name : 'stafferName', content: cMap['${param.operation}'], sortable : false, width : '8%'},
 		     {display: '当前环节', name : 'tokenName', width : '10%'},
 		     {display: '流程定义', name : 'flowName', sortable : true, cname: 'FlowDefineBean.name', width : '15%'},
 		     {display: '更新时间', name : 'logTime', sortable : true, width : 'auto'}

@@ -16,6 +16,7 @@ import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.publics.bean.StafferBean;
 
 
@@ -43,6 +44,9 @@ public class FlowBelongBean implements Serializable
 
     @Join(tagClass = FlowTokenBean.class)
     private String tokenId = "";
+
+    @Join(tagClass = StafferBean.class, type = JoinType.LEFT, alias = "SB1")
+    private String createId = "";
 
     @Join(tagClass = StafferBean.class)
     private String stafferId = "";
@@ -156,5 +160,63 @@ public class FlowBelongBean implements Serializable
     public void setLogTime(String logTime)
     {
         this.logTime = logTime;
+    }
+
+    /**
+     * @return the createId
+     */
+    public String getCreateId()
+    {
+        return createId;
+    }
+
+    /**
+     * @param createId
+     *            the createId to set
+     */
+    public void setCreateId(String createId)
+    {
+        this.createId = createId;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("FlowBelongBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("instanceId = ")
+            .append(this.instanceId)
+            .append(TAB)
+            .append("flowId = ")
+            .append(this.flowId)
+            .append(TAB)
+            .append("tokenId = ")
+            .append(this.tokenId)
+            .append(TAB)
+            .append("createId = ")
+            .append(this.createId)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }
