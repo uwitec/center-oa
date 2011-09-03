@@ -28,6 +28,7 @@ import org.apache.struts.actions.DispatchAction;
 import com.center.china.osgi.publics.User;
 import com.center.china.osgi.publics.file.writer.WriteFile;
 import com.center.china.osgi.publics.file.writer.WriteFileFactory;
+import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.OldPageSeparateTools;
 import com.china.center.actionhelper.common.PageSeparateTools;
@@ -632,9 +633,14 @@ public class ParentQueryFinaAction extends DispatchAction
 
             write.openFile(out);
 
-            request.getSession().setAttribute("EXPORT_FINANCEITE_KEY", QUERYTAXFINANCE2);
+            Object attribute = request.getSession().getAttribute("EXPORT_FINANCEITE_KEY");
 
-            String type = request.getSession().getAttribute("EXPORT_FINANCEITE_KEY").toString();
+            if (attribute == null)
+            {
+                return ActionTools.toError(mapping, request);
+            }
+
+            String type = attribute.toString();
 
             if (type.equals(QUERYTAXFINANCE2))
             {

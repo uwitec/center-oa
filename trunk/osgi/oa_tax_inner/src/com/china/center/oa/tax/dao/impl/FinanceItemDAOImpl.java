@@ -186,4 +186,5 @@ public class FinanceItemDAOImpl extends BaseDAO<FinanceItemBean, FinanceItemVO> 
     {
         this.ibatisDaoSupport = ibatisDaoSupport;
     }
+
 }

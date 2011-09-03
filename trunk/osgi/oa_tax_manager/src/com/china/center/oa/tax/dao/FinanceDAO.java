@@ -9,6 +9,8 @@
 package com.china.center.oa.tax.dao;
 
 
+import java.util.List;
+
 import com.china.center.jdbc.inter.DAO;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.vo.FinanceVO;
@@ -34,4 +36,12 @@ public interface FinanceDAO extends DAO<FinanceBean, FinanceVO>
      * @return
      */
     int updateLockToEnd(String beginTime, String endTime);
+
+    List<FinanceBean> queryRefFinanceItemByOutId(String outId);
+
+    List<FinanceBean> queryRefFinanceItemByBillId(String billId);
+
+    List<FinanceBean> queryRefFinanceItemByStockId(String stockId);
+
+    List<FinanceBean> queryRefFinanceItemByRefId(String refId);
 }
