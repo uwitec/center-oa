@@ -24,7 +24,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
-import org.osgi.framework.BundleContext;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.actionhelper.common.ActionTools;
@@ -41,7 +40,9 @@ import com.china.center.oa.group.vo.GroupVSStafferVO;
 import com.china.center.oa.group.vs.GroupVSStafferBean;
 import com.china.center.oa.mg.facade.MailGroupFacade;
 import com.china.center.oa.publics.Helper;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.publics.vo.StafferVO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -60,11 +61,11 @@ public class GroupAction extends DispatchAction
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
-    private BundleContext bundleContext = null;
-
     private MailGroupFacade mailGroupFacade = null;
 
     private GroupDAO groupDAO = null;
+
+    private OrgManager orgManager = null;
 
     private StafferDAO stafferDAO = null;
 
@@ -93,8 +94,8 @@ public class GroupAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryGroup(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse response)
+    public ActionForward queryGroup(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         final ConditionParse condtion = new ConditionParse();
@@ -115,7 +116,8 @@ public class GroupAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYGROUP, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYGROUP, request, condtion, this.groupDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYGROUP, request, condtion,
+            this.groupDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -130,8 +132,8 @@ public class GroupAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryPublicGroup(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward queryPublicGroup(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         final ConditionParse condtion = new ConditionParse();
@@ -142,7 +144,8 @@ public class GroupAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYPUBLICGROUP, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPUBLICGROUP, request, condtion, this.groupDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPUBLICGROUP, request, condtion,
+            this.groupDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -157,8 +160,8 @@ public class GroupAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward querySystemGroup(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward querySystemGroup(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         final ConditionParse condtion = new ConditionParse();
@@ -169,7 +172,8 @@ public class GroupAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYSYSTEMGROUP, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSYSTEMGROUP, request, condtion, this.groupDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSYSTEMGROUP, request, condtion,
+            this.groupDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -184,8 +188,8 @@ public class GroupAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addOrUpdateGroup(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward addOrUpdateGroup(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         GroupBean bean = new GroupBean();
@@ -244,8 +248,8 @@ public class GroupAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findGroup(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                   HttpServletResponse response)
+    public ActionForward findGroup(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -321,8 +325,8 @@ public class GroupAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward delGroup(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse response)
+    public ActionForward delGroup(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -357,8 +361,8 @@ public class GroupAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryGroup(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse reponse)
+    public ActionForward rptQueryGroup(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -386,13 +390,15 @@ public class GroupAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryGroupMember(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                             HttpServletResponse reponse)
+    public ActionForward rptQueryGroupMember(ActionMapping mapping, ActionForm form,
+                                             HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
 
         String pid = request.getParameter("pid");
+        String name = request.getParameter("name");
+        String dname = request.getParameter("dname");
 
         GroupBean group = groupDAO.find(pid);
 
@@ -402,7 +408,35 @@ public class GroupAction extends DispatchAction
 
         for (GroupVSStafferBean groupVSStafferBean : vs)
         {
-            list.add(stafferDAO.findVO(groupVSStafferBean.getStafferId()));
+            StafferVO vo = stafferDAO.findVO(groupVSStafferBean.getStafferId());
+
+            if (vo != null)
+            {
+                if ( !StringTools.isNullOrNone(name))
+                {
+                    if ( !vo.getName().contains(name))
+                    {
+                        continue;
+                    }
+                }
+
+                PrincipalshipBean pb = orgManager.findPrincipalshipById(vo.getPrincipalshipId());
+
+                if (pb != null)
+                {
+                    vo.setDepartmentFullName(pb.getFullName());
+
+                    if ( !StringTools.isNullOrNone(dname))
+                    {
+                        if ( !vo.getDepartmentFullName().contains(dname))
+                        {
+                            continue;
+                        }
+                    }
+                }
+
+                list.add(vo);
+            }
         }
 
         request.setAttribute("beanList", list);
@@ -422,8 +456,8 @@ public class GroupAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryStaffer2(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse reponse)
+    public ActionForward rptQueryStaffer2(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -523,19 +557,19 @@ public class GroupAction extends DispatchAction
     }
 
     /**
-     * @return the bundleContext
+     * @return the orgManager
      */
-    public BundleContext getBundleContext()
+    public OrgManager getOrgManager()
     {
-        return bundleContext;
+        return orgManager;
     }
 
     /**
-     * @param bundleContext
-     *            the bundleContext to set
+     * @param orgManager
+     *            the orgManager to set
      */
-    public void setBundleContext(BundleContext bundleContext)
+    public void setOrgManager(OrgManager orgManager)
     {
-        this.bundleContext = bundleContext;
+        this.orgManager = orgManager;
     }
 }

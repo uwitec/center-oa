@@ -39,10 +39,16 @@ public class AbstractMail implements Serializable
      */
     private String reveiveId = "";
 
+    /**
+     * 主送
+     */
     private String reveiveIds = "";
 
     private String reveiveNames = "";
 
+    /**
+     * 抄送
+     */
     private String reveiveIds2 = "";
 
     private String reveiveNames2 = "";
