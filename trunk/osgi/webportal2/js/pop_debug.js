@@ -40,10 +40,23 @@ function tip_start()
    {
       return;
    }
-
+   
    var content1 = document.getElementById("g_tip_content1");
 
    var content2 = document.getElementById("g_tip_content2");
+   
+   var msg = content1 + content2;
+   
+    if (msg.length > 45)
+    {
+        var addH = ((msg.length - 45) / 15) + 1;
+        
+        g_pop_h = g_pop_h_old + addH * 30;
+    }
+    else
+    {
+        g_pop_h = g_pop_h_old;
+    }
 
    var flagObj = document.getElementById("g_tip_flag");
 
@@ -126,23 +139,23 @@ function loadTip()
    }
    else
    {
-   	   if (timer1) 
-   	   clearTimeout(timer1); 
-   	   if (timer2) 
-   	   clearTimeout(timer2); 
-	   
-	   timer1 = setTimeout("tip_start()", 300);
-	
-	   timer2 = setTimeout("tip_hiden()", 8000);
+       if (timer1) 
+       clearTimeout(timer1); 
+       if (timer2) 
+       clearTimeout(timer2); 
+       
+       timer1 = setTimeout("tip_start()", 300);
+    
+       timer2 = setTimeout("tip_hiden()", 8000);
    }
 }
 
 function $error(msg)
 {
-	if (msg == undefined && Res._Public)
-	reloadTip(Res._Public['REFUSE'], false)
-	else
-	reloadTip(msg, false)
+    if (msg == undefined && Res._Public)
+    reloadTip(Res._Public['REFUSE'], false)
+    else
+    reloadTip(msg, false)
 }
 
 function $sucess(msg)
@@ -152,33 +165,33 @@ function $sucess(msg)
 
 function reloadTip(msg, success)
 {
-	if (msg.length > 45)
-	{
-		var addH = ((msg.length - 45) / 15) + 1;
-		
-		g_pop_h = g_pop_h_old + addH * 12;
-	}
-	else
-	{
-		g_pop_h = g_pop_h_old;
-	}
-	
-	if (success)
-	{
-		document.getElementById('g_tip_content1').innerHTML = msg;
-		document.getElementById('g_tip_content2').innerHTML = '';
-	}
-	else
-	{
-		document.getElementById('g_tip_content1').innerHTML = '';
-		document.getElementById('g_tip_content2').innerHTML = msg;
-	}
-	
-	var flagObj = document.getElementById("g_tip_flag");
-	
-	flagObj.value = "0";
-	
-	loadTip();
+    if (msg.length > 45)
+    {
+        var addH = ((msg.length - 45) / 15) + 1;
+        
+        g_pop_h = g_pop_h_old + addH * 30;
+    }
+    else
+    {
+        g_pop_h = g_pop_h_old;
+    }
+    
+    if (success)
+    {
+        document.getElementById('g_tip_content1').innerHTML = msg;
+        document.getElementById('g_tip_content2').innerHTML = '';
+    }
+    else
+    {
+        document.getElementById('g_tip_content1').innerHTML = '';
+        document.getElementById('g_tip_content2').innerHTML = msg;
+    }
+    
+    var flagObj = document.getElementById("g_tip_flag");
+    
+    flagObj.value = "0";
+    
+    loadTip();
 }
 
 if (window.addEventCommon)
