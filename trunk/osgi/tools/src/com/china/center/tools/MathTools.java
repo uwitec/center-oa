@@ -74,16 +74,16 @@ public abstract class MathTools
 
     public static boolean equal2(double a, double b)
     {
-        int aa = (int)Math.round(a * 1000);
-        int bb = (int)Math.round(b * 1000);
+        long aa = Math.round(a * 1000);
+        long bb = Math.round(b * 1000);
 
         return Math.abs(aa - bb) <= 10;
     }
 
     public static int compare(double a, double b)
     {
-        long aa = (long)Math.round(a * 1000);
-        long bb = (long)Math.round(b * 1000);
+        long aa = Math.round(a * 1000);
+        long bb = Math.round(b * 1000);
 
         if (Math.abs(aa - bb) <= 10)
         {
@@ -130,5 +130,28 @@ public abstract class MathTools
         }
 
         return Double.parseDouble(result);
+    }
+
+    public static long doubleToLong2(String value)
+    {
+        // 先格式转成double
+        double parseDouble = MathTools.parseDouble(value);
+
+        return Math.round(MathTools.parseDouble(formatNum(parseDouble)) * 100);
+    }
+
+    public static double longToDouble2(long value)
+    {
+        return value / 100.0d;
+    }
+
+    public static String longToDoubleStr2(long value)
+    {
+        return formatNum(value / 100.0d);
+    }
+
+    public static long doubleToLong2(double value)
+    {
+        return Math.round(MathTools.parseDouble(formatNum(value)) * 100);
     }
 }
