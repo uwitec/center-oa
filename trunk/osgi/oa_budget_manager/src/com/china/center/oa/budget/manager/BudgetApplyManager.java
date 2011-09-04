@@ -13,6 +13,8 @@ import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.budget.bean.BudgetApplyBean;
+import com.china.center.oa.budget.bean.BudgetBean;
+import com.china.center.oa.budget.bean.BudgetItemBean;
 import com.china.center.oa.budget.listener.BudgetListener;
 
 
@@ -37,4 +39,20 @@ public interface BudgetApplyManager extends ListenerManager<BudgetListener>
 
     boolean whetherApply(String budgetId)
         throws MYException;
+
+    /**
+     * 合计所有的递归使用的子项
+     * 
+     * @param budgetItemBean
+     * @return
+     */
+    double sumPreAndUseInEachBudgetItem(BudgetItemBean budgetItemBean);
+
+    /**
+     * 统计预算已经使用金额
+     * 
+     * @param budget
+     * @return
+     */
+    double sumPreAndUseInEachBudget(BudgetBean budget);
 }

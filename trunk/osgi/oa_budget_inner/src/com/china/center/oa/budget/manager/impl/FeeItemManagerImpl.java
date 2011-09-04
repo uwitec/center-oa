@@ -11,7 +11,7 @@ package com.china.center.oa.budget.manager.impl;
 
 import java.io.Serializable;
 
-import org.china.center.spring.ex.annotation.Exceptional;
+import org.china.center.spring.iaop.annotation.IntegrationAOP;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
@@ -34,7 +34,7 @@ import com.china.center.tools.JudgeTools;
  * @see FeeItemManagerImpl
  * @since 1.0
  */
-@Exceptional
+@IntegrationAOP
 public class FeeItemManagerImpl implements FeeItemManager
 {
     private FeeItemDAO feeItemDAO = null;

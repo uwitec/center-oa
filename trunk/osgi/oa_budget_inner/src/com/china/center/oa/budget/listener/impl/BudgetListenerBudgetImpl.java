@@ -10,8 +10,6 @@ package com.china.center.oa.budget.listener.impl;
 
 
 import com.center.china.osgi.publics.User;
-import com.china.center.common.MYException;
-import com.china.center.oa.budget.bean.BudgetApplyBean;
 import com.china.center.oa.budget.bean.BudgetItemBean;
 import com.china.center.oa.budget.dao.BudgetLogDAO;
 import com.china.center.oa.budget.listener.BudgetListener;
@@ -39,11 +37,9 @@ public class BudgetListenerBudgetImpl implements BudgetListener
     /**
      * 返回预算已经使用的金额
      */
-    public double onSumPreAndUseInEachBudgetItemChange(User user, BudgetApplyBean apply,
-                                                       BudgetItemBean changeItem)
-        throws MYException
+    public double onSumPreAndUseInEachBudgetItemChange(User user, BudgetItemBean changeItem)
     {
-        return budgetLogDAO.sumBudgetLogByBudgetItemId(changeItem.getId());
+        return budgetLogDAO.sumBudgetLogByBudgetItemId(changeItem.getId()) / 100.0d;
     }
 
     /*

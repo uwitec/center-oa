@@ -26,11 +26,12 @@ import com.china.center.oa.budget.vo.BudgetLogVO;
  */
 public class BudgetLogDAOImpl extends BaseDAO<BudgetLogBean, BudgetLogVO> implements BudgetLogDAO
 {
-    public double sumBudgetLogByBudgetItemId(String budgetItemId)
+    public long sumBudgetLogByBudgetItemId(String budgetItemId)
     {
-        String sql = BeanTools.getSumHead(this.claz, "monery") + "where budgetItemId = ?";
+        String sql = BeanTools.getSumHead(this.claz, "monery") + "where budgetItemId = '"
+                     + budgetItemId + "'";
 
-        return this.jdbcOperation.queryForDouble(sql, budgetItemId);
+        return this.jdbcOperation.queryForLong(sql);
     }
 
 }

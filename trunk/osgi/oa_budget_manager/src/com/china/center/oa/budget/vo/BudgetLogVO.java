@@ -29,20 +29,14 @@ public class BudgetLogVO extends BudgetLogBean
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
 
-    @Relationship(relationField = "locationId", tagField = "name")
-    private String locationName = "";
-
     @Relationship(relationField = "feeItemId")
     private String feeItemName = "";
 
     @Relationship(relationField = "budgetId")
     private String budgetName = "";
 
-    @Ignore
-    private String sbeforemonery = "";
-
-    @Ignore
-    private String saftermonery = "";
+    @Relationship(relationField = "departmentId")
+    private String departmentName = "";
 
     @Ignore
     private String smonery = "";
@@ -69,23 +63,6 @@ public class BudgetLogVO extends BudgetLogBean
     public void setStafferName(String stafferName)
     {
         this.stafferName = stafferName;
-    }
-
-    /**
-     * @return the locationName
-     */
-    public String getLocationName()
-    {
-        return locationName;
-    }
-
-    /**
-     * @param locationName
-     *            the locationName to set
-     */
-    public void setLocationName(String locationName)
-    {
-        this.locationName = locationName;
     }
 
     /**
@@ -123,40 +100,6 @@ public class BudgetLogVO extends BudgetLogBean
     }
 
     /**
-     * @return the sbeforemonery
-     */
-    public String getSbeforemonery()
-    {
-        return sbeforemonery;
-    }
-
-    /**
-     * @param sbeforemonery
-     *            the sbeforemonery to set
-     */
-    public void setSbeforemonery(String sbeforemonery)
-    {
-        this.sbeforemonery = sbeforemonery;
-    }
-
-    /**
-     * @return the saftermonery
-     */
-    public String getSaftermonery()
-    {
-        return saftermonery;
-    }
-
-    /**
-     * @param saftermonery
-     *            the saftermonery to set
-     */
-    public void setSaftermonery(String saftermonery)
-    {
-        this.saftermonery = saftermonery;
-    }
-
-    /**
      * @return the smonery
      */
     public String getSmonery()
@@ -172,4 +115,42 @@ public class BudgetLogVO extends BudgetLogBean
     {
         this.smonery = smonery;
     }
+
+    /**
+     * @return the departmentName
+     */
+    public String getDepartmentName()
+    {
+        return departmentName;
+    }
+
+    /**
+     * @param departmentName
+     *            the departmentName to set
+     */
+    public void setDepartmentName(String departmentName)
+    {
+        this.departmentName = departmentName;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue.append("BudgetLogVO ( ").append(super.toString()).append(TAB).append(
+            "stafferName = ").append(this.stafferName).append(TAB).append("feeItemName = ").append(
+            this.feeItemName).append(TAB).append("budgetName = ").append(this.budgetName).append(
+            TAB).append("departmentName = ").append(this.departmentName).append(TAB).append(
+            "smonery = ").append(this.smonery).append(TAB).append(" )");
+
+        return retValue.toString();
+    }
+
 }

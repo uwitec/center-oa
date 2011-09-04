@@ -26,8 +26,11 @@
 	<osgi:reference id="convertEncode"
 		interface="com.china.center.jdbc.inter.Convert" />
 		
-	<osgi:reference id="exceptionalManager"
-		interface="org.china.center.spring.ex.annotation.ExceptionalManager" />
+    <osgi:reference id="integrationAOPManager"
+        interface="org.china.center.spring.iaop.annotation.IntegrationAOPManager" />
+        
+    <osgi:reference id="integrationAuthManager" 
+        interface="org.china.center.spring.iaop.annotation.IntegrationAuthManager" />
 		
 	<osgi:reference id="commonDAO" interface="com.china.center.oa.publics.dao.CommonDAO" />
 	

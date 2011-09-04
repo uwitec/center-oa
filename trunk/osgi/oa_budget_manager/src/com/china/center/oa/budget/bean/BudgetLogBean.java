@@ -11,12 +11,14 @@ package com.china.center.oa.budget.bean;
 
 import java.io.Serializable;
 
+import com.china.center.jdbc.annosql.constant.AnoConstant;
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
-import com.china.center.oa.publics.bean.LocationBean;
+import com.china.center.oa.budget.constant.BudgetConstant;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
 
 
@@ -42,6 +44,16 @@ public class BudgetLogBean implements Serializable
     private String stafferId = "";
 
     /**
+     * 0:报销 1:收款单
+     */
+    private int fromType = BudgetConstant.BUDGETLOG_FROMTYPE_TCP;
+
+    /**
+     * 0:预占 1:实际已经使用
+     */
+    private int userType = BudgetConstant.BUDGETLOG_USERTYPE_PRE;
+
+    /**
      * 预算
      */
     @Join(tagClass = BudgetBean.class)
@@ -53,24 +65,43 @@ public class BudgetLogBean implements Serializable
     private String billId = "";
 
     /**
-     * 关联ID
+     * 关联ID(一般是关联主单据ID)
      */
+    @FK
     private String refId = "";
 
-    private double beforemonery = 0.0d;
+    /**
+     * 关联具体的子项ID
+     */
+    @FK(index = AnoConstant.FK_FIRST)
+    private String refSubId = "";
 
-    private double aftermonery = 0.0d;
+    /**
+     * 准确到分
+     */
+    private long monery = 0L;
 
-    private double monery = 0.0d;
-
-    @Join(tagClass = LocationBean.class)
     private String locationId = "";
 
+    /**
+     * 使用时间
+     */
     private String logTime = "";
 
-    @FK
+    /**
+     * 预算子项ID
+     */
     private String budgetItemId = "";
 
+    /**
+     * 部门ID
+     */
+    @Join(tagClass = PrincipalshipBean.class)
+    private String departmentId = "";
+
+    /**
+     * 预算项ID(费用科目)
+     */
     @Join(tagClass = FeeItemBean.class)
     private String feeItemId = "";
 
@@ -118,6 +149,40 @@ public class BudgetLogBean implements Serializable
     }
 
     /**
+     * @return the fromType
+     */
+    public int getFromType()
+    {
+        return fromType;
+    }
+
+    /**
+     * @param fromType
+     *            the fromType to set
+     */
+    public void setFromType(int fromType)
+    {
+        this.fromType = fromType;
+    }
+
+    /**
+     * @return the userType
+     */
+    public int getUserType()
+    {
+        return userType;
+    }
+
+    /**
+     * @param userType
+     *            the userType to set
+     */
+    public void setUserType(int userType)
+    {
+        this.userType = userType;
+    }
+
+    /**
      * @return the budgetId
      */
     public String getBudgetId()
@@ -152,43 +217,43 @@ public class BudgetLogBean implements Serializable
     }
 
     /**
-     * @return the beforemonery
+     * @return the refId
      */
-    public double getBeforemonery()
+    public String getRefId()
     {
-        return beforemonery;
+        return refId;
     }
 
     /**
-     * @param beforemonery
-     *            the beforemonery to set
+     * @param refId
+     *            the refId to set
      */
-    public void setBeforemonery(double beforemonery)
+    public void setRefId(String refId)
     {
-        this.beforemonery = beforemonery;
+        this.refId = refId;
     }
 
     /**
-     * @return the aftermonery
+     * @return the refSubId
      */
-    public double getAftermonery()
+    public String getRefSubId()
     {
-        return aftermonery;
+        return refSubId;
     }
 
     /**
-     * @param aftermonery
-     *            the aftermonery to set
+     * @param refSubId
+     *            the refSubId to set
      */
-    public void setAftermonery(double aftermonery)
+    public void setRefSubId(String refSubId)
     {
-        this.aftermonery = aftermonery;
+        this.refSubId = refSubId;
     }
 
     /**
      * @return the monery
      */
-    public double getMonery()
+    public long getMonery()
     {
         return monery;
     }
@@ -197,7 +262,7 @@ public class BudgetLogBean implements Serializable
      * @param monery
      *            the monery to set
      */
-    public void setMonery(double monery)
+    public void setMonery(long monery)
     {
         this.monery = monery;
     }
@@ -237,23 +302,6 @@ public class BudgetLogBean implements Serializable
     }
 
     /**
-     * @return the log
-     */
-    public String getLog()
-    {
-        return log;
-    }
-
-    /**
-     * @param log
-     *            the log to set
-     */
-    public void setLog(String log)
-    {
-        this.log = log;
-    }
-
-    /**
      * @return the budgetItemId
      */
     public String getBudgetItemId()
@@ -288,19 +336,102 @@ public class BudgetLogBean implements Serializable
     }
 
     /**
-     * @return the refId
+     * @return the log
      */
-    public String getRefId()
+    public String getLog()
     {
-        return refId;
+        return log;
     }
 
     /**
-     * @param refId
-     *            the refId to set
+     * @param log
+     *            the log to set
      */
-    public void setRefId(String refId)
+    public void setLog(String log)
     {
-        this.refId = refId;
+        this.log = log;
     }
+
+    /**
+     * @return the departmentId
+     */
+    public String getDepartmentId()
+    {
+        return departmentId;
+    }
+
+    /**
+     * @param departmentId
+     *            the departmentId to set
+     */
+    public void setDepartmentId(String departmentId)
+    {
+        this.departmentId = departmentId;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("BudgetLogBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("fromType = ")
+            .append(this.fromType)
+            .append(TAB)
+            .append("userType = ")
+            .append(this.userType)
+            .append(TAB)
+            .append("budgetId = ")
+            .append(this.budgetId)
+            .append(TAB)
+            .append("billId = ")
+            .append(this.billId)
+            .append(TAB)
+            .append("refId = ")
+            .append(this.refId)
+            .append(TAB)
+            .append("refSubId = ")
+            .append(this.refSubId)
+            .append(TAB)
+            .append("monery = ")
+            .append(this.monery)
+            .append(TAB)
+            .append("locationId = ")
+            .append(this.locationId)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("budgetItemId = ")
+            .append(this.budgetItemId)
+            .append(TAB)
+            .append("departmentId = ")
+            .append(this.departmentId)
+            .append(TAB)
+            .append("feeItemId = ")
+            .append(this.feeItemId)
+            .append(TAB)
+            .append("log = ")
+            .append(this.log)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
+    }
+
 }

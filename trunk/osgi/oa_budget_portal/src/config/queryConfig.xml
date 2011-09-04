@@ -57,24 +57,26 @@
     </item>
     
     <item name="queryBudgetLog" deaultpfix="BudgetLogBean">
-        <condtion name="alogTime" filed="logTime" caption="开始时间">
+        <condtion name="alogTime" filed="logTime" caption="开始日期">
             <opr>&gt;=</opr>
-            <type>datetime</type>
+            <type>date</type>
             <inner></inner>
         </condtion>
-        <condtion name="blogTime" filed="logTime" caption="结束时间">
+        <condtion name="blogTime" filed="logTime" caption="结束日期">
             <opr>&lt;=</opr>
-            <type>datetime</type>
+            <type>date</type>
             <inner></inner>
         </condtion>
-        <condtion name="budgetId" caption="预算">
-            <opr>=</opr>
-            <datatype>0</datatype>
-            <type>select</type>
-            <option>$releaseBudget</option>
-        </condtion>
-        <condtion name="billId" caption="付款单">
+        <condtion name="budgetName" filed="name" caption="预算" pfix="BudgetBean">
             <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="stafferName" filed="name" caption="使用人" pfix="StafferBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="refId" caption="单据(A)">
+            <opr>=</opr>
             <type>text</type>
         </condtion>
         <condtion name="feeItemId" caption="预算项">

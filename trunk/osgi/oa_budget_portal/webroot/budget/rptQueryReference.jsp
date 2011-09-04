@@ -62,17 +62,35 @@ function closesd()
             id="result">
             <tr align=center class="content0">
                 <td align="center"><strong>预算项</strong></td>
+                
+                <c:if test="${!unit}">
                 <td align="center"><strong>子预算</strong></td>
+                </c:if>
                 <td align="center"><strong>预算金额</strong></td>
+                <c:if test="${!unit}">
+                <td align="center"><strong>未分配预算</strong></td>
+                </c:if>
+                <c:if test="${unit}">
                 <td align="center"><strong>剩余预算</strong></td>
+                </c:if>
+                <td align="center"><strong>已经使用</strong></td>
+                <c:if test="${!unit}">
+                <td align="center"><strong>剩余预算</strong></td>
+                </c:if>
             </tr>
 
             <c:forEach items="${items}" var="item" varStatus="vs">
                 <tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
                     <td align="center" onclick="hrefAndSelect(this)">${item.feeItemName}</td>
+                    <c:if test="${!unit}">
                     <td align="center" onclick="hrefAndSelect(this)">${item.description}</td>
+                    </c:if>
                     <td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.budget)}</td>
                     <td align="center" onclick="hrefAndSelect(this)">${item.sbudget}</td>
+                    <td align="center" onclick="hrefAndSelect(this)">${item.suseMonery}</td>
+                    <c:if test="${!unit}">
+                        <td align="center" onclick="hrefAndSelect(this)">${item.sremainMonery}</td>
+                    </c:if>
                 </tr>
             </c:forEach>
         </table>

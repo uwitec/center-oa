@@ -29,6 +29,9 @@ public class BudgetItemVO extends BudgetItemBean
     @Relationship(relationField = "feeItemId")
     private String feeItemName = "";
 
+    @Relationship(relationField = "budgetId")
+    private String budgetName = "";
+
     @Ignore
     private String sbudget = "";
 
@@ -144,6 +147,23 @@ public class BudgetItemVO extends BudgetItemBean
     }
 
     /**
+     * @return the budgetName
+     */
+    public String getBudgetName()
+    {
+        return budgetName;
+    }
+
+    /**
+     * @param budgetName
+     *            the budgetName to set
+     */
+    public void setBudgetName(String budgetName)
+    {
+        this.budgetName = budgetName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -160,6 +180,9 @@ public class BudgetItemVO extends BudgetItemBean
             .append(TAB)
             .append("feeItemName = ")
             .append(this.feeItemName)
+            .append(TAB)
+            .append("budgetName = ")
+            .append(this.budgetName)
             .append(TAB)
             .append("sbudget = ")
             .append(this.sbudget)

@@ -23,6 +23,11 @@ import com.china.center.jdbc.annotation.Defined;
 public interface BudgetConstant
 {
     /**
+     * 操作锁
+     */
+    String BUDGETLOG_ADD_LOCK = "BUDGETLOG_ADD_LOCK";
+
+    /**
      * 预算--初始化
      */
     @Defined(key = "budgetStatus", value = "初始化")
@@ -203,4 +208,22 @@ public interface BudgetConstant
      * 差旅费
      */
     String FEE_ITEM_TRAVELLING = "A9201108070000000001";
+
+    /**
+     * 预算使用来源-报销
+     */
+    @Defined(key = "budgetLogFromType", value = "报销")
+    int BUDGETLOG_FROMTYPE_TCP = 0;
+
+    /**
+     * 预算使用类型-预占
+     */
+    @Defined(key = "budgetLogUserType", value = "预占")
+    int BUDGETLOG_USERTYPE_PRE = 0;
+
+    /**
+     * 预算使用类型使用
+     */
+    @Defined(key = "budgetLogUserType", value = "使用")
+    int BUDGETLOG_USERTYPE_REAL = 1;
 }

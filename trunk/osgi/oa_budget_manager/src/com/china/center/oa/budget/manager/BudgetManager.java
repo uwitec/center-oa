@@ -9,12 +9,14 @@
 package com.china.center.oa.budget.manager;
 
 
+import java.util.List;
+
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.budget.bean.BudgetBean;
 import com.china.center.oa.budget.bean.BudgetItemBean;
+import com.china.center.oa.budget.bean.BudgetLogBean;
 import com.china.center.oa.budget.vo.BudgetVO;
-import com.china.center.oa.finance.bean.OutBillBean;
 
 
 /**
@@ -30,7 +32,18 @@ public interface BudgetManager
     boolean addBean(User user, BudgetBean bean)
         throws MYException;
 
-    boolean addBill(String stafferId, OutBillBean bill, String budgetItemId, String budgetId)
+    /**
+     * 增加预算使用日志(全局同步操作),无事务
+     * 
+     * @param user
+     * @param logBean
+     * @return
+     * @throws MYException
+     */
+    boolean addBudgetLogListWithoutTransactional(User user, List<BudgetLogBean> logBean)
+        throws MYException;
+
+    boolean deleteBudgetLogListWithoutTransactional(User user, String refId)
         throws MYException;
 
     boolean updateBean(User user, BudgetBean bean)

@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.china.center.common.MYException;
 import com.china.center.oa.budget.bean.BudgetApplyBean;
 import com.china.center.oa.budget.bean.BudgetBean;
 import com.china.center.oa.budget.constant.BudgetConstant;
@@ -97,9 +98,74 @@ public abstract class BudgetHelper
      */
     public static void formatBudgetLog(BudgetLogVO log)
     {
-        log.setSmonery(MathTools.formatNum(log.getMonery()));
-        log.setSbeforemonery(MathTools.formatNum(log.getBeforemonery()));
-        log.setSaftermonery(MathTools.formatNum(log.getAftermonery()));
+        log.setSmonery(MathTools.formatNum(log.getMonery() / 100.0d));
+    }
+
+    /**
+     * 检查使用状态
+     * 
+     * @param budget
+     * @return
+     * @throws MYException
+     */
+    public static boolean checkBudgetCanUse(BudgetBean budget)
+        throws MYException
+    {
+        if (budget.getType() != BudgetConstant.BUDGET_TYPE_DEPARTMENT
+            || budget.getLevel() != BudgetConstant.BUDGET_LEVEL_MONTH)
+        {
+            throw new MYException("不是部门月度预算,不能报销");
+        }
+
+        // 执行状态
+        if (budget.getCarryStatus() != BudgetConstant.BUDGET_CARRY_DOING
+            || budget.getStatus() != BudgetConstant.BUDGET_STATUS_PASS)
+        {
+            throw new MYException("预算[%s]不在执行状态", budget.getName());
+        }
+
+        return true;
+    }
+
+    /**
+     * 是否是最小执行单位
+     * 
+     * @param budget
+     * @return
+     */
+    public static boolean isUnitBudget(BudgetBean budget)
+    {
+        if (budget.getType() == BudgetConstant.BUDGET_TYPE_DEPARTMENT
+            && budget.getLevel() == BudgetConstant.BUDGET_LEVEL_MONTH)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 判断使用状态
+     * 
+     * @param budget
+     * @return
+     */
+    public static boolean budgetCanUse(BudgetBean budget)
+    {
+        if (budget.getType() != BudgetConstant.BUDGET_TYPE_DEPARTMENT
+            || budget.getLevel() != BudgetConstant.BUDGET_LEVEL_MONTH)
+        {
+            return false;
+        }
+
+        // 执行状态
+        if (budget.getCarryStatus() != BudgetConstant.BUDGET_CARRY_DOING
+            || budget.getStatus() != BudgetConstant.BUDGET_STATUS_PASS)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     /**

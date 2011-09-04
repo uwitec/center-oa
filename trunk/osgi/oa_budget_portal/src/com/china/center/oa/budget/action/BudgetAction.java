@@ -213,6 +213,10 @@ public class BudgetAction extends DispatchAction
         for (BudgetVO budgetVO : list)
         {
             warpBudgetVO(budgetVO);
+
+            double hasUsed = budgetApplyManager.sumPreAndUseInEachBudget(budgetVO);
+
+            budgetVO.setSrealMonery(MathTools.formatNum(hasUsed));
         }
 
         request.setAttribute("beanList", list);
@@ -611,7 +615,7 @@ public class BudgetAction extends DispatchAction
     }
 
     /**
-     * queryReference
+     * queryReference(相关,包含使用情况)
      * 
      * @param mapping
      * @param form
@@ -639,35 +643,56 @@ public class BudgetAction extends DispatchAction
 
         request.setAttribute("pbean", parentBean);
 
-        request.setAttribute("items", items);
+        boolean isUnit = BudgetHelper.isUnitBudget(parentBean);
 
-        List<BudgetBean> subBudget = budgetDAO.querySubmitBudgetByParentId(parentId);
+        request.setAttribute("unit", isUnit);
+
+        request.setAttribute("items", items);
 
         // handle item
         for (BudgetItemVO budgetItemBean : items)
         {
-            String subDesc = "";
+            double hasUseed = budgetApplyManager.sumPreAndUseInEachBudgetItem(budgetItemBean);
 
-            double total = 0.0d;
+            budgetItemBean.setSuseMonery(MathTools.formatNum(hasUseed));
 
-            for (BudgetBean budgetBean : subBudget)
+            if ( !isUnit)
             {
-                BudgetItemBean subBudgetItemBean = budgetItemDAO.findByBudgetIdAndFeeItemId(
-                    budgetBean.getId(), budgetItemBean.getFeeItemId());
+                List<BudgetBean> subBudget = budgetDAO.querySubmitBudgetByParentId(parentId);
 
-                if (subBudgetItemBean != null)
+                String subDesc = "";
+
+                double total = 0.0d;
+
+                for (BudgetBean budgetBean : subBudget)
                 {
-                    subDesc += budgetBean.getName() + " ";
+                    BudgetItemBean subBudgetItemBean = budgetItemDAO.findByBudgetIdAndFeeItemId(
+                        budgetBean.getId(), budgetItemBean.getFeeItemId());
 
-                    total += subBudgetItemBean.getBudget();
+                    if (subBudgetItemBean != null)
+                    {
+                        subDesc += budgetBean.getName() + " ";
+
+                        total += subBudgetItemBean.getBudget();
+                    }
                 }
+
+                budgetItemBean.setDescription(subDesc);
+
+                double last = budgetItemBean.getBudget() - total;
+
+                // 为分配的预算
+                budgetItemBean.setSbudget(MathTools.formatNum(last));
+
+                // 剩余预算
+                budgetItemBean.setSremainMonery(MathTools.formatNum(budgetItemBean.getBudget()
+                                                                    - hasUseed));
             }
-
-            budgetItemBean.setDescription(subDesc);
-
-            double last = budgetItemBean.getBudget() - total;
-
-            budgetItemBean.setSbudget(MathTools.formatNum(last));
+            else
+            {
+                budgetItemBean.setSbudget(MathTools
+                    .formatNum(budgetItemBean.getBudget() - hasUseed));
+            }
         }
 
         return mapping.findForward("rptQueryReference");

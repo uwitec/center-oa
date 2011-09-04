@@ -13,7 +13,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.china.center.spring.ex.annotation.Exceptional;
+import org.china.center.spring.iaop.annotation.IntegrationAOP;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
@@ -42,7 +42,7 @@ import com.china.center.tools.TimeTools;
  * @see BudgetEndPlanManagerImpl
  * @since 1.0
  */
-@Exceptional
+@IntegrationAOP
 public class BudgetEndPlanManagerImpl implements CarryPlan
 {
     private final Log _logger = LogFactory.getLog(getClass());

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.china.center.spring.ex.annotation.Exceptional;
+import org.china.center.spring.iaop.annotation.IntegrationAOP;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.AbstractListenerManager;
@@ -38,6 +38,7 @@ import com.china.center.oa.publics.constant.ModuleConstant;
 import com.china.center.oa.publics.constant.OperationConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.LogDAO;
+import com.china.center.oa.publics.helper.UserHelper;
 import com.china.center.oa.publics.manager.NotifyManager;
 import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.tools.JudgeTools;
@@ -54,7 +55,7 @@ import com.china.center.tools.TimeTools;
  * @see BudgetApplyManagerImpl
  * @since 1.0
  */
-@Exceptional
+@IntegrationAOP
 public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListener> implements BudgetApplyManager
 {
     private BudgetDAO budgetDAO = null;
@@ -183,7 +184,7 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
                     for (BudgetListener budgetListener : listenerMapValues)
                     {
                         itemTotal += budgetListener.onSumPreAndUseInEachBudgetItemChange(user,
-                            apply, budgetItemBean);
+                            budgetItemBean);
                     }
 
                     if (MathTools.compare(itemTotal, budgetItemBean.getBudget()) > 0)
@@ -221,6 +222,84 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
         logApply(apply, user, apply.getBudgetId(), OperationConstant.OPERATION_PASS, "通过预算变更");
 
         return true;
+    }
+
+    public double sumPreAndUseInEachBudget(BudgetBean budget)
+    {
+        List<BudgetItemBean> itemList = budgetItemDAO.queryEntityBeansByFK(budget.getId());
+
+        double total = 0.0d;
+
+        for (BudgetItemBean budgetItemBean : itemList)
+        {
+            total += sumPreAndUseInEachBudgetItem(budgetItemBean);
+        }
+
+        return total;
+    }
+
+    public double sumPreAndUseInEachBudgetItem(BudgetItemBean budgetItemBean)
+    {
+        List<BudgetBean> endBudgetList = new ArrayList();
+
+        BudgetBean budget = budgetDAO.find(budgetItemBean.getBudgetId());
+
+        if (budget == null)
+        {
+            return 0.0;
+        }
+
+        if (BudgetHelper.isUnitBudget(budget))
+        {
+            endBudgetList.add(budget);
+        }
+        else
+        {
+            searchAllUnitSub(budgetItemBean.getBudgetId(), endBudgetList);
+        }
+
+        Collection<BudgetListener> listenerMapValues = this.listenerMapValues();
+
+        double itemTotal = 0.0d;
+
+        // 所有的部门月度预算
+        for (BudgetBean budgetBean : endBudgetList)
+        {
+            List<BudgetItemBean> itemList = budgetItemDAO.queryEntityBeansByFK(budgetBean.getId());
+
+            // 所有的月度预算的子项里面的fee
+            for (BudgetItemBean eachItem : itemList)
+            {
+                if (eachItem.getFeeItemId().equals(budgetItemBean.getFeeItemId()))
+                {
+                    for (BudgetListener budgetListener : listenerMapValues)
+                    {
+                        itemTotal += budgetListener.onSumPreAndUseInEachBudgetItemChange(UserHelper
+                            .getSystemUser(), eachItem);
+                    }
+                }
+            }
+        }
+
+        return itemTotal;
+    }
+
+    private void searchAllUnitSub(String rootId, List<BudgetBean> endBudgetList)
+    {
+        // 需要递归寻找
+        List<BudgetBean> subBudget = budgetDAO.queryEntityBeansByFK(rootId);
+
+        for (BudgetBean budgetBean : subBudget)
+        {
+            if (BudgetHelper.isUnitBudget(budgetBean))
+            {
+                endBudgetList.add(budgetBean);
+            }
+            else
+            {
+                searchAllUnitSub(budgetBean.getId(), endBudgetList);
+            }
+        }
     }
 
     /**
@@ -869,4 +948,5 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
     {
         this.orgManager = orgManager;
     }
+
 }

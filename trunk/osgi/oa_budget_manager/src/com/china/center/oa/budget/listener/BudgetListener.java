@@ -12,7 +12,6 @@ package com.china.center.oa.budget.listener;
 import com.center.china.osgi.publics.ParentListener;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
-import com.china.center.oa.budget.bean.BudgetApplyBean;
 import com.china.center.oa.budget.bean.BudgetItemBean;
 
 
@@ -35,7 +34,5 @@ public interface BudgetListener extends ParentListener
      * @param newList
      * @throws MYException
      */
-    double onSumPreAndUseInEachBudgetItemChange(User user, BudgetApplyBean apply,
-                                                BudgetItemBean changeItem)
-        throws MYException;
+    double onSumPreAndUseInEachBudgetItemChange(User user, BudgetItemBean changeItem);
 }

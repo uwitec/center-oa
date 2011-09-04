@@ -25,15 +25,14 @@ function load()
 		 url: '../budget/budget.do?method=queryBudgetLog',
 		 colModel : [
 		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, sortable : false, align: 'center'},
+		     {display: '使用人', name : 'stafferName', width : '5%', sortable : false, align: 'left'},
 		     {display: '预算', name : 'budgetName', width : '12%', sortable : false, align: 'left'},
-		     {display: '提交人', name : 'stafferName', width : '5%', sortable : false, align: 'left'},
 		     {display: '预算项', name : 'feeItemName', width : '8%', sortable : true},
-		     {display: '区域', name : 'locationName', width : '10%'},
-		     {display: '付款单', name : 'billId', width : '10%'},
+		     {display: '部门', name : 'departmentName', width : '10%'},
+		     {display: '单据', name : 'refId', width : '15%'},
 		     {display: '金额', name : 'smonery', width : '5%'},
-		     {display: '使用前', name : 'sbeforemonery', width : '5%'},
-		     {display: '使用后', name : 'saftermonery', width : '5%'},
-		     {display: '时间', name : 'logTime', width : 'auto', sortable : true}
+		     {display: '时间', name : 'logTime', width : '15%', sortable : true},
+		     {display: '日志', name : 'log', width : 'auto'}
 		     ],
 		 extAtt: {
 		     //budgetName : {begin : '<a href=../budget/budget.do?method=findBudgetApply&id={id}>', end : '</a>'}

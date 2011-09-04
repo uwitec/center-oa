@@ -15,7 +15,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.china.center.spring.ex.annotation.Exceptional;
+import org.china.center.spring.iaop.annotation.IntegrationAOP;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
@@ -34,7 +34,6 @@ import com.china.center.oa.budget.helper.BudgetHelper;
 import com.china.center.oa.budget.manager.BudgetManager;
 import com.china.center.oa.budget.vo.BudgetItemVO;
 import com.china.center.oa.budget.vo.BudgetVO;
-import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.publics.bean.LogBean;
 import com.china.center.oa.publics.bean.PlanBean;
@@ -49,6 +48,7 @@ import com.china.center.oa.publics.dao.PlanDAO;
 import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.ListTools;
+import com.china.center.tools.MathTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -60,7 +60,7 @@ import com.china.center.tools.TimeTools;
  * @see BudgetManagerImpl
  * @since 1.0
  */
-@Exceptional
+@IntegrationAOP
 public class BudgetManagerImpl implements BudgetManager
 {
     private final Log triggerLog = LogFactory.getLog("trigger");
@@ -117,26 +117,84 @@ public class BudgetManagerImpl implements BudgetManager
         return true;
     }
 
-    /**
-     * add bill in budget
-     * 
-     * @param bill
-     * @param budgetItemId
-     * @param budgetId
-     * @return boolean
-     * @throws MYException
-     */
-    @Transactional(rollbackFor = {MYException.class})
-    public synchronized boolean addBill(String stafferId, OutBillBean bill, String budgetItemId,
-                                        String budgetId)
+    @IntegrationAOP(lock = BudgetConstant.BUDGETLOG_ADD_LOCK)
+    public boolean deleteBudgetLogListWithoutTransactional(User user, String refId)
         throws MYException
     {
-        // TODO
-        checkAddBill(bill, budgetItemId, budgetId);
+        JudgeTools.judgeParameterIsNull(user, refId);
 
-        createLog(stafferId, bill, budgetItemId, budgetId, null, null);
+        budgetLogDAO.deleteEntityBeansByFK(refId);
 
-        recursiveUpdate(null, false);
+        return true;
+    }
+
+    @IntegrationAOP(lock = BudgetConstant.BUDGETLOG_ADD_LOCK)
+    public boolean addBudgetLogListWithoutTransactional(User user, List<BudgetLogBean> logList)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, logList);
+
+        Set<String> budgetItemSet = new HashSet();
+        for (BudgetLogBean budgetLogBean : logList)
+        {
+            checkAddLog(budgetLogBean.getBudgetItemId(), budgetLogBean.getBudgetId());
+
+            budgetItemSet.add(budgetLogBean.getBudgetItemId());
+        }
+
+        // 检验预算是否超支
+        for (String eachBudgetItem : budgetItemSet)
+        {
+            BudgetItemVO budgetItem = budgetItemDAO.findVO(eachBudgetItem);
+
+            // 预算总金额
+            long total = MathTools.doubleToLong2(budgetItem.getBudget());
+
+            // 当前已经使用
+            long currentUse = budgetLogDAO.sumBudgetLogByBudgetItemId(eachBudgetItem);
+
+            long lastUse = currentUse;
+
+            for (BudgetLogBean budgetLogBean : logList)
+            {
+                if (budgetLogBean.getBudgetItemId().equals(eachBudgetItem))
+                {
+                    currentUse += budgetLogBean.getMonery();
+                }
+
+                if (currentUse > total)
+                {
+                    throw new MYException(
+                        "预算[%s]下的预算项[%s]使用超值,当前预算项总金额[%f],已经使用金额[%f],剩余可使用金额[%f],请确认操作", budgetItem
+                            .getBudgetName(), budgetItem.getFeeItemName(), MathTools
+                            .longToDouble2(total), MathTools.longToDouble2(lastUse), MathTools
+                            .longToDouble2(total - lastUse));
+                }
+            }
+        }
+
+        budgetLogDAO.saveAllEntityBeans(logList);
+
+        // 再次检查预算是否超支
+        for (String eachBudgetItem : budgetItemSet)
+        {
+            BudgetItemVO budgetItem = budgetItemDAO.findVO(eachBudgetItem);
+
+            // 预算总金额
+            long total = MathTools.doubleToLong2(budgetItem.getBudget());
+
+            // 当前已经使用
+            long currentUse = budgetLogDAO.sumBudgetLogByBudgetItemId(eachBudgetItem);
+
+            if (currentUse > total)
+            {
+                throw new MYException(
+                    "预算[%s]下的预算项[%s]使用超值,当前预算项总金额[%f],已经使用金额[%f],剩余可使用金额[%f],请确认操作", budgetItem
+                        .getBudgetName(), budgetItem.getFeeItemName(), MathTools
+                        .longToDouble2(total), MathTools.longToDouble2(currentUse), MathTools
+                        .longToDouble2(total - currentUse));
+            }
+        }
 
         return true;
     }
@@ -148,7 +206,7 @@ public class BudgetManagerImpl implements BudgetManager
      * @param hasSub
      * @throws MYException
      */
-    private void recursiveUpdate(BudgetItemBean itemBean, boolean hasSub)
+    public void recursiveUpdate(BudgetItemBean itemBean, boolean hasSub)
         throws MYException
     {
         if (hasSub)
@@ -200,48 +258,14 @@ public class BudgetManagerImpl implements BudgetManager
     }
 
     /**
-     * @param stafferId
-     * @param bill
-     * @param budgetItemId
-     * @param budgetId
-     * @param itemBean
-     * @param logBean
-     */
-    private void createLog(String stafferId, OutBillBean bill, String budgetItemId,
-                           String budgetId, BudgetItemBean itemBean, BudgetLogBean logBean)
-    {
-        logBean.setStafferId(stafferId);
-
-        logBean.setLocationId(bill.getLocationId());
-
-        logBean.setBillId(bill.getId());
-
-        logBean.setBudgetId(budgetId);
-
-        logBean.setMonery(bill.getMoneys());
-
-        logBean.setLog(bill.getDescription());
-
-        logBean.setBudgetItemId(budgetItemId);
-
-        logBean.setLogTime(TimeTools.now());
-
-        logBean.setFeeItemId(itemBean.getFeeItemId());
-
-        logBean.setBeforemonery(itemBean.getBudget() - itemBean.getRealMonery());
-
-        logBean.setAftermonery(itemBean.getBudget() - itemBean.getRealMonery() - bill.getMoneys());
-    }
-
-    /**
-     * checkAddBill
+     * 检查预算使用的合法性
      * 
      * @param bill
      * @param budgetItemId
      * @param budgetId
      * @throws MYException
      */
-    private BudgetItemBean checkAddBill(OutBillBean bill, String budgetItemId, String budgetId)
+    private BudgetItemBean checkAddLog(String budgetItemId, String budgetId)
         throws MYException
     {
         BudgetBean budget = budgetDAO.find(budgetId);
@@ -251,10 +275,7 @@ public class BudgetManagerImpl implements BudgetManager
             throw new MYException("预算不存在");
         }
 
-        if (budget.getLevel() != BudgetConstant.BUDGET_LEVEL_MONTH)
-        {
-            throw new MYException("不是月度预算,不能报销");
-        }
+        BudgetHelper.checkBudgetCanUse(budget);
 
         BudgetItemBean budgetItem = budgetItemDAO.find(budgetItemId);
 
@@ -266,11 +287,6 @@ public class BudgetManagerImpl implements BudgetManager
         if ( !budgetItem.getBudgetId().equals(budgetId))
         {
             throw new MYException("数据不匹配,请重新操作");
-        }
-
-        if ( ( (budgetItem.getBudget() - budgetItem.getRealMonery()) - bill.getMoneys()) < 0)
-        {
-            throw new MYException("预算项金额不足,无法报销");
         }
 
         return budgetItem;

@@ -40,6 +40,7 @@ public class BudgetItemBean implements Serializable
     private String feeItemId = "";
 
     @FK
+    @Join(tagClass = BudgetBean.class)
     private String budgetId = "";
 
     private String locationId = "";

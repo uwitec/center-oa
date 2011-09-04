@@ -32,6 +32,11 @@ public interface BudgetDAO extends DAO<BudgetBean, BudgetVO>
 
     List<BudgetBean> querySubmitBudgetByParentId(String parentId);
 
+    /**
+     * 当前运行的预算
+     * 
+     * @return
+     */
     List<BudgetVO> queryCurrentRunBudget();
 
     int countByYearAndType(String year, int type);

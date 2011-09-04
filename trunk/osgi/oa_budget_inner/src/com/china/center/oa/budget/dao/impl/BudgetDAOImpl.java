@@ -22,7 +22,6 @@ import com.china.center.oa.budget.constant.BudgetConstant;
 import com.china.center.oa.budget.dao.BudgetDAO;
 import com.china.center.oa.budget.vo.BudgetVO;
 import com.china.center.tools.ListTools;
-import com.china.center.tools.TimeTools;
 
 
 /**
@@ -68,11 +67,10 @@ public class BudgetDAOImpl extends BaseDAO<BudgetBean, BudgetVO> implements Budg
      */
     public List<BudgetVO> queryCurrentRunBudget()
     {
-        return this
-            .queryEntityVOsByCondition(
-                "where BudgetBean.level = ? and BudgetBean.status = ? and BudgetBean.beginDate <= ? and BudgetBean.endDate >= ?",
-                BudgetConstant.BUDGET_LEVEL_MONTH, BudgetConstant.BUDGET_STATUS_PASS, TimeTools
-                    .now_short(), TimeTools.now_short());
+        return this.queryEntityVOsByCondition(
+            "where BudgetBean.level = ? and BudgetBean.status = ? and carryStatus = ?",
+            BudgetConstant.BUDGET_LEVEL_MONTH, BudgetConstant.BUDGET_STATUS_PASS,
+            BudgetConstant.BUDGET_CARRY_DOING);
     }
 
     /**
