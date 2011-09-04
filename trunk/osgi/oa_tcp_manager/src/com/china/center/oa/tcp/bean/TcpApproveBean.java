@@ -12,6 +12,7 @@ package com.china.center.oa.tcp.bean;
 import java.io.Serializable;
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
@@ -41,6 +42,7 @@ public class TcpApproveBean implements Serializable
     /**
      * 申请ID
      */
+    @FK
     private String applyId = "";
 
     /**

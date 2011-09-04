@@ -7,6 +7,7 @@ Bundle-Activator: com.china.center.oa.tcp.inner.Activator
 Require-Bundle: 
  com.china.center.oa.tcp.manager;bundle-version="1.0.0",
  com.china.center.oa.budget.manager;bundle-version="1.0.0",
+ com.china.center.oa.mailgroup.manager;bundle-version="1.0.0",
  com.china.center.oa.publics.manager;bundle-version="1.0.0",
  com.china.center.osgi.jdbc;bundle-version="1.0.0",
  com.china.center.osgi.tools;bundle-version="1.0.0",

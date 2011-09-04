@@ -64,5 +64,11 @@
 	
 	<!-- ************************************************************************************** -->
 	
+	<osgi:reference id="mailMangaer" interface="com.china.center.oa.mail.manager.MailMangaer" />
+	
+	<osgi:reference id="budgetManager" interface="com.china.center.oa.budget.manager.BudgetManager" />
+	
+	<osgi:reference id="budgetItemDAO" interface="com.china.center.oa.budget.dao.BudgetItemDAO" />
+	
 
 </beans>

@@ -15,10 +15,11 @@ import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.annotation.Unique;
 
 
 /**
- * TcpFlowBean
+ * 流程环节表
  * 
  * @author ZHUZHU
  * @version 2011-7-17
@@ -33,7 +34,13 @@ public class TcpFlowBean implements Serializable
     private String id = "";
 
     @FK
+    @Unique(dependFields = "currentStatus")
     private String flowKey = "";
+
+    /**
+     * 当前支持group,plugin,end
+     */
+    private String nextPlugin = "";
 
     private String tokenName = "";
 
@@ -43,7 +50,17 @@ public class TcpFlowBean implements Serializable
 
     private int reject = 0;
 
+    /**
+     * 0:返回到初始 1:到上一级
+     */
+    private int rejectToPre = 0;
+
     private int begining = 0;
+
+    /**
+     * 0:非会签 1:会签
+     */
+    private int singeAll = 0;
 
     private int ending = 0;
 
@@ -191,6 +208,57 @@ public class TcpFlowBean implements Serializable
     }
 
     /**
+     * @return the nextPlugin
+     */
+    public String getNextPlugin()
+    {
+        return nextPlugin;
+    }
+
+    /**
+     * @param nextPlugin
+     *            the nextPlugin to set
+     */
+    public void setNextPlugin(String nextPlugin)
+    {
+        this.nextPlugin = nextPlugin;
+    }
+
+    /**
+     * @return the singeAll
+     */
+    public int getSingeAll()
+    {
+        return singeAll;
+    }
+
+    /**
+     * @param singeAll
+     *            the singeAll to set
+     */
+    public void setSingeAll(int singeAll)
+    {
+        this.singeAll = singeAll;
+    }
+
+    /**
+     * @return the rejectToPre
+     */
+    public int getRejectToPre()
+    {
+        return rejectToPre;
+    }
+
+    /**
+     * @param rejectToPre
+     *            the rejectToPre to set
+     */
+    public void setRejectToPre(int rejectToPre)
+    {
+        this.rejectToPre = rejectToPre;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -211,6 +279,9 @@ public class TcpFlowBean implements Serializable
             .append("flowKey = ")
             .append(this.flowKey)
             .append(TAB)
+            .append("nextPlugin = ")
+            .append(this.nextPlugin)
+            .append(TAB)
             .append("tokenName = ")
             .append(this.tokenName)
             .append(TAB)
@@ -223,8 +294,14 @@ public class TcpFlowBean implements Serializable
             .append("reject = ")
             .append(this.reject)
             .append(TAB)
+            .append("rejectToPre = ")
+            .append(this.rejectToPre)
+            .append(TAB)
             .append("begining = ")
             .append(this.begining)
+            .append(TAB)
+            .append("singeAll = ")
+            .append(this.singeAll)
             .append(TAB)
             .append("ending = ")
             .append(this.ending)

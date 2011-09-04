@@ -10,6 +10,7 @@ package com.china.center.oa.tcp.vo;
 
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Relationship;
 import com.china.center.oa.tcp.bean.TcpApproveBean;
 
@@ -30,6 +31,12 @@ public class TcpApproveVO extends TcpApproveBean
 
     @Relationship(relationField = "approverId")
     private String approverName = "";
+
+    @Ignore
+    private String showTotal = "";
+
+    @Ignore
+    private String url = "";
 
     /**
      * default constructor
@@ -73,6 +80,40 @@ public class TcpApproveVO extends TcpApproveBean
     }
 
     /**
+     * @return the showTotal
+     */
+    public String getShowTotal()
+    {
+        return showTotal;
+    }
+
+    /**
+     * @param showTotal
+     *            the showTotal to set
+     */
+    public void setShowTotal(String showTotal)
+    {
+        this.showTotal = showTotal;
+    }
+
+    /**
+     * @return the url
+     */
+    public String getUrl()
+    {
+        return url;
+    }
+
+    /**
+     * @param url
+     *            the url to set
+     */
+    public void setUrl(String url)
+    {
+        this.url = url;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -92,6 +133,12 @@ public class TcpApproveVO extends TcpApproveBean
             .append(TAB)
             .append("approverName = ")
             .append(this.approverName)
+            .append(TAB)
+            .append("showTotal = ")
+            .append(this.showTotal)
+            .append(TAB)
+            .append("url = ")
+            .append(this.url)
             .append(TAB)
             .append(" )");
 

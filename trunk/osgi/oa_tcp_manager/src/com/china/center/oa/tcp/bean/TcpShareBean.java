@@ -37,6 +37,9 @@ public class TcpShareBean implements Serializable
     @Join(tagClass = PrincipalshipBean.class)
     private String departmentId = "";
 
+    /**
+     * 权签人
+     */
     @Join(tagClass = StafferBean.class)
     private String approverId = "";
 

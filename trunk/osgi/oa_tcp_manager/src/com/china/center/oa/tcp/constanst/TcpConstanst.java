@@ -123,4 +123,9 @@ public interface TcpConstanst
      */
     @Defined(key = "travelApplyReceiveType", value = "银行")
     int TRAVELAPPLY_RECEIVETYPE_BANK = 1;
+
+    /**
+     * 出差申请处理的URL
+     */
+    String TCP_TRAVELAPPLY_PROCESS_URL = "../tcp/apply.do?method=findTravelApply&update=2&id=";
 }

@@ -36,6 +36,12 @@ public class TravelApplyVO extends TravelApplyBean
     @Relationship(relationField = "departmentId")
     private String departmentName = "";
 
+    /**
+     * 当前处理人
+     */
+    @Ignore
+    private String processer = "";
+
     @Ignore
     private List<TravelApplyItemVO> itemVOList = null;
 
@@ -337,6 +343,23 @@ public class TravelApplyVO extends TravelApplyBean
     }
 
     /**
+     * @return the processer
+     */
+    public String getProcesser()
+    {
+        return processer;
+    }
+
+    /**
+     * @param processer
+     *            the processer to set
+     */
+    public void setProcesser(String processer)
+    {
+        this.processer = processer;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -356,6 +379,9 @@ public class TravelApplyVO extends TravelApplyBean
             .append(TAB)
             .append("departmentName = ")
             .append(this.departmentName)
+            .append(TAB)
+            .append("processer = ")
+            .append(this.processer)
             .append(TAB)
             .append("itemVOList = ")
             .append(this.itemVOList)

@@ -11,10 +11,14 @@ package com.china.center.oa.tcp.helper;
 
 import java.text.DecimalFormat;
 
+import com.china.center.common.taglib.DefinedCommon;
+import com.china.center.oa.publics.bean.FlowLogBean;
+import com.china.center.oa.publics.vo.FlowLogVO;
 import com.china.center.oa.tcp.bean.TravelApplyBean;
 import com.china.center.oa.tcp.constanst.TcpConstanst;
 import com.china.center.oa.tcp.constanst.TcpFlowConstant;
 import com.china.center.oa.tcp.vo.TravelApplyVO;
+import com.china.center.tools.BeanUtil;
 import com.china.center.tools.MathTools;
 
 
@@ -75,12 +79,12 @@ public abstract class TCPHelper
         // 先格式转成double
         double parseDouble = MathTools.parseDouble(value);
 
-        return (long)Math.round(MathTools.parseDouble(formatNum2(parseDouble)) * 100);
+        return Math.round(MathTools.parseDouble(formatNum2(parseDouble)) * 100);
     }
 
     public static long doubleToLong2(double value)
     {
-        return (long)Math.round(MathTools.parseDouble(formatNum2(value)) * 100);
+        return Math.round(MathTools.parseDouble(formatNum2(value)) * 100);
     }
 
     public static void chageVO(TravelApplyVO vo)
@@ -130,5 +134,25 @@ public abstract class TCPHelper
         }
 
         return result;
+    }
+
+    public static FlowLogVO getTCPFlowLogVO(FlowLogBean bean)
+    {
+        FlowLogVO vo = new FlowLogVO();
+
+        if (bean == null)
+        {
+            return vo;
+        }
+
+        BeanUtil.copyProperties(vo, bean);
+
+        vo.setOprModeName(DefinedCommon.getValue("oprMode", vo.getOprMode()));
+
+        vo.setPreStatusName(DefinedCommon.getValue("tcpStatus", vo.getPreStatus()));
+
+        vo.setAfterStatusName(DefinedCommon.getValue("tcpStatus", vo.getAfterStatus()));
+
+        return vo;
     }
 }

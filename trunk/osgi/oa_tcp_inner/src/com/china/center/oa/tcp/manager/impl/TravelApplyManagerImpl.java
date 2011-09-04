@@ -9,6 +9,8 @@
 package com.china.center.oa.tcp.manager.impl;
 
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -19,14 +21,28 @@ import org.springframework.transaction.annotation.Transactional;
 import com.center.china.osgi.config.ConfigLoader;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.budget.bean.BudgetItemBean;
+import com.china.center.oa.budget.bean.BudgetLogBean;
+import com.china.center.oa.budget.constant.BudgetConstant;
+import com.china.center.oa.budget.dao.BudgetItemDAO;
+import com.china.center.oa.budget.manager.BudgetManager;
+import com.china.center.oa.mail.bean.MailBean;
+import com.china.center.oa.mail.manager.MailMangaer;
 import com.china.center.oa.publics.bean.AttachmentBean;
+import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.constant.IDPrefixConstant;
+import com.china.center.oa.publics.constant.PublicConstant;
+import com.china.center.oa.publics.constant.StafferConstant;
 import com.china.center.oa.publics.dao.AttachmentDAO;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
+import com.china.center.oa.publics.helper.UserHelper;
+import com.china.center.oa.publics.manager.NotifyManager;
 import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.tcp.bean.TcpApplyBean;
+import com.china.center.oa.tcp.bean.TcpApproveBean;
+import com.china.center.oa.tcp.bean.TcpFlowBean;
 import com.china.center.oa.tcp.bean.TcpShareBean;
 import com.china.center.oa.tcp.bean.TravelApplyBean;
 import com.china.center.oa.tcp.bean.TravelApplyItemBean;
@@ -42,11 +58,13 @@ import com.china.center.oa.tcp.dao.TravelApplyItemDAO;
 import com.china.center.oa.tcp.dao.TravelApplyPayDAO;
 import com.china.center.oa.tcp.helper.TCPHelper;
 import com.china.center.oa.tcp.manager.TravelApplyManager;
+import com.china.center.oa.tcp.vo.TcpApproveVO;
 import com.china.center.oa.tcp.vo.TcpShareVO;
 import com.china.center.oa.tcp.vo.TravelApplyItemVO;
 import com.china.center.oa.tcp.vo.TravelApplyVO;
 import com.china.center.tools.FileTools;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.TimeTools;
 
 
 /**
@@ -78,7 +96,15 @@ public class TravelApplyManagerImpl implements TravelApplyManager
 
     private CommonDAO commonDAO = null;
 
+    private MailMangaer mailMangaer = null;
+
+    private NotifyManager notifyManager = null;
+
+    private BudgetManager budgetManager = null;
+
     private OrgManager orgManager = null;
+
+    private BudgetItemDAO budgetItemDAO = null;
 
     private AttachmentDAO attachmentDAO = null;
 
@@ -127,16 +153,28 @@ public class TravelApplyManagerImpl implements TravelApplyManager
 
         if (bean.getBorrow() == TcpConstanst.TRAVELAPPLY_BORROW_YES)
         {
+            long temp = 0L;
+
             List<TravelApplyPayBean> payList = bean.getPayList();
 
             for (TravelApplyPayBean travelApplyPayBean : payList)
             {
                 travelApplyPayBean.setId(commonDAO.getSquenceString20());
                 travelApplyPayBean.setParentId(bean.getId());
+
+                temp += travelApplyPayBean.getMoneys();
             }
+
+            bean.setBorrowTotal(temp);
 
             travelApplyPayDAO.saveAllEntityBeans(payList);
         }
+        else
+        {
+            bean.setBorrowTotal(0);
+        }
+
+        checkApply(bean);
 
         List<TcpShareBean> shareList = bean.getShareList();
 
@@ -162,7 +200,478 @@ public class TravelApplyManagerImpl implements TravelApplyManager
 
         saveApply(user, bean);
 
+        saveFlowLog(user, TcpConstanst.TCP_STATUS_INIT, bean, "自动提交保存", PublicConstant.OPRMODE_SAVE);
+
         return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean submitTravelApplyBean(User user, String id, String processId)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        TravelApplyVO bean = findVO(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if ( !bean.getStafferId().equals(user.getStafferId()))
+        {
+            throw new MYException("只能操作自己的申请");
+        }
+
+        if (bean.getBorrow() == TcpConstanst.TRAVELAPPLY_BORROW_YES)
+        {
+            checkBudget(user, bean);
+        }
+
+        // 获得当前的处理环节
+        TcpFlowBean token = tcpFlowDAO.findByUnique(bean.getFlowKey(), bean.getStatus());
+
+        // 进入审批状态
+        int newStatus = saveApprove(user, processId, bean, token.getNextStatus());
+
+        int oldStatus = bean.getStatus();
+
+        bean.setStatus(newStatus);
+
+        travelApplyDAO.updateStatus(bean.getId(), newStatus);
+
+        // 记录操作日志
+        saveFlowLog(user, oldStatus, bean, "提交申请", PublicConstant.OPRMODE_SUBMIT);
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean passTravelApplyBean(User user, String id, String processId, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        TravelApplyVO bean = findVO(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 权限
+        checkAuth(user, id);
+
+        // 获得当前的处理环节
+        TcpFlowBean token = tcpFlowDAO.findByUnique(bean.getFlowKey(), bean.getStatus());
+
+        // 群组模式
+        if (token.getNextPlugin().startsWith("group"))
+        {
+            int newStatus = saveApprove(user, processId, bean, token.getNextStatus());
+
+            int oldStatus = bean.getStatus();
+
+            if (newStatus != oldStatus)
+            {
+                bean.setStatus(newStatus);
+
+                travelApplyDAO.updateStatus(bean.getId(), newStatus);
+            }
+
+            // 记录操作日志
+            saveFlowLog(user, oldStatus, bean, reason, PublicConstant.OPRMODE_PASS);
+        }
+        // 插件模式
+        else if (token.getNextPlugin().startsWith("plugin"))
+        {
+            // plugin:travelSingeAll(意思是权签人会签)
+            if (token.getNextPlugin().equalsIgnoreCase("plugin:travelSingeAll"))
+            {
+                List<String> processList = new ArrayList();
+
+                // 先处理一个
+                List<TcpShareVO> shareVOList = bean.getShareVOList();
+
+                for (TcpShareVO tcpShareVO : shareVOList)
+                {
+                    processList.add(tcpShareVO.getApproverId());
+                }
+
+                int newStatus = saveApprove(user, processList, bean, token.getNextStatus());
+
+                int oldStatus = bean.getStatus();
+
+                bean.setStatus(newStatus);
+
+                travelApplyDAO.updateStatus(bean.getId(), newStatus);
+
+                // 记录操作日志
+                saveFlowLog(user, oldStatus, bean, reason, PublicConstant.OPRMODE_PASS);
+            }
+        }
+        // 结束模式
+        else if (token.getNextPlugin().startsWith("end"))
+        {
+            // 结束了需要清空
+            tcpApproveDAO.deleteEntityBeansByFK(bean.getId());
+
+            int oldStatus = bean.getStatus();
+
+            bean.setStatus(token.getNextStatus());
+
+            travelApplyDAO.updateStatus(bean.getId(), bean.getStatus());
+
+            // 记录操作日志
+            saveFlowLog(user, oldStatus, bean, reason, PublicConstant.OPRMODE_PASS);
+        }
+
+        return true;
+    }
+
+    /**
+     * 权限
+     * 
+     * @param user
+     * @param id
+     * @throws MYException
+     */
+    private void checkAuth(User user, String id)
+        throws MYException
+    {
+        List<TcpApproveBean> approveList = tcpApproveDAO.queryEntityBeansByFK(id);
+
+        boolean hasAuth = false;
+
+        for (TcpApproveBean tcpApproveBean : approveList)
+        {
+            if (tcpApproveBean.getApproverId().equals(user.getStafferId()))
+            {
+                hasAuth = true;
+
+                break;
+            }
+        }
+
+        if ( !hasAuth)
+        {
+            throw new MYException("没有操作权限,请确认操作");
+        }
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean rejectTravelApplyBean(User user, String id, String type, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        TravelApplyVO bean = findVO(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 权限
+        checkAuth(user, id);
+
+        // 获得当前的处理环节
+        // TcpFlowBean token = tcpFlowDAO.findByUnique(bean.getFlowKey(), bean.getStatus());
+
+        // 获得上一步
+        FlowLogBean lastLog = flowLogDAO.findLastLog(bean.getId());
+
+        if (lastLog == null)
+        {
+            // 驳回到初始
+            type = "1";
+        }
+
+        // 驳回到初始
+        if ("1".equals(type))
+        {
+            // 结束了需要清空
+            tcpApproveDAO.deleteEntityBeansByFK(bean.getId());
+
+            // 清空预占的金额
+            budgetManager.deleteBudgetLogListWithoutTransactional(user, bean.getId());
+
+            int oldStatus = bean.getStatus();
+
+            bean.setStatus(TcpConstanst.TCP_STATUS_REJECT);
+
+            travelApplyDAO.updateStatus(bean.getId(), bean.getStatus());
+
+            // 记录操作日志
+            saveFlowLog(user, oldStatus, bean, reason, PublicConstant.OPRMODE_REJECT);
+        }
+        // 驳回到上一步
+        else
+        {
+            // TODO 获得上一步的人
+            String actorId = lastLog.getActorId();
+
+            int nextStatus = lastLog.getAfterStatus();
+
+            int newStatus = saveApprove(user, actorId, bean, nextStatus);
+
+            int oldStatus = bean.getStatus();
+
+            bean.setStatus(newStatus);
+
+            travelApplyDAO.updateStatus(bean.getId(), newStatus);
+
+            // 记录操作日志
+            saveFlowLog(user, oldStatus, bean, reason, PublicConstant.OPRMODE_REJECT);
+        }
+
+        return true;
+    }
+
+    /**
+     * saveApprove
+     * 
+     * @param user
+     * @param processList
+     * @param bean
+     * @param nextStatus
+     * @return
+     * @throws MYException
+     */
+    private int saveApprove(User user, List<String> processList, TravelApplyVO bean, int nextStatus)
+        throws MYException
+    {
+        // 获得当前的处理环节
+        TcpFlowBean token = tcpFlowDAO.findByUnique(bean.getFlowKey(), bean.getStatus());
+
+        if (token.getSingeAll() == 0)
+        {
+            // 清除之前的处理人
+            tcpApproveDAO.deleteEntityBeansByFK(bean.getId());
+        }
+        else
+        {
+            // 仅仅删除自己的
+            List<TcpApproveBean> approveList = tcpApproveDAO.queryEntityBeansByFK(bean.getId());
+
+            for (TcpApproveBean tcpApproveBean : approveList)
+            {
+                if (tcpApproveBean.getApproverId().equals(user.getStafferId()))
+                {
+                    tcpApproveDAO.deleteEntityBean(tcpApproveBean.getId());
+                }
+            }
+        }
+
+        List<TcpApproveBean> appList = tcpApproveDAO.queryEntityBeansByFK(bean.getId());
+
+        if (appList.size() == 0 || token.getSingeAll() == 0)
+        {
+            for (String processId : processList)
+            {
+                // 进入审批状态
+                TcpApproveBean approve = new TcpApproveBean();
+
+                approve.setApplyerId(bean.getStafferId());
+                approve.setApplyId(bean.getId());
+                approve.setApproverId(processId);
+                approve.setFlowKey(bean.getFlowKey());
+                approve.setId(commonDAO.getSquenceString20());
+                approve.setLogTime(TimeTools.now());
+                approve.setName(bean.getName());
+                approve.setStatus(nextStatus);
+                approve.setTotal(bean.getTotal());
+                approve.setType(TcpConstanst.TCP_TYPE_TRAVEL);
+
+                tcpApproveDAO.saveEntityBean(approve);
+            }
+
+            MailBean mail = new MailBean();
+
+            mail.setTitle(bean.getStafferName() + "的出差申请[" + bean.getName() + "]等待您的处理.");
+
+            mail.setContent(mail.getContent());
+
+            mail.setSenderId(StafferConstant.SUPER_STAFFER);
+
+            mail.setReveiveIds(listToString(processList));
+
+            mail.setReveiveIds2(bean.getStafferId());
+
+            mail.setHref(TcpConstanst.TCP_TRAVELAPPLY_PROCESS_URL + bean.getId());
+
+            // send mail
+            mailMangaer.addMailWithoutTransactional(UserHelper.getSystemUser(), mail);
+        }
+        else
+        {
+            // 会签
+            nextStatus = bean.getStatus();
+        }
+
+        return nextStatus;
+    }
+
+    /**
+     * @param processers
+     * @return
+     */
+    private String listToString(List<String> processers)
+    {
+        StringBuilder builder = new StringBuilder();
+
+        for (String string : processers)
+        {
+            builder.append(string).append(';');
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * 进入审批状态
+     * 
+     * @param processId
+     * @param bean
+     * @throws MYException
+     */
+    private int saveApprove(User user, String processId, TravelApplyVO bean, int nextStatus)
+        throws MYException
+    {
+        List<String> processList = new ArrayList();
+
+        processList.add(processId);
+
+        return saveApprove(user, processList, bean, nextStatus);
+    }
+
+    /**
+     * 校验预算(且占用预算)
+     * 
+     * @param user
+     * @param bean
+     * @throws MYException
+     */
+    private void checkBudget(User user, TravelApplyVO bean)
+        throws MYException
+    {
+        double borrowRadio = (double)bean.getTotal() / (double)bean.getBorrowTotal();
+
+        List<TravelApplyItemVO> itemVOList = bean.getItemVOList();
+
+        List<TcpShareVO> shareVOList = bean.getShareVOList();
+
+        List<BudgetLogBean> logList = new ArrayList();
+
+        long hasUse = 0L;
+
+        for (Iterator iterator = shareVOList.iterator(); iterator.hasNext();)
+        {
+            TcpShareVO tcpShareVO = (TcpShareVO)iterator.next();
+
+            for (Iterator ite = itemVOList.iterator(); ite.hasNext();)
+            {
+                TravelApplyItemVO travelApplyItemVO = (TravelApplyItemVO)ite.next();
+
+                // 预算鉴权()
+                BudgetLogBean log = new BudgetLogBean();
+
+                logList.add(log);
+
+                log.setBudgetId(tcpShareVO.getBudgetId());
+
+                BudgetItemBean item = budgetItemDAO.findByBudgetIdAndFeeItemId(tcpShareVO
+                    .getBudgetId(), travelApplyItemVO.getFeeItemId());
+
+                if (item == null)
+                {
+                    throw new MYException("预算[%s]里面缺少预算项[%s],请确认操作", tcpShareVO.getBudgetName(),
+                        travelApplyItemVO.getFeeItemName());
+                }
+
+                log.setBudgetItemId(item.getId());
+
+                log.setDepartmentId(tcpShareVO.getDepartmentId());
+
+                log.setFeeItemId(travelApplyItemVO.getFeeItemId());
+
+                log.setFromType(BudgetConstant.BUDGETLOG_FROMTYPE_TCP);
+
+                log.setLocationId(user.getLocationId());
+
+                log.setLog("出差申请[" + bean.getId() + "]使用预算");
+
+                log.setLogTime(TimeTools.now());
+
+                log.setRefId(bean.getId());
+
+                log.setRefSubId(travelApplyItemVO.getId());
+
+                log.setStafferId(bean.getStafferId());
+
+                // 预占
+                log.setUserType(BudgetConstant.BUDGETLOG_USERTYPE_PRE);
+
+                // 这里肯定有误差的
+                long useMoney = Math.round( (tcpShareVO.getRatio() / 100.0) * borrowRadio
+                                           * travelApplyItemVO.getMoneys());
+
+                log.setMonery(useMoney);
+
+                hasUse += useMoney;
+            }
+        }
+
+        // 处理不能的情况
+        long chae = hasUse - bean.getBorrowTotal();
+
+        // 消除误差
+        if (chae != 0)
+        {
+            for (BudgetLogBean budgetLogBean : logList)
+            {
+                if (budgetLogBean.getMonery() > chae)
+                {
+                    budgetLogBean.setMonery(budgetLogBean.getMonery() - chae);
+
+                    break;
+                }
+            }
+        }
+
+        // 进入使用日志,如果超出预算会抛出异常的
+        budgetManager.addBudgetLogListWithoutTransactional(user, logList);
+    }
+
+    /**
+     * checkApply
+     * 
+     * @param bean
+     * @throws MYException
+     */
+    private void checkApply(TravelApplyBean bean)
+        throws MYException
+    {
+        // 验证
+        if (bean.getBorrowTotal() > bean.getTotal())
+        {
+            throw new MYException("借款金额[%f]大于总费用[%f]", bean.getBorrowTotal() / 100.0d, bean
+                .getTotal() / 100.0d);
+        }
+
+        int ratioTotal = 0;
+        for (TcpShareBean tcpShareBean : bean.getShareList())
+        {
+            tcpShareBean.setId(commonDAO.getSquenceString20());
+            tcpShareBean.setRefId(bean.getId());
+
+            ratioTotal += tcpShareBean.getRatio();
+        }
+
+        if (ratioTotal != 100)
+        {
+            throw new MYException("分担比例之和必须是100");
+        }
     }
 
     /**
@@ -189,6 +698,39 @@ public class TravelApplyManagerImpl implements TravelApplyManager
         tcpApplyDAO.saveEntityBean(apply);
     }
 
+    /**
+     * saveFlowLog/PublicConstant.OPRMODE_PASS
+     * 
+     * @param user
+     * @param preStatus
+     * @param apply
+     * @param reason
+     * @param oprMode
+     */
+    private void saveFlowLog(User user, int preStatus, TravelApplyBean apply, String reason,
+                             int oprMode)
+    {
+        FlowLogBean log = new FlowLogBean();
+
+        log.setFullId(apply.getId());
+
+        log.setActor(user.getStafferName());
+
+        log.setActorId(user.getStafferId());
+
+        log.setOprMode(oprMode);
+
+        log.setDescription(reason);
+
+        log.setLogTime(TimeTools.now());
+
+        log.setPreStatus(preStatus);
+
+        log.setAfterStatus(apply.getStatus());
+
+        flowLogDAO.saveEntityBean(log);
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -200,6 +742,13 @@ public class TravelApplyManagerImpl implements TravelApplyManager
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, bean);
+
+        TravelApplyBean old = travelApplyDAO.find(bean.getId());
+
+        if (old == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
 
         if ( !bean.getStafferId().equals(user.getStafferId()))
         {
@@ -215,6 +764,7 @@ public class TravelApplyManagerImpl implements TravelApplyManager
         travelApplyItemDAO.deleteEntityBeansByFK(bean.getId());
         travelApplyPayDAO.deleteEntityBeansByFK(bean.getId());
         tcpShareDAO.deleteEntityBeansByFK(bean.getId());
+        attachmentDAO.deleteEntityBeansByFK(bean.getId());
 
         // TravelApplyItemBean
         List<TravelApplyItemBean> itemList = bean.getItemList();
@@ -225,13 +775,32 @@ public class TravelApplyManagerImpl implements TravelApplyManager
             travelApplyItemBean.setParentId(bean.getId());
         }
 
-        List<TravelApplyPayBean> payList = bean.getPayList();
+        travelApplyItemDAO.saveAllEntityBeans(itemList);
 
-        for (TravelApplyPayBean travelApplyPayBean : payList)
+        if (bean.getBorrow() == TcpConstanst.TRAVELAPPLY_BORROW_YES)
         {
-            travelApplyPayBean.setId(commonDAO.getSquenceString20());
-            travelApplyPayBean.setParentId(bean.getId());
+            long temp = 0L;
+
+            List<TravelApplyPayBean> payList = bean.getPayList();
+
+            for (TravelApplyPayBean travelApplyPayBean : payList)
+            {
+                travelApplyPayBean.setId(commonDAO.getSquenceString20());
+                travelApplyPayBean.setParentId(bean.getId());
+
+                temp += travelApplyPayBean.getMoneys();
+            }
+
+            travelApplyPayDAO.saveAllEntityBeans(payList);
+
+            bean.setBorrowTotal(temp);
         }
+        else
+        {
+            bean.setBorrowTotal(0);
+        }
+
+        checkApply(bean);
 
         List<TcpShareBean> shareList = bean.getShareList();
 
@@ -241,7 +810,21 @@ public class TravelApplyManagerImpl implements TravelApplyManager
             tcpShareBean.setRefId(bean.getId());
         }
 
-        travelApplyDAO.saveEntityBean(bean);
+        tcpShareDAO.saveAllEntityBeans(shareList);
+
+        List<AttachmentBean> attachmentList = bean.getAttachmentList();
+
+        for (AttachmentBean attachmentBean : attachmentList)
+        {
+            attachmentBean.setId(commonDAO.getSquenceString20());
+            attachmentBean.setRefId(bean.getId());
+        }
+
+        attachmentDAO.saveAllEntityBeans(attachmentList);
+
+        travelApplyDAO.updateEntityBean(bean);
+
+        saveFlowLog(user, old.getStatus(), bean, "自动修改保存", PublicConstant.OPRMODE_SAVE);
 
         return true;
     }
@@ -268,6 +851,7 @@ public class TravelApplyManagerImpl implements TravelApplyManager
         travelApplyItemDAO.deleteEntityBeansByFK(bean.getId());
         travelApplyPayDAO.deleteEntityBeansByFK(bean.getId());
         tcpShareDAO.deleteEntityBeansByFK(bean.getId());
+        flowLogDAO.deleteEntityBeansByFK(bean.getId());
 
         String rootPath = ConfigLoader.getProperty("tcpAttachmentPath");
 
@@ -302,6 +886,12 @@ public class TravelApplyManagerImpl implements TravelApplyManager
 
         bean.setItemVOList(itemVOList);
 
+        for (TravelApplyItemVO travelApplyItemVO : itemVOList)
+        {
+            travelApplyItemVO.setShowMoneys(TCPHelper
+                .formatNum2(travelApplyItemVO.getMoneys() / 100.0d));
+        }
+
         List<AttachmentBean> attachmentList = attachmentDAO.queryEntityVOsByFK(id);
 
         bean.setAttachmentList(attachmentList);
@@ -325,6 +915,14 @@ public class TravelApplyManagerImpl implements TravelApplyManager
         bean.setShareVOList(shareList);
 
         TCPHelper.chageVO(bean);
+
+        // 当前处理人
+        List<TcpApproveVO> approveList = tcpApproveDAO.queryEntityVOsByFK(bean.getId());
+
+        for (TcpApproveVO tcpApproveVO : approveList)
+        {
+            bean.setProcesser(bean.getProcesser() + tcpApproveVO.getApproverName() + ';');
+        }
 
         return bean;
     }
@@ -532,4 +1130,73 @@ public class TravelApplyManagerImpl implements TravelApplyManager
     {
         this.orgManager = orgManager;
     }
+
+    /**
+     * @return the budgetManager
+     */
+    public BudgetManager getBudgetManager()
+    {
+        return budgetManager;
+    }
+
+    /**
+     * @param budgetManager
+     *            the budgetManager to set
+     */
+    public void setBudgetManager(BudgetManager budgetManager)
+    {
+        this.budgetManager = budgetManager;
+    }
+
+    /**
+     * @return the budgetItemDAO
+     */
+    public BudgetItemDAO getBudgetItemDAO()
+    {
+        return budgetItemDAO;
+    }
+
+    /**
+     * @param budgetItemDAO
+     *            the budgetItemDAO to set
+     */
+    public void setBudgetItemDAO(BudgetItemDAO budgetItemDAO)
+    {
+        this.budgetItemDAO = budgetItemDAO;
+    }
+
+    /**
+     * @return the notifyManager
+     */
+    public NotifyManager getNotifyManager()
+    {
+        return notifyManager;
+    }
+
+    /**
+     * @param notifyManager
+     *            the notifyManager to set
+     */
+    public void setNotifyManager(NotifyManager notifyManager)
+    {
+        this.notifyManager = notifyManager;
+    }
+
+    /**
+     * @return the mailMangaer
+     */
+    public MailMangaer getMailMangaer()
+    {
+        return mailMangaer;
+    }
+
+    /**
+     * @param mailMangaer
+     *            the mailMangaer to set
+     */
+    public void setMailMangaer(MailMangaer mailMangaer)
+    {
+        this.mailMangaer = mailMangaer;
+    }
+
 }

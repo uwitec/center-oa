@@ -25,4 +25,8 @@ import com.china.center.oa.tcp.vo.TravelApplyVO;
  */
 public class TravelApplyDAOImpl extends BaseDAO<TravelApplyBean, TravelApplyVO> implements TravelApplyDAO
 {
+    public int updateStatus(String id, int status)
+    {
+        return this.jdbcOperation.updateField("status", status, id, this.claz);
+    }
 }

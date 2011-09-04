@@ -65,4 +65,41 @@ public interface TravelApplyManager
      * @return
      */
     TravelApplyVO findVO(String id);
+
+    /**
+     * 提交
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean submitTravelApplyBean(User user, String id, String processId)
+        throws MYException;
+
+    /**
+     * 通过
+     * 
+     * @param user
+     * @param id
+     * @param processId
+     * @param reason
+     * @return
+     * @throws MYException
+     */
+    boolean passTravelApplyBean(User user, String id, String processId, String reason)
+        throws MYException;
+
+    /**
+     * rejectTravelApplyBean
+     * 
+     * @param user
+     * @param id
+     * @param processId
+     * @param reason
+     * @return
+     * @throws MYException
+     */
+    boolean rejectTravelApplyBean(User user, String id, String type, String reason)
+        throws MYException;
 }

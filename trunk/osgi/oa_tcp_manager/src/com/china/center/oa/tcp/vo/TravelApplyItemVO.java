@@ -10,6 +10,7 @@ package com.china.center.oa.tcp.vo;
 
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Relationship;
 import com.china.center.oa.tcp.bean.TravelApplyItemBean;
 
@@ -27,6 +28,9 @@ public class TravelApplyItemVO extends TravelApplyItemBean
 {
     @Relationship(relationField = "feeItemId")
     private String feeItemName = "";
+
+    @Ignore
+    private String showMoneys = "";
 
     /**
      * default constructor
@@ -53,6 +57,23 @@ public class TravelApplyItemVO extends TravelApplyItemBean
     }
 
     /**
+     * @return the showMoneys
+     */
+    public String getShowMoneys()
+    {
+        return showMoneys;
+    }
+
+    /**
+     * @param showMoneys
+     *            the showMoneys to set
+     */
+    public void setShowMoneys(String showMoneys)
+    {
+        this.showMoneys = showMoneys;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -64,7 +85,8 @@ public class TravelApplyItemVO extends TravelApplyItemBean
         StringBuilder retValue = new StringBuilder();
 
         retValue.append("TravelApplyItemVO ( ").append(super.toString()).append(TAB).append(
-            "feeItemName = ").append(this.feeItemName).append(TAB).append(" )");
+            "feeItemName = ").append(this.feeItemName).append(TAB).append("showMoneys = ").append(
+            this.showMoneys).append(TAB).append(" )");
 
         return retValue.toString();
     }

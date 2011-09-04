@@ -40,6 +40,7 @@ public class TravelApplyBean implements Serializable
     @Id
     private String id = "";
 
+    @Html(title = "目的", must = true, maxLength = 40)
     private String name = "";
 
     private String flowKey = "";
@@ -69,6 +70,7 @@ public class TravelApplyBean implements Serializable
     @Html(title = "申请事由", maxLength = 200, must = true, type = Element.TEXTAREA)
     private String description = "";
 
+    @Html(title = "状态", must = true, type = Element.SELECT)
     private int status = TcpConstanst.TCP_STATUS_INIT;
 
     /**
