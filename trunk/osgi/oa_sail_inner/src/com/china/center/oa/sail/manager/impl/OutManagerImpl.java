@@ -418,8 +418,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                                 _logger.error("error price1:" + a);
                                 _logger.error("error price2:" + b);
 
-                                _logger.error("error price3:" + ((int)Math.round(a * 1000)));
-                                _logger.error("error price4:" + ((int)Math.round(b * 1000)));
+                                _logger.error("error price3:" + ((long)Math.round(a * 1000)));
+                                _logger.error("error price4:" + ((long)Math.round(b * 1000)));
 
                                 throw new RuntimeException("卖出价格非含税价格,请重新操作");
                             }

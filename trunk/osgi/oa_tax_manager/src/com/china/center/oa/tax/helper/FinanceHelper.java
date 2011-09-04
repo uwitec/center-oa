@@ -42,8 +42,8 @@ public abstract class FinanceHelper
         // 先格式转成double
         double parseDouble = MathTools.parseDouble(val);
 
-        return (long)Math.round(MathTools.parseDouble(formatNum2(parseDouble))
-                                * TaxConstanst.DOUBLE_TO_INT);
+        return Math.round(MathTools.parseDouble(formatNum2(parseDouble))
+                          * TaxConstanst.DOUBLE_TO_INT);
     }
 
     /**
