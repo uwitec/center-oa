@@ -646,7 +646,9 @@ public class FinaAction extends ParentQueryFinaAction
 
         CommonTools.removeParamers(request);
 
-        return mapping.findForward(QUERYFINANCE);
+        request.setAttribute("bean", bean);
+
+        return preForAddFinance(mapping, form, request, response);
     }
 
     /**

@@ -123,6 +123,8 @@ function closesd()
 			<c:forEach items="${beanList}" var="item" varStatus="vs">
 				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
 					<td align="center"><input type='${selectMode == 1 ? "radio" : "checkbox"}' name="beans"
+					pdname="${item.principalshipName}"
+					pdid="${item.principalshipId}"
 					plever="${item.lever}"	pname="${item.name}" pcode="${item.code}" value="${item.id}"/></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.name}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.code}</td>

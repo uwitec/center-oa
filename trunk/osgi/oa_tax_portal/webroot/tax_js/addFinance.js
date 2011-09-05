@@ -340,6 +340,22 @@ function getStaffers(oos)
     current.value = obj.pname;
     
     current.style.color = '';
+    
+    var org = getNextInput(hid.nextSibling);
+    
+    if (org)
+    {
+    	if (org.name == 'departmentId')
+    	{
+    		org.value = obj.pdname;
+    		
+    		var hid = getNextInput(org.nextSibling);
+    
+		    hid.value = obj.pdid;
+		    
+		    org.style.color = '';
+    	}
+    }
 }
 
 function getUnit(obj)
@@ -373,6 +389,11 @@ function selectUnit(obj)
 
 function getNextInput(el)
 {
+	if (el == null)
+	{
+	   return;	
+	}   
+	
     if (el.tagName && el.tagName.toLowerCase() == 'input')
     {
         return el;

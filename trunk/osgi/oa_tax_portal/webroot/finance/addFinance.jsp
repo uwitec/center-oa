@@ -140,14 +140,14 @@ function callClick(obj, el)
 		<p:table cells="1">
 			<p:tr align="left">
 			凭证日期：
-			<p:plugin name="financeDate" size="20" type="0" oncheck="cnow(12)"/>
+			<p:plugin name="financeDate" size="20" type="0" oncheck="cnow(12)" value="${bean.financeDate}"/>
 	         凭证类型：
-			<select name="type" class="select_class" style="width: 15%;" oncheck="notNone">
+			<select name="type" class="select_class" style="width: 15%;" oncheck="notNone" values="${bean.type}">
 		         <option value="">--</option>
 		         <p:option type="financeType"/>
 	         </select>
 			凭证归属：
-			<select name="dutyId" class="select_class" style="width: 15%;" oncheck="notNone">
+			<select name="dutyId" class="select_class" style="width: 15%;" oncheck="notNone" values="${bean.dutyId}">
 		         <option value="">--</option>
 		         <p:option type="dutyList"></p:option>
 	         </select>
@@ -174,7 +174,7 @@ function callClick(obj, el)
                         <td width="25%" align="center">辅助核算</td>
                         <td width="8%" align="center">借方金额</td>
                         <td width="8%" align="center">贷方金额</td>
-                        <td width="5%" align="left"><input type="button" accesskey="A"
+                        <td width="5%" align="left"><input type="button"
                             value="增加" class="button_class" onclick="addTr()"></td>
                     </tr>
                 </table>
@@ -188,8 +188,10 @@ function callClick(obj, el)
 
 	<p:button leftWidth="100%" rightWidth="0%">
 		<div align="right">
+		<input type="button" accesskey="A"
+                            value="追加凭证项" class="button_class" onclick="addTr()">&nbsp;&nbsp;
 		  <input type="button" class="button_class" id="sub_b"
-            value="&nbsp;&nbsp;提 交&nbsp;&nbsp;" onclick="addBean()">
+            value="&nbsp;&nbsp;提 交&nbsp;&nbsp;" onclick="addBean()">&nbsp;&nbsp;
         </div>
 	</p:button>
 	
@@ -209,13 +211,13 @@ function callClick(obj, el)
          
          <td>
          <br>
-         <input type="text" style="width: 85%;display: none;cursor: pointer;color: gray;" onclick="selectPrin(this)" title="选择部门" head="部门" 
-                    name="departmentId" value="选择部门" readonly="readonly">
-         <input type="hidden" name="departmentId2" value=""> 
-         <br>
          <input type="text" style="width: 85%;display: none;cursor: pointer;color: gray;" onclick="selectStaffer(this)" title="选择职员" head="职员" 
                     name="stafferId" value="选择职员" readonly="readonly">
          <input type="hidden" name="stafferId2" value=""> 
+         <br>
+         <input type="text" style="width: 85%;display: none;cursor: pointer;color: gray;" onclick="selectPrin(this)" title="选择部门" head="部门" 
+                    name="departmentId" value="选择部门" readonly="readonly">
+         <input type="hidden" name="departmentId2" value=""> 
          <br>
          <input type="text" style="width: 85%;display: none;cursor: pointer;color: gray;" onclick="selectUnit(this)" title="选择单位" head="单位"
                     name="unitId" value="选择单位" readonly="readonly">
