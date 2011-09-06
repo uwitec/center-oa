@@ -17,6 +17,7 @@ import com.china.center.oa.publics.vo.FlowLogVO;
 import com.china.center.oa.tcp.bean.TravelApplyBean;
 import com.china.center.oa.tcp.constanst.TcpConstanst;
 import com.china.center.oa.tcp.constanst.TcpFlowConstant;
+import com.china.center.oa.tcp.vo.TcpApproveVO;
 import com.china.center.oa.tcp.vo.TravelApplyVO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.MathTools;
@@ -134,6 +135,21 @@ public abstract class TCPHelper
         }
 
         return result;
+    }
+
+    /**
+     * getTcpApproveVO
+     * 
+     * @param vo
+     */
+    public static void getTcpApproveVO(TcpApproveVO vo)
+    {
+        vo.setShowTotal(MathTools.formatNum(MathTools.longToDouble2(vo.getTotal())));
+
+        if (vo.getType() == TcpConstanst.TCP_TYPE_TRAVEL)
+        {
+            vo.setUrl(TcpConstanst.TCP_TRAVELAPPLY_PROCESS_URL + vo.getApplyId());
+        }
     }
 
     public static FlowLogVO getTCPFlowLogVO(FlowLogBean bean)

@@ -30,4 +30,6 @@
 
 	<bean id="tcpApproveDAO" class="com.china.center.oa.tcp.dao.impl.TcpApproveDAOImpl" />
 
+	<bean id="tcpFlowManager" class="com.china.center.oa.tcp.manager.impl.TcpFlowManagerImpl" />
+
 </beans>

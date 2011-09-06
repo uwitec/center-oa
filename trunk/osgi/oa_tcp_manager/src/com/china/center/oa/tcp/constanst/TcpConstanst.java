@@ -128,4 +128,21 @@ public interface TcpConstanst
      * 出差申请处理的URL
      */
     String TCP_TRAVELAPPLY_PROCESS_URL = "../tcp/apply.do?method=findTravelApply&update=2&id=";
+
+    /**
+     * 显示
+     */
+    String TCP_TRAVELAPPLY_DETAIL_URL = "../tcp/apply.do?method=findTravelApply&id=";
+
+    /**
+     * 归属
+     */
+    @Defined(key = "tcpPool", value = "归属")
+    int TCP_POOL_COMMON = 0;
+
+    /**
+     * 共享池
+     */
+    @Defined(key = "tcpPool", value = "共享池")
+    int TCP_POOL_POOL = 1;
 }

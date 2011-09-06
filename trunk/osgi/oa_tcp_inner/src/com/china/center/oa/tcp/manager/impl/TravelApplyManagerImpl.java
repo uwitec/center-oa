@@ -26,6 +26,8 @@ import com.china.center.oa.budget.bean.BudgetLogBean;
 import com.china.center.oa.budget.constant.BudgetConstant;
 import com.china.center.oa.budget.dao.BudgetItemDAO;
 import com.china.center.oa.budget.manager.BudgetManager;
+import com.china.center.oa.group.dao.GroupVSStafferDAO;
+import com.china.center.oa.group.vs.GroupVSStafferBean;
 import com.china.center.oa.mail.bean.MailBean;
 import com.china.center.oa.mail.manager.MailMangaer;
 import com.china.center.oa.publics.bean.AttachmentBean;
@@ -83,6 +85,8 @@ public class TravelApplyManagerImpl implements TravelApplyManager
     private TcpApplyDAO tcpApplyDAO = null;
 
     private TcpFlowDAO tcpFlowDAO = null;
+
+    private GroupVSStafferDAO groupVSStafferDAO = null;
 
     private TcpPrepaymentDAO tcpPrepaymentDAO = null;
 
@@ -232,7 +236,7 @@ public class TravelApplyManagerImpl implements TravelApplyManager
         TcpFlowBean token = tcpFlowDAO.findByUnique(bean.getFlowKey(), bean.getStatus());
 
         // 进入审批状态
-        int newStatus = saveApprove(user, processId, bean, token.getNextStatus());
+        int newStatus = saveApprove(user, processId, bean, token.getNextStatus(), 0);
 
         int oldStatus = bean.getStatus();
 
@@ -268,7 +272,35 @@ public class TravelApplyManagerImpl implements TravelApplyManager
         // 群组模式
         if (token.getNextPlugin().startsWith("group"))
         {
-            int newStatus = saveApprove(user, processId, bean, token.getNextStatus());
+            int newStatus = saveApprove(user, processId, bean, token.getNextStatus(), 0);
+
+            int oldStatus = bean.getStatus();
+
+            if (newStatus != oldStatus)
+            {
+                bean.setStatus(newStatus);
+
+                travelApplyDAO.updateStatus(bean.getId(), newStatus);
+            }
+
+            // 记录操作日志
+            saveFlowLog(user, oldStatus, bean, reason, PublicConstant.OPRMODE_PASS);
+        }
+        // 共享池模式
+        if (token.getNextPlugin().startsWith("pool"))
+        {
+            String groupId = token.getNextPlugin().substring(5);
+
+            List<GroupVSStafferBean> vsList = groupVSStafferDAO.queryEntityBeansByFK(groupId);
+
+            List<String> processList = new ArrayList();
+
+            for (GroupVSStafferBean groupVSStafferBean : vsList)
+            {
+                processList.add(groupVSStafferBean.getStafferId());
+            }
+
+            int newStatus = saveApprove(user, processList, bean, token.getNextStatus(), 1);
 
             int oldStatus = bean.getStatus();
 
@@ -298,7 +330,7 @@ public class TravelApplyManagerImpl implements TravelApplyManager
                     processList.add(tcpShareVO.getApproverId());
                 }
 
-                int newStatus = saveApprove(user, processList, bean, token.getNextStatus());
+                int newStatus = saveApprove(user, processList, bean, token.getNextStatus(), 0);
 
                 int oldStatus = bean.getStatus();
 
@@ -413,7 +445,7 @@ public class TravelApplyManagerImpl implements TravelApplyManager
 
             int nextStatus = lastLog.getAfterStatus();
 
-            int newStatus = saveApprove(user, actorId, bean, nextStatus);
+            int newStatus = saveApprove(user, actorId, bean, nextStatus, 0);
 
             int oldStatus = bean.getStatus();
 
@@ -435,10 +467,13 @@ public class TravelApplyManagerImpl implements TravelApplyManager
      * @param processList
      * @param bean
      * @param nextStatus
+     * @param pool
+     *            TODO
      * @return
      * @throws MYException
      */
-    private int saveApprove(User user, List<String> processList, TravelApplyVO bean, int nextStatus)
+    private int saveApprove(User user, List<String> processList, TravelApplyVO bean,
+                            int nextStatus, int pool)
         throws MYException
     {
         // 获得当前的处理环节
@@ -472,36 +507,41 @@ public class TravelApplyManagerImpl implements TravelApplyManager
                 // 进入审批状态
                 TcpApproveBean approve = new TcpApproveBean();
 
+                approve.setId(commonDAO.getSquenceString20());
                 approve.setApplyerId(bean.getStafferId());
                 approve.setApplyId(bean.getId());
                 approve.setApproverId(processId);
                 approve.setFlowKey(bean.getFlowKey());
-                approve.setId(commonDAO.getSquenceString20());
                 approve.setLogTime(TimeTools.now());
                 approve.setName(bean.getName());
                 approve.setStatus(nextStatus);
                 approve.setTotal(bean.getTotal());
                 approve.setType(TcpConstanst.TCP_TYPE_TRAVEL);
+                approve.setPool(pool);
 
                 tcpApproveDAO.saveEntityBean(approve);
             }
 
-            MailBean mail = new MailBean();
+            // 如果是共享的不发送邮件
+            if (pool == TcpConstanst.TCP_POOL_COMMON)
+            {
+                MailBean mail = new MailBean();
 
-            mail.setTitle(bean.getStafferName() + "的出差申请[" + bean.getName() + "]等待您的处理.");
+                mail.setTitle(bean.getStafferName() + "的出差申请[" + bean.getName() + "]等待您的处理.");
 
-            mail.setContent(mail.getContent());
+                mail.setContent(mail.getContent());
 
-            mail.setSenderId(StafferConstant.SUPER_STAFFER);
+                mail.setSenderId(StafferConstant.SUPER_STAFFER);
 
-            mail.setReveiveIds(listToString(processList));
+                mail.setReveiveIds(listToString(processList));
 
-            mail.setReveiveIds2(bean.getStafferId());
+                mail.setReveiveIds2(bean.getStafferId());
 
-            mail.setHref(TcpConstanst.TCP_TRAVELAPPLY_PROCESS_URL + bean.getId());
+                mail.setHref(TcpConstanst.TCP_TRAVELAPPLY_PROCESS_URL + bean.getId());
 
-            // send mail
-            mailMangaer.addMailWithoutTransactional(UserHelper.getSystemUser(), mail);
+                // send mail
+                mailMangaer.addMailWithoutTransactional(UserHelper.getSystemUser(), mail);
+            }
         }
         else
         {
@@ -533,16 +573,19 @@ public class TravelApplyManagerImpl implements TravelApplyManager
      * 
      * @param processId
      * @param bean
+     * @param pool
+     *            TODO
      * @throws MYException
      */
-    private int saveApprove(User user, String processId, TravelApplyVO bean, int nextStatus)
+    private int saveApprove(User user, String processId, TravelApplyVO bean, int nextStatus,
+                            int pool)
         throws MYException
     {
         List<String> processList = new ArrayList();
 
         processList.add(processId);
 
-        return saveApprove(user, processList, bean, nextStatus);
+        return saveApprove(user, processList, bean, nextStatus, pool);
     }
 
     /**
@@ -1197,6 +1240,23 @@ public class TravelApplyManagerImpl implements TravelApplyManager
     public void setMailMangaer(MailMangaer mailMangaer)
     {
         this.mailMangaer = mailMangaer;
+    }
+
+    /**
+     * @return the groupVSStafferDAO
+     */
+    public GroupVSStafferDAO getGroupVSStafferDAO()
+    {
+        return groupVSStafferDAO;
+    }
+
+    /**
+     * @param groupVSStafferDAO
+     *            the groupVSStafferDAO to set
+     */
+    public void setGroupVSStafferDAO(GroupVSStafferDAO groupVSStafferDAO)
+    {
+        this.groupVSStafferDAO = groupVSStafferDAO;
     }
 
 }

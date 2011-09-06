@@ -62,6 +62,11 @@ public class TcpApproveBean implements Serializable
      */
     private int type = TcpConstanst.TCP_TYPE_TRAVEL;
 
+    /**
+     * 0:归属 1:共享池
+     */
+    private int pool = TcpConstanst.TCP_POOL_COMMON;
+
     private int status = TcpConstanst.TCP_STATUS_INIT;
 
     private long total = 0;
@@ -265,6 +270,23 @@ public class TcpApproveBean implements Serializable
     }
 
     /**
+     * @return the pool
+     */
+    public int getPool()
+    {
+        return pool;
+    }
+
+    /**
+     * @param pool
+     *            the pool to set
+     */
+    public void setPool(int pool)
+    {
+        this.pool = pool;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -276,7 +298,7 @@ public class TcpApproveBean implements Serializable
         StringBuilder retValue = new StringBuilder();
 
         retValue
-            .append("TcpApplyBean ( ")
+            .append("TcpApproveBean ( ")
             .append(super.toString())
             .append(TAB)
             .append("id = ")
@@ -299,6 +321,9 @@ public class TcpApproveBean implements Serializable
             .append(TAB)
             .append("type = ")
             .append(this.type)
+            .append(TAB)
+            .append("pool = ")
+            .append(this.pool)
             .append(TAB)
             .append("status = ")
             .append(this.status)

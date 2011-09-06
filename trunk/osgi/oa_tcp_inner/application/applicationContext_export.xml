@@ -29,4 +29,6 @@
 
 	<osgi:service ref="tcpApproveDAO" interface="com.china.center.oa.tcp.dao.TcpApproveDAO" />
 
+	<osgi:service ref="tcpFlowManager" interface="com.china.center.oa.tcp.manager.TcpFlowManager" />
+
 </beans>
