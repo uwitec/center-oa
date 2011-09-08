@@ -871,6 +871,11 @@ public class StorageAction extends DispatchAction
 
         StorageRelationVO bean = storageRelationDAO.findVO(id);
 
+        if (StringTools.isNullOrNone(bean.getStafferName()))
+        {
+            bean.setStafferName("公共");
+        }
+
         request.setAttribute("bean", bean);
 
         return mapping.findForward("addStorageApply");

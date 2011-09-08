@@ -41,6 +41,7 @@ function load()
          },
          buttons : [
              {id: 'search', bclass: 'search', onpress : doSearch},
+             {id: 'add', bclass: 'add', caption: '申请转移库存',  onpress : applyBean},
              {id: 'search1', bclass: 'search', caption: '仓区下异动历史', onpress : depotpartLog},
              {id: 'search2', bclass: 'search', caption: '仓区下异动(价格)', onpress : depotpartLog2},
              {id: 'search3', bclass: 'search', caption: '仓库下异动历史', onpress : depotLog},
@@ -132,6 +133,17 @@ function depotLog2(opr, grid)
 	else
 	$error('不能操作');
 }
+
+function applyBean(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {    
+        $l(gurl + 'preForAddStorageApply' + '&id=' + getRadioValue('checkb'));
+    }
+    else
+    $error('不能操作');
+}
+
 
 function doSearch()
 {

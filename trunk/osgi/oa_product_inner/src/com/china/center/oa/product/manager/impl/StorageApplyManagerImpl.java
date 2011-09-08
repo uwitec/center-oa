@@ -25,7 +25,9 @@ import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.vo.StorageApplyVO;
 import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
+import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.tools.JudgeTools;
 
 
@@ -45,6 +47,8 @@ public class StorageApplyManagerImpl implements StorageApplyManager
     private StorageRelationDAO storageRelationDAO = null;
 
     private CommonDAO commonDAO = null;
+
+    private UserManager userManager = null;
 
     private StorageRelationManager storageRelationManager = null;
 
@@ -84,11 +88,6 @@ public class StorageApplyManagerImpl implements StorageApplyManager
     private void checkAdd(User user, StorageApplyBean bean)
         throws MYException
     {
-        if ( !bean.getApplyer().equals(user.getStafferId()))
-        {
-            throw new MYException("只能转移自己名下的库存");
-        }
-
         StorageRelationBean relation = storageRelationDAO.find(bean.getStorageRelationId());
 
         if (relation == null)
@@ -96,14 +95,26 @@ public class StorageApplyManagerImpl implements StorageApplyManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        if ( !user.getStafferId().equals(relation.getStafferId()))
-        {
-            throw new MYException("只能转移自己名下的库存");
-        }
+        boolean hasPublicTranc = userManager.containAuth(user, AuthConstant.STORAGE_TRANS);
 
-        if (user.getStafferId().equals(bean.getReveiver()))
+        if ("0".equals(relation.getStafferId()))
         {
-            throw new MYException("不能自己转移给自己");
+            if ( !hasPublicTranc)
+            {
+                throw new MYException("没有操作权限");
+            }
+        }
+        else
+        {
+            if ( !user.getStafferId().equals(relation.getStafferId()))
+            {
+                throw new MYException("只能转移自己名下的库存");
+            }
+
+            if (user.getStafferId().equals(bean.getReveiver()))
+            {
+                throw new MYException("不能自己转移给自己");
+            }
         }
 
         // 删除以前的申请
@@ -300,6 +311,23 @@ public class StorageApplyManagerImpl implements StorageApplyManager
     public void setStorageRelationManager(StorageRelationManager storageRelationManager)
     {
         this.storageRelationManager = storageRelationManager;
+    }
+
+    /**
+     * @return the userManager
+     */
+    public UserManager getUserManager()
+    {
+        return userManager;
+    }
+
+    /**
+     * @param userManager
+     *            the userManager to set
+     */
+    public void setUserManager(UserManager userManager)
+    {
+        this.userManager = userManager;
     }
 
 }

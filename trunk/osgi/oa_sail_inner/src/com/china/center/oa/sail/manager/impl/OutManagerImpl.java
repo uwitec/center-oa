@@ -56,8 +56,10 @@ import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.DepotpartDAO;
 import com.china.center.oa.product.dao.ProductDAO;
+import com.china.center.oa.product.dao.StorageRelationDAO;
 import com.china.center.oa.product.helper.StorageRelationHelper;
 import com.china.center.oa.product.manager.StorageRelationManager;
+import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
@@ -176,6 +178,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     private OutBalanceDAO outBalanceDAO = null;
 
     private StorageRelationManager storageRelationManager = null;
+
+    private StorageRelationDAO storageRelationDAO = null;
 
     /**
      * 短信最大停留时间
@@ -337,6 +341,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                     List<BaseBean> baseList = new ArrayList();
 
+                    // 处理每个base
                     for (int i = 0; i < nameList.length; i++ )
                     {
                         BaseBean base = new BaseBean();
@@ -512,10 +517,12 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         {
                             StafferBean sb = stafferDAO.find(base.getOwner());
 
-                            if (sb != null)
+                            if (sb == null)
                             {
-                                base.setOwnerName(sb.getName());
+                                throw new RuntimeException("所属职员不存在,请确认操作");
                             }
+
+                            base.setOwnerName(sb.getName());
                         }
 
                         DepotpartBean deport = depotpartDAO.find(base.getDepotpartId());
@@ -534,7 +541,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             throw new RuntimeException("销售必须在一个仓库下面");
                         }
 
-                        // TODO 调拨的时候有bug啊
+                        // 调拨的时候有bug啊
                         base.setLocationId(outBean.getLocation());
 
                         // 其实也是成本
@@ -546,6 +553,54 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         baseDAO.saveEntityBean(base);
 
                         addSub = true;
+                    }
+
+                    // 自卖的东西必须先卖掉
+                    if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+                    {
+                        for (BaseBean base : baseList)
+                        {
+                            if ("0".equals(base.getOwner()))
+                            {
+                                ConditionParse con = new ConditionParse();
+                                con.addWhereStr();
+                                con.addCondition("stafferId", "=", user.getStafferId());
+                                con.addCondition("productId", "=", base.getProductId());
+
+                                List<StorageRelationBean> selfRelation = storageRelationDAO
+                                    .queryEntityBeansByCondition(con);
+
+                                if (ListTools.isEmptyOrNull(selfRelation))
+                                {
+                                    continue;
+                                }
+
+                                int samont = 0;
+
+                                for (StorageRelationBean seach : selfRelation)
+                                {
+                                    samont += seach.getAmount();
+                                }
+
+                                // 看看是否都在里面出售
+                                int amount = 0;
+
+                                for (BaseBean each : baseList)
+                                {
+                                    if (user.getStafferId().equals(each.getOwner())
+                                        && base.getProductId().equals(each.getProductId()))
+                                    {
+                                        amount += each.getAmount();
+                                    }
+                                }
+
+                                if (samont != amount)
+                                {
+                                    throw new RuntimeException("必须先销售自己名下的产品["
+                                                               + base.getProductName() + "]");
+                                }
+                            }
+                        }
                     }
 
                     // 销售单强制设置为赠送
@@ -4559,6 +4614,23 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     public String getStafferCreditStorePath()
     {
         return ConfigLoader.getProperty("stafferCreditStore");
+    }
+
+    /**
+     * @return the storageRelationDAO
+     */
+    public StorageRelationDAO getStorageRelationDAO()
+    {
+        return storageRelationDAO;
+    }
+
+    /**
+     * @param storageRelationDAO
+     *            the storageRelationDAO to set
+     */
+    public void setStorageRelationDAO(StorageRelationDAO storageRelationDAO)
+    {
+        this.storageRelationDAO = storageRelationDAO;
     }
 
 }
