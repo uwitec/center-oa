@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<struts-config>
+	<action-mappings>
+	
+		<action path="/tcp/apply" parameter="method"
+			type="org.springframework.web.struts.DelegatingActionProxy"
+			validate="false">
+			<forward name="addTravelApply" path="/tcp/addTravelApply.jsp" />
+			<forward name="updateTravelApply" path="/tcp/updateTravelApply.jsp" />
+			<forward name="queryTravelApply" path="/tcp/queryTravelApply.jsp" />
+			<forward name="querySelfTravelApply" path="/tcp/querySelfTravelApply.jsp" />
+			<forward name="detailTravelApply" path="/tcp/detailTravelApply.jsp" />
+			<forward name="processTravelApply" path="/tcp/processTravelApply.jsp" />
+			<forward name="querySelfApprove" path="/tcp/querySelfApprove.jsp" />
+		</action>
+		
+	</action-mappings>
+</struts-config>
