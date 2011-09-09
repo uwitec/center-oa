@@ -95,13 +95,19 @@ public class StorageApplyManagerImpl implements StorageApplyManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        boolean hasPublicTranc = userManager.containAuth(user, AuthConstant.STORAGE_TRANS);
-
+        // 公卖转私买
         if ("0".equals(relation.getStafferId()))
         {
+            boolean hasPublicTranc = userManager.containAuth(user, AuthConstant.STORAGE_TRANS);
+
             if ( !hasPublicTranc)
             {
                 throw new MYException("没有操作权限");
+            }
+
+            if ( !"0".equals(relation.getStafferId()))
+            {
+                throw new MYException("只能转移公共库存");
             }
         }
         else
