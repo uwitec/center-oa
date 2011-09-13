@@ -8,7 +8,6 @@
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
-<script language="JavaScript" src="../js/key.js"></script>
 <script language="JavaScript" src="../stockapply_js/detailStockPayApply.js"></script>
 <script language="javascript">
 

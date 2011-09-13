@@ -12,6 +12,8 @@ package com.china.center.oa.flow.manager.impl;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Formatter;
 import java.util.Iterator;
 import java.util.List;
@@ -67,6 +69,7 @@ import com.china.center.osgi.dym.DynamicBundleTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.FileTools;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.ListTools;
 import com.china.center.tools.RandomTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
@@ -140,8 +143,7 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
      * @throws MYException
      */
     @Transactional(rollbackFor = {MYException.class})
-    public boolean addFlowInstance(User user, FlowInstanceBean bean, int operation,
-                                   List<String> processers)
+    public boolean addFlowInstance(User user, FlowInstanceBean bean, int operation, List<String> processers)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, bean);
@@ -206,8 +208,7 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
      * @throws MYException
      */
     @Transactional(rollbackFor = {MYException.class})
-    public boolean updateFlowInstance(User user, FlowInstanceBean bean, int operation,
-                                      List<String> processers)
+    public boolean updateFlowInstance(User user, FlowInstanceBean bean, int operation, List<String> processers)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, bean);
@@ -304,13 +305,11 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
 
         if (instanceTemplateBean.getReadonly() == FlowConstant.TEMPLATE_READONLY_YES)
         {
-            allPath = FileTools.formatPath2(this.getInstanceReadonlyAttachmentRoot())
-                      + instanceTemplateBean.getPath();
+            allPath = FileTools.formatPath2(this.getInstanceReadonlyAttachmentRoot()) + instanceTemplateBean.getPath();
         }
         else
         {
-            allPath = FileTools.formatPath2(this.getInstanceAttachmentRoot())
-                      + instanceTemplateBean.getPath();
+            allPath = FileTools.formatPath2(this.getInstanceAttachmentRoot()) + instanceTemplateBean.getPath();
         }
 
         try
@@ -339,13 +338,12 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
      * @throws MYException
      */
     @Transactional(rollbackFor = {MYException.class})
-    public boolean passFlowInstance(User user, String instanceId, String opinion,
-                                    List<String> processers)
+    public boolean passFlowInstance(User user, String instanceId, String opinion, List<String> processers)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, instanceId);
 
-        FlowInstanceBean bean = checkPass(instanceId);
+        FlowInstanceBean bean = checkPass(user, instanceId);
 
         // 下一个环节
         nextFlowInstance(opinion, user, bean, processers, FlowConstant.OPERATION_PASS);
@@ -446,15 +444,14 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
     public void deleteTempTemplateFile()
     {
         // query -10 and -1 InstanceTemplateBeans
-        List<InstanceTemplateBean> templateList = instanceTemplateDAO.queryByDuration(TimeTools
-            .now( -7), TimeTools.now( -1));
+        List<InstanceTemplateBean> templateList = instanceTemplateDAO.queryByDuration(TimeTools.now( -7),
+            TimeTools.now( -1));
 
         for (InstanceTemplateBean instanceTemplateBean : templateList)
         {
             if ( !flowInstanceDAO.isExist(instanceTemplateBean.getInstanceId()))
             {
-                planLog.info("delete temp InstanceTemplateBean:"
-                             + BeanUtil.toStrings(instanceTemplateBean));
+                planLog.info("delete temp InstanceTemplateBean:" + BeanUtil.toStrings(instanceTemplateBean));
 
                 deleteInstanceTemplateAndFile(instanceTemplateBean);
             }
@@ -548,8 +545,7 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
      * @param operation
      * @throws MYException
      */
-    private void rejectFlowInstanceInner(String option, User user, FlowInstanceBean bean,
-                                         int operation)
+    private void rejectFlowInstanceInner(String option, User user, FlowInstanceBean bean, int operation)
         throws MYException
     {
         FlowTokenBean token = flowTokenDAO.find(bean.getCurrentTokenId());
@@ -573,19 +569,16 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
 
         if (operation == FlowConstant.OPERATION_REJECT)
         {
-            FlowInstanceLogBean lastLog = flowInstanceLogDAO.findLastLog(bean.getId(), preOrders
-                .getId(), token.getId());
+            FlowInstanceLogBean lastLog = flowInstanceLogDAO.findLastLog(bean.getId(), preOrders.getId(), token.getId());
 
             if (lastLog == null)
             {
                 // may be reject jump a abstract token,so must query pre token's next token
-                FlowTokenBean preNext = flowTokenDAO.findToken(bean.getFlowId(), preOrders
-                    .getNextOrders());
+                FlowTokenBean preNext = flowTokenDAO.findToken(bean.getFlowId(), preOrders.getNextOrders());
 
                 if (preNext != null)
                 {
-                    lastLog = flowInstanceLogDAO.findLastLog(bean.getId(), preOrders.getId(),
-                        preNext.getId());
+                    lastLog = flowInstanceLogDAO.findLastLog(bean.getId(), preOrders.getId(), preNext.getId());
                 }
 
                 if (lastLog == null)
@@ -623,8 +616,7 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
      * @return
      * @throws MYException
      */
-    private FlowTokenBean checkRejectAuth(User user, FlowInstanceBean bean, int operation,
-                                          FlowTokenBean token)
+    private FlowTokenBean checkRejectAuth(User user, FlowInstanceBean bean, int operation, FlowTokenBean token)
         throws MYException
     {
         TokenVSOperationBean operationVS = tokenVSOperationDAO.findByUnique(token.getId());
@@ -634,14 +626,12 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
             throw new MYException("数据不完备,请重新操作");
         }
 
-        if (operation == FlowConstant.OPERATION_REJECT
-            && operationVS.getReject() != FlowConstant.OPERATION_YES)
+        if (operation == FlowConstant.OPERATION_REJECT && operationVS.getReject() != FlowConstant.OPERATION_YES)
         {
             throw new MYException("没有此环节的驳回权限");
         }
 
-        if (operation == FlowConstant.OPERATION_REJECTALL
-            && operationVS.getRejectAll() != FlowConstant.OPERATION_YES)
+        if (operation == FlowConstant.OPERATION_REJECTALL && operationVS.getRejectAll() != FlowConstant.OPERATION_YES)
         {
             throw new MYException("没有此环节的驳回到初始的权限");
         }
@@ -699,8 +689,8 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
             // get the last real token
             while (preOrders.getType() == FlowConstant.TOKEN_TYPEE_ABSTOKEN)
             {
-                FlowInstanceBean childInstance = flowInstanceDAO.findByParentIdAndTokenId(
-                    rootInstance.getId(), preOrders.getId());
+                FlowInstanceBean childInstance = flowInstanceDAO.findByParentIdAndTokenId(rootInstance.getId(),
+                    preOrders.getId());
 
                 if (childInstance != null && FlowHelper.isSubInstance(childInstance))
                 {
@@ -732,8 +722,8 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
         {
             if (FlowHelper.isAbstactToken(flowTokenBean))
             {
-                FlowInstanceBean childInstance = flowInstanceDAO.findByParentIdAndTokenId(bean
-                    .getId(), flowTokenBean.getId());
+                FlowInstanceBean childInstance = flowInstanceDAO.findByParentIdAndTokenId(bean.getId(),
+                    flowTokenBean.getId());
 
                 if (childInstance != null && FlowHelper.isSubInstance(childInstance))
                 {
@@ -807,11 +797,9 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
             {
                 if (edit.getTemplateId().equals(read.getTemplateId()))
                 {
-                    String src = FileTools.formatPath2(this.getInstanceAttachmentRoot())
-                                 + edit.getPath();
+                    String src = FileTools.formatPath2(this.getInstanceAttachmentRoot()) + edit.getPath();
 
-                    String dir = FileTools.formatPath2(this.getInstanceReadonlyAttachmentRoot())
-                                 + read.getPath();
+                    String dir = FileTools.formatPath2(this.getInstanceReadonlyAttachmentRoot()) + read.getPath();
                     // copy file
                     try
                     {
@@ -894,10 +882,31 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
      * @return
      * @throws MYException
      */
-    private FlowInstanceBean checkPass(String instanceId)
+    private FlowInstanceBean checkPass(User user, String instanceId)
         throws MYException
     {
         FlowInstanceBean bean = checkReject(instanceId);
+
+        // 检验日志最后的处理人是当前人
+
+        List<FlowInstanceLogBean> logList = flowInstanceLogDAO.queryEntityBeansByFK(instanceId);
+
+        if ( !ListTools.isEmptyOrNull(logList))
+        {
+            // 最后一个日志
+            Collections.sort(logList, new Comparator<FlowInstanceLogBean>()
+            {
+                public int compare(FlowInstanceLogBean o1, FlowInstanceLogBean o2)
+                {
+                    return (int) (Long.parseLong(o2.getId()) - Long.parseLong(o1.getId()));
+                }
+            });
+
+            if ( !logList.get(0).getNextStafferId().equals(user.getStafferId()))
+            {
+                throw new MYException("流程出现严重错误,您不是上环节指定处理人,请联系管理员!");
+            }
+        }
 
         return bean;
     }
@@ -907,8 +916,7 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
      * 
      * @param bean
      */
-    private int nextFlowInstance(String option, User user, FlowInstanceBean bean,
-                                 List<String> processers, int operation)
+    private int nextFlowInstance(String option, User user, FlowInstanceBean bean, List<String> processers, int operation)
         throws MYException
     {
         FlowTokenBean token = null;
@@ -1012,9 +1020,8 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
      * @param next
      * @throws MYException
      */
-    private void handleRealToken(String option, User user, FlowInstanceBean bean,
-                                 List<String> processers, int operation, FlowTokenBean token,
-                                 FlowTokenBean next)
+    private void handleRealToken(String option, User user, FlowInstanceBean bean, List<String> processers,
+                                 int operation, FlowTokenBean token, FlowTokenBean next)
         throws MYException
     {
         // process liminal
@@ -1064,7 +1071,15 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
             addFlowLog(option, operation, cid, next.getId(), rootInstance, user, processers.get(0));
         }
 
-        addFlowLog(option, operation, cid, next.getId(), bean, user, processers.get(0));
+        if (next.isEnding())
+        {
+            // 结束的人指定为系统管理员
+            addFlowLog(option, operation, cid, next.getId(), bean, user, StafferConstant.SUPER_STAFFER);
+        }
+        else
+        {
+            addFlowLog(option, operation, cid, next.getId(), bean, user, processers.get(0));
+        }
 
         // send mail
         if ( !next.isEnding())
@@ -1091,9 +1106,8 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
      * @param next
      * @throws MYException
      */
-    private void processAbstractToken(String option, User user, FlowInstanceBean bean,
-                                      List<String> processers, int operation, FlowTokenBean token,
-                                      FlowTokenBean next)
+    private void processAbstractToken(String option, User user, FlowInstanceBean bean, List<String> processers,
+                                      int operation, FlowTokenBean token, FlowTokenBean next)
         throws MYException
     {
         // handle abstract token
@@ -1124,8 +1138,7 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
         subInstance.setParentTokenId(next.getId());
 
         // NOTE copy file to subinstance
-        List<InstanceTemplateBean> queryEntityBeansByFK = instanceTemplateDAO
-            .queryEntityBeansByFK(bean.getId());
+        List<InstanceTemplateBean> queryEntityBeansByFK = instanceTemplateDAO.queryEntityBeansByFK(bean.getId());
 
         List<TokenVSTemplateBean> subTemplateList = tokenVSTemplateDAO.queryByFlowId(subFlowId);
 
@@ -1289,9 +1302,8 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
      * @param operation
      * @throws MYException
      */
-    private void sendMailInFlow(String option, User user, FlowInstanceBean bean,
-                                List<String> processers, int operation, FlowTokenBean next,
-                                FlowInstanceBean srcInstance)
+    private void sendMailInFlow(String option, User user, FlowInstanceBean bean, List<String> processers,
+                                int operation, FlowTokenBean next, FlowInstanceBean srcInstance)
         throws MYException
     {
         MailBean mail = new MailBean();
@@ -1318,8 +1330,7 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
             definedName = defined.getName();
         }
 
-        mail.setTitle(formatter.format("系统通知:%s发出的[%s]需要您处理--%s", srcName, definedName,
-            bean.getTitle()).toString());
+        mail.setTitle(formatter.format("系统通知:%s发出的[%s]需要您处理--%s", srcName, definedName, bean.getTitle()).toString());
 
         StringBuilder builder = new StringBuilder();
 
@@ -1380,8 +1391,8 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
      * @param sb
      * @param fkId
      */
-    private void sendSMS(FlowInstanceBean bean, int operation, FlowTokenBean next, StafferBean sb,
-                         String fkId, String srcName)
+    private void sendSMS(FlowInstanceBean bean, int operation, FlowTokenBean next, StafferBean sb, String fkId,
+                         String srcName)
     {
         if (next == null)
         {
@@ -1430,8 +1441,8 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
         List<StafferBean> staffList = plugin.listNextHandler(bean.getId(), next.getId());
 
         // if not exception,send sms
-        if (next != null && operation != FlowConstant.OPERATION_EXEND
-            && !StringTools.isNullOrNone(sb.getHandphone()) && comeIn && !next.isEnding())
+        if (next != null && operation != FlowConstant.OPERATION_EXEND && !StringTools.isNullOrNone(sb.getHandphone())
+            && comeIn && !next.isEnding())
         {
             // 动态引入的判断
             if ( !DynamicBundleTools.isServiceExist(DymFlowConstant.SMSDAO))
@@ -1439,8 +1450,7 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
                 return;
             }
 
-            ShortMessageTaskDAO shortMessageTaskDAO = DynamicBundleTools
-                .getService(ShortMessageTaskDAO.class);
+            ShortMessageTaskDAO shortMessageTaskDAO = DynamicBundleTools.getService(ShortMessageTaskDAO.class);
 
             if (shortMessageTaskDAO == null)
             {
@@ -1466,9 +1476,8 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
 
             sms.setMenuReceives(toStr(staffList));
 
-            sms.setMessage(srcName + "发起" + defind.getName() + "[" + bean.getTitle() + "]"
-                           + "需您审批(" + next.getName() + ").0通过,1驳回.回复格式[" + sms.getHandId()
-                           + ":0:处理代号:理由]或[" + sms.getHandId() + ":1:理由].处理代号("
+            sms.setMessage(srcName + "发起" + defind.getName() + "[" + bean.getTitle() + "]" + "需您审批(" + next.getName()
+                           + ").0通过,1驳回.回复格式[" + sms.getHandId() + ":0:处理代号:理由]或[" + sms.getHandId() + ":1:理由].处理代号("
                            + sms.getMenuReceives() + ")");
 
             sms.setReceiver(sb.getHandphone());
@@ -1613,8 +1622,7 @@ public class FlowInstanceManagerImpl implements FlowInstanceManager
      * @param token
      * @throws MYException
      */
-    private void processBelong(FlowInstanceBean instance, FlowTokenBean token,
-                               List<String> processers)
+    private void processBelong(FlowInstanceBean instance, FlowTokenBean token, List<String> processers)
         throws MYException
     {
         // delete old belongs
