@@ -6,6 +6,7 @@
 <p:link title="付款申请" />
 <script language="JavaScript" src="../js/JCheck_debug.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
+<script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="JavaScript" src="../stockapply_js/detailStockPayApply.js"></script>

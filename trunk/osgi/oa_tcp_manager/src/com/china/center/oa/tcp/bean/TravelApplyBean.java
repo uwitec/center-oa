@@ -38,6 +38,7 @@ import com.china.center.oa.tcp.constanst.TcpConstanst;
 public class TravelApplyBean implements Serializable
 {
     @Id
+    @Html(title = "标识", must = true, maxLength = 40)
     private String id = "";
 
     @Html(title = "目的", must = true, maxLength = 40)

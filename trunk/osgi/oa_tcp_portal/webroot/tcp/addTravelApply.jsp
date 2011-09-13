@@ -5,6 +5,7 @@
 <head>
 <p:link title="差旅费申请" guid="true"/>
 <script language="JavaScript" src="../js/common.js"></script>
+<script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../js/math.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
@@ -89,15 +90,15 @@ function load()
 
             <p:pro field="description" cell="0" innerString="rows=4 cols=55" />
             
-            <p:cell title="附件" width="8" end="true"><input type="file" name="atts" size="70" class="button_class">  
+            <p:cell title="附件" width="8" end="true"><input type="file" name="atts" size="70" >  
             <font color="blue"><span style="cursor: pointer;" onclick="showMoreAtt()" >【更多附件】 </span><b>建议压缩后上传,最大支持10M</b></font>
             </p:cell>
             
             <p:cell title="附件N" width="8" id="att_more" end="true">
-            <input type="file" name="atts0" size="70" class="button_class"> <br> 
-            <input type="file" name="atts1" size="70" class="button_class"> <br> 
-            <input type="file" name="atts2" size="70" class="button_class"> <br> 
-            <input type="file" name="atts3" size="70" class="button_class"> <br> 
+            <input type="file" name="atts0" size="70" > <br> 
+            <input type="file" name="atts1" size="70" > <br> 
+            <input type="file" name="atts2" size="70" > <br> 
+            <input type="file" name="atts3" size="70" > <br> 
             </p:cell>
 
         </p:table>
@@ -150,7 +151,7 @@ function load()
                         <td width="15%" align="center">结束日期</td>
                         <td width="15%" align="center">预算项</td>
                         <td width="10%" align="center">申请金额</td>
-                        <td width="40%" align="center">备注</td>
+                        <td width="25%" align="center">备注</td>
                         <td width="5%" align="left"><input type="button" accesskey="A"
                             value="增加" class="button_class" onclick="addTr()"></td>
                     </tr>
@@ -254,7 +255,7 @@ function load()
 
     <p:line flag="0" />
     
-    <tr id="pay_main_tr">
+    <tr id="sub_main_tr">
         <td colspan='2' align='center'>
         <table width="98%" border="0" cellpadding="0" cellspacing="0"
             class="border">
@@ -359,7 +360,7 @@ function load()
          <td align="left">
          <textarea name="p_description" rows="3" style="width: 100%"></textarea>
          </td>
-        <td width="5%" align="center"><input type=button
+        <td width="5%" align="center"><input type=button name="pay_del_bu"
             value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
     </tr>
     

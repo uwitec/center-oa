@@ -14,7 +14,7 @@ function load()
 {
     showFlowLogTr();
     
-    <c:if test="${bean.status == 22}">
+    <c:if test="${bean.status == 22 && bean.borrow == 1}">
     addTrInner("tables_realPay", "trCopy");
     </c:if>
 }
@@ -29,6 +29,8 @@ function processBean(opr)
     $("input[name='oprType']").val(opr);
     
     var msg = '';
+    
+    var checkFun = null;
     
     if ("0" == opr)
     {
@@ -57,7 +59,11 @@ function processBean(opr)
 	    }
     }
     
-    submit(msg, null, null);
+    <c:if test="${bean.status == 22}">
+    checkFun = checkMoney;
+    </c:if>
+    
+    submit(msg, null, checkFun);
 }
 
 var showTr = false;
@@ -97,6 +103,32 @@ function getNextInput(el)
     {
         return getNextInput(el.nextSibling);
     }
+}
+
+function checkMoney()
+{
+    var total = parseFloat('${bean.showBorrowTotal}');
+    
+    var mels = document.getElementsByName('money');
+    
+    var addMoney = 0.0;
+    
+    for (var i = 0; i < mels.length; i++)
+    {
+        if (mels[i].value != '')
+        {
+            addMoney += parseFloat(mels[i].value);
+        }
+    }
+    
+    if (addMoney != total)
+    {
+        alert('付款金额必须是${bean.showBorrowTotal}');
+        
+        return false;
+    }
+    
+    return true;
 }
 
 </script>
@@ -379,7 +411,7 @@ function getNextInput(el)
         </td>
     </tr>
     
-    <c:if test="${bean.status == 22}">
+    <c:if test="${bean.status == 22 && bean.borrow == 1}">
 	    <p:title>
 	        <td class="caption">
 	         <strong>财务支付</strong>

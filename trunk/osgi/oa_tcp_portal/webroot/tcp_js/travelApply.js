@@ -22,37 +22,6 @@ function addShareTr()
     }
 }
 
-function addTrInner(tableId, trId)
-{
-    var table = $O(tableId);
-    
-    var tr = $O(trId);
-    
-    trow =  table.insertRow(-1);
-    
-    if (length % 2 == 1)
-    {
-        trow.className = 'content2';
-    }
-    else
-    {
-        trow.className = 'content1';
-    }
-    
-    for (var i = 0; i < tr.cells.length; i++)
-    {
-        var tcell = document.createElement("td");
-        
-        tcell.innerHTML = tr.cells[i].innerHTML;
-        
-        trow.appendChild(tcell);
-    }
-    
-    trow.appendChild(tcell);
-    
-    return trow;
-}
-
 function compareNumber(a, b)
 {
 	var aa = a * 1000;
@@ -202,6 +171,18 @@ function borrowChange()
     if ($$('borrow') == 0)
     {
         $v('pay_main_tr', false);
+        
+        //remove tr
+        var list = formEntry.elements;
+        
+        if (list)
+        {
+        	for (var i = 0; i < list.length; i++)
+            {
+            	if (list[i].name== 'pay_del_bu')
+            	list[i].onclick.apply(list[i]);
+            }
+        }
     }
     
     if ($$('borrow') == 1)

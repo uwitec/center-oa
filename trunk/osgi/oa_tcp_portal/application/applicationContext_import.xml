@@ -77,4 +77,8 @@
     <osgi:reference id="feeItemDAO" interface="com.china.center.oa.budget.dao.FeeItemDAO" />
     
     <osgi:reference id="tcpFlowManager" interface="com.china.center.oa.tcp.manager.TcpFlowManager" />
+    
+    <osgi:reference id="outBillDAO" interface="com.china.center.oa.finance.dao.OutBillDAO" />
+    
+    <osgi:reference id="financeDAO" interface="com.china.center.oa.tax.dao.FinanceDAO" />
 </beans>

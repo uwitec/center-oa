@@ -42,6 +42,8 @@ function load()
 	    
 		<p:table cells="2">
 
+            <p:pro field="id" cell="0"/>
+            
             <p:pro field="stafferId" value="${g_stafferBean.name}"/>
             <p:pro field="departmentId" value="${g_stafferBean.principalshipName}"/>
             
@@ -76,6 +78,18 @@ function load()
             
             <p:cell title="处理人" width="8" end="true">
             ${bean.processer}
+            </p:cell>
+            
+            <p:cell title="关联付款单" width="8" end="true">
+	            <c:forEach items="${billList}" var="item">
+	            <a href="../finance/bill.do?method=findBill&id=${item.id}">${item.id}</a>&nbsp;&nbsp;
+	            </c:forEach>
+            </p:cell>
+            
+            <p:cell title="关联凭证" width="8" end="true">
+                <c:forEach items="${financeList}" var="item">
+                <a href="../finance/finance.do?method=findFinance&id=${item.id}">${item.id}</a>&nbsp;&nbsp;
+                </c:forEach>
             </p:cell>
 
         </p:table>

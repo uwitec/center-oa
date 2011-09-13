@@ -89,8 +89,12 @@ function load()
                 <a href="../finance/bank.do?method=findPayment&mode=2&id=${bean.refId}">${bean.refId}</a>
                 </c:when>
                 
-                 <c:when test="${bean.createType == 65 || bean.createType == 66}">
+                <c:when test="${bean.createType == 65 || bean.createType == 66}">
                 <a href="../finance/backpay.do?method=findBackPayApply&id=${bean.refId}">${bean.refId}</a>
+                </c:when>
+                
+                <c:when test="${bean.createType == 70}">
+                <a href="../tcp/apply.do?method=findTravelApply&id=${bean.refId}">${bean.refId}</a>
                 </c:when>
                 
 				<c:otherwise>

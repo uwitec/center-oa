@@ -5,6 +5,7 @@
 <head>
 <p:link title="差旅费申请" guid="true"/>
 <script language="JavaScript" src="../js/string.js"></script>
+<script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/math.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
@@ -52,7 +53,7 @@ function load()
 	
 	borrowChange();
 	
-	 updateInit();
+	updateInit();
 }
 
 function del(id)

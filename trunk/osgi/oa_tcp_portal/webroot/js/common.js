@@ -137,10 +137,10 @@ function setRadioValue(name, value)
     
     for (var i = 0; i < obj.length; i++)
     {
-    	if (obj[i].value == value)
-    	{
+        if (obj[i].value == value)
+        {
             obj[i].checked = true;
-    	}
+        }
     }
 }
 
@@ -213,15 +213,15 @@ function concat(arr1, arr2)
 
 function containInList(arr, item)
 {
-	for (var i = 0; i < arr.length; i++)
-	{
-		if (arr[i] == item)
-		{
-			return true;
-		}
-	}
-	
-	return false;
+    for (var i = 0; i < arr.length; i++)
+    {
+        if (arr[i] == item)
+        {
+            return true;
+        }
+    }
+    
+    return false;
 }
 
 function setAllReadOnly(obj)
@@ -294,7 +294,7 @@ function $innerDetail(obj, ignoreArray)
         
         if (!containInList(ignoreArray, ele.name) && ele.type.toLowerCase() != 'hidden')
         {
-        	ele.setAttribute('autodisplay', 1);
+            ele.setAttribute('autodisplay', 1);
         }
     }
 }
@@ -302,45 +302,45 @@ function $innerDetail(obj, ignoreArray)
 
 function setAllReadOnlyInner(obj, clickFlag, ignoreArray)
 {
-	var elements = [];
-	
-	if (!obj)
-	{
-		obj = document;
-	}
-	
-	if (!ignoreArray)
-	{
-		ignoreArray = [];
-	}
-	
-	var tem;
-	if (clickFlag)
-	{
-		tem = obj.getElementsByTagName("img");
-		
-		for (var k =0; k < tem.length; k++)
-	    {
-	    	if (!containInList(ignoreArray, tem[k].name))
-	    	{
-	           tem[k].onclick = null;
-	    	}
-	    }
-	    
-	    tem = obj.getElementsByTagName("input");
-	    
-	    for (var k =0; k < tem.length; k++)
-	    {
-	    	if (!containInList(ignoreArray, tem[k].name))
+    var elements = [];
+    
+    if (!obj)
+    {
+        obj = document;
+    }
+    
+    if (!ignoreArray)
+    {
+        ignoreArray = [];
+    }
+    
+    var tem;
+    if (clickFlag)
+    {
+        tem = obj.getElementsByTagName("img");
+        
+        for (var k =0; k < tem.length; k++)
+        {
+            if (!containInList(ignoreArray, tem[k].name))
             {
                tem[k].onclick = null;
             }
-	    }
-	}
-	else
-	{
-		tem = obj.getElementsByTagName("input");
-	}
+        }
+        
+        tem = obj.getElementsByTagName("input");
+        
+        for (var k =0; k < tem.length; k++)
+        {
+            if (!containInList(ignoreArray, tem[k].name))
+            {
+               tem[k].onclick = null;
+            }
+        }
+    }
+    else
+    {
+        tem = obj.getElementsByTagName("input");
+    }
     
     concat(elements, tem);
     
@@ -414,7 +414,7 @@ function loadDiv(div)
 
 function eload(elements)
 {
-	var ele = null;
+    var ele = null;
     var rIndex = 0;
     var bb = true;
     for (var i = 0; i < elements.length; i++)
@@ -463,15 +463,15 @@ function eload(elements)
             
             if (!disAll)
             {
-	            if (va == 'true' || va == 'readonly' || va == true)
-	            {
-	                var ii = 0;
-	                for (ii = ele.options.length - 1; ii >= 0; ii--)
-	                {
-	                    if (!ele.options[ii].selected)
-	                    ele.remove(ii);
-	                }
-	            }
+                if (va == 'true' || va == 'readonly' || va == true)
+                {
+                    var ii = 0;
+                    for (ii = ele.options.length - 1; ii >= 0; ii--)
+                    {
+                        if (!ele.options[ii].selected)
+                        ele.remove(ii);
+                    }
+                }
             }
         }
 
@@ -647,7 +647,7 @@ function $f(obj)
 
 function $r(obj, readonly)
 {
-	if (typeof obj == 'string')
+    if (typeof obj == 'string')
     {
        obj = $O(obj);
     }
@@ -813,7 +813,7 @@ function $v(name, f)
     {
         if (f)
         {
-        	if (is_ie)
+            if (is_ie)
             obj.style.display = 'inline';
             else
             obj.style.display = '';
@@ -930,7 +930,7 @@ function removeOption(fromSelect, value)
 {
     for (i=fromSelect.options.length-1; i>=0; i--)
     {
-    	if (fromSelect.options[i].value == value)
+        if (fromSelect.options[i].value == value)
         fromSelect.remove(i);
     }
 }
@@ -1005,8 +1005,8 @@ function quickSelect(element)
     //防止重复绑定
     if (!element.hasspell && window.spellList)
     {
-    	element.style.imeMode="disabled";
-    	
+        element.style.imeMode="disabled";
+        
         window.common.addEvent(element, 'keydown', window.spellList);
         
         element.hasspell = true;
@@ -1095,30 +1095,30 @@ function setInputValueInTr(tr, name, value)
 
 function $duplicate(arr)
 {
-	var map = {};
-	
-	for (var i = 0; i < arr.length; i++)
-	{
-		var vv;
-		
-		if (typeof arr[i] == 'string')
-		{
-			vv = arr[i];
-		}
-		else
-		{
-			vv = arr[i].value;
-		}
-		
-		if (map[vv] != null)
-		{
-			return true;
-		}
-		
-		map[vv] = vv;
-	}
-	
-	return false;
+    var map = {};
+    
+    for (var i = 0; i < arr.length; i++)
+    {
+        var vv;
+        
+        if (typeof arr[i] == 'string')
+        {
+            vv = arr[i];
+        }
+        else
+        {
+            vv = arr[i].value;
+        }
+        
+        if (map[vv] != null)
+        {
+            return true;
+        }
+        
+        map[vv] = vv;
+    }
+    
+    return false;
 }
 
 /**
@@ -1126,29 +1126,29 @@ function $duplicate(arr)
  */
 function $encode(str)
 {
-	//+ %20 
-	/// %2F 
-	//? %3F 
-	//% %25 
-	//# %23
-	//& %26
-	var result = '';
-	for (var i = 0 ; i < str.length; i++)
-	{
-		result += pspecialChar(str.charAt(i));
-	}
-	
-	return result;
+    //+ %20 
+    /// %2F 
+    //? %3F 
+    //% %25 
+    //# %23
+    //& %26
+    var result = '';
+    for (var i = 0 ; i < str.length; i++)
+    {
+        result += pspecialChar(str.charAt(i));
+    }
+    
+    return result;
 }
 
 function pspecialChar(c)
 {
-	if (c == '+')
-	{
-		return "%20";
-	}
-	
-	if (c == '/')
+    if (c == '+')
+    {
+        return "%20";
+    }
+    
+    if (c == '/')
     {
         return "%2F";
     }
@@ -1178,11 +1178,11 @@ function pspecialChar(c)
 
 function addEventCommon(el, evname, func)
 {
-	if (!func)
-	{
-		return;
-	}
-	
+    if (!func)
+    {
+        return;
+    }
+    
     if (el.attachEvent)
     {
         // IE
@@ -1219,29 +1219,29 @@ function removeEventCommon(el, evname, func)
 
 function callBackFun(data)
 {
-	if (reloadTip)
+    if (reloadTip)
     reloadTip(data.msg, data.ret == 0);
 
     if (data.ret == 0 && commonQuery)
     {
-    	//if (gobal_guid && gobal_guid.p && gobal_guid.p.queryMode == 1 && window.resetsModal)
-    	//{
-    		// clear pop-query
-    		//resetsModal();
-    	//}
-    	
+        //if (gobal_guid && gobal_guid.p && gobal_guid.p.queryMode == 1 && window.resetsModal)
+        //{
+            // clear pop-query
+            //resetsModal();
+        //}
+        
         commonQuery();
     }
 }
 
 function $c()
 {
-	return getRadio('checkb') && getRadioValue('checkb');
+    return getRadio('checkb') && getRadioValue('checkb');
 }
 
 function $ajax(urls, successFun, errorFun)
 {
-	if ($.ajax)
+    if ($.ajax)
     $.ajax({
             type: 'POST',
             url: urls,
@@ -1257,17 +1257,17 @@ function $ajax(urls, successFun, errorFun)
 
 function $auth()
 {
-	if (window.top.topFrame && window.top.topFrame.gAuth)
-	{
-		return window.top.topFrame.gAuth;
-	}
-	
-	return [];
+    if (window.top.topFrame && window.top.topFrame.gAuth)
+    {
+        return window.top.topFrame.gAuth;
+    }
+    
+    return [];
 }
 
 function getAllDef()
 {
-	return window.top.topFrame.allDef;
+    return window.top.topFrame.allDef;
 }
 
 /**
@@ -1287,7 +1287,7 @@ function senfe(o,a,b,c,d)
     
     if (t.length == 0)
     {
-    	return;
+        return;
     }
     
     for(var i=1;i<t.length;i++){
@@ -1308,6 +1308,40 @@ function senfe(o,a,b,c,d)
             if(this.x!="1")this.style.backgroundColor=(this.sectionRowIndex%2==0)?a:b;
         }
     }
+}
+
+/**
+ * add TR in table(need compatible.js)
+ */
+function addTrInner(tableId, trId)
+{
+    var table = $O(tableId);
+    
+    var tr = $O(trId);
+    
+    trow =  table.insertRow(-1);
+    
+    if (length % 2 == 1)
+    {
+        trow.className = 'content2';
+    }
+    else
+    {
+        trow.className = 'content1';
+    }
+    
+    for (var i = 0; i < tr.cells.length; i++)
+    {
+        var tcell = document.createElement("td");
+        
+        tcell.innerHTML = tr.cells[i].innerHTML;
+        
+        trow.appendChild(tcell);
+    }
+    
+    trow.appendChild(tcell);
+    
+    return trow;
 }
 
 
