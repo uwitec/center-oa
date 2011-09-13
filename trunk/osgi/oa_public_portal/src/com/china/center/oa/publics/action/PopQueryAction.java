@@ -24,6 +24,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
+import com.china.center.actionhelper.common.ActionTools;
+import com.china.center.actionhelper.common.HandleQueryCondition;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.actionhelper.jsonimpl.JSONArray;
@@ -42,6 +44,7 @@ import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.StafferVSPriDAO;
 import com.china.center.oa.publics.dao.UserDAO;
+import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.publics.manager.RoleManager;
 import com.china.center.oa.publics.vo.CityVO;
 import com.china.center.oa.publics.vo.LogVO;
@@ -49,7 +52,9 @@ import com.china.center.oa.publics.vo.RoleVO;
 import com.china.center.oa.publics.vo.StafferVO;
 import com.china.center.oa.publics.vo.UserVO;
 import com.china.center.oa.publics.vs.StafferVSPriBean;
+import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
+import com.china.center.tools.ListTools;
 import com.china.center.tools.StringTools;
 
 
@@ -71,6 +76,8 @@ public class PopQueryAction extends DispatchAction
 
     private UserDAO userDAO = null;
 
+    private OrgManager orgManager = null;
+
     private CityDAO cityDAO = null;
 
     private RoleManager roleManager = null;
@@ -81,9 +88,322 @@ public class PopQueryAction extends DispatchAction
 
     private static String RPTQUERYSTAFFER = "rptQueryStaffer";
 
+    private static String RPTQUERYORG = "rptQueryOrg";
+
     private static String RPTQUERYCITY = "rptQueryCity";
 
     private static String RPTQUERYUSER = "rptQueryUser";
+
+    /**
+     * 职员的查询
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryStaffer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                         HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        List<StafferVO> list = null;
+
+        List<LocationBean> locationList = locationDAO.listEntityBeans();
+
+        if (PageSeparateTools.isFirstLoad(request))
+        {
+            ConditionParse condtion = new ConditionParse();
+
+            condtion.addWhereStr();
+
+            // 过滤废弃的
+            condtion.addIntCondition("StafferBean.status", "=", StafferConstant.STATUS_COMMON);
+
+            setStafferInnerCondition(request, condtion);
+
+            int total = stafferDAO.countVOByCondition(condtion.toString());
+
+            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+
+            PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYSTAFFER);
+
+            list = stafferDAO.queryEntityVOsByCondition(condtion, page);
+        }
+        else
+        {
+            PageSeparateTools.processSeparate(request, RPTQUERYSTAFFER);
+
+            list = stafferDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, RPTQUERYSTAFFER),
+                PageSeparateTools.getPageSeparate(request, RPTQUERYSTAFFER));
+        }
+
+        request.setAttribute("beanList", list);
+
+        request.setAttribute("locationList", locationList);
+
+        return mapping.findForward("rptQueryStaffer");
+    }
+
+    /**
+     * 组织列表查询
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryOrg(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse response)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        String cacheKey = RPTQUERYORG;
+
+        List<PrincipalshipBean> list = ActionTools.commonQueryInPageSeparate(cacheKey, request, principalshipDAO,
+            new HandleQueryCondition()
+            {
+                public void setQueryCondition(HttpServletRequest request, ConditionParse condtion)
+                {
+                    String name = request.getParameter("name");
+                    String level = request.getParameter("level");
+
+                    if ( !StringTools.isNullOrNone(name))
+                    {
+                        condtion.addCondition("PrincipalshipBean.name", "like", name);
+                    }
+
+                    if ( !StringTools.isNullOrNone(level))
+                    {
+                        condtion.addIntCondition("PrincipalshipBean.level", "=", level);
+                    }
+                }
+            });
+
+        if ( !ListTools.isEmptyOrNull(list))
+        {
+            for (PrincipalshipBean principalshipBean : list)
+            {
+                PrincipalshipBean fullBean = orgManager.findPrincipalshipById(principalshipBean.getId());
+
+                BeanUtil.copyProperties(principalshipBean, fullBean);
+            }
+        }
+
+        return mapping.findForward(cacheKey);
+    }
+
+    /**
+     * 用户的查询
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryUser(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        List<UserVO> list = null;
+
+        if (PageSeparateTools.isFirstLoad(request))
+        {
+            ConditionParse condtion = new ConditionParse();
+
+            condtion.addWhereStr();
+
+            setUserInnerCondition(request, condtion);
+
+            int total = userDAO.countVOByCondition(condtion.toString());
+
+            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+
+            PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYUSER);
+
+            list = userDAO.queryEntityVOsByCondition(condtion, page);
+        }
+        else
+        {
+            PageSeparateTools.processSeparate(request, RPTQUERYSTAFFER);
+
+            list = userDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, RPTQUERYUSER),
+                PageSeparateTools.getPageSeparate(request, RPTQUERYUSER));
+        }
+
+        for (UserVO userVO : list)
+        {
+            RoleVO bean = null;
+
+            try
+            {
+                bean = roleManager.findVO(userVO.getRoleId());
+
+                if (bean == null)
+                {
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, userVO.getName() + "的角色不存在");
+
+                    return mapping.findForward("error");
+                }
+
+                JSONArray jarr = new JSONArray(bean.getAuth(), true);
+
+                // 借用
+                userVO.setRoleName(jarr.toString());
+            }
+            catch (MYException e)
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, userVO.getName() + "的角色不存在");
+
+                return mapping.findForward("error");
+            }
+        }
+
+        request.setAttribute("beanList", list);
+
+        return mapping.findForward("rptQueryUser");
+    }
+
+    /**
+     * rptQueryCity
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryCity(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        List<CityVO> list = null;
+
+        String cacheKey = RPTQUERYCITY;
+
+        if (PageSeparateTools.isFirstLoad(request))
+        {
+            ConditionParse condtion = new ConditionParse();
+
+            condtion.addWhereStr();
+
+            setCityInnerCondition(request, condtion);
+
+            int total = cityDAO.countVOByCondition(condtion.toString());
+
+            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
+
+            PageSeparateTools.initPageSeparate(condtion, page, request, cacheKey);
+
+            list = cityDAO.queryEntityVOsByCondition(condtion, page);
+        }
+        else
+        {
+            PageSeparateTools.processSeparate(request, cacheKey);
+
+            list = cityDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, cacheKey),
+                PageSeparateTools.getPageSeparate(request, cacheKey));
+        }
+
+        request.setAttribute("beanList", list);
+
+        return mapping.findForward("rptQueryCity");
+    }
+
+    /**
+     * rptQuerySuperiorStaffer(查询上级)
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQuerySuperiorStaffer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                                 HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        String stafferId = request.getParameter("stafferId");
+
+        Set<StafferVO> set = new HashSet<StafferVO>();
+
+        // 获得人员的组织结构
+        List<StafferVSPriBean> vsList = stafferVSPriDAO.queryEntityBeansByFK(stafferId);
+
+        // 循环获得所有可以操作的人员
+        for (StafferVSPriBean stafferVSPriBean : vsList)
+        {
+            PrincipalshipBean pri = principalshipDAO.find(stafferVSPriBean.getPrincipalshipId());
+
+            if (pri == null || StringTools.isNullOrNone(pri.getParentId()))
+            {
+                continue;
+            }
+
+            String parentId = pri.getParentId();
+
+            List<StafferVSPriBean> svsp = stafferVSPriDAO.queryEntityBeansByFK(parentId, AnoConstant.FK_FIRST);
+
+            for (StafferVSPriBean each : svsp)
+            {
+                set.add(stafferDAO.findVO(each.getStafferId()));
+            }
+        }
+
+        request.setAttribute("beanList", set);
+
+        return mapping.findForward("rptQuerySuperiorStaffer");
+    }
+
+    /**
+     * query log
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryLog(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        String fk = request.getParameter("fk");
+
+        List<LogVO> list = logDAO.queryEntityVOsByFK(fk);
+
+        Collections.sort(list, new Comparator<LogVO>()
+        {
+
+            public int compare(LogVO o1, LogVO o2)
+            {
+                return o1.getLogTime().compareTo(o2.getLogTime());
+            }
+        });
+
+        request.setAttribute("beanList", list);
+
+        return mapping.findForward("rptQueryLog");
+    }
 
     /**
      * @param request
@@ -158,268 +478,6 @@ public class PopQueryAction extends DispatchAction
         {
             condtion.addCondition("ProvinceBean.name", "like", sname);
         }
-    }
-
-    /**
-     * 职员的查询
-     * 
-     * @param mapping
-     * @param form
-     * @param request
-     * @param reponse
-     * @return
-     * @throws ServletException
-     */
-    public ActionForward rptQueryStaffer(ActionMapping mapping, ActionForm form,
-                                         HttpServletRequest request, HttpServletResponse reponse)
-        throws ServletException
-    {
-        CommonTools.saveParamers(request);
-
-        List<StafferVO> list = null;
-
-        List<LocationBean> locationList = locationDAO.listEntityBeans();
-
-        if (PageSeparateTools.isFirstLoad(request))
-        {
-            ConditionParse condtion = new ConditionParse();
-
-            condtion.addWhereStr();
-
-            // 过滤废弃的
-            condtion.addIntCondition("StafferBean.status", "=", StafferConstant.STATUS_COMMON);
-
-            setStafferInnerCondition(request, condtion);
-
-            int total = stafferDAO.countVOByCondition(condtion.toString());
-
-            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
-
-            PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYSTAFFER);
-
-            list = stafferDAO.queryEntityVOsByCondition(condtion, page);
-        }
-        else
-        {
-            PageSeparateTools.processSeparate(request, RPTQUERYSTAFFER);
-
-            list = stafferDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
-                RPTQUERYSTAFFER), PageSeparateTools.getPageSeparate(request, RPTQUERYSTAFFER));
-        }
-
-        request.setAttribute("beanList", list);
-
-        request.setAttribute("locationList", locationList);
-
-        return mapping.findForward("rptQueryStaffer");
-    }
-
-    /**
-     * 用户的查询
-     * 
-     * @param mapping
-     * @param form
-     * @param request
-     * @param reponse
-     * @return
-     * @throws ServletException
-     */
-    public ActionForward rptQueryUser(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse reponse)
-        throws ServletException
-    {
-        CommonTools.saveParamers(request);
-
-        List<UserVO> list = null;
-
-        if (PageSeparateTools.isFirstLoad(request))
-        {
-            ConditionParse condtion = new ConditionParse();
-
-            condtion.addWhereStr();
-
-            setUserInnerCondition(request, condtion);
-
-            int total = userDAO.countVOByCondition(condtion.toString());
-
-            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
-
-            PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYUSER);
-
-            list = userDAO.queryEntityVOsByCondition(condtion, page);
-        }
-        else
-        {
-            PageSeparateTools.processSeparate(request, RPTQUERYSTAFFER);
-
-            list = userDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
-                RPTQUERYUSER), PageSeparateTools.getPageSeparate(request, RPTQUERYUSER));
-        }
-
-        for (UserVO userVO : list)
-        {
-            RoleVO bean = null;
-
-            try
-            {
-                bean = roleManager.findVO(userVO.getRoleId());
-
-                if (bean == null)
-                {
-                    request.setAttribute(KeyConstant.ERROR_MESSAGE, userVO.getName() + "的角色不存在");
-
-                    return mapping.findForward("error");
-                }
-
-                JSONArray jarr = new JSONArray(bean.getAuth(), true);
-
-                // 借用
-                userVO.setRoleName(jarr.toString());
-            }
-            catch (MYException e)
-            {
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, userVO.getName() + "的角色不存在");
-
-                return mapping.findForward("error");
-            }
-        }
-
-        request.setAttribute("beanList", list);
-
-        return mapping.findForward("rptQueryUser");
-    }
-
-    /**
-     * rptQueryCity
-     * 
-     * @param mapping
-     * @param form
-     * @param request
-     * @param reponse
-     * @return
-     * @throws ServletException
-     */
-    public ActionForward rptQueryCity(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse reponse)
-        throws ServletException
-    {
-        CommonTools.saveParamers(request);
-
-        List<CityVO> list = null;
-
-        String cacheKey = RPTQUERYCITY;
-
-        if (PageSeparateTools.isFirstLoad(request))
-        {
-            ConditionParse condtion = new ConditionParse();
-
-            condtion.addWhereStr();
-
-            setCityInnerCondition(request, condtion);
-
-            int total = cityDAO.countVOByCondition(condtion.toString());
-
-            PageSeparate page = new PageSeparate(total, PublicConstant.PAGE_COMMON_SIZE);
-
-            PageSeparateTools.initPageSeparate(condtion, page, request, cacheKey);
-
-            list = cityDAO.queryEntityVOsByCondition(condtion, page);
-        }
-        else
-        {
-            PageSeparateTools.processSeparate(request, cacheKey);
-
-            list = cityDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
-                cacheKey), PageSeparateTools.getPageSeparate(request, cacheKey));
-        }
-
-        request.setAttribute("beanList", list);
-
-        return mapping.findForward("rptQueryCity");
-    }
-
-    /**
-     * rptQuerySuperiorStaffer(查询上级)
-     * 
-     * @param mapping
-     * @param form
-     * @param request
-     * @param reponse
-     * @return
-     * @throws ServletException
-     */
-    public ActionForward rptQuerySuperiorStaffer(ActionMapping mapping, ActionForm form,
-                                                 HttpServletRequest request,
-                                                 HttpServletResponse reponse)
-        throws ServletException
-    {
-        CommonTools.saveParamers(request);
-
-        String stafferId = request.getParameter("stafferId");
-
-        Set<StafferVO> set = new HashSet<StafferVO>();
-
-        // 获得人员的组织结构
-        List<StafferVSPriBean> vsList = stafferVSPriDAO.queryEntityBeansByFK(stafferId);
-
-        // 循环获得所有可以操作的人员
-        for (StafferVSPriBean stafferVSPriBean : vsList)
-        {
-            PrincipalshipBean pri = principalshipDAO.find(stafferVSPriBean.getPrincipalshipId());
-
-            if (pri == null || StringTools.isNullOrNone(pri.getParentId()))
-            {
-                continue;
-            }
-
-            String parentId = pri.getParentId();
-
-            List<StafferVSPriBean> svsp = stafferVSPriDAO.queryEntityBeansByFK(parentId,
-                AnoConstant.FK_FIRST);
-
-            for (StafferVSPriBean each : svsp)
-            {
-                set.add(stafferDAO.findVO(each.getStafferId()));
-            }
-        }
-
-        request.setAttribute("beanList", set);
-
-        return mapping.findForward("rptQuerySuperiorStaffer");
-    }
-
-    /**
-     * query log
-     * 
-     * @param mapping
-     * @param form
-     * @param request
-     * @param reponse
-     * @return
-     * @throws ServletException
-     */
-    public ActionForward rptQueryLog(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse reponse)
-        throws ServletException
-    {
-        CommonTools.saveParamers(request);
-
-        String fk = request.getParameter("fk");
-
-        List<LogVO> list = logDAO.queryEntityVOsByFK(fk);
-
-        Collections.sort(list, new Comparator<LogVO>()
-        {
-
-            public int compare(LogVO o1, LogVO o2)
-            {
-                return o1.getLogTime().compareTo(o2.getLogTime());
-            }
-        });
-
-        request.setAttribute("beanList", list);
-
-        return mapping.findForward("rptQueryLog");
     }
 
     /**
@@ -556,5 +614,22 @@ public class PopQueryAction extends DispatchAction
     public void setCityDAO(CityDAO cityDAO)
     {
         this.cityDAO = cityDAO;
+    }
+
+    /**
+     * @return the orgManager
+     */
+    public OrgManager getOrgManager()
+    {
+        return orgManager;
+    }
+
+    /**
+     * @param orgManager
+     *            the orgManager to set
+     */
+    public void setOrgManager(OrgManager orgManager)
+    {
+        this.orgManager = orgManager;
     }
 }

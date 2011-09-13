@@ -98,6 +98,7 @@
 			<forward name="rptQueryCity" path="/rpt/rptQueryCity.jsp" />
 			<forward name="rptQueryGroup" path="/rpt/rptQueryGroup.jsp" />
 			<forward name="rptQueryUser" path="/rpt/rptQueryUser.jsp" />
+			<forward name="rptQueryOrg" path="/rpt/rptQueryOrg.jsp" />
 			<forward name="rptQueryTemplateFile"
 				path="/rpt/rptQueryTemplateFile.jsp" />
 			<forward name="rptQuerySuperiorStaffer"
