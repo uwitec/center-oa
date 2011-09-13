@@ -118,5 +118,7 @@
     <osgi:reference id="customerManager" interface="com.china.center.oa.customer.manager.CustomerManager" />
     
     <osgi:reference id="providerManager" interface="com.china.center.oa.product.manager.ProviderManager" />
+    
+    <osgi:reference id="travelApplyManager" interface="com.china.center.oa.tcp.manager.TravelApplyManager" />
 
 </beans>

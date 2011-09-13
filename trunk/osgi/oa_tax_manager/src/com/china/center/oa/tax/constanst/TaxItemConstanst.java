@@ -112,4 +112,9 @@ public interface TaxItemConstanst
      * 未分配利润（无）
      */
     String NO_PROFIT = "3141-12";
+
+    /**
+     * 其他应收款_备用金(部门/职员)
+     */
+    String OTHER_RECEIVE_BORROW = "1133-01";
 }

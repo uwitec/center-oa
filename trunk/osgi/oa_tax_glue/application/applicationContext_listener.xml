@@ -164,4 +164,17 @@
         </property>
     </bean>
     
+    <bean id="tcpPayListenerTaxGlueImpl" class="com.china.center.oa.tax.glue.listener.impl.TcpPayListenerTaxGlueImpl" />
+    
+    <bean id="travelApplyLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="travelApplyManager"/>
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="tcpPayListenerTaxGlueImpl" />
+            </list>
+        </property>
+    </bean>
+    
 </beans>

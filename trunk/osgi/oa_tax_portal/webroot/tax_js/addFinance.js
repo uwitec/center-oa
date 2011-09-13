@@ -313,7 +313,7 @@ function selectProduct(obj)
 function selectPrin(obj)
 {
 	current = obj;
-    window.common.modal('../admin/org.do?method=popOrg');
+    window.common.modal('../admin/pop.do?method=rptQueryOrg&load=1&selectMode=1');
 }
 
 function getProduct(oos)

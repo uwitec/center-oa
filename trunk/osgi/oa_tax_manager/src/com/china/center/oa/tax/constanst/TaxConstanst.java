@@ -311,6 +311,12 @@ public interface TaxConstanst
     int FINANCE_CREATETYPE_BILL_TOFEE = 67;
 
     /**
+     * 报销-出差借款
+     */
+    @Defined(key = "financeCreateType", value = "报销-出差借款")
+    int FINANCE_CREATETYPE_TCP_BORROW = 70;
+
+    /**
      * 损益结转
      */
     @Defined(key = "financeCreateType", value = "损益结转")
