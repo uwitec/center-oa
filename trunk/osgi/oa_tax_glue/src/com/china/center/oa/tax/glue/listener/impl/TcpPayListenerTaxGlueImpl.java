@@ -87,7 +87,6 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
      * @see com.china.center.oa.tcp.listener.TcpPayListener#onPayTravelApply(com.center.china.osgi.publics.User,
      *      com.china.center.oa.tcp.bean.TravelApplyBean, java.util.List)
      */
-    @Override
     public void onPayTravelApply(User user, TravelApplyBean bean, List<OutBillBean> outBillList)
         throws MYException
     {
@@ -154,8 +153,9 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
      * @param itemList
      * @throws MYException
      */
-    private void createAddItem1(User user, TravelApplyBean bean, BankBean bank, OutBillBean outBillBean,
-                                FinanceBean financeBean, List<FinanceItemBean> itemList)
+    private void createAddItem1(User user, TravelApplyBean bean, BankBean bank,
+                                OutBillBean outBillBean, FinanceBean financeBean,
+                                List<FinanceItemBean> itemList)
         throws MYException
     {
         // 申请人
@@ -245,7 +245,6 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
      * 
      * @see com.center.china.osgi.publics.ParentListener#getListenerType()
      */
-    @Override
     public String getListenerType()
     {
         return "TcpPayListener.TaxGlueImpl";
