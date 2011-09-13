@@ -9,10 +9,13 @@
 package com.china.center.oa.tcp.manager;
 
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.tcp.bean.TravelApplyBean;
+import com.china.center.oa.tcp.listener.TcpPayListener;
 import com.china.center.oa.tcp.vo.TravelApplyVO;
+import com.china.center.oa.tcp.wrap.TcpParamWrap;
 
 
 /**
@@ -23,7 +26,7 @@ import com.china.center.oa.tcp.vo.TravelApplyVO;
  * @see TravelApplyManager
  * @since 3.0
  */
-public interface TravelApplyManager
+public interface TravelApplyManager extends ListenerManager<TcpPayListener>
 {
     /**
      * 增加差旅费申请及借款
@@ -87,7 +90,7 @@ public interface TravelApplyManager
      * @return
      * @throws MYException
      */
-    boolean passTravelApplyBean(User user, String id, String processId, String reason)
+    boolean passTravelApplyBean(User user, TcpParamWrap param)
         throws MYException;
 
     /**
@@ -100,6 +103,6 @@ public interface TravelApplyManager
      * @return
      * @throws MYException
      */
-    boolean rejectTravelApplyBean(User user, String id, String type, String reason)
+    boolean rejectTravelApplyBean(User user, TcpParamWrap param)
         throws MYException;
 }

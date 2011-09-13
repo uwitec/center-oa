@@ -46,6 +46,7 @@ import com.china.center.oa.budget.constant.BudgetConstant;
 import com.china.center.oa.budget.dao.BudgetItemDAO;
 import com.china.center.oa.budget.dao.FeeItemDAO;
 import com.china.center.oa.budget.vo.FeeItemVO;
+import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.AttachmentBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
@@ -74,6 +75,7 @@ import com.china.center.oa.tcp.manager.TravelApplyManager;
 import com.china.center.oa.tcp.vo.TcpApproveVO;
 import com.china.center.oa.tcp.vo.TravelApplyItemVO;
 import com.china.center.oa.tcp.vo.TravelApplyVO;
+import com.china.center.oa.tcp.wrap.TcpParamWrap;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.FileTools;
 import com.china.center.tools.MathTools;
@@ -147,8 +149,7 @@ public class TravelApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward querySelfTravelApply(ActionMapping mapping, ActionForm form,
-                                              HttpServletRequest request,
+    public ActionForward querySelfTravelApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                               HttpServletResponse response)
         throws ServletException
     {
@@ -164,8 +165,8 @@ public class TravelApplyAction extends DispatchAction
 
         condtion.addCondition("order by TravelApplyBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFTRAVELAPPLY, request,
-            condtion, this.travelApplyDAO, new HandleResult<TravelApplyVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFTRAVELAPPLY, request, condtion,
+            this.travelApplyDAO, new HandleResult<TravelApplyVO>()
             {
                 public void handle(TravelApplyVO vo)
                 {
@@ -178,8 +179,7 @@ public class TravelApplyAction extends DispatchAction
                     {
                         if (tcpApproveVO.getPool() == TcpConstanst.TCP_POOL_COMMON)
                         {
-                            vo.setProcesser(vo.getProcesser() + tcpApproveVO.getApproverName()
-                                            + ';');
+                            vo.setProcesser(vo.getProcesser() + tcpApproveVO.getApproverName() + ';');
                         }
                     }
                 }
@@ -198,8 +198,8 @@ public class TravelApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryPoolApprove(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse response)
+    public ActionForward queryPoolApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -218,8 +218,8 @@ public class TravelApplyAction extends DispatchAction
 
         condtion.addCondition("order by TcpApproveBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion,
-            this.tcpApproveDAO, new HandleResult<TcpApproveVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion, this.tcpApproveDAO,
+            new HandleResult<TcpApproveVO>()
             {
                 public void handle(TcpApproveVO vo)
                 {
@@ -242,8 +242,8 @@ public class TravelApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward querySelfApprove(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse response)
+    public ActionForward querySelfApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -262,8 +262,8 @@ public class TravelApplyAction extends DispatchAction
 
         condtion.addCondition("order by TcpApproveBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion,
-            this.tcpApproveDAO, new HandleResult<TcpApproveVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion, this.tcpApproveDAO,
+            new HandleResult<TcpApproveVO>()
             {
                 public void handle(TcpApproveVO vo)
                 {
@@ -284,8 +284,7 @@ public class TravelApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddTravelApply(ActionMapping mapping, ActionForm form,
-                                              HttpServletRequest request,
+    public ActionForward preForAddTravelApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                               HttpServletResponse response)
         throws ServletException
     {
@@ -331,8 +330,8 @@ public class TravelApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteTravelApply(ActionMapping mapping, ActionForm form,
-                                           HttpServletRequest request, HttpServletResponse response)
+    public ActionForward deleteTravelApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                           HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -367,8 +366,8 @@ public class TravelApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findTravelApply(ActionMapping mapping, ActionForm form,
-                                         HttpServletRequest request, HttpServletResponse response)
+    public ActionForward findTravelApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                         HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -388,7 +387,10 @@ public class TravelApplyAction extends DispatchAction
 
         request.setAttribute("bean", bean);
 
-        if ("1".equals(update))
+        request.setAttribute("update", update);
+
+        // 2是稽核修改
+        if ("1".equals(update) || "3".equals(update))
         {
             List<AttachmentBean> attachmentList = bean.getAttachmentList();
 
@@ -488,8 +490,8 @@ public class TravelApplyAction extends DispatchAction
      * @throws ServletException
      * @throws IOException
      */
-    public ActionForward downAttachmentFile(ActionMapping mapping, ActionForm form,
-                                            HttpServletRequest request, HttpServletResponse response)
+    public ActionForward downAttachmentFile(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                            HttpServletResponse response)
         throws ServletException, IOException
     {
         String path = getAttachmentPath();
@@ -512,8 +514,7 @@ public class TravelApplyAction extends DispatchAction
         response.setContentType("application/x-dbf");
 
         response.setHeader("Content-Disposition", "attachment; filename="
-                                                  + StringTools.getStringBySet(bean.getName(),
-                                                      "GBK", "ISO8859-1"));
+                                                  + StringTools.getStringBySet(bean.getName(), "GBK", "ISO8859-1"));
 
         UtilStream us = new UtilStream(new FileInputStream(file), out);
 
@@ -532,8 +533,7 @@ public class TravelApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addOrUpdateTravelApply(ActionMapping mapping, ActionForm form,
-                                                HttpServletRequest request,
+    public ActionForward addOrUpdateTravelApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                                 HttpServletResponse response)
         throws ServletException
     {
@@ -630,8 +630,7 @@ public class TravelApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward processTravelApplyBean(ActionMapping mapping, ActionForm form,
-                                                HttpServletRequest request,
+    public ActionForward processTravelApplyBean(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                                 HttpServletResponse response)
         throws ServletException
     {
@@ -643,14 +642,24 @@ public class TravelApplyAction extends DispatchAction
         {
             User user = Helper.getUser(request);
 
+            TcpParamWrap param = new TcpParamWrap();
+
+            param.setId(id);
+            param.setType(oprType);
+            param.setReason(reason);
+            param.setProcessId(processId);
+
+            // 组装参数
+            fillWrap(request, param);
+
             // 提交
             if ("0".equals(oprType))
             {
-                travelApplyManager.passTravelApplyBean(user, id, processId, reason);
+                travelApplyManager.passTravelApplyBean(user, param);
             }
             else
             {
-                travelApplyManager.rejectTravelApplyBean(user, id, oprType, reason);
+                travelApplyManager.rejectTravelApplyBean(user, param);
             }
 
             request.setAttribute(KeyConstant.MESSAGE, "成功处理出差申请");
@@ -666,6 +675,69 @@ public class TravelApplyAction extends DispatchAction
     }
 
     /**
+     * fillWrap
+     * 
+     * @param request
+     * @param param
+     */
+    private void fillWrap(HttpServletRequest request, TcpParamWrap param)
+    {
+        String[] ppid = request.getParameterValues("p_cid");
+
+        // 稽核处理
+        if (ppid != null && ppid.length > 0)
+        {
+            String[] pcmoneysList = request.getParameterValues("p_cmoneys");
+            String[] pcdescriptionList = request.getParameterValues("p_cdescription");
+            List<TravelApplyPayBean> payList = travelApplyPayDAO.queryEntityBeansByFK(param.getId());
+            for (int i = 0; i < ppid.length; i++ )
+            {
+                for (TravelApplyPayBean travelApplyPayBean : payList)
+                {
+                    if (travelApplyPayBean.getId().equals(ppid[i]))
+                    {
+                        travelApplyPayBean.setCmoneys(MathTools.doubleToLong2(pcmoneysList[i]));
+                        travelApplyPayBean.setCdescription(pcdescriptionList[i]);
+                    }
+                }
+            }
+
+            param.setOther(payList);
+        }
+
+        String[] bankIds = request.getParameterValues("bankId");
+
+        // 财务付款
+        if (bankIds != null && bankIds.length > 0)
+        {
+            String[] payTypes = request.getParameterValues("payType");
+            String[] moneys = request.getParameterValues("money");
+
+            List<OutBillBean> outBillList = new ArrayList<OutBillBean>();
+
+            for (int i = 0; i < bankIds.length; i++ )
+            {
+                if (StringTools.isNullOrNone(bankIds[i]))
+                {
+                    continue;
+                }
+
+                OutBillBean outBill = new OutBillBean();
+
+                outBill.setBankId(bankIds[i]);
+
+                outBill.setPayType(MathTools.parseInt(payTypes[i]));
+
+                outBill.setMoneys(MathTools.parseDouble(moneys[i]));
+
+                outBillList.add(outBill);
+            }
+
+            param.setOther(outBillList);
+        }
+    }
+
+    /**
      * 认领
      * 
      * @param mapping
@@ -675,8 +747,8 @@ public class TravelApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward drawApprove(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse response)
+    public ActionForward drawApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -909,8 +981,8 @@ public class TravelApplyAction extends DispatchAction
      * @param bean
      * @return
      */
-    private ActionForward parserAttachment(ActionMapping mapping, HttpServletRequest request,
-                                           RequestDataStream rds, TravelApplyBean travelApply)
+    private ActionForward parserAttachment(ActionMapping mapping, HttpServletRequest request, RequestDataStream rds,
+                                           TravelApplyBean travelApply)
     {
         List<AttachmentBean> attachmentList = new ArrayList<AttachmentBean>();
 

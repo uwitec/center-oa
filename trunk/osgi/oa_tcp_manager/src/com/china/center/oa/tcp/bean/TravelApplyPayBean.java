@@ -46,7 +46,17 @@ public class TravelApplyPayBean implements Serializable
 
     private String description = "";
 
+    /**
+     * 核对
+     */
+    private String cdescription = "";
+
     private long moneys = 0L;
+
+    /**
+     * 核对
+     */
+    private long cmoneys = 0L;
 
     /**
      * default constructor
@@ -192,6 +202,40 @@ public class TravelApplyPayBean implements Serializable
     }
 
     /**
+     * @return the cdescription
+     */
+    public String getCdescription()
+    {
+        return cdescription;
+    }
+
+    /**
+     * @param cdescription
+     *            the cdescription to set
+     */
+    public void setCdescription(String cdescription)
+    {
+        this.cdescription = cdescription;
+    }
+
+    /**
+     * @return the cmoneys
+     */
+    public long getCmoneys()
+    {
+        return cmoneys;
+    }
+
+    /**
+     * @param cmoneys
+     *            the cmoneys to set
+     */
+    public void setCmoneys(long cmoneys)
+    {
+        this.cmoneys = cmoneys;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -200,37 +244,15 @@ public class TravelApplyPayBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("TravelApplyPayBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("parentId = ")
-            .append(this.parentId)
-            .append(TAB)
-            .append("receiveType = ")
-            .append(this.receiveType)
-            .append(TAB)
-            .append("bankName = ")
-            .append(this.bankName)
-            .append(TAB)
-            .append("userName = ")
-            .append(this.userName)
-            .append(TAB)
-            .append("bankNo = ")
-            .append(this.bankNo)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append("moneys = ")
-            .append(this.moneys)
-            .append(TAB)
-            .append(" )");
+        retValue.append("TravelApplyPayBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("parentId = ").append(this.parentId).append(TAB).append("receiveType = ").append(
+            this.receiveType).append(TAB).append("bankName = ").append(this.bankName).append(TAB).append("userName = ").append(
+            this.userName).append(TAB).append("bankNo = ").append(this.bankNo).append(TAB).append("description = ").append(
+            this.description).append(TAB).append("cdescription = ").append(this.cdescription).append(TAB).append(
+            "moneys = ").append(this.moneys).append(TAB).append("cmoneys = ").append(this.cmoneys).append(TAB).append(
+            " )");
 
         return retValue.toString();
     }

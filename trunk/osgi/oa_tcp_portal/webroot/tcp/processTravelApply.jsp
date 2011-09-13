@@ -13,6 +13,15 @@
 function load()
 {
     showFlowLogTr();
+    
+    <c:if test="${bean.status == 22}">
+    addTrInner("tables_realPay", "trCopy");
+    </c:if>
+}
+
+function addTr()
+{
+	addTrInner("tables_realPay", "trCopy");
 }
 
 function processBean(opr)
@@ -58,6 +67,36 @@ function showFlowLogTr()
     $v('flowLogTr', showTr);
     
     showTr = !showTr;
+}
+
+var g_obj;
+function selectBank(obj)
+{
+    g_obj = obj;
+    
+    //单选
+    window.common.modal('../finance/bank.do?method=rptQueryBank&load=1');
+}
+
+function getBank(obj)
+{
+    g_obj.value = obj.pname;
+    
+    var hobj = getNextInput(g_obj.nextSibling);
+    
+    hobj.value = obj.value;
+}
+
+function getNextInput(el)
+{
+    if (el.tagName && el.tagName.toLowerCase() == 'input')
+    {
+        return el;
+    }
+    else
+    {
+        return getNextInput(el.nextSibling);
+    }
 }
 
 </script>
@@ -217,7 +256,14 @@ function showFlowLogTr()
                         <td width="15%" align="center">户名</td>
                         <td width="20%" align="center">收款帐号</td>
                         <td width="10%" align="center">收款金额</td>
-                        <td width="25%" align="center">备注</td>
+                        <c:if test="${bean.status == 20 && bean.borrow == 1}">
+                        <td width="10%" align="center">稽核金额<font color="#FF0000">*</font></td>
+                        <td width="25%" align="center">稽核备注<font color="#FF0000">*</font></td>
+                        </c:if>
+                        <c:if test="${bean.status != 20}">
+                        <td width="10%" align="center">稽核金额</td>
+                        <td width="25%" align="center">稽核备注</td>
+                        </c:if>
                     </tr>
                     <c:forEach items="${bean.payList}" var="item">
                     <tr align="center" class="content1">
@@ -225,8 +271,19 @@ function showFlowLogTr()
                         <td align="center">${item.bankName}</td>
                         <td align="center">${item.userName}</td>
                         <td align="center">${item.bankNo}</td>
-                        <td align="center">${my:formatNum(item.moneys / 100.0)}</td>
-                        <td align="center"><c:out value="${item.description}"/></td>
+                        <td align="center" title='<c:out value="${item.description}"/>'>${my:formatNum(item.moneys / 100.0)}</td>
+                        <c:if test="${bean.status == 20 && bean.borrow == 1}">
+                        <td align="center">
+                         <input type="text" style="width: 100%"
+                    		name="p_cmoneys" value="" oncheck="notNone;isFloat3">
+                    	<input type="hidden" name="p_cid" value="${item.id}">
+                    	</td>
+                        <td align="center"><textarea name="p_cdescription" rows="3" style="width: 100%" oncheck="notNone;maxLength(600)"></textarea></td>
+                        </c:if>
+                        <c:if test="${bean.status != 20}">
+                        <td align="center"><font color="red">${my:formatNum(item.cmoneys / 100.0)}</font></td>
+                        <td align="center"><c:out value="${item.cdescription}"/></td>
+                        </c:if>
                     </tr>
                     </c:forEach>
                 </table>
@@ -322,6 +379,40 @@ function showFlowLogTr()
         </td>
     </tr>
     
+    <c:if test="${bean.status == 22}">
+	    <p:title>
+	        <td class="caption">
+	         <strong>财务支付</strong>
+	        </td>
+	    </p:title>
+	
+	    <p:line flag="0" />
+	    
+	    <tr>
+	        <td colspan='2' align='center'>
+	        <table width="98%" border="0" cellpadding="0" cellspacing="0"
+	            class="border">
+	            <tr>
+	                <td>
+	                <table width="100%" border="0" cellspacing='1' id="tables_realPay">
+                    <tr align="center" class="content0">
+                        <td width="30%" align="center">银行</td>
+                        <td width="30%" align="center">付款类型</td>
+                        <td width="15%" align="center">金额</td>
+                        <td width="5%" align="left"><input type="button" accesskey="A"
+                            value="增加" class="button_class" onclick="addTr()"></td>
+                    </tr>
+               		</table>
+	                </td>
+	            </tr>
+	        </table>
+	
+	        </td>
+	    </tr>
+	    
+	    <p:line flag="0" />
+    </c:if>
+    
     <p:title>
         <td class="caption">
          <strong>审核</strong>
@@ -384,6 +475,26 @@ function showFlowLogTr()
 	<p:message2/>
 </p:body>
 </form>
+
+<table>
+    <tr class="content1" id="trCopy" style="display: none;">
+         <td width="50%" align="center">
+         <input name="bankName" type="text" readonly="readonly" style="width: 100%;cursor: pointer;" oncheck="notNone" onclick="selectBank(this)">
+         <input type="hidden" name="bankId" value=""> 
+         </td>
+         <td width="25%" align="center">
+         <select name="payType" style="width: 100%" class="select_class" oncheck="notNone">
+                <p:option type="outbillPayType"></p:option>
+                </select>
+         </td>
+         <td width="20%" align="center"><input type="text" style="width: 100%"
+                    name="money" value="" oncheck="notNone;isFloat">
+         </td>
+         <td width="5%" align="center"><input type=button
+            value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
+    </tr>
+</table>
+
 </body>
 </html>
 

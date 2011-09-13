@@ -167,7 +167,8 @@ function load()
                         <td width="15%" align="center">户名</td>
                         <td width="20%" align="center">收款帐号</td>
                         <td width="10%" align="center">收款金额</td>
-                        <td width="25%" align="center">备注</td>
+                        <td width="10%" align="center">稽核金额</td>
+                        <td width="25%" align="center">稽核备注</td>
                     </tr>
                     <c:forEach items="${bean.payList}" var="item">
                     <tr align="center" class="content1">
@@ -175,8 +176,9 @@ function load()
                         <td align="center">${item.bankName}</td>
                         <td align="center">${item.userName}</td>
                         <td align="center">${item.bankNo}</td>
-                        <td align="center">${my:formatNum(item.moneys / 100.0)}</td>
-                        <td align="center"><c:out value="${item.description}"/></td>
+                        <td align="center" title='<c:out value="${item.description}"/>'>${my:formatNum(item.moneys / 100.0)}</td>
+                        <td align="center">${my:formatNum(item.cmoneys / 100.0)}</td>
+                        <td align="center"><c:out value="${item.cdescription}"/></td>
                     </tr>
                     </c:forEach>
                 </table>

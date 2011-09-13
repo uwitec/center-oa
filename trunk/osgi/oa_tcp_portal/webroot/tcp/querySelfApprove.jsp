@@ -25,7 +25,7 @@ function load()
          title: '待我处理列表',
          url: gurl + 'querySelfApprove',
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} lurl={url}>', width : 40, align: 'center'},
+             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} lurl={url} ltype={type}>', width : 40, align: 'center'},
              {display: '标识', name : 'applyId', width : '15%'},
              {display: '目的', name : 'name', width : '15%'},
              {display: '申请人', name : 'applyerName', width : '10%'},
@@ -58,6 +58,19 @@ function updateBean()
 	if (getRadio('checkb') && getRadioValue('checkb'))
 	{	
 		$l(getRadio('checkb').lurl);
+	}
+	else
+	$error('不能操作');
+}
+
+function updateBean2()
+{
+	//出差申请的稽核修改
+	if (getRadio('checkb') && getRadioValue('checkb') 
+			&& getRadio('checkb').lstatus == 20
+			&& getRadio('checkb').ltype == 0)
+	{	
+		$l(getRadio('checkb').lurl + '&update=3');
 	}
 	else
 	$error('不能操作');

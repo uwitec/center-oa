@@ -10,6 +10,7 @@
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/json.js"></script>
+<script language="JavaScript" src="../js/jquery.blockUI.js"></script>
 <script language="JavaScript" src="../tcp_js/travelApply.js"></script>
 <script language="javascript">
 
@@ -17,22 +18,31 @@ function addBean(opr)
 {
     $("input[name='oprType']").val(opr);
     
-    if ("0" == opr)
+    if ($O('processer'))
     {
-        $O('processer').oncheck = '';
-    }
-    else
-    {
-        $O('processer').oncheck = 'notNone';
+	    if ("0" == opr)
+	    {
+	        $O('processer').oncheck = '';
+	    }
+	    else
+	    {
+	        $O('processer').oncheck = 'notNone';
+	    }
     }
     
     if ("0" == opr)
     {
         submit('确定修改差旅费申请?', null, checks);
     }
-    else
+    
+    if ("1" == opr)
     {
         submit('确定提交差旅费申请?', null, checks);
+    }
+    
+    if ("2" == opr)
+    {
+        submit('稽核修改费用,每项费用只能减少.确定提交稽核修改差旅费申请?', null, checks);
     }
 }
 
@@ -41,6 +51,8 @@ function load()
 	$v('tr_att_more', false);
 	
 	borrowChange();
+	
+	 updateInit();
 }
 
 function del(id)
@@ -48,6 +60,16 @@ function del(id)
     $O('span_' + id).innerHTML = '';
     
     $O('attacmentIds').value = $O('attacmentIds').value.delSubString(id + ';')
+}
+
+var updateType = '${update}';
+
+function updateInit()
+{
+	if (updateType == 3)
+	{
+		$('#main_div').block({ message: null }); 
+	}
 }
 
 </script>
@@ -83,7 +105,8 @@ function del(id)
 	
 	    <p:class value="com.china.center.oa.tcp.bean.TravelApplyBean" opr="1"/>
 	    
-		<p:table cells="2">
+	    <div id="main_div">
+		<p:table cells="2" id="main_t">
 
             <p:pro field="stafferId" value="${bean.stafferName}"/>
             <p:pro field="departmentId" value="${bean.departmentName}"/>
@@ -105,8 +128,11 @@ function del(id)
             <p:cell title="原附件" width="8" end="true">
             <c:forEach items="${bean.attachmentList}" var="item" varStatus="vs">
             <span id="span_${item.id}"><img src=../images/oa/attachment.gif><a target="_blank" href="../mail/mail.do?method=downMailAttachment&id=${item.id}">${item.name}</a>&nbsp;
+            <c:if test="${update == 1}">
             <a title="删除附件" href="javascript:del('${item.id}')"> <img
-                        src="../images/oa/del.gif" border="0" height="15" width="15"></a></span>
+                        src="../images/oa/del.gif" border="0" height="15" width="15"></a>
+            </c:if>
+            </span>
             &nbsp;&nbsp;&nbsp;&nbsp;
             <c:if test="${!vs.last}">
             <br>
@@ -126,6 +152,7 @@ function del(id)
             </p:cell>
 
         </p:table>
+        </div>
 	</p:subBody>
 	
 	<p:title>
@@ -367,47 +394,54 @@ function del(id)
         </td>
     </tr>
     
-    <p:title>
-        <td class="caption">
-         <strong>提交/审核</strong>
-        </td>
-    </p:title>
-
-    <p:line flag="0" />
-    
-    <tr id="pay_main_tr">
-        <td colspan='2' align='center'>
-        <table width="98%" border="0" cellpadding="0" cellspacing="0"
-            class="border">
-            <tr>
-                <td>
-                <table width="100%" border="0" cellspacing='1' id="tables_pay">
-                    <tr align="center" class="content0">
-                        <td width="15%" align="center">提交到</td>
-                        <td align="left">
-                        <input type="text" name="processer" readonly="readonly" oncheck="notNone" head="下环处理人"/>&nbsp;
-                        <font color=red>*</font>
-                        <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                            class="button_class" onclick="selectNext('${pluginType}', '${pluginValue}')">&nbsp;&nbsp;
-                        </td>
-                    </tr>
-                </table>
-                </td>
-            </tr>
-        </table>
-
-        </td>
-    </tr>
+	    <p:title>
+	        <td class="caption">
+	         <strong>提交/审核</strong>
+	        </td>
+	    </p:title>
+	
+	    <p:line flag="0" />
+	    
+	    <tr id="pay_main_tr">
+	        <td colspan='2' align='center'>
+	        <table width="98%" border="0" cellpadding="0" cellspacing="0"
+	            class="border">
+	            <tr>
+	                <td>
+	                <table width="100%" border="0" cellspacing='1' id="tables_pay">
+	                    <tr align="center" class="content0">
+	                        <td width="15%" align="center">提交到</td>
+	                        <td align="left">
+	                        <input type="text" name="processer" readonly="readonly" oncheck="notNone" head="下环处理人"/>&nbsp;
+	                        <font color=red>*</font>
+	                        <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+	                            class="button_class" onclick="selectNext('${pluginType}', '${pluginValue}')">&nbsp;&nbsp;
+	                        </td>
+	                    </tr>
+	                </table>
+	                </td>
+	            </tr>
+	        </table>
+	
+	        </td>
+	    </tr>
     
     <p:line flag="1" />
     
 	<p:button leftWidth="98%" rightWidth="0%">
 		<div align="right">
+		<c:if test="${update == 1}">
 		<input type="button" class="button_class" id="sub_b1"
             value="&nbsp;&nbsp;保存为草稿&nbsp;&nbsp;" onclick="addBean(0)">
 		  &nbsp;&nbsp;
 		  <input type="button" class="button_class" id="sub_b2"
             value="&nbsp;&nbsp;提 交&nbsp;&nbsp;" onclick="addBean(1)">
+         </c:if>
+         
+         <c:if test="${update == 3}">
+		  <input type="button" class="button_class" id="sub_b2"
+            value="&nbsp;&nbsp;稽核修改&nbsp;&nbsp;" onclick="addBean(2)">
+         </c:if>
         </div>
 	</p:button>
 	

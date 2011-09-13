@@ -25,4 +25,13 @@ import com.china.center.oa.tcp.vo.TravelApplyVO;
 public interface TravelApplyDAO extends DAO<TravelApplyBean, TravelApplyVO>
 {
     int updateStatus(String id, int status);
+
+    /**
+     * updateBorrowTotal
+     * 
+     * @param id
+     * @param borrowTotal
+     * @return
+     */
+    int updateBorrowTotal(String id, long borrowTotal);
 }
