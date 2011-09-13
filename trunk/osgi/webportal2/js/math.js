@@ -174,3 +174,24 @@ function isNumbers(str)
     var reg1 = /^-{1}[0-9]+$/;
     return reg.test(str) || reg1.test(str);
 }
+
+/**
+ * 比较大小
+ */
+function compareDouble(a, b)
+{
+    var aa = a * 1000;
+    var bb = b * 1000;
+    
+    if (Math.abs(aa - bb) < 10)
+    {
+        return 0;
+    }
+    
+    if (aa > bb)
+    {
+        return 1;
+    }
+
+    return -1;
+}

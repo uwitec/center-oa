@@ -1310,6 +1310,40 @@ function senfe(o,a,b,c,d)
     }
 }
 
+/**
+ * add TR in table(need compatible.js)
+ */
+function addTrInner(tableId, trId)
+{
+    var table = $O(tableId);
+    
+    var tr = $O(trId);
+    
+    trow =  table.insertRow(-1);
+    
+    if (length % 2 == 1)
+    {
+        trow.className = 'content2';
+    }
+    else
+    {
+        trow.className = 'content1';
+    }
+    
+    for (var i = 0; i < tr.cells.length; i++)
+    {
+        var tcell = document.createElement("td");
+        
+        tcell.innerHTML = tr.cells[i].innerHTML;
+        
+        trow.appendChild(tcell);
+    }
+    
+    trow.appendChild(tcell);
+    
+    return trow;
+}
+
 
 if (window.addEventCommon)
 window.addEventCommon(window, 'load', loadForm);
