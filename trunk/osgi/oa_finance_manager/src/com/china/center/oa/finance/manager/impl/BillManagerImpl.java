@@ -114,7 +114,7 @@ public class BillManagerImpl implements BillManager
                 double hasPay = inBillDAO.sumByOutId(bean.getOutId());
 
                 // 发现支付的金额过多
-                if (hasPay + bean.getMoneys() > out.getTotal())
+                if (MathTools.compare(hasPay + bean.getMoneys(), out.getTotal()) > 0)
                 {
                     throw new MYException("销售单[%s]的总金额[%.2f],当前已付金额[%.2f],本次申请付款[%.2f],付款金额超出销售金额",
                         bean.getOutId(), out.getTotal(), hasPay, bean.getMoneys());
