@@ -442,7 +442,7 @@ public class TravelApplyAction extends DispatchAction
                 }
             }
 
-            return mapping.findForward("updateTravelApply");
+            return mapping.findForward("updateTravelApply" + bean.getType());
         }
 
         // 获取审批日志
@@ -498,10 +498,10 @@ public class TravelApplyAction extends DispatchAction
                 request.setAttribute("pluginValue", "");
             }
 
-            return mapping.findForward("processTravelApply");
+            return mapping.findForward("processTravelApply" + bean.getType());
         }
 
-        return mapping.findForward("detailTravelApply");
+        return mapping.findForward("detailTravelApply" + bean.getType());
     }
 
     /**
@@ -644,7 +644,7 @@ public class TravelApplyAction extends DispatchAction
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作出差申请失败:" + e.getMessage());
         }
 
-        return mapping.findForward("querySelfTravelApply");
+        return mapping.findForward("querySelfTravelApply" + bean.getType());
     }
 
     /**
