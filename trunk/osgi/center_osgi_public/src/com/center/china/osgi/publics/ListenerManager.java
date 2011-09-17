@@ -31,4 +31,11 @@ public interface ListenerManager<Listener extends ParentListener>
      * @param listener
      */
     void removeListener(String listener);
+
+    /**
+     * getImplClassName
+     * 
+     * @return
+     */
+    String getImplClassName();
 }

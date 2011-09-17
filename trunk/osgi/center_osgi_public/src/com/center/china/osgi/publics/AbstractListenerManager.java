@@ -29,7 +29,7 @@ public abstract class AbstractListenerManager<Listener extends ParentListener> i
      */
     public static Map<String, Map> g_listenerMap = new HashMap<String, Map>();
 
-    public void putListener(Listener listener)
+    public final void putListener(Listener listener)
     {
         synchronized (g_listenerMap)
         {
@@ -37,25 +37,35 @@ public abstract class AbstractListenerManager<Listener extends ParentListener> i
         }
     }
 
-    private Map<String, Listener> getMap()
+    public final String getImplClassName()
     {
-        Map<String, Listener> map = g_listenerMap.get(this.getClass().getName());
-
-        if (map == null)
-        {
-            map = new HashMap<String, Listener>();
-
-            g_listenerMap.put(this.getClass().getName(), map);
-        }
-
-        return map;
+        return this.getClass().getName();
     }
 
-    public void removeListener(String listener)
+    public final void removeListener(String listener)
     {
         synchronized (g_listenerMap)
         {
             getMap().remove(listener);
+        }
+    }
+
+    /**
+     * 静态删除
+     * 
+     * @param className
+     * @param listener
+     */
+    public static void staticRemoveListener(String className, String listener)
+    {
+        synchronized (g_listenerMap)
+        {
+            Map<String, ParentListener> map = g_listenerMap.get(className);
+
+            if (map != null)
+            {
+                map.remove(listener);
+            }
         }
     }
 
@@ -85,5 +95,19 @@ public abstract class AbstractListenerManager<Listener extends ParentListener> i
 
             return null;
         }
+    }
+
+    private Map<String, Listener> getMap()
+    {
+        Map<String, Listener> map = g_listenerMap.get(this.getClass().getName());
+
+        if (map == null)
+        {
+            map = new HashMap<String, Listener>();
+
+            g_listenerMap.put(this.getClass().getName(), map);
+        }
+
+        return map;
     }
 }

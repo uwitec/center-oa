@@ -24,6 +24,11 @@ public class DefaultLoadListener
 {
     private ListenerManager listenerManager = null;
 
+    /**
+     * IMPL name
+     */
+    private String implClassName = "";
+
     private List<ParentListener> listenerList = null;
 
     /**
@@ -39,13 +44,17 @@ public class DefaultLoadListener
         {
             listenerManager.putListener(each);
         }
+
+        implClassName = listenerManager.getImplClassName();
     }
 
     public void destroy()
     {
         for (ParentListener each : listenerList)
         {
-            listenerManager.removeListener(each.getListenerType());
+            // 这里防止listenerManager服务失效
+            AbstractListenerManager
+                .staticRemoveListener(this.implClassName, each.getListenerType());
         }
     }
 
@@ -81,6 +90,23 @@ public class DefaultLoadListener
     public void setListenerList(List<ParentListener> listenerList)
     {
         this.listenerList = listenerList;
+    }
+
+    /**
+     * @return the implClassName
+     */
+    public String getImplClassName()
+    {
+        return implClassName;
+    }
+
+    /**
+     * @param implClassName
+     *            the implClassName to set
+     */
+    public void setImplClassName(String implClassName)
+    {
+        this.implClassName = implClassName;
     }
 
 }
