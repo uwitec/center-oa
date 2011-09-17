@@ -50,6 +50,7 @@ function load()
 <input type="hidden" name="oprType" value="0"> 
 <input type="hidden" name="addOrUpdate" value="0"> 
 <input type="hidden" name="processId" value=""> 
+<input type="hidden" name="type" value="0"> 
 <input type="hidden" name="stafferId" value="${g_stafferBean.id}"> 
 <input type="hidden" name="departmentId" value="${g_stafferBean.principalshipId}"> 
 
@@ -339,17 +340,17 @@ function load()
          </td>
          
          <td align="left"><input type="text" style="width: 100%"
-                    name="p_bank" value="" oncheck="notNone;">
+                    name="p_bank" value="" >
          </td>
          
          <td align="left">
          <input type="text" style="width: 100%"
-                    name="p_userName" value="" oncheck="notNone;">
+                    name="p_userName" value="" >
          </td>
          
          <td align="left">
          <input type="text" style="width: 100%"
-                    name="p_bankNo" value="" oncheck="notNone;">
+                    name="p_bankNo" value="" >
          </td>
          
          <td align="left">

@@ -171,6 +171,10 @@ public class TravelApplyAction extends DispatchAction
 
         condtion.addCondition("TravelApplyBean.stafferId", "=", user.getStafferId());
 
+        String type = request.getParameter("type");
+
+        condtion.addIntCondition("TravelApplyBean.type", "=", type);
+
         condtion.addCondition("order by TravelApplyBean.logTime desc");
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFTRAVELAPPLY, request,
@@ -300,7 +304,9 @@ public class TravelApplyAction extends DispatchAction
     {
         prepareInner(request);
 
-        return mapping.findForward("addTravelApply");
+        String type = request.getParameter("type");
+
+        return mapping.findForward("addTravelApply" + type);
     }
 
     /**
@@ -399,6 +405,15 @@ public class TravelApplyAction extends DispatchAction
 
         request.setAttribute("update", update);
 
+        // 查询关联的付款单和凭证
+        List<OutBillBean> billList = outBillDAO.queryEntityBeansByFK(id);
+
+        request.setAttribute("billList", billList);
+
+        List<FinanceBean> financeList = financeDAO.queryEntityBeansByFK(id);
+
+        request.setAttribute("financeList", financeList);
+
         // 2是稽核修改
         if ("1".equals(update) || "3".equals(update))
         {
@@ -485,15 +500,6 @@ public class TravelApplyAction extends DispatchAction
 
             return mapping.findForward("processTravelApply");
         }
-
-        // 查询关联的付款单和凭证
-        List<OutBillBean> billList = outBillDAO.queryEntityBeansByFK(id);
-
-        request.setAttribute("billList", billList);
-
-        List<FinanceBean> financeList = financeDAO.queryEntityBeansByFK(id);
-
-        request.setAttribute("financeList", financeList);
 
         return mapping.findForward("detailTravelApply");
     }
@@ -778,11 +784,19 @@ public class TravelApplyAction extends DispatchAction
 
         try
         {
-            String id = request.getParameter("id");
+            String ids = request.getParameter("ids");
 
             User user = Helper.getUser(request);
 
-            tcpFlowManager.drawApprove(user, id);
+            String[] splits = ids.split(";");
+
+            for (String id : splits)
+            {
+                if ( !StringTools.isNullOrNone(id))
+                {
+                    tcpFlowManager.drawApprove(user, id);
+                }
+            }
 
             ajax.setSuccess("成功操作");
         }

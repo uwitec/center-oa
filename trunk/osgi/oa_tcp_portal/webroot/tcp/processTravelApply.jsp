@@ -59,11 +59,30 @@ function processBean(opr)
 	    }
     }
     
+    
     <c:if test="${bean.status == 22}">
+    if ("0" == opr)
     checkFun = checkMoney;
+    else
+    removePay();
     </c:if>
     
     submit(msg, null, checkFun);
+}
+
+function removePay()
+{
+    //remove tr
+    var list = formEntry.elements;
+    
+    if (list)
+    {
+        for (var i = 0; i < list.length; i++)
+        {
+            if (list[i].name== 'pay_del_bu')
+            list[i].onclick.apply(list[i]);
+        }
+    }
 }
 
 var showTr = false;
@@ -151,7 +170,7 @@ function checkMoney()
 
 	<p:title>
 		<td class="caption">
-		 <strong>出差申请及借款</strong>
+		 <strong>出差申请及借款-${my:get('tcpStatus', bean.status)}</strong>
 		</td>
 	</p:title>
 
@@ -197,6 +216,18 @@ function checkMoney()
             
             <p:cell title="处理人" width="8" end="true">
             ${bean.processer}
+            </p:cell>
+            
+            <p:cell title="关联付款单" width="8" end="true">
+                <c:forEach items="${billList}" var="item">
+                <a href="../finance/bill.do?method=findBill&id=${item.id}">${item.id}</a>&nbsp;&nbsp;
+                </c:forEach>
+            </p:cell>
+            
+            <p:cell title="关联凭证" width="8" end="true">
+                <c:forEach items="${financeList}" var="item">
+                <a href="../finance/finance.do?method=findFinance&id=${item.id}">${item.id}</a>&nbsp;&nbsp;
+                </c:forEach>
             </p:cell>
 
         </p:table>
@@ -447,7 +478,7 @@ function checkMoney()
     
     <p:title>
         <td class="caption">
-         <strong>审核</strong>
+         <strong>审核-${my:get('tcpStatus', bean.status)}</strong>
         </td>
     </p:title>
 
@@ -522,7 +553,7 @@ function checkMoney()
          <td width="20%" align="center"><input type="text" style="width: 100%"
                     name="money" value="" oncheck="notNone;isFloat">
          </td>
-         <td width="5%" align="center"><input type=button
+         <td width="5%" align="center"><input type=button name="pay_del_bu"
             value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
     </tr>
 </table>

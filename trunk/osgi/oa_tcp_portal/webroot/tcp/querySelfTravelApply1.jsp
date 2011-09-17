@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="费用申请管理" link="true" guid="true" cal="true" dialog="true" />
+<p:link title="业务招待费申请管理" link="true" guid="true" cal="true" dialog="true" />
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
@@ -11,7 +11,7 @@
 <script type="text/javascript">
 
 var gurl = '../tcp/apply.do?method=';
-var addUrl = '../tcp/addTravelApply.jsp';
+var addUrl = '../tcp/addTravelApply1.jsp';
 var ukey = 'TravelApply';
 
 var allDef = getAllDef();
@@ -22,8 +22,8 @@ function load()
      preload();
      
      guidMap = {
-         title: '出差费用申请列表',
-         url: gurl + 'querySelfTravelApply&type=0',
+         title: '业务招待费申请列表',
+         url: gurl + 'querySelfTravelApply&type=1',
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},
@@ -60,7 +60,7 @@ function $callBack()
 
 function addBean(opr, grid)
 {
-    $l(gurl + 'preForAdd' + ukey + '&type=0');
+    $l(gurl + 'preForAdd' + ukey + '&type=1');
     //$l(addUrl);
 }
 

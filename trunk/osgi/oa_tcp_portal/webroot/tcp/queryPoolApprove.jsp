@@ -25,7 +25,7 @@ function load()
          title: '工单池列表',
          url: gurl + 'queryPoolApprove',
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} lurl={url}>', width : 40, align: 'center'},
+             {display: '<input type=checkbox id=flexi_Check onclick=checkAll(this)> 选择', name : 'check', content : '<input type=checkbox name=checkb value={id} lstatus={status} lurl={url}>', width : 40, align: 'center'},
              {display: '标识', name : 'applyId', width : '15%'},
              {display: '目的', name : 'name', width : '15%'},
              {display: '申请人', name : 'applyerName', width : '10%'},
@@ -55,11 +55,22 @@ function $callBack()
 
 function drawApprove()
 {
-	if (getRadio('checkb') && getRadioValue('checkb'))
-	{	
-	    if (window.confirm('确定认领此工单?'))
-		$ajax('../tcp/apply.do?method=drawApprove&id=' + getRadioValue('checkb'), callBackFun);
-	}
+    var clis = getCheckBox('checkb');
+    
+    if (clis.length > 0)
+    {
+        var str = '';
+        
+        for (var i = 0; i < clis.length; i++)
+        {
+            str += clis[i].value + ';';
+        }
+        
+        if (window.confirm('确定认领选中的工单?'))
+        {
+            $ajax('../tcp/apply.do?method=drawApprove&ids=' + str, callBackFun);
+        }
+    }
 	else
 	$error('不能操作');
 }

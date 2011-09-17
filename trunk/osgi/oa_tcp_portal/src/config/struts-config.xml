@@ -5,7 +5,7 @@
 		<action path="/tcp/apply" parameter="method"
 			type="org.springframework.web.struts.DelegatingActionProxy"
 			validate="false">
-			<forward name="addTravelApply" path="/tcp/addTravelApply.jsp" />
+			<forward name="addTravelApply0" path="/tcp/addTravelApply0.jsp" />
 			<forward name="updateTravelApply" path="/tcp/updateTravelApply.jsp" />
 			<forward name="queryTravelApply" path="/tcp/queryTravelApply.jsp" />
 			<forward name="querySelfTravelApply" path="/tcp/querySelfTravelApply.jsp" />
