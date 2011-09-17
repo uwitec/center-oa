@@ -27,7 +27,7 @@ public abstract class AbstractListenerManager<Listener extends ParentListener> i
     /**
      * 静态的在bundle重新加载的时候不会丢失数据
      */
-    protected static Map<String, Map> g_listenerMap = new HashMap<String, Map>();
+    public static Map<String, Map> g_listenerMap = new HashMap<String, Map>();
 
     public void putListener(Listener listener)
     {
