@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -17,6 +18,9 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
+
+import com.center.china.osgi.publics.AbstractListenerManager;
+import com.center.china.osgi.publics.ParentListener;
 
 
 public class Activator implements BundleActivator, CommandProvider
@@ -97,6 +101,45 @@ public class Activator implements BundleActivator, CommandProvider
                 intp.println(msg);
             }
         }
+    }
+
+    public void _ll(CommandInterpreter intp)
+        throws Exception
+    {
+        String filtrate = intp.nextArgument();
+
+        List<String> filtrateList = new ArrayList();
+
+        while (filtrate != null)
+        {
+            filtrateList.add(filtrate);
+
+            filtrate = intp.nextArgument();
+        }
+
+        Map<String, Map> map = AbstractListenerManager.g_listenerMap;
+
+        int total = 0;
+        int ltotal = 0;
+        for (Entry<String, Map> entry : map.entrySet())
+        {
+            Map<String, ParentListener> value = entry.getValue();
+
+            String msg = entry.getKey() + " = " + "[" + value.values().size() + "]"
+                         + value.values();
+
+            if (contain(msg, filtrateList))
+            {
+                total++ ;
+
+                ltotal += value.values().size();
+
+                intp.println(msg);
+            }
+        }
+
+        intp.println("Listener total is:" + total);
+        intp.println("ListenerImpl total is:" + ltotal);
     }
 
     private boolean contain(String msg, List<String> filtrateList)
