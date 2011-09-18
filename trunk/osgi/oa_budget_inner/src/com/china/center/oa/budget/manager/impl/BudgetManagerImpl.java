@@ -31,12 +31,14 @@ import com.china.center.oa.budget.dao.BudgetItemDAO;
 import com.china.center.oa.budget.dao.BudgetLogDAO;
 import com.china.center.oa.budget.dao.FeeItemDAO;
 import com.china.center.oa.budget.helper.BudgetHelper;
+import com.china.center.oa.budget.manager.BudgetApplyManager;
 import com.china.center.oa.budget.manager.BudgetManager;
 import com.china.center.oa.budget.vo.BudgetItemVO;
 import com.china.center.oa.budget.vo.BudgetVO;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.publics.bean.LogBean;
 import com.china.center.oa.publics.bean.PlanBean;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.constant.IDPrefixConstant;
 import com.china.center.oa.publics.constant.ModuleConstant;
 import com.china.center.oa.publics.constant.OperationConstant;
@@ -74,6 +76,8 @@ public class BudgetManagerImpl implements BudgetManager
     private FeeItemDAO feeItemDAO = null;
 
     private BudgetLogDAO budgetLogDAO = null;
+
+    private BudgetApplyManager budgetApplyManager = null;
 
     private LogDAO logDAO = null;
 
@@ -128,16 +132,37 @@ public class BudgetManagerImpl implements BudgetManager
         return true;
     }
 
-    @IntegrationAOP(lock = BudgetConstant.BUDGETLOG_ADD_LOCK)
-    public boolean addBudgetLogListWithoutTransactional(User user, List<BudgetLogBean> logList)
+    public boolean updateBudgetLogUserTypeByRefIdWithoutTransactional(User user, String refId,
+                                                                      int userType, String billIds)
         throws MYException
     {
-        JudgeTools.judgeParameterIsNull(user, logList);
+        JudgeTools.judgeParameterIsNull(user, refId);
+
+        budgetLogDAO.updateUserTypeByRefId(refId, userType, billIds);
+
+        return true;
+    }
+
+    @IntegrationAOP(lock = BudgetConstant.BUDGETLOG_ADD_LOCK)
+    public boolean addBudgetLogListWithoutTransactional(User user, String refId,
+                                                        List<BudgetLogBean> logList)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, refId, logList);
+
+        // 检查是否存在使用的refId
+        int countByFK = budgetLogDAO.countByFK(refId);
+
+        if (countByFK > 0)
+        {
+            throw new MYException("单据[%s]已经存在预算使用,请确认", refId);
+        }
 
         Set<String> budgetItemSet = new HashSet();
+
         for (BudgetLogBean budgetLogBean : logList)
         {
-            checkAddLog(budgetLogBean.getBudgetItemId(), budgetLogBean.getBudgetId());
+            checkAddLog(budgetLogBean);
 
             budgetItemSet.add(budgetLogBean.getBudgetItemId());
         }
@@ -263,11 +288,16 @@ public class BudgetManagerImpl implements BudgetManager
      * @param bill
      * @param budgetItemId
      * @param budgetId
+     * @param feeItemId
      * @throws MYException
      */
-    private BudgetItemBean checkAddLog(String budgetItemId, String budgetId)
+    private BudgetItemBean checkAddLog(BudgetLogBean budgetLogBean)
         throws MYException
     {
+        String budgetId = budgetLogBean.getBudgetId();
+        String budgetItemId = budgetLogBean.getBudgetItemId();
+        String feeItemId = budgetLogBean.getFeeItemId();
+
         BudgetBean budget = budgetDAO.find(budgetId);
 
         if (budget == null)
@@ -288,6 +318,69 @@ public class BudgetManagerImpl implements BudgetManager
         {
             throw new MYException("数据不匹配,请重新操作");
         }
+
+        // 填充部门年度
+        String dyearId = budget.getParentId();
+
+        BudgetBean dyearBudget = budgetDAO.find(dyearId);
+
+        if (dyearBudget == null)
+        {
+            throw new MYException("部门年度预算不存在");
+        }
+
+        BudgetItemBean dyearBudgetItem = budgetItemDAO.findByBudgetIdAndFeeItemId(dyearId,
+            feeItemId);
+
+        if (dyearBudgetItem == null)
+        {
+            throw new MYException("部门年度预算项不存在");
+        }
+
+        budgetLogBean.setBudgetId2(dyearId);
+        budgetLogBean.setBudgetItemId2(dyearBudgetItem.getId());
+
+        // 填充事业部年度
+        String syearId = dyearBudget.getParentId();
+
+        BudgetBean syearBudget = budgetDAO.find(syearId);
+
+        if (syearBudget == null)
+        {
+            throw new MYException("事业部年度预算不存在");
+        }
+
+        BudgetItemBean syearBudgetItem = budgetItemDAO.findByBudgetIdAndFeeItemId(syearId,
+            feeItemId);
+
+        if (syearBudgetItem == null)
+        {
+            throw new MYException("事业部年度预算项不存在");
+        }
+
+        budgetLogBean.setBudgetId1(syearId);
+        budgetLogBean.setBudgetItemId1(syearBudgetItem.getId());
+
+        // 填充公司年度
+        String cyearId = syearBudget.getParentId();
+
+        BudgetBean cyearBudget = budgetDAO.find(cyearId);
+
+        if (cyearBudget == null)
+        {
+            throw new MYException("公司年度预算不存在");
+        }
+
+        BudgetItemBean cyearBudgetItem = budgetItemDAO.findByBudgetIdAndFeeItemId(cyearId,
+            feeItemId);
+
+        if (cyearBudgetItem == null)
+        {
+            throw new MYException("公司年度预算项不存在");
+        }
+
+        budgetLogBean.setBudgetId0(cyearId);
+        budgetLogBean.setBudgetItemId0(cyearBudgetItem.getId());
 
         return budgetItem;
     }
@@ -1043,10 +1136,72 @@ public class BudgetManagerImpl implements BudgetManager
 
         vo.setItemVOs(itemVOs);
 
-        // change vo
-        for (BudgetItemVO budgetItemVO : itemVOs)
+        BudgetHelper.formatBudgetVO(vo);
+
+        PrincipalshipBean org = orgManager.findPrincipalshipById(vo.getBudgetDepartment());
+
+        if (org != null)
         {
-            BudgetHelper.formatBudgetItem(budgetItemVO);
+            vo.setBudgetFullDepartmentName(org.getFullName());
+        }
+
+        double hasUsed = budgetApplyManager.sumPreAndUseInEachBudget(vo);
+
+        vo.setSrealMonery(MathTools.formatNum(hasUsed));
+
+        // change vo
+        boolean isUnit = BudgetHelper.isUnitBudget(vo);
+
+        // handle item
+        for (BudgetItemVO budgetItemBean : itemVOs)
+        {
+            BudgetHelper.formatBudgetItem(budgetItemBean);
+
+            double hasUseed = budgetApplyManager.sumPreAndUseInEachBudgetItem(budgetItemBean);
+
+            budgetItemBean.setSuseMonery(MathTools.formatNum(hasUseed));
+
+            // 父预算
+            if ( !isUnit)
+            {
+                List<BudgetBean> subBudget = budgetDAO.querySubmitBudgetByParentId(id);
+
+                String subDesc = "";
+
+                double total = 0.0d;
+
+                for (BudgetBean budgetBean : subBudget)
+                {
+                    BudgetItemBean subBudgetItemBean = budgetItemDAO.findByBudgetIdAndFeeItemId(
+                        budgetBean.getId(), budgetItemBean.getFeeItemId());
+
+                    if (subBudgetItemBean != null)
+                    {
+                        subDesc += budgetBean.getName() + " ";
+
+                        total += subBudgetItemBean.getBudget();
+                    }
+                }
+
+                budgetItemBean.setDescription(subDesc);
+
+                double last = budgetItemBean.getBudget() - total;
+
+                // 未分配的预算
+                budgetItemBean.setSbudget(MathTools.formatNum(last));
+
+                // 剩余预算
+                budgetItemBean.setSremainMonery(MathTools.formatNum(budgetItemBean.getBudget()
+                                                                    - hasUseed));
+            }
+            else
+            {
+                // 最小预算
+                budgetItemBean.setSbudget("0");
+
+                budgetItemBean.setSremainMonery(MathTools.formatNum(budgetItemBean.getBudget()
+                                                                    - hasUseed));
+            }
         }
 
         return vo;
@@ -1225,6 +1380,23 @@ public class BudgetManagerImpl implements BudgetManager
     public void setOrgManager(OrgManager orgManager)
     {
         this.orgManager = orgManager;
+    }
+
+    /**
+     * @return the budgetApplyManager
+     */
+    public BudgetApplyManager getBudgetApplyManager()
+    {
+        return budgetApplyManager;
+    }
+
+    /**
+     * @param budgetApplyManager
+     *            the budgetApplyManager to set
+     */
+    public void setBudgetApplyManager(BudgetApplyManager budgetApplyManager)
+    {
+        this.budgetApplyManager = budgetApplyManager;
     }
 
 }

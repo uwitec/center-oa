@@ -28,6 +28,7 @@ function load()
 		 colModel : [
 		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lname={name} status1={status} etype={type}>', width : 40, sortable : false, align: 'center'},
 		     {display: '预算', name : 'name', width : '12%', sortable : false, align: 'left'},
+		     {display: '权签人', name : 'signerName', width : '5%', sortable : false, align: 'left'},
 		     {display: '提交人', name : 'stafferName', width : '5%', sortable : false, align: 'left'},
 		     {display: '状态', name : 'status', width : '5%', sortable : false, align: 'left',cc: 'budgetStatus'},
 		     {display: '预算金额', name : 'stotal', width : '10%', sortable : true, align: 'left', cname: 'total'},

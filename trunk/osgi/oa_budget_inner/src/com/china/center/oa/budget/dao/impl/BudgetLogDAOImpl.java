@@ -28,9 +28,18 @@ public class BudgetLogDAOImpl extends BaseDAO<BudgetLogBean, BudgetLogVO> implem
 {
     public long sumBudgetLogByBudgetItemId(String budgetItemId)
     {
-        String sql = BeanTools.getSumHead(this.claz, "monery") + "where budgetItemId = '" + budgetItemId + "'";
+        String sql = BeanTools.getSumHead(this.claz, "monery") + "where budgetItemId = '"
+                     + budgetItemId + "'";
 
         return (long)this.jdbcOperation.queryForDouble(sql);
+    }
+
+    public int updateUserTypeByRefId(String refId, int useType, String billIds)
+    {
+        String sql = BeanTools.getUpdateHead(this.claz)
+                     + "set userType = ? , billIds = ? where refId = ?";
+
+        return this.jdbcOperation.update(sql, useType, billIds, refId);
     }
 
 }

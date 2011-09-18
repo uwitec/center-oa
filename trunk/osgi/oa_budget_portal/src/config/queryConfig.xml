@@ -67,7 +67,19 @@
             <type>date</type>
             <inner></inner>
         </condtion>
-        <condtion name="budgetName" filed="name" caption="预算" pfix="BudgetBean">
+        <condtion name="budgetName" filed="name" caption="部门月度预算" pfix="BudgetBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="budgetName2" filed="name" caption="部门年度预算" pfix="BU2">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="budgetName1" filed="name" caption="事业部年度预算" pfix="BU1">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+         <condtion name="budgetName0" filed="name" caption="公司年度预算" pfix="BU0">
             <opr>like</opr>
             <type>text</type>
         </condtion>
@@ -78,6 +90,12 @@
         <condtion name="refId" caption="单据(A)">
             <opr>=</opr>
             <type>text</type>
+        </condtion>
+        <condtion name="userType" caption="使用类型">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$budgetLogUserType</option>
         </condtion>
         <condtion name="feeItemId" caption="预算项">
             <opr>=</opr>

@@ -11,7 +11,6 @@
 <script language="javascript">
 function load()
 {
-    $detail($O('tables'));
 }
 
 </script>
@@ -95,57 +94,50 @@ function load()
 	</p:subBody>
 
 	<p:tr></p:tr>
-
-	<tr>
-		<td colspan='2' align='center'>
-		<table width="98%" border="0" cellpadding="0" cellspacing="0"
-			class="border">
-			<tr>
-				<td>
-				<table width="100%" border="0" cellspacing='1' id="tables">
-					<tr align="center" class="content0">
-						<td width="20%" align="center">预算项</td>
-						<td width="15%" align="center">预算金额</td>
-						<td width="15%" align="center">使用金额</td>
-						<td width="15%" align="center">预用金额</td>
-						<td width="50%" align="center">描述</td>
-					</tr>
-
-					<c:forEach items="${bean.itemVOs}" var="item" varStatus="vs">
-						<tr class="content1" id="trCopy${vs.index}">
-							<td width="20%"><input type="text" name="item_name"
-								id="f_item_name" maxlength="20" value="${item.feeItemName}" oncheck="notNone" head="预算项名称"
-								style="width: 100%;"></td>
-
-							<td width="20%" align="left"><input type="text"
-								id="f_item_budget" style="width: 100%;" oncheck="isFloat"
-								head="预算金额" value="${item.sbudget}" maxlength="12"
-								name="item_budget"></td>
-								
-							<td width="15%" align="left"><input type="text"
-                                id="f_item_budget" style="width: 100%;" oncheck="isFloat"
-                                head="预算金额" value="${item.srealMonery}" maxlength="12"
-                                name="item_budget"></td>
-                                
-                            <td width="15%" align="left"><input type="text"
-                                id="f_item_budget" style="width: 100%;" oncheck="isFloat"
-                                head="预用金额" value="${item.suseMonery}" maxlength="12"
-                                name="item_budget"></td>
-
-							<td width="40%" align="left"><textarea
-								name="item_description" rows="2" style="width: 100%;"
-								id="f_item_description" oncheck="maxLength(200)">${item.description}</textarea></td>
-						</tr>
-					</c:forEach>
-				</table>
-				</td>
-			</tr>
-		</table>
-
-		</td>
-	</tr>
 	
-	<p:tr></p:tr>
+	<p:subBody width="98%">
+        <table width="100%" align="center" cellspacing='1' class="table0"
+            id="result">
+            <tr align=center class="content0">
+                <td align="center"><strong>预算项</strong></td>
+                
+                <c:if test="${!unit}">
+                <td align="center"><strong>子预算</strong></td>
+                </c:if>
+                <td align="center"><strong>预算金额</strong></td>
+                <c:if test="${!unit}">
+                <td align="center"><strong>未分配预算</strong></td>
+                </c:if>
+                <c:if test="${unit}">
+                <td align="center"><strong>剩余预算</strong></td>
+                </c:if>
+                <td align="center"><strong>已经使用</strong></td>
+                <c:if test="${!unit}">
+                <td align="center"><strong>剩余预算</strong></td>
+                </c:if>
+                <td align="center"><strong>描述</strong></td>
+            </tr>
+
+            <c:forEach items="${bean.itemVOs}" var="item" varStatus="vs">
+                <tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
+                    <td align="center" onclick="hrefAndSelect(this)">${item.feeItemName}</td>
+                    <c:if test="${!unit}">
+                    <td align="center" onclick="hrefAndSelect(this)">${item.description}</td>
+                    </c:if>
+                    <td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.budget)}</td>
+                    <td align="center" onclick="hrefAndSelect(this)">${item.sremainMonery}</td>
+                    <td align="center" onclick="hrefAndSelect(this)">
+                    <a title="点击查看使用明细" href="../budget/budget.do?method=queryAllBudgetLog&load=1&itemId=${item.id}">${item.suseMonery}</a></td>
+                    <c:if test="${!unit}">
+                        <td align="center" onclick="hrefAndSelect(this)">${item.sremainMonery}</td>
+                    </c:if>
+                    <td align="center" onclick="hrefAndSelect(this)">${item.description}</td>
+                </tr>
+            </c:forEach>
+        </table>
+    </p:subBody>
+	
+	<p:tr/>
 	
 	<tr>
         <td colspan='2' align='center'>
@@ -185,9 +177,11 @@ function load()
 	<p:line flag="1" />
 
 	<p:button leftWidth="100%" rightWidth="0%">
-		<div align="right"><input type="button" class="button_class"
+		<div align="right">
+		<input type="button" class="button_class"
 			id="ok_b" style="cursor: pointer" value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"
-			onclick="javaScript:window.history.go(-1);"></div>
+			onclick="javaScript:window.history.go(-1);">
+	   </div>
 	</p:button>
 </p:body></form>
 </body>

@@ -25,6 +25,10 @@ public class QueryItemBean implements Serializable
 {
     private String name = "";
 
+    private String alias = "";
+
+    private String namespace = "";
+
     private String deaultpfix = "";
 
     private List<QueryConditionBean> conditions = null;
@@ -38,6 +42,8 @@ public class QueryItemBean implements Serializable
     public QueryItemBean(QueryItemBean queryItemBean)
     {
         this.name = queryItemBean.name;
+        this.alias = queryItemBean.alias;
+        this.namespace = queryItemBean.namespace;
         this.deaultpfix = queryItemBean.deaultpfix;
         this.conditions = queryItemBean.conditions;
     }
@@ -98,5 +104,74 @@ public class QueryItemBean implements Serializable
     public void setConditions(List<QueryConditionBean> conditions)
     {
         this.conditions = conditions;
+    }
+
+    /**
+     * @return the namespace
+     */
+    public String getNamespace()
+    {
+        return namespace;
+    }
+
+    /**
+     * @param namespace
+     *            the namespace to set
+     */
+    public void setNamespace(String namespace)
+    {
+        this.namespace = namespace;
+    }
+
+    /**
+     * @return the alias
+     */
+    public String getAlias()
+    {
+        return alias;
+    }
+
+    /**
+     * @param alias
+     *            the alias to set
+     */
+    public void setAlias(String alias)
+    {
+        this.alias = alias;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("QueryItemBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("name = ")
+            .append(this.name)
+            .append(TAB)
+            .append("alias = ")
+            .append(this.alias)
+            .append(TAB)
+            .append("namespace = ")
+            .append(this.namespace)
+            .append(TAB)
+            .append("deaultpfix = ")
+            .append(this.deaultpfix)
+            .append(TAB)
+            .append("conditions = ")
+            .append(this.conditions)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }

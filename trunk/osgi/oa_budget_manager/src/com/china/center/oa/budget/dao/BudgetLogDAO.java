@@ -25,4 +25,6 @@ import com.china.center.oa.budget.vo.BudgetLogVO;
 public interface BudgetLogDAO extends DAO<BudgetLogBean, BudgetLogVO>
 {
     long sumBudgetLogByBudgetItemId(String budgetItemId);
+
+    int updateUserTypeByRefId(String refId, int useType, String billIds);
 }

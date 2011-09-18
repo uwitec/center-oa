@@ -57,6 +57,10 @@ function load()
         <p:table cells="2" id="infoTable">
             <p:pro field="name" cell="2" innerString="size=60"/>
             
+             <p:cell title="父预算" end="true">
+               ${bean.parentName}
+            </p:cell>
+            
             <p:pro field="type">
             <p:option type="budgetType"></p:option>
             </p:pro>
@@ -132,7 +136,7 @@ function load()
 
                             <td width="20%" align="left"><input type="text"
                                 id="f_item_budget" style="width: 100%;" oncheck="isFloat3"
-                                head="预算金额" value="${item.sbudget}" maxlength="12"
+                                head="预算金额" value="${my:formatNum(item.budget)}" maxlength="12"
                                 name="item_budget"></td>
 
                             <td width="50%" align="left"><textarea

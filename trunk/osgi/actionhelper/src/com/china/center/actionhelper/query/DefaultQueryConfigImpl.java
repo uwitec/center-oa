@@ -82,6 +82,18 @@ public class DefaultQueryConfigImpl implements QueryConfig
         }
     }
 
+    private String getName(String namespace, String name)
+    {
+        if (StringTools.isNullOrNone(namespace))
+        {
+            return name;
+        }
+        else
+        {
+            return namespace + "." + name;
+        }
+    }
+
     /**
      * parserXML
      * 
@@ -99,7 +111,11 @@ public class DefaultQueryConfigImpl implements QueryConfig
 
             Element element = (Element)root;
 
+            String namespace = element.attributeValue("namespace");
+
             List<Element> elements = element.elements("item");
+
+            List<QueryItemBean> aliasList = new ArrayList<QueryItemBean>();
 
             for (Element eachItem : elements)
             {
@@ -107,9 +123,11 @@ public class DefaultQueryConfigImpl implements QueryConfig
 
                 String name = eachItem.attribute("name").getText();
 
+                name = getName(namespace, name);
+
                 item.setName(name);
 
-                configMap.put(name, item);
+                item.setNamespace(namespace);
 
                 Attribute attribute = eachItem.attribute("alias");
 
@@ -117,19 +135,16 @@ public class DefaultQueryConfigImpl implements QueryConfig
                 {
                     String alias = attribute.getText();
 
-                    if ( !StringTools.isNullOrNone(alias))
-                    {
-                        QueryItemBean queryItemBean = configMap.get(alias);
+                    alias = getName(namespace, alias);
 
-                        QueryItemBean deepCopy = new QueryItemBean(queryItemBean);
+                    item.setAlias(alias);
 
-                        deepCopy.setName(name);
+                    aliasList.add(item);
 
-                        configMap.put(name, deepCopy);
-
-                        continue;
-                    }
+                    continue;
                 }
+
+                configMap.put(name, item);
 
                 String deaultpfix = eachItem.attribute("deaultpfix").getText();
 
@@ -205,6 +220,18 @@ public class DefaultQueryConfigImpl implements QueryConfig
                     }
                 }
 
+            }
+
+            // 处理别名
+            for (QueryItemBean alias : aliasList)
+            {
+                QueryItemBean queryItemBean = configMap.get(alias.getAlias());
+
+                QueryItemBean copy = new QueryItemBean(queryItemBean);
+
+                copy.setName(alias.getName());
+
+                configMap.put(alias.getName(), copy);
             }
 
         }

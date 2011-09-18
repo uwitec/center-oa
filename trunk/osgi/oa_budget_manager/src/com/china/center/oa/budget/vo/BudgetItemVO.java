@@ -32,6 +32,9 @@ public class BudgetItemVO extends BudgetItemBean
     @Relationship(relationField = "budgetId")
     private String budgetName = "";
 
+    /**
+     * 未分配
+     */
     @Ignore
     private String sbudget = "";
 
@@ -41,6 +44,9 @@ public class BudgetItemVO extends BudgetItemBean
     @Ignore
     private String suseMonery = "";
 
+    /**
+     * 剩余预算
+     */
     @Ignore
     private String sremainMonery = "";
 

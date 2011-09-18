@@ -36,14 +36,30 @@ public interface BudgetManager
      * 增加预算使用日志(全局同步操作),无事务
      * 
      * @param user
+     * @param refId
      * @param logBean
      * @return
      * @throws MYException
      */
-    boolean addBudgetLogListWithoutTransactional(User user, List<BudgetLogBean> logBean)
+    boolean addBudgetLogListWithoutTransactional(User user, String refId,
+                                                 List<BudgetLogBean> logBean)
         throws MYException;
 
     boolean deleteBudgetLogListWithoutTransactional(User user, String refId)
+        throws MYException;
+
+    /**
+     * 更新费用使用类型(同时更新billids)
+     * 
+     * @param user
+     * @param refId
+     * @param userType
+     * @param billIds
+     * @return
+     * @throws MYException
+     */
+    boolean updateBudgetLogUserTypeByRefIdWithoutTransactional(User user, String refId,
+                                                               int userType, String billIds)
         throws MYException;
 
     boolean updateBean(User user, BudgetBean bean)

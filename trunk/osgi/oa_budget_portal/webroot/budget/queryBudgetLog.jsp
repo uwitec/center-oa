@@ -10,6 +10,7 @@
 <script src="../js/pop.js"></script>
 <script src="../js/json.js"></script>
 <script src="../js/jquery.blockUI.js"></script>
+<script src="../js/plugin/highlight/jquery.highlight.js"></script>
 <script type="text/javascript">
 
 var allDef = window.top.topFrame.allDef;
@@ -30,12 +31,14 @@ function load()
 		     {display: '预算项', name : 'feeItemName', width : '8%', sortable : true},
 		     {display: '部门', name : 'departmentName', width : '10%'},
 		     {display: '单据', name : 'refId', width : '15%'},
+		     {display: '类型', name : 'userType', cc: 'budgetLogUserType', width : '5%'},
 		     {display: '金额', name : 'smonery', width : '5%'},
 		     {display: '时间', name : 'logTime', width : '15%', sortable : true},
 		     {display: '日志', name : 'log', width : 'auto'}
 		     ],
 		 extAtt: {
-		     //budgetName : {begin : '<a href=../budget/budget.do?method=findBudgetApply&id={id}>', end : '</a>'}
+		     stafferName : {begin : '<a href=../budget/budget.do?method=findBudgetLog&id={id}>', end : '</a>'},
+		     budgetName : {begin : '<a href=../budget/budget.do?method=findBudget&update=1&id={budgetId}>', end : '</a>'}
 		 },
 		 buttons : [
 		     {id: 'search', bclass: 'search', onpress : doSearch}
@@ -49,6 +52,8 @@ function load()
 function $callBack()
 {
     loadForm();
+    
+    highlights($("#mainTable").get(0), ['使用'], 'blue');
 }
 
 
@@ -65,5 +70,5 @@ function doSearch()
 
 <p:message />
 <table id="mainTable" style="display: none"></table>
-<p:query/>
+<p:query height="300px" width="600px"/>
 </body>

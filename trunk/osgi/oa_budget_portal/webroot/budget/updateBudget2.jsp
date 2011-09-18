@@ -131,7 +131,7 @@ function load()
 
 							<td width="20%" align="left"><input type="text"
 								id="f_item_budget" style="width: 100%;" oncheck="isFloat3"
-								head="预算金额" value="${item.sbudget}" maxlength="12"
+								head="预算金额" value="${my:formatNum(item.budget)}" maxlength="12"
 								name="item_budget"></td>
 
 							<td width="50%" align="left"><textarea

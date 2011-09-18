@@ -54,15 +54,14 @@ public class BudgetLogBean implements Serializable
     private int userType = BudgetConstant.BUDGETLOG_USERTYPE_PRE;
 
     /**
-     * 预算
-     */
-    @Join(tagClass = BudgetBean.class)
-    private String budgetId = "";
-
-    /**
      * 关联bill
      */
     private String billId = "";
+
+    /**
+     * 多个关联的付款单
+     */
+    private String billIds = "";
 
     /**
      * 关联ID(一般是关联主单据ID)
@@ -89,9 +88,39 @@ public class BudgetLogBean implements Serializable
     private String logTime = "";
 
     /**
+     * 预算
+     */
+    @Join(tagClass = BudgetBean.class)
+    private String budgetId = "";
+
+    /**
      * 预算子项ID
      */
     private String budgetItemId = "";
+
+    /**
+     * 公司预算
+     */
+    @Join(tagClass = BudgetBean.class, alias = "BU0")
+    private String budgetId0 = "";
+
+    /**
+     * 事业部预算
+     */
+    @Join(tagClass = BudgetBean.class, alias = "BU1")
+    private String budgetId1 = "";
+
+    /**
+     * 部门年度预算
+     */
+    @Join(tagClass = BudgetBean.class, alias = "BU2")
+    private String budgetId2 = "";
+
+    private String budgetItemId0 = "";
+
+    private String budgetItemId1 = "";
+
+    private String budgetItemId2 = "";
 
     /**
      * 部门ID
@@ -370,6 +399,125 @@ public class BudgetLogBean implements Serializable
     }
 
     /**
+     * @return the billIds
+     */
+    public String getBillIds()
+    {
+        return billIds;
+    }
+
+    /**
+     * @param billIds
+     *            the billIds to set
+     */
+    public void setBillIds(String billIds)
+    {
+        this.billIds = billIds;
+    }
+
+    /**
+     * @return the budgetId0
+     */
+    public String getBudgetId0()
+    {
+        return budgetId0;
+    }
+
+    /**
+     * @param budgetId0
+     *            the budgetId0 to set
+     */
+    public void setBudgetId0(String budgetId0)
+    {
+        this.budgetId0 = budgetId0;
+    }
+
+    /**
+     * @return the budgetId1
+     */
+    public String getBudgetId1()
+    {
+        return budgetId1;
+    }
+
+    /**
+     * @param budgetId1
+     *            the budgetId1 to set
+     */
+    public void setBudgetId1(String budgetId1)
+    {
+        this.budgetId1 = budgetId1;
+    }
+
+    /**
+     * @return the budgetId2
+     */
+    public String getBudgetId2()
+    {
+        return budgetId2;
+    }
+
+    /**
+     * @param budgetId2
+     *            the budgetId2 to set
+     */
+    public void setBudgetId2(String budgetId2)
+    {
+        this.budgetId2 = budgetId2;
+    }
+
+    /**
+     * @return the budgetItemId0
+     */
+    public String getBudgetItemId0()
+    {
+        return budgetItemId0;
+    }
+
+    /**
+     * @param budgetItemId0
+     *            the budgetItemId0 to set
+     */
+    public void setBudgetItemId0(String budgetItemId0)
+    {
+        this.budgetItemId0 = budgetItemId0;
+    }
+
+    /**
+     * @return the budgetItemId1
+     */
+    public String getBudgetItemId1()
+    {
+        return budgetItemId1;
+    }
+
+    /**
+     * @param budgetItemId1
+     *            the budgetItemId1 to set
+     */
+    public void setBudgetItemId1(String budgetItemId1)
+    {
+        this.budgetItemId1 = budgetItemId1;
+    }
+
+    /**
+     * @return the budgetItemId2
+     */
+    public String getBudgetItemId2()
+    {
+        return budgetItemId2;
+    }
+
+    /**
+     * @param budgetItemId2
+     *            the budgetItemId2 to set
+     */
+    public void setBudgetItemId2(String budgetItemId2)
+    {
+        this.budgetItemId2 = budgetItemId2;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -396,11 +544,11 @@ public class BudgetLogBean implements Serializable
             .append("userType = ")
             .append(this.userType)
             .append(TAB)
-            .append("budgetId = ")
-            .append(this.budgetId)
-            .append(TAB)
             .append("billId = ")
             .append(this.billId)
+            .append(TAB)
+            .append("billIds = ")
+            .append(this.billIds)
             .append(TAB)
             .append("refId = ")
             .append(this.refId)
@@ -417,8 +565,29 @@ public class BudgetLogBean implements Serializable
             .append("logTime = ")
             .append(this.logTime)
             .append(TAB)
+            .append("budgetId = ")
+            .append(this.budgetId)
+            .append(TAB)
+            .append("budgetId0 = ")
+            .append(this.budgetId0)
+            .append(TAB)
+            .append("budgetId1 = ")
+            .append(this.budgetId1)
+            .append(TAB)
+            .append("budgetId2 = ")
+            .append(this.budgetId2)
+            .append(TAB)
             .append("budgetItemId = ")
             .append(this.budgetItemId)
+            .append(TAB)
+            .append("budgetItemId0 = ")
+            .append(this.budgetItemId0)
+            .append(TAB)
+            .append("budgetItemId1 = ")
+            .append(this.budgetItemId1)
+            .append(TAB)
+            .append("budgetItemId2 = ")
+            .append(this.budgetItemId2)
             .append(TAB)
             .append("departmentId = ")
             .append(this.departmentId)

@@ -34,7 +34,7 @@ function load()
 		     {display: '类型', name : 'level', width : '8%', sortable : true, align: 'left', cc: 'budgetLevel'},
 		     {display: '状态', name : 'status', width : '5%', sortable : false, align: 'left',cc: 'budgetStatus'},
 		     {display: '执行状态', name : 'carryStatus', width : '5%', sortable : false, align: 'left',cc: 'budgetCarry'},
-		     {display: '预算/使用', name : 'stotal', width : '10%', content : '{stotal}/{srealMonery}', sortable : true, cname: 'total'},
+		     {display: '预算/使用', name : 'stotal', width : '12%', content : '{stotal}/{srealMonery}', sortable : true, cname: 'total'},
 		     {display: '预算时间', name : 'beginDate', content : '{beginDate}至{endDate}', width : '10%', sortable : true, align: 'left', cname: 'beginDate'},
 		     {display: '父预算', name : 'parentName', width : '10%', sortable : true, align: 'left'},
 		     {display: '预算部门', name : 'budgetFullDepartmentName', width : 'auto', sortable : true, align: 'left'}
