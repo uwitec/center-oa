@@ -48,6 +48,9 @@ public class GroupBean implements Serializable
     private String stafferId = "";
 
     @Ignore
+    private String stafferNames = "";
+
+    @Ignore
     private List<GroupVSStafferBean> items = null;
 
     /**
@@ -173,6 +176,23 @@ public class GroupBean implements Serializable
     }
 
     /**
+     * @return the stafferNames
+     */
+    public String getStafferNames()
+    {
+        return stafferNames;
+    }
+
+    /**
+     * @param stafferNames
+     *            the stafferNames to set
+     */
+    public void setStafferNames(String stafferNames)
+    {
+        this.stafferNames = stafferNames;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -198,6 +218,9 @@ public class GroupBean implements Serializable
             .append(TAB)
             .append("stafferId = ")
             .append(this.stafferId)
+            .append(TAB)
+            .append("stafferNames = ")
+            .append(this.stafferNames)
             .append(TAB)
             .append("items = ")
             .append(this.items)

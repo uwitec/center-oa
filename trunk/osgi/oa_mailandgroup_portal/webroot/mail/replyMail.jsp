@@ -32,7 +32,7 @@ function selectStaffer(flag)
 function selectGroup(flag)
 {
     gflag = flag;
-    window.common.modal('../admin/pop.do?method=rptQueryGroup&load=1');
+    window.common.modal('../group/group.do?method=rptQueryGroup&load=1');
 }
 
 function clears()

@@ -63,5 +63,16 @@
 			<option>$mailAttachment</option>
 		</condtion>
 	</item>
+	
+	<item name="queryGroup" deaultpfix="GroupBean">
+        <condtion name="name" caption="名称">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+    </item>
+    
+    <item name="queryPublicGroup" alias="queryGroup"/>
+    
+    <item name="querySystemGroup" alias="queryGroup"/>
 
 </query>

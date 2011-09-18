@@ -14,6 +14,7 @@ import java.util.List;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.dao.BankDAO;
@@ -36,6 +37,7 @@ import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.helper.FinanceHelper;
 import com.china.center.oa.tax.manager.FinanceManager;
 import com.china.center.oa.tcp.bean.TravelApplyBean;
+import com.china.center.oa.tcp.constanst.TcpConstanst;
 import com.china.center.oa.tcp.listener.TcpPayListener;
 import com.china.center.tools.TimeTools;
 
@@ -107,13 +109,33 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
 
             FinanceBean financeBean = new FinanceBean();
 
-            String name = "出差申请借款通过:" + bean.getId() + '.';
+            String name = DefinedCommon.getValue("tcpApplyType", bean.getType()) + "申请通过:"
+                          + bean.getId() + '.';
 
             financeBean.setName(name);
 
             financeBean.setType(TaxConstanst.FINANCE_TYPE_MANAGER);
 
-            financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TCP_BORROW);
+            if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_TRAVEL)
+            {
+                financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TCP_BORROW);
+            }
+            else if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_ENTERTAIN)
+            {
+                financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TCP_ENTERTAIN);
+            }
+            else if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_STOCK)
+            {
+                financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TCP_STOCK);
+            }
+            else if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_PUBLIC)
+            {
+                financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TCP_PUBLIC);
+            }
+            else
+            {
+                financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TCP_BORROW);
+            }
 
             // 付款单申请
             financeBean.setRefId(bean.getId());
@@ -158,8 +180,8 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
                                 List<FinanceItemBean> itemList)
         throws MYException
     {
-        // 申请人
-        StafferBean staffer = stafferDAO.find(bean.getStafferId());
+        // 借款人
+        StafferBean staffer = stafferDAO.find(bean.getBorrowStafferId());
 
         if (staffer == null)
         {

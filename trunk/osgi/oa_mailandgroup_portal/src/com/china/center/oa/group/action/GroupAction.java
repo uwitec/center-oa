@@ -30,6 +30,7 @@ import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.json.AjaxResult;
+import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.gm.constant.GroupConstant;
@@ -117,7 +118,13 @@ public class GroupAction extends DispatchAction
         ActionTools.processJSONQueryCondition(QUERYGROUP, request, condtion);
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYGROUP, request, condtion,
-            this.groupDAO);
+            this.groupDAO, new HandleResult<GroupBean>()
+            {
+                public void handle(GroupBean vo)
+                {
+                    wrapGroup(vo);
+                }
+            });
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -145,7 +152,13 @@ public class GroupAction extends DispatchAction
         ActionTools.processJSONQueryCondition(QUERYPUBLICGROUP, request, condtion);
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPUBLICGROUP, request, condtion,
-            this.groupDAO);
+            this.groupDAO, new HandleResult<GroupBean>()
+            {
+                public void handle(GroupBean vo)
+                {
+                    wrapGroup(vo);
+                }
+            });
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -173,7 +186,13 @@ public class GroupAction extends DispatchAction
         ActionTools.processJSONQueryCondition(QUERYSYSTEMGROUP, request, condtion);
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSYSTEMGROUP, request, condtion,
-            this.groupDAO);
+            this.groupDAO, new HandleResult<GroupBean>()
+            {
+                public void handle(GroupBean vo)
+                {
+                    wrapGroup(vo);
+                }
+            });
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -571,5 +590,15 @@ public class GroupAction extends DispatchAction
     public void setOrgManager(OrgManager orgManager)
     {
         this.orgManager = orgManager;
+    }
+
+    private void wrapGroup(GroupBean vo)
+    {
+        List<GroupVSStafferVO> voList = groupVSStafferDAO.queryEntityVOsByFK(vo.getId());
+
+        for (GroupVSStafferVO groupVSStafferVO : voList)
+        {
+            vo.setStafferNames(groupVSStafferVO.getStafferName() + ',' + vo.getStafferNames());
+        }
     }
 }
