@@ -9,9 +9,12 @@
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="javascript">
 
-function load()
+function updateBean()
 {
+    document.location.href = '../finance/finance.do?method=findFinance&update=1&id=${bean.id}';
 }
+
+
 </script>
 
 </head>
@@ -152,6 +155,11 @@ function load()
 
 	<p:button leftWidth="100%" rightWidth="0%">
 		<div align="right">
+		<c:if test="${my:auth(user, '1802')}">
+		<input type="button" class="button_class" id="return_b"
+            style="cursor: pointer" value="&nbsp;&nbsp;财务修改&nbsp;&nbsp;"
+            onclick="updateBean()">&nbsp;&nbsp;
+        </c:if>
 		<input type="button" class="button_class" id="return_b"
 			style="cursor: pointer" value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"
 			onclick="javascript:history.go(-1)">

@@ -58,9 +58,13 @@ function load()
             
             <p:pro field="beginDate" cell="0"/>
             
-            <p:pro field="borrow" cell="0" innerString="onchange='borrowChange()'">
+            <p:pro field="borrow" innerString="onchange='borrowChange()'">
                 <p:option type="travelApplyBorrow"></p:option>
             </p:pro>
+            
+            <p:cell title="借款人">
+            ${bean.borrowStafferName}
+            </p:cell>
             
             <p:pro field="showTotal"/>
             <p:pro field="showBorrowTotal"/>
@@ -115,6 +119,7 @@ function load()
                         <td width="15%" align="center">采购品名</td>
                         <td width="15%" align="center">采购数量</td>
                         <td width="15%" align="center">预估单价</td>
+                        <td width="10%" align="center">采购单价</td>
                         <td width="15%" align="center">预算项</td>
                         <td width="10%" align="center">总价</td>
                         <td width="25%" align="center">备注</td>
@@ -124,6 +129,7 @@ function load()
                         <td width="15%" align="center">${item.productName}</td>
                         <td width="15%" align="center">${item.amount}</td>
                         <td width="15%" align="center">${my:formatNum(item.prices / 100.0)}</td>
+                        <td width="15%" align="center">${my:formatNum(item.checkPrices / 100.0)}</td>
                         <td width="15%" align="center">${item.feeItemName}</td>
                         <td width="10%" align="center">${my:formatNum(item.moneys / 100.0)}</td>
                         <td width="40%" align="center"><c:out value="${item.description}"/></td>

@@ -6,6 +6,7 @@
 <p:link title="业务招待费申请" guid="true"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
+<script language="JavaScript" src="../js/math.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../tcp_js/travelApply.js"></script>
@@ -140,7 +141,7 @@ function checkMoney()
         }
     }
     
-    if (addMoney != total)
+    if (compareDouble(addMoney, total) != 0)
     {
         alert('付款金额必须是${bean.showBorrowTotal}');
         
@@ -208,9 +209,13 @@ function checkMoney()
             
             <p:pro field="companyStafferNames" cell="0" innerString="size=60"/>
             
-            <p:pro field="borrow" cell="0" innerString="onchange='borrowChange()'">
+            <p:pro field="borrow" innerString="onchange='borrowChange()'">
                 <p:option type="travelApplyBorrow"></p:option>
             </p:pro>
+            
+            <p:cell title="借款人">
+            ${bean.borrowStafferName}
+            </p:cell>
             
             <p:pro field="showTotal"/>
             <p:pro field="showBorrowTotal"/>

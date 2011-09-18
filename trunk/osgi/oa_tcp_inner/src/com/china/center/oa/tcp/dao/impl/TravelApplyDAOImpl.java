@@ -34,4 +34,14 @@ public class TravelApplyDAOImpl extends BaseDAO<TravelApplyBean, TravelApplyVO> 
     {
         return this.jdbcOperation.updateField("borrowTotal", borrowTotal, id, this.claz);
     }
+
+    public int updateTotal(String id, long total)
+    {
+        return this.jdbcOperation.updateField("total", total, id, this.claz);
+    }
+
+    public int updateBorrowStafferId(String id, String borrowStafferId)
+    {
+        return this.jdbcOperation.updateField("borrowStafferId", borrowStafferId, id, this.claz);
+    }
 }

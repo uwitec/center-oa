@@ -67,9 +67,13 @@ function load()
             
             <p:pro field="companyStafferNames" cell="0" innerString="size=60"/>
             
-            <p:pro field="borrow" cell="0" innerString="onchange='borrowChange()'">
+            <p:pro field="borrow" innerString="onchange='borrowChange()'">
                 <p:option type="travelApplyBorrow"></p:option>
             </p:pro>
+            
+            <p:cell title="借款人">
+            ${bean.borrowStafferName}
+            </p:cell>
             
             <p:pro field="showTotal"/>
             <p:pro field="showBorrowTotal"/>

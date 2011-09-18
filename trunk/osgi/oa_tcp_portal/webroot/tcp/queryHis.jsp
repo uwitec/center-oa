@@ -29,7 +29,7 @@ function load()
              {display: '标识', name : 'refId', width : '15%'},
              {display: '目的', name : 'name', width : '15%'},
              {display: '申请人', name : 'applyName', width : '10%'},
-             {display: '类型', name : 'type', cc: 'tcpApplyType', sortable: true, width : '15%'},
+             {display: '类型', name : 'type', cc: 'tcpApplyType', sortable: true, width : '20%'},
              {display: '时间', name : 'logTime', sortable: true, width : 'auto'}
              ],
          extAtt: {

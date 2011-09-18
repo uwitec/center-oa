@@ -83,6 +83,7 @@ import com.china.center.oa.tcp.vo.TravelApplyVO;
 import com.china.center.oa.tcp.wrap.TcpParamWrap;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.FileTools;
+import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
 import com.china.center.tools.RequestDataStream;
 import com.china.center.tools.SequenceTools;
@@ -469,6 +470,11 @@ public class TravelApplyAction extends DispatchAction
         // 2是稽核修改
         if ("1".equals(update) || "3".equals(update))
         {
+            if ( !TCPHelper.canTravelApplyUpdate(bean))
+            {
+                return ActionTools.toError("申请当前状态下不能被修改", mapping, request);
+            }
+
             List<AttachmentBean> attachmentList = bean.getAttachmentList();
 
             String attacmentIds = "";
@@ -767,8 +773,10 @@ public class TravelApplyAction extends DispatchAction
      * 
      * @param request
      * @param param
+     * @throws MYException
      */
     private void fillWrap(HttpServletRequest request, TcpParamWrap param)
+        throws MYException
     {
         String[] ppid = request.getParameterValues("p_cid");
 
@@ -789,6 +797,93 @@ public class TravelApplyAction extends DispatchAction
                         travelApplyPayBean.setCdescription(pcdescriptionList[i]);
                     }
                 }
+            }
+
+            param.setOther(payList);
+        }
+
+        // 处理采购货比三家
+        String[] cids = request.getParameterValues("i_cid");
+
+        if (cids != null && cids.length > 0)
+        {
+            String[] checkPrices = request.getParameterValues("i_checkPrices");
+            String[] moneys = request.getParameterValues("i_moneys");
+            String[] purpose = request.getParameterValues("i_purpose");
+
+            List<TravelApplyItemBean> list = new ArrayList();
+
+            long m1 = 0L;
+            for (int i = 0; i < cids.length; i++ )
+            {
+                if (StringTools.isNullOrNone(cids[i]))
+                {
+                    continue;
+                }
+
+                TravelApplyItemBean item = new TravelApplyItemBean();
+
+                item.setId(cids[i]);
+                item.setCheckPrices(MathTools.doubleToLong2(checkPrices[i]));
+                item.setMoneys(MathTools.doubleToLong2(moneys[i]));
+                item.setPurpose(purpose[i]);
+
+                m1 += item.getMoneys();
+
+                list.add(item);
+            }
+
+            param.setOther2(list);
+
+            List<TravelApplyPayBean> payList = new ArrayList<TravelApplyPayBean>();
+
+            List<String> receiveTypeList = ListTools.changeArrayToList(request
+                .getParameterValues("p_receiveType"));
+            List<String> bankList = ListTools.changeArrayToList(request
+                .getParameterValues("p_bank"));
+            List<String> userNameList = ListTools.changeArrayToList(request
+                .getParameterValues("p_userName"));
+            List<String> bankNoList = ListTools.changeArrayToList(request
+                .getParameterValues("p_bankNo"));
+            List<String> pmoneysList = ListTools.changeArrayToList(request
+                .getParameterValues("p_moneys"));
+            List<String> pdescriptionList = ListTools.changeArrayToList(request
+                .getParameterValues("p_description"));
+
+            long m2 = 0L;
+
+            if (receiveTypeList != null && receiveTypeList.size() > 0)
+            {
+                for (int i = 0; i < receiveTypeList.size(); i++ )
+                {
+                    String each = receiveTypeList.get(i);
+
+                    if (StringTools.isNullOrNone(each))
+                    {
+                        continue;
+                    }
+
+                    TravelApplyPayBean pay = new TravelApplyPayBean();
+
+                    pay.setReceiveType(MathTools.parseInt(receiveTypeList.get(i)));
+                    pay.setBankName(bankList.get(i));
+                    pay.setUserName(userNameList.get(i));
+                    pay.setBankNo(bankNoList.get(i));
+                    pay.setMoneys(TCPHelper.doubleToLong2(pmoneysList.get(i)));
+                    pay.setDescription(pdescriptionList.get(i));
+
+                    payList.add(pay);
+                }
+
+                for (TravelApplyPayBean each : payList)
+                {
+                    m2 += each.getMoneys();
+                }
+            }
+
+            if (m1 != m2)
+            {
+                throw new MYException("采购金额和收款金额不一致");
             }
 
             param.setOther(payList);

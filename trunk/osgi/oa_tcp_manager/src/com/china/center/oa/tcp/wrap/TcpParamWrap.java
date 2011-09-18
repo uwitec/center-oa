@@ -32,6 +32,8 @@ public class TcpParamWrap implements Serializable
 
     private Object other = null;
 
+    private Object other2 = null;
+
     /**
      * default constructor
      */
@@ -125,6 +127,23 @@ public class TcpParamWrap implements Serializable
     }
 
     /**
+     * @return the other2
+     */
+    public Object getOther2()
+    {
+        return other2;
+    }
+
+    /**
+     * @param other2
+     *            the other2 to set
+     */
+    public void setOther2(Object other2)
+    {
+        this.other2 = other2;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -133,12 +152,31 @@ public class TcpParamWrap implements Serializable
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("TcpParamWrap ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("processId = ").append(this.processId).append(TAB).append("reason = ").append(this.reason).append(
-            TAB).append("type = ").append(this.type).append(TAB).append("other = ").append(this.other).append(TAB).append(
-            " )");
+        retValue
+            .append("TcpParamWrap ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("processId = ")
+            .append(this.processId)
+            .append(TAB)
+            .append("reason = ")
+            .append(this.reason)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("other = ")
+            .append(this.other)
+            .append(TAB)
+            .append("other2 = ")
+            .append(this.other2)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

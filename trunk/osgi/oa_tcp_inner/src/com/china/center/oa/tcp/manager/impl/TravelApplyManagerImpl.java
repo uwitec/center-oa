@@ -79,6 +79,7 @@ import com.china.center.oa.tcp.vo.TravelApplyVO;
 import com.china.center.oa.tcp.wrap.TcpParamWrap;
 import com.china.center.tools.FileTools;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
 import com.china.center.tools.TimeTools;
 
@@ -330,6 +331,11 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
             List<GroupVSStafferBean> vsList = groupVSStafferDAO.queryEntityBeansByFK(groupId);
 
+            if (ListTools.isEmptyOrNull(vsList))
+            {
+                throw new MYException("当前群组内没有人员,请确认操作");
+            }
+
             List<String> processList = new ArrayList();
 
             for (GroupVSStafferBean groupVSStafferBean : vsList)
@@ -359,6 +365,11 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
                 // 先处理一个
                 List<TcpShareVO> shareVOList = bean.getShareVOList();
+
+                if (ListTools.isEmptyOrNull(shareVOList))
+                {
+                    throw new MYException("下环节里面没有人员,请确认操作");
+                }
 
                 for (TcpShareVO tcpShareVO : shareVOList)
                 {
@@ -468,6 +479,59 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
             budgetManager.updateBudgetLogUserTypeByRefIdWithoutTransactional(user, bean.getId(),
                 BudgetConstant.BUDGETLOG_USERTYPE_REAL, idBuffer.toString());
         }
+
+        // 采购货比三家
+        if (oldStatus == TcpConstanst.TCP_STATUS_WAIT_BUY
+            && bean.getType() == TcpConstanst.TCP_APPLYTYPE_STOCK)
+        {
+            List<TravelApplyItemBean> newItemList = (List<TravelApplyItemBean>)param.getOther2();
+
+            List<TravelApplyItemVO> itemVOList = bean.getItemVOList();
+
+            long total = 0L;
+
+            for (TravelApplyItemVO travelApplyItemVO : itemVOList)
+            {
+                for (TravelApplyItemBean travelApplyItemBean : newItemList)
+                {
+                    if (travelApplyItemVO.getId().equals(travelApplyItemBean.getId()))
+                    {
+                        travelApplyItemVO.setCheckPrices(travelApplyItemBean.getCheckPrices());
+                        travelApplyItemVO.setMoneys(travelApplyItemBean.getMoneys());
+                        travelApplyItemVO.setPurpose(travelApplyItemBean.getPurpose());
+                    }
+                }
+
+                // 更新采购项
+                travelApplyItemDAO.updateEntityBean(travelApplyItemVO);
+
+                total += travelApplyItemVO.getMoneys();
+            }
+
+            travelApplyDAO.updateTotal(param.getId(), total);
+
+            travelApplyDAO.updateBorrowTotal(param.getId(), total);
+
+            // 更新借款人员是审核人
+            travelApplyDAO.updateBorrowStafferId(param.getId(), user.getStafferId());
+
+            // 先删除
+            travelApplyPayDAO.deleteEntityBeansByFK(bean.getId());
+
+            List<TravelApplyPayBean> payList = (List<TravelApplyPayBean>)param.getOther();
+
+            for (TravelApplyPayBean travelApplyPayBean : payList)
+            {
+                travelApplyPayBean.setId(commonDAO.getSquenceString20());
+                travelApplyPayBean.setParentId(bean.getId());
+            }
+
+            // 重新加入
+            travelApplyPayDAO.saveAllEntityBeans(payList);
+
+            // 更新预算(重新加入预占)
+            checkBudget(user, bean, 1);
+        }
     }
 
     /**
@@ -491,7 +555,7 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
         outBill.setType(FinanceConstant.OUTBILL_TYPE_BORROW);
 
-        outBill.setOwnerId(apply.getStafferId());
+        outBill.setOwnerId(apply.getBorrowStafferId());
 
         outBill.setStafferId(user.getStafferId());
 
@@ -582,6 +646,12 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
             travelApplyDAO.updateStatus(bean.getId(), bean.getStatus());
 
+            // 这里驳回需要删除pay
+            if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_STOCK)
+            {
+                travelApplyPayDAO.deleteEntityBeansByFK(bean.getId());
+            }
+
             // 记录操作日志
             saveFlowLog(user, oldStatus, bean, reason, PublicConstant.OPRMODE_REJECT);
         }
@@ -622,7 +692,6 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
      * @param bean
      * @param nextStatus
      * @param pool
-     *            TODO
      * @return
      * @throws MYException
      */
@@ -730,7 +799,6 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
      * @param processId
      * @param bean
      * @param pool
-     *            TODO
      * @throws MYException
      */
     private int saveApprove(User user, String processId, TravelApplyVO bean, int nextStatus,
@@ -816,7 +884,8 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
                 log.setRefSubId(travelApplyItemVO.getId());
 
-                log.setStafferId(bean.getStafferId());
+                // 使用人
+                log.setStafferId(bean.getBorrowStafferId());
 
                 // 预占
                 log.setUserType(BudgetConstant.BUDGETLOG_USERTYPE_PRE);

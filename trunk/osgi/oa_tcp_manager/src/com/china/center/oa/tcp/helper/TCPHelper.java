@@ -163,6 +163,17 @@ public abstract class TCPHelper
     }
 
     /**
+     * canTravelApplyUpdate
+     * 
+     * @param bean
+     * @return
+     */
+    public static boolean canTravelApplyUpdate(TravelApplyBean bean)
+    {
+        return canTravelApplyDelete(bean);
+    }
+
+    /**
      * 是否是初始状态
      * 
      * @param bean

@@ -46,6 +46,9 @@ public class TravelApplyItemBean implements Serializable
 
     private long moneys = 0L;
 
+    /**
+     * 核对说明
+     */
     private String purpose = "";
 
     /**

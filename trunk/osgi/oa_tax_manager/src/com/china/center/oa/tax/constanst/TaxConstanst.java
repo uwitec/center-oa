@@ -317,6 +317,24 @@ public interface TaxConstanst
     int FINANCE_CREATETYPE_TCP_BORROW = 70;
 
     /**
+     * 报销-业务招待费借款
+     */
+    @Defined(key = "financeCreateType", value = "报销-业务招待费借款")
+    int FINANCE_CREATETYPE_TCP_ENTERTAIN = 71;
+
+    /**
+     * 报销-日常办公和固定资产采购申请及借款
+     */
+    @Defined(key = "financeCreateType", value = "报销-日常办公借款")
+    int FINANCE_CREATETYPE_TCP_STOCK = 72;
+
+    /**
+     * 报销-对公业务借款
+     */
+    @Defined(key = "financeCreateType", value = "报销-对公业务借款")
+    int FINANCE_CREATETYPE_TCP_PUBLIC = 73;
+
+    /**
      * 损益结转
      */
     @Defined(key = "financeCreateType", value = "损益结转")

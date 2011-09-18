@@ -52,7 +52,7 @@ function load()
             
             <p:pro field="name"/>
             
-             <p:pro field="status">
+            <p:pro field="status">
                 <p:option type="tcpStatus"></p:option>
             </p:pro>
             
@@ -62,9 +62,13 @@ function load()
             <p:pro field="srcCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
             <p:pro field="destCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
             
-            <p:pro field="borrow" cell="0" innerString="onchange='borrowChange()'">
+            <p:pro field="borrow" innerString="onchange='borrowChange()'">
                 <p:option type="travelApplyBorrow"></p:option>
             </p:pro>
+            
+            <p:cell title="借款人">
+            ${bean.borrowStafferName}
+            </p:cell>
             
             <p:pro field="showTotal"/>
             <p:pro field="showBorrowTotal"/>

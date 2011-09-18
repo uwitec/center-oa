@@ -6,6 +6,7 @@
 <p:link title="办公采购申请" guid="true"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
+<script language="JavaScript" src="../js/math.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../tcp_js/travelApply.js"></script>
@@ -16,6 +17,10 @@ function load()
     
     <c:if test="${bean.status == 22 && bean.borrow == 1}">
     addTrInner("tables_realPay", "trCopy");
+    </c:if>
+    
+    <c:if test="${bean.status == 11}">
+    addPayTr();
     </c:if>
 }
 
@@ -63,6 +68,13 @@ function processBean(opr)
     <c:if test="${bean.status == 22}">
     if ("0" == opr)
     checkFun = checkMoney;
+    else
+    removePay();
+    </c:if>
+    
+    <c:if test="${bean.status == 11}">
+    if ("0" == opr)
+    checkFun = checkMoney2;
     else
     removePay();
     </c:if>
@@ -140,9 +152,45 @@ function checkMoney()
         }
     }
     
-    if (addMoney != total)
+    if (compareDouble(addMoney, total) != 0)
     {
         alert('付款金额必须是${bean.showBorrowTotal}');
+        
+        return false;
+    }
+    
+    return true;
+}
+
+function checkMoney2()
+{
+    var mels = document.getElementsByName('i_moneys');
+    
+    var addMoney = 0.0;
+    
+    for (var i = 0; i < mels.length; i++)
+    {
+        if (mels[i].value != '')
+        {
+            addMoney += parseFloat(mels[i].value);
+        }
+    }
+    
+    var mels2 = document.getElementsByName('p_moneys');
+    
+    var addMoney2 = 0.0;
+    
+    for (var i = 0; i < mels2.length; i++)
+    {
+        if (mels2[i].value != '')
+        {
+            addMoney2 += parseFloat(mels2[i].value);
+        }
+    }
+    
+    if (compareDouble(addMoney, addMoney2) != 0)
+    {
+        alert('收款金额必须是:' + addMoney);
         
         return false;
     }
@@ -159,6 +207,7 @@ function checkMoney()
 <input type="hidden" name="oprType" value="0"> 
 <input type="hidden" name="processId" value=""> 
 <input type="hidden" name="id" value="${bean.id}"> 
+<input type="hidden" name="type" value="${bean.type}"> 
 
 <p:navigation height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
@@ -199,9 +248,13 @@ function checkMoney()
             
             <p:pro field="beginDate" cell="0"/>
             
-            <p:pro field="borrow" cell="0" innerString="onchange='borrowChange()'">
+            <p:pro field="borrow" innerString="onchange='borrowChange()'">
                 <p:option type="travelApplyBorrow"></p:option>
             </p:pro>
+            
+            <p:cell title="借款人">
+            ${bean.borrowStafferName}
+            </p:cell>
             
             <p:pro field="showTotal"/>
             <p:pro field="showBorrowTotal"/>
@@ -249,24 +302,63 @@ function checkMoney()
             class="border">
             <tr>
                 <td>
+                <c:if test="${bean.status != 11}">
                 <table width="100%" border="0" cellspacing='1' id="tables">
                     <tr align="center" class="content0">
-                        <td width="15%" align="center">开始日期</td>
-                        <td width="15%" align="center">结束日期</td>
+                        <td width="15%" align="center">采购品名</td>
+                        <td width="15%" align="center">采购数量</td>
+                        <td width="15%" align="center">预估单价</td>
+                        <td width="10%" align="center">采购单价</td>
                         <td width="15%" align="center">预算项</td>
-                        <td width="10%" align="center">申请金额</td>
-                        <td width="40%" align="center">备注</td>
+                        <td width="10%" align="center">总价</td>
+                        <td width="25%" align="center">备注</td>
                     </tr>
                     <c:forEach items="${bean.itemVOList}" var="item">
                     <tr align="center" class="content1">
-                        <td width="15%" align="center">${item.beginDate}</td>
-                        <td width="15%" align="center">${item.endDate}</td>
+                        <td width="15%" align="center">${item.productName}</td>
+                        <td width="15%" align="center">${item.amount}</td>
+                        <td width="15%" align="center">${my:formatNum(item.prices / 100.0)}</td>
+                        <td width="15%" align="center">${my:formatNum(item.checkPrices / 100.0)}</td>
                         <td width="15%" align="center">${item.feeItemName}</td>
                         <td width="10%" align="center">${my:formatNum(item.moneys / 100.0)}</td>
                         <td width="40%" align="center"><c:out value="${item.description}"/></td>
                     </tr>
                     </c:forEach>
                 </table>
+                </c:if>
+                
+                <c:if test="${bean.status == 11}">
+                <table width="100%" border="0" cellspacing='1' id="tables">
+                    <tr align="center" class="content0">
+                        <td width="15%" align="center">采购品名</td>
+                        <td width="12%" align="center">数量/预估单价/总价</td>
+                        <td width="15%" align="center">备注</td>
+                        <td width="15%" align="center">预算项</td>
+                        <td width="10%" align="center">采购单价</td>
+                        <td width="10%" align="center">采购总价</td>
+                        <td width="25%" align="center">货比三家</td>
+                    </tr>
+                    <c:forEach items="${bean.itemVOList}" var="item">
+                    <tr align="center" class="content1">
+                        <td align="center">${item.productName}</td>
+                        <td align="center">${item.amount}/${my:formatNum(item.prices / 100.0)}/${my:formatNum(item.moneys / 100.0)}</td>
+                        <td align="center"><c:out value="${item.description}"/></td>
+                        <td align="center">${item.feeItemName}</td>
+                        <td align="center"><input type="text" style="width: 100%"
+                            name="i_checkPrices" value="0.0" oncheck="notNone;isFloat3">
+                        <input type="hidden" name="i_cid" value="${item.id}">
+                        </td>
+                        <td align="center"><input type="text" style="width: 100%"
+                            name="i_moneys" value="0.0" oncheck="notNone;isFloat3">
+                        </td>
+                        <td align="center">
+                        <textarea name="i_purpose" rows="3" style="width: 100%" oncheck="maxLength(600)"></textarea>
+                        </td>
+                    </tr>
+                    </c:forEach>
+                </table>
+                </c:if>
+                
                 </td>
             </tr>
         </table>
@@ -287,6 +379,8 @@ function checkMoney()
             class="border">
             <tr>
                 <td>
+                
+                <c:if test="${bean.status != 11}">
                 <table width="100%" border="0" cellspacing='1' id="tables_pay">
                     <tr align="center" class="content0">
                         <td width="10%" align="center">收款方式</td>
@@ -325,6 +419,23 @@ function checkMoney()
                     </tr>
                     </c:forEach>
                 </table>
+                </c:if>
+                
+                <c:if test="${bean.status == 11}">
+                <table width="100%" border="0" cellspacing='1' id="tables_pay">
+                    <tr align="center" class="content0">
+                        <td width="10%" align="center">收款方式</td>
+                        <td width="15%" align="center">开户银行</td>
+                        <td width="15%" align="center">户名</td>
+                        <td width="20%" align="center">收款帐号</td>
+                        <td width="10%" align="center">收款金额</td>
+                        <td width="25%" align="center">备注</td>
+                        <td width="5%" align="left"><input type="button" accesskey="B"
+                            value="增加" class="button_class" onclick="addPayTr()"></td>
+                    </tr>
+                </table>
+                </c:if>
+                
                 </td>
             </tr>
         </table>
@@ -469,7 +580,7 @@ function checkMoney()
                     <tr align="center" class="content0">
                         <td width="15%" align="center">审批意见</td>
                         <td align="left">
-                        <textarea rows="3" cols="55" oncheck="notNone;maxLength(200);" name="reason"></textarea>
+                        <textarea rows="3" cols="55" oncheck="notNone;maxLength(200);" name="reason" head="审批意见"></textarea>
                         <font color="red">*</font>
                         </td>
                     </tr>
@@ -529,6 +640,39 @@ function checkMoney()
                     name="money" value="" oncheck="notNone;isFloat">
          </td>
          <td width="5%" align="center"><input type=button name="pay_del_bu"
+            value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
+    </tr>
+    
+    <tr class="content1" id="trCopy_pay" style="display: none;">
+         <td align="left">
+         <select name="p_receiveType" class="select_class" style="width: 100%;" oncheck="notNone">
+            <p:option type="travelApplyReceiveType" empty="true"></p:option>
+         </select>
+         </td>
+         
+         <td align="left"><input type="text" style="width: 100%"
+                    name="p_bank" value="" >
+         </td>
+         
+         <td align="left">
+         <input type="text" style="width: 100%"
+                    name="p_userName" value="" >
+         </td>
+         
+         <td align="left">
+         <input type="text" style="width: 100%"
+                    name="p_bankNo" value="" >
+         </td>
+         
+         <td align="left">
+         <input type="text" style="width: 100%"
+                    name="p_moneys" value="" oncheck="notNone;isFloat3">
+         </td>
+         
+         <td align="left">
+         <textarea name="p_description" rows="3" style="width: 100%"></textarea>
+         </td>
+        <td width="5%" align="center"><input type=button name="pay_del_bu"
             value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
     </tr>
 </table>

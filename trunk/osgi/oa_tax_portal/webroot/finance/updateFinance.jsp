@@ -197,7 +197,7 @@ function callClick(obj, el)
 					         </td>
 					         <td>
 					         <input type="text" style="width: 95%;"
-					                name="taxId" value="${itemTop.taxName}">
+					                name="taxId" value="${itemTop.taxId}${itemTop.taxName}">
 					         <input type="hidden" name="taxId2" value="${itemTop.taxId}">
 					         </td>
 					         

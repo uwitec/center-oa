@@ -29,7 +29,7 @@ function load()
              {display: '标识', name : 'applyId', width : '15%'},
              {display: '目的', name : 'name', width : '15%'},
              {display: '申请人', name : 'applyerName', width : '10%'},
-             {display: '类型', name : 'type', cc: 'tcpApplyType', sortable: true, width : '12%'},
+             {display: '类型', name : 'type', cc: 'tcpApplyType', sortable: true, width : '20%'},
              {display: '状态', name : 'status', cc: 'tcpStatus',  width : '10%'},
              {display: '费用', name : 'showTotal', sortable: true, cname: 'total', width : '8%'},
              {display: '时间', name : 'logTime', sortable: true, width : 'auto'}
