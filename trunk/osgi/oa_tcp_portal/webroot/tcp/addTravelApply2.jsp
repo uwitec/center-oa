@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="业务招待费申请" guid="true"/>
+<p:link title="办公采购申请" guid="true"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../js/math.js"></script>
@@ -26,14 +26,12 @@ function addBean(opr)
         $O('processer').oncheck = 'notNone';
     }
     
-    submit('确定业务招待费申请?', null, checks);
+    submit('确定办公采购申请?', null, checks);
 }
 
 function load()
 {
 	addTr();
-	
-	addPayTr();
 	
 	addShareTr();
 	
@@ -50,12 +48,13 @@ function load()
 <input type="hidden" name="oprType" value="0"> 
 <input type="hidden" name="addOrUpdate" value="0"> 
 <input type="hidden" name="processId" value=""> 
-<input type="hidden" name="type" value="1"> 
+<input type="hidden" name="type" value="2"> 
+<input type="hidden" name="borrow" value="1"> 
 <input type="hidden" name="stafferId" value="${g_stafferBean.id}"> 
 <input type="hidden" name="departmentId" value="${g_stafferBean.principalshipId}"> 
 
 <p:navigation height="22">
-	<td width="550" class="navigation">业务招待费申请</td>
+	<td width="550" class="navigation">办公采购申请</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -63,7 +62,7 @@ function load()
 
 	<p:title>
 		<td class="caption">
-		 <strong>业务招待费申请及借款</strong>
+		 <strong>办公采购申请及借款</strong>
 		</td>
 	</p:title>
 
@@ -80,19 +79,6 @@ function load()
             <p:pro field="name" cell="0" innerString="size=60"/>
             
             <p:pro field="beginDate" cell="0"/>
-            
-            <p:pro field="unitName" cell="0" innerString="size=60"/>
-            <p:pro field="address" cell="0" innerString="size=60"/>
-            
-            <p:pro field="customerNames" cell="0" innerString="rows=4 cols=55"/>
-            
-            <p:pro field="aroundNames" cell="0" innerString="size=60"/>
-            
-            <p:pro field="companyStafferNames" cell="0" innerString="size=60"/>
-            
-            <p:pro field="borrow" cell="0" innerString="onchange='borrowChange()'">
-                <p:option type="travelApplyBorrow"></p:option>
-            </p:pro>
 
             <p:pro field="description" cell="0" innerString="rows=4 cols=55" />
             
@@ -112,7 +98,7 @@ function load()
 	
     <p:title>
         <td class="caption">
-         <strong>业务招待明细</strong>
+         <strong>办公采购费用明细</strong>
         </td>
     </p:title>
 
@@ -126,10 +112,11 @@ function load()
                 <td>
                 <table width="100%" border="0" cellspacing='1' id="tables">
                     <tr align="center" class="content0">
-                        <td width="15%" align="center">开始日期</td>
-                        <td width="15%" align="center">结束日期</td>
+                        <td width="15%" align="center">采购品名</td>
+                        <td width="15%" align="center">采购数量</td>
+                        <td width="15%" align="center">预估单价</td>
                         <td width="15%" align="center">预算项</td>
-                        <td width="10%" align="center">申请金额</td>
+                        <td width="10%" align="center">总价</td>
                         <td width="25%" align="center">备注</td>
                         <td width="5%" align="left"><input type="button" accesskey="A"
                             value="增加" class="button_class" onclick="addTr()"></td>
@@ -153,39 +140,6 @@ function load()
                             name="allTotal" class="input_class" readonly="readonly" oncheck="notNone">
                             <font color="#FF0000">*</font>
                         </td>
-                    </tr>
-                </table>
-                </td>
-            </tr>
-        </table>
-
-        </td>
-    </tr>
-
-	<p:title>
-        <td class="caption">
-         <strong>收款明细</strong>
-        </td>
-    </p:title>
-
-    <p:line flag="0" />
-    
-    <tr id="pay_main_tr">
-        <td colspan='2' align='center'>
-        <table width="98%" border="0" cellpadding="0" cellspacing="0"
-            class="border">
-            <tr>
-                <td>
-                <table width="100%" border="0" cellspacing='1' id="tables_pay">
-                    <tr align="center" class="content0">
-                        <td width="10%" align="center">收款方式</td>
-                        <td width="15%" align="center">开户银行</td>
-                        <td width="15%" align="center">户名</td>
-                        <td width="20%" align="center">收款帐号</td>
-                        <td width="10%" align="center">收款金额</td>
-                        <td width="25%" align="center">备注</td>
-                        <td width="5%" align="left"><input type="button" accesskey="B"
-                            value="增加" class="button_class" onclick="addPayTr()"></td>
                     </tr>
                 </table>
                 </td>
@@ -287,10 +241,16 @@ function load()
 <table>
     <tr class="content1" id="trCopy" style="display: none;">
          <td align="left">
-         <input type=text name = 'i_beginDate'  id = 'i_beginDate'  oncheck = ""  value = ''  readonly=readonly class='input_class' size = '20' ><img src='../images/calendar.gif' style='cursor: pointer' title='请选择时间' align='top' onclick='return calDateInner(this, "i_beginDate");' height='20px' width='20px'/>
+         <input type="text" style="width: 100%"
+                    name="i_productName" value="" oncheck="notNone;">
          </td>
          <td align="left">
-         <input type=text name = 'i_endDate'  id = 'i_endDate'  oncheck = ""  value = ''  readonly=readonly class='input_class' size = '20' ><img src='../images/calendar.gif' style='cursor: pointer' title='请选择时间' align='top' onclick='return calDateInner(this, "i_endDate");' height='20px' width='20px'/>
+         <input type="text" style="width: 100%"
+                    name="i_amount" value="" oncheck="notNone;isInt">
+         </td>
+         <td align="left">
+         <input type="text" style="width: 100%"
+                    name="i_prices" value="" oncheck="notNone;isFloat3">
          </td>
          <td align="left">
          <select name="i_feeItem" class="select_class" style="width: 100%;" oncheck="notNone">

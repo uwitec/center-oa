@@ -52,7 +52,7 @@ public class TcpApplyBean implements Serializable
     /**
      * 差旅费申请及借款、业务招待费申请及借款、日常办公和固定资产采购申请及借款、对公业务申请及借款
      */
-    private int type = TcpConstanst.TCP_TYPE_TRAVEL;
+    private int type = TcpConstanst.TCP_APPLYTYPE_TRAVEL;
 
     private int status = TcpConstanst.TCP_STATUS_INIT;
 

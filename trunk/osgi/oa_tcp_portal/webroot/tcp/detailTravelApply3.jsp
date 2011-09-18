@@ -1,9 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"
-	errorPage="../common/error.jsp"%>
+    errorPage="../common/error.jsp"%>
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="差旅费申请" guid="true"/>
+<p:link title="对公业务申请" guid="true"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="javascript">
@@ -22,26 +22,26 @@ function load()
 <input type="hidden" name="departmentId" value="${g_stafferBean.principalshipId}"> 
 
 <p:navigation height="22">
-	<td width="550" class="navigation">差旅费申请明细</td>
-	<td width="85"></td>
+    <td width="550" class="navigation">对公业务申请明细</td>
+    <td width="85"></td>
 </p:navigation> <br>
 
 <p:body width="100%">
 
-	<p:title>
-		<td class="caption">
-		 <strong>出差申请及借款</strong>
-		</td>
-	</p:title>
+    <p:title>
+        <td class="caption">
+         <strong>对公业务</strong>
+        </td>
+    </p:title>
 
-	<p:line flag="0" />
+    <p:line flag="0" />
 
-	<p:subBody width="98%">
-	
-	    <p:class value="com.china.center.oa.tcp.bean.TravelApplyBean" opr="2"/>
-	    
-		<p:table cells="2">
-		    <p:cell title="处理流程" width="8" end="true">
+    <p:subBody width="98%">
+    
+        <p:class value="com.china.center.oa.tcp.bean.TravelApplyBean" opr="2"/>
+        
+        <p:table cells="2">
+            <p:cell title="处理流程" width="8" end="true">
             ${bean.flowDescription}
             </p:cell>
 
@@ -52,15 +52,11 @@ function load()
             
             <p:pro field="name"/>
             
-             <p:pro field="status">
+            <p:pro field="status">
                 <p:option type="tcpStatus"></p:option>
             </p:pro>
             
-            <p:pro field="beginDate"/>
-            <p:pro field="endDate"/>
-            
-            <p:pro field="srcCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
-            <p:pro field="destCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
+            <p:pro field="beginDate" cell="0"/>
             
             <p:pro field="borrow" cell="0" innerString="onchange='borrowChange()'">
                 <p:option type="travelApplyBorrow"></p:option>
@@ -84,9 +80,9 @@ function load()
             </p:cell>
             
             <p:cell title="关联付款单" width="8" end="true">
-	            <c:forEach items="${billList}" var="item">
-	            <a href="../finance/bill.do?method=findBill&id=${item.id}">${item.id}</a>&nbsp;&nbsp;
-	            </c:forEach>
+                <c:forEach items="${billList}" var="item">
+                <a href="../finance/bill.do?method=findBill&id=${item.id}">${item.id}</a>&nbsp;&nbsp;
+                </c:forEach>
             </p:cell>
             
             <p:cell title="关联凭证" width="8" end="true">
@@ -96,44 +92,18 @@ function load()
             </p:cell>
 
         </p:table>
-	</p:subBody>
-	
-	<p:title>
-        <td class="caption">
-         <strong>差旅费明细</strong>
-        </td>
-    </p:title>
-
-    <p:line flag="0" />
-
-    <p:subBody width="98%">
-    
-        <p:table cells="2" id="traTable">
-
-            <p:pro field="showAirplaneCharges"/>
-            <p:pro field="showTrainCharges"/>
-            
-            <p:pro field="showBusCharges"/>
-            <p:pro field="showHotelCharges"/>
-            
-            <p:pro field="showEntertainCharges"/>
-            <p:pro field="showAllowanceCharges"/>
-            
-            <p:pro field="showOther1Charges"/>
-            <p:pro field="showOther2Charges"/>
-
-        </p:table>
     </p:subBody>
-	
+    
+        
     <p:title>
         <td class="caption">
-         <strong>其他申请费用明细(包含差旅费)</strong>
+         <strong>申请费用明细</strong>
         </td>
     </p:title>
 
     <p:line flag="0" />
-	
-	<tr>
+    
+    <tr>
         <td colspan='2' align='center'>
         <table width="98%" border="0" cellpadding="0" cellspacing="0"
             class="border">
@@ -163,7 +133,7 @@ function load()
         </td>
     </tr>
 
-	<p:title>
+    <p:title>
         <td class="caption">
          <strong>收款明细</strong>
         </td>
@@ -293,13 +263,13 @@ function load()
     
     <p:line flag="1" />
     
-	<p:button leftWidth="98%" rightWidth="0%">
+    <p:button leftWidth="98%" rightWidth="0%">
         <div align="right"><input type="button" class="button_class"
             id="ok_b" style="cursor: pointer" value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"
             onclick="javaScript:window.history.go(-1);"></div>
     </p:button>
-	
-	<p:message2/>
+    
+    <p:message2/>
 </p:body>
 </form>
 </body>

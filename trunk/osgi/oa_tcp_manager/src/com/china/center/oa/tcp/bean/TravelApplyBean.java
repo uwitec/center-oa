@@ -26,7 +26,7 @@ import com.china.center.oa.tcp.constanst.TcpConstanst;
 
 
 /**
- * 差旅费申请
+ * 借款申请
  * 
  * @author ZHUZHU
  * @version 2011-7-10
@@ -50,23 +50,19 @@ public class TravelApplyBean implements Serializable
     @Join(tagClass = StafferBean.class)
     private String stafferId = "";
 
+    /**
+     * 借款人
+     */
+    @Join(tagClass = StafferBean.class, alias = "BSB")
+    private String borrowStafferId = "";
+
     @Html(title = "部门", name = "departmentName", must = true, maxLength = 40, readonly = true)
     @Join(tagClass = PrincipalshipBean.class)
     private String departmentId = "";
 
     private String logTime = "";
 
-    @Html(title = "出发城市", must = true, readonly = true)
-    private String srcCity = "";
-
-    @Html(title = "目的城市", must = true, readonly = true)
-    private String destCity = "";
-
-    @Html(title = "开始日期", must = true, type = Element.DATE)
-    private String beginDate = "";
-
-    @Html(title = "结束日期", must = true, type = Element.DATE)
-    private String endDate = "";
+    private String refId = "";
 
     @Html(title = "申请事由", maxLength = 200, must = true, type = Element.TEXTAREA)
     private String description = "";
@@ -81,31 +77,20 @@ public class TravelApplyBean implements Serializable
     private int borrow = TcpConstanst.TRAVELAPPLY_BORROW_NO;
 
     /**
-     * 飞机票-其他费用二需要合计到差旅费里面
+     * 是否报销冲抵
      */
-    @Html(title = "飞机票", must = true, type = Element.DOUBLE)
-    private long airplaneCharges = 0L;
+    private int feedback = TcpConstanst.TCP_APPLY_FEEDBACK_NO;
 
-    @Html(title = "火车票", must = true, type = Element.DOUBLE)
-    private long trainCharges = 0L;
+    /**
+     * 申请类型
+     */
+    private int type = TcpConstanst.TCP_APPLYTYPE_TRAVEL;
 
-    @Html(title = "汽车票", must = true, type = Element.DOUBLE)
-    private long busCharges = 0L;
+    @Html(title = "开始日期", must = true, type = Element.DATE)
+    private String beginDate = "";
 
-    @Html(title = "住宿费", must = true, type = Element.DOUBLE)
-    private long hotelCharges = 0L;
-
-    @Html(title = "业务招待费", must = true, type = Element.DOUBLE)
-    private long entertainCharges = 0L;
-
-    @Html(title = "补贴", must = true, type = Element.DOUBLE)
-    private long allowanceCharges = 0L;
-
-    @Html(title = "其他费用一", must = true, type = Element.DOUBLE)
-    private long other1Charges = 0L;
-
-    @Html(title = "其他费用二", must = true, type = Element.DOUBLE)
-    private long other2Charges = 0L;
+    @Html(title = "结束日期", must = true, type = Element.DATE)
+    private String endDate = "";
 
     /**
      * 准确到分
@@ -140,6 +125,60 @@ public class TravelApplyBean implements Serializable
      */
     @Ignore
     private List<AttachmentBean> attachmentList = null;
+
+    // ////////////////////////差旅费申请及借款/////////////////////
+    @Html(title = "出发城市", must = true, readonly = true)
+    private String srcCity = "";
+
+    @Html(title = "目的城市", must = true, readonly = true)
+    private String destCity = "";
+
+    /**
+     * 飞机票-其他费用二需要合计到差旅费里面
+     */
+    @Html(title = "飞机票", must = true, type = Element.DOUBLE)
+    private long airplaneCharges = 0L;
+
+    @Html(title = "火车票", must = true, type = Element.DOUBLE)
+    private long trainCharges = 0L;
+
+    @Html(title = "汽车票", must = true, type = Element.DOUBLE)
+    private long busCharges = 0L;
+
+    @Html(title = "住宿费", must = true, type = Element.DOUBLE)
+    private long hotelCharges = 0L;
+
+    @Html(title = "业务招待费", must = true, type = Element.DOUBLE)
+    private long entertainCharges = 0L;
+
+    @Html(title = "补贴", must = true, type = Element.DOUBLE)
+    private long allowanceCharges = 0L;
+
+    @Html(title = "其他费用一", must = true, type = Element.DOUBLE)
+    private long other1Charges = 0L;
+
+    @Html(title = "其他费用二", must = true, type = Element.DOUBLE)
+    private long other2Charges = 0L;
+
+    // ////////////////////////差旅费申请及借款/////////////////////
+
+    // ////////////////////////业务招待费申请及借款/////////////////////
+    @Html(title = "来客单位", must = true)
+    private String unitName = "";
+
+    @Html(title = "招待地点", must = true)
+    private String address = "";
+
+    @Html(title = "来客姓名及职位", must = true, type = Element.TEXTAREA)
+    private String customerNames = "";
+
+    @Html(title = "顾客方面同席者")
+    private String aroundNames = "";
+
+    @Html(title = "本公司同席者", must = true)
+    private String companyStafferNames = "";
+
+    // ////////////////////////业务招待费申请及借款/////////////////////
 
     /**
      * default constructor
@@ -608,6 +647,159 @@ public class TravelApplyBean implements Serializable
     }
 
     /**
+     * @return the refId
+     */
+    public String getRefId()
+    {
+        return refId;
+    }
+
+    /**
+     * @param refId
+     *            the refId to set
+     */
+    public void setRefId(String refId)
+    {
+        this.refId = refId;
+    }
+
+    /**
+     * @return the feedback
+     */
+    public int getFeedback()
+    {
+        return feedback;
+    }
+
+    /**
+     * @param feedback
+     *            the feedback to set
+     */
+    public void setFeedback(int feedback)
+    {
+        this.feedback = feedback;
+    }
+
+    /**
+     * @return the type
+     */
+    public int getType()
+    {
+        return type;
+    }
+
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(int type)
+    {
+        this.type = type;
+    }
+
+    /**
+     * @return the unitName
+     */
+    public String getUnitName()
+    {
+        return unitName;
+    }
+
+    /**
+     * @param unitName
+     *            the unitName to set
+     */
+    public void setUnitName(String unitName)
+    {
+        this.unitName = unitName;
+    }
+
+    /**
+     * @return the address
+     */
+    public String getAddress()
+    {
+        return address;
+    }
+
+    /**
+     * @param address
+     *            the address to set
+     */
+    public void setAddress(String address)
+    {
+        this.address = address;
+    }
+
+    /**
+     * @return the customerNames
+     */
+    public String getCustomerNames()
+    {
+        return customerNames;
+    }
+
+    /**
+     * @param customerNames
+     *            the customerNames to set
+     */
+    public void setCustomerNames(String customerNames)
+    {
+        this.customerNames = customerNames;
+    }
+
+    /**
+     * @return the aroundNames
+     */
+    public String getAroundNames()
+    {
+        return aroundNames;
+    }
+
+    /**
+     * @param aroundNames
+     *            the aroundNames to set
+     */
+    public void setAroundNames(String aroundNames)
+    {
+        this.aroundNames = aroundNames;
+    }
+
+    /**
+     * @return the companyStafferNames
+     */
+    public String getCompanyStafferNames()
+    {
+        return companyStafferNames;
+    }
+
+    /**
+     * @param companyStafferNames
+     *            the companyStafferNames to set
+     */
+    public void setCompanyStafferNames(String companyStafferNames)
+    {
+        this.companyStafferNames = companyStafferNames;
+    }
+
+    /**
+     * @return the borrowStafferId
+     */
+    public String getBorrowStafferId()
+    {
+        return borrowStafferId;
+    }
+
+    /**
+     * @param borrowStafferId
+     *            the borrowStafferId to set
+     */
+    public void setBorrowStafferId(String borrowStafferId)
+    {
+        this.borrowStafferId = borrowStafferId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -634,23 +826,17 @@ public class TravelApplyBean implements Serializable
             .append("stafferId = ")
             .append(this.stafferId)
             .append(TAB)
+            .append("borrowStafferId = ")
+            .append(this.borrowStafferId)
+            .append(TAB)
             .append("departmentId = ")
             .append(this.departmentId)
             .append(TAB)
             .append("logTime = ")
             .append(this.logTime)
             .append(TAB)
-            .append("srcCity = ")
-            .append(this.srcCity)
-            .append(TAB)
-            .append("destCity = ")
-            .append(this.destCity)
-            .append(TAB)
-            .append("beginDate = ")
-            .append(this.beginDate)
-            .append(TAB)
-            .append("endDate = ")
-            .append(this.endDate)
+            .append("refId = ")
+            .append(this.refId)
             .append(TAB)
             .append("description = ")
             .append(this.description)
@@ -660,6 +846,42 @@ public class TravelApplyBean implements Serializable
             .append(TAB)
             .append("borrow = ")
             .append(this.borrow)
+            .append(TAB)
+            .append("feedback = ")
+            .append(this.feedback)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("beginDate = ")
+            .append(this.beginDate)
+            .append(TAB)
+            .append("endDate = ")
+            .append(this.endDate)
+            .append(TAB)
+            .append("total = ")
+            .append(this.total)
+            .append(TAB)
+            .append("borrowTotal = ")
+            .append(this.borrowTotal)
+            .append(TAB)
+            .append("itemList = ")
+            .append(this.itemList)
+            .append(TAB)
+            .append("payList = ")
+            .append(this.payList)
+            .append(TAB)
+            .append("shareList = ")
+            .append(this.shareList)
+            .append(TAB)
+            .append("attachmentList = ")
+            .append(this.attachmentList)
+            .append(TAB)
+            .append("srcCity = ")
+            .append(this.srcCity)
+            .append(TAB)
+            .append("destCity = ")
+            .append(this.destCity)
             .append(TAB)
             .append("airplaneCharges = ")
             .append(this.airplaneCharges)
@@ -685,23 +907,20 @@ public class TravelApplyBean implements Serializable
             .append("other2Charges = ")
             .append(this.other2Charges)
             .append(TAB)
-            .append("total = ")
-            .append(this.total)
+            .append("unitName = ")
+            .append(this.unitName)
             .append(TAB)
-            .append("borrowTotal = ")
-            .append(this.borrowTotal)
+            .append("address = ")
+            .append(this.address)
             .append(TAB)
-            .append("itemList = ")
-            .append(this.itemList)
+            .append("customerNames = ")
+            .append(this.customerNames)
             .append(TAB)
-            .append("payList = ")
-            .append(this.payList)
+            .append("aroundNames = ")
+            .append(this.aroundNames)
             .append(TAB)
-            .append("shareList = ")
-            .append(this.shareList)
-            .append(TAB)
-            .append("attachmentList = ")
-            .append(this.attachmentList)
+            .append("companyStafferNames = ")
+            .append(this.companyStafferNames)
             .append(TAB)
             .append(" )");
 

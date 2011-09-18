@@ -39,6 +39,26 @@ public interface TcpFlowConstant
     String TRAVELAPPLY_50000_MAX = "travel-50000+";
 
     /**
+     * 5000以内的报销
+     */
+    String STOCK_APPLY_0_5000 = "stock-0-5000";
+
+    /**
+     * 5000-10000的报销
+     */
+    String STOCK_APPLY_5000_10000 = "stock-5000-10000";
+
+    /**
+     * 10000-50000的报销
+     */
+    String STOCK_APPLY_10000_50000 = "stock-10000-50000";
+
+    /**
+     * 50000+的报销
+     */
+    String STOCK_APPLY_50000_MAX = "stock-50000+";
+
+    /**
      * 部门经理
      */
     String GROUP_DM = "A220110406000200001";
@@ -77,4 +97,9 @@ public interface TcpFlowConstant
      * 财务支付
      */
     String GROUP_PAY = "A220110406000200008";
+
+    /**
+     * 财务入账
+     */
+    String GROUP_LASTCHECK = "A220110406000200009";
 }

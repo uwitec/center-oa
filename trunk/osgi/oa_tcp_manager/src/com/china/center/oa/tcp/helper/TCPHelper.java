@@ -21,6 +21,7 @@ import com.china.center.oa.tcp.vo.TcpApproveVO;
 import com.china.center.oa.tcp.vo.TravelApplyVO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.MathTools;
+import com.china.center.tools.StringTools;
 
 
 /**
@@ -34,38 +35,71 @@ import com.china.center.tools.MathTools;
 public abstract class TCPHelper
 {
     /**
-     * 设置key
+     * 设置报销的key(CORE)
      * 
      * @param bean
      */
     public static void setFlowKey(TravelApplyBean bean)
     {
-        if (bean.getTotal() <= 500000)
+        if (bean.getType() != TcpConstanst.TCP_APPLYTYPE_STOCK)
         {
-            bean.setFlowKey(TcpFlowConstant.TRAVELAPPLY_0_5000);
+            if (bean.getTotal() <= 500000)
+            {
+                bean.setFlowKey(TcpFlowConstant.TRAVELAPPLY_0_5000);
 
-            return;
+                return;
+            }
+
+            if (bean.getTotal() > 500000 && bean.getTotal() <= 1000000)
+            {
+                bean.setFlowKey(TcpFlowConstant.TRAVELAPPLY_5000_10000);
+
+                return;
+            }
+
+            if (bean.getTotal() > 1000000 && bean.getTotal() <= 5000000)
+            {
+                bean.setFlowKey(TcpFlowConstant.TRAVELAPPLY_10000_50000);
+
+                return;
+            }
+
+            if (bean.getTotal() > 5000000)
+            {
+                bean.setFlowKey(TcpFlowConstant.TRAVELAPPLY_50000_MAX);
+
+                return;
+            }
         }
-
-        if (bean.getTotal() > 500000 && bean.getTotal() <= 1000000)
+        else
         {
-            bean.setFlowKey(TcpFlowConstant.TRAVELAPPLY_5000_10000);
+            if (bean.getTotal() <= 500000)
+            {
+                bean.setFlowKey(TcpFlowConstant.STOCK_APPLY_0_5000);
 
-            return;
-        }
+                return;
+            }
 
-        if (bean.getTotal() > 1000000 && bean.getTotal() <= 5000000)
-        {
-            bean.setFlowKey(TcpFlowConstant.TRAVELAPPLY_10000_50000);
+            if (bean.getTotal() > 500000 && bean.getTotal() <= 1000000)
+            {
+                bean.setFlowKey(TcpFlowConstant.STOCK_APPLY_5000_10000);
 
-            return;
-        }
+                return;
+            }
 
-        if (bean.getTotal() > 5000000)
-        {
-            bean.setFlowKey(TcpFlowConstant.TRAVELAPPLY_50000_MAX);
+            if (bean.getTotal() > 1000000 && bean.getTotal() <= 5000000)
+            {
+                bean.setFlowKey(TcpFlowConstant.STOCK_APPLY_10000_50000);
 
-            return;
+                return;
+            }
+
+            if (bean.getTotal() > 5000000)
+            {
+                bean.setFlowKey(TcpFlowConstant.STOCK_APPLY_50000_MAX);
+
+                return;
+            }
         }
     }
 
@@ -77,6 +111,11 @@ public abstract class TCPHelper
      */
     public static long doubleToLong2(String value)
     {
+        if (StringTools.isNullOrNone(value))
+        {
+            return 0L;
+        }
+
         // 先格式转成double
         double parseDouble = MathTools.parseDouble(value);
 
@@ -123,6 +162,39 @@ public abstract class TCPHelper
         return false;
     }
 
+    /**
+     * 是否是初始状态
+     * 
+     * @param bean
+     * @return
+     */
+    public static boolean isTravelApplyInit(TravelApplyBean bean)
+    {
+        if (bean.getStatus() == TcpConstanst.TCP_STATUS_INIT
+            || bean.getStatus() == TcpConstanst.TCP_STATUS_REJECT)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 是否是初始状态
+     * 
+     * @param status
+     * @return
+     */
+    public static boolean isTravelApplyInit(int status)
+    {
+        if (status == TcpConstanst.TCP_STATUS_INIT || status == TcpConstanst.TCP_STATUS_REJECT)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public static String formatNum2(double d)
     {
         DecimalFormat df = new DecimalFormat("####0.00");
@@ -146,10 +218,7 @@ public abstract class TCPHelper
     {
         vo.setShowTotal(MathTools.formatNum(MathTools.longToDouble2(vo.getTotal())));
 
-        if (vo.getType() == TcpConstanst.TCP_TYPE_TRAVEL)
-        {
-            vo.setUrl(TcpConstanst.TCP_TRAVELAPPLY_PROCESS_URL + vo.getApplyId());
-        }
+        vo.setUrl(TcpConstanst.TCP_TRAVELAPPLY_PROCESS_URL + vo.getApplyId());
     }
 
     public static FlowLogVO getTCPFlowLogVO(FlowLogBean bean)

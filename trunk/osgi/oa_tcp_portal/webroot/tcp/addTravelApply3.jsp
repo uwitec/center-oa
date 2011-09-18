@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="业务招待费申请" guid="true"/>
+<p:link title="对公业务申请" guid="true"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../js/math.js"></script>
@@ -26,7 +26,7 @@ function addBean(opr)
         $O('processer').oncheck = 'notNone';
     }
     
-    submit('确定业务招待费申请?', null, checks);
+    submit('确定对公业务申请?', null, checks);
 }
 
 function load()
@@ -50,12 +50,12 @@ function load()
 <input type="hidden" name="oprType" value="0"> 
 <input type="hidden" name="addOrUpdate" value="0"> 
 <input type="hidden" name="processId" value=""> 
-<input type="hidden" name="type" value="1"> 
+<input type="hidden" name="type" value="3"> 
 <input type="hidden" name="stafferId" value="${g_stafferBean.id}"> 
 <input type="hidden" name="departmentId" value="${g_stafferBean.principalshipId}"> 
 
 <p:navigation height="22">
-	<td width="550" class="navigation">业务招待费申请</td>
+	<td width="550" class="navigation">对公业务申请</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -63,7 +63,7 @@ function load()
 
 	<p:title>
 		<td class="caption">
-		 <strong>业务招待费申请及借款</strong>
+		 <strong>对公业务申请及借款</strong>
 		</td>
 	</p:title>
 
@@ -80,15 +80,6 @@ function load()
             <p:pro field="name" cell="0" innerString="size=60"/>
             
             <p:pro field="beginDate" cell="0"/>
-            
-            <p:pro field="unitName" cell="0" innerString="size=60"/>
-            <p:pro field="address" cell="0" innerString="size=60"/>
-            
-            <p:pro field="customerNames" cell="0" innerString="rows=4 cols=55"/>
-            
-            <p:pro field="aroundNames" cell="0" innerString="size=60"/>
-            
-            <p:pro field="companyStafferNames" cell="0" innerString="size=60"/>
             
             <p:pro field="borrow" cell="0" innerString="onchange='borrowChange()'">
                 <p:option type="travelApplyBorrow"></p:option>
@@ -112,7 +103,7 @@ function load()
 	
     <p:title>
         <td class="caption">
-         <strong>业务招待明细</strong>
+         <strong>对公业务费用明细</strong>
         </td>
     </p:title>
 

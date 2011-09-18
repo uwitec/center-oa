@@ -33,6 +33,9 @@ public class TravelApplyVO extends TravelApplyBean
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
 
+    @Relationship(relationField = "borrowStafferId")
+    private String borrowStafferName = "";
+
     @Relationship(relationField = "departmentId")
     private String departmentName = "";
 
@@ -41,6 +44,12 @@ public class TravelApplyVO extends TravelApplyBean
      */
     @Ignore
     private String processer = "";
+
+    /**
+     * 流程描述
+     */
+    @Ignore
+    private String flowDescription = "";
 
     @Ignore
     private List<TravelApplyItemVO> itemVOList = null;
@@ -360,6 +369,23 @@ public class TravelApplyVO extends TravelApplyBean
     }
 
     /**
+     * @return the borrowStafferName
+     */
+    public String getBorrowStafferName()
+    {
+        return borrowStafferName;
+    }
+
+    /**
+     * @param borrowStafferName
+     *            the borrowStafferName to set
+     */
+    public void setBorrowStafferName(String borrowStafferName)
+    {
+        this.borrowStafferName = borrowStafferName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -376,6 +402,9 @@ public class TravelApplyVO extends TravelApplyBean
             .append(TAB)
             .append("stafferName = ")
             .append(this.stafferName)
+            .append(TAB)
+            .append("borrowStafferName = ")
+            .append(this.borrowStafferName)
             .append(TAB)
             .append("departmentName = ")
             .append(this.departmentName)
@@ -422,5 +451,22 @@ public class TravelApplyVO extends TravelApplyBean
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the flowDescription
+     */
+    public String getFlowDescription()
+    {
+        return flowDescription;
+    }
+
+    /**
+     * @param flowDescription
+     *            the flowDescription to set
+     */
+    public void setFlowDescription(String flowDescription)
+    {
+        this.flowDescription = flowDescription;
     }
 }

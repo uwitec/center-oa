@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="差旅费申请" guid="true"/>
+<p:link title="业务招待费申请" guid="true"/>
 <script language="JavaScript" src="../js/string.js"></script>
 <script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
@@ -33,17 +33,17 @@ function addBean(opr)
     
     if ("0" == opr)
     {
-        submit('确定修改差旅费申请?', null, checks);
+        submit('确定修改业务招待费申请?', null, checks);
     }
     
     if ("1" == opr)
     {
-        submit('确定提交差旅费申请?', null, checks);
+        submit('确定提交业务招待费申请?', null, checks);
     }
     
     if ("2" == opr)
     {
-        submit('稽核修改费用,每项费用只能减少.确定提交稽核修改差旅费申请?', null, checks);
+        submit('稽核修改费用,每项费用只能减少.确定提交稽核修改业务招待费申请?', null, checks);
     }
 }
 
@@ -89,7 +89,7 @@ function updateInit()
     type="hidden" name="attacmentIds" value="${attacmentIds}">
 
 <p:navigation height="22">
-	<td width="550" class="navigation">差旅费申请</td>
+	<td width="550" class="navigation">业务招待费申请</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -97,7 +97,7 @@ function updateInit()
 
 	<p:title>
 		<td class="caption">
-		 <strong>出差申请及借款更新</strong>
+		 <strong>业务招待费申请及借款更新</strong>
 		</td>
 	</p:title>
 
@@ -115,11 +115,16 @@ function updateInit()
             
             <p:pro field="name" cell="0" innerString="size=60"/>
             
-            <p:pro field="beginDate"/>
-            <p:pro field="endDate"/>
+            <p:pro field="beginDate" cell="0"/>
             
-            <p:pro field="srcCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
-            <p:pro field="destCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
+            <p:pro field="unitName" cell="0" innerString="size=60"/>
+            <p:pro field="address" cell="0" innerString="size=60"/>
+            
+            <p:pro field="customerNames" cell="0" innerString="rows=4 cols=55"/>
+            
+            <p:pro field="aroundNames" cell="0" innerString="size=60"/>
+            
+            <p:pro field="companyStafferNames" cell="0" innerString="size=60"/>
             
             <p:pro field="borrow" cell="0" innerString="onchange='borrowChange()'">
                 <p:option type="travelApplyBorrow"></p:option>
@@ -158,36 +163,9 @@ function updateInit()
         </div>
 	</p:subBody>
 	
-	<p:title>
-        <td class="caption">
-         <strong>差旅费明细</strong>
-        </td>
-    </p:title>
-
-    <p:line flag="0" />
-
-    <p:subBody width="98%">
-    
-        <p:table cells="2" id="traTable">
-
-            <p:pro field="airplaneCharges" value="${bean.showAirplaneCharges}"/>
-            <p:pro field="trainCharges" value="${bean.showTrainCharges}"/>
-            
-            <p:pro field="busCharges" value="${bean.showBusCharges}"/>
-            <p:pro field="hotelCharges" value="${bean.showHotelCharges}"/>
-            
-            <p:pro field="entertainCharges" value="${bean.showEntertainCharges}"/>
-            <p:pro field="allowanceCharges" value="${bean.showAllowanceCharges}"/>
-            
-            <p:pro field="other1Charges" value="${bean.showOther1Charges}"/>
-            <p:pro field="other2Charges" value="${bean.showOther2Charges}"/>
-
-        </p:table>
-    </p:subBody>
-	
     <p:title>
         <td class="caption">
-         <strong>其他申请费用明细(不包含差旅费)</strong>
+         <strong>业务招待费明细</strong>
         </td>
     </p:title>
 
@@ -251,7 +229,7 @@ function updateInit()
                     <tr align="left" class="content0">
                         <td align="left" width="20%" align="center">
                         <input type="button" class="button_class" id="sum_b"
-                        value="&nbsp;合计金额(包含差旅费)&nbsp;" onclick="sumTotal()">
+                        value="&nbsp;合计金额&nbsp;" onclick="sumTotal()">
                         </td>
                         <td width="90%" align="left">
                         <input type="text" 

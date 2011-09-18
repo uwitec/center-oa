@@ -23,12 +23,6 @@ import com.china.center.jdbc.annotation.Defined;
 public interface TcpConstanst
 {
     /**
-     * 差旅费申请及借款
-     */
-    @Defined(key = "tcpType", value = "差旅费申请及借款")
-    int TCP_TYPE_TRAVEL = 0;
-
-    /**
      * 初始
      */
     @Defined(key = "tcpStatus", value = "初始")
@@ -77,6 +71,12 @@ public interface TcpConstanst
     int TCP_STATUS_WAIT_TOP = 7;
 
     /**
+     * 待采购货比三家
+     */
+    @Defined(key = "tcpStatus", value = "待采购货比三家")
+    int TCP_STATUS_WAIT_BUY = 11;
+
+    /**
      * 待稽核
      */
     @Defined(key = "tcpStatus", value = "待稽核")
@@ -95,10 +95,16 @@ public interface TcpConstanst
     int TCP_STATUS_WAIT_PAY = 22;
 
     /**
+     * 待财务入账
+     */
+    @Defined(key = "tcpStatus", value = "待财务入账")
+    int TCP_STATUS_LAST_CHECK = 23;
+
+    /**
      * 结束
      */
     @Defined(key = "tcpStatus", value = "结束")
-    int TCP_STATUS_WAIT_END = 99;
+    int TCP_STATUS_END = 99;
 
     /**
      * 借款
@@ -145,4 +151,40 @@ public interface TcpConstanst
      */
     @Defined(key = "tcpPool", value = "共享池")
     int TCP_POOL_POOL = 1;
+
+    /**
+     * 差旅费申请及借款
+     */
+    @Defined(key = "tcpApplyType", value = "差旅费申请及借款")
+    int TCP_APPLYTYPE_TRAVEL = 0;
+
+    /**
+     * 业务招待费申请及借款
+     */
+    @Defined(key = "tcpApplyType", value = "业务招待费申请及借款")
+    int TCP_APPLYTYPE_ENTERTAIN = 1;
+
+    /**
+     * 日常办公和固定资产采购申请及借
+     */
+    @Defined(key = "tcpApplyType", value = "日常办公和固定资产采购申请及借款")
+    int TCP_APPLYTYPE_STOCK = 2;
+
+    /**
+     * 对公业务申请及借款
+     */
+    @Defined(key = "tcpApplyType", value = "对公业务申请及借款")
+    int TCP_APPLYTYPE_PUBLIC = 3;
+
+    /**
+     * 未关联报销
+     */
+    @Defined(key = "tcpApplyFeedback", value = "未关联报销")
+    int TCP_APPLY_FEEDBACK_NO = 0;
+
+    /**
+     * 已关联报销
+     */
+    @Defined(key = "tcpApplyFeedback", value = "已关联报销")
+    int TCP_APPLY_FEEDBACK_YES = 1;
 }

@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="差旅费申请" guid="true"/>
+<p:link title="业务招待费申请" guid="true"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
@@ -34,17 +34,17 @@ function processBean(opr)
     
     if ("0" == opr)
     {
-        msg = '确定通过差旅费申请?';
+        msg = '确定通过业务招待费申请?';
     }
     
     if ("1" == opr)
     {
-        msg = '确定驳回到差旅费申请到初始?';
+        msg = '确定驳回到业务招待费申请到初始?';
     }
     
     if ("2" == opr)
     {
-        msg = '确定驳回到差旅费申请到上一步?';
+        msg = '确定驳回到业务招待费申请到上一步?';
     }
     
     if ($O('processer'))
@@ -162,7 +162,7 @@ function checkMoney()
 
 <p:navigation height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
-        onclick="javascript:history.go(-1)">待我处理</span> &gt;&gt; 差旅费申请处理</td>
+        onclick="javascript:history.go(-1)">待我处理</span> &gt;&gt; 业务招待费申请处理</td>
     <td width="85"></td>
 </p:navigation> <br>
 
@@ -170,7 +170,7 @@ function checkMoney()
 
 	<p:title>
 		<td class="caption">
-		 <strong>出差申请及借款-${my:get('tcpStatus', bean.status)}</strong>
+		 <strong>业务招待申请及借款-${my:get('tcpStatus', bean.status)}</strong>
 		</td>
 	</p:title>
 
@@ -186,6 +186,7 @@ function checkMoney()
             </p:cell>
             
             <p:pro field="id" cell="0"/>
+            
 
             <p:pro field="stafferId" value="${g_stafferBean.name}"/>
             <p:pro field="departmentId" value="${g_stafferBean.principalshipName}"/>
@@ -196,11 +197,16 @@ function checkMoney()
                 <p:option type="tcpStatus"></p:option>
             </p:pro>
             
-            <p:pro field="beginDate"/>
-            <p:pro field="endDate"/>
+            <p:pro field="beginDate" cell="0"/>
             
-            <p:pro field="srcCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
-            <p:pro field="destCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
+            <p:pro field="unitName" cell="0" innerString="size=60"/>
+            <p:pro field="address" cell="0" innerString="size=60"/>
+            
+            <p:pro field="customerNames" cell="0" innerString="rows=4 cols=55"/>
+            
+            <p:pro field="aroundNames" cell="0" innerString="size=60"/>
+            
+            <p:pro field="companyStafferNames" cell="0" innerString="size=60"/>
             
             <p:pro field="borrow" cell="0" innerString="onchange='borrowChange()'">
                 <p:option type="travelApplyBorrow"></p:option>
@@ -218,8 +224,7 @@ function checkMoney()
             <br>
             </c:forEach>
             </p:cell>
-            
-    
+
             
             <p:cell title="处理人" width="8" end="true">
             ${bean.processer}
@@ -240,36 +245,9 @@ function checkMoney()
         </p:table>
 	</p:subBody>
 	
-	<p:title>
-        <td class="caption">
-         <strong>差旅费明细</strong>
-        </td>
-    </p:title>
-
-    <p:line flag="0" />
-
-    <p:subBody width="98%">
-    
-        <p:table cells="2" id="traTable">
-
-            <p:pro field="showAirplaneCharges"/>
-            <p:pro field="showTrainCharges"/>
-            
-            <p:pro field="showBusCharges"/>
-            <p:pro field="showHotelCharges"/>
-            
-            <p:pro field="showEntertainCharges"/>
-            <p:pro field="showAllowanceCharges"/>
-            
-            <p:pro field="showOther1Charges"/>
-            <p:pro field="showOther2Charges"/>
-
-        </p:table>
-    </p:subBody>
-	
     <p:title>
         <td class="caption">
-         <strong>其他申请费用明细(包含差旅费)</strong>
+         <strong>业务招待费明细</strong>
         </td>
     </p:title>
 

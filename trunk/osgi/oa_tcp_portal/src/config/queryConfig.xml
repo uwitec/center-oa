@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<query>
+<query namespace="tcp">
+    <item name="queryTcpPoolApprove" alias="queryTcpSelfApprove"/>
     
     <item name="querySelfTravelApply" deaultpfix="TravelApplyBean">
         <condtion name="alogTime" filed="logTime" caption="日期从">
@@ -9,6 +10,10 @@
         <condtion name="blogTime" filed="logTime" caption="到">
             <opr>&lt;=</opr>
             <type>date</type>
+        </condtion>
+        <condtion name="id" caption="标识(A)">
+            <opr>=</opr>
+            <type>text</type>
         </condtion>
         <condtion name="name" caption="目的">
             <opr>like</opr>
@@ -28,7 +33,7 @@
         </condtion>
     </item>
     
-    <item name="querySelfApprove" deaultpfix="TcpApproveBean">
+    <item name="queryTcpSelfApprove" deaultpfix="TcpApproveBean">
         <condtion name="alogTime" filed="logTime" caption="日期从">
             <opr>&gt;=</opr>
             <type>date</type>
@@ -55,7 +60,7 @@
             <opr>=</opr>
             <datatype>1</datatype>
             <type>select</type>
-            <option>$tcpType</option>
+            <option>$tcpApplyType</option>
         </condtion>
          <condtion name="applyerId" filed="name" caption="申请人" pfix="APPLYER">
              <opr>like</opr>
@@ -63,6 +68,33 @@
         </condtion>
     </item>
     
-    <item name="queryPoolApprove" alias="querySelfApprove"/>
+    <item name="queryTcpHis" deaultpfix="TcpHandleHisBean">
+        <condtion name="alogTime" filed="logTime" caption="日期从">
+            <opr>&gt;=</opr>
+            <type>date</type>
+        </condtion>
+        <condtion name="blogTime" filed="logTime" caption="到">
+            <opr>&lt;=</opr>
+            <type>date</type>
+        </condtion>
+        <condtion name="refId" caption="标识(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="name" caption="目的">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="type" caption="类型">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$tcpApplyType</option>
+        </condtion>
+        <condtion name="applyId" filed="name" caption="申请人" pfix="SB2">
+             <opr>like</opr>
+            <type>text</type>
+        </condtion>
+    </item>
     
 </query>

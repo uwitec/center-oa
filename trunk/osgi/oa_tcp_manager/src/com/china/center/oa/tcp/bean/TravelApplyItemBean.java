@@ -20,7 +20,7 @@ import com.china.center.oa.budget.bean.FeeItemBean;
 
 
 /**
- * 差旅费申请项
+ * 费用申请项
  * 
  * @author ZHUZHU
  * @version 2011-7-10
@@ -45,6 +45,19 @@ public class TravelApplyItemBean implements Serializable
     private String feeItemId = "";
 
     private long moneys = 0L;
+
+    private String purpose = "";
+
+    /**
+     * 采购的产品名称
+     */
+    private String productName = "";
+
+    private int amount = 0;
+
+    private long prices = 0L;
+
+    private long checkPrices = 0L;
 
     private String description = "";
 
@@ -175,6 +188,91 @@ public class TravelApplyItemBean implements Serializable
     }
 
     /**
+     * @return the productName
+     */
+    public String getProductName()
+    {
+        return productName;
+    }
+
+    /**
+     * @param productName
+     *            the productName to set
+     */
+    public void setProductName(String productName)
+    {
+        this.productName = productName;
+    }
+
+    /**
+     * @return the purpose
+     */
+    public String getPurpose()
+    {
+        return purpose;
+    }
+
+    /**
+     * @param purpose
+     *            the purpose to set
+     */
+    public void setPurpose(String purpose)
+    {
+        this.purpose = purpose;
+    }
+
+    /**
+     * @return the amount
+     */
+    public int getAmount()
+    {
+        return amount;
+    }
+
+    /**
+     * @param amount
+     *            the amount to set
+     */
+    public void setAmount(int amount)
+    {
+        this.amount = amount;
+    }
+
+    /**
+     * @return the prices
+     */
+    public long getPrices()
+    {
+        return prices;
+    }
+
+    /**
+     * @param prices
+     *            the prices to set
+     */
+    public void setPrices(long prices)
+    {
+        this.prices = prices;
+    }
+
+    /**
+     * @return the checkPrices
+     */
+    public long getCheckPrices()
+    {
+        return checkPrices;
+    }
+
+    /**
+     * @param checkPrices
+     *            the checkPrices to set
+     */
+    public void setCheckPrices(long checkPrices)
+    {
+        this.checkPrices = checkPrices;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -201,11 +299,26 @@ public class TravelApplyItemBean implements Serializable
             .append("endDate = ")
             .append(this.endDate)
             .append(TAB)
+            .append("productName = ")
+            .append(this.productName)
+            .append(TAB)
             .append("feeItemId = ")
             .append(this.feeItemId)
             .append(TAB)
             .append("moneys = ")
             .append(this.moneys)
+            .append(TAB)
+            .append("purpose = ")
+            .append(this.purpose)
+            .append(TAB)
+            .append("amount = ")
+            .append(this.amount)
+            .append(TAB)
+            .append("prices = ")
+            .append(this.prices)
+            .append(TAB)
+            .append("checkPrices = ")
+            .append(this.checkPrices)
             .append(TAB)
             .append("description = ")
             .append(this.description)

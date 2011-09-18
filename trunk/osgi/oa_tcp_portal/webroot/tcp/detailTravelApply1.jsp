@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="差旅费申请" guid="true"/>
+<p:link title="业务招待费申请" guid="true"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="javascript">
@@ -22,7 +22,7 @@ function load()
 <input type="hidden" name="departmentId" value="${g_stafferBean.principalshipId}"> 
 
 <p:navigation height="22">
-	<td width="550" class="navigation">差旅费申请明细</td>
+	<td width="550" class="navigation">业务招待费申请明细</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -30,7 +30,7 @@ function load()
 
 	<p:title>
 		<td class="caption">
-		 <strong>出差申请及借款</strong>
+		 <strong>业务招待信息</strong>
 		</td>
 	</p:title>
 
@@ -52,15 +52,20 @@ function load()
             
             <p:pro field="name"/>
             
-             <p:pro field="status">
+            <p:pro field="status">
                 <p:option type="tcpStatus"></p:option>
             </p:pro>
             
-            <p:pro field="beginDate"/>
-            <p:pro field="endDate"/>
+            <p:pro field="beginDate" cell="0"/>
             
-            <p:pro field="srcCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
-            <p:pro field="destCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
+            <p:pro field="unitName" cell="0" innerString="size=60"/>
+            <p:pro field="address" cell="0" innerString="size=60"/>
+            
+            <p:pro field="customerNames" cell="0" innerString="rows=4 cols=55"/>
+            
+            <p:pro field="aroundNames" cell="0" innerString="size=60"/>
+            
+            <p:pro field="companyStafferNames" cell="0" innerString="size=60"/>
             
             <p:pro field="borrow" cell="0" innerString="onchange='borrowChange()'">
                 <p:option type="travelApplyBorrow"></p:option>
@@ -98,36 +103,10 @@ function load()
         </p:table>
 	</p:subBody>
 	
-	<p:title>
-        <td class="caption">
-         <strong>差旅费明细</strong>
-        </td>
-    </p:title>
-
-    <p:line flag="0" />
-
-    <p:subBody width="98%">
-    
-        <p:table cells="2" id="traTable">
-
-            <p:pro field="showAirplaneCharges"/>
-            <p:pro field="showTrainCharges"/>
-            
-            <p:pro field="showBusCharges"/>
-            <p:pro field="showHotelCharges"/>
-            
-            <p:pro field="showEntertainCharges"/>
-            <p:pro field="showAllowanceCharges"/>
-            
-            <p:pro field="showOther1Charges"/>
-            <p:pro field="showOther2Charges"/>
-
-        </p:table>
-    </p:subBody>
-	
+		
     <p:title>
         <td class="caption">
-         <strong>其他申请费用明细(包含差旅费)</strong>
+         <strong>申请费用明细</strong>
         </td>
     </p:title>
 

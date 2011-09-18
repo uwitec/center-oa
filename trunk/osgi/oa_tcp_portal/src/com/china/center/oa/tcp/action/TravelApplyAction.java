@@ -67,6 +67,7 @@ import com.china.center.oa.tcp.constanst.TcpFlowConstant;
 import com.china.center.oa.tcp.dao.TcpApplyDAO;
 import com.china.center.oa.tcp.dao.TcpApproveDAO;
 import com.china.center.oa.tcp.dao.TcpFlowDAO;
+import com.china.center.oa.tcp.dao.TcpHandleHisDAO;
 import com.china.center.oa.tcp.dao.TcpPrepaymentDAO;
 import com.china.center.oa.tcp.dao.TcpShareDAO;
 import com.china.center.oa.tcp.dao.TravelApplyDAO;
@@ -76,6 +77,7 @@ import com.china.center.oa.tcp.helper.TCPHelper;
 import com.china.center.oa.tcp.manager.TcpFlowManager;
 import com.china.center.oa.tcp.manager.TravelApplyManager;
 import com.china.center.oa.tcp.vo.TcpApproveVO;
+import com.china.center.oa.tcp.vo.TcpHandleHisVO;
 import com.china.center.oa.tcp.vo.TravelApplyItemVO;
 import com.china.center.oa.tcp.vo.TravelApplyVO;
 import com.china.center.oa.tcp.wrap.TcpParamWrap;
@@ -127,17 +129,21 @@ public class TravelApplyAction extends DispatchAction
 
     private FlowLogDAO flowLogDAO = null;
 
+    private TcpHandleHisDAO tcpHandleHisDAO = null;
+
     private OutBillDAO outBillDAO = null;
 
     private FinanceDAO financeDAO = null;
 
     private AttachmentDAO attachmentDAO = null;
 
-    private static String QUERYSELFTRAVELAPPLY = "querySelfTravelApply";
+    private static String QUERYSELFTRAVELAPPLY = "tcp.querySelfTravelApply";
 
-    private static String QUERYSELFAPPROVE = "querySelfApprove";
+    private static String QUERYSELFAPPROVE = "tcp.querySelfApprove";
 
-    private static String QUERYPOOLAPPROVE = "queryPoolApprove";
+    private static String QUERYPOOLAPPROVE = "tcp.queryPoolApprove";
+
+    private static String QUERYTCPHIS = "tcp.queryTcpHis";
 
     /**
      * default constructor
@@ -246,6 +252,46 @@ public class TravelApplyAction extends DispatchAction
     }
 
     /**
+     * queryTcpHis
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryTcpHis(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        User user = Helper.getUser(request);
+
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        String cacheKey = QUERYTCPHIS;
+
+        ActionTools.processJSONQueryCondition(cacheKey, request, condtion);
+
+        condtion.addCondition("TcpHandleHisBean.stafferId", "=", user.getStafferId());
+
+        condtion.addCondition("order by TcpHandleHisBean.logTime desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion,
+            this.tcpHandleHisDAO, new HandleResult<TcpHandleHisVO>()
+            {
+                public void handle(TcpHandleHisVO vo)
+                {
+                    vo.setUrl(TcpConstanst.TCP_TRAVELAPPLY_DETAIL_URL + vo.getRefId());
+                }
+            });
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
      * 查询待我处理的
      * 
      * @param mapping
@@ -316,16 +362,22 @@ public class TravelApplyAction extends DispatchAction
      */
     private void prepareInner(HttpServletRequest request)
     {
+        String type = request.getParameter("type");
+
         List<FeeItemVO> feeItemList = feeItemDAO.listEntityVOs();
 
-        for (Iterator iterator = feeItemList.iterator(); iterator.hasNext();)
+        // 只有出差的特殊处理
+        if ("0".equals(type))
         {
-            FeeItemVO feeItemVO = (FeeItemVO)iterator.next();
-
-            if (feeItemVO.getId().equals(BudgetConstant.FEE_ITEM_TRAVELLING))
+            for (Iterator iterator = feeItemList.iterator(); iterator.hasNext();)
             {
-                iterator.remove();
-                break;
+                FeeItemVO feeItemVO = (FeeItemVO)iterator.next();
+
+                if (feeItemVO.getId().equals(BudgetConstant.FEE_ITEM_TRAVELLING))
+                {
+                    iterator.remove();
+                    break;
+                }
             }
         }
 
@@ -430,15 +482,19 @@ public class TravelApplyAction extends DispatchAction
 
             List<TravelApplyItemVO> itemVOList = bean.getItemVOList();
 
-            for (Iterator iterator = itemVOList.iterator(); iterator.hasNext();)
+            // 出差特殊处理屏蔽差旅费
+            if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_TRAVEL)
             {
-                TravelApplyItemVO travelApplyItemVO = (TravelApplyItemVO)iterator.next();
-
-                if (travelApplyItemVO.getFeeItemId().equals(BudgetConstant.FEE_ITEM_TRAVELLING))
+                for (Iterator iterator = itemVOList.iterator(); iterator.hasNext();)
                 {
-                    iterator.remove();
+                    TravelApplyItemVO travelApplyItemVO = (TravelApplyItemVO)iterator.next();
 
-                    break;
+                    if (travelApplyItemVO.getFeeItemId().equals(BudgetConstant.FEE_ITEM_TRAVELLING))
+                    {
+                        iterator.remove();
+
+                        break;
+                    }
                 }
             }
 
@@ -579,7 +635,7 @@ public class TravelApplyAction extends DispatchAction
 
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "增加失败:附件超过10M");
 
-            return mapping.findForward("querySelfTravelApply");
+            return mapping.findForward("error");
         }
         catch (Exception e)
         {
@@ -587,7 +643,7 @@ public class TravelApplyAction extends DispatchAction
 
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "增加失败");
 
-            return mapping.findForward("querySelfTravelApply");
+            return mapping.findForward("error");
         }
 
         BeanUtil.getBean(bean, rds.getParmterMap());
@@ -598,7 +654,11 @@ public class TravelApplyAction extends DispatchAction
 
         String processId = rds.getParameter("processId");
 
-        changeTravel(bean, rds);
+        // 出差申请的特殊处理
+        if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_TRAVEL)
+        {
+            changeTravel(bean, rds);
+        }
 
         ActionForward afor = parserAttachment(mapping, request, rds, bean);
 
@@ -627,7 +687,7 @@ public class TravelApplyAction extends DispatchAction
                 travelApplyManager.updateTravelApplyBean(user, bean);
             }
 
-            request.setAttribute(KeyConstant.MESSAGE, "成功保存出差申请");
+            request.setAttribute(KeyConstant.MESSAGE, "成功保存费用申请");
 
             // 提交
             if ("1".equals(oprType))
@@ -635,13 +695,13 @@ public class TravelApplyAction extends DispatchAction
                 travelApplyManager.submitTravelApplyBean(user, bean.getId(), processId);
             }
 
-            request.setAttribute(KeyConstant.MESSAGE, "成功提交出差申请");
+            request.setAttribute(KeyConstant.MESSAGE, "成功提交费用申请");
         }
         catch (MYException e)
         {
             _logger.warn(e, e);
 
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作出差申请失败:" + e.getMessage());
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作费用申请失败:" + e.getMessage());
         }
 
         return mapping.findForward("querySelfTravelApply" + bean.getType());
@@ -699,7 +759,7 @@ public class TravelApplyAction extends DispatchAction
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理出差申请失败:" + e.getMessage());
         }
 
-        return mapping.findForward(QUERYSELFAPPROVE);
+        return mapping.findForward("querySelfApprove");
     }
 
     /**
@@ -885,6 +945,9 @@ public class TravelApplyAction extends DispatchAction
 
         // i_beginDate
         List<String> beginDateList = rds.getParameters("i_beginDate");
+        List<String> productNameList = rds.getParameters("i_productName");
+        List<String> amountList = rds.getParameters("i_amount");
+        List<String> pricesList = rds.getParameters("i_prices");
         List<String> endDateList = rds.getParameters("i_endDate");
         List<String> feeItemList = rds.getParameters("i_feeItem");
         List<String> moneysList = rds.getParameters("i_moneys");
@@ -903,15 +966,39 @@ public class TravelApplyAction extends DispatchAction
                 }
 
                 // 过滤差旅费
-                if (BudgetConstant.FEE_ITEM_TRAVELLING.equals(each))
+                if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_TRAVEL
+                    && BudgetConstant.FEE_ITEM_TRAVELLING.equals(each))
                 {
                     continue;
                 }
 
                 TravelApplyItemBean item = new TravelApplyItemBean();
 
-                item.setBeginDate(beginDateList.get(i));
-                item.setEndDate(endDateList.get(i));
+                if (beginDateList != null && beginDateList.size() > 0)
+                {
+                    item.setBeginDate(beginDateList.get(i));
+                }
+
+                if (endDateList != null && endDateList.size() > 0)
+                {
+                    item.setEndDate(endDateList.get(i));
+                }
+
+                if (productNameList != null && productNameList.size() > 0)
+                {
+                    item.setProductName(productNameList.get(i));
+                }
+
+                if (amountList != null && amountList.size() > 0)
+                {
+                    item.setAmount(MathTools.parseInt(amountList.get(i)));
+                }
+
+                if (pricesList != null && pricesList.size() > 0)
+                {
+                    item.setPrices(MathTools.doubleToLong2(pricesList.get(i)));
+                }
+
                 item.setFeeItemId(feeItemList.get(i));
                 item.setMoneys(TCPHelper.doubleToLong2(moneysList.get(i)));
                 item.setDescription(descriptionList.get(i));
@@ -920,16 +1007,21 @@ public class TravelApplyAction extends DispatchAction
             }
         }
 
-        // 自动组装差旅费
-        TravelApplyItemBean travelItem = new TravelApplyItemBean();
-        travelItem.setBeginDate(bean.getBeginDate());
-        travelItem.setEndDate(bean.getEndDate());
-        travelItem.setFeeItemId(BudgetConstant.FEE_ITEM_TRAVELLING);
-        travelItem.setMoneys(getTravelItemTotal(bean));
-        travelItem.setDescription("系统自动组装的差旅费");
+        // 特殊处理
+        if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_TRAVEL)
+        {
+            // 自动组装差旅费
+            TravelApplyItemBean travelItem = new TravelApplyItemBean();
+            travelItem.setBeginDate(bean.getBeginDate());
+            travelItem.setEndDate(bean.getEndDate());
+            travelItem.setFeeItemId(BudgetConstant.FEE_ITEM_TRAVELLING);
+            travelItem.setMoneys(getTravelItemTotal(bean));
+            travelItem.setDescription("系统自动组装的差旅费");
 
-        itemList.add(0, travelItem);
+            itemList.add(0, travelItem);
+        }
 
+        // 总费用
         long total = 0L;
 
         for (TravelApplyItemBean each : itemList)
@@ -938,6 +1030,12 @@ public class TravelApplyAction extends DispatchAction
         }
 
         bean.setTotal(total);
+
+        // 采购默认全部借款
+        if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_STOCK)
+        {
+            bean.setBorrowTotal(bean.getTotal());
+        }
 
         List<TravelApplyPayBean> payList = new ArrayList<TravelApplyPayBean>();
 
@@ -953,35 +1051,39 @@ public class TravelApplyAction extends DispatchAction
             List<String> pmoneysList = rds.getParameters("p_moneys");
             List<String> pdescriptionList = rds.getParameters("p_description");
 
-            for (int i = 0; i < receiveTypeList.size(); i++ )
+            if (receiveTypeList != null && receiveTypeList.size() > 0)
             {
-                String each = receiveTypeList.get(i);
 
-                if (StringTools.isNullOrNone(each))
+                for (int i = 0; i < receiveTypeList.size(); i++ )
                 {
-                    continue;
+                    String each = receiveTypeList.get(i);
+
+                    if (StringTools.isNullOrNone(each))
+                    {
+                        continue;
+                    }
+
+                    TravelApplyPayBean pay = new TravelApplyPayBean();
+
+                    pay.setReceiveType(MathTools.parseInt(receiveTypeList.get(i)));
+                    pay.setBankName(bankList.get(i));
+                    pay.setUserName(userNameList.get(i));
+                    pay.setBankNo(bankNoList.get(i));
+                    pay.setMoneys(TCPHelper.doubleToLong2(pmoneysList.get(i)));
+                    pay.setDescription(pdescriptionList.get(i));
+
+                    payList.add(pay);
                 }
 
-                TravelApplyPayBean pay = new TravelApplyPayBean();
+                long paytotal = 0L;
 
-                pay.setReceiveType(MathTools.parseInt(receiveTypeList.get(i)));
-                pay.setBankName(bankList.get(i));
-                pay.setUserName(userNameList.get(i));
-                pay.setBankNo(bankNoList.get(i));
-                pay.setMoneys(TCPHelper.doubleToLong2(pmoneysList.get(i)));
-                pay.setDescription(pdescriptionList.get(i));
+                for (TravelApplyPayBean each : payList)
+                {
+                    paytotal += each.getMoneys();
+                }
 
-                payList.add(pay);
+                bean.setBorrowTotal(paytotal);
             }
-
-            long paytotal = 0L;
-
-            for (TravelApplyPayBean each : payList)
-            {
-                paytotal += each.getMoneys();
-            }
-
-            bean.setBorrowTotal(paytotal);
         }
 
         // 费用分担
@@ -1012,7 +1114,6 @@ public class TravelApplyAction extends DispatchAction
 
             shareList.add(share);
         }
-
     }
 
     /**
@@ -1414,6 +1515,23 @@ public class TravelApplyAction extends DispatchAction
     public void setFinanceDAO(FinanceDAO financeDAO)
     {
         this.financeDAO = financeDAO;
+    }
+
+    /**
+     * @return the tcpHandleHisDAO
+     */
+    public TcpHandleHisDAO getTcpHandleHisDAO()
+    {
+        return tcpHandleHisDAO;
+    }
+
+    /**
+     * @param tcpHandleHisDAO
+     *            the tcpHandleHisDAO to set
+     */
+    public void setTcpHandleHisDAO(TcpHandleHisDAO tcpHandleHisDAO)
+    {
+        this.tcpHandleHisDAO = tcpHandleHisDAO;
     }
 
 }

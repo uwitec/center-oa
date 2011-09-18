@@ -31,4 +31,6 @@
 
 	<osgi:service ref="tcpFlowManager" interface="com.china.center.oa.tcp.manager.TcpFlowManager" />
 
+	<osgi:service ref="tcpHandleHisDAO" interface="com.china.center.oa.tcp.dao.TcpHandleHisDAO" />
+
 </beans>

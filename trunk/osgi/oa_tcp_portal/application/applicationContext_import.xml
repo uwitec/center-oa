@@ -81,4 +81,6 @@
     <osgi:reference id="outBillDAO" interface="com.china.center.oa.finance.dao.OutBillDAO" />
     
     <osgi:reference id="financeDAO" interface="com.china.center.oa.tax.dao.FinanceDAO" />
+    
+    <osgi:reference id="tcpHandleHisDAO" interface="com.china.center.oa.tcp.dao.TcpHandleHisDAO" />
 </beans>
