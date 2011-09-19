@@ -285,11 +285,11 @@ public class ConsignAction extends DispatchAction
 
             String old = TimeTools.getStringByFormat(new Date(cal.getTimeInMillis()), "yyyy-MM-dd");
 
-            condition.addCondition("outTime", ">=", old);
+            condition.addCondition("managerTime", ">=", old);
 
             request.setAttribute("beginDate", old);
 
-            condition.addCondition("outTime", "<=", now);
+            condition.addCondition("managerTime", "<=", now);
 
             request.setAttribute("endDate", now);
         }
@@ -299,14 +299,14 @@ public class ConsignAction extends DispatchAction
 
             if ( !StringTools.isNullOrNone(beginDate))
             {
-                condition.addCondition("outTime", ">=", beginDate);
+                condition.addCondition("managerTime", ">=", beginDate);
             }
 
             String endDate = request.getParameter("endDate");
 
             if ( !StringTools.isNullOrNone(endDate))
             {
-                condition.addCondition("outTime", "<=", endDate);
+                condition.addCondition("managerTime", "<=", endDate);
             }
 
             String abeginDate = request.getParameter("abeginDate");

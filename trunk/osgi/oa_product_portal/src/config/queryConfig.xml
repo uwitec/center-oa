@@ -169,6 +169,10 @@
 			<opr>like</opr>
 			<type>text</type>
 		</condtion>
+		<condtion name="stafferName" filed="name" caption="职员" pfix="StafferBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
 		<condtion name="type" caption="类型" pfix="DepotpartBean">
 			<opr>=</opr>
 			<datatype>1</datatype>
@@ -193,6 +197,10 @@
             <type>text</type>
         </condtion>
         <condtion name="sname" filed="name" caption="储位" pfix="StorageBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="stafferName" filed="name" caption="职员" pfix="StafferBean">
             <opr>like</opr>
             <type>text</type>
         </condtion>

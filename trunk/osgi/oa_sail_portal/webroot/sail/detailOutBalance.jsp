@@ -18,7 +18,17 @@
 <script language="javascript">
 function load()
 {
-    $detail($O('viewTable'), ['ba']);
+    $detail($O('viewTable'), ['ba', 'pr']);
+}
+
+function pagePrint()
+{
+    $O('ba').style.display = 'none';
+    $O('pr').style.display = 'none';
+    window.print();
+
+    $O('pr').style.display = 'inline';
+    $O('ba').style.display = 'inline';
 }
 
 function addBean()
@@ -59,11 +69,13 @@ function centerCheck()
 <input type="hidden" value="" name="method"> 
     <input type="hidden" value="${bean.id}" name="id">
     <input type="hidden" value="" name="reason">
+<div id="na">
 <p:navigation
     height="22">
     <td width="550" class="navigation">结算清单详细</td>
     <td width="85"></td>
 </p:navigation> <br>
+</div>
 
 <table width="95%" border="0" cellpadding="0" cellspacing="0" id="viewTable"
 	align="center">
@@ -218,6 +230,10 @@ function centerCheck()
             onclick="centerCheck()"
             value="&nbsp;&nbsp;总部核对&nbsp;&nbsp;">&nbsp;&nbsp;
         </c:if>
+        
+        <input type="button" name="pr"
+            class="button_class" onclick="pagePrint()"
+            value="&nbsp;&nbsp;打 印&nbsp;&nbsp;">&nbsp;&nbsp;
         
     <input
             type="button" name="ba" class="button_class"

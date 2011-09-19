@@ -56,11 +56,11 @@ function exports()
 	<p:subBody width="98%">
 		<table width="100%" align="center" cellspacing='1' class="table0">
 			<tr class="content1">
-				<td width="15%" align="center">(单据)开始时间</td>
+				<td width="15%" align="center">库管审批时间从</td>
 				<td align="left">
 				<p:plugin name="beginDate" size="20" value="${beginDate}"/>
 				</td>
-				<td width="15%" align="center">(单据)结束时间</td>
+				<td width="15%" align="center">到</td>
 				<td align="left">
 				<p:plugin name="endDate" size="20" value="${endDate}"/>
 				</td>
@@ -148,7 +148,7 @@ function exports()
                         >
                     ${item.gid}</a></td>
                     <td align="center" onclick="hrefAndSelect(this)">${item.outTime}</td>
-                    <td align="center" onclick="hrefAndSelect(this)">${item.fullId}</td>
+                    <td align="center" onclick="hrefAndSelect(this)"><a href="../sail/out.do?method=findOut&radioIndex=0&fow=99&outId=${item.fullId}">${item.fullId}</a></td>
                     <td align="center" onclick="hrefAndSelect(this)">${my:get('consignStatus', item.currentStatus)}</td>
                     
                     <td align="center" onclick="hrefAndSelect(this)">${my:get('consignReprotType', item.reprotType)}</td>
