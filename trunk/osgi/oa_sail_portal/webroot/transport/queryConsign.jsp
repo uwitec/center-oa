@@ -58,36 +58,36 @@ function exports()
 			<tr class="content1">
 				<td width="15%" align="center">库管审批时间从</td>
 				<td align="left">
-				<p:plugin name="beginDate" size="20" value="${beginDate}"/>
+				<p:plugin name="beginDate" size="20" value="${g_queryConsign_pmap.beginDate}"/>
 				</td>
 				<td width="15%" align="center">到</td>
 				<td align="left">
-				<p:plugin name="endDate" size="20" value="${endDate}"/>
+				<p:plugin name="endDate" size="20" value="${g_queryConsign_pmap.endDate}"/>
 				</td>
 			</tr>
 			
 			<tr class="content2">
 				<td width="15%" align="center">(到货)开始时间</td>
 				<td align="left">
-				<p:plugin name="abeginDate" size="20" value="${abeginDate}"/>
+				<p:plugin name="abeginDate" size="20" value="${g_queryConsign_pmap.abeginDate}"/>
 				</td>
 				<td width="15%" align="center">(到货)结束时间</td>
 				<td align="left">
-				<p:plugin name="aendDate" size="20" value="${aendDate}"/>
+				<p:plugin name="aendDate" size="20" value="${g_queryConsign_pmap.aendDate}"/>
 				</td>
 			</tr>
 
 			<tr class="content1">
 				<td width="15%" align="center">货单状态:</td>
 				<td align="left"><select name="currentStatus"
-					class="select_class" values="${currentStatus}">
+					class="select_class" values="${g_queryConsign_pmap.currentStatus}">
 					<option value="">--</option>
 					<option value="1">初始</option>
 					<option value="2">通过</option>
 				</select></td>
 				<td width="15%" align="center">回复类型:</td>
 				<td align="left"><select name="reprotType" class="select_class"
-					values="${reprotType}">
+					values="${g_queryConsign_pmap.reprotType}">
 					<option value="">--</option>
 					<option value="0">无回复</option>
 					<option value="1">正常收货</option>
@@ -98,7 +98,7 @@ function exports()
 			<tr class="content2">
 				<td width="15%" align="center">单号：</td>
 				<td align="left">
-				<input name="fullId" size="20" value="${fullId}"  />
+				<input name="fullId" size="20" value="${g_queryConsign_pmap.fullId}"  />
 				</td>
 				<td width="15%" align="center"></td>
 				<td align="left">

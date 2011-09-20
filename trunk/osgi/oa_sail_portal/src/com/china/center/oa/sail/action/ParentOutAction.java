@@ -2304,6 +2304,8 @@ public class ParentOutAction extends DispatchAction
 
             request.setAttribute("queryType", "5");
 
+            request.setAttribute("holdCondition", "1");
+
             request.setAttribute(KeyConstant.MESSAGE, "成功确认单据:" + fullId);
 
             return queryBuy(mapping, form, request, reponse);
@@ -4111,17 +4113,14 @@ public class ParentOutAction extends DispatchAction
         // 事业部经理领样退库/销售退库
         else if ("9".equals(queryType))
         {
-            if (OldPageSeparateTools.isMenuLoad(request))
-            {
-                condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_SAVE);
+            condtion.addIntCondition("OutBean.status", "=", OutConstant.STATUS_SAVE);
 
-                request.setAttribute("status", OutConstant.STATUS_SAVE);
+            request.setAttribute("status", OutConstant.STATUS_SAVE);
 
-                queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_SAVE));
+            queryOutCondtionMap.put("status", String.valueOf(OutConstant.STATUS_SAVE));
 
-                // 领样退库/销售退库
-                condtion.addCondition("and OutBean.outType in (4, 5)");
-            }
+            // 领样退库/销售退库
+            condtion.addCondition("and OutBean.outType in (4, 5)");
 
             condtion.addCondition("and OutBean.industryId in " + getAllIndustryId(staffer));
         }

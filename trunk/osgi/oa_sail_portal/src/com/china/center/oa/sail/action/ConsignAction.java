@@ -219,9 +219,7 @@ public class ConsignAction extends DispatchAction
     {
         CommonTools.saveParamers(request);
 
-        ConditionParse condition = new ConditionParse();
-
-        setCondition(request, condition);
+        ConditionParse condition = setCondition(request);
 
         List<ConsignBean> list = consignDAO.queryConsignByCondition(condition);
 
@@ -265,8 +263,10 @@ public class ConsignAction extends DispatchAction
      * @param request
      * @param condition
      */
-    private void setCondition(HttpServletRequest request, ConditionParse condition)
+    private ConditionParse setCondition(HttpServletRequest request)
     {
+        ConditionParse condition = new ConditionParse();
+
         String init = request.getParameter("load");
 
         if (StringTools.isNullOrNone(init))
@@ -281,7 +281,7 @@ public class ConsignAction extends DispatchAction
 
             cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) - 7);
 
-            String now = TimeTools.getStringByFormat(new Date(), "yyyy-MM-dd");
+            String now = TimeTools.now_short();
 
             String old = TimeTools.getStringByFormat(new Date(cal.getTimeInMillis()), "yyyy-MM-dd");
 
@@ -292,6 +292,18 @@ public class ConsignAction extends DispatchAction
             condition.addCondition("managerTime", "<=", now);
 
             request.setAttribute("endDate", now);
+
+            Map<String, String> pmap = CommonTools.saveParamersToMap(request);
+
+            pmap.put("beginDate", old);
+
+            pmap.put("endDate", now);
+
+            request.getSession().setAttribute("g_queryConsign_pmap", pmap);
+        }
+        else if ("2".equals(init))
+        {
+            return (ConditionParse)request.getSession().getAttribute("g_queryConsign_condition");
         }
         else
         {
@@ -322,6 +334,10 @@ public class ConsignAction extends DispatchAction
             {
                 condition.addCondition("arriveDate", "<=", aendDate);
             }
+
+            Map<String, String> pmap = CommonTools.saveParamersToMap(request);
+
+            request.getSession().setAttribute("g_queryConsign_pmap", pmap);
         }
 
         String currentStatus = request.getParameter("currentStatus");
@@ -348,6 +364,8 @@ public class ConsignAction extends DispatchAction
         condition.addCondition("order by t2.arriveDate desc");
 
         request.getSession().setAttribute("g_queryConsign_condition", condition);
+
+        return condition;
     }
 
     /**
@@ -638,7 +656,7 @@ public class ConsignAction extends DispatchAction
 
         CommonTools.removeParamers(request);
 
-        request.setAttribute("load", "1");
+        request.setAttribute("load", "2");
 
         return queryConsign(mapping, form, request, reponse);
     }
@@ -678,7 +696,7 @@ public class ConsignAction extends DispatchAction
 
         CommonTools.removeParamers(request);
 
-        request.setAttribute("load", "1");
+        request.setAttribute("load", "2");
 
         return queryConsign(mapping, form, request, reponse);
     }
