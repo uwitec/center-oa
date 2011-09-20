@@ -116,7 +116,7 @@ function exports()
 	</p:subBody>
 
 	<p:title>
-		<td class="caption"><strong>发货单列表：</strong></td>
+		<td class="caption"><strong>发货单列表：(最多返回500条)</strong></td>
 	</p:title>
 
 	<p:line flag="0" />
