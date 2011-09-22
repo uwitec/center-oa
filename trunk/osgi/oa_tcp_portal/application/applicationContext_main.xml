@@ -31,5 +31,8 @@
 
 	<bean name="/tcp/apply"
 		class="com.china.center.oa.tcp.action.TravelApplyAction" />
+		
+	<bean name="/tcp/expense"
+        class="com.china.center.oa.tcp.action.ExpenseApplyAction" />
 
 </beans>

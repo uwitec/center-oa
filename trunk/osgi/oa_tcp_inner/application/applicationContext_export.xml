@@ -33,4 +33,6 @@
 
 	<osgi:service ref="tcpHandleHisDAO" interface="com.china.center.oa.tcp.dao.TcpHandleHisDAO" />
 
+	<osgi:service ref="expenseApplyDAO" interface="com.china.center.oa.tcp.dao.ExpenseApplyDAO" />
+
 </beans>

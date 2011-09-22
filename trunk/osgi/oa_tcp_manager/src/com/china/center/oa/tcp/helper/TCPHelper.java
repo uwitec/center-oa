@@ -17,6 +17,7 @@ import com.china.center.oa.publics.vo.FlowLogVO;
 import com.china.center.oa.tcp.bean.TravelApplyBean;
 import com.china.center.oa.tcp.constanst.TcpConstanst;
 import com.china.center.oa.tcp.constanst.TcpFlowConstant;
+import com.china.center.oa.tcp.vo.ExpenseApplyVO;
 import com.china.center.oa.tcp.vo.TcpApproveVO;
 import com.china.center.oa.tcp.vo.TravelApplyVO;
 import com.china.center.tools.BeanUtil;
@@ -128,6 +129,24 @@ public abstract class TCPHelper
     }
 
     public static void chageVO(TravelApplyVO vo)
+    {
+        vo.setShowTotal(formatNum2(vo.getTotal() / 100.0d));
+        vo.setShowBorrowTotal(formatNum2(vo.getBorrowTotal() / 100.0d));
+
+        vo.setShowAirplaneCharges(formatNum2(vo.getAirplaneCharges() / 100.0d));
+        vo.setShowTrainCharges(formatNum2(vo.getTrainCharges() / 100.0d));
+
+        vo.setShowBusCharges(formatNum2(vo.getBusCharges() / 100.0d));
+        vo.setShowHotelCharges(formatNum2(vo.getHotelCharges() / 100.0d));
+
+        vo.setShowEntertainCharges(formatNum2(vo.getEntertainCharges() / 100.0d));
+        vo.setShowAllowanceCharges(formatNum2(vo.getAllowanceCharges() / 100.0d));
+
+        vo.setShowOther1Charges(formatNum2(vo.getOther1Charges() / 100.0d));
+        vo.setShowOther2Charges(formatNum2(vo.getOther2Charges() / 100.0d));
+    }
+
+    public static void chageVO(ExpenseApplyVO vo)
     {
         vo.setShowTotal(formatNum2(vo.getTotal() / 100.0d));
         vo.setShowBorrowTotal(formatNum2(vo.getBorrowTotal() / 100.0d));

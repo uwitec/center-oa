@@ -20,36 +20,33 @@ import com.china.center.oa.tcp.constanst.TcpConstanst;
 
 
 /**
- * 借款申请
+ * 报销申请
  * 
  * @author ZHUZHU
  * @version 2011-7-10
- * @see TravelApplyBean
+ * @see ExpenseApplyBean
  * @since 3.0
  */
 @Entity(inherit = true)
-@Table(name = "T_CENTER_TRAVELAPPLY")
-public class TravelApplyBean extends AbstractTcpBean implements Serializable
+@Table(name = "T_CENTER_TCPEXPENSE")
+public class ExpenseApplyBean extends AbstractTcpBean implements Serializable
 {
     @Id
     @Html(title = "标识", must = true, maxLength = 40)
     private String id = "";
 
-    /**
-     * 是否借款
-     */
-    @Html(title = "借款", must = true, type = Element.SELECT)
-    private int borrow = TcpConstanst.TRAVELAPPLY_BORROW_NO;
+    @Html(title = "付款类型", must = true, type = Element.SELECT)
+    private int payType = TcpConstanst.PAYTYPE_PAY_YES;
 
     /**
-     * 是否报销冲抵
+     * 剩余金额
      */
-    private int feedback = TcpConstanst.TCP_APPLY_FEEDBACK_NO;
+    protected long lastMoney = 0L;
 
     /**
      * default constructor
      */
-    public TravelApplyBean()
+    public ExpenseApplyBean()
     {
     }
 
@@ -71,37 +68,37 @@ public class TravelApplyBean extends AbstractTcpBean implements Serializable
     }
 
     /**
-     * @return the borrow
+     * @return the lastMoney
      */
-    public int getBorrow()
+    public long getLastMoney()
     {
-        return borrow;
+        return lastMoney;
     }
 
     /**
-     * @param borrow
-     *            the borrow to set
+     * @param lastMoney
+     *            the lastMoney to set
      */
-    public void setBorrow(int borrow)
+    public void setLastMoney(long lastMoney)
     {
-        this.borrow = borrow;
+        this.lastMoney = lastMoney;
     }
 
     /**
-     * @return the feedback
+     * @return the payType
      */
-    public int getFeedback()
+    public int getPayType()
     {
-        return feedback;
+        return payType;
     }
 
     /**
-     * @param feedback
-     *            the feedback to set
+     * @param payType
+     *            the payType to set
      */
-    public void setFeedback(int feedback)
+    public void setPayType(int payType)
     {
-        this.feedback = feedback;
+        this.payType = payType;
     }
 
     /**
@@ -116,17 +113,17 @@ public class TravelApplyBean extends AbstractTcpBean implements Serializable
         StringBuilder retValue = new StringBuilder();
 
         retValue
-            .append("TravelApplyBean ( ")
+            .append("ExpenseApplyBean ( ")
             .append(super.toString())
             .append(TAB)
             .append("id = ")
             .append(this.id)
             .append(TAB)
-            .append("borrow = ")
-            .append(this.borrow)
+            .append("payType = ")
+            .append(this.payType)
             .append(TAB)
-            .append("feedback = ")
-            .append(this.feedback)
+            .append("lastMoney = ")
+            .append(this.lastMoney)
             .append(TAB)
             .append(" )");
 

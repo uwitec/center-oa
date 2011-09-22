@@ -34,4 +34,6 @@
 
 	<bean id="tcpHandleHisDAO" class="com.china.center.oa.tcp.dao.impl.TcpHandleHisDAOImpl" />
 
+	<bean id="expenseApplyDAO" class="com.china.center.oa.tcp.dao.impl.ExpenseApplyDAOImpl" />
+
 </beans>

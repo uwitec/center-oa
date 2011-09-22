@@ -191,6 +191,32 @@ function borrowChange()
     }
 }
 
+function payTypeChange()
+{
+    if ($$('payType') == 0 || $$('payType') == 2)
+    {
+        $v('pay_main_tr', false);
+        
+        //remove tr
+        var list = formEntry.elements;
+        
+        if (list)
+        {
+            for (var i = 0; i < list.length; i++)
+            {
+                if (list[i].name== 'pay_del_bu')
+                list[i].onclick.apply(list[i]);
+            }
+        }
+    }
+    
+    if ($$('payType') == 1)
+    {
+        $v('pay_main_tr', true);
+    }
+}
+
+
 function getCitys(oos)
 {
     var obj = oos[0];

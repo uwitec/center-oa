@@ -119,6 +119,24 @@ public interface TcpConstanst
     int TRAVELAPPLY_BORROW_NO = 0;
 
     /**
+     * 付款
+     */
+    @Defined(key = "expensePayType", value = "公司付款给员工")
+    int PAYTYPE_PAY_YES = 1;
+
+    /**
+     * 收支均衡
+     */
+    @Defined(key = "expensePayType", value = "收支均衡")
+    int PAYTYPE_PAY_OK = 0;
+
+    /**
+     * 收支均衡
+     */
+    @Defined(key = "expensePayType", value = "员工付款给公司")
+    int PAYTYPE_PAY_NO = 2;
+
+    /**
      * 现金
      */
     @Defined(key = "travelApplyReceiveType", value = "现金")
@@ -175,6 +193,30 @@ public interface TcpConstanst
      */
     @Defined(key = "tcpApplyType", value = "对公业务申请及借款")
     int TCP_APPLYTYPE_PUBLIC = 3;
+
+    /**
+     * 差旅费报销
+     */
+    @Defined(key = "tcpExpenseType", value = "差旅费报销")
+    int TCP_EXPENSETYPE_TRAVEL = 0;
+
+    /**
+     * 业务招待费报销
+     */
+    @Defined(key = "tcpExpenseType", value = "业务招待费报销")
+    int TCP_EXPENSETYPE_ENTERTAIN = 1;
+
+    /**
+     * 日常办公和固定资产采购报销
+     */
+    @Defined(key = "tcpExpenseType", value = "日常办公和固定资产采购报销")
+    int TCP_EXPENSETYPE_STOCK = 2;
+
+    /**
+     * 对公业务报销
+     */
+    @Defined(key = "tcpExpenseType", value = "对公业务报销")
+    int TCP_EXPENSETYPE_PUBLIC = 3;
 
     /**
      * 未关联报销

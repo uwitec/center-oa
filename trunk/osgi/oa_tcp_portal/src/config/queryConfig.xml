@@ -25,7 +25,7 @@
             <type>select</type>
             <option>$tcpStatus</option>
         </condtion>
-         <condtion name="borrow" caption="借款">
+        <condtion name="borrow" caption="借款">
             <opr>=</opr>
             <datatype>1</datatype>
             <type>select</type>
@@ -94,6 +94,35 @@
         <condtion name="applyId" filed="name" caption="申请人" pfix="SB2">
              <opr>like</opr>
             <type>text</type>
+        </condtion>
+    </item>
+    
+    <item name="querySelfExpense" deaultpfix="ExpenseApplyBean">
+        <condtion name="alogTime" filed="logTime" caption="日期从">
+            <opr>&gt;=</opr>
+            <type>date</type>
+        </condtion>
+        <condtion name="blogTime" filed="logTime" caption="到">
+            <opr>&lt;=</opr>
+            <type>date</type>
+        </condtion>
+        <condtion name="id" caption="标识(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="refId" caption="关联申请(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="name" caption="目的">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="status" caption="状态">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$tcpStatus</option>
         </condtion>
     </item>
     
