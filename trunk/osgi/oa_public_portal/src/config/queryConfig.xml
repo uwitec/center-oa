@@ -141,6 +141,10 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
+        <condtion name="dutyName" filed="name" caption="纳税实体" pfix="DutyBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
     </item>
     
     <item name="queryInvoiceCredit" deaultpfix="InvoiceCreditBean">
