@@ -85,49 +85,50 @@ function calDateInner(obj, name)
 
 function checks()
 {
-    sumTotal();
-    
-    if ($$('borrow') == 1)
+	if ($$('payType') == 0)
+	{
+	    var borrow = sumborrowTotal() + parseFloat($$('borrowTotal'));
+	        
+	    var stotal = sumTotal();
+	    
+	    if (compareNumber(borrow, stotal) > 0)
+	    {
+	        alert('公司付款给员工下报销金额必须等于借款金额加公司的付款总金额');
+	        
+	        return false;
+	    }
+	}
+	
+	if ($$('payType') == 1)
     {
-        var borrow = sumborrowTotal();
-        
+        var borrow = parseFloat($$('borrowTotal'));
+            
         var stotal = sumTotal();
         
         if (compareNumber(borrow, stotal) > 0)
         {
-            alert('借款金额大于申请金额');
+            alert('收支平衡下报销金额必须等于借款金额');
             
             return false;
         }
     }
-    
-    //s_ratio
-    var total = sumRatio();
-    
-    if (total != 100)
+	
+	if ($$('payType') == 2)
     {
-        alert('分担比例之和必须等于100');
-            
-        return false;
-    } 
-    
-    //检查预算分担不能重复
-    var blist = $("input[name='s_budgetId']");
-    
-    var tmp = {};
-    
-    for (var i = 0; i < blist.length; i++)
-    {
-        if (!isNoneInCommon(tmp[blist[i].value]))
-        {
-            alert('不能选择重复的预算');
-            
-            return false;
-        }
+        var borrow = parseFloat($$('borrowTotal'));
         
-        tmp[blist[i].value] = blist[i].value;
+        var lastMoney = parseFloat($$('lastMoney'));
+            
+        var stotal = sumTotal() + lastMoney;
+        
+        if (compareNumber(borrow, stotal) > 0)
+        {
+            alert('员工付款给公司下报销金额加还款金额必须等于借款金额');
+            
+            return false;
+        }
     }
-    
+
     return true;
 }
 

@@ -33,6 +33,7 @@
 			<forward name="processTravelApply3" path="/tcp/processTravelApply3.jsp" />
 			
 			<forward name="querySelfApprove" path="/tcp/querySelfApprove.jsp" />
+			<forward name="rptQueryTravelApply" path="/tcp/rptQueryTravelApply.jsp" />
 		</action>
 		
 		<action path="/tcp/expense" parameter="method"

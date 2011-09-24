@@ -10,7 +10,7 @@
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/json.js"></script>
-<script language="JavaScript" src="../tcp_js/travelApply.js"></script>
+<script language="JavaScript" src="../tcp_js/expense.js"></script>
 <script language="javascript">
 
 function addBean(opr)
@@ -42,15 +42,29 @@ function load()
 	payTypeChange();
 }
 
+function selectTravelApply()
+{
+    window.common.modal('../tcp/apply.do?method=rptQueryTravelApply&load=1&selectMode=1&type=0');
+}
+
+function getTravelApply(oos)
+{
+    var oo = oos[0];
+    
+    $("#borrowTotal").val(oo.pbtotal);
+    
+    $("#refId").val(oo.value);
+}
+
 </script>
 </head>
 
 <body class="body_class" onload="load()">
-<form name="formEntry" action="../tcp/apply.do?method=addOrUpdateTravelApply" enctype="multipart/form-data" method="post">
+<form name="formEntry" action="../tcp/expense.do?method=addOrUpdateExpense" enctype="multipart/form-data" method="post">
 <input type="hidden" name="oprType" value="0"> 
 <input type="hidden" name="addOrUpdate" value="0"> 
 <input type="hidden" name="processId" value=""> 
-<input type="hidden" name="type" value="0"> 
+<input type="hidden" name="type" value="11"> 
 <input type="hidden" name="stafferId" value="${g_stafferBean.id}"> 
 <input type="hidden" name="departmentId" value="${g_stafferBean.principalshipId}"> 
 
@@ -85,9 +99,18 @@ function load()
             <p:pro field="srcCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
             <p:pro field="destCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
             
-            <p:pro field="payType" cell="0" innerString="onchange='payTypeChange()'">
+            <p:pro field="refId">
+                  <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectTravelApply()">&nbsp;
+            </p:pro>
+            
+            <p:pro field="borrowTotal" innerString="readonly=true"/>
+            
+            <p:pro field="payType" innerString="onchange='payTypeChange()'">
                 <p:option type="expensePayType"></p:option>
             </p:pro>
+            
+            <p:pro field="lastMoney"/>
 
             <p:pro field="description" cell="0" innerString="rows=4 cols=55" />
             
@@ -208,37 +231,6 @@ function load()
                         <td width="25%" align="center">备注</td>
                         <td width="5%" align="left"><input type="button" accesskey="B"
                             value="增加" class="button_class" onclick="addPayTr()"></td>
-                    </tr>
-                </table>
-                </td>
-            </tr>
-        </table>
-
-        </td>
-    </tr>
-    
-    <p:title>
-        <td class="caption">
-         <strong>费用分担</strong>
-        </td>
-    </p:title>
-
-    <p:line flag="0" />
-    
-    <tr>
-        <td colspan='2' align='center'>
-        <table width="98%" border="0" cellpadding="0" cellspacing="0"
-            class="border">
-            <tr>
-                <td>
-                <table width="100%" border="0" cellspacing='1' id="tables_share">
-                    <tr align="center" class="content0">
-                        <td width="35%" align="center">月度预算</td>
-                        <td width="35%" align="center">部门</td>
-                        <td width="15%" align="center">权签人</td>
-                        <td width="10%" align="center">分担比例(%)</td>
-                        <td width="5%" align="left"><input type="button" accesskey="B"
-                            value="增加" class="button_class" onclick="addShareTr()"></td>
                     </tr>
                 </table>
                 </td>

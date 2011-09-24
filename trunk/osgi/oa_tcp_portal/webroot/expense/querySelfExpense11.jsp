@@ -23,7 +23,7 @@ function load()
      
      guidMap = {
          title: '出差费用报销列表',
-         url: gurl + 'querySelfExpense&type=0',
+         url: gurl + 'querySelfExpense&type=11',
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},

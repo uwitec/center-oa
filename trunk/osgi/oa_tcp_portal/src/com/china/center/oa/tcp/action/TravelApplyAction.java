@@ -36,6 +36,7 @@ import org.apache.struts.actions.DispatchAction;
 import com.center.china.osgi.config.ConfigLoader;
 import com.center.china.osgi.publics.User;
 import com.china.center.actionhelper.common.ActionTools;
+import com.china.center.actionhelper.common.HandleQueryCondition;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.json.AjaxResult;
@@ -82,6 +83,7 @@ import com.china.center.oa.tcp.vo.TravelApplyItemVO;
 import com.china.center.oa.tcp.vo.TravelApplyVO;
 import com.china.center.oa.tcp.wrap.TcpParamWrap;
 import com.china.center.tools.BeanUtil;
+import com.china.center.tools.CommonTools;
 import com.china.center.tools.FileTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
@@ -143,6 +145,8 @@ public class TravelApplyAction extends DispatchAction
     private static String QUERYSELFAPPROVE = "tcp.querySelfApprove";
 
     private static String QUERYPOOLAPPROVE = "tcp.queryPoolApprove";
+
+    private static String RPTQUERYTRAVELAPPLY = "rptQueryTravelApply";
 
     private static String QUERYTCPHIS = "tcp.queryTcpHis";
 
@@ -711,6 +715,71 @@ public class TravelApplyAction extends DispatchAction
         }
 
         return mapping.findForward("querySelfTravelApply" + bean.getType());
+    }
+
+    /**
+     * rptQueryTravelApply
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryTravelApply(ActionMapping mapping, ActionForm form,
+                                             HttpServletRequest request,
+                                             HttpServletResponse response)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        String cacheKey = RPTQUERYTRAVELAPPLY;
+
+        final User user = Helper.getUser(request);
+
+        List<TravelApplyVO> voList = ActionTools.commonQueryInPageSeparate(cacheKey, request,
+            this.travelApplyDAO, new HandleQueryCondition()
+            {
+                public void setQueryCondition(HttpServletRequest request, ConditionParse condtion)
+                {
+                    String name = request.getParameter("name");
+
+                    String id = request.getParameter("id");
+
+                    String type = request.getParameter("type");
+
+                    if ( !StringTools.isNullOrNone(name))
+                    {
+                        condtion.addCondition("TravelApplyBean.name", "like", name);
+                    }
+
+                    if ( !StringTools.isNullOrNone(id))
+                    {
+                        condtion.addCondition("TravelApplyBean.id", "like", id);
+                    }
+
+                    // 查询自己借款的单据
+                    condtion.addCondition("TravelApplyBean.borrowStafferId", "=", user
+                        .getStafferId());
+
+                    // 查询结束
+                    condtion.addIntCondition("TravelApplyBean.status", "=",
+                        TcpConstanst.TCP_STATUS_END);
+
+                    condtion.addIntCondition("TravelApplyBean.type", "=", type);
+
+                    condtion.addIntCondition("TravelApplyBean.feedback", "=",
+                        TcpConstanst.TCP_APPLY_FEEDBACK_NO);
+                }
+            });
+
+        for (TravelApplyVO travelApplyVO : voList)
+        {
+            TCPHelper.chageVO(travelApplyVO);
+        }
+
+        return mapping.findForward(cacheKey);
     }
 
     /**

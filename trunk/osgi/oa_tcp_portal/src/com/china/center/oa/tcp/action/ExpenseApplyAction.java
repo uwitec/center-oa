@@ -56,10 +56,10 @@ import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.vo.FlowLogVO;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.dao.FinanceDAO;
+import com.china.center.oa.tcp.bean.ExpenseApplyBean;
 import com.china.center.oa.tcp.bean.TcpApproveBean;
 import com.china.center.oa.tcp.bean.TcpFlowBean;
 import com.china.center.oa.tcp.bean.TcpShareBean;
-import com.china.center.oa.tcp.bean.TravelApplyBean;
 import com.china.center.oa.tcp.bean.TravelApplyItemBean;
 import com.china.center.oa.tcp.bean.TravelApplyPayBean;
 import com.china.center.oa.tcp.constanst.TcpConstanst;
@@ -75,13 +75,12 @@ import com.china.center.oa.tcp.dao.TravelApplyDAO;
 import com.china.center.oa.tcp.dao.TravelApplyItemDAO;
 import com.china.center.oa.tcp.dao.TravelApplyPayDAO;
 import com.china.center.oa.tcp.helper.TCPHelper;
+import com.china.center.oa.tcp.manager.ExpenseManager;
 import com.china.center.oa.tcp.manager.TcpFlowManager;
-import com.china.center.oa.tcp.manager.TravelApplyManager;
 import com.china.center.oa.tcp.vo.ExpenseApplyVO;
 import com.china.center.oa.tcp.vo.TcpApproveVO;
 import com.china.center.oa.tcp.vo.TcpHandleHisVO;
 import com.china.center.oa.tcp.vo.TravelApplyItemVO;
-import com.china.center.oa.tcp.vo.TravelApplyVO;
 import com.china.center.oa.tcp.wrap.TcpParamWrap;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.FileTools;
@@ -106,7 +105,7 @@ public class ExpenseApplyAction extends DispatchAction
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
-    private TravelApplyManager travelApplyManager = null;
+    private ExpenseManager expenseManager = null;
 
     private TcpApplyDAO tcpApplyDAO = null;
 
@@ -414,7 +413,7 @@ public class ExpenseApplyAction extends DispatchAction
 
             User user = Helper.getUser(request);
 
-            travelApplyManager.deleteTravelApplyBean(user, id);
+            expenseManager.deleteExpenseApplyBean(user, id);
 
             ajax.setSuccess("成功操作");
         }
@@ -448,7 +447,7 @@ public class ExpenseApplyAction extends DispatchAction
 
         String update = request.getParameter("update");
 
-        TravelApplyVO bean = travelApplyManager.findVO(id);
+        ExpenseApplyVO bean = expenseManager.findVO(id);
 
         if (bean == null)
         {
@@ -492,7 +491,7 @@ public class ExpenseApplyAction extends DispatchAction
             List<TravelApplyItemVO> itemVOList = bean.getItemVOList();
 
             // 出差特殊处理屏蔽差旅费
-            if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_TRAVEL)
+            if (bean.getType() == TcpConstanst.TCP_EXPENSETYPE_TRAVEL)
             {
                 for (Iterator iterator = itemVOList.iterator(); iterator.hasNext();)
                 {
@@ -615,7 +614,7 @@ public class ExpenseApplyAction extends DispatchAction
     }
 
     /**
-     * addTravelApply
+     * addOrUpdateExpense
      * 
      * @param mapping
      * @param form
@@ -624,12 +623,11 @@ public class ExpenseApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addOrUpdateTravelApply(ActionMapping mapping, ActionForm form,
-                                                HttpServletRequest request,
-                                                HttpServletResponse response)
+    public ActionForward addOrUpdateExpense(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
-        TravelApplyBean bean = new TravelApplyBean();
+        ExpenseApplyBean bean = new ExpenseApplyBean();
 
         // 模板最多10M
         RequestDataStream rds = new RequestDataStream(request, 1024 * 1024 * 10L);
@@ -664,7 +662,7 @@ public class ExpenseApplyAction extends DispatchAction
         String processId = rds.getParameter("processId");
 
         // 出差申请的特殊处理
-        if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_TRAVEL)
+        if (bean.getType() == TcpConstanst.TCP_EXPENSETYPE_TRAVEL)
         {
             changeTravel(bean, rds);
         }
@@ -689,11 +687,11 @@ public class ExpenseApplyAction extends DispatchAction
 
             if ("0".equals(addOrUpdate))
             {
-                travelApplyManager.addTravelApplyBean(user, bean);
+                expenseManager.addExpenseApplyBean(user, bean);
             }
             else
             {
-                travelApplyManager.updateTravelApplyBean(user, bean);
+                expenseManager.updateExpenseApplyBean(user, bean);
             }
 
             request.setAttribute(KeyConstant.MESSAGE, "成功保存费用申请");
@@ -701,7 +699,7 @@ public class ExpenseApplyAction extends DispatchAction
             // 提交
             if ("1".equals(oprType))
             {
-                travelApplyManager.submitTravelApplyBean(user, bean.getId(), processId);
+                expenseManager.submitExpenseApplyBean(user, bean.getId(), processId);
             }
 
             request.setAttribute(KeyConstant.MESSAGE, "成功提交费用申请");
@@ -713,7 +711,7 @@ public class ExpenseApplyAction extends DispatchAction
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作费用申请失败:" + e.getMessage());
         }
 
-        return mapping.findForward("querySelfTravelApply" + bean.getType());
+        return mapping.findForward("queryExpense" + bean.getType());
     }
 
     /**
@@ -726,9 +724,9 @@ public class ExpenseApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward processTravelApplyBean(ActionMapping mapping, ActionForm form,
-                                                HttpServletRequest request,
-                                                HttpServletResponse response)
+    public ActionForward processExpenseApplyBean(ActionMapping mapping, ActionForm form,
+                                                 HttpServletRequest request,
+                                                 HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -752,11 +750,11 @@ public class ExpenseApplyAction extends DispatchAction
             // 提交
             if ("0".equals(oprType))
             {
-                travelApplyManager.passTravelApplyBean(user, param);
+                expenseManager.passExpenseApplyBean(user, param);
             }
             else
             {
-                travelApplyManager.rejectTravelApplyBean(user, param);
+                expenseManager.rejectExpenseApplyBean(user, param);
             }
 
             request.setAttribute(KeyConstant.MESSAGE, "成功处理出差申请");
@@ -974,7 +972,7 @@ public class ExpenseApplyAction extends DispatchAction
      * @param bean
      * @param rds
      */
-    private void changeTravel(TravelApplyBean bean, RequestDataStream rds)
+    private void changeTravel(ExpenseApplyBean bean, RequestDataStream rds)
     {
         String airplaneCharges = rds.getParameter("airplaneCharges");
 
@@ -1009,7 +1007,7 @@ public class ExpenseApplyAction extends DispatchAction
         bean.setOther2Charges(TCPHelper.doubleToLong2(other2Charges));
     }
 
-    private long getTravelItemTotal(TravelApplyBean bean)
+    private long getTravelItemTotal(ExpenseApplyBean bean)
     {
         long total = 0L;
 
@@ -1034,7 +1032,7 @@ public class ExpenseApplyAction extends DispatchAction
      * @param rds
      * @param bean
      */
-    private void fillTravel(RequestDataStream rds, TravelApplyBean bean)
+    private void fillTravel(RequestDataStream rds, ExpenseApplyBean bean)
     {
         // 费用明细
         List<TravelApplyItemBean> itemList = new ArrayList<TravelApplyItemBean>();
@@ -1064,7 +1062,7 @@ public class ExpenseApplyAction extends DispatchAction
                 }
 
                 // 过滤差旅费
-                if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_TRAVEL
+                if (bean.getType() == TcpConstanst.TCP_EXPENSETYPE_TRAVEL
                     && BudgetConstant.FEE_ITEM_TRAVELLING.equals(each))
                 {
                     continue;
@@ -1106,7 +1104,7 @@ public class ExpenseApplyAction extends DispatchAction
         }
 
         // 特殊处理
-        if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_TRAVEL)
+        if (bean.getType() == TcpConstanst.TCP_EXPENSETYPE_TRAVEL)
         {
             // 自动组装差旅费
             TravelApplyItemBean travelItem = new TravelApplyItemBean();
@@ -1129,18 +1127,12 @@ public class ExpenseApplyAction extends DispatchAction
 
         bean.setTotal(total);
 
-        // 采购默认全部借款
-        if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_STOCK)
-        {
-            bean.setBorrowTotal(bean.getTotal());
-        }
-
         List<TravelApplyPayBean> payList = new ArrayList<TravelApplyPayBean>();
 
         bean.setPayList(payList);
 
-        // 收款明细
-        if (bean.getBorrow() == TcpConstanst.TRAVELAPPLY_BORROW_YES)
+        // 公司付款给员工
+        if (bean.getPayType() == TcpConstanst.PAYTYPE_PAY_YES)
         {
             List<String> receiveTypeList = rds.getParameters("p_receiveType");
             List<String> bankList = rds.getParameters("p_bank");
@@ -1184,7 +1176,7 @@ public class ExpenseApplyAction extends DispatchAction
             }
         }
 
-        // 费用分担
+        // 费用分担(TODO 需要核实)
         List<TcpShareBean> shareList = new ArrayList<TcpShareBean>();
 
         bean.setShareList(shareList);
@@ -1224,7 +1216,7 @@ public class ExpenseApplyAction extends DispatchAction
      * @return
      */
     private ActionForward parserAttachment(ActionMapping mapping, HttpServletRequest request,
-                                           RequestDataStream rds, TravelApplyBean travelApply)
+                                           RequestDataStream rds, ExpenseApplyBean travelApply)
     {
         List<AttachmentBean> attachmentList = new ArrayList<AttachmentBean>();
 
@@ -1341,23 +1333,6 @@ public class ExpenseApplyAction extends DispatchAction
     public String getAttachmentPath()
     {
         return ConfigLoader.getProperty("tcpAttachmentPath");
-    }
-
-    /**
-     * @return the travelApplyManager
-     */
-    public TravelApplyManager getTravelApplyManager()
-    {
-        return travelApplyManager;
-    }
-
-    /**
-     * @param travelApplyManager
-     *            the travelApplyManager to set
-     */
-    public void setTravelApplyManager(TravelApplyManager travelApplyManager)
-    {
-        this.travelApplyManager = travelApplyManager;
     }
 
     /**
@@ -1647,6 +1622,23 @@ public class ExpenseApplyAction extends DispatchAction
     public void setExpenseApplyDAO(ExpenseApplyDAO expenseApplyDAO)
     {
         this.expenseApplyDAO = expenseApplyDAO;
+    }
+
+    /**
+     * @return the expenseManager
+     */
+    public ExpenseManager getExpenseManager()
+    {
+        return expenseManager;
+    }
+
+    /**
+     * @param expenseManager
+     *            the expenseManager to set
+     */
+    public void setExpenseManager(ExpenseManager expenseManager)
+    {
+        this.expenseManager = expenseManager;
     }
 
 }
