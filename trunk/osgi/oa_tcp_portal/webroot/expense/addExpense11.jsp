@@ -35,8 +35,6 @@ function load()
 	
 	addPayTr();
 	
-	addShareTr();
-	
 	$v('tr_att_more', false);
 	
 	payTypeChange();
@@ -51,7 +49,7 @@ function getTravelApply(oos)
 {
     var oo = oos[0];
     
-    $("#borrowTotal").val(oo.pbtotal);
+    $("#refMoney").val(oo.pbtotal);
     
     $("#refId").val(oo.value);
 }
@@ -104,7 +102,7 @@ function getTravelApply(oos)
                     class="button_class" onclick="selectTravelApply()">&nbsp;
             </p:pro>
             
-            <p:pro field="borrowTotal" innerString="readonly=true"/>
+            <p:pro field="refMoney" innerString="readonly=true"/>
             
             <p:pro field="payType" innerString="onchange='payTypeChange()'">
                 <p:option type="expensePayType"></p:option>

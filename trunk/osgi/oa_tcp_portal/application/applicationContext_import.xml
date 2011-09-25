@@ -86,4 +86,6 @@
     
     <osgi:reference id="expenseApplyDAO" interface="com.china.center.oa.tcp.dao.ExpenseApplyDAO" />
     
+    <osgi:reference id="expenseManager" interface="com.china.center.oa.tcp.manager.ExpenseManager" />
+    
 </beans>

@@ -39,32 +39,27 @@
 		<action path="/tcp/expense" parameter="method"
             type="org.springframework.web.struts.DelegatingActionProxy"
             validate="false">
-            <forward name="addExpense0" path="/expense/addExpense0.jsp" />
-            <forward name="addExpense1" path="/expense/addExpense1.jsp" />
-            <forward name="addExpense2" path="/expense/addExpense2.jsp" />
-            <forward name="addExpense3" path="/expense/addExpense3.jsp" />
+            <forward name="addExpense11" path="/expense/addExpense11.jsp" />
+            <forward name="addExpense12" path="/expense/addExpense12.jsp" />
+            <forward name="addExpense13" path="/expense/addExpense13.jsp" />
             
-            <forward name="updateExpense0" path="/expense/updateExpense0.jsp" />
-            <forward name="updateExpense1" path="/expense/updateExpense1.jsp" />
-            <forward name="updateExpense2" path="/expense/updateExpense2.jsp" />
-            <forward name="updateExpense3" path="/expense/updateExpense3.jsp" />
+            <forward name="updateExpense11" path="/expense/updateExpense11.jsp" />
+            <forward name="updateExpense12" path="/expense/updateExpense12.jsp" />
+            <forward name="updateExpense13" path="/expense/updateExpense13.jsp" />
             
             <forward name="queryExpense" path="/expense/queryExpense.jsp" />
             
-            <forward name="querySelfExpense0" path="/expense/querySelfExpense0.jsp" />
-            <forward name="querySelfExpense1" path="/expense/querySelfExpense1.jsp" />
-            <forward name="querySelfExpense2" path="/expense/querySelfExpense2.jsp" />
-            <forward name="querySelfExpense3" path="/expense/querySelfExpense3.jsp" />
+            <forward name="querySelfExpense11" path="/expense/querySelfExpense11.jsp" />
+            <forward name="querySelfExpense12" path="/expense/querySelfExpense12.jsp" />
+            <forward name="querySelfExpense13" path="/expense/querySelfExpense13.jsp" />
             
-            <forward name="detailExpense0" path="/expense/detailExpense0.jsp" />
-            <forward name="detailExpense1" path="/expense/detailExpense1.jsp" />
-            <forward name="detailExpense2" path="/expense/detailExpense2.jsp" />
-            <forward name="detailExpense3" path="/expense/detailExpense3.jsp" />
+            <forward name="detailExpense11" path="/expense/detailExpense11.jsp" />
+            <forward name="detailExpense12" path="/expense/detailExpense12.jsp" />
+            <forward name="detailExpense13" path="/expense/detailExpense13.jsp" />
             
-            <forward name="processExpense0" path="/expense/processExpense0.jsp" />
-            <forward name="processExpense1" path="/expense/processExpense1.jsp" />
-            <forward name="processExpense2" path="/expense/processExpense2.jsp" />
-            <forward name="processExpense3" path="/expense/processExpense3.jsp" />
+            <forward name="processExpense11" path="/expense/processExpense11.jsp" />
+            <forward name="processExpense12" path="/expense/processExpense12.jsp" />
+            <forward name="processExpense13" path="/expense/processExpense13.jsp" />
         </action>
 		
 	</action-mappings>

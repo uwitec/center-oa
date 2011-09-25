@@ -59,7 +59,7 @@ function $callBack()
 
 function addBean(opr, grid)
 {
-    $l(gurl + 'preForAdd' + ukey + '&type=0');
+    $l(gurl + 'preForAdd' + ukey + '&type=11');
     //$l(addUrl);
 }
 

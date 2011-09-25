@@ -87,7 +87,7 @@ function checks()
 {
 	if ($$('payType') == 0)
 	{
-	    var borrow = sumborrowTotal() + parseFloat($$('borrowTotal'));
+	    var borrow = sumborrowTotal() + parseFloat($$('refMoney'));
 	        
 	    var stotal = sumTotal();
 	    
@@ -101,7 +101,7 @@ function checks()
 	
 	if ($$('payType') == 1)
     {
-        var borrow = parseFloat($$('borrowTotal'));
+        var borrow = parseFloat($$('refMoney'));
             
         var stotal = sumTotal();
         
@@ -115,7 +115,7 @@ function checks()
 	
 	if ($$('payType') == 2)
     {
-        var borrow = parseFloat($$('borrowTotal'));
+        var borrow = parseFloat($$('refMoney'));
         
         var lastMoney = parseFloat($$('lastMoney'));
             

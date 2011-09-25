@@ -98,10 +98,10 @@ import com.china.center.tools.UtilStream;
  * 
  * @author ZHUZHU
  * @version 2011-7-20
- * @see ExpenseApplyAction
+ * @see ExpenseAction
  * @since 3.0
  */
-public class ExpenseApplyAction extends DispatchAction
+public class ExpenseAction extends DispatchAction
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
@@ -152,7 +152,7 @@ public class ExpenseApplyAction extends DispatchAction
     /**
      * default constructor
      */
-    public ExpenseApplyAction()
+    public ExpenseAction()
     {
     }
 
@@ -401,8 +401,8 @@ public class ExpenseApplyAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteTravelApply(ActionMapping mapping, ActionForm form,
-                                           HttpServletRequest request, HttpServletResponse response)
+    public ActionForward deleteExpense(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -413,7 +413,7 @@ public class ExpenseApplyAction extends DispatchAction
 
             User user = Helper.getUser(request);
 
-            expenseManager.deleteExpenseApplyBean(user, id);
+            expenseManager.deleteExpenseBean(user, id);
 
             ajax.setSuccess("成功操作");
         }
@@ -687,11 +687,11 @@ public class ExpenseApplyAction extends DispatchAction
 
             if ("0".equals(addOrUpdate))
             {
-                expenseManager.addExpenseApplyBean(user, bean);
+                expenseManager.addExpenseBean(user, bean);
             }
             else
             {
-                expenseManager.updateExpenseApplyBean(user, bean);
+                expenseManager.updateExpenseBean(user, bean);
             }
 
             request.setAttribute(KeyConstant.MESSAGE, "成功保存费用申请");
@@ -699,7 +699,7 @@ public class ExpenseApplyAction extends DispatchAction
             // 提交
             if ("1".equals(oprType))
             {
-                expenseManager.submitExpenseApplyBean(user, bean.getId(), processId);
+                expenseManager.submitExpenseBean(user, bean.getId(), processId);
             }
 
             request.setAttribute(KeyConstant.MESSAGE, "成功提交费用申请");
@@ -711,7 +711,7 @@ public class ExpenseApplyAction extends DispatchAction
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作费用申请失败:" + e.getMessage());
         }
 
-        return mapping.findForward("queryExpense" + bean.getType());
+        return mapping.findForward("querySelfExpense" + bean.getType());
     }
 
     /**
@@ -750,11 +750,11 @@ public class ExpenseApplyAction extends DispatchAction
             // 提交
             if ("0".equals(oprType))
             {
-                expenseManager.passExpenseApplyBean(user, param);
+                expenseManager.passExpenseBean(user, param);
             }
             else
             {
-                expenseManager.rejectExpenseApplyBean(user, param);
+                expenseManager.rejectExpenseBean(user, param);
             }
 
             request.setAttribute(KeyConstant.MESSAGE, "成功处理出差申请");
@@ -1034,6 +1034,10 @@ public class ExpenseApplyAction extends DispatchAction
      */
     private void fillTravel(RequestDataStream rds, ExpenseApplyBean bean)
     {
+        String lastMoney = rds.getParameter("lastMoney");
+
+        bean.setLastMoney(MathTools.doubleToLong2(lastMoney));
+
         // 费用明细
         List<TravelApplyItemBean> itemList = new ArrayList<TravelApplyItemBean>();
 
@@ -1176,33 +1180,37 @@ public class ExpenseApplyAction extends DispatchAction
             }
         }
 
-        // 费用分担(TODO 需要核实)
-        List<TcpShareBean> shareList = new ArrayList<TcpShareBean>();
-
-        bean.setShareList(shareList);
-
         List<String> budgetIdeList = rds.getParameters("s_budgetId");
-        List<String> departmentIdList = rds.getParameters("s_departmentId");
-        List<String> approverIdList = rds.getParameters("s_approverId");
-        List<String> ratioList = rds.getParameters("s_ratio");
 
-        for (int i = 0; i < budgetIdeList.size(); i++ )
+        if ( !ListTools.isEmptyOrNull(budgetIdeList))
         {
-            String each = budgetIdeList.get(i);
+            // 费用分担(TODO 需要核实)
+            List<TcpShareBean> shareList = new ArrayList<TcpShareBean>();
 
-            if (StringTools.isNullOrNone(each))
+            bean.setShareList(shareList);
+
+            List<String> departmentIdList = rds.getParameters("s_departmentId");
+            List<String> approverIdList = rds.getParameters("s_approverId");
+            List<String> ratioList = rds.getParameters("s_ratio");
+
+            for (int i = 0; i < budgetIdeList.size(); i++ )
             {
-                continue;
+                String each = budgetIdeList.get(i);
+
+                if (StringTools.isNullOrNone(each))
+                {
+                    continue;
+                }
+
+                TcpShareBean share = new TcpShareBean();
+
+                share.setBudgetId(budgetIdeList.get(i));
+                share.setDepartmentId(departmentIdList.get(i));
+                share.setApproverId(approverIdList.get(i));
+                share.setRatio(MathTools.parseInt(ratioList.get(i)));
+
+                shareList.add(share);
             }
-
-            TcpShareBean share = new TcpShareBean();
-
-            share.setBudgetId(budgetIdeList.get(i));
-            share.setDepartmentId(departmentIdList.get(i));
-            share.setApproverId(approverIdList.get(i));
-            share.setRatio(MathTools.parseInt(ratioList.get(i)));
-
-            shareList.add(share);
         }
     }
 
