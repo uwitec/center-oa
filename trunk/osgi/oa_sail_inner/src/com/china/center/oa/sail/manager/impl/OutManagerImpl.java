@@ -2780,7 +2780,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             throw new MYException("数据错误,请确认操作");
         }
 
-        if (out.getHadPay() + bad > out.getTotal())
+        if (MathTools.compare(out.getHadPay() + bad, out.getTotal()) > 0)
         {
             throw new MYException("坏账金额过多,请确认操作");
         }
