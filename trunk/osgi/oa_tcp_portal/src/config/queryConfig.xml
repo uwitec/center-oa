@@ -60,7 +60,7 @@
             <opr>=</opr>
             <datatype>1</datatype>
             <type>select</type>
-            <option>$tcpApplyType</option>
+            <option>$tcpType</option>
         </condtion>
          <condtion name="applyerId" filed="name" caption="申请人" pfix="APPLYER">
              <opr>like</opr>
@@ -89,7 +89,7 @@
             <opr>=</opr>
             <datatype>1</datatype>
             <type>select</type>
-            <option>$tcpApplyType</option>
+            <option>$tcpType</option>
         </condtion>
         <condtion name="applyId" filed="name" caption="申请人" pfix="SB2">
              <opr>like</opr>

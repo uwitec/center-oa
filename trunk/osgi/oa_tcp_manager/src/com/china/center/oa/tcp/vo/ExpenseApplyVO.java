@@ -68,10 +68,10 @@ public class ExpenseApplyVO extends ExpenseApplyBean
     private String showTotal = "";
 
     /**
-     * 借款总金额
+     * 付款金额
      */
     @Ignore
-    @Html(title = "借款额", must = true, type = Element.DOUBLE)
+    @Html(title = "公司支付金额", must = true, type = Element.DOUBLE)
     private String showBorrowTotal = "";
 
     @Ignore

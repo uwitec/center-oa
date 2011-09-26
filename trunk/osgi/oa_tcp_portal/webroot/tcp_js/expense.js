@@ -86,32 +86,32 @@ function calDateInner(obj, name)
 function checks()
 {
 	if ($$('payType') == 0)
-	{
-	    var borrow = sumborrowTotal() + parseFloat($$('refMoney'));
-	        
-	    var stotal = sumTotal();
-	    
-	    if (compareNumber(borrow, stotal) > 0)
-	    {
-	        alert('公司付款给员工下报销金额必须等于借款金额加公司的付款总金额');
-	        
-	        return false;
-	    }
-	}
-	
-	if ($$('payType') == 1)
     {
         var borrow = parseFloat($$('refMoney'));
             
         var stotal = sumTotal();
         
-        if (compareNumber(borrow, stotal) > 0)
+        if (compareNumber(borrow, stotal) != 0)
         {
-            alert('收支平衡下报销金额必须等于借款金额');
+            alert('收支平衡下报销金额必须等于借款金额:' + borrow);
             
             return false;
         }
     }
+    
+	if ($$('payType') == 1)
+	{
+	    var borrow = sumborrowTotal() + parseFloat($$('refMoney'));
+	        
+	    var stotal = sumTotal();
+	    
+	    if (compareNumber(borrow, stotal) != 0)
+	    {
+	        alert('公司付款给员工下报销金额: '+ stotal +',必须等于借款金额加公司的付款总金额:' + borrow);
+	        
+	        return false;
+	    }
+	}
 	
 	if ($$('payType') == 2)
     {
@@ -121,9 +121,9 @@ function checks()
             
         var stotal = sumTotal() + lastMoney;
         
-        if (compareNumber(borrow, stotal) > 0)
+        if (compareNumber(borrow, stotal) != 0)
         {
-            alert('员工付款给公司下报销金额加还款金额必须等于借款金额');
+            alert('员工付款给公司下报销金额加还款金额: '+ stotal +'必须等于借款金额:' + borrow);
             
             return false;
         }

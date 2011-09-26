@@ -32,7 +32,7 @@ function load()
              {display: '处理人', name : 'processer', width : '10%'},
              {display: '状态', name : 'status', cc: 'tcpStatus', width : '10%'},
              {display: '费用', name : 'showTotal', sortable: true, cname: 'total', width : '8%'},
-             {display: '借款', name : 'showBorrowTotal', sortable: true, cname: 'borrowTotal', width : '8%'},
+             {display: '付款', name : 'showBorrowTotal', sortable: true, cname: 'borrowTotal', width : '8%'},
              {display: '时间', name : 'logTime', sortable: true, width : 'auto'}
              ],
          extAtt: {

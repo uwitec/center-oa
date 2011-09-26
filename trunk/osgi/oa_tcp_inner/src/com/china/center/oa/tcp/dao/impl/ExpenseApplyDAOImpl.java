@@ -25,4 +25,23 @@ import com.china.center.oa.tcp.vo.ExpenseApplyVO;
  */
 public class ExpenseApplyDAOImpl extends BaseDAO<ExpenseApplyBean, ExpenseApplyVO> implements ExpenseApplyDAO
 {
+    public int updateStatus(String id, int status)
+    {
+        return this.jdbcOperation.updateField("status", status, id, this.claz);
+    }
+
+    public int updateBorrowTotal(String id, long borrowTotal)
+    {
+        return this.jdbcOperation.updateField("borrowTotal", borrowTotal, id, this.claz);
+    }
+
+    public int updateTotal(String id, long total)
+    {
+        return this.jdbcOperation.updateField("total", total, id, this.claz);
+    }
+
+    public int updateBorrowStafferId(String id, String borrowStafferId)
+    {
+        return this.jdbcOperation.updateField("borrowStafferId", borrowStafferId, id, this.claz);
+    }
 }

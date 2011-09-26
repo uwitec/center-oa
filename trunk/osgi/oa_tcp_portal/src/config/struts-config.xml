@@ -60,6 +60,8 @@
             <forward name="processExpense11" path="/expense/processExpense11.jsp" />
             <forward name="processExpense12" path="/expense/processExpense12.jsp" />
             <forward name="processExpense13" path="/expense/processExpense13.jsp" />
+            
+            <forward name="querySelfApprove" path="/tcp/querySelfApprove.jsp" />
         </action>
 		
 	</action-mappings>

@@ -246,13 +246,41 @@ public class TravelApplyPayBean implements Serializable
 
         StringBuffer retValue = new StringBuffer();
 
-        retValue.append("TravelApplyPayBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("parentId = ").append(this.parentId).append(TAB).append("receiveType = ").append(
-            this.receiveType).append(TAB).append("bankName = ").append(this.bankName).append(TAB).append("userName = ").append(
-            this.userName).append(TAB).append("bankNo = ").append(this.bankNo).append(TAB).append("description = ").append(
-            this.description).append(TAB).append("cdescription = ").append(this.cdescription).append(TAB).append(
-            "moneys = ").append(this.moneys).append(TAB).append("cmoneys = ").append(this.cmoneys).append(TAB).append(
-            " )");
+        retValue
+            .append("TravelApplyPayBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("parentId = ")
+            .append(this.parentId)
+            .append(TAB)
+            .append("receiveType = ")
+            .append(this.receiveType)
+            .append(TAB)
+            .append("bankName = ")
+            .append(this.bankName)
+            .append(TAB)
+            .append("userName = ")
+            .append(this.userName)
+            .append(TAB)
+            .append("bankNo = ")
+            .append(this.bankNo)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("cdescription = ")
+            .append(this.cdescription)
+            .append(TAB)
+            .append("moneys = ")
+            .append(this.moneys)
+            .append(TAB)
+            .append("cmoneys = ")
+            .append(this.cmoneys)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

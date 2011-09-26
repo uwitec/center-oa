@@ -36,4 +36,6 @@
 
 	<bean id="expenseApplyDAO" class="com.china.center.oa.tcp.dao.impl.ExpenseApplyDAOImpl" />
 
+	<bean id="expenseManager" class="com.china.center.oa.tcp.manager.impl.ExpenseManagerImpl" />
+
 </beans>

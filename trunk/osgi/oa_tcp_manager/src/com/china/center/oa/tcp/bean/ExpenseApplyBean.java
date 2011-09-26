@@ -39,9 +39,13 @@ public class ExpenseApplyBean extends AbstractTcpBean implements Serializable
     private int payType = TcpConstanst.PAYTYPE_PAY_YES;
 
     /**
-     * 剩余金额
+     * 员工还款金额
      */
-    protected long lastMoney = 0L;
+    @Html(title = "还款金额", must = true, type = Element.DOUBLE)
+    private long lastMoney = 0L;
+
+    @Html(title = "原申请借款金额", must = true, type = Element.DOUBLE)
+    private long refMoney = 0L;
 
     /**
      * default constructor
@@ -102,6 +106,23 @@ public class ExpenseApplyBean extends AbstractTcpBean implements Serializable
     }
 
     /**
+     * @return the refMoney
+     */
+    public long getRefMoney()
+    {
+        return refMoney;
+    }
+
+    /**
+     * @param refMoney
+     *            the refMoney to set
+     */
+    public void setRefMoney(long refMoney)
+    {
+        this.refMoney = refMoney;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -124,6 +145,9 @@ public class ExpenseApplyBean extends AbstractTcpBean implements Serializable
             .append(TAB)
             .append("lastMoney = ")
             .append(this.lastMoney)
+            .append(TAB)
+            .append("refMoney = ")
+            .append(this.refMoney)
             .append(TAB)
             .append(" )");
 

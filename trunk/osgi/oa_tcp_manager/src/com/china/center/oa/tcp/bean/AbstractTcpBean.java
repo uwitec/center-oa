@@ -12,6 +12,7 @@ package com.china.center.oa.tcp.bean;
 import java.io.Serializable;
 import java.util.List;
 
+import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Html;
 import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Join;
@@ -53,6 +54,8 @@ public abstract class AbstractTcpBean implements Serializable
 
     protected String logTime = "";
 
+    @FK
+    @Html(title = "关联申请", must = true, readonly = true)
     protected String refId = "";
 
     @Html(title = "申请事由", maxLength = 200, must = true, type = Element.TEXTAREA)
@@ -78,7 +81,7 @@ public abstract class AbstractTcpBean implements Serializable
     protected long total = 0L;
 
     /**
-     * 借款总金额/抵消金额
+     * 借款总金额/报销公司支付金额
      */
     protected long borrowTotal = 0L;
 

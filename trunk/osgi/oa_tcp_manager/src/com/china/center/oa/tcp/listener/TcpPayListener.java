@@ -14,7 +14,9 @@ import java.util.List;
 import com.center.china.osgi.publics.ParentListener;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.OutBillBean;
+import com.china.center.oa.tcp.bean.ExpenseApplyBean;
 import com.china.center.oa.tcp.bean.TravelApplyBean;
 
 
@@ -37,5 +39,20 @@ public interface TcpPayListener extends ParentListener
      * @throws MYException
      */
     void onPayTravelApply(User user, TravelApplyBean bean, List<OutBillBean> outBillList)
+        throws MYException;
+
+    /**
+     * onPayExpenseApply
+     * 
+     * @param user
+     * @param bean
+     * @param outBillList
+     *            付款单
+     * @param inBillList
+     *            收款单
+     * @throws MYException
+     */
+    void onPayExpenseApply(User user, ExpenseApplyBean bean, List<OutBillBean> outBillList,
+                           List<InBillBean> inBillList)
         throws MYException;
 }

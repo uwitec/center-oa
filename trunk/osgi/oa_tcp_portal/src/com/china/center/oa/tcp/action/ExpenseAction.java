@@ -428,7 +428,7 @@ public class ExpenseAction extends DispatchAction
     }
 
     /**
-     * findTravelApply
+     * findExpense
      * 
      * @param mapping
      * @param form
@@ -437,8 +437,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findTravelApply(ActionMapping mapping, ActionForm form,
-                                         HttpServletRequest request, HttpServletResponse response)
+    public ActionForward findExpense(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -506,7 +506,7 @@ public class ExpenseAction extends DispatchAction
                 }
             }
 
-            return mapping.findForward("updateTravelApply" + bean.getType());
+            return mapping.findForward("updateExpense" + bean.getType());
         }
 
         // 获取审批日志
@@ -562,10 +562,10 @@ public class ExpenseAction extends DispatchAction
                 request.setAttribute("pluginValue", "");
             }
 
-            return mapping.findForward("processTravelApply" + bean.getType());
+            return mapping.findForward("processExpense" + bean.getType());
         }
 
-        return mapping.findForward("detailTravelApply" + bean.getType());
+        return mapping.findForward("detailExpense" + bean.getType());
     }
 
     /**
@@ -724,9 +724,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward processExpenseApplyBean(ActionMapping mapping, ActionForm form,
-                                                 HttpServletRequest request,
-                                                 HttpServletResponse response)
+    public ActionForward processExpenseBean(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");

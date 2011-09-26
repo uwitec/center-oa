@@ -24,5 +24,33 @@ import com.china.center.oa.tcp.vo.ExpenseApplyVO;
  */
 public interface ExpenseApplyDAO extends DAO<ExpenseApplyBean, ExpenseApplyVO>
 {
+    int updateStatus(String id, int status);
+
+    /**
+     * updateBorrowTotal
+     * 
+     * @param id
+     * @param borrowTotal
+     * @return
+     */
+    int updateBorrowTotal(String id, long borrowTotal);
+
+    /**
+     * updateTotal
+     * 
+     * @param id
+     * @param total
+     * @return
+     */
+    int updateTotal(String id, long total);
+
+    /**
+     * updateBorrowStafferId
+     * 
+     * @param id
+     * @param borrowStafferId
+     * @return
+     */
+    int updateBorrowStafferId(String id, String borrowStafferId);
 
 }

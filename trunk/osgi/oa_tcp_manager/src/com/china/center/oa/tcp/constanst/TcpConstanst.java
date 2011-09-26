@@ -119,7 +119,7 @@ public interface TcpConstanst
     int TRAVELAPPLY_BORROW_NO = 0;
 
     /**
-     * 付款
+     * 公司付款给员工
      */
     @Defined(key = "expensePayType", value = "公司付款给员工")
     int PAYTYPE_PAY_YES = 1;
@@ -131,7 +131,7 @@ public interface TcpConstanst
     int PAYTYPE_PAY_OK = 0;
 
     /**
-     * 收支均衡
+     * 员工付款给公司
      */
     @Defined(key = "expensePayType", value = "员工付款给公司")
     int PAYTYPE_PAY_NO = 2;
@@ -154,6 +154,11 @@ public interface TcpConstanst
     String TCP_TRAVELAPPLY_PROCESS_URL = "../tcp/apply.do?method=findTravelApply&update=2&id=";
 
     /**
+     * 报销处理的URL
+     */
+    String TCP_EXPENSE_PROCESS_URL = "../tcp/expense.do?method=findExpense&update=2&id=";
+
+    /**
      * 显示
      */
     String TCP_TRAVELAPPLY_DETAIL_URL = "../tcp/apply.do?method=findTravelApply&id=";
@@ -173,50 +178,44 @@ public interface TcpConstanst
     /**
      * 差旅费申请及借款
      */
-    @Defined(key = "tcpApplyType", value = "差旅费申请及借款")
+    @Defined(key = "tcpType", value = "差旅费申请及借款")
     int TCP_APPLYTYPE_TRAVEL = 0;
 
     /**
      * 业务招待费申请及借款
      */
-    @Defined(key = "tcpApplyType", value = "业务招待费申请及借款")
+    @Defined(key = "tcpType", value = "业务招待费申请及借款")
     int TCP_APPLYTYPE_ENTERTAIN = 1;
 
     /**
      * 日常办公和固定资产采购申请及借
      */
-    @Defined(key = "tcpApplyType", value = "日常办公和固定资产采购申请及借款")
+    @Defined(key = "tcpType", value = "日常办公和固定资产采购申请及借款")
     int TCP_APPLYTYPE_STOCK = 2;
 
     /**
      * 对公业务申请及借款
      */
-    @Defined(key = "tcpApplyType", value = "对公业务申请及借款")
+    @Defined(key = "tcpType", value = "对公业务申请及借款")
     int TCP_APPLYTYPE_PUBLIC = 3;
 
     /**
      * 差旅费报销
      */
-    @Defined(key = "tcpExpenseType", value = "差旅费报销")
-    int TCP_EXPENSETYPE_TRAVEL = 0;
+    @Defined(key = "tcpType", value = "差旅费报销")
+    int TCP_EXPENSETYPE_TRAVEL = 11;
 
     /**
      * 业务招待费报销
      */
-    @Defined(key = "tcpExpenseType", value = "业务招待费报销")
-    int TCP_EXPENSETYPE_ENTERTAIN = 1;
+    @Defined(key = "tcpType", value = "业务招待费报销")
+    int TCP_EXPENSETYPE_ENTERTAIN = 12;
 
     /**
-     * 日常办公和固定资产采购报销
+     * 日常费用报销(日常办公和固定资产采购申请及借/对公业务申请及借款)
      */
-    @Defined(key = "tcpExpenseType", value = "日常办公和固定资产采购报销")
-    int TCP_EXPENSETYPE_STOCK = 2;
-
-    /**
-     * 对公业务报销
-     */
-    @Defined(key = "tcpExpenseType", value = "对公业务报销")
-    int TCP_EXPENSETYPE_PUBLIC = 3;
+    @Defined(key = "tcpType", value = "日常费用报销")
+    int TCP_EXPENSETYPE_PUBLIC = 13;
 
     /**
      * 未关联报销

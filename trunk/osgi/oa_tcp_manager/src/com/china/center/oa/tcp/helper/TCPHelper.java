@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.vo.FlowLogVO;
+import com.china.center.oa.tcp.bean.AbstractTcpBean;
 import com.china.center.oa.tcp.bean.TravelApplyBean;
 import com.china.center.oa.tcp.constanst.TcpConstanst;
 import com.china.center.oa.tcp.constanst.TcpFlowConstant;
@@ -40,7 +41,7 @@ public abstract class TCPHelper
      * 
      * @param bean
      */
-    public static void setFlowKey(TravelApplyBean bean)
+    public static void setFlowKey(AbstractTcpBean bean)
     {
         if (bean.getType() != TcpConstanst.TCP_APPLYTYPE_STOCK)
         {
@@ -170,7 +171,7 @@ public abstract class TCPHelper
      * @param bean
      * @return
      */
-    public static boolean canTravelApplyDelete(TravelApplyBean bean)
+    public static boolean canTravelApplyDelete(AbstractTcpBean bean)
     {
         if (bean.getStatus() == TcpConstanst.TCP_STATUS_INIT
             || bean.getStatus() == TcpConstanst.TCP_STATUS_REJECT)
@@ -187,7 +188,7 @@ public abstract class TCPHelper
      * @param bean
      * @return
      */
-    public static boolean canTravelApplyUpdate(TravelApplyBean bean)
+    public static boolean canTravelApplyUpdate(AbstractTcpBean bean)
     {
         return canTravelApplyDelete(bean);
     }
@@ -248,7 +249,14 @@ public abstract class TCPHelper
     {
         vo.setShowTotal(MathTools.formatNum(MathTools.longToDouble2(vo.getTotal())));
 
-        vo.setUrl(TcpConstanst.TCP_TRAVELAPPLY_PROCESS_URL + vo.getApplyId());
+        if (vo.getType() <= 10)
+        {
+            vo.setUrl(TcpConstanst.TCP_TRAVELAPPLY_PROCESS_URL + vo.getApplyId());
+        }
+        else
+        {
+            vo.setUrl(TcpConstanst.TCP_EXPENSE_PROCESS_URL + vo.getApplyId());
+        }
     }
 
     public static FlowLogVO getTCPFlowLogVO(FlowLogBean bean)
