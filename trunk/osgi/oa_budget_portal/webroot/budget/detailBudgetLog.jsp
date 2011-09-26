@@ -80,7 +80,11 @@ function load()
                ${my:formatNum(bean.monery / 100.0)}
             </p:cell>
             
-            <p:cell title="时间" end="true">
+            <p:cell title="状态">
+               ${my:get('budgetLogStatus', bean.status)}
+            </p:cell>
+            
+            <p:cell title="时间" >
                ${bean.logTime}
             </p:cell>
             

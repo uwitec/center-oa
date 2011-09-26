@@ -145,6 +145,39 @@ public abstract class BudgetHelper
     }
 
     /**
+     * getLogLevel
+     * 
+     * @param budget
+     * @return
+     */
+    public static String getLogLevel(BudgetBean budget)
+    {
+        if (budget.getType() == BudgetConstant.BUDGET_TYPE_DEPARTMENT
+            && budget.getLevel() == BudgetConstant.BUDGET_LEVEL_MONTH)
+        {
+            return "";
+        }
+
+        if (budget.getType() == BudgetConstant.BUDGET_TYPE_DEPARTMENT
+            && budget.getLevel() == BudgetConstant.BUDGET_LEVEL_YEAR)
+        {
+            return "2";
+        }
+
+        if (budget.getType() == BudgetConstant.BUDGET_TYPE_LOCATION)
+        {
+            return "1";
+        }
+
+        if (budget.getType() == BudgetConstant.BUDGET_TYPE_COMPANY)
+        {
+            return "0";
+        }
+
+        return "";
+    }
+
+    /**
      * 判断使用状态
      * 
      * @param budget

@@ -31,7 +31,6 @@ import com.china.center.oa.budget.dao.BudgetItemDAO;
 import com.china.center.oa.budget.dao.BudgetLogDAO;
 import com.china.center.oa.budget.dao.FeeItemDAO;
 import com.china.center.oa.budget.helper.BudgetHelper;
-import com.china.center.oa.budget.manager.BudgetApplyManager;
 import com.china.center.oa.budget.manager.BudgetManager;
 import com.china.center.oa.budget.vo.BudgetItemVO;
 import com.china.center.oa.budget.vo.BudgetVO;
@@ -76,8 +75,6 @@ public class BudgetManagerImpl implements BudgetManager
     private FeeItemDAO feeItemDAO = null;
 
     private BudgetLogDAO budgetLogDAO = null;
-
-    private BudgetApplyManager budgetApplyManager = null;
 
     private LogDAO logDAO = null;
 
@@ -128,6 +125,17 @@ public class BudgetManagerImpl implements BudgetManager
         JudgeTools.judgeParameterIsNull(user, refId);
 
         budgetLogDAO.deleteEntityBeansByFK(refId);
+
+        return true;
+    }
+
+    @IntegrationAOP(lock = BudgetConstant.BUDGETLOG_ADD_LOCK)
+    public boolean updateBudgetLogStatusWithoutTransactional(User user, String refId, int status)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, refId);
+
+        budgetLogDAO.updateStatuseByRefId(refId, status);
 
         return true;
     }
@@ -841,6 +849,37 @@ public class BudgetManagerImpl implements BudgetManager
         return true;
     }
 
+    public double sumPreAndUseInEachBudget(BudgetBean budget)
+    {
+        List<BudgetItemBean> itemList = budgetItemDAO.queryEntityBeansByFK(budget.getId());
+
+        double total = 0.0d;
+
+        for (BudgetItemBean budgetItemBean : itemList)
+        {
+            total += sumPreAndUseInEachBudgetItem(budgetItemBean);
+        }
+
+        return total;
+    }
+
+    public double sumPreAndUseInEachBudgetItem(BudgetItemBean budgetItemBean)
+    {
+        BudgetBean budget = budgetDAO.find(budgetItemBean.getBudgetId());
+
+        if (budget == null)
+        {
+            return 0.0;
+        }
+
+        String level = BudgetHelper.getLogLevel(budget);
+
+        double itemTotal = budgetLogDAO.sumBudgetLogByLevel("budgetItemId" + level, budgetItemBean
+            .getId()) / 100.0d;
+
+        return itemTotal;
+    }
+
     /**
      * checkContain
      * 
@@ -946,8 +985,8 @@ public class BudgetManagerImpl implements BudgetManager
 
         plan.setBeginTime(item.getBeginDate() + " 00:00:00");
 
-        // 推后15天
-        String endTime = TimeTools.getSpecialDateStringByDays(item.getEndDate() + " 23:59:59", 15);
+        // 30天后自动关闭
+        String endTime = TimeTools.getSpecialDateStringByDays(item.getEndDate() + " 23:59:59", 30);
 
         // 结束应该是推后
         plan.setEndTime(endTime);
@@ -1145,7 +1184,7 @@ public class BudgetManagerImpl implements BudgetManager
             vo.setBudgetFullDepartmentName(org.getFullName());
         }
 
-        double hasUsed = budgetApplyManager.sumPreAndUseInEachBudget(vo);
+        double hasUsed = this.sumPreAndUseInEachBudget(vo);
 
         vo.setSrealMonery(MathTools.formatNum(hasUsed));
 
@@ -1157,7 +1196,7 @@ public class BudgetManagerImpl implements BudgetManager
         {
             BudgetHelper.formatBudgetItem(budgetItemBean);
 
-            double hasUseed = budgetApplyManager.sumPreAndUseInEachBudgetItem(budgetItemBean);
+            double hasUseed = this.sumPreAndUseInEachBudgetItem(budgetItemBean);
 
             budgetItemBean.setSuseMonery(MathTools.formatNum(hasUseed));
 
@@ -1381,22 +1420,4 @@ public class BudgetManagerImpl implements BudgetManager
     {
         this.orgManager = orgManager;
     }
-
-    /**
-     * @return the budgetApplyManager
-     */
-    public BudgetApplyManager getBudgetApplyManager()
-    {
-        return budgetApplyManager;
-    }
-
-    /**
-     * @param budgetApplyManager
-     *            the budgetApplyManager to set
-     */
-    public void setBudgetApplyManager(BudgetApplyManager budgetApplyManager)
-    {
-        this.budgetApplyManager = budgetApplyManager;
-    }
-
 }

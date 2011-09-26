@@ -114,9 +114,8 @@ public interface BudgetConstant
     /**
      * 暂时没有季度预算
      */
-    @Defined(key = "budgetLevel", value = "季度预算")
-    int BUDGET_LEVEL_QUARTER = 1;
-
+    // @Defined(key = "budgetLevel", value = "季度预算")
+    // int BUDGET_LEVEL_QUARTER = 1;
     /**
      * 月度预算
      */
@@ -210,10 +209,16 @@ public interface BudgetConstant
     String FEE_ITEM_TRAVELLING = "A9201108070000000001";
 
     /**
+     * 预算使用来源-借款
+     */
+    @Defined(key = "budgetLogFromType", value = "借款")
+    int BUDGETLOG_FROMTYPE_TCP = 0;
+
+    /**
      * 预算使用来源-报销
      */
     @Defined(key = "budgetLogFromType", value = "报销")
-    int BUDGETLOG_FROMTYPE_TCP = 0;
+    int BUDGETLOG_FROMTYPE_EXPENSE = 1;
 
     /**
      * 预算使用类型-预占
@@ -226,4 +231,22 @@ public interface BudgetConstant
      */
     @Defined(key = "budgetLogUserType", value = "使用")
     int BUDGETLOG_USERTYPE_REAL = 1;
+
+    /**
+     * 临时使用
+     */
+    @Defined(key = "budgetLogUserType", value = "临时使用")
+    int BUDGETLOG_USERTYPE_TEMP = 2;
+
+    /**
+     * 正式
+     */
+    @Defined(key = "budgetLogStatus", value = "正式")
+    int BUDGETLOG_STATUS_OK = 0;
+
+    /**
+     * 临时
+     */
+    @Defined(key = "budgetLogStatus", value = "临时")
+    int BUDGETLOG_STATUS_TEMP = 1;
 }

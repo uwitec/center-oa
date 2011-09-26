@@ -44,8 +44,8 @@ function load()
 		     parentName : {begin : '<a href=../budget/budget.do?method=findBudget&update=1&id={parentId}>', end : '</a>'}
 		 },
 		 buttons : [
-		     {id: 'add1', caption: '增加公司预算', bclass: 'add', onpress : addRootBean, auth: '0504'},
-		     {id: 'add', bclass: 'add', caption: '增加事业部预算', onpress : addBean, auth: '0502'},
+		     {id: 'add1', caption: '增加公司年度预算', bclass: 'add', onpress : addRootBean, auth: '0504'},
+		     {id: 'add', bclass: 'add', caption: '增加事业部年度预算', onpress : addBean, auth: '0502'},
 		     {id: 'add', bclass: 'add', caption: '增加部门年度预算', onpress : addDepartmentBean, auth: '0509'},
 		     {id: 'add', bclass: 'add', caption: '增加部门月度预算', onpress : addMonthDepartmentBean, auth: '0509'},
 		     {id: 'update', bclass: 'update', onpress : updateBean, auth: '0502'},

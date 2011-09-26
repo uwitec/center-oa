@@ -16,6 +16,7 @@ import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.oa.finance.bean.BankBean;
+import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.dao.BankDAO;
 import com.china.center.oa.finance.dao.InBillDAO;
@@ -36,6 +37,7 @@ import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.helper.FinanceHelper;
 import com.china.center.oa.tax.manager.FinanceManager;
+import com.china.center.oa.tcp.bean.ExpenseApplyBean;
 import com.china.center.oa.tcp.bean.TravelApplyBean;
 import com.china.center.oa.tcp.constanst.TcpConstanst;
 import com.china.center.oa.tcp.listener.TcpPayListener;
@@ -109,7 +111,7 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
 
             FinanceBean financeBean = new FinanceBean();
 
-            String name = DefinedCommon.getValue("tcpApplyType", bean.getType()) + "申请通过:"
+            String name = DefinedCommon.getValue("tcpType", bean.getType()) + "申请通过:"
                           + bean.getId() + '.';
 
             financeBean.setName(name);
@@ -162,6 +164,13 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
             financeManager.addFinanceBeanWithoutTransactional(user, financeBean);
         }
 
+    }
+
+    public void onPayExpenseApply(User user, ExpenseApplyBean bean, List<OutBillBean> outBillList,
+                                  List<InBillBean> inBillList)
+        throws MYException
+    {
+        // TODO 报销的凭证生成(这里每个需要选择具体的子科目,需要和他们确认)
     }
 
     /**

@@ -261,6 +261,11 @@ public class BudgetAction extends DispatchAction
         condition.addIntCondition("BudgetBean.level", "=", BudgetConstant.BUDGET_LEVEL_MONTH);
 
         condition.addIntCondition("BudgetBean.status", "=", BudgetConstant.BUDGET_STATUS_PASS);
+
+        // 时间在当前时间内的有效预算
+        condition.addCondition("BudgetBean.endDate", ">=", TimeTools.now_short());
+
+        condition.addCondition("BudgetBean.beginDate", "<=", TimeTools.now_short());
     }
 
     /**
@@ -722,7 +727,7 @@ public class BudgetAction extends DispatchAction
         // handle item
         for (BudgetItemVO budgetItemBean : items)
         {
-            double hasUseed = budgetApplyManager.sumPreAndUseInEachBudgetItem(budgetItemBean);
+            double hasUseed = budgetManager.sumPreAndUseInEachBudgetItem(budgetItemBean);
 
             budgetItemBean.setSuseMonery(MathTools.formatNum(hasUseed));
 
@@ -855,6 +860,20 @@ public class BudgetAction extends DispatchAction
             if ("1".equals(opr))
             {
                 bean.setStatus(BudgetConstant.BUDGET_STATUS_SUBMIT);
+            }
+
+            // 处理月份
+            if (BudgetHelper.isUnitBudget(bean))
+            {
+                String month = request.getParameter("month");
+
+                String begin = bean.getYear() + '-' + month + "-01";
+
+                String end = TimeTools.getMonthEnd(begin);
+
+                bean.setBeginDate(begin);
+
+                bean.setEndDate(end);
             }
 
             budgetFacade.addBudget(user.getId(), bean);
@@ -1060,6 +1079,20 @@ public class BudgetAction extends DispatchAction
                 bean.setStatus(BudgetConstant.BUDGET_STATUS_SUBMIT);
             }
 
+            // 处理月份
+            if (BudgetHelper.isUnitBudget(bean))
+            {
+                String month = request.getParameter("month");
+
+                String begin = bean.getYear() + '-' + month + "-01";
+
+                String end = TimeTools.getMonthEnd(begin);
+
+                bean.setBeginDate(begin);
+
+                bean.setEndDate(end);
+            }
+
             budgetFacade.updateBudget(user.getId(), bean);
 
             request.setAttribute(KeyConstant.MESSAGE, "修改预算成功");
@@ -1214,6 +1247,11 @@ public class BudgetAction extends DispatchAction
             boolean isUnit = BudgetHelper.isUnitBudget(bean);
 
             request.setAttribute("unit", isUnit);
+
+            if (isUnit)
+            {
+                request.setAttribute("month", bean.getBeginDate().substring(5, 7));
+            }
         }
         catch (MYException e)
         {
@@ -1580,7 +1618,7 @@ public class BudgetAction extends DispatchAction
             obj.setBudgetFullDepartmentName(org.getFullName());
         }
 
-        double hasUsed = budgetApplyManager.sumPreAndUseInEachBudget(obj);
+        double hasUsed = budgetManager.sumPreAndUseInEachBudget(obj);
 
         obj.setSrealMonery(MathTools.formatNum(hasUsed));
     }

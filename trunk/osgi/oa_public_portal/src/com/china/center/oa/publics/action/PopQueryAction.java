@@ -104,8 +104,8 @@ public class PopQueryAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryStaffer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse reponse)
+    public ActionForward rptQueryStaffer(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -137,8 +137,18 @@ public class PopQueryAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYSTAFFER);
 
-            list = stafferDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, RPTQUERYSTAFFER),
-                PageSeparateTools.getPageSeparate(request, RPTQUERYSTAFFER));
+            list = stafferDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                RPTQUERYSTAFFER), PageSeparateTools.getPageSeparate(request, RPTQUERYSTAFFER));
+        }
+
+        for (StafferVO vo : list)
+        {
+            PrincipalshipBean pri = orgManager.findPrincipalshipById(vo.getPrincipalshipId());
+
+            if (pri != null)
+            {
+                vo.setDepartmentFullName(pri.getFullName());
+            }
         }
 
         request.setAttribute("beanList", list);
@@ -158,16 +168,16 @@ public class PopQueryAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryOrg(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward rptQueryOrg(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         CommonTools.saveParamers(request);
 
         String cacheKey = RPTQUERYORG;
 
-        List<PrincipalshipBean> list = ActionTools.commonQueryInPageSeparate(cacheKey, request, principalshipDAO,
-            new HandleQueryCondition()
+        List<PrincipalshipBean> list = ActionTools.commonQueryInPageSeparate(cacheKey, request,
+            principalshipDAO, new HandleQueryCondition()
             {
                 public void setQueryCondition(HttpServletRequest request, ConditionParse condtion)
                 {
@@ -190,7 +200,8 @@ public class PopQueryAction extends DispatchAction
         {
             for (PrincipalshipBean principalshipBean : list)
             {
-                PrincipalshipBean fullBean = orgManager.findPrincipalshipById(principalshipBean.getId());
+                PrincipalshipBean fullBean = orgManager.findPrincipalshipById(principalshipBean
+                    .getId());
 
                 BeanUtil.copyProperties(principalshipBean, fullBean);
             }
@@ -209,8 +220,8 @@ public class PopQueryAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryUser(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse reponse)
+    public ActionForward rptQueryUser(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -237,8 +248,8 @@ public class PopQueryAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYSTAFFER);
 
-            list = userDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, RPTQUERYUSER),
-                PageSeparateTools.getPageSeparate(request, RPTQUERYUSER));
+            list = userDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                RPTQUERYUSER), PageSeparateTools.getPageSeparate(request, RPTQUERYUSER));
         }
 
         for (UserVO userVO : list)
@@ -284,8 +295,8 @@ public class PopQueryAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryCity(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse reponse)
+    public ActionForward rptQueryCity(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -314,8 +325,8 @@ public class PopQueryAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, cacheKey);
 
-            list = cityDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, cacheKey),
-                PageSeparateTools.getPageSeparate(request, cacheKey));
+            list = cityDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                cacheKey), PageSeparateTools.getPageSeparate(request, cacheKey));
         }
 
         request.setAttribute("beanList", list);
@@ -333,7 +344,8 @@ public class PopQueryAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQuerySuperiorStaffer(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward rptQuerySuperiorStaffer(ActionMapping mapping, ActionForm form,
+                                                 HttpServletRequest request,
                                                  HttpServletResponse reponse)
         throws ServletException
     {
@@ -358,7 +370,8 @@ public class PopQueryAction extends DispatchAction
 
             String parentId = pri.getParentId();
 
-            List<StafferVSPriBean> svsp = stafferVSPriDAO.queryEntityBeansByFK(parentId, AnoConstant.FK_FIRST);
+            List<StafferVSPriBean> svsp = stafferVSPriDAO.queryEntityBeansByFK(parentId,
+                AnoConstant.FK_FIRST);
 
             for (StafferVSPriBean each : svsp)
             {
@@ -381,8 +394,8 @@ public class PopQueryAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryLog(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse reponse)
+    public ActionForward rptQueryLog(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);

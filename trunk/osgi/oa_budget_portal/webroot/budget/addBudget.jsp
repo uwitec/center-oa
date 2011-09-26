@@ -144,9 +144,29 @@ function getStaffers(oos)
             </p:pro>
             </c:if>
             
-			<c:if test="${type == 0 || nextLevel == 2}">
+			<c:if test="${type == 0}">
 			<p:pro field="beginDate"/>
 			<p:pro field="endDate"/>
+			</c:if>
+			
+			<c:if test="${nextLevel == 2}">
+			<p:cell title="选择月" end="true">
+			<select name="month" values="${month}" class="select_class" oncheck="notNone">
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+                <font color="#FF0000">*</font>
+			</p:cell>
 			</c:if>
 			
 			<c:if test="${type != 0 && nextLevel != 2}">

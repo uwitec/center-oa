@@ -25,18 +25,4 @@
         </property>
     </bean>
     
-    <bean id="budgetListenerBudgetImpl" class="com.china.center.oa.budget.listener.impl.BudgetListenerBudgetImpl" />
-    
-    <bean id="budgetLoadListener"
-        class="com.center.china.osgi.publics.DefaultLoadListener">
-        <property name="listenerManager">
-            <ref bean="budgetApplyManager" />
-        </property>
-        <property name="listenerList">
-            <list>
-                <ref bean="budgetListenerBudgetImpl" />
-            </list>
-        </property>
-    </bean>
-    
 </beans>

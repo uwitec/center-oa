@@ -54,6 +54,11 @@ public class BudgetLogBean implements Serializable
     private int userType = BudgetConstant.BUDGETLOG_USERTYPE_PRE;
 
     /**
+     * 0:正式 1:临时(只有正式的才能进入统计范围)
+     */
+    private int status = BudgetConstant.BUDGETLOG_STATUS_OK;
+
+    /**
      * 关联bill
      */
     private String billId = "";
@@ -518,6 +523,23 @@ public class BudgetLogBean implements Serializable
     }
 
     /**
+     * @return the status
+     */
+    public int getStatus()
+    {
+        return status;
+    }
+
+    /**
+     * @param status
+     *            the status to set
+     */
+    public void setStatus(int status)
+    {
+        this.status = status;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -544,6 +566,9 @@ public class BudgetLogBean implements Serializable
             .append("userType = ")
             .append(this.userType)
             .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
             .append("billId = ")
             .append(this.billId)
             .append(TAB)
@@ -568,6 +593,9 @@ public class BudgetLogBean implements Serializable
             .append("budgetId = ")
             .append(this.budgetId)
             .append(TAB)
+            .append("budgetItemId = ")
+            .append(this.budgetItemId)
+            .append(TAB)
             .append("budgetId0 = ")
             .append(this.budgetId0)
             .append(TAB)
@@ -576,9 +604,6 @@ public class BudgetLogBean implements Serializable
             .append(TAB)
             .append("budgetId2 = ")
             .append(this.budgetId2)
-            .append(TAB)
-            .append("budgetItemId = ")
-            .append(this.budgetItemId)
             .append(TAB)
             .append("budgetItemId0 = ")
             .append(this.budgetItemId0)

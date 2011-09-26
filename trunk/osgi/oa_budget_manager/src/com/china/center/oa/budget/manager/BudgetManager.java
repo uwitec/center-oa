@@ -45,7 +45,27 @@ public interface BudgetManager
                                                  List<BudgetLogBean> logBean)
         throws MYException;
 
+    /**
+     * deleteBudgetLogListWithoutTransactional
+     * 
+     * @param user
+     * @param refId
+     * @return
+     * @throws MYException
+     */
     boolean deleteBudgetLogListWithoutTransactional(User user, String refId)
+        throws MYException;
+
+    /**
+     * 更新预算使用的状态
+     * 
+     * @param user
+     * @param refId
+     * @param status
+     * @return
+     * @throws MYException
+     */
+    boolean updateBudgetLogStatusWithoutTransactional(User user, String refId, int status)
         throws MYException;
 
     /**
@@ -90,4 +110,20 @@ public interface BudgetManager
      * 配置预算的开始
      */
     void initCarryStatus();
+
+    /**
+     * 合计所有的递归使用的子项
+     * 
+     * @param budgetItemBean
+     * @return
+     */
+    double sumPreAndUseInEachBudgetItem(BudgetItemBean budgetItemBean);
+
+    /**
+     * 统计预算已经使用金额
+     * 
+     * @param budget
+     * @return
+     */
+    double sumPreAndUseInEachBudget(BudgetBean budget);
 }

@@ -35,7 +35,7 @@ import com.china.center.tools.TimeTools;
 
 
 /**
- * BudgetEndPlanManager
+ * 预算自动结束
  * 
  * @author ZHUZHU
  * @version 2009-5-31

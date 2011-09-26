@@ -116,8 +116,8 @@ function closesd()
 				<td align="center">选择</td>
 				<td align="center"><strong>名称</strong></td>
 				<td align="center"><strong>编码</strong></td>
-				<td align="center"><strong>部门</strong></td>
 				<td align="center"><strong>区域</strong></td>
+				<td align="center"><strong>部门</strong></td>
 			</tr>
 
 			<c:forEach items="${beanList}" var="item" varStatus="vs">
@@ -128,8 +128,8 @@ function closesd()
 					plever="${item.lever}"	pname="${item.name}" pcode="${item.code}" value="${item.id}"/></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.name}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.code}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${item.departmentName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.locationName}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.departmentFullName}</td>
 				</tr>
 			</c:forEach>
 		</table>

@@ -34,5 +34,6 @@ public interface BudgetListener extends ParentListener
      * @param newList
      * @throws MYException
      */
+    @Deprecated
     double onSumPreAndUseInEachBudgetItemChange(User user, BudgetItemBean changeItem);
 }
