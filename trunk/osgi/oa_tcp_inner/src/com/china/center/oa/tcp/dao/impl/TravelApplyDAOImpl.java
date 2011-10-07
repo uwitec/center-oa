@@ -9,6 +9,7 @@
 package com.china.center.oa.tcp.dao.impl;
 
 
+import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.tcp.bean.TravelApplyBean;
 import com.china.center.oa.tcp.dao.TravelApplyDAO;
@@ -28,6 +29,13 @@ public class TravelApplyDAOImpl extends BaseDAO<TravelApplyBean, TravelApplyVO> 
     public int updateStatus(String id, int status)
     {
         return this.jdbcOperation.updateField("status", status, id, this.claz);
+    }
+
+    public int updateFeedback(String id, String refId, int feedback)
+    {
+        String sql = BeanTools.getUpdateHead(claz) + "set feedback = ?, refId = ? where id = ?";
+
+        return this.jdbcOperation.update(sql, feedback, refId, id);
     }
 
     public int updateBorrowTotal(String id, long borrowTotal)

@@ -208,6 +208,7 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
             }
         }
 
+        // 合法性校验
         checkApply(bean);
 
         List<TcpShareBean> shareList = bean.getShareList();
@@ -434,6 +435,7 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
                 bean.setPayList(newPayList);
 
+                // 如果没有借款不需要重新预算
                 checkBudget(user, bean, 1);
 
                 // 成功后更新支付列表
@@ -443,8 +445,7 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
             }
         }
 
-        if (oldStatus == TcpConstanst.TCP_STATUS_WAIT_PAY
-            && bean.getBorrow() == TcpConstanst.TRAVELAPPLY_BORROW_YES)
+        if (oldStatus == TcpConstanst.TCP_STATUS_WAIT_PAY && bean.getBorrow() == TcpConstanst.TRAVELAPPLY_BORROW_YES)
         {
             // 财务付款
             List<OutBillBean> outBillList = (List<OutBillBean>)param.getOther();
@@ -463,8 +464,7 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
             if (MathTools.doubleToLong2(total) != bean.getBorrowTotal())
             {
-                throw new MYException("付款金额[%.2f]不等于借款金额[%.2f]", total, MathTools
-                    .longToDouble2(bean.getBorrowTotal()));
+                throw new MYException("付款金额[%.2f]不等于借款金额[%.2f]", total, MathTools.longToDouble2(bean.getBorrowTotal()));
             }
 
             Collection<TcpPayListener> listenerMapValues = this.listenerMapValues();
@@ -481,8 +481,7 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
         }
 
         // 采购货比三家
-        if (oldStatus == TcpConstanst.TCP_STATUS_WAIT_BUY
-            && bean.getType() == TcpConstanst.TCP_APPLYTYPE_STOCK)
+        if (oldStatus == TcpConstanst.TCP_STATUS_WAIT_BUY && bean.getType() == TcpConstanst.TCP_APPLYTYPE_STOCK)
         {
             List<TravelApplyItemBean> newItemList = (List<TravelApplyItemBean>)param.getOther2();
 
@@ -546,8 +545,7 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
         throws MYException
     {
         // 自动生成付款单
-        outBill.setDescription(DefinedCommon.getValue("tcpType", apply.getType()) + "申请借款的付款:"
-                               + apply.getId());
+        outBill.setDescription(DefinedCommon.getValue("tcpType", apply.getType()) + "申请借款的付款:" + apply.getId());
 
         outBill.setLocationId(user.getLocationId());
 
@@ -705,8 +703,7 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
      * @return
      * @throws MYException
      */
-    private int saveApprove(User user, List<String> processList, TravelApplyVO bean,
-                            int nextStatus, int pool)
+    private int saveApprove(User user, List<String> processList, TravelApplyVO bean, int nextStatus, int pool)
         throws MYException
     {
         // 获得当前的处理环节
@@ -746,6 +743,7 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
                 approve.setApproverId(processId);
                 approve.setFlowKey(bean.getFlowKey());
                 approve.setLogTime(TimeTools.now());
+                approve.setDepartmentId(bean.getDepartmentId());
                 approve.setName(bean.getName());
                 approve.setStatus(nextStatus);
                 approve.setTotal(bean.getTotal());
@@ -760,8 +758,7 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
             {
                 MailBean mail = new MailBean();
 
-                mail.setTitle(bean.getStafferName() + "的"
-                              + DefinedCommon.getValue("tcpType", bean.getType()) + "申请["
+                mail.setTitle(bean.getStafferName() + "的" + DefinedCommon.getValue("tcpType", bean.getType()) + "申请["
                               + bean.getName() + "]等待您的处理.");
 
                 mail.setContent(mail.getContent());
@@ -811,8 +808,7 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
      * @param pool
      * @throws MYException
      */
-    private int saveApprove(User user, String processId, TravelApplyVO bean, int nextStatus,
-                            int pool)
+    private int saveApprove(User user, String processId, TravelApplyVO bean, int nextStatus, int pool)
         throws MYException
     {
         List<String> processList = new ArrayList();
@@ -840,7 +836,12 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
             budgetManager.deleteBudgetLogListWithoutTransactional(user, bean.getId());
         }
 
-        double borrowRadio = (double)bean.getTotal() / (double)bean.getBorrowTotal();
+        double borrowRadio = 1.0d;
+
+        if (bean.getTotal() != 0)
+        {
+            borrowRadio = (double)bean.getBorrowTotal() / (double)bean.getTotal();
+        }
 
         List<TravelApplyItemVO> itemVOList = bean.getItemVOList();
 
@@ -865,8 +866,8 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
                 log.setBudgetId(tcpShareVO.getBudgetId());
 
-                BudgetItemBean item = budgetItemDAO.findByBudgetIdAndFeeItemId(tcpShareVO
-                    .getBudgetId(), travelApplyItemVO.getFeeItemId());
+                BudgetItemBean item = budgetItemDAO.findByBudgetIdAndFeeItemId(tcpShareVO.getBudgetId(),
+                    travelApplyItemVO.getFeeItemId());
 
                 if (item == null)
                 {
@@ -885,8 +886,7 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
                 log.setLocationId(user.getLocationId());
 
-                log.setLog(DefinedCommon.getValue("tcpType", bean.getType()) + "申请[" + bean.getId()
-                           + "]占用预算");
+                log.setLog(DefinedCommon.getValue("tcpType", bean.getType()) + "申请[" + bean.getId() + "]占用预算");
 
                 log.setLogTime(TimeTools.now());
 
@@ -943,11 +943,11 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
         // 验证
         if (bean.getBorrowTotal() > bean.getTotal())
         {
-            throw new MYException("借款金额[%f]大于总费用[%f]", bean.getBorrowTotal() / 100.0d, bean
-                .getTotal() / 100.0d);
+            throw new MYException("借款金额[%f]大于总费用[%f]", bean.getBorrowTotal() / 100.0d, bean.getTotal() / 100.0d);
         }
 
         int ratioTotal = 0;
+
         for (TcpShareBean tcpShareBean : bean.getShareList())
         {
             tcpShareBean.setId(commonDAO.getSquenceString20());
@@ -977,6 +977,7 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
         apply.setFlowKey(bean.getFlowKey());
         apply.setApplyId(bean.getId());
         apply.setApplyId(user.getStafferId());
+        apply.setDepartmentId(bean.getDepartmentId());
         apply.setType(bean.getType());
         apply.setStatus(TcpConstanst.TCP_STATUS_INIT);
         apply.setTotal(bean.getTotal());
@@ -995,8 +996,7 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
      * @param reason
      * @param oprMode
      */
-    private void saveFlowLog(User user, int preStatus, TravelApplyBean apply, String reason,
-                             int oprMode)
+    private void saveFlowLog(User user, int preStatus, TravelApplyBean apply, String reason, int oprMode)
     {
         FlowLogBean log = new FlowLogBean();
 
@@ -1201,14 +1201,21 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
             return bean;
         }
 
+        // 部门
+        PrincipalshipBean depa = orgManager.findPrincipalshipById(bean.getDepartmentId());
+
+        if (depa != null)
+        {
+            bean.setDepartmentName(depa.getFullName());
+        }
+
         List<TravelApplyItemVO> itemVOList = travelApplyItemDAO.queryEntityVOsByFK(id);
 
         bean.setItemVOList(itemVOList);
 
         for (TravelApplyItemVO travelApplyItemVO : itemVOList)
         {
-            travelApplyItemVO.setShowMoneys(TCPHelper
-                .formatNum2(travelApplyItemVO.getMoneys() / 100.0d));
+            travelApplyItemVO.setShowMoneys(TCPHelper.formatNum2(travelApplyItemVO.getMoneys() / 100.0d));
         }
 
         List<AttachmentBean> attachmentList = attachmentDAO.queryEntityVOsByFK(id);
@@ -1261,21 +1268,18 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
             if (bean.getStatus() == tcpFlowBean.getCurrentStatus())
             {
                 sb.append("<font color=red>").append(
-                    DefinedCommon.getValue("tcpStatus", tcpFlowBean.getCurrentStatus())).append(
-                    "</font>").append("->");
+                    DefinedCommon.getValue("tcpStatus", tcpFlowBean.getCurrentStatus())).append("</font>").append("->");
             }
             else
             {
-                sb
-                    .append(DefinedCommon.getValue("tcpStatus", tcpFlowBean.getCurrentStatus()))
-                    .append("->");
+                sb.append(DefinedCommon.getValue("tcpStatus", tcpFlowBean.getCurrentStatus())).append("->");
             }
         }
 
         if (bean.getStatus() == TcpConstanst.TCP_STATUS_END)
         {
-            sb.append("<font color=red>").append(
-                DefinedCommon.getValue("tcpStatus", TcpConstanst.TCP_STATUS_END)).append("</font>");
+            sb.append("<font color=red>").append(DefinedCommon.getValue("tcpStatus", TcpConstanst.TCP_STATUS_END)).append(
+                "</font>");
         }
         else
         {
