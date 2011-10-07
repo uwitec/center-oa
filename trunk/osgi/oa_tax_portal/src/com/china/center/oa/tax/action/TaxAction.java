@@ -98,8 +98,8 @@ public class TaxAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryTax(ActionMapping mapping, ActionForm form,
-                                  HttpServletRequest request, HttpServletResponse response)
+    public ActionForward queryTax(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                  HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -110,8 +110,8 @@ public class TaxAction extends DispatchAction
 
         condtion.addCondition("order by TaxBean.code asc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYTAX, request, condtion,
-            this.taxDAO, new HandleResult<TaxVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYTAX, request, condtion, this.taxDAO,
+            new HandleResult<TaxVO>()
             {
                 public void handle(TaxVO obj)
                 {
@@ -132,8 +132,8 @@ public class TaxAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryTax(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward rptQueryTax(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -160,8 +160,8 @@ public class TaxAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYTAX);
 
-            list = taxDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
-                RPTQUERYTAX), PageSeparateTools.getPageSeparate(request, RPTQUERYTAX));
+            list = taxDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, RPTQUERYTAX),
+                PageSeparateTools.getPageSeparate(request, RPTQUERYTAX));
         }
 
         request.setAttribute("beanList", list);
@@ -174,6 +174,9 @@ public class TaxAction extends DispatchAction
     private void setCondition(HttpServletRequest request, ConditionParse condtion)
     {
         String name = request.getParameter("name");
+
+        // 父节点
+        String pid = request.getParameter("pid");
 
         String code = request.getParameter("code");
 
@@ -193,10 +196,17 @@ public class TaxAction extends DispatchAction
         {
             condtion.addIntCondition("TaxBean.bottomFlag", "=", bottomFlag);
         }
+
+        if ( !StringTools.isNullOrNone(pid))
+        {
+            TaxBean parent = taxDAO.find(pid);
+
+            condtion.addCondition("TaxBean.parentId" + parent.getLevel(), "=", pid);
+        }
     }
 
-    public ActionForward preForAddTax(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse response)
+    public ActionForward preForAddTax(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse response)
         throws ServletException
     {
         List<TaxTypeBean> taxTypeList = taxTypeDAO.listEntityBeans();
@@ -258,8 +268,8 @@ public class TaxAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findTax(ActionMapping mapping, ActionForm form,
-                                 HttpServletRequest request, HttpServletResponse response)
+    public ActionForward findTax(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                 HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -303,8 +313,8 @@ public class TaxAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateTax(ActionMapping mapping, ActionForm form,
-                                   HttpServletRequest request, HttpServletResponse response)
+    public ActionForward updateTax(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                   HttpServletResponse response)
         throws ServletException
     {
         TaxBean bean = new TaxBean();
@@ -341,8 +351,8 @@ public class TaxAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteTax(ActionMapping mapping, ActionForm form,
-                                   HttpServletRequest request, HttpServletResponse response)
+    public ActionForward deleteTax(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                   HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -377,8 +387,8 @@ public class TaxAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward exportTax(ActionMapping mapping, ActionForm form,
-                                   HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward exportTax(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                   HttpServletResponse reponse)
         throws ServletException
     {
         OutputStream out = null;

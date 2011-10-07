@@ -116,14 +116,12 @@ public class FinanceManagerImpl implements FinanceManager
         bean.setLogTime(TimeTools.now());
 
         // 默认纳税实体
-        if (bean.getType() == TaxConstanst.FINANCE_TYPE_MANAGER
-            && StringTools.isNullOrNone(bean.getDutyId()))
+        if (bean.getType() == TaxConstanst.FINANCE_TYPE_MANAGER && StringTools.isNullOrNone(bean.getDutyId()))
         {
             bean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
         }
 
-        if (bean.getType() == TaxConstanst.FINANCE_TYPE_DUTY
-            && StringTools.isNullOrNone(bean.getDutyId()))
+        if (bean.getType() == TaxConstanst.FINANCE_TYPE_DUTY && StringTools.isNullOrNone(bean.getDutyId()))
         {
             throw new MYException("税务凭证必须有纳税实体的属性");
         }
@@ -168,6 +166,12 @@ public class FinanceManagerImpl implements FinanceManager
             if (tax == null)
             {
                 throw new MYException("科目不存在,请确认操作");
+            }
+
+            // 必须是最小科目哦
+            if (tax.getBottomFlag() != TaxConstanst.TAX_BOTTOMFLAG_ITEM)
+            {
+                throw new MYException("[%s]科目必须是最小科目,请确认操作", tax.getName() + tax.getId());
             }
 
             // 不是结转需要检查辅助核算项
@@ -217,8 +221,7 @@ public class FinanceManagerImpl implements FinanceManager
         financeDAO.saveEntityBean(bean);
 
         // 手工增加增加成功后需要更新
-        if (bean.getCreateType() == TaxConstanst.FINANCE_CREATETYPE_HAND
-            && !StringTools.isNullOrNone(bean.getRefId()))
+        if (bean.getCreateType() == TaxConstanst.FINANCE_CREATETYPE_HAND && !StringTools.isNullOrNone(bean.getRefId()))
         {
             billManager.updateBillBeanChecksWithoutTransactional(user, bean.getRefId(),
                 "增加手工凭证自动更新收款单核对状态:" + FinanceHelper.createFinanceLink(bean.getId()));
@@ -338,8 +341,7 @@ public class FinanceManagerImpl implements FinanceManager
             // 获取最近的一个月
             FinanceTurnVO lastTurn = financeTurnDAO.findLastVO();
 
-            FinanceMonthBean lastMonth = financeMonthDAO.findByUnique(taxBean.getId(), lastTurn
-                .getMonthKey());
+            FinanceMonthBean lastMonth = financeMonthDAO.findByUnique(taxBean.getId(), lastTurn.getMonthKey());
 
             if (lastMonth != null)
             {
@@ -391,8 +393,7 @@ public class FinanceManagerImpl implements FinanceManager
 
             if ( !nextKey.equals(bean.getMonthKey()))
             {
-                throw new MYException("上次结转的是[%s],本次结转的是[%s],应该结转的是[%s],请确认操作", monthKey, bean
-                    .getMonthKey(), nextKey);
+                throw new MYException("上次结转的是[%s],本次结转的是[%s],应该结转的是[%s],请确认操作", monthKey, bean.getMonthKey(), nextKey);
             }
         }
 
@@ -415,8 +416,7 @@ public class FinanceManagerImpl implements FinanceManager
      * @param changeFormat
      * @throws MYException
      */
-    private List<FinanceItemBean> createTurnFinance(User user, FinanceTurnBean bean,
-                                                    String changeFormat)
+    private List<FinanceItemBean> createTurnFinance(User user, FinanceTurnBean bean, String changeFormat)
         throws MYException
     {
         // 产生凭证(结转/利润结转)
@@ -603,8 +603,7 @@ public class FinanceManagerImpl implements FinanceManager
      * @return
      * @throws MYException
      */
-    private List<FinanceItemBean> createProfitFinance(User user, FinanceTurnBean bean,
-                                                      String changeFormat,
+    private List<FinanceItemBean> createProfitFinance(User user, FinanceTurnBean bean, String changeFormat,
                                                       List<FinanceItemBean> itemNearList)
         throws MYException
     {
@@ -733,8 +732,7 @@ public class FinanceManagerImpl implements FinanceManager
     private void checkItem(FinanceItemBean financeItemBean, TaxBean tax)
         throws MYException
     {
-        if (tax.getUnit() == TaxConstanst.TAX_CHECK_YES
-            && StringTools.isNullOrNone(financeItemBean.getUnitId()))
+        if (tax.getUnit() == TaxConstanst.TAX_CHECK_YES && StringTools.isNullOrNone(financeItemBean.getUnitId()))
         {
             throw new MYException("科目[%s]下辅助核算型-单位必须存在,请确认操作", tax.getName());
         }
@@ -745,26 +743,22 @@ public class FinanceManagerImpl implements FinanceManager
             throw new MYException("科目[%s]下辅助核算型-部门必须存在,请确认操作", tax.getName());
         }
 
-        if (tax.getStaffer() == TaxConstanst.TAX_CHECK_YES
-            && StringTools.isNullOrNone(financeItemBean.getStafferId()))
+        if (tax.getStaffer() == TaxConstanst.TAX_CHECK_YES && StringTools.isNullOrNone(financeItemBean.getStafferId()))
         {
             throw new MYException("科目[%s]下辅助核算型-职员必须存在,请确认操作", tax.getName());
         }
 
-        if (tax.getProduct() == TaxConstanst.TAX_CHECK_YES
-            && StringTools.isNullOrNone(financeItemBean.getProductId()))
+        if (tax.getProduct() == TaxConstanst.TAX_CHECK_YES && StringTools.isNullOrNone(financeItemBean.getProductId()))
         {
             throw new MYException("科目[%s]下辅助核算型-产品必须存在,请确认操作", tax.getName());
         }
 
-        if (tax.getDepot() == TaxConstanst.TAX_CHECK_YES
-            && StringTools.isNullOrNone(financeItemBean.getDepotId()))
+        if (tax.getDepot() == TaxConstanst.TAX_CHECK_YES && StringTools.isNullOrNone(financeItemBean.getDepotId()))
         {
             throw new MYException("科目[%s]下辅助核算型-仓库必须存在,请确认操作", tax.getName());
         }
 
-        if (tax.getDuty() == TaxConstanst.TAX_CHECK_YES
-            && StringTools.isNullOrNone(financeItemBean.getDuty2Id()))
+        if (tax.getDuty() == TaxConstanst.TAX_CHECK_YES && StringTools.isNullOrNone(financeItemBean.getDuty2Id()))
         {
             throw new MYException("科目[%s]下辅助核算型-纳税实体必须存在,请确认操作", tax.getName());
         }
@@ -790,8 +784,7 @@ public class FinanceManagerImpl implements FinanceManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        if (old.getStatus() == TaxConstanst.FINANCE_STATUS_CHECK
-            || old.getLocks() == TaxConstanst.FINANCE_LOCK_YES)
+        if (old.getStatus() == TaxConstanst.FINANCE_STATUS_CHECK || old.getLocks() == TaxConstanst.FINANCE_LOCK_YES)
         {
             throw new MYException("已经被核对(锁定)不能修改,请重新操作");
         }
@@ -822,14 +815,12 @@ public class FinanceManagerImpl implements FinanceManager
         checkTime(bean);
 
         // 默认纳税实体
-        if (bean.getType() == TaxConstanst.FINANCE_TYPE_MANAGER
-            && StringTools.isNullOrNone(bean.getDutyId()))
+        if (bean.getType() == TaxConstanst.FINANCE_TYPE_MANAGER && StringTools.isNullOrNone(bean.getDutyId()))
         {
             bean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
         }
 
-        if (bean.getType() == TaxConstanst.FINANCE_TYPE_DUTY
-            && StringTools.isNullOrNone(bean.getDutyId()))
+        if (bean.getType() == TaxConstanst.FINANCE_TYPE_DUTY && StringTools.isNullOrNone(bean.getDutyId()))
         {
             throw new MYException("税务凭证必须有纳税实体的属性");
         }
@@ -876,6 +867,12 @@ public class FinanceManagerImpl implements FinanceManager
                 throw new MYException("科目不存在,请确认操作");
             }
 
+            // 必须是最小科目哦
+            if (tax.getBottomFlag() != TaxConstanst.TAX_BOTTOMFLAG_ITEM)
+            {
+                throw new MYException("[%s]科目必须是最小科目,请确认操作", tax.getName() + tax.getId());
+            }
+
             // 不是结转需要检查辅助核算项
             if ( !isTurn)
             {
@@ -917,8 +914,8 @@ public class FinanceManagerImpl implements FinanceManager
 
         if (bean.getInmoney() != old.getInmoney())
         {
-            throw new MYException("原单据金额[%s],当前金额[%s]不等,凭证增加错误", FinanceHelper.longToString(bean
-                .getInmoney()), FinanceHelper.longToString(old.getInmoney()));
+            throw new MYException("原单据金额[%s],当前金额[%s]不等,凭证增加错误", FinanceHelper.longToString(bean.getInmoney()),
+                FinanceHelper.longToString(old.getInmoney()));
         }
 
         // CORE 核对借贷必相等的原则
@@ -949,8 +946,7 @@ public class FinanceManagerImpl implements FinanceManager
             throw new MYException("凭证时间不能大于[%s]", TimeTools.now_short());
         }
 
-        String monthKey = TimeTools.changeFormat(bean.getFinanceDate(), TimeTools.SHORT_FORMAT,
-            "yyyyMM");
+        String monthKey = TimeTools.changeFormat(bean.getFinanceDate(), TimeTools.SHORT_FORMAT, "yyyyMM");
 
         List<FinanceTurnBean> turnList = financeTurnDAO.listEntityBeans("order by monthKey desc");
 

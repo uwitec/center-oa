@@ -107,12 +107,12 @@ public class FinanceItemBean implements Serializable
     private String dutyId = PublicConstant.DEFAULR_DUTY_ID;
 
     /**
-     * 准确到微分,就是小数点后四位
+     * 准确到微分,就是小数点后四位(借方金额)
      */
     private long inmoney = 0;
 
     /**
-     * 准确到微分,就是小数点后四位
+     * 准确到微分,就是小数点后四位(贷方金额)
      */
     private long outmoney = 0;
 
@@ -771,119 +771,25 @@ public class FinanceItemBean implements Serializable
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue
-            .append("FinanceItemBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("pid = ")
-            .append(this.pid)
-            .append(TAB)
-            .append("pareId = ")
-            .append(this.pareId)
-            .append(TAB)
-            .append("name = ")
-            .append(this.name)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("createType = ")
-            .append(this.createType)
-            .append(TAB)
-            .append("forward = ")
-            .append(this.forward)
-            .append(TAB)
-            .append("refId = ")
-            .append(this.refId)
-            .append(TAB)
-            .append("refOut = ")
-            .append(this.refOut)
-            .append(TAB)
-            .append("refBill = ")
-            .append(this.refBill)
-            .append(TAB)
-            .append("refStock = ")
-            .append(this.refStock)
-            .append(TAB)
-            .append("financeDate = ")
-            .append(this.financeDate)
-            .append(TAB)
-            .append("taxId = ")
-            .append(this.taxId)
-            .append(TAB)
-            .append("taxId0 = ")
-            .append(this.taxId0)
-            .append(TAB)
-            .append("taxId1 = ")
-            .append(this.taxId1)
-            .append(TAB)
-            .append("taxId2 = ")
-            .append(this.taxId2)
-            .append(TAB)
-            .append("taxId3 = ")
-            .append(this.taxId3)
-            .append(TAB)
-            .append("taxId4 = ")
-            .append(this.taxId4)
-            .append(TAB)
-            .append("taxId5 = ")
-            .append(this.taxId5)
-            .append(TAB)
-            .append("taxId6 = ")
-            .append(this.taxId6)
-            .append(TAB)
-            .append("taxId7 = ")
-            .append(this.taxId7)
-            .append(TAB)
-            .append("taxId8 = ")
-            .append(this.taxId8)
-            .append(TAB)
-            .append("dutyId = ")
-            .append(this.dutyId)
-            .append(TAB)
-            .append("inmoney = ")
-            .append(this.inmoney)
-            .append(TAB)
-            .append("outmoney = ")
-            .append(this.outmoney)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append("logTime = ")
-            .append(this.logTime)
-            .append(TAB)
-            .append("unitId = ")
-            .append(this.unitId)
-            .append(TAB)
-            .append("unitType = ")
-            .append(this.unitType)
-            .append(TAB)
-            .append("departmentId = ")
-            .append(this.departmentId)
-            .append(TAB)
-            .append("stafferId = ")
-            .append(this.stafferId)
-            .append(TAB)
-            .append("depotId = ")
-            .append(this.depotId)
-            .append(TAB)
-            .append("productId = ")
-            .append(this.productId)
-            .append(TAB)
-            .append("productAmountIn = ")
-            .append(this.productAmountIn)
-            .append(TAB)
-            .append("productAmountOut = ")
-            .append(this.productAmountOut)
-            .append(TAB)
-            .append("duty2Id = ")
-            .append(this.duty2Id)
-            .append(TAB)
-            .append(" )");
+        retValue.append("FinanceItemBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("pid = ").append(this.pid).append(TAB).append("pareId = ").append(this.pareId).append(TAB).append(
+            "name = ").append(this.name).append(TAB).append("type = ").append(this.type).append(TAB).append(
+            "createType = ").append(this.createType).append(TAB).append("forward = ").append(this.forward).append(TAB).append(
+            "refId = ").append(this.refId).append(TAB).append("refOut = ").append(this.refOut).append(TAB).append(
+            "refBill = ").append(this.refBill).append(TAB).append("refStock = ").append(this.refStock).append(TAB).append(
+            "financeDate = ").append(this.financeDate).append(TAB).append("taxId = ").append(this.taxId).append(TAB).append(
+            "taxId0 = ").append(this.taxId0).append(TAB).append("taxId1 = ").append(this.taxId1).append(TAB).append(
+            "taxId2 = ").append(this.taxId2).append(TAB).append("taxId3 = ").append(this.taxId3).append(TAB).append(
+            "taxId4 = ").append(this.taxId4).append(TAB).append("taxId5 = ").append(this.taxId5).append(TAB).append(
+            "taxId6 = ").append(this.taxId6).append(TAB).append("taxId7 = ").append(this.taxId7).append(TAB).append(
+            "taxId8 = ").append(this.taxId8).append(TAB).append("dutyId = ").append(this.dutyId).append(TAB).append(
+            "inmoney = ").append(this.inmoney).append(TAB).append("outmoney = ").append(this.outmoney).append(TAB).append(
+            "description = ").append(this.description).append(TAB).append("logTime = ").append(this.logTime).append(TAB).append(
+            "unitId = ").append(this.unitId).append(TAB).append("unitType = ").append(this.unitType).append(TAB).append(
+            "departmentId = ").append(this.departmentId).append(TAB).append("stafferId = ").append(this.stafferId).append(
+            TAB).append("depotId = ").append(this.depotId).append(TAB).append("productId = ").append(this.productId).append(
+            TAB).append("productAmountIn = ").append(this.productAmountIn).append(TAB).append("productAmountOut = ").append(
+            this.productAmountOut).append(TAB).append("duty2Id = ").append(this.duty2Id).append(TAB).append(" )");
 
         return retValue.toString();
     }

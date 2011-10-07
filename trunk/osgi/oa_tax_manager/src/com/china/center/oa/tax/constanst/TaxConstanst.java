@@ -335,6 +335,30 @@ public interface TaxConstanst
     int FINANCE_CREATETYPE_TCP_PUBLIC = 73;
 
     /**
+     * 报销-出差报销
+     */
+    @Defined(key = "financeCreateType", value = "报销-出差报销")
+    int FINANCE_CREATETYPE_EXPENSE_BORROW = 80;
+
+    /**
+     * 报销-业务招待费报销
+     */
+    @Defined(key = "financeCreateType", value = "报销-业务招待费报销")
+    int FINANCE_CREATETYPE_EXPENSE_ENTERTAIN = 81;
+
+    /**
+     * 报销-日常费用报销
+     */
+    @Defined(key = "financeCreateType", value = "报销-日常费用报销")
+    int FINANCE_CREATETYPE_EXPENSE_PUBLIC = 82;
+
+    /**
+     * 报销-通用报销
+     */
+    @Defined(key = "financeCreateType", value = "报销-通用报销")
+    int FINANCE_CREATETYPE_EXPENSE_COMMON = 83;
+
+    /**
      * 损益结转
      */
     @Defined(key = "financeCreateType", value = "损益结转")

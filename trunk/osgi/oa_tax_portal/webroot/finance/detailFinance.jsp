@@ -100,6 +100,10 @@ function updateBean()
                 <a href="../tcp/apply.do?method=findTravelApply&id=${bean.refId}">${bean.refId}</a>
                 </c:when>
                 
+                <c:when test="${bean.createType >= 80 && bean.createType <= 89}">
+                <a href="../tcp/expense.do?method=findExpense&id=${bean.refId}">${bean.refId}</a>
+                </c:when>
+                
 				<c:otherwise>
 				${bean.refId}
 				</c:otherwise>

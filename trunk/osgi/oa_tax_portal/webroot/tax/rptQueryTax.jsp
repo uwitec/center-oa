@@ -71,8 +71,9 @@ function pop(obj)
 <body class="body_class" onload="load()">
 <form name="formEntry" action="../tax/tax.do" method="post"><input
 	type="hidden" name="method" value="${rptMethod}"><input
-	type="hidden" value="1" name="load"><input
-    type="hidden" value="${selectMode}" name="selectMode"> 
+	type="hidden" value="1" name="load">
+<input type="hidden" value="${selectMode}" name="selectMode"> 
+<input type="hidden" value="${pid}" name="pid"> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">科目管理</td>

@@ -8,6 +8,7 @@
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
 <script src="../js/plugin/highlight/jquery.highlight.js"></script>
+<script src="../js/jquery.blockUI.js"></script>
 <script type="text/javascript">
 
 var gurl = '../finance/finance.do?method=';
@@ -53,7 +54,12 @@ function $callBack()
 
 function addBean(opr, grid)
 {
-    $l(gurl + 'preForAdd' + ukey);
+	if (window.confirm('确定准备月结,收集数据需要一段时间?'))
+    {
+        $.blockUI({ message: $('#loadingDiv'),css:{width: '40%'}}, true);
+        
+        $l(gurl + 'preForAdd' + ukey);
+    }
 }
 
 function doSearch()
@@ -70,4 +76,10 @@ function doSearch()
 <p:message/>
 <table id="mainTable" style="display: none"></table>
 <p:query/>
+<div id="loadingDiv" style="display:none">
+<p>&nbsp;</p>
+<p>月结准备中......</p>
+<p><img src="../images/oa/process.gif" /></p>
+<p>&nbsp;</p>
+</div>
 </body>

@@ -8,12 +8,18 @@
 <script src="../js/public.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script src="../js/plugin/highlight/jquery.highlight.js"></script>
+<script src="../js/jquery.blockUI.js"></script>
 <script src="../js/tableSort.js"></script>
 <script language="javascript">
 
 function addBean()
 {
-    submit('确定结转[${nextKey}]?', null, null);
+    if (formCheck(formEntry) && window.confirm('月结需要一段时间,需要耐心等待.确定结转[${nextKey}]?'))
+    {
+        $.blockUI({ message: $('#loadingDiv'),css:{width: '40%'}}, true);
+        
+        submitC(formEntry);
+    }
 }
 
 function load()
@@ -86,6 +92,13 @@ function load()
 	<p:message />
 
 </p:body></form>
+
+<div id="loadingDiv" style="display:none">
+<p>&nbsp;</p>
+<p align='center'>月结进行中......</p>
+<p><img src="../images/oa/process.gif" /></p>
+<p>&nbsp;</p>
+</div>
 </body>
 </html>
 
