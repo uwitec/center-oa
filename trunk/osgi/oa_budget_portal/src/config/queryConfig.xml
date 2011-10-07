@@ -87,9 +87,19 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
+        <condtion name="departmentName" filed="name" caption="部门" pfix="PrincipalshipBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
         <condtion name="refId" caption="单据(A)">
             <opr>=</opr>
             <type>text</type>
+        </condtion>
+        <condtion name="fromType" caption="使用来源">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$budgetLogFromType</option>
         </condtion>
         <condtion name="userType" caption="使用类型">
             <opr>=</opr>

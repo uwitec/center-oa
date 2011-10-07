@@ -142,6 +142,36 @@ public class DynamicBundleTools
     }
 
     /**
+     * 直接获取
+     * 
+     * @param serviceClassName
+     * @return
+     */
+    public static Object getService(String serviceClassName)
+    {
+        if ( !ready)
+        {
+            return null;
+        }
+
+        ServiceReference serviceReference = bundleContext.getServiceReference(serviceClassName);
+
+        if (serviceReference == null)
+        {
+            return null;
+        }
+
+        Object service = bundleContext.getService(serviceReference);
+
+        if (service == null)
+        {
+            return null;
+        }
+
+        return service;
+    }
+
+    /**
      * isServiceExist(线程睡眠等待)
      * 
      * @param serviceClassName

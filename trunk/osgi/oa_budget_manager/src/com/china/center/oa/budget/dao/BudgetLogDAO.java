@@ -10,6 +10,7 @@ package com.china.center.oa.budget.dao;
 
 
 import com.china.center.jdbc.inter.DAO;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.budget.bean.BudgetLogBean;
 import com.china.center.oa.budget.vo.BudgetLogVO;
 
@@ -27,6 +28,14 @@ public interface BudgetLogDAO extends DAO<BudgetLogBean, BudgetLogVO>
     long sumBudgetLogByBudgetItemId(String budgetItemId);
 
     long sumBudgetLogByLevel(String level, String levelId);
+
+    /**
+     * 统计金额
+     * 
+     * @param condition
+     * @return
+     */
+    long sumVOBudgetLogByCondition(ConditionParse condition);
 
     int updateUserTypeByRefId(String refId, int useType, String billIds);
 

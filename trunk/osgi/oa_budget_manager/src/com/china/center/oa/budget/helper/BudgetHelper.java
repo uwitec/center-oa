@@ -69,9 +69,9 @@ public abstract class BudgetHelper
 
     public static void formatBudgetVO(BudgetVO vo)
     {
-        vo.setStotal( (MathTools.formatNum(vo.getTotal())));
+        vo.setStotal( (MathTools.formatNum2(vo.getTotal())));
 
-        vo.setSrealMonery( (MathTools.formatNum(vo.getRealMonery())));
+        vo.setSrealMonery( (MathTools.formatNum2(vo.getRealMonery())));
     }
 
     /**
@@ -81,14 +81,13 @@ public abstract class BudgetHelper
      */
     public static void formatBudgetItem(BudgetItemVO budgetItemVO)
     {
-        budgetItemVO.setSbudget(MathTools.formatNum(budgetItemVO.getBudget()));
+        budgetItemVO.setSbudget(MathTools.formatNum2(budgetItemVO.getBudget()));
 
-        budgetItemVO.setSrealMonery(MathTools.formatNum(budgetItemVO.getRealMonery()));
+        budgetItemVO.setSrealMonery(MathTools.formatNum2(budgetItemVO.getRealMonery()));
 
-        budgetItemVO.setSuseMonery(MathTools.formatNum(budgetItemVO.getUseMonery()));
+        budgetItemVO.setSuseMonery(MathTools.formatNum2(budgetItemVO.getUseMonery()));
 
-        budgetItemVO.setSremainMonery(MathTools.formatNum(budgetItemVO.getBudget()
-                                                          - budgetItemVO.getRealMonery()));
+        budgetItemVO.setSremainMonery(MathTools.formatNum2(budgetItemVO.getBudget() - budgetItemVO.getRealMonery()));
     }
 
     /**

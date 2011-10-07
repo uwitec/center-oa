@@ -65,6 +65,10 @@ function load()
                <a href="../tcp/apply.do?method=findTravelApply&id=${bean.refId}">${bean.refId}</a>
                </c:when>
                
+               <c:when test="${bean.fromType == 1}">
+               <a href="../tcp/expense.do?method=findExpense&id=${bean.refId}">${bean.refId}</a>
+               </c:when>
+               
                <c:otherwise>
                 ${bean.refId}
                 </c:otherwise>

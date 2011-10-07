@@ -233,20 +233,14 @@ public interface BudgetConstant
     int BUDGETLOG_USERTYPE_REAL = 1;
 
     /**
-     * 临时使用
-     */
-    @Defined(key = "budgetLogUserType", value = "临时使用")
-    int BUDGETLOG_USERTYPE_TEMP = 2;
-
-    /**
      * 正式
      */
-    @Defined(key = "budgetLogStatus", value = "正式")
+    @Defined(key = "budgetLogStatus", value = "正式(占用预算)")
     int BUDGETLOG_STATUS_OK = 0;
 
     /**
      * 临时
      */
-    @Defined(key = "budgetLogStatus", value = "临时")
+    @Defined(key = "budgetLogStatus", value = "临时(不占用预算)")
     int BUDGETLOG_STATUS_TEMP = 1;
 }

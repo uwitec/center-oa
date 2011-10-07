@@ -115,6 +115,7 @@ function load()
                 <c:if test="${!unit}">
                 <td align="center"><strong>剩余预算</strong></td>
                 </c:if>
+                <td align="center"><strong>使用率</strong></td>
                 <td align="center"><strong>描述</strong></td>
             </tr>
 
@@ -131,6 +132,7 @@ function load()
                     <c:if test="${!unit}">
                         <td align="center" onclick="hrefAndSelect(this)">${item.sremainMonery}</td>
                     </c:if>
+                    <td align="center" onclick="hrefAndSelect(this)">${my:formatNum((item.suseMonery / item.budget) * 100.0)}%</td>
                     <td align="center" onclick="hrefAndSelect(this)">${item.description}</td>
                 </tr>
             </c:forEach>

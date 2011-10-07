@@ -10,6 +10,7 @@ package com.china.center.oa.budget.manager.impl;
 
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -140,8 +141,8 @@ public class BudgetManagerImpl implements BudgetManager
         return true;
     }
 
-    public boolean updateBudgetLogUserTypeByRefIdWithoutTransactional(User user, String refId,
-                                                                      int userType, String billIds)
+    public boolean updateBudgetLogUserTypeByRefIdWithoutTransactional(User user, String refId, int userType,
+                                                                      String billIds)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, refId);
@@ -152,10 +153,10 @@ public class BudgetManagerImpl implements BudgetManager
     }
 
     @IntegrationAOP(lock = BudgetConstant.BUDGETLOG_ADD_LOCK)
-    public boolean addBudgetLogListWithoutTransactional(User user, String refId,
-                                                        List<BudgetLogBean> logList)
+    public boolean addBudgetLogListWithoutTransactional(User user, String refId, List<BudgetLogBean> logList)
         throws MYException
     {
+
         JudgeTools.judgeParameterIsNull(user, refId, logList);
 
         // 检查是否存在使用的refId
@@ -168,11 +169,26 @@ public class BudgetManagerImpl implements BudgetManager
 
         Set<String> budgetItemSet = new HashSet();
 
-        for (BudgetLogBean budgetLogBean : logList)
+        // 过滤为0的
+        for (Iterator iterator = logList.iterator(); iterator.hasNext();)
         {
+            BudgetLogBean budgetLogBean = (BudgetLogBean)iterator.next();
+
+            if (budgetLogBean.getMonery() == 0)
+            {
+                iterator.remove();
+
+                continue;
+            }
+
             checkAddLog(budgetLogBean);
 
             budgetItemSet.add(budgetLogBean.getBudgetItemId());
+        }
+
+        if (logList.size() == 0)
+        {
+            return true;
         }
 
         // 检验预算是否超支
@@ -197,11 +213,9 @@ public class BudgetManagerImpl implements BudgetManager
 
                 if (currentUse > total)
                 {
-                    throw new MYException(
-                        "预算[%s]下的预算项[%s]使用超值,当前预算项总金额[%f],已经使用金额[%f],剩余可使用金额[%f],请确认操作", budgetItem
-                            .getBudgetName(), budgetItem.getFeeItemName(), MathTools
-                            .longToDouble2(total), MathTools.longToDouble2(lastUse), MathTools
-                            .longToDouble2(total - lastUse));
+                    throw new MYException("预算[%s]下的预算项[%s]使用超值,当前预算项总金额[%f],已经使用金额[%f],剩余可使用金额[%f],请确认操作",
+                        budgetItem.getBudgetName(), budgetItem.getFeeItemName(), MathTools.longToDouble2(total),
+                        MathTools.longToDouble2(lastUse), MathTools.longToDouble2(total - lastUse));
                 }
             }
         }
@@ -221,11 +235,9 @@ public class BudgetManagerImpl implements BudgetManager
 
             if (currentUse > total)
             {
-                throw new MYException(
-                    "预算[%s]下的预算项[%s]使用超值,当前预算项总金额[%f],已经使用金额[%f],剩余可使用金额[%f],请确认操作", budgetItem
-                        .getBudgetName(), budgetItem.getFeeItemName(), MathTools
-                        .longToDouble2(total), MathTools.longToDouble2(currentUse), MathTools
-                        .longToDouble2(total - currentUse));
+                throw new MYException("预算[%s]下的预算项[%s]使用超值,当前预算项总金额[%f],已经使用金额[%f],剩余可使用金额[%f],请确认操作",
+                    budgetItem.getBudgetName(), budgetItem.getFeeItemName(), MathTools.longToDouble2(total),
+                    MathTools.longToDouble2(currentUse), MathTools.longToDouble2(total - currentUse));
             }
         }
 
@@ -245,8 +257,8 @@ public class BudgetManagerImpl implements BudgetManager
         if (hasSub)
         {
             // if has subItem, count sub
-            double sumRealTotalInSubBudget = budgetItemDAO.sumRealTotalInSubBudget(itemBean
-                .getBudgetId(), itemBean.getFeeItemId());
+            double sumRealTotalInSubBudget = budgetItemDAO.sumRealTotalInSubBudget(itemBean.getBudgetId(),
+                itemBean.getFeeItemId());
 
             itemBean.setRealMonery(sumRealTotalInSubBudget);
         }
@@ -279,8 +291,7 @@ public class BudgetManagerImpl implements BudgetManager
         }
 
         // parent item
-        BudgetItemBean parentItem = budgetItemDAO.findByBudgetIdAndFeeItemId(parent.getId(),
-            itemBean.getFeeItemId());
+        BudgetItemBean parentItem = budgetItemDAO.findByBudgetIdAndFeeItemId(parent.getId(), itemBean.getFeeItemId());
 
         if (parentItem == null)
         {
@@ -337,8 +348,7 @@ public class BudgetManagerImpl implements BudgetManager
             throw new MYException("部门年度预算不存在");
         }
 
-        BudgetItemBean dyearBudgetItem = budgetItemDAO.findByBudgetIdAndFeeItemId(dyearId,
-            feeItemId);
+        BudgetItemBean dyearBudgetItem = budgetItemDAO.findByBudgetIdAndFeeItemId(dyearId, feeItemId);
 
         if (dyearBudgetItem == null)
         {
@@ -358,8 +368,7 @@ public class BudgetManagerImpl implements BudgetManager
             throw new MYException("事业部年度预算不存在");
         }
 
-        BudgetItemBean syearBudgetItem = budgetItemDAO.findByBudgetIdAndFeeItemId(syearId,
-            feeItemId);
+        BudgetItemBean syearBudgetItem = budgetItemDAO.findByBudgetIdAndFeeItemId(syearId, feeItemId);
 
         if (syearBudgetItem == null)
         {
@@ -379,8 +388,7 @@ public class BudgetManagerImpl implements BudgetManager
             throw new MYException("公司年度预算不存在");
         }
 
-        BudgetItemBean cyearBudgetItem = budgetItemDAO.findByBudgetIdAndFeeItemId(cyearId,
-            feeItemId);
+        BudgetItemBean cyearBudgetItem = budgetItemDAO.findByBudgetIdAndFeeItemId(cyearId, feeItemId);
 
         if (cyearBudgetItem == null)
         {
@@ -514,8 +522,7 @@ public class BudgetManagerImpl implements BudgetManager
             // 预算选择的组织不是上下级别的关系
             if (bean.getLevel() == BudgetConstant.BUDGET_LEVEL_YEAR)
             {
-                if ( !orgManager.isSubPrincipalship(parentBudget.getBudgetDepartment(), bean
-                    .getBudgetDepartment()))
+                if ( !orgManager.isSubPrincipalship(parentBudget.getBudgetDepartment(), bean.getBudgetDepartment()))
                 {
                     throw new MYException("预算选择的组织不是上下级别的关系,请确认操作");
                 }
@@ -559,8 +566,7 @@ public class BudgetManagerImpl implements BudgetManager
             // check subitem is in parent and budget is less than parent
             if (bean.getType() != BudgetConstant.BUDGET_TYPE_COMPANY)
             {
-                compareSubItem(budgetItemDAO.queryEntityVOsByFK(bean.getParentId()), bean
-                    .getItems());
+                compareSubItem(budgetItemDAO.queryEntityVOsByFK(bean.getParentId()), bean.getItems());
             }
         }
     }
@@ -624,8 +630,8 @@ public class BudgetManagerImpl implements BudgetManager
 
         for (BudgetBean budgetBean : allSubBudget)
         {
-            BudgetItemBean subFeeItem = budgetItemDAO.findByBudgetIdAndFeeItemId(
-                budgetBean.getId(), pitem.getFeeItemId());
+            BudgetItemBean subFeeItem = budgetItemDAO.findByBudgetIdAndFeeItemId(budgetBean.getId(),
+                pitem.getFeeItemId());
 
             if (subFeeItem != null)
             {
@@ -874,8 +880,7 @@ public class BudgetManagerImpl implements BudgetManager
 
         String level = BudgetHelper.getLogLevel(budget);
 
-        double itemTotal = budgetLogDAO.sumBudgetLogByLevel("budgetItemId" + level, budgetItemBean
-            .getId()) / 100.0d;
+        double itemTotal = budgetLogDAO.sumBudgetLogByLevel("budgetItemId" + level, budgetItemBean.getId()) / 100.0d;
 
         return itemTotal;
     }
@@ -902,16 +907,14 @@ public class BudgetManagerImpl implements BudgetManager
 
             if (b < 0)
             {
-                throw new MYException("月份和年度预算有冲突,年度预算[%s]-[%s]", parent.getBeginDate(), parent
-                    .getEndDate());
+                throw new MYException("月份和年度预算有冲突,年度预算[%s]-[%s]", parent.getBeginDate(), parent.getEndDate());
             }
 
             int e = bean.getEndDate().compareTo(parent.getEndDate());
 
             if (e > 0)
             {
-                throw new MYException("月份和年度预算有冲突,年度预算[%s]-[%s]", parent.getBeginDate(), parent
-                    .getEndDate());
+                throw new MYException("月份和年度预算有冲突,年度预算[%s]-[%s]", parent.getBeginDate(), parent.getEndDate());
             }
 
             List<BudgetBean> subList = budgetDAO.queryEntityBeansByFK(bean.getParentId());
@@ -934,8 +937,7 @@ public class BudgetManagerImpl implements BudgetManager
 
                 if (bcompare * ecompare <= 0)
                 {
-                    throw new MYException("月份有重叠处,已经存在[%s]-[%s]", each.getBeginDate(), each
-                        .getEndDate());
+                    throw new MYException("月份有重叠处,已经存在[%s]-[%s]", each.getBeginDate(), each.getEndDate());
                 }
 
                 int bcompare1 = each.getBeginDate().compareTo(bean.getEndDate());
@@ -944,15 +946,13 @@ public class BudgetManagerImpl implements BudgetManager
 
                 if (bcompare1 * ecompare1 <= 0)
                 {
-                    throw new MYException("月份有重叠处,已经存在[%s]-[%s]", each.getBeginDate(), each
-                        .getEndDate());
+                    throw new MYException("月份有重叠处,已经存在[%s]-[%s]", each.getBeginDate(), each.getEndDate());
                 }
 
                 // 包含关系的
                 if (bcompare * bcompare1 < 0)
                 {
-                    throw new MYException("月份有重叠处,已经存在[%s]-[%s]", each.getBeginDate(), each
-                        .getEndDate());
+                    throw new MYException("月份有重叠处,已经存在[%s]-[%s]", each.getBeginDate(), each.getEndDate());
                 }
 
             }
@@ -1211,8 +1211,8 @@ public class BudgetManagerImpl implements BudgetManager
 
                 for (BudgetBean budgetBean : subBudget)
                 {
-                    BudgetItemBean subBudgetItemBean = budgetItemDAO.findByBudgetIdAndFeeItemId(
-                        budgetBean.getId(), budgetItemBean.getFeeItemId());
+                    BudgetItemBean subBudgetItemBean = budgetItemDAO.findByBudgetIdAndFeeItemId(budgetBean.getId(),
+                        budgetItemBean.getFeeItemId());
 
                     if (subBudgetItemBean != null)
                     {
@@ -1230,16 +1230,14 @@ public class BudgetManagerImpl implements BudgetManager
                 budgetItemBean.setSbudget(MathTools.formatNum(last));
 
                 // 剩余预算
-                budgetItemBean.setSremainMonery(MathTools.formatNum(budgetItemBean.getBudget()
-                                                                    - hasUseed));
+                budgetItemBean.setSremainMonery(MathTools.formatNum(budgetItemBean.getBudget() - hasUseed));
             }
             else
             {
                 // 最小预算
                 budgetItemBean.setSbudget("0");
 
-                budgetItemBean.setSremainMonery(MathTools.formatNum(budgetItemBean.getBudget()
-                                                                    - hasUseed));
+                budgetItemBean.setSremainMonery(MathTools.formatNum(budgetItemBean.getBudget() - hasUseed));
             }
         }
 
