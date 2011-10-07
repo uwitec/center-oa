@@ -23,6 +23,7 @@ import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
@@ -37,10 +38,12 @@ import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.helper.FinanceHelper;
 import com.china.center.oa.tax.manager.FinanceManager;
+import com.china.center.oa.tcp.bean.AbstractTcpBean;
 import com.china.center.oa.tcp.bean.ExpenseApplyBean;
 import com.china.center.oa.tcp.bean.TravelApplyBean;
 import com.china.center.oa.tcp.constanst.TcpConstanst;
 import com.china.center.oa.tcp.listener.TcpPayListener;
+import com.china.center.tools.ListTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -111,33 +114,11 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
 
             FinanceBean financeBean = new FinanceBean();
 
-            String name = DefinedCommon.getValue("tcpType", bean.getType()) + "申请通过:"
-                          + bean.getId() + '.';
+            String name = DefinedCommon.getValue("tcpType", bean.getType()) + "申请通过:" + bean.getId() + '.';
 
             financeBean.setName(name);
 
-            financeBean.setType(TaxConstanst.FINANCE_TYPE_MANAGER);
-
-            if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_TRAVEL)
-            {
-                financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TCP_BORROW);
-            }
-            else if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_ENTERTAIN)
-            {
-                financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TCP_ENTERTAIN);
-            }
-            else if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_STOCK)
-            {
-                financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TCP_STOCK);
-            }
-            else if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_PUBLIC)
-            {
-                financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TCP_PUBLIC);
-            }
-            else
-            {
-                financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TCP_BORROW);
-            }
+            fillType(bean, financeBean);
 
             // 付款单申请
             financeBean.setRefId(bean.getId());
@@ -166,11 +147,207 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
 
     }
 
+    /**
+     * 凭证类型
+     * 
+     * @param bean
+     * @param financeBean
+     */
+    private void fillType(AbstractTcpBean bean, FinanceBean financeBean)
+    {
+        financeBean.setType(TaxConstanst.FINANCE_TYPE_MANAGER);
+
+        if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_TRAVEL)
+        {
+            financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TCP_BORROW);
+        }
+        else if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_ENTERTAIN)
+        {
+            financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TCP_ENTERTAIN);
+        }
+        else if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_STOCK)
+        {
+            financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TCP_STOCK);
+        }
+        else if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_PUBLIC)
+        {
+            financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TCP_PUBLIC);
+        }
+        else if (bean.getType() == TcpConstanst.TCP_EXPENSETYPE_TRAVEL)
+        {
+            financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_EXPENSE_BORROW);
+        }
+        else if (bean.getType() == TcpConstanst.TCP_EXPENSETYPE_ENTERTAIN)
+        {
+            financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_EXPENSE_ENTERTAIN);
+        }
+        else if (bean.getType() == TcpConstanst.TCP_EXPENSETYPE_PUBLIC)
+        {
+            financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_EXPENSE_PUBLIC);
+        }
+        else if (bean.getType() == TcpConstanst.TCP_EXPENSETYPE_COMMON)
+        {
+            financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_EXPENSE_COMMON);
+        }
+        else
+        {
+            financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TCP_BORROW);
+        }
+    }
+
+    /**
+     * 费用合计是借款金额+支付金额,同时把之前的借款需要平账
+     */
     public void onPayExpenseApply(User user, ExpenseApplyBean bean, List<OutBillBean> outBillList,
                                   List<InBillBean> inBillList)
         throws MYException
     {
-        // TODO 报销的凭证生成(这里每个需要选择具体的子科目,需要和他们确认)
+        // 这里不可能既收款又付款
+        if ( !ListTools.isEmptyOrNull(outBillList) && !ListTools.isEmptyOrNull(inBillList))
+        {
+            throw new MYException("报销不可能同时存在收款和付款,请确认操作");
+        }
+
+        // 公司支付
+        if ( !ListTools.isEmptyOrNull(outBillList) && ListTools.isEmptyOrNull(inBillList))
+        {
+            for (OutBillBean outBillBean : outBillList)
+            {
+                // 兼容性
+                if ( !TaxGlueHelper.bankGoon(outBillBean.getBankId(), this.taxDAO))
+                {
+                    continue;
+                }
+
+                BankBean bank = bankDAO.find(outBillBean.getBankId());
+
+                if (bank == null)
+                {
+                    throw new MYException("银行不存在,请确认操作");
+                }
+
+                FinanceBean financeBean = new FinanceBean();
+
+                String name = DefinedCommon.getValue("tcpType", bean.getType()) + "申请通过:" + bean.getId() + '.';
+
+                financeBean.setName(name);
+
+                fillType(bean, financeBean);
+
+                // 付款单申请
+                financeBean.setRefId(bean.getId());
+
+                financeBean.setRefBill(outBillBean.getId());
+
+                financeBean.setDutyId(bank.getDutyId());
+
+                financeBean.setCreaterId(user.getStafferId());
+
+                financeBean.setDescription(financeBean.getName());
+
+                financeBean.setFinanceDate(TimeTools.now_short());
+
+                financeBean.setLogTime(TimeTools.now());
+
+                List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
+
+                // 借:其他应收款-借款/贷:现金或银行
+                createAddItem2(user, bean, bank, outBillBean, financeBean, itemList);
+
+                financeBean.setItemList(itemList);
+
+                financeManager.addFinanceBeanWithoutTransactional(user, financeBean);
+            }
+        }
+
+        // 员工还款
+        if (ListTools.isEmptyOrNull(outBillList) && !ListTools.isEmptyOrNull(inBillList))
+        {
+            for (InBillBean inBillBean : inBillList)
+            {
+                // 兼容性
+                if ( !TaxGlueHelper.bankGoon(inBillBean.getBankId(), this.taxDAO))
+                {
+                    continue;
+                }
+
+                BankBean bank = bankDAO.find(inBillBean.getBankId());
+
+                if (bank == null)
+                {
+                    throw new MYException("银行不存在,请确认操作");
+                }
+
+                FinanceBean financeBean = new FinanceBean();
+
+                String name = DefinedCommon.getValue("tcpType", bean.getType()) + "申请通过:" + bean.getId() + '.';
+
+                financeBean.setName(name);
+
+                fillType(bean, financeBean);
+
+                // 收款单申请
+                financeBean.setRefId(bean.getId());
+
+                financeBean.setRefBill(inBillBean.getId());
+
+                financeBean.setDutyId(bank.getDutyId());
+
+                financeBean.setCreaterId(user.getStafferId());
+
+                financeBean.setDescription(financeBean.getName());
+
+                financeBean.setFinanceDate(TimeTools.now_short());
+
+                financeBean.setLogTime(TimeTools.now());
+
+                List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
+
+                // 借:其他应收款-借款/贷:现金或银行
+                createAddItem3(user, bean, bank, inBillBean, financeBean, itemList);
+
+                financeBean.setItemList(itemList);
+
+                financeManager.addFinanceBeanWithoutTransactional(user, financeBean);
+            }
+        }
+
+    }
+
+    /**
+     * 财务入账 借:各个费用科目 贷:备用金
+     */
+    public void onEndExpenseApply(User user, ExpenseApplyBean bean, List<String> taxIdList, List<Long> moneyList)
+        throws MYException
+    {
+        FinanceBean financeBean = new FinanceBean();
+
+        String name = DefinedCommon.getValue("tcpType", bean.getType()) + "报销最终通过:" + bean.getId() + '.';
+
+        financeBean.setName(name);
+
+        fillType(bean, financeBean);
+
+        financeBean.setRefId(bean.getId());
+
+        financeBean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
+
+        financeBean.setCreaterId(user.getStafferId());
+
+        financeBean.setDescription(financeBean.getName());
+
+        financeBean.setFinanceDate(TimeTools.now_short());
+
+        financeBean.setLogTime(TimeTools.now());
+
+        List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
+
+        // 各种费用/备用金
+        createAddItem4(user, bean, taxIdList, moneyList, financeBean, itemList);
+
+        financeBean.setItemList(itemList);
+
+        financeManager.addFinanceBeanWithoutTransactional(user, financeBean);
     }
 
     /**
@@ -184,9 +361,8 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
      * @param itemList
      * @throws MYException
      */
-    private void createAddItem1(User user, TravelApplyBean bean, BankBean bank,
-                                OutBillBean outBillBean, FinanceBean financeBean,
-                                List<FinanceItemBean> itemList)
+    private void createAddItem1(User user, TravelApplyBean bean, BankBean bank, OutBillBean outBillBean,
+                                FinanceBean financeBean, List<FinanceItemBean> itemList)
         throws MYException
     {
         // 借款人
@@ -266,6 +442,305 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
         itemOut.setOutmoney(FinanceHelper.doubleToLong(outMoney));
 
         itemOut.setDescription(itemOut.getName());
+
+        // 辅助核算 NA
+        itemList.add(itemOut);
+    }
+
+    /**
+     * 其他应收款-借款/银行科目
+     * 
+     * @param user
+     * @param bean
+     * @param bank
+     * @param outBillBean
+     * @param financeBean
+     * @param itemList
+     * @throws MYException
+     */
+    private void createAddItem2(User user, ExpenseApplyBean bean, BankBean bank, OutBillBean outBillBean,
+                                FinanceBean financeBean, List<FinanceItemBean> itemList)
+        throws MYException
+    {
+        // 收款人
+        StafferBean staffer = stafferDAO.find(bean.getBorrowStafferId());
+
+        if (staffer == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        String name = "出差报销公司支付剩余金额:" + bean.getId() + '.';
+
+        FinanceItemBean itemIn = new FinanceItemBean();
+
+        String pareId = commonDAO.getSquenceString();
+
+        itemIn.setPareId(pareId);
+
+        itemIn.setName("其他应收款_备用金:" + name);
+
+        itemIn.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+        FinanceHelper.copyFinanceItem(financeBean, itemIn);
+
+        // 其他应收款_备用金(部门/职员)
+        TaxBean inTax = taxDAO.findByUnique(TaxItemConstanst.OTHER_RECEIVE_BORROW);
+
+        if (inTax == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 科目拷贝
+        FinanceHelper.copyTax(inTax, itemIn);
+
+        // 当前发生额
+        double inMoney = outBillBean.getMoneys();
+
+        itemIn.setInmoney(FinanceHelper.doubleToLong(inMoney));
+
+        itemIn.setOutmoney(0);
+
+        itemIn.setDescription(itemIn.getName());
+
+        // 辅助核算 部门和职员
+        itemIn.setDepartmentId(staffer.getPrincipalshipId());
+        itemIn.setStafferId(staffer.getId());
+
+        itemList.add(itemIn);
+
+        // 贷方
+        FinanceItemBean itemOut = new FinanceItemBean();
+
+        itemOut.setPareId(pareId);
+
+        itemOut.setName("银行科目:" + name);
+
+        itemOut.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+        FinanceHelper.copyFinanceItem(financeBean, itemOut);
+
+        // 银行科目
+        TaxBean outTax = taxDAO.findByBankId(outBillBean.getBankId());
+
+        if (outTax == null)
+        {
+            throw new MYException("银行[%s]缺少对应的科目,请确认操作", bank.getName());
+        }
+
+        // 科目拷贝
+        FinanceHelper.copyTax(outTax, itemOut);
+
+        double outMoney = outBillBean.getMoneys();
+
+        itemOut.setInmoney(0);
+
+        itemOut.setOutmoney(FinanceHelper.doubleToLong(outMoney));
+
+        itemOut.setDescription(itemOut.getName());
+
+        // 辅助核算 NA
+        itemList.add(itemOut);
+    }
+
+    /**
+     * 其他应收款-借款(负数)/银行科目(负数)
+     * 
+     * @param user
+     * @param bean
+     * @param bank
+     * @param outBillBean
+     * @param financeBean
+     * @param itemList
+     * @throws MYException
+     */
+    private void createAddItem3(User user, ExpenseApplyBean bean, BankBean bank, InBillBean outBillBean,
+                                FinanceBean financeBean, List<FinanceItemBean> itemList)
+        throws MYException
+    {
+        // 收款人
+        StafferBean staffer = stafferDAO.find(bean.getBorrowStafferId());
+
+        if (staffer == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        String name = "出差报销员工还款金额:" + bean.getId() + '.';
+
+        FinanceItemBean itemIn = new FinanceItemBean();
+
+        String pareId = commonDAO.getSquenceString();
+
+        itemIn.setPareId(pareId);
+
+        itemIn.setName("其他应收款_备用金:" + name);
+
+        itemIn.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+        FinanceHelper.copyFinanceItem(financeBean, itemIn);
+
+        // 其他应收款_备用金(部门/职员)
+        TaxBean inTax = taxDAO.findByUnique(TaxItemConstanst.OTHER_RECEIVE_BORROW);
+
+        if (inTax == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 科目拷贝
+        FinanceHelper.copyTax(inTax, itemIn);
+
+        // 当前发生额
+        double inMoney = outBillBean.getMoneys();
+
+        itemIn.setInmoney( -FinanceHelper.doubleToLong(inMoney));
+
+        itemIn.setOutmoney(0);
+
+        itemIn.setDescription(itemIn.getName());
+
+        // 辅助核算 部门和职员
+        itemIn.setDepartmentId(staffer.getPrincipalshipId());
+        itemIn.setStafferId(staffer.getId());
+
+        itemList.add(itemIn);
+
+        // 贷方
+        FinanceItemBean itemOut = new FinanceItemBean();
+
+        itemOut.setPareId(pareId);
+
+        itemOut.setName("银行科目:" + name);
+
+        itemOut.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+        FinanceHelper.copyFinanceItem(financeBean, itemOut);
+
+        // 银行科目
+        TaxBean outTax = taxDAO.findByBankId(outBillBean.getBankId());
+
+        if (outTax == null)
+        {
+            throw new MYException("银行[%s]缺少对应的科目,请确认操作", bank.getName());
+        }
+
+        // 科目拷贝
+        FinanceHelper.copyTax(outTax, itemOut);
+
+        double outMoney = outBillBean.getMoneys();
+
+        itemOut.setInmoney(0);
+
+        itemOut.setOutmoney( -FinanceHelper.doubleToLong(outMoney));
+
+        itemOut.setDescription(itemOut.getName());
+
+        // 辅助核算 NA
+        itemList.add(itemOut);
+    }
+
+    /**
+     * 各种费用/备用金
+     * 
+     * @param user
+     * @param bean
+     * @param bank
+     * @param outBillBean
+     * @param financeBean
+     * @param itemList
+     * @throws MYException
+     */
+    private void createAddItem4(User user, ExpenseApplyBean bean, List<String> taxIds, List<Long> moneyList,
+                                FinanceBean financeBean, List<FinanceItemBean> itemList)
+        throws MYException
+    {
+        // 收款人
+        StafferBean staffer = stafferDAO.find(bean.getBorrowStafferId());
+
+        if (staffer == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        String name = "报销最终入账:" + bean.getId() + '.';
+
+        String pareId = commonDAO.getSquenceString();
+
+        long total = 0L;
+
+        for (int i = 0; i < taxIds.size(); i++ )
+        {
+            String eachTaxId = taxIds.get(i);
+
+            FinanceItemBean itemIn = new FinanceItemBean();
+
+            itemIn.setPareId(pareId);
+
+            itemIn.setName("报销费用:" + name);
+
+            itemIn.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemIn);
+
+            // 其他应收款_备用金(部门/职员)
+            TaxBean inTax = taxDAO.findByUnique(eachTaxId);
+
+            if (inTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(inTax, itemIn);
+
+            itemIn.setInmoney(moneyList.get(i));
+
+            total += moneyList.get(i);
+
+            itemIn.setOutmoney(0);
+
+            itemIn.setDescription(itemIn.getName());
+
+            // 辅助核算 部门和职员
+            itemIn.setDepartmentId(staffer.getPrincipalshipId());
+            itemIn.setStafferId(staffer.getId());
+
+            itemList.add(itemIn);
+        }
+
+        // 贷方
+        FinanceItemBean itemOut = new FinanceItemBean();
+
+        itemOut.setPareId(pareId);
+
+        itemOut.setName("其他应收款_备用金:" + name);
+
+        itemOut.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+        FinanceHelper.copyFinanceItem(financeBean, itemOut);
+
+        // 其他应收款_备用金
+        TaxBean outTax = taxDAO.findByUnique(TaxItemConstanst.OTHER_RECEIVE_BORROW);
+
+        if (outTax == null)
+        {
+            throw new MYException("缺少其他应收款_备用金,请确认操作");
+        }
+
+        // 科目拷贝
+        FinanceHelper.copyTax(outTax, itemOut);
+
+        itemOut.setInmoney(0);
+
+        itemOut.setOutmoney(total);
+
+        itemOut.setDescription(itemOut.getName());
+
+        // 辅助核算 部门和职员
+        itemOut.setDepartmentId(staffer.getPrincipalshipId());
+        itemOut.setStafferId(staffer.getId());
 
         // 辅助核算 NA
         itemList.add(itemOut);

@@ -177,4 +177,15 @@
         </property>
     </bean>
     
+    <bean id="expenseLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="expenseManager"/>
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="tcpPayListenerTaxGlueImpl" />
+            </list>
+        </property>
+    </bean>
+    
 </beans>
