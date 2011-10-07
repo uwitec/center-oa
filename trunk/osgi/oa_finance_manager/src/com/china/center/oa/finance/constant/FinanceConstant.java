@@ -95,6 +95,12 @@ public interface FinanceConstant
     int INBILL_TYPE_FEE = 5;
 
     /**
+     * 个人还款
+     */
+    @Defined(key = "inbillType", value = "个人还款")
+    int INBILL_TYPE_UNBORROW = 6;
+
+    /**
      * 转账
      */
     @Defined(key = "inbillType", value = "转账")

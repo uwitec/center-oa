@@ -77,8 +77,20 @@ function pagePrint()
                ${bean.customerName}
             </p:cell>
 			
-			<p:cell title="销售/委托">
-			    <a href="../sail/out.do?method=findOut&fow=99&outId=${bean.outId}">${bean.outId}</a>/${bean.outBalanceId}
+			<p:cell title="销售/委托/其他">
+			<c:choose>
+				<c:when test="${bean.type == 0}">
+                   <a href="../sail/out.do?method=findOut&fow=99&outId=${bean.outId}" title="查看销售明细">${bean.outId}</a>/${bean.outBalanceId}
+                </c:when>
+               
+			    <c:when test="${bean.type == 6}">
+                   <a href="../tcp/expense.do?method=findExpense&id=${bean.outId}" title="查看报销明细">${bean.outId}</a>
+                </c:when>
+			    
+			    <c:otherwise>
+                ${bean.outId}/${bean.outBalanceId}
+                </c:otherwise>
+			</c:choose>
             </p:cell>
             
             <p:cell title="关联回款">
