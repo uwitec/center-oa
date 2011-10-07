@@ -59,6 +59,8 @@ function inits()
 	load(true);
 	
 	setAuth();
+	
+	allSelect(false);
 }
 
 </script>
@@ -70,8 +72,7 @@ function inits()
 	type="hidden" name="principalshipId" value="${bean.principalshipId}"> <input
 	type="hidden" name="id" value="${bean.id}"> <p:navigation
 	height="22">
-	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javascript:history.go(-1)">人员管理</span> &gt;&gt; 人员明细</td>
+	<td width="550" class="navigation">人员明细</td>
 	<td width="85"></td>
 </p:navigation> <br>
 

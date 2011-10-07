@@ -126,7 +126,9 @@ function checkLock()
     
     
     <td ondblclick="sho()" align="right">
-    <font color="#FFFFFF">登录者：${g_stafferBean.name}</font>
+    <font color="#FFFFFF">登录者：<a style="color: #FFFFFF" href="../admin/staffer.do?method=preForFindStaffer" target="main" title="我的个人信息">
+    <u>${g_stafferBean.name}</u>
+    </a></font>
     <c:if test="${my:dym('com.china.center.oa.flow.portal')}">
     <a href="welcome.jsp" target="main" title="我的桌面"><img src="../images/oa/desk.png" width="20px" height="20px" border="0"/></a>
     </c:if>

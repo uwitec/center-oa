@@ -17,7 +17,7 @@
 			<type>select</type>
 			<option>$locationList</option>
 		</condtion>
-		<condtion name="postId" caption="属性">
+		<condtion name="postId" caption="岗位">
 			<opr>=</opr>
 			<type>select</type>
 			<option>$postList</option>

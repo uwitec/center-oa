@@ -36,7 +36,7 @@ function load()
 		     {display: '信用属性', name : 'black', width : 'auto', sortable : false, cc : 'stafferBlack'}
 		     ],
 		 extAtt: {
-		     name : {begin : '<a href=../admin/staffer.do?method=findStaffer&id={id} title=查看明细>', end : '</a>'}
+		     code : {begin : '<a href=../admin/staffer.do?method=findStaffer&id={id} title=查看明细>', end : '</a>'}
 		 },
 		 buttons : [
 		     {id: 'add', bclass: 'add', onpress : addBean},

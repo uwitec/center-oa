@@ -125,6 +125,7 @@ function closesd()
 					<td align="center"><input type='${selectMode == 1 ? "radio" : "checkbox"}' name="beans"
 					pdname="${item.principalshipName}"
 					pdid="${item.principalshipId}"
+					${vs.index == 0 ? 'checked' : ''}
 					plever="${item.lever}"	pname="${item.name}" pcode="${item.code}" value="${item.id}"/></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.name}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.code}</td>
