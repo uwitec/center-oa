@@ -8,6 +8,10 @@
  */
 package com.china.center.actionhelper.query;
 
+
+import java.util.List;
+
+
 /**
  * HandleHint
  * 
@@ -16,7 +20,7 @@ package com.china.center.actionhelper.query;
  * @see HandleHint
  * @since 3.0
  */
-public interface HandleHint
+public interface HandleHint<V>
 {
-    String getHint();
+    String getHint(List<V> list);
 }
