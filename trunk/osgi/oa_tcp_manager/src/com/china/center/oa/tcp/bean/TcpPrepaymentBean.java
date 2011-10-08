@@ -20,7 +20,7 @@ import com.china.center.oa.budget.bean.FeeItemBean;
 
 
 /**
- * TcpPrepaymentBean
+ * TcpPrepaymentBean(no used)
  * 
  * @author ZHUZHU
  * @version 2011-7-10
@@ -204,35 +204,12 @@ public class TcpPrepaymentBean implements Serializable
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue
-            .append("TcpPrepaymentBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("refId = ")
-            .append(this.refId)
-            .append(TAB)
-            .append("refItemId = ")
-            .append(this.refItemId)
-            .append(TAB)
-            .append("budgetId = ")
-            .append(this.budgetId)
-            .append(TAB)
-            .append("budgetItemId = ")
-            .append(this.budgetItemId)
-            .append(TAB)
-            .append("feeItem = ")
-            .append(this.feeItem)
-            .append(TAB)
-            .append("departmentId = ")
-            .append(this.departmentId)
-            .append(TAB)
-            .append("moneys = ")
-            .append(this.moneys)
-            .append(TAB)
-            .append(" )");
+        retValue.append("TcpPrepaymentBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("refId = ").append(this.refId).append(TAB).append("refItemId = ").append(this.refItemId).append(
+            TAB).append("budgetId = ").append(this.budgetId).append(TAB).append("budgetItemId = ").append(
+            this.budgetItemId).append(TAB).append("feeItem = ").append(this.feeItem).append(TAB).append(
+            "departmentId = ").append(this.departmentId).append(TAB).append("moneys = ").append(this.moneys).append(TAB).append(
+            " )");
 
         return retValue.toString();
     }

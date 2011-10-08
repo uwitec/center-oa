@@ -20,6 +20,7 @@ import com.china.center.oa.tcp.constanst.TcpConstanst;
 import com.china.center.oa.tcp.constanst.TcpFlowConstant;
 import com.china.center.oa.tcp.vo.ExpenseApplyVO;
 import com.china.center.oa.tcp.vo.TcpApproveVO;
+import com.china.center.oa.tcp.vo.TcpHandleHisVO;
 import com.china.center.oa.tcp.vo.TravelApplyVO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.MathTools;
@@ -173,8 +174,7 @@ public abstract class TCPHelper
      */
     public static boolean canTravelApplyDelete(AbstractTcpBean bean)
     {
-        if (bean.getStatus() == TcpConstanst.TCP_STATUS_INIT
-            || bean.getStatus() == TcpConstanst.TCP_STATUS_REJECT)
+        if (bean.getStatus() == TcpConstanst.TCP_STATUS_INIT || bean.getStatus() == TcpConstanst.TCP_STATUS_REJECT)
         {
             return true;
         }
@@ -201,8 +201,7 @@ public abstract class TCPHelper
      */
     public static boolean isTravelApplyInit(TravelApplyBean bean)
     {
-        if (bean.getStatus() == TcpConstanst.TCP_STATUS_INIT
-            || bean.getStatus() == TcpConstanst.TCP_STATUS_REJECT)
+        if (bean.getStatus() == TcpConstanst.TCP_STATUS_INIT || bean.getStatus() == TcpConstanst.TCP_STATUS_REJECT)
         {
             return true;
         }
@@ -256,6 +255,23 @@ public abstract class TCPHelper
         else
         {
             vo.setUrl(TcpConstanst.TCP_EXPENSE_PROCESS_URL + vo.getApplyId());
+        }
+    }
+
+    /**
+     * getTcpApproveVO
+     * 
+     * @param vo
+     */
+    public static void getTcpHandleHisVO(TcpHandleHisVO vo)
+    {
+        if (vo.getType() <= 10)
+        {
+            vo.setUrl(TcpConstanst.TCP_TRAVELAPPLY_DETAIL_URL + vo.getRefId());
+        }
+        else
+        {
+            vo.setUrl(TcpConstanst.TCP_EXPENSE_DETAIL_URL + vo.getRefId());
         }
     }
 

@@ -28,6 +28,9 @@ public class TcpApplyVO extends TcpApplyBean
     @Relationship(relationField = "applyerId")
     private String applyerName = "";
 
+    @Relationship(relationField = "departmentId")
+    private String departmentName = "";
+
     /**
      * default constructor
      */
@@ -53,6 +56,23 @@ public class TcpApplyVO extends TcpApplyBean
     }
 
     /**
+     * @return the departmentName
+     */
+    public String getDepartmentName()
+    {
+        return departmentName;
+    }
+
+    /**
+     * @param departmentName
+     *            the departmentName to set
+     */
+    public void setDepartmentName(String departmentName)
+    {
+        this.departmentName = departmentName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -61,10 +81,11 @@ public class TcpApplyVO extends TcpApplyBean
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue.append("TcpApplyVO ( ").append(super.toString()).append(TAB).append(
-            "applyerName = ").append(this.applyerName).append(TAB).append(" )");
+        retValue.append("TcpApplyVO ( ").append(super.toString()).append(TAB).append("applyerName = ").append(
+            this.applyerName).append(TAB).append("departmentName = ").append(this.departmentName).append(TAB).append(
+            " )");
 
         return retValue.toString();
     }

@@ -127,7 +127,7 @@ public interface TcpConstanst
     /**
      * 收支均衡
      */
-    @Defined(key = "expensePayType", value = "收支均衡")
+    @Defined(key = "expensePayType", value = "借款报销收支平衡")
     int PAYTYPE_PAY_OK = 0;
 
     /**
@@ -159,9 +159,14 @@ public interface TcpConstanst
     String TCP_EXPENSE_PROCESS_URL = "../tcp/expense.do?method=findExpense&update=2&id=";
 
     /**
-     * 显示
+     * 申请借款的详细URL
      */
     String TCP_TRAVELAPPLY_DETAIL_URL = "../tcp/apply.do?method=findTravelApply&id=";
+
+    /**
+     * 报销详细URL
+     */
+    String TCP_EXPENSE_DETAIL_URL = "../tcp/expense.do?method=findExpense&id=";
 
     /**
      * 归属
@@ -218,13 +223,19 @@ public interface TcpConstanst
     int TCP_EXPENSETYPE_PUBLIC = 13;
 
     /**
+     * 通用费用报销
+     */
+    @Defined(key = "tcpType", value = "通用费用报销")
+    int TCP_EXPENSETYPE_COMMON = 14;
+
+    /**
      * 未关联报销
      */
     @Defined(key = "tcpApplyFeedback", value = "未关联报销")
     int TCP_APPLY_FEEDBACK_NO = 0;
 
     /**
-     * 已关联报销
+     * 已关联报销(说明借款结束)
      */
     @Defined(key = "tcpApplyFeedback", value = "已关联报销")
     int TCP_APPLY_FEEDBACK_YES = 1;

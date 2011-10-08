@@ -39,9 +39,15 @@ public class ExpenseApplyBean extends AbstractTcpBean implements Serializable
     private int payType = TcpConstanst.PAYTYPE_PAY_YES;
 
     /**
+     * 
+     */
+    @Html(title = "票据张数", must = true, type = Element.NUMBER)
+    private int ticikCount = 0;
+
+    /**
      * 员工还款金额
      */
-    @Html(title = "还款金额", must = true, type = Element.DOUBLE)
+    @Html(title = "员工还款金额", must = true, type = Element.DOUBLE)
     private long lastMoney = 0L;
 
     @Html(title = "原申请借款金额", must = true, type = Element.DOUBLE)
@@ -123,6 +129,23 @@ public class ExpenseApplyBean extends AbstractTcpBean implements Serializable
     }
 
     /**
+     * @return the ticikCount
+     */
+    public int getTicikCount()
+    {
+        return ticikCount;
+    }
+
+    /**
+     * @param ticikCount
+     *            the ticikCount to set
+     */
+    public void setTicikCount(int ticikCount)
+    {
+        this.ticikCount = ticikCount;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -131,25 +154,12 @@ public class ExpenseApplyBean extends AbstractTcpBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("ExpenseApplyBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("payType = ")
-            .append(this.payType)
-            .append(TAB)
-            .append("lastMoney = ")
-            .append(this.lastMoney)
-            .append(TAB)
-            .append("refMoney = ")
-            .append(this.refMoney)
-            .append(TAB)
-            .append(" )");
+        retValue.append("ExpenseApplyBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("payType = ").append(this.payType).append(TAB).append("ticikCount = ").append(this.ticikCount).append(
+            TAB).append("lastMoney = ").append(this.lastMoney).append(TAB).append("refMoney = ").append(this.refMoney).append(
+            TAB).append(" )");
 
         return retValue.toString();
     }

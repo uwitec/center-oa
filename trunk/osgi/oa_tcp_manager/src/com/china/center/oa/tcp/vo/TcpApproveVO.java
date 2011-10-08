@@ -32,6 +32,9 @@ public class TcpApproveVO extends TcpApproveBean
     @Relationship(relationField = "approverId")
     private String approverName = "";
 
+    @Relationship(relationField = "departmentId")
+    private String departmentName = "";
+
     @Ignore
     private String showTotal = "";
 
@@ -114,6 +117,23 @@ public class TcpApproveVO extends TcpApproveBean
     }
 
     /**
+     * @return the departmentName
+     */
+    public String getDepartmentName()
+    {
+        return departmentName;
+    }
+
+    /**
+     * @param departmentName
+     *            the departmentName to set
+     */
+    public void setDepartmentName(String departmentName)
+    {
+        this.departmentName = departmentName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -122,25 +142,12 @@ public class TcpApproveVO extends TcpApproveBean
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("TcpApproveVO ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("applyerName = ")
-            .append(this.applyerName)
-            .append(TAB)
-            .append("approverName = ")
-            .append(this.approverName)
-            .append(TAB)
-            .append("showTotal = ")
-            .append(this.showTotal)
-            .append(TAB)
-            .append("url = ")
-            .append(this.url)
-            .append(TAB)
-            .append(" )");
+        retValue.append("TcpApproveVO ( ").append(super.toString()).append(TAB).append("applyerName = ").append(
+            this.applyerName).append(TAB).append("approverName = ").append(this.approverName).append(TAB).append(
+            "departmentName = ").append(this.departmentName).append(TAB).append("showTotal = ").append(this.showTotal).append(
+            TAB).append("url = ").append(this.url).append(TAB).append(" )");
 
         return retValue.toString();
     }

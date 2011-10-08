@@ -15,6 +15,8 @@ import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.annotation.enums.JoinType;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.tcp.constanst.TcpConstanst;
 
@@ -48,6 +50,9 @@ public class TcpApplyBean implements Serializable
      */
     @Join(tagClass = StafferBean.class, alias = "APPLYER")
     private String applyerId = "";
+
+    @Join(tagClass = PrincipalshipBean.class, type = JoinType.LEFT)
+    private String departmentId = "";
 
     /**
      * 差旅费申请及借款、业务招待费申请及借款、日常办公和固定资产采购申请及借款、对公业务申请及借款
@@ -240,6 +245,23 @@ public class TcpApplyBean implements Serializable
     }
 
     /**
+     * @return the departmentId
+     */
+    public String getDepartmentId()
+    {
+        return departmentId;
+    }
+
+    /**
+     * @param departmentId
+     *            the departmentId to set
+     */
+    public void setDepartmentId(String departmentId)
+    {
+        this.departmentId = departmentId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -248,43 +270,15 @@ public class TcpApplyBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("TcpApplyBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("name = ")
-            .append(this.name)
-            .append(TAB)
-            .append("flowKey = ")
-            .append(this.flowKey)
-            .append(TAB)
-            .append("applyId = ")
-            .append(this.applyId)
-            .append(TAB)
-            .append("applyerId = ")
-            .append(this.applyerId)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("status = ")
-            .append(this.status)
-            .append(TAB)
-            .append("total = ")
-            .append(this.total)
-            .append(TAB)
-            .append("logTime = ")
-            .append(this.logTime)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append(" )");
+        retValue.append("TcpApplyBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("name = ").append(this.name).append(TAB).append("flowKey = ").append(this.flowKey).append(TAB).append(
+            "applyId = ").append(this.applyId).append(TAB).append("applyerId = ").append(this.applyerId).append(TAB).append(
+            "departmentId = ").append(this.departmentId).append(TAB).append("type = ").append(this.type).append(TAB).append(
+            "status = ").append(this.status).append(TAB).append("total = ").append(this.total).append(TAB).append(
+            "logTime = ").append(this.logTime).append(TAB).append("description = ").append(this.description).append(TAB).append(
+            " )");
 
         return retValue.toString();
     }

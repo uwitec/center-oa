@@ -26,6 +26,8 @@ public interface TravelApplyDAO extends DAO<TravelApplyBean, TravelApplyVO>
 {
     int updateStatus(String id, int status);
 
+    int updateFeedback(String id, String refId, int feedback);
+
     /**
      * updateBorrowTotal
      * 
