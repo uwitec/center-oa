@@ -313,3 +313,15 @@ function getStaffers(oo)
         $("input[name='processId']").val(item.value);
     }
 }
+
+function pagePrint()
+{
+    $O('flowLog').style.display = 'none';
+    $O('ok_b').style.display = 'none';
+    $O('pr').style.display = 'none';
+    window.print();
+
+    $O('flowLog').style.display = 'inline';
+    $O('ok_b').style.display = 'inline';
+    $O('pr').style.display = 'inline';
+}
