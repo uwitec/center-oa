@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="差旅费报销" guid="true"/>
+<p:link title="通用费用报销" guid="true"/>
 <script language="JavaScript" src="../js/string.js"></script>
 <script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
@@ -32,17 +32,17 @@ function addBean(opr)
     
     if ("0" == opr)
     {
-        submit('确定修改差旅费报销?', null, checks);
+        submit('确定修改通用费用报销?', null, checks);
     }
     
     if ("1" == opr)
     {
-        submit('确定提交差旅费报销?', null, checks);
+        submit('确定提交通用费用报销?', null, checks);
     }
     
     if ("2" == opr)
     {
-        submit('稽核修改费用,每项费用只能减少.确定提交稽核修改差旅费报销?', null, checks);
+        submit('稽核修改费用,每项费用只能减少.确定提交稽核修改通用费用报销?', null, checks);
     }
 }
 
@@ -62,20 +62,38 @@ function del(id)
     $O('attacmentIds').value = $O('attacmentIds').value.delSubString(id + ';')
 }
 
-function selectTravelApply()
+function checks()
 {
-    window.common.modal('../tcp/apply.do?method=rptQueryTravelApply&load=1&selectMode=1&type=0');
-}
-
-function getTravelApply(oos)
-{
-    var oo = oos[0];
+	if ($$('payType') == 0)
+    {
+        var borrow = 0;
+            
+        var stotal = sumTotal();
+        
+        if (compareNumber(borrow, stotal) != 0)
+        {
+            alert('收支平衡下报销金额必须等于借款金额:' + borrow);
+            
+            return false;
+        }
+    }
     
-    $("#refMoney").val(oo.pbtotal);
-    
-    $("#refId").val(oo.value);
+	if ($$('payType') == 1)
+	{
+	    var borrow = sumborrowTotal();
+	        
+	    var stotal = sumTotal();
+	    
+	    if (compareNumber(borrow, stotal) != 0)
+	    {
+	        alert('公司付款给员工下报销金额: '+ stotal +',必须等于公司的付款总金额:' + borrow);
+	        
+	        return false;
+	    }
+	}
+	
+    return true;
 }
-
 
 </script>
 </head>
@@ -93,7 +111,7 @@ function getTravelApply(oos)
     type="hidden" name="attacmentIds" value="${attacmentIds}">
 
 <p:navigation height="22">
-	<td width="550" class="navigation">差旅费报销</td>
+	<td width="550" class="navigation">通用费用报销</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -101,7 +119,7 @@ function getTravelApply(oos)
 
 	<p:title>
 		<td class="caption">
-		 <strong>出差报销</strong>
+		 <strong>通用费用报销</strong>
 		</td>
 	</p:title>
 
@@ -121,16 +139,6 @@ function getTravelApply(oos)
             
             <p:pro field="beginDate"/>
             <p:pro field="endDate"/>
-            
-            <p:pro field="srcCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
-            <p:pro field="destCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
-            
-            <p:pro field="refId">
-                  <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectTravelApply()">&nbsp;
-            </p:pro>
-            
-            <p:pro field="refMoney" innerString="readonly=true" value="${my:formatNum(bean.refMoney / 100.0)}"/>
             
             <p:pro field="payType" innerString="onchange='payTypeChange()'">
                 <p:option type="expensePayType"></p:option>
@@ -173,36 +181,10 @@ function getTravelApply(oos)
         </div>
 	</p:subBody>
 	
-	<p:title>
-        <td class="caption">
-         <strong>差旅费明细</strong>
-        </td>
-    </p:title>
-
-    <p:line flag="0" />
-
-    <p:subBody width="98%">
-    
-        <p:table cells="2" id="traTable">
-
-            <p:pro field="airplaneCharges" value="${bean.showAirplaneCharges}"/>
-            <p:pro field="trainCharges" value="${bean.showTrainCharges}"/>
-            
-            <p:pro field="busCharges" value="${bean.showBusCharges}"/>
-            <p:pro field="hotelCharges" value="${bean.showHotelCharges}"/>
-            
-            <p:pro field="entertainCharges" value="${bean.showEntertainCharges}"/>
-            <p:pro field="allowanceCharges" value="${bean.showAllowanceCharges}"/>
-            
-            <p:pro field="other1Charges" value="${bean.showOther1Charges}"/>
-            <p:pro field="other2Charges" value="${bean.showOther2Charges}"/>
-
-        </p:table>
-    </p:subBody>
 	
     <p:title>
         <td class="caption">
-         <strong>其他申请费用明细(不包含差旅费)</strong>
+         <strong>通用费用明细</strong>
         </td>
     </p:title>
 
@@ -266,7 +248,7 @@ function getTravelApply(oos)
                     <tr align="left" class="content0">
                         <td align="left" width="20%" align="center">
                         <input type="button" class="button_class" id="sum_b"
-                        value="&nbsp;合计金额(包含差旅费)&nbsp;" onclick="sumTotal()">
+                        value="&nbsp;合计金额&nbsp;" onclick="sumTotal()">
                         </td>
                         <td width="90%" align="left">
                         <input type="text" 
@@ -343,6 +325,67 @@ function getTravelApply(oos)
 			         </tr>
 			         </c:forEach>
 			         
+                </table>
+                </td>
+            </tr>
+        </table>
+
+        </td>
+    </tr>
+    
+    <p:title>
+        <td class="caption">
+         <strong>费用分担</strong>
+        </td>
+    </p:title>
+
+    <p:line flag="0" />
+    
+    <tr>
+        <td colspan='2' align='center'>
+        <table width="98%" border="0" cellpadding="0" cellspacing="0"
+            class="border">
+            <tr>
+                <td>
+                <table width="100%" border="0" cellspacing='1' id="tables_share">
+                    <tr align="center" class="content0">
+                        <td width="35%" align="center">月度预算</td>
+                        <td width="35%" align="center">部门</td>
+                        <td width="15%" align="center">权签人</td>
+                        <td width="10%" align="center">分担比例(%)</td>
+                        <td width="5%" align="left"><input type="button" accesskey="B"
+                            value="增加" class="button_class" onclick="addShareTr()"></td>
+                    </tr>
+                    
+                    <c:forEach items="${bean.shareVOList}" var="itemEach" varStatus="vs">
+                    <tr class="content1">
+			         <td align="left"><input type="text" style="width: 100%;cursor: pointer;"
+			                    name="s_budgetName" value="${itemEach.budgetName}" oncheck="notNone;" readonly="readonly" onclick="selectBudget(this)">
+			         <input type="hidden" name="s_budgetId" value="${itemEach.budgetId}"> 
+			         </td>
+			         
+			         <td align="left">
+			         <input type="text" style="width: 100%"
+			                    name="s_departmentName" value="${itemEach.departmentName}" oncheck="notNone;" readonly="readonly">
+			         <input type="hidden" name="s_departmentId" value="${itemEach.departmentId}"> 
+			         </td>
+			         
+			         <td align="left">
+			         <input type="text" style="width: 100%"
+			                    name="s_approverName" value="${itemEach.approverName}" oncheck="notNone;" readonly="readonly">
+			         <input type="hidden" name="s_approverId" value="${itemEach.approverId}"> 
+			         </td>
+			         
+			         <td align="left">
+			         <input type="text" style="width: 100%"
+			                    name="s_ratio" value="${itemEach.ratio}" oncheck="notNone;isInt">
+			         </td>
+			         
+			        <td width="5%" align="center"><input type=button
+			            value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
+			        </tr>
+			        </c:forEach>
+			        
                 </table>
                 </td>
             </tr>

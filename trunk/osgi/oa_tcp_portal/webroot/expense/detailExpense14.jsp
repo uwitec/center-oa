@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="差旅费报销" guid="true"/>
+<p:link title="通用费用报销" guid="true"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
 <script language="JavaScript" src="../tcp_js/expense.js"></script>
@@ -23,7 +23,7 @@ function load()
 <input type="hidden" name="departmentId" value="${g_stafferBean.principalshipId}"> 
 
 <p:navigation height="22">
-	<td width="550" class="navigation">差旅费报销明细</td>
+	<td width="550" class="navigation">通用费用报销明细</td>
 	<td width="85"></td>
 </p:navigation> <br>
 
@@ -31,7 +31,7 @@ function load()
 
 	<p:title>
 		<td class="caption">
-		 <strong>出差报销</strong>
+		 <strong>通用费用报销</strong>
 		</td>
 	</p:title>
 
@@ -59,15 +59,6 @@ function load()
             
             <p:pro field="beginDate"/>
             <p:pro field="endDate"/>
-            
-            <p:pro field="srcCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
-            <p:pro field="destCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
-            
-            <p:cell title="关联申请">
-            <a href="../tcp/apply.do?method=findTravelApply&id=${bean.refId}">${bean.refId}</a>
-            </p:cell>
-            
-            <p:pro field="refMoney" innerString="readonly=true" value="${my:formatNum(bean.refMoney / 100.0)}"/>
             
             <p:pro field="payType" innerString="onchange='payTypeChange()'">
                 <p:option type="expensePayType"></p:option>
@@ -113,36 +104,9 @@ function load()
         </p:table>
 	</p:subBody>
 	
-	<p:title>
-        <td class="caption">
-         <strong>差旅费明细</strong>
-        </td>
-    </p:title>
-
-    <p:line flag="0" />
-
-    <p:subBody width="98%">
-    
-        <p:table cells="2" id="traTable">
-
-            <p:pro field="showAirplaneCharges"/>
-            <p:pro field="showTrainCharges"/>
-            
-            <p:pro field="showBusCharges"/>
-            <p:pro field="showHotelCharges"/>
-            
-            <p:pro field="showEntertainCharges"/>
-            <p:pro field="showAllowanceCharges"/>
-            
-            <p:pro field="showOther1Charges"/>
-            <p:pro field="showOther2Charges"/>
-
-        </p:table>
-    </p:subBody>
-	
     <p:title>
         <td class="caption">
-         <strong>其他申请费用明细(包含差旅费)</strong>
+         <strong>通用费用明细</strong>
         </td>
     </p:title>
 
@@ -310,7 +274,7 @@ function load()
     
 	<p:button leftWidth="98%" rightWidth="0%">
         <div align="right">
-        <input type="button" name="pr"
+         <input type="button" name="pr"
             class="button_class" onclick="pagePrint()"
             value="&nbsp;&nbsp;打 印&nbsp;&nbsp;">&nbsp;&nbsp;
         <input type="button" class="button_class"

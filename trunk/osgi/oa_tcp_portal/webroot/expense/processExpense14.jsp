@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="差旅费报销" guid="true"/>
+<p:link title="通用费用报销" guid="true"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/math.js"></script>
@@ -44,17 +44,17 @@ function processBean(opr)
     
     if ("0" == opr)
     {
-        msg = '确定通过差旅费报销?';
+        msg = '确定通过通用费用报销?';
     }
     
     if ("1" == opr)
     {
-        msg = '确定驳回到差旅费报销到初始?';
+        msg = '确定驳回到通用费用报销到初始?';
     }
     
     if ("2" == opr)
     {
-        msg = '确定驳回到差旅费报销到上一步?';
+        msg = '确定驳回到通用费用报销到上一步?';
     }
     
     if ($O('processer'))
@@ -259,7 +259,7 @@ function checkMoney2()
 
 <p:navigation height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
-        onclick="javascript:history.go(-1)">待我处理</span> &gt;&gt; 差旅费报销处理</td>
+        onclick="javascript:history.go(-1)">待我处理</span> &gt;&gt; 通用费用报销处理</td>
     <td width="85"></td>
 </p:navigation> <br>
 
@@ -267,7 +267,7 @@ function checkMoney2()
 
 	<p:title>
 		<td class="caption">
-		 <strong>差旅费报销-${my:get('tcpStatus', bean.status)}</strong>
+		 <strong>通用费用报销-${my:get('tcpStatus', bean.status)}</strong>
 		</td>
 	</p:title>
 
@@ -295,14 +295,6 @@ function checkMoney2()
             
             <p:pro field="beginDate"/>
             <p:pro field="endDate"/>
-            
-            <p:pro field="srcCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
-            <p:pro field="destCity" innerString="onclick='selectCity(this)' style='cursor: pointer;'"/>
-            
-             
-            <p:pro field="refId"/>
-            
-            <p:pro field="refMoney" innerString="readonly=true" value="${my:formatNum(bean.refMoney / 100.0)}"/>
             
             <p:pro field="payType" innerString="onchange='payTypeChange()'">
                 <p:option type="expensePayType"></p:option>
@@ -347,36 +339,10 @@ function checkMoney2()
         </p:table>
 	</p:subBody>
 	
-	<p:title>
-        <td class="caption">
-         <strong>差旅费明细</strong>
-        </td>
-    </p:title>
-
-    <p:line flag="0" />
-
-    <p:subBody width="98%">
-    
-        <p:table cells="2" id="traTable">
-
-            <p:pro field="showAirplaneCharges"/>
-            <p:pro field="showTrainCharges"/>
-            
-            <p:pro field="showBusCharges"/>
-            <p:pro field="showHotelCharges"/>
-            
-            <p:pro field="showEntertainCharges"/>
-            <p:pro field="showAllowanceCharges"/>
-            
-            <p:pro field="showOther1Charges"/>
-            <p:pro field="showOther2Charges"/>
-
-        </p:table>
-    </p:subBody>
 	
     <p:title>
         <td class="caption">
-         <strong>其他申请费用明细(包含差旅费)</strong>
+         <strong>通用费用明细</strong>
         </td>
     </p:title>
 
