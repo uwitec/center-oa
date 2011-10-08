@@ -189,8 +189,8 @@ function checkMoney()
             <p:pro field="id" cell="0"/>
             
 
-            <p:pro field="stafferId" value="${g_stafferBean.name}"/>
-            <p:pro field="departmentId" value="${g_stafferBean.principalshipName}"/>
+            <p:pro field="stafferId" value="${bean.stafferName}"/>
+            <p:pro field="departmentId" value="${bean.departmentName}"/>
             
             <p:pro field="name"/>
             
@@ -235,7 +235,7 @@ function checkMoney()
             ${bean.processer}
             </p:cell>
             
-            <p:cell title="关联付款单" width="8" end="true">
+            <p:cell title="关联收付款单" width="8" end="true">
                 <c:forEach items="${billList}" var="item">
                 <a href="../finance/bill.do?method=findBill&id=${item.id}">${item.id}</a>&nbsp;&nbsp;
                 </c:forEach>
@@ -435,7 +435,7 @@ function checkMoney()
     <c:if test="${bean.status == 22 && bean.borrow == 1}">
 	    <p:title>
 	        <td class="caption">
-	         <strong>财务支付</strong>
+	         <strong>财务支付-支付金额:${bean.showBorrowTotal}</strong>
 	        </td>
 	    </p:title>
 	

@@ -32,8 +32,8 @@ function load()
              {display: '处理人', name : 'processer', width : '10%'},
              {display: '状态', name : 'status', cc: 'tcpStatus', width : '10%'},
              {display: '是否借款', name : 'borrow', cc: 'travelApplyBorrow', width : '5%'},
-             {display: '费用', name : 'showTotal', sortable: true, cname: 'total', width : '8%'},
-             {display: '借款', name : 'showBorrowTotal', sortable: true, cname: 'borrowTotal', width : '8%'},
+             {display: '报销', name : 'feedback', cc: 'tcpApplyFeedback', width : '8%'},
+             {display: '费用/借款', name : 'showTotal', sortable: true, content: '{showTotal}/{showBorrowTotal}', cname: 'total', width : '10%'},
              {display: '时间', name : 'logTime', sortable: true, width : 'auto'}
              ],
          extAtt: {
@@ -55,7 +55,7 @@ function $callBack()
 {
     loadForm();
     highlights($("#mainTable").get(0), ['结束'], 'blue');
-    highlights($("#mainTable").get(0), ['驳回'], 'red');
+    highlights($("#mainTable").get(0), ['驳回', '未关联报销'], 'red');
 }
 
 function addBean(opr, grid)

@@ -6,6 +6,7 @@
 <p:link title="业务招待费申请" guid="true"/>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
+<script language="JavaScript" src="../tcp_js/travelApply.js"></script>
 <script language="javascript">
 function load()
 {
@@ -47,8 +48,8 @@ function load()
 
             <p:pro field="id" cell="0"/>
             
-            <p:pro field="stafferId" value="${g_stafferBean.name}"/>
-            <p:pro field="departmentId" value="${g_stafferBean.principalshipName}"/>
+            <p:pro field="stafferId" value="${bean.stafferName}"/>
+            <p:pro field="departmentId" value="${bean.departmentName}"/>
             
             <p:pro field="name"/>
             
@@ -77,6 +78,10 @@ function load()
             
             <p:pro field="showTotal"/>
             <p:pro field="showBorrowTotal"/>
+            
+            <p:cell title="报销关联"end="true">
+            ${my:get('tcpApplyFeedback', bean.feedback)}
+            </p:cell>
 
             <p:pro field="description" cell="0" innerString="rows=4 cols=55" />
             
@@ -92,7 +97,11 @@ function load()
             ${bean.processer}
             </p:cell>
             
-            <p:cell title="关联付款单" width="8" end="true">
+            <p:cell title="关联报销单" end="true">
+	          <a href="../tcp/expense.do?method=findExpense&id=${bean.refId}">${bean.refId}</a>
+            </p:cell>
+            
+            <p:cell title="关联收付款单" width="8" end="true">
 	            <c:forEach items="${billList}" var="item">
 	            <a href="../finance/bill.do?method=findBill&id=${item.id}">${item.id}</a>&nbsp;&nbsp;
 	            </c:forEach>
@@ -234,7 +243,7 @@ function load()
 
     <p:line flag="0" />
     
-    <tr>
+    <tr id="flowLog">
         <td colspan='2' align='center'>
         <table width="98%" border="0" cellpadding="0" cellspacing="0"
             class="border">
@@ -277,7 +286,11 @@ function load()
     <p:line flag="1" />
     
 	<p:button leftWidth="98%" rightWidth="0%">
-        <div align="right"><input type="button" class="button_class"
+        <div align="right">
+        <input type="button" name="pr"
+            class="button_class" onclick="pagePrint()"
+            value="&nbsp;&nbsp;打 印&nbsp;&nbsp;">&nbsp;&nbsp;
+        <input type="button" class="button_class"
             id="ok_b" style="cursor: pointer" value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"
             onclick="javaScript:window.history.go(-1);"></div>
     </p:button>

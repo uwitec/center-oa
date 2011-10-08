@@ -122,6 +122,7 @@ function closesd()
 					pname="${item.name}"
 					pborrow="${item.borrow}"
 					pbtotal="${item.showBorrowTotal}"
+					${vs.index == 0 ? 'checked' : ''}
 					value="${item.id}"/></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.id}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.name}</td>
