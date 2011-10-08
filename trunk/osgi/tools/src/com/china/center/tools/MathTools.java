@@ -112,6 +112,20 @@ public abstract class MathTools
         return result;
     }
 
+    public static String formatNum2(double d)
+    {
+        DecimalFormat df = new DecimalFormat("####,##0.00");
+
+        String result = df.format(d);
+
+        if (".00".equals(result))
+        {
+            result = "0" + result;
+        }
+
+        return result;
+    }
+
     /**
      * 格式化
      * 
