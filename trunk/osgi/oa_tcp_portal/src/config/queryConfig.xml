@@ -31,6 +31,12 @@
             <type>select</type>
             <option>$travelApplyBorrow</option>
         </condtion>
+        <condtion name="feedback" caption="报销">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$tcpApplyFeedback</option>
+        </condtion>
     </item>
     
     <item name="queryTcpSelfApprove" deaultpfix="TcpApproveBean">
@@ -47,6 +53,10 @@
             <type>text</type>
         </condtion>
         <condtion name="name" caption="目的">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="departmentName" filed="name" caption="部门" pfix="PrincipalshipBean">
             <opr>like</opr>
             <type>text</type>
         </condtion>

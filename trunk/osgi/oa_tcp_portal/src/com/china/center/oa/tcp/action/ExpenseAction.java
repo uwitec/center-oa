@@ -46,7 +46,9 @@ import com.china.center.oa.budget.constant.BudgetConstant;
 import com.china.center.oa.budget.dao.BudgetItemDAO;
 import com.china.center.oa.budget.dao.FeeItemDAO;
 import com.china.center.oa.budget.vo.FeeItemVO;
+import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.OutBillBean;
+import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.AttachmentBean;
@@ -83,6 +85,7 @@ import com.china.center.oa.tcp.vo.TcpHandleHisVO;
 import com.china.center.oa.tcp.vo.TravelApplyItemVO;
 import com.china.center.oa.tcp.wrap.TcpParamWrap;
 import com.china.center.tools.BeanUtil;
+import com.china.center.tools.CommonTools;
 import com.china.center.tools.FileTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
@@ -137,6 +140,8 @@ public class ExpenseAction extends DispatchAction
 
     private OutBillDAO outBillDAO = null;
 
+    private InBillDAO inBillDAO = null;
+
     private FinanceDAO financeDAO = null;
 
     private AttachmentDAO attachmentDAO = null;
@@ -166,8 +171,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward querySelfExpense(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse response)
+    public ActionForward querySelfExpense(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -200,8 +205,7 @@ public class ExpenseAction extends DispatchAction
                     {
                         if (tcpApproveVO.getPool() == TcpConstanst.TCP_POOL_COMMON)
                         {
-                            vo.setProcesser(vo.getProcesser() + tcpApproveVO.getApproverName()
-                                            + ';');
+                            vo.setProcesser(vo.getProcesser() + tcpApproveVO.getApproverName() + ';');
                         }
                     }
                 }
@@ -220,8 +224,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryPoolApprove(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse response)
+    public ActionForward queryPoolApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -240,8 +244,8 @@ public class ExpenseAction extends DispatchAction
 
         condtion.addCondition("order by TcpApproveBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion,
-            this.tcpApproveDAO, new HandleResult<TcpApproveVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion, this.tcpApproveDAO,
+            new HandleResult<TcpApproveVO>()
             {
                 public void handle(TcpApproveVO vo)
                 {
@@ -264,8 +268,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryTcpHis(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse response)
+    public ActionForward queryTcpHis(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -282,8 +286,8 @@ public class ExpenseAction extends DispatchAction
 
         condtion.addCondition("order by TcpHandleHisBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion,
-            this.tcpHandleHisDAO, new HandleResult<TcpHandleHisVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion, this.tcpHandleHisDAO,
+            new HandleResult<TcpHandleHisVO>()
             {
                 public void handle(TcpHandleHisVO vo)
                 {
@@ -304,8 +308,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward querySelfApprove(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse response)
+    public ActionForward querySelfApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -324,8 +328,8 @@ public class ExpenseAction extends DispatchAction
 
         condtion.addCondition("order by TcpApproveBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion,
-            this.tcpApproveDAO, new HandleResult<TcpApproveVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion, this.tcpApproveDAO,
+            new HandleResult<TcpApproveVO>()
             {
                 public void handle(TcpApproveVO vo)
                 {
@@ -346,8 +350,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddExpense(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse response)
+    public ActionForward preForAddExpense(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse response)
         throws ServletException
     {
         prepareInner(request);
@@ -369,7 +373,7 @@ public class ExpenseAction extends DispatchAction
         List<FeeItemVO> feeItemList = feeItemDAO.listEntityVOs();
 
         // 只有出差的特殊处理
-        if ("0".equals(type))
+        if ("0".equals(type) || "11".equals(type))
         {
             for (Iterator iterator = feeItemList.iterator(); iterator.hasNext();)
             {
@@ -401,8 +405,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteExpense(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse response)
+    public ActionForward deleteExpense(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -437,8 +441,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findExpense(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse response)
+    public ActionForward findExpense(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -464,6 +468,10 @@ public class ExpenseAction extends DispatchAction
         List<OutBillBean> billList = outBillDAO.queryEntityBeansByFK(id);
 
         request.setAttribute("billList", billList);
+
+        List<InBillBean> inList = inBillDAO.queryEntityBeansByFK(id);
+
+        request.setAttribute("inList", inList);
 
         List<FinanceBean> financeList = financeDAO.queryEntityBeansByFK(id);
 
@@ -579,8 +587,8 @@ public class ExpenseAction extends DispatchAction
      * @throws ServletException
      * @throws IOException
      */
-    public ActionForward downAttachmentFile(ActionMapping mapping, ActionForm form,
-                                            HttpServletRequest request, HttpServletResponse response)
+    public ActionForward downAttachmentFile(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                            HttpServletResponse response)
         throws ServletException, IOException
     {
         String path = getAttachmentPath();
@@ -603,8 +611,7 @@ public class ExpenseAction extends DispatchAction
         response.setContentType("application/x-dbf");
 
         response.setHeader("Content-Disposition", "attachment; filename="
-                                                  + StringTools.getStringBySet(bean.getName(),
-                                                      "GBK", "ISO8859-1"));
+                                                  + StringTools.getStringBySet(bean.getName(), "GBK", "ISO8859-1"));
 
         UtilStream us = new UtilStream(new FileInputStream(file), out);
 
@@ -623,8 +630,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addOrUpdateExpense(ActionMapping mapping, ActionForm form,
-                                            HttpServletRequest request, HttpServletResponse response)
+    public ActionForward addOrUpdateExpense(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                            HttpServletResponse response)
         throws ServletException
     {
         ExpenseApplyBean bean = new ExpenseApplyBean();
@@ -677,7 +684,7 @@ public class ExpenseAction extends DispatchAction
         rds.close();
 
         // 子项的组装
-        fillTravel(rds, bean);
+        fillExpense(rds, bean);
 
         try
         {
@@ -724,8 +731,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward processExpenseBean(ActionMapping mapping, ActionForm form,
-                                            HttpServletRequest request, HttpServletResponse response)
+    public ActionForward processExpenseBean(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                            HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -756,13 +763,13 @@ public class ExpenseAction extends DispatchAction
                 expenseManager.rejectExpenseBean(user, param);
             }
 
-            request.setAttribute(KeyConstant.MESSAGE, "成功处理出差申请");
+            request.setAttribute(KeyConstant.MESSAGE, "成功处理报销申请");
         }
         catch (MYException e)
         {
             _logger.warn(e, e);
 
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理出差申请失败:" + e.getMessage());
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理报销申请失败:" + e.getMessage());
         }
 
         return mapping.findForward("querySelfApprove");
@@ -785,8 +792,7 @@ public class ExpenseAction extends DispatchAction
         {
             String[] pcmoneysList = request.getParameterValues("p_cmoneys");
             String[] pcdescriptionList = request.getParameterValues("p_cdescription");
-            List<TravelApplyPayBean> payList = travelApplyPayDAO
-                .queryEntityBeansByFK(param.getId());
+            List<TravelApplyPayBean> payList = travelApplyPayDAO.queryEntityBeansByFK(param.getId());
             for (int i = 0; i < ppid.length; i++ )
             {
                 for (TravelApplyPayBean travelApplyPayBean : payList)
@@ -802,167 +808,94 @@ public class ExpenseAction extends DispatchAction
             param.setOther(payList);
         }
 
-        // 处理采购货比三家
-        String[] cids = request.getParameterValues("i_cid");
+        String[] bankIds = request.getParameterValues("bankId");
 
-        if (cids != null && cids.length > 0)
+        // 财务付款/收款
+        if (bankIds != null && bankIds.length > 0)
         {
-            String[] checkPrices = request.getParameterValues("i_checkPrices");
-            String[] moneys = request.getParameterValues("i_moneys");
-            String[] purpose = request.getParameterValues("i_purpose");
+            int payType = CommonTools.parseInt(request.getParameter("payType"));
 
-            List<TravelApplyItemBean> list = new ArrayList();
+            String[] payTypes = request.getParameterValues("payType");
+            String[] moneys = request.getParameterValues("money");
 
-            long m1 = 0L;
-            for (int i = 0; i < cids.length; i++ )
+            // 付款
+            if (payType == TcpConstanst.PAYTYPE_PAY_YES)
             {
-                if (StringTools.isNullOrNone(cids[i]))
+                List<OutBillBean> outBillList = new ArrayList<OutBillBean>();
+
+                for (int i = 0; i < bankIds.length; i++ )
                 {
-                    continue;
-                }
-
-                TravelApplyItemBean item = new TravelApplyItemBean();
-
-                item.setId(cids[i]);
-                item.setCheckPrices(MathTools.doubleToLong2(checkPrices[i]));
-                item.setMoneys(MathTools.doubleToLong2(moneys[i]));
-                item.setPurpose(purpose[i]);
-
-                m1 += item.getMoneys();
-
-                list.add(item);
-            }
-
-            param.setOther2(list);
-
-            List<TravelApplyPayBean> payList = new ArrayList<TravelApplyPayBean>();
-
-            List<String> receiveTypeList = ListTools.changeArrayToList(request
-                .getParameterValues("p_receiveType"));
-            List<String> bankList = ListTools.changeArrayToList(request
-                .getParameterValues("p_bank"));
-            List<String> userNameList = ListTools.changeArrayToList(request
-                .getParameterValues("p_userName"));
-            List<String> bankNoList = ListTools.changeArrayToList(request
-                .getParameterValues("p_bankNo"));
-            List<String> pmoneysList = ListTools.changeArrayToList(request
-                .getParameterValues("p_moneys"));
-            List<String> pdescriptionList = ListTools.changeArrayToList(request
-                .getParameterValues("p_description"));
-
-            long m2 = 0L;
-
-            if (receiveTypeList != null && receiveTypeList.size() > 0)
-            {
-                for (int i = 0; i < receiveTypeList.size(); i++ )
-                {
-                    String each = receiveTypeList.get(i);
-
-                    if (StringTools.isNullOrNone(each))
+                    if (StringTools.isNullOrNone(bankIds[i]))
                     {
                         continue;
                     }
 
-                    TravelApplyPayBean pay = new TravelApplyPayBean();
+                    OutBillBean outBill = new OutBillBean();
 
-                    pay.setReceiveType(MathTools.parseInt(receiveTypeList.get(i)));
-                    pay.setBankName(bankList.get(i));
-                    pay.setUserName(userNameList.get(i));
-                    pay.setBankNo(bankNoList.get(i));
-                    pay.setMoneys(TCPHelper.doubleToLong2(pmoneysList.get(i)));
-                    pay.setDescription(pdescriptionList.get(i));
+                    outBill.setBankId(bankIds[i]);
 
-                    payList.add(pay);
+                    outBill.setPayType(MathTools.parseInt(payTypes[i]));
+
+                    outBill.setMoneys(MathTools.parseDouble(moneys[i]));
+
+                    outBillList.add(outBill);
                 }
 
-                for (TravelApplyPayBean each : payList)
-                {
-                    m2 += each.getMoneys();
-                }
+                param.setOther(outBillList);
             }
 
-            if (m1 != m2)
+            // 收款
+            if (payType == TcpConstanst.PAYTYPE_PAY_NO)
             {
-                throw new MYException("采购金额和收款金额不一致");
-            }
+                List<InBillBean> inBillList = new ArrayList<InBillBean>();
 
-            param.setOther(payList);
+                for (int i = 0; i < bankIds.length; i++ )
+                {
+                    if (StringTools.isNullOrNone(bankIds[i]))
+                    {
+                        continue;
+                    }
+
+                    InBillBean outBill = new InBillBean();
+
+                    outBill.setBankId(bankIds[i]);
+
+                    outBill.setMoneys(MathTools.parseDouble(moneys[i]));
+
+                    inBillList.add(outBill);
+                }
+
+                param.setOther2(inBillList);
+            }
         }
 
-        String[] bankIds = request.getParameterValues("bankId");
+        String[] taxIds = request.getParameterValues("taxId");
 
-        // 财务付款
-        if (bankIds != null && bankIds.length > 0)
+        if (taxIds != null && taxIds.length > 0)
         {
-            String[] payTypes = request.getParameterValues("payType");
-            String[] moneys = request.getParameterValues("money");
+            String[] moneys = request.getParameterValues("t_money");
 
-            List<OutBillBean> outBillList = new ArrayList<OutBillBean>();
+            // FinanceItemBean
+            List<String> taxList = new ArrayList<String>();
+            List<Long> longList = new ArrayList<Long>();
 
-            for (int i = 0; i < bankIds.length; i++ )
+            for (int i = 0; i < taxIds.length; i++ )
             {
-                if (StringTools.isNullOrNone(bankIds[i]))
+                if (StringTools.isNullOrNone(taxIds[i]))
                 {
                     continue;
                 }
+                taxList.add(taxIds[i]);
 
-                OutBillBean outBill = new OutBillBean();
+                // 万单位
+                longList.add(MathTools.doubleToLong2(moneys[i]) * 100);
 
-                outBill.setBankId(bankIds[i]);
-
-                outBill.setPayType(MathTools.parseInt(payTypes[i]));
-
-                outBill.setMoneys(MathTools.parseDouble(moneys[i]));
-
-                outBillList.add(outBill);
             }
 
-            param.setOther(outBillList);
+            param.setOther(taxList);
+
+            param.setOther2(longList);
         }
-    }
-
-    /**
-     * 认领
-     * 
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
-     * @throws ServletException
-     */
-    public ActionForward drawApprove(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse response)
-        throws ServletException
-    {
-        AjaxResult ajax = new AjaxResult();
-
-        try
-        {
-            String ids = request.getParameter("ids");
-
-            User user = Helper.getUser(request);
-
-            String[] splits = ids.split(";");
-
-            for (String id : splits)
-            {
-                if ( !StringTools.isNullOrNone(id))
-                {
-                    tcpFlowManager.drawApprove(user, id);
-                }
-            }
-
-            ajax.setSuccess("成功操作");
-        }
-        catch (MYException e)
-        {
-            _logger.warn(e, e);
-
-            ajax.setError("操作失败:" + e.getMessage());
-        }
-
-        return JSONTools.writeResponse(response, ajax);
     }
 
     /**
@@ -1026,12 +959,12 @@ public class ExpenseAction extends DispatchAction
     }
 
     /**
-     * fillTravel
+     * fillExpense
      * 
      * @param rds
      * @param bean
      */
-    private void fillTravel(RequestDataStream rds, ExpenseApplyBean bean)
+    private void fillExpense(RequestDataStream rds, ExpenseApplyBean bean)
     {
         String lastMoney = rds.getParameter("lastMoney");
 
@@ -1183,7 +1116,7 @@ public class ExpenseAction extends DispatchAction
 
         if ( !ListTools.isEmptyOrNull(budgetIdeList))
         {
-            // 费用分担(TODO 需要核实)
+            // 费用分担(只有通用报销的时候需要)
             List<TcpShareBean> shareList = new ArrayList<TcpShareBean>();
 
             bean.setShareList(shareList);
@@ -1222,8 +1155,8 @@ public class ExpenseAction extends DispatchAction
      * @param bean
      * @return
      */
-    private ActionForward parserAttachment(ActionMapping mapping, HttpServletRequest request,
-                                           RequestDataStream rds, ExpenseApplyBean travelApply)
+    private ActionForward parserAttachment(ActionMapping mapping, HttpServletRequest request, RequestDataStream rds,
+                                           ExpenseApplyBean travelApply)
     {
         List<AttachmentBean> attachmentList = new ArrayList<AttachmentBean>();
 
@@ -1646,6 +1579,23 @@ public class ExpenseAction extends DispatchAction
     public void setExpenseManager(ExpenseManager expenseManager)
     {
         this.expenseManager = expenseManager;
+    }
+
+    /**
+     * @return the inBillDAO
+     */
+    public InBillDAO getInBillDAO()
+    {
+        return inBillDAO;
+    }
+
+    /**
+     * @param inBillDAO
+     *            the inBillDAO to set
+     */
+    public void setInBillDAO(InBillDAO inBillDAO)
+    {
+        this.inBillDAO = inBillDAO;
     }
 
 }
