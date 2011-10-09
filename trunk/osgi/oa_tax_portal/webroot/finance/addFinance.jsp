@@ -251,7 +251,10 @@ function callClick(obj, el)
          <input type="text" style="width: 100%"
                     name="outmoney" value="0.0" oncheck=""></td>
                     
-        <td width="5%" align="center"><input type=button
+        <td width="5%" align="center">
+        <input type=button
+            value="&nbsp;拷 贝&nbsp;" class=button_class onclick="copyTr(this)">&nbsp;<br><br>
+        <input type=button
             value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
     </tr>
 </table>

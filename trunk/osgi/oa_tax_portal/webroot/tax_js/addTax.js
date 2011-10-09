@@ -32,7 +32,12 @@ function addTrInner(list)
     
     var tr = $O("trCopy");
     
-    trow =  table.insertRow(-1);
+    return addTrInner_2(list, tr, table, -1);
+}
+
+function addTrInner_2(list, tr, table, index)
+{
+    trow =  table.insertRow(index);
     
     if (length % 2 == 1)
     {
@@ -98,3 +103,18 @@ function removeTr(obj)
         }
     }
 }
+
+function copyTr(obj)
+{
+    //rows
+    var table = $O("tables");
+    
+    var list = initData();
+    
+    var table = $O("tables");
+    
+    var tr = obj.parentNode.parentNode;
+    
+    return addTrInner_2(list, tr, table, tr.rowIndex + 1);
+}
+
