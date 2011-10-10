@@ -466,7 +466,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
-    public boolean splitInBillBean(String userId, String id, double newMoney)
+    public String splitInBillBean(String userId, String id, double newMoney)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(userId, id);

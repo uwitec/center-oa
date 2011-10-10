@@ -102,7 +102,7 @@ public interface BillManager
      * @return
      * @throws MYException
      */
-    boolean splitInBillBean(User user, String id, double newMoney)
+    String splitInBillBean(User user, String id, double newMoney)
         throws MYException;
 
     /**

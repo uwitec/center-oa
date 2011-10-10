@@ -106,7 +106,8 @@ public class BillManagerImpl implements BillManager
             else
             {
                 // 验证销售单绑定策略(非坏账)
-                if ( !StringTools.isNullOrNone(bean.getOutId()) && bean.getType() != FinanceConstant.INBILL_TYPE_BADOUT)
+                if ( !StringTools.isNullOrNone(bean.getOutId())
+                    && bean.getType() != FinanceConstant.INBILL_TYPE_BADOUT)
                 {
                     OutBean out = outDAO.find(bean.getOutId());
 
@@ -121,8 +122,9 @@ public class BillManagerImpl implements BillManager
                     // 发现支付的金额过多
                     if (MathTools.compare(hasPay + bean.getMoneys(), out.getTotal()) > 0)
                     {
-                        throw new MYException("销售单[%s]的总金额[%.2f],当前已付金额[%.2f],本次申请付款[%.2f],付款金额超出销售金额",
-                            bean.getOutId(), out.getTotal(), hasPay, bean.getMoneys());
+                        throw new MYException(
+                            "销售单[%s]的总金额[%.2f],当前已付金额[%.2f],本次申请付款[%.2f],付款金额超出销售金额", bean
+                                .getOutId(), out.getTotal(), hasPay, bean.getMoneys());
                     }
 
                     // 更新已经支付的金额
@@ -130,7 +132,8 @@ public class BillManagerImpl implements BillManager
                 }
 
                 // 更新坏账状态
-                if ( !StringTools.isNullOrNone(bean.getOutId()) && bean.getType() == FinanceConstant.INBILL_TYPE_BADOUT)
+                if ( !StringTools.isNullOrNone(bean.getOutId())
+                    && bean.getType() == FinanceConstant.INBILL_TYPE_BADOUT)
                 {
                     OutBean out = outDAO.find(bean.getOutId());
 
@@ -143,7 +146,8 @@ public class BillManagerImpl implements BillManager
 
                     bean.setOwnerId(out.getStafferId());
 
-                    outDAO.updataBadDebtsCheckStatus(bean.getOutId(), OutConstant.BADDEBTSCHECKSTATUS_YES);
+                    outDAO.updataBadDebtsCheckStatus(bean.getOutId(),
+                        OutConstant.BADDEBTSCHECKSTATUS_YES);
                 }
             }
 
@@ -185,7 +189,8 @@ public class BillManagerImpl implements BillManager
             throw new MYException("单据已经被核对,请确认操作");
         }
 
-        if ( !StringTools.isNullOrNone(bill.getOutId()) || !StringTools.isNullOrNone(bill.getOutBalanceId()))
+        if ( !StringTools.isNullOrNone(bill.getOutId())
+            || !StringTools.isNullOrNone(bill.getOutBalanceId()))
         {
             throw new MYException("单据已经被销售单[%s]绑定,请确认操作", bill.getOutId());
         }
@@ -342,7 +347,8 @@ public class BillManagerImpl implements BillManager
             throw new MYException("单据已经被核对,请确认操作");
         }
 
-        if ( !StringTools.isNullOrNone(bill.getStockId()) || !StringTools.isNullOrNone(bill.getStockItemId()))
+        if ( !StringTools.isNullOrNone(bill.getStockId())
+            || !StringTools.isNullOrNone(bill.getStockItemId()))
         {
             throw new MYException("单据已经被采购单[%s]关联,请确认操作", bill.getStockId());
         }
@@ -365,12 +371,10 @@ public class BillManagerImpl implements BillManager
     }
 
     @Transactional(rollbackFor = MYException.class)
-    public boolean splitInBillBean(User user, String id, double newMoney)
+    public String splitInBillBean(User user, String id, double newMoney)
         throws MYException
     {
-        splitInBillBeanWithoutTransactional(user, id, newMoney);
-
-        return true;
+        return splitInBillBeanWithoutTransactional(user, id, newMoney);
     }
 
     @Transactional(rollbackFor = MYException.class)
@@ -517,7 +521,8 @@ public class BillManagerImpl implements BillManager
 
             bean.setRefBillId(inbill.getId());
 
-            bean.setDescription(bean.getDescription() + "" + "此单被驳回,由于锁定自动生成了同样金额的收款单:" + inbill.getId());
+            bean.setDescription(bean.getDescription() + "" + "此单被驳回,由于锁定自动生成了同样金额的收款单:"
+                                + inbill.getId());
 
             outBillDAO.updateEntityBean(bean);
         }
@@ -549,7 +554,8 @@ public class BillManagerImpl implements BillManager
 
         bill.setMoneys(bill.getMoneys() - newMoney);
 
-        bill.setDescription(bill.getDescription() + "<br>" + "销售关联分拆了:" + MathTools.formatNum(newMoney) + "出去");
+        bill.setDescription(bill.getDescription() + "<br>" + "销售关联分拆了:"
+                            + MathTools.formatNum(newMoney) + "出去");
 
         inBillDAO.updateEntityBean(bill);
 

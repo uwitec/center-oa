@@ -131,7 +131,7 @@ public interface FinanceFacade
      * @return
      * @throws MYException
      */
-    boolean splitInBillBean(String userId, String id, double newMoney)
+    String splitInBillBean(String userId, String id, double newMoney)
         throws MYException;
 
     boolean addInBillBean(String userId, InBillBean bean)

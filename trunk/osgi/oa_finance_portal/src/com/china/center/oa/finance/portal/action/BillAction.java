@@ -42,6 +42,7 @@ import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.dao.StatBankDAO;
 import com.china.center.oa.finance.facade.FinanceFacade;
+import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.vo.InBillVO;
 import com.china.center.oa.finance.vo.OutBillVO;
 import com.china.center.oa.publics.Helper;
@@ -85,6 +86,8 @@ public class BillAction extends DispatchAction
     private AuthManager authManager = null;
 
     private UserManager userManager = null;
+
+    private BillManager billManager = null;
 
     private FinanceFacade financeFacade = null;
 
@@ -841,6 +844,8 @@ public class BillAction extends DispatchAction
 
             String id = request.getParameter("id");
 
+            String newMoney = request.getParameter("newMoney");
+
             InBillBean inBill = inBillDAO.find(id);
 
             if (inBill == null)
@@ -848,7 +853,8 @@ public class BillAction extends DispatchAction
                 throw new MYException("数据错误,请确认操作");
             }
 
-            String newMoney = request.getParameter("newMoney");
+            String newId = financeFacade.splitInBillBean(user.getId(), id, MathTools
+                .parseDouble(newMoney));
 
             BackPayApplyBean bean = new BackPayApplyBean();
 
@@ -856,7 +862,7 @@ public class BillAction extends DispatchAction
 
             bean.setBackPay(MathTools.parseDouble(newMoney));
 
-            bean.setBillId(id);
+            bean.setBillId(newId);
 
             bean.setChangePayment(0.0d);
 
@@ -1287,5 +1293,22 @@ public class BillAction extends DispatchAction
     public void setFinanceDAO(FinanceDAO financeDAO)
     {
         this.financeDAO = financeDAO;
+    }
+
+    /**
+     * @return the billManager
+     */
+    public BillManager getBillManager()
+    {
+        return billManager;
+    }
+
+    /**
+     * @param billManager
+     *            the billManager to set
+     */
+    public void setBillManager(BillManager billManager)
+    {
+        this.billManager = billManager;
     }
 }

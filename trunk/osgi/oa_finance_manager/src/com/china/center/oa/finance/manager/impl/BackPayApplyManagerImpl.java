@@ -118,6 +118,16 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
             bean.setStatus(BackPayApplyConstant.STATUS_SEC);
         }
 
+        // 预收变为关联状态
+        if (bean.getType() == BackPayApplyConstant.TYPE_BILL)
+        {
+            InBillBean bill = inBillDAO.find(bean.getBillId());
+
+            bill.setStatus(FinanceConstant.INBILL_STATUS_PREPAYMENTS);
+
+            inBillDAO.updateEntityBean(bill);
+        }
+
         saveFlowLog(user, BackPayApplyConstant.STATUS_INIT, bean, "提交", PublicConstant.OPRMODE_PASS);
 
         return backPayApplyDAO.saveEntityBean(bean);
@@ -142,6 +152,11 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
         if (bean.getBackPay() <= 0.0d)
         {
             throw new MYException("退款金额错误,请确认操作");
+        }
+
+        if (inBill.getStatus() != FinanceConstant.INBILL_STATUS_NOREF)
+        {
+            throw new MYException("必须是预收单据,请确认操作");
         }
 
         if (inBill.getMoneys() < bean.getBackPay())
@@ -301,6 +316,19 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
 
         backPayApplyDAO.updateEntityBean(bean);
 
+        // 预收回滚状态
+        if (bean.getType() == BackPayApplyConstant.TYPE_BILL)
+        {
+            InBillBean bill = inBillDAO.find(bean.getBillId());
+
+            if (bill != null && bill.getStatus() == FinanceConstant.INBILL_STATUS_PREPAYMENTS)
+            {
+                bill.setStatus(FinanceConstant.INBILL_STATUS_NOREF);
+
+                inBillDAO.updateEntityBean(bill);
+            }
+        }
+
         saveFlowLog(user, preStatus, bean, reason, PublicConstant.OPRMODE_REJECT);
 
         return true;
@@ -390,14 +418,29 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
                 throw new MYException("数据错误,请确认操作");
             }
 
-            if (inBill.getStatus() != FinanceConstant.INBILL_STATUS_NOREF)
-            {
-                throw new MYException("收款单已经不在预收状态,请确认操作");
-            }
+            String newId = "";
 
-            // 直接把预收拆分成两个单据
-            String newId = billManager.splitInBillBeanWithoutTransactional(user, inBill.getId(),
-                bean.getBackPay());
+            // 为了兼容哦
+            if (MathTools.equal2(bean.getBackPay(), inBill.getMoneys()))
+            {
+                if (inBill.getStatus() != FinanceConstant.INBILL_STATUS_PREPAYMENTS)
+                {
+                    throw new MYException("收款单已经不在关联申请状态,请确认操作");
+                }
+
+                newId = bean.getBillId();
+            }
+            else
+            {
+                if (inBill.getStatus() != FinanceConstant.INBILL_STATUS_NOREF)
+                {
+                    throw new MYException("收款单已经不在预收状态,请确认操作");
+                }
+
+                // 暂时不拆分了
+                newId = billManager.splitInBillBeanWithoutTransactional(user, inBill.getId(), bean
+                    .getBackPay());
+            }
 
             // 预收
             InBillBean newInBill = inBillDAO.find(newId);

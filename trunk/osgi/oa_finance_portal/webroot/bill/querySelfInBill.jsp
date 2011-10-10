@@ -27,7 +27,7 @@ function load()
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},
-             {display: '帐号', name : 'bankName', width : '10%'},
+             {display: '帐号', name : 'bankName', width : '20%'},
              {display: '类型', name : 'type', cc: 'inbillType', width : '8%'},
              {display: '状态', name : 'status', cc: 'inbillStatus', width : '8%'},
              {display: '金额', name : 'moneys',  toFixed: 2, width : '8%'},
@@ -101,5 +101,5 @@ function doSearch()
 </form>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
-<p:query/>
+<p:query height="300"/>
 </body>
