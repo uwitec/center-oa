@@ -9,6 +9,7 @@
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/json.js"></script>
 <script language="JavaScript" src="../js/math.js"></script>
+<script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../tax_js/autosuggest_debug.js"></script>
 <script language="JavaScript" src="../tax_js/addTax.js"></script>
 <script language="JavaScript" src="../tax_js/addFinance.js"></script>
@@ -21,17 +22,10 @@ function addBean()
 
 var taxList = JSON.parse('${taxListStr}');
 
-function initData()
-{
-	var dataList = [];
-	
-	for (var i = 0; i < taxList.length; i++)
-	{
-		dataList[i] = taxList[i].code + taxList[i].name;
-	}
-	
-	return dataList;
-}
+var stafferList = JSON.parse('${stafferListStr}');
+
+var priList = JSON.parse('${priListStr}');
+
 
 function checks()
 {
@@ -105,11 +99,6 @@ function load()
 	loadForm();
 	
 	addTr();
-}
-
-function callClick(obj, el)
-{
-	taxChange(obj);
 }
 
 </script>
@@ -211,12 +200,12 @@ function callClick(obj, el)
          
          <td>
          <br>
-         <input type="text" style="width: 85%;display: none;cursor: pointer;color: gray;" onclick="selectStaffer(this)" title="选择职员" head="职员" 
-                    name="stafferId" value="选择职员" readonly="readonly">
+         <input type="text" style="width: 85%;display: none;color: gray;" title="选择职员" head="职员" 
+                    name="stafferId" value="请输入职员" onclick="colorthis(this)">
          <input type="hidden" name="stafferId2" value=""> 
          <br>
-         <input type="text" style="width: 85%;display: none;cursor: pointer;color: gray;" onclick="selectPrin(this)" title="选择部门" head="部门" 
-                    name="departmentId" value="选择部门" readonly="readonly">
+         <input type="text" style="width: 85%;display: none;color: gray;" onclick="colorthis(this)" title="选择部门" head="部门" 
+                    name="departmentId" value="请输入部门" >
          <input type="hidden" name="departmentId2" value=""> 
          <br>
          <input type="text" style="width: 85%;display: none;cursor: pointer;color: gray;" onclick="selectUnit(this)" title="选择单位" head="单位"

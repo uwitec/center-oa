@@ -316,6 +316,57 @@ function selectPrin(obj)
     window.common.modal('../admin/pop.do?method=rptQueryOrg&load=1&selectMode=1');
 }
 
+function callClick(obj, el)
+{
+    taxChange(obj);
+}
+
+function callClickStaffer(obj, el)
+{
+	var data = findData2(obj.value);
+	
+	if (data == null)
+	{
+		return;
+	}
+	
+    //自动赋值给部门
+    var hid = getNextInput(obj.nextSibling);
+    
+    hid.value = data.id;
+    
+    var org = getNextInput(hid.nextSibling);
+    
+    if (org)
+    {
+        if (org.name == 'departmentId' && (org.value == '' || org.value == '请输入部门'))
+        {
+            org.value = data.description;
+            
+            var hid = getNextInput(org.nextSibling);
+    
+            hid.value = data.principalshipId;
+            
+            org.style.color = '';
+        }
+    }
+}
+
+
+function callClickPri(obj, el)
+{
+	var data = findData3(obj.value);
+	
+    if (data == null)
+    {
+        return;
+    }
+    
+    var hid = getNextInput(obj.nextSibling);
+    
+    hid.value = data.id;
+}
+
 function getProduct(oos)
 {
     var obj = oos[0];
@@ -327,6 +378,21 @@ function getProduct(oos)
     hid.value = obj.value;
     
     current.style.color = '';
+}
+
+function colorthis(obj)
+{
+	obj.style.color = '';
+	
+	if (obj.value == '请输入职员')
+	{
+		obj.value = '';
+	}
+	
+	if (obj.value == '请输入部门')
+    {
+        obj.value = '';
+    }
 }
 
 function getStaffers(oos)
@@ -404,3 +470,64 @@ function getNextInput(el)
     }
 }
 
+function initData()
+{
+    var dataList = [];
+    
+    for (var i = 0; i < taxList.length; i++)
+    {
+        dataList[i] = taxList[i].code + taxList[i].name;
+    }
+    
+    return dataList;
+}
+
+function initData2()
+{
+    var dataList = [];
+    
+    for (var i = 0; i < stafferList.length; i++)
+    {
+        dataList[i] = stafferList[i].name + '(' + stafferList[i].description + ')';
+    }
+    
+    return dataList;
+}
+
+function findData2(value)
+{
+    for (var i = 0; i < stafferList.length; i++)
+    {
+        if (value == (stafferList[i].name + '(' + stafferList[i].description + ')'))
+        {
+            return stafferList[i];
+        }
+    }
+    
+    return null;
+}
+
+function initData3()
+{
+    var dataList = [];
+    
+    for (var i = 0; i < priList.length; i++)
+    {
+        dataList[i] = priList[i].name;
+    }
+    
+    return dataList;
+}
+
+function findData3(value)
+{
+    for (var i = 0; i < priList.length; i++)
+    {
+        if (value == priList[i].name)
+        {
+            return priList[i];
+        }
+    }
+    
+    return null;
+}

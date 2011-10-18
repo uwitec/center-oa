@@ -45,6 +45,7 @@ import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.DutyBean;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.DutyDAO;
@@ -1228,6 +1229,24 @@ public class FinaAction extends ParentQueryFinaAction
             return ActionTools.toError("结转只能在月末或者下月发生,不能提前结转", mapping, request);
         }
 
+        // 查询是否都已经核对
+        ConditionParse con = new ConditionParse();
+
+        con.addWhereStr();
+
+        con.addCondition("financeDate", ">=", changeFormat + "-01");
+        con.addCondition("financeDate", "<=", changeFormat + "-31");
+
+        con.addIntCondition("status", "=", TaxConstanst.FINANCE_STATUS_NOCHECK);
+
+        int count = financeDAO.countByCondition(con.toString());
+
+        if (count > 0)
+        {
+            return ActionTools.toError("当前[" + changeFormat + "]下存在:" + count + "个凭证没有核对,不能月结",
+                mapping, request);
+        }
+
         List<TaxBean> taxList = taxDAO.listEntityBeans("order by id");
 
         List<FinanceMonthVO> monthList = new ArrayList<FinanceMonthVO>();
@@ -1309,6 +1328,54 @@ public class FinaAction extends ParentQueryFinaAction
         JSONArray object = new JSONArray(taxList, false);
 
         request.setAttribute("taxListStr", object.toString());
+
+        List<StafferBean> tempList = stafferDAO.listCommonEntityBeans();
+
+        List<StafferBean> stafferList = new ArrayList();
+
+        for (StafferBean bean : tempList)
+        {
+            StafferBean nbean = new StafferBean();
+
+            bean.setPwkey("");
+
+            PrincipalshipBean pri = orgManager.findPrincipalshipById(bean.getPrincipalshipId());
+
+            if (pri != null)
+            {
+                nbean.setDescription(pri.getName());
+            }
+
+            nbean.setPriList(null);
+            nbean.setName(bean.getName());
+
+            nbean.setId(bean.getId());
+            nbean.setPrincipalshipId(bean.getPrincipalshipId());
+
+            stafferList.add(nbean);
+        }
+
+        object = new JSONArray(stafferList, false);
+
+        request.setAttribute("stafferListStr", object.toString());
+
+        List<PrincipalshipBean> priList = principalshipDAO.listEntityBeans();
+
+        for (PrincipalshipBean principalshipBean : priList)
+        {
+            PrincipalshipBean fullBean = orgManager
+                .findPrincipalshipById(principalshipBean.getId());
+
+            BeanUtil.copyProperties(principalshipBean, fullBean);
+
+            principalshipBean.setName("[" + principalshipBean.getLevel() + "]"
+                                      + principalshipBean.getName() + "("
+                                      + principalshipBean.getParentName() + ")");
+        }
+
+        object = new JSONArray(priList, false);
+
+        request.setAttribute("priListStr", object.toString());
     }
 
     /**

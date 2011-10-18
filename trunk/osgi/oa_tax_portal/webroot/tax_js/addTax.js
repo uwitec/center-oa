@@ -10,8 +10,12 @@ function addTr()
 function initTr()
 {
     var list = initData();
+    var list2 = initData2();
+    var list3 = initData3();
     
     var deList = document.getElementsByName('taxId');
+    var staList = document.getElementsByName('stafferId');
+    var depList = document.getElementsByName('departmentId');
     
     for (var i = 0; i < deList.length; i++)
     {
@@ -21,6 +25,10 @@ function initTr()
        }
        
        new hint(deList[i], list, HINT_MODE.CLIENT, false, null, callClick);
+       
+       new hint(staList[i], list2, HINT_MODE.CLIENT, false, null, callClickStaffer);
+       
+       new hint(depList[i], list3, HINT_MODE.CLIENT, false, null, callClickPri);
        
        taxChange(deList[i]);
     }
@@ -60,6 +68,10 @@ function addTrInner_2(list, tr, table, index)
     trow.appendChild(tcell);
     
     new hint(getTrInnerObj2(trow, 'taxId'), list, HINT_MODE.CLIENT, false, null, callClick);
+    
+    new hint(getTrInnerObj2(trow, 'stafferId'), initData2(), HINT_MODE.CLIENT, false, null, callClickStaffer);
+    
+    new hint(getTrInnerObj2(trow, 'departmentId'), initData3(), HINT_MODE.CLIENT, false, null, callClickPri);
     
     for (var i = 2; i < table.rows.length; i++)
     {
