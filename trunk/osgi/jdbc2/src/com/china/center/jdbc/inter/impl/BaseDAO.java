@@ -138,6 +138,22 @@ public abstract class BaseDAO<Bean extends Serializable, VO extends Bean> implem
         return true;
     }
 
+    public boolean deleteEntityBeansByUnique(Object... key)
+    {
+        String[] fieldName = BeanTools.getUniqueFields(claz);
+
+        if (fieldName == null || fieldName.length == 0)
+        {
+            throw new RuntimeException(claz.getName() + " miss unique field");
+        }
+
+        String sql = jdbcOperation.getUniqueQuerySql(fieldName, claz, 1);
+
+        jdbcOperation.delete(sql, claz, key);
+
+        return true;
+    }
+
     public boolean deleteEntityBeansByCondition(ConditionParse condition, Object... args)
     {
         jdbcOperation.delete(condition.toString(), claz, args);

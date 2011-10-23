@@ -99,6 +99,14 @@ public interface DAO<Bean extends Serializable, VO extends Serializable>
     boolean deleteEntityBeansByFK(Serializable fk);
 
     /**
+     * delete entity beans by Unique
+     * 
+     * @param args
+     * @return
+     */
+    boolean deleteEntityBeansByUnique(Object... args);
+
+    /**
      * delete entity beans by frist FK
      * 
      * @param key
@@ -242,7 +250,8 @@ public interface DAO<Bean extends Serializable, VO extends Serializable>
      * @param args
      * @return
      */
-    List<Bean> queryEntityBeansByCondition(ConditionParse condition, PageSeparate page, Object... args);
+    List<Bean> queryEntityBeansByCondition(ConditionParse condition, PageSeparate page,
+                                           Object... args);
 
     /**
      * query entitys by special condition and limit

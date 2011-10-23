@@ -950,7 +950,7 @@ public class MyJdbcTemplate implements JdbcOperation
     private <T> List<T> queryForListByFieldsInner(String[] fieldName, Class<T> claz, Object... args)
         throws DataAccessException
     {
-        String sql = getUniqueQuerySql(fieldName, claz);
+        String sql = getUniqueQuerySql(fieldName, claz, 0);
 
         return this.queryForList(sql, claz, args);
     }
@@ -961,13 +961,14 @@ public class MyJdbcTemplate implements JdbcOperation
      * @param claz
      * @return
      */
-    private <T> String getUniqueQuerySql(String[] fieldName, Class<T> claz)
+    public <T> String getUniqueQuerySql(String[] fieldName, Class<T> claz, int type)
     {
         String sql = "";
 
         String[] columnNames = new String[fieldName.length];
 
         int i = 0;
+
         for (String str : fieldName)
         {
             Field field = BeanTools.getFieldIgnoreCase(str, claz);
@@ -980,15 +981,33 @@ public class MyJdbcTemplate implements JdbcOperation
             columnNames[i++ ] = BeanTools.getColumnName(field);
         }
 
-        for (int k = 0; k < columnNames.length; k++ )
+        if (type == 0)
         {
-            if (k != columnNames.length - 1)
+            for (int k = 0; k < columnNames.length; k++ )
             {
-                sql += autoCreateSql.prefix(claz) + '.' + columnNames[k] + " = ? and ";
+                if (k != columnNames.length - 1)
+                {
+                    sql += autoCreateSql.prefix(claz) + '.' + columnNames[k] + " = ? and ";
+                }
+                else
+                {
+                    sql += autoCreateSql.prefix(claz) + '.' + columnNames[k] + " = ?";
+                }
             }
-            else
+        }
+        else
+        {
+            // 没有前缀
+            for (int k = 0; k < columnNames.length; k++ )
             {
-                sql += autoCreateSql.prefix(claz) + '.' + columnNames[k] + " = ?";
+                if (k != columnNames.length - 1)
+                {
+                    sql += columnNames[k] + " = ? and ";
+                }
+                else
+                {
+                    sql += columnNames[k] + " = ?";
+                }
             }
         }
         return "where " + sql;
@@ -1799,7 +1818,7 @@ public class MyJdbcTemplate implements JdbcOperation
             throw new RuntimeException(claz.getName() + " miss unique field");
         }
 
-        String sql = getUniqueQuerySql(fieldName, claz);
+        String sql = getUniqueQuerySql(fieldName, claz, 0);
         try
         {
             sql = autoCreateSql.queryByCondtionSql(sql, claz);

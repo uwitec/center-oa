@@ -469,4 +469,16 @@ public interface JdbcOperation
      */
     @Deprecated
     IbatisDaoSupport getIbatisDaoSupport();
+
+    /**
+     * getUniqueQuerySql
+     * 
+     * @param <T>
+     * @param fieldName
+     * @param claz
+     * @param type
+     *            0:Add pfix 1:NOT
+     * @return
+     */
+    <T> String getUniqueQuerySql(String[] fieldName, Class<T> claz, int type);
 }

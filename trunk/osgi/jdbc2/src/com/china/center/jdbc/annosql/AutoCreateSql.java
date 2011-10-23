@@ -78,7 +78,8 @@ public interface AutoCreateSql
         throws MYSqlException;
 
     /**
-     * delSql
+     * delSql<br>
+     * MYSQL:delete t from student t where t.id in (1,2);
      * 
      * @param claz
      * @param columnName
