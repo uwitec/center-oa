@@ -59,6 +59,11 @@ public interface TaxItemConstanst
     String PREREVEIVE_PRODUCT = "2131";
 
     /**
+     * 营业外收入
+     */
+    String EXT_RECEIVE = "5301";
+
+    /**
      * 主营业务税金及附加(部门)
      */
     String MAIN_TAX = "5402";

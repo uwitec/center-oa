@@ -72,6 +72,7 @@ function updateBean()
                             || bean.createType == 24
                             || bean.createType == 25
                             || bean.createType == 26
+                            || bean.createType == 27
                             || bean.createType == 40
                             || bean.createType == 41
                             || bean.createType == 42

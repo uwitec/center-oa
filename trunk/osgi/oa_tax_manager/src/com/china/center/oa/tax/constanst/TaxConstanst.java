@@ -185,9 +185,9 @@ public interface TaxConstanst
     int FINANCE_CREATETYPE_BUY_STOCKBACK = 23;
 
     /**
-     * 入库-其它入库
+     * 入库-其他入库
      */
-    @Defined(key = "financeCreateType", value = "入库-库存中转")
+    @Defined(key = "financeCreateType", value = "入库-其他入库")
     int FINANCE_CREATETYPE_BUY_OTHER = 24;
 
     /**
@@ -201,6 +201,12 @@ public interface TaxConstanst
      */
     @Defined(key = "financeCreateType", value = "入库-销售退库")
     int FINANCE_CREATETYPE_OUT_SAILBACK = 26;
+
+    /**
+     * 入库-领样转销售对冲
+     */
+    @Defined(key = "financeCreateType", value = "入库-领样转销售对冲")
+    int FINANCE_CREATETYPE_OUT_DUICHONG = 27;
 
     /**
      * 销售-销售出库
