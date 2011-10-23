@@ -136,9 +136,8 @@ function getStaffers(oos)
             </c:if>
             
             <c:if test="${type != 0}">
-            <p:pro field="year" cell="2" value="${pbean.year}" innerString="readonly=true">
-                <option value="">--</option>
-                <c:forEach begin="2010" end="2100" var="item">
+            <p:pro field="year" cell="2" value="${pbean.year}">
+                <c:forEach begin="${pbean.year}" end="${pbean.year + 1}" var="item">
                     <option value="${item}">${item}</option>
                 </c:forEach>
             </p:pro>
