@@ -147,6 +147,10 @@ function inits()
             <p:pro field="black" cell="1">
                 <p:option type="stafferBlack"></p:option>
             </p:pro>
+            
+            <p:pro field="status" cell="0">
+                <p:option type="stafferStatus"></p:option>
+            </p:pro>
 
 			<p:pro field="address" cell="0" innerString="size=80"
 				value="${bean.address}" />
