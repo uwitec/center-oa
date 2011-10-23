@@ -63,6 +63,12 @@ public class StafferListenerCustomerImpl implements StafferListener
 
     }
 
+    public void onDrop(StafferBean bean)
+        throws MYException
+    {
+
+    }
+
     /*
      * (non-Javadoc)
      * 

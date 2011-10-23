@@ -2204,6 +2204,9 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         newInBean.setStatus(OutConstant.BUY_STATUS_PASS);
 
+        // 表明是对冲的单据
+        newInBean.setReserve8("1");
+
         // 对冲单据
         newInBean.setRefOutFullId(outBean.getRefOutFullId());
 
@@ -2276,6 +2279,14 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             OutConstant.BUY_STATUS_PASS);
 
         saveUnique(user, newInBean);
+
+        // OSGI 监听实现
+        Collection<OutListener> listenerMapValues = listenerMapValues();
+
+        for (OutListener listener : listenerMapValues)
+        {
+            listener.onConfirmOutOrBuy(user, newInBean);
+        }
     }
 
     /**
