@@ -23,7 +23,7 @@ function load()
 		 title: '人员列表',
 		 url: '../admin/staffer.do?method=queryStaffer',
 		 colModel : [
-		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lname={name}>', width : 40, sortable : false, align: 'center'},
+		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lname={name} lstatus={status}>', width : 40, sortable : false, align: 'center'},
 		     {display: '工号', name : 'code', width : '8%', sortable : false, align: 'left'},
 		     {display: '名称', name : 'name', width : '10%', sortable : false, align: 'left'},
 		     {display: '公司', name : 'locationName', width : '10%', sortable : false, align: 'left'},
@@ -42,7 +42,9 @@ function load()
 		     {id: 'add', bclass: 'add', onpress : addBean},
 		     {id: 'update', bclass: 'update', onpress : updateBean},
 		     {id: 'update', bclass: 'update',caption: '加密锁设置', onpress : updateKey},
-		     {id: 'del', bclass: 'delete',caption: '废弃', onpress : delBean},
+		     {id: 'update', bclass: 'update',caption: '工作交接', onpress : transferWork},
+		     {id: 'del', bclass: 'delete',caption: '废弃', onpress : dropBean},
+		     {id: 'del2', bclass: 'delete',caption: '删除', onpress : delBean},
 		     {id: 'search', bclass: 'search', onpress : doSearch},
 		     {separator: true}
 		     ],
@@ -66,6 +68,16 @@ function doSearch()
     $modalQuery('../admin/query.do?method=popCommonQuery2&key=queryStaffer');
 }
 
+function transferWork()
+{
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 99)
+    {
+        $l('../admin/staffer.do?method=preForTransferWork&srcId=' + getRadioValue('checkb'));
+    }
+    else
+    $error();
+}
+
 function addBean()
 {
     $l('../admin/staffer.do?method=preForAddStaffer');
@@ -73,7 +85,7 @@ function addBean()
 
 function delBean(opr, grid)
 {
-    if (getRadio('checkb') && getRadioValue('checkb'))
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 99)
     {
         if (window.confirm('确定删除--' + getRadio('checkb').lname))
         {
@@ -84,6 +96,25 @@ function delBean(opr, grid)
             document.mainForm.submit();
         }
     }
+    else
+    $error();
+}
+
+function dropBean(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {
+        if (window.confirm('确定废弃--' + getRadio('checkb').lname))
+        {
+            document.mainForm.stafferId.value = getRadioValue('checkb');
+            
+            document.mainForm.method.value = 'dropStaffer';
+            
+            document.mainForm.submit();
+        }
+    }
+    else
+    $error();
 }
 
 function updateBean(opr, grid)
@@ -92,6 +123,8 @@ function updateBean(opr, grid)
     {
        $l('../admin/staffer.do?method=findStaffer&id=' + getRadioValue('checkb') + '&update=1');
     }
+    else
+    $error();
 }
 
 function updateKey(opr, grid)
@@ -100,6 +133,8 @@ function updateKey(opr, grid)
     {
        $l('../admin/staffer.do?method=preForSetpwkey&id=' + getRadioValue('checkb'));
     }
+    else
+    $error();
 }
 
 function commonQuery(par)

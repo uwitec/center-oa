@@ -12,6 +12,7 @@ package com.china.center.oa.publics.action;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,12 +55,14 @@ import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.dao.ProvinceDAO;
 import com.china.center.oa.publics.dao.RoleAuthDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.publics.dao.StafferTransferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.helper.LoginHelper;
 import com.china.center.oa.publics.manager.MenuManager;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.publics.vo.UserVO;
 import com.china.center.oa.publics.vs.RoleAuthBean;
+import com.china.center.oa.publics.vs.StafferTransferBean;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.Security;
 import com.china.center.tools.SessionTools;
@@ -101,6 +104,8 @@ public class LoginAction extends DispatchAction
 
     private ProvinceDAO provinceDAO = null;
 
+    private StafferTransferDAO stafferTransferDAO = null;
+
     private CityDAO cityDAO = null;
 
     /**
@@ -117,84 +122,264 @@ public class LoginAction extends DispatchAction
                                HttpServletResponse reponse)
         throws ServletException
     {
-        String longinName = request.getParameter("userName");
-
-        String password = request.getParameter("password");
-
-        String rand = request.getParameter("rand");
-
-        String key = request.getParameter("key");
-
-        String randKey = request.getParameter("jiamiRand");
-
-        String spassword = request.getParameter("spassword");
-
-        // 是否二次认证
-        String anhao = parameterDAO.getString(SysConfigConstant.SIGN_YY_CENTER);
-
         boolean login = parameterDAO.getBoolean("REAL_LOGIN");
 
         // 是否启用加密锁
         boolean hasEncLock = parameterDAO.getBoolean(SysConfigConstant.NEED_SUPER_ENC_LOCK);
 
+        String key = request.getParameter("key");
+
         boolean real = login;
 
-        ActionForward checkCommonResult = checkCommon(mapping, request, rand, real);
+        String loginType = request.getParameter("loginType");
 
-        if (checkCommonResult != null)
+        String spassword = request.getParameter("spassword");
+
+        UserVO user = null;
+
+        boolean passwordEquals = false;
+
+        boolean enc = false;
+
+        StafferBean stafferBean = null;
+
+        // 正常登录
+        if ( !"99".equals(loginType) && !"98".equals(loginType))
         {
-            return checkCommonResult;
+            String longinName = request.getParameter("userName");
+
+            String password = request.getParameter("password");
+
+            String rand = request.getParameter("rand");
+
+            String randKey = request.getParameter("jiamiRand");
+
+            // 是否二次认证
+            String anhao = parameterDAO.getString(SysConfigConstant.SIGN_YY_CENTER);
+
+            ActionForward checkCommonResult = checkCommon(mapping, request, rand, real);
+
+            if (checkCommonResult != null)
+            {
+                return checkCommonResult;
+            }
+
+            String randVal = rand.toUpperCase();
+
+            user = userDAO.findUserByName(longinName);
+
+            if (user == null)
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "用户名或密码错误");
+                return mapping.findForward("error");
+            }
+
+            if (real && anhao != null && !anhao.equals(spassword))
+            {
+                _accessLog.info(logLogin(request, user, false) + ',' + spassword);
+
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "二次密码错误");
+
+                return mapping.findForward("error");
+            }
+
+            // 锁定处理
+            if (user.getStatus() == PublicConstant.LOGIN_STATUS_LOCK)
+            {
+                _accessLog.info(logLogin(request, user, false) + ',' + spassword);
+
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "用户被锁定,请联系管理员解锁!");
+
+                return mapping.findForward("error");
+            }
+
+            stafferBean = stafferDAO.findVO(user.getStafferId());
+
+            if (stafferBean == null)
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "用户名或密码错误!");
+
+                return mapping.findForward("error");
+            }
+
+            if (stafferBean.getStatus() == StafferConstant.STATUS_DROP)
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "用户名或密码错误!");
+
+                return mapping.findForward("error");
+            }
+
+            // 验证密码
+            enc = handleEncLock(key, randKey, randVal, hasEncLock, stafferBean);
+
+            passwordEquals = user.getPassword().equals(Security.getSecurity(password));
+
+            request.getSession().setAttribute("g_loginType", "0");
         }
 
-        String randVal = rand.toUpperCase();
-
-        UserVO user = userDAO.findUserByName(longinName);
-
-        if (user == null)
+        // 正常人登录移交人
+        if ("99".equals(loginType))
         {
-            request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "用户名或密码错误");
-            return mapping.findForward("error");
+            User current = Helper.getUser(request);
+
+            Enumeration attributeNames = request.getSession().getAttributeNames();
+
+            while (attributeNames.hasMoreElements())
+            {
+                Object nextElement = attributeNames.nextElement();
+
+                request.getSession().removeAttribute(nextElement.toString());
+            }
+
+            if (current == null)
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "非法登录");
+
+                return mapping.findForward("error");
+            }
+
+            // 移交登录
+            String sessionId = request.getParameter("sessionId");
+
+            // session校验
+            if ( !MySessionListener.getSessionSet().contains(sessionId))
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "非法登录");
+
+                return mapping.findForward("error");
+            }
+
+            String srcUserId = request.getParameter("srcUserId");
+
+            // 没有安全漏洞了
+            String destId = current.getStafferId();
+
+            user = userDAO.findVO(srcUserId);
+
+            if (user == null)
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "非法登录");
+
+                return mapping.findForward("error");
+            }
+
+            stafferBean = stafferDAO.find(user.getStafferId());
+
+            if (stafferBean == null)
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "非法登录!");
+
+                return mapping.findForward("error");
+            }
+
+            StafferTransferBean transfer = stafferTransferDAO.findByUnique(user.getStafferId());
+
+            if (transfer == null)
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "非法登录");
+
+                return mapping.findForward("error");
+            }
+
+            if ( !transfer.getDestId().equals(destId))
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "非法登录");
+
+                return mapping.findForward("error");
+            }
+
+            passwordEquals = true;
+
+            enc = true;
+
+            request.getSession().setAttribute("g_loginType", "1");
+
+            request.getSession().setAttribute("g_srcUser", current);
         }
 
-        if (real && anhao != null && !anhao.equals(spassword))
+        // 返回自己的页面
+        if ("98".equals(loginType))
         {
-            _accessLog.info(logLogin(request, user, false) + ',' + spassword);
+            User current = Helper.getUser(request);
 
-            request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "二次密码错误");
+            Enumeration attributeNames = request.getSession().getAttributeNames();
 
-            return mapping.findForward("error");
+            while (attributeNames.hasMoreElements())
+            {
+                Object nextElement = attributeNames.nextElement();
+
+                request.getSession().removeAttribute(nextElement.toString());
+            }
+
+            if (current == null)
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "非法登录");
+
+                return mapping.findForward("error");
+            }
+
+            // 移交登录
+            String sessionId = request.getParameter("sessionId");
+
+            // session校验
+            if ( !MySessionListener.getSessionSet().contains(sessionId))
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "非法登录");
+
+                return mapping.findForward("error");
+            }
+
+            // 正常职员的用户ID
+            String srcUserId = request.getParameter("srcUserId");
+
+            // 移交人的ID
+            String destId = current.getStafferId();
+
+            user = userDAO.findVO(srcUserId);
+
+            if (user == null)
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "非法登录");
+
+                return mapping.findForward("error");
+            }
+
+            stafferBean = stafferDAO.find(user.getStafferId());
+
+            if (stafferBean == null)
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "非法登录!");
+
+                return mapping.findForward("error");
+            }
+
+            StafferTransferBean transfer = stafferTransferDAO.findByUnique(destId);
+
+            if (transfer == null)
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "非法登录");
+
+                return mapping.findForward("error");
+            }
+
+            // 能回来
+            if ( !transfer.getDestId().equals(stafferBean.getId()))
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "非法登录");
+
+                return mapping.findForward("error");
+            }
+
+            passwordEquals = true;
+
+            enc = true;
+
+            request.getSession().setAttribute("g_loginType", "2");
+
+            request.getSession().setAttribute("g_srcUser", current);
         }
 
-        // 锁定处理
-        if (user.getStatus() == PublicConstant.LOGIN_STATUS_LOCK)
-        {
-            _accessLog.info(logLogin(request, user, false) + ',' + spassword);
-
-            request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "用户被锁定,请联系管理员解锁!");
-
-            return mapping.findForward("error");
-        }
-
-        StafferBean stafferBean = stafferDAO.findVO(user.getStafferId());
-
-        if (stafferBean == null)
-        {
-            request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "用户名或密码错误!");
-
-            return mapping.findForward("error");
-        }
-
-        if (stafferBean.getStatus() == StafferConstant.STATUS_DROP)
-        {
-            request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "用户名或密码错误!");
-
-            return mapping.findForward("error");
-        }
-
-        // 验证密码
-        boolean enc = handleEncLock(key, randKey, randVal, hasEncLock, stafferBean);
-
-        if ( !real || (user.getPassword().equals(Security.getSecurity(password)) && enc))
+        if ( !real || (passwordEquals && enc))
         {
             try
             {
@@ -923,5 +1108,22 @@ public class LoginAction extends DispatchAction
     public void setMenuManager(MenuManager menuManager)
     {
         this.menuManager = menuManager;
+    }
+
+    /**
+     * @return the stafferTransferDAO
+     */
+    public StafferTransferDAO getStafferTransferDAO()
+    {
+        return stafferTransferDAO;
+    }
+
+    /**
+     * @param stafferTransferDAO
+     *            the stafferTransferDAO to set
+     */
+    public void setStafferTransferDAO(StafferTransferDAO stafferTransferDAO)
+    {
+        this.stafferTransferDAO = stafferTransferDAO;
     }
 }

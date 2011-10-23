@@ -17,6 +17,12 @@
 			<type>select</type>
 			<option>$locationList</option>
 		</condtion>
+		<condtion name="status" caption="状态">
+            <opr>=</opr>
+            <type>select</type>
+            <datatype>1</datatype>
+            <option>$stafferStatus</option>
+        </condtion>
 		<condtion name="postId" caption="岗位">
 			<opr>=</opr>
 			<type>select</type>

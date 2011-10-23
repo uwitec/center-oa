@@ -19,6 +19,7 @@
 			<forward name="queryStaffer" path="/admin/queryStaffer.jsp" />
 			<forward name="addStaffer" path="/admin/addStaffer.jsp" />
 			<forward name="updatePwkey" path="/admin/updatePwkey.jsp" />
+			<forward name="transferWork" path="/admin/transferWork.jsp" />
 			<forward name="queryInvoiceCredit" path="/admin/queryInvoiceCredit.jsp" />
 			<forward name="updateStaffer"
 				path="/admin/updateStaffer.jsp" />
@@ -127,6 +128,7 @@
 			<forward name="queryUser" path="/admin/queryUser.jsp" />
 			<forward name="addUser" path="/admin/addUser.jsp" />
 			<forward name="updateUser" path="/admin/updateUser.jsp" />
+			<forward name="querySelfTransferUser" path="/admin/querySelfTransferUser.jsp" />
 		</action>
 		
 		<action path="/admin/duty" parameter="method" folder="/admin/" bean="Duty"

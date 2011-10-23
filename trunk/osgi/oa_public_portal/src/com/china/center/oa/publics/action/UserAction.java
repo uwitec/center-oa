@@ -32,6 +32,7 @@ import com.china.center.actionhelper.jsonimpl.JSONArray;
 import com.china.center.actionhelper.query.QueryConfig;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.LocationHelper;
 import com.china.center.oa.publics.bean.AuthBean;
@@ -44,12 +45,15 @@ import com.china.center.oa.publics.dao.AuthDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.RoleDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.publics.dao.StafferTransferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.facade.PublicFacade;
 import com.china.center.oa.publics.manager.AuthManager;
 import com.china.center.oa.publics.manager.RoleManager;
 import com.china.center.oa.publics.manager.UserManager;
+import com.china.center.oa.publics.vo.UserVO;
 import com.china.center.oa.publics.vs.RoleAuthBean;
+import com.china.center.oa.publics.vs.StafferTransferBean;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.RandomTools;
@@ -72,6 +76,8 @@ public class UserAction extends DispatchAction
     private RoleManager roleManager = null;
 
     private RoleDAO roleDAO = null;
+
+    private StafferTransferDAO stafferTransferDAO = null;
 
     private AuthDAO authDAO = null;
 
@@ -131,6 +137,44 @@ public class UserAction extends DispatchAction
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYUSER, request, condtion,
             this.userDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * querySelfTransferUser
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward querySelfTransferUser(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
+                                               HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        User user = Helper.getUser(request);
+
+        List<StafferTransferBean> vsList = stafferTransferDAO.queryEntityBeansByFK(user
+            .getStafferId());
+
+        List<UserVO> result = new ArrayList();
+
+        for (StafferTransferBean each : vsList)
+        {
+            result.addAll(userDAO.queryEntityVOsByFK(each.getSrcId()));
+        }
+
+        PageSeparate page = new PageSeparate(result.size(), result.size());
+
+        String jsonstr = JSONTools.getJSONString(result, page);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -742,5 +786,22 @@ public class UserAction extends DispatchAction
     public void setAuthManager(AuthManager authManager)
     {
         this.authManager = authManager;
+    }
+
+    /**
+     * @return the stafferTransferDAO
+     */
+    public StafferTransferDAO getStafferTransferDAO()
+    {
+        return stafferTransferDAO;
+    }
+
+    /**
+     * @param stafferTransferDAO
+     *            the stafferTransferDAO to set
+     */
+    public void setStafferTransferDAO(StafferTransferDAO stafferTransferDAO)
+    {
+        this.stafferTransferDAO = stafferTransferDAO;
     }
 }

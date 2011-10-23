@@ -16,6 +16,12 @@ body
     font-size: 12px;
 }
 </STYLE>
+<%
+  String sid = session.getId();
+
+  request.setAttribute("sessionId", sid);
+%>
+
 <script language="javascript">
 var END_POINT="${pageContext.request.contextPath}/bfapp";
 
@@ -126,6 +132,22 @@ function checkLock()
     
     
     <td ondblclick="sho()" align="right">
+    <c:if test="${g_loginType == '1'}">
+    <font color="#FFFFFF">返回移交人：
+    <a style="color: #FFFFFF" 
+    href='../admin/checkuser.do?method=login&loginType=98&sessionId=${sessionId}&srcUserId=${g_srcUser.id}&key=${gkey}' target="_top" title="返回移交人">
+    <u>${g_srcUser.stafferName}</u>
+    </a></font>
+    </c:if>
+    
+    <c:if test="${g_loginType == '2' && g_srcUser != null}">
+    <font color="#FFFFFF">进入被移交人：
+    <a style="color: #FFFFFF" 
+    href='../admin/checkuser.do?method=login&loginType=99&sessionId=${sessionId}&srcUserId=${g_srcUser.id}&key=${gkey}' target="_top" title="返回被移交人">
+    <u>${g_srcUser.stafferName}</u>
+    </a></font>
+    </c:if>
+    
     <font color="#FFFFFF">登录者：<a style="color: #FFFFFF" href="../admin/staffer.do?method=preForFindStaffer" target="main" title="我的个人信息">
     <u>${g_stafferBean.name}</u>
     </a></font>

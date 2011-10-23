@@ -66,8 +66,11 @@ function closesd()
 <body class="body_class" onload="load()">
 <form name="formEntry" action="../admin/pop.do" method="post"><input
 	type="hidden" name="method" value="rptQueryStaffer"><input
-	type="hidden" value="1" name="load"><input
-    type="hidden" value="${selectMode}" name="selectMode"> <p:navigation
+	type="hidden" value="1" name="load">
+<input type="hidden" value="${selectMode}" name="selectMode"> 
+<input type="hidden" value="${status}" name="status"> 
+
+<p:navigation
 	height="22">
 	<td width="550" class="navigation">职员管理</td>
 	<td width="85"></td>

@@ -110,6 +110,8 @@ public class PopQueryAction extends DispatchAction
     {
         CommonTools.saveParamers(request);
 
+        String status = request.getParameter("status");
+
         List<StafferVO> list = null;
 
         List<LocationBean> locationList = locationDAO.listEntityBeans();
@@ -120,8 +122,15 @@ public class PopQueryAction extends DispatchAction
 
             condtion.addWhereStr();
 
-            // 过滤废弃的
-            condtion.addIntCondition("StafferBean.status", "=", StafferConstant.STATUS_COMMON);
+            if ( !"99".equals(status))
+            {
+                // 过滤废弃的
+                condtion.addIntCondition("StafferBean.status", "=", StafferConstant.STATUS_COMMON);
+            }
+            else
+            {
+                condtion.addIntCondition("StafferBean.status", "=", StafferConstant.STATUS_DROP);
+            }
 
             setStafferInnerCondition(request, condtion);
 
