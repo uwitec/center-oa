@@ -134,7 +134,7 @@ public class CurOutManagerImpl implements CurOutManager
     }
 
     /**
-     * 客户统计
+     * CORE 统计客户信用开始
      */
     public void statOut()
     {
