@@ -212,7 +212,8 @@ public class CustomerCreditManagerImpl implements CustomerCreditManager
 
         customerCreditBean.setItemId(CreditConstant.SET_DRECT);
 
-        customerCreditBean.setLog(user.getStafferName() + "人为干预等级,直接加分到:" + MathTools.formatNum(newCreditVal));
+        customerCreditBean.setLog(user.getStafferName() + "人为干预等级,直接加分到:"
+                                  + MathTools.formatNum(newCreditVal));
 
         customerCreditBean.setPitemId(CreditConstant.SET_DRECT_PARENT);
 
@@ -238,7 +239,7 @@ public class CustomerCreditManagerImpl implements CustomerCreditManager
     }
 
     /**
-     * interposeCreditInner(None Transaction)
+     * interposeCreditInner(None Transaction)(要求入库的信用值和不会小于0,也不会大于100)
      * 
      * @param user
      * @param cid
@@ -251,16 +252,19 @@ public class CustomerCreditManagerImpl implements CustomerCreditManager
     {
         JudgeTools.judgeParameterIsNull(user, cid, customerCreditBean);
 
-        CustomerCreditBean drectBean = customerCreditDAO.findByUnique(cid, customerCreditBean.getItemId());
+        CustomerCreditBean drectBean = customerCreditDAO.findByUnique(cid, customerCreditBean
+            .getItemId());
 
+        // 当前不包括此单(99)
         double sumVal = customerCreditDAO.sumValExceptionByFK(cid, customerCreditBean.getItemId());
 
+        // 预计合计(2)
         double total = sumVal + customerCreditBean.getVal();
 
-        // 越界了
+        // 越界了(负数了,变为0)
         if (total < 0.0)
         {
-            // 防止越界
+            // 防止越界采用-sumVal和sumVal抵消
             customerCreditBean.setVal( -sumVal);
         }
 
@@ -324,7 +328,8 @@ public class CustomerCreditManagerImpl implements CustomerCreditManager
      * @throws MYException
      */
     @Transactional(rollbackFor = MYException.class)
-    public boolean applyConfigStaticCustomerCredit(User user, String cid, List<CustomerCreditApplyBean> creditList)
+    public boolean applyConfigStaticCustomerCredit(User user, String cid,
+                                                   List<CustomerCreditApplyBean> creditList)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, creditList);
@@ -367,7 +372,8 @@ public class CustomerCreditManagerImpl implements CustomerCreditManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        List<CustomerCreditApplyBean> creditApplyList = customerCreditApplyDAO.queryEntityBeansByFK(cid);
+        List<CustomerCreditApplyBean> creditApplyList = customerCreditApplyDAO
+            .queryEntityBeansByFK(cid);
 
         List<CustomerCreditBean> creditList = new ArrayList();
 
