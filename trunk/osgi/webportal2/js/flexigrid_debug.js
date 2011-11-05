@@ -1274,11 +1274,11 @@ if(window.HTMLElement)
                         var hasAuth = false;
                         
                         //check auth true
-                        if (btn.auth == true || btn.auth == 'true')
+                        if ((btn.auth + '') == 'true')
                         {
                             hasAuth = true;
                         }
-                        else if (btn.auth == false || btn.auth == 'false')
+                        else if ((btn.auth + '') == 'false')
                         {
                             hasAuth = false;
                         }
