@@ -15,7 +15,7 @@ import java.io.InputStreamReader;
 
 /**
  * <描述>
- *
+ * 
  * @author ZHUZHU
  * @version 2008-2-17
  * @see
@@ -23,11 +23,17 @@ import java.io.InputStreamReader;
  */
 public abstract class CMDTools
 {
+    /**
+     * 后台执行命令行,但是打印日志到控制台上
+     * 
+     * @param cmdline
+     */
     public static void cmdAndShow(String cmdline)
     {
         try
         {
             String line;
+
             Process p = Runtime.getRuntime().exec(cmdline);
 
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -44,11 +50,38 @@ public abstract class CMDTools
         }
     }
 
+    /**
+     * 后台运行cmd
+     * 
+     * @param cmdline
+     * @return
+     */
     public static boolean cmd(String cmdline)
     {
         try
         {
+            // "cmd /c start \"" + cmdline + "\""
             Runtime.getRuntime().exec(cmdline);
+        }
+        catch (Exception err)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 打开窗口执行命令行
+     * 
+     * @param cmdline
+     * @return
+     */
+    public static boolean cmdInOpenWindow(String cmdline)
+    {
+        try
+        {
+            Runtime.getRuntime().exec("cmd /c start \"" + cmdline + "\"");
         }
         catch (Exception err)
         {
