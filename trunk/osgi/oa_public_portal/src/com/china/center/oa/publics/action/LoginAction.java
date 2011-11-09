@@ -550,6 +550,8 @@ public class LoginAction extends DispatchAction
 
         RoleAuthBean publicAuth = new RoleAuthBean();
 
+        publicAuth.setId(AuthConstant.PUNLIC_AUTH);
+
         publicAuth.setAuthId(AuthConstant.PUNLIC_AUTH);
 
         authList.add(publicAuth);
