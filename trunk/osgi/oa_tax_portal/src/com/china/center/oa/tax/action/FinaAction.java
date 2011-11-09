@@ -1186,6 +1186,26 @@ public class FinaAction extends ParentQueryFinaAction
      * @param response
      * @return
      */
+    public ActionForward preForQueryTaxFinance1(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
+                                                HttpServletResponse response)
+    {
+        List<DepotBean> listEntityBeans = depotDAO.listEntityBeans();
+
+        request.getSession().setAttribute("g_tax_depotList", listEntityBeans);
+
+        return mapping.findForward("queryTaxFinance1");
+    }
+
+    /**
+     * preForAddFinance
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     */
     public ActionForward preForAddFinance(ActionMapping mapping, ActionForm form,
                                           HttpServletRequest request, HttpServletResponse response)
     {
@@ -1195,7 +1215,7 @@ public class FinaAction extends ParentQueryFinaAction
     }
 
     /**
-     * 凭证结转做准备
+     * 凭证结转做准备(月结准备)
      * 
      * @param mapping
      * @param form

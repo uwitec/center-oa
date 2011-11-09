@@ -61,12 +61,37 @@ function selectStaffer()
     window.common.modal('../admin/pop.do?method=rptQueryStaffer&load=1&selectMode=1');
 }
 
+
+function selectProduct()
+{
+    window.common.modal('../product/product.do?method=rptQueryProduct&load=1&selectMode=1&abstractType=0&status=0');
+}
+
+function selectUnit()
+{
+    window.common.modal('../finance/finance.do?method=rptQueryUnit&load=1');
+}
+
+function getUnit(oo)
+{
+    $O('unitId').value = oo.value;
+    $O('unitName').value = oo.pname;
+}
+
 function getStaffers(oos)
 {
     var obj = oos[0];
     
     $("input[name='stafferId']").val(obj.value);
     $("input[name='stafferName']").val(obj.pname);
+}
+
+function getProduct(oos)
+{
+    var obj = oos[0];
+    
+    $("input[name='productId']").val(obj.value);
+    $("input[name='productName']").val(obj.pname);
 }
 
 function selectDepartment()
@@ -92,15 +117,34 @@ function resetAll()
     $("input[name='taxId']").val('');
     $("input[name='stafferId']").val('');
     $("input[name='departmentId']").val('');
+    $("input[name='productId']").val('');
+    $("input[name='unitId']").val('');
+    
     $("input[name='taxName']").val('');
     $("input[name='stafferName']").val('');
     $("input[name='departmentName']").val('');
+    $("input[name='productName']").val('');
+    $("input[name='unitName']").val('');
+    
+    setSelectIndex($O('depotId'), 0);
 }
 
 function clearStaffer()
 {
     $("input[name='stafferId']").val('');
     $("input[name='stafferName']").val('');
+}
+
+function clearProduct()
+{
+    $("input[name='productId']").val('');
+    $("input[name='productName']").val('');
+}
+
+function clearUnit()
+{
+    $("input[name='unitId']").val('');
+    $("input[name='unitName']").val('');
 }
 
 function clearDepartment()
@@ -118,6 +162,8 @@ function clearDepartment()
 <input type="hidden" name="taxId" value="${taxId}"> 
 <input type="hidden" name="stafferId" value="${stafferId}"> 
 <input type="hidden" name="departmentId" value="${departmentId}"> 
+<input type="hidden" name="productId" value="${productId}"> 
+<input type="hidden" name="unitId" value="${unitId}"> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">分类账</td>
@@ -166,7 +212,7 @@ function clearDepartment()
                     class="button_class" onclick="clearStaffer()">
                 </td>
                 
-                <td width="15%" align="center">部门</td>
+                <td width="15%" align="center">部门(5)</td>
                 <td align="left" colspan="1"><input type="text" name="departmentName" style="width: 70%" value="${departmentName}" readonly="readonly">
                 <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
                     class="button_class" onclick="selectDepartment()">&nbsp;
@@ -174,8 +220,40 @@ function clearDepartment()
                     class="button_class" onclick="clearDepartment()">
                 </td>
             </tr>
+            
+             <tr class="content2">
+                <td width="15%" align="center">产品</td>
+                <td align="left" colspan="1"><input type="text" name="productName" style="width: 70%" value="${productName}" readonly="readonly">
+                <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectProduct()">&nbsp;
+                <input type="button" value="&nbsp;C&nbsp;" name="qout_p" id="qout_p"
+                    class="button_class" onclick="clearProduct()">
+                </td>
+                
+                <td width="15%" align="center">仓库</td>
+                <td align="left" colspan="1">
+	                <select name="depotId" class="select_class" style="width: 240px" values="${depotId}">
+	                <option value="">--</option>
+	                    <p:option type="g_tax_depotList"></p:option>
+	                </select>
+                </td>
+            </tr>
+            
+             <tr class="content2">
+                <td width="15%" align="center">单位</td>
+                <td align="left" colspan="1"><input type="text" name="unitName" style="width: 70%" value="${unitName}" readonly="readonly">
+                <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectUnit()">&nbsp;
+                <input type="button" value="&nbsp;C&nbsp;" name="qout_u" id="qout_u"
+                    class="button_class" onclick="clearUnit()">
+                </td>
+                
+                <td width="15%" align="center"></td>
+                <td align="left" colspan="1">
+                </td>
+            </tr>
 
-			<tr class="content2">
+			<tr class="content1">
 				<td colspan="4" align="right"><input type="button" onclick="query()"
 					class="button_class" value="&nbsp;&nbsp;查 询&nbsp;&nbsp;">&nbsp;&nbsp;<input
 					type="button" class="button_class" onclick="resetAll()"

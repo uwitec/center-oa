@@ -12,6 +12,10 @@ package com.china.center.oa.tax.action;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -43,19 +47,24 @@ import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.DutyDAO;
+import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.sail.dao.UnitViewDAO;
 import com.china.center.oa.sail.manager.OutManager;
+import com.china.center.oa.tax.bean.FinanceMonthBean;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.bean.UnitBean;
+import com.china.center.oa.tax.constanst.FinaConstant;
 import com.china.center.oa.tax.constanst.TaxConstanst;
 import com.china.center.oa.tax.dao.CheckViewDAO;
 import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.oa.tax.dao.FinanceItemDAO;
 import com.china.center.oa.tax.dao.FinanceMonthDAO;
+import com.china.center.oa.tax.dao.FinanceRepDAO;
 import com.china.center.oa.tax.dao.FinanceTurnDAO;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.dao.UnitDAO;
@@ -64,10 +73,12 @@ import com.china.center.oa.tax.helper.FinanceHelper;
 import com.china.center.oa.tax.helper.TaxHelper;
 import com.china.center.oa.tax.manager.FinanceManager;
 import com.china.center.oa.tax.vo.FinanceItemVO;
+import com.china.center.oa.tax.vo.FinanceRepVO;
 import com.china.center.oa.tax.vo.FinanceShowVO;
 import com.china.center.oa.tax.vo.TaxVO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
+import com.china.center.tools.MathTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 import com.china.center.tools.WriteFileBuffer;
@@ -119,6 +130,10 @@ public class ParentQueryFinaAction extends DispatchAction
 
     protected FinanceMonthDAO financeMonthDAO = null;
 
+    protected ParameterDAO parameterDAO = null;
+
+    protected FinanceRepDAO financeRepDAO = null;
+
     protected static final String QUERYFINANCE = "queryFinance";
 
     protected static final String QUERYFINANCEMONTH = "queryFinanceMonth";
@@ -134,6 +149,8 @@ public class ParentQueryFinaAction extends DispatchAction
     protected static final String QUERYTAXFINANCE2 = "queryTaxFinance2";
 
     protected static final String QUERYTAXFINANCE3 = "queryTaxFinance3";
+
+    protected static final String QUERYTAXREPORT = "queryTaxReport";
 
     protected static String RPTQUERYUNIT = "rptQueryUnit";
 
@@ -225,7 +242,8 @@ public class ParentQueryFinaAction extends DispatchAction
 
             long ptotal = 0L;
 
-            if (pageSeparate.getNowPage() != 1)
+            // 当进入翻页的时候,开始计算上页的期末余额
+            if (pageSeparate.getNowPage() > 1)
             {
                 PageSeparate newPage = new PageSeparate();
                 newPage.setRowCount( (pageSeparate.getNowPage() - 1) * pageSeparate.getPageSize());
@@ -254,7 +272,7 @@ public class ParentQueryFinaAction extends DispatchAction
                 financeItemVO.setShowLastmoney(FinanceHelper.longToString(lastmoney));
             }
 
-            if (pageSeparate.getNowPage() == 1)
+            if (pageSeparate.getNowPage() <= 1)
             {
                 // 放入合计统计
                 list.add(0, head);
@@ -370,6 +388,190 @@ public class ParentQueryFinaAction extends DispatchAction
     }
 
     /**
+     * 报表
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryTaxReport(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        request.getSession().setAttribute("EXPORT_FINANCEITE_KEY", QUERYTAXREPORT);
+
+        CommonTools.saveParamers(request);
+
+        String type = request.getParameter("type");
+
+        String year = request.getParameter("year");
+
+        String month = request.getParameter("month");
+
+        String beginTimeKey = (MathTools.parseInt(year) - 1) + "12";
+
+        String endTimeKey = year + month;
+
+        try
+        {
+            List<FinanceRepVO> repList = financeRepDAO.queryEntityVOsByFK(type);
+
+            Collections.sort(repList, new Comparator<FinanceRepVO>()
+            {
+                public int compare(FinanceRepVO o1, FinanceRepVO o2)
+                {
+                    return o1.getItemIndex() - o2.getItemIndex();
+                }
+            });
+
+            List<FinanceRepVO> statList = new ArrayList();
+
+            for (FinanceRepVO financeRepVO : repList)
+            {
+                if (financeRepVO.getRmethod() == FinaConstant.FINANCEREP_RMETHOD_ALL)
+                {
+                    statList.add(financeRepVO);
+
+                    continue;
+                }
+
+                // 表达式
+                String expr = financeRepVO.getExpr();
+
+                List<String>[] parserExpr = FinanceHelper.parserExpr(expr);
+
+                List<String> taxList = parserExpr[0];
+
+                List<String> oprList = parserExpr[1];
+
+                long beginTotal = 0L;
+
+                long endTotal = 0L;
+
+                for (int i = 0; i < taxList.size(); i++ )
+                {
+                    FinanceMonthBean beginTurn = financeMonthDAO.findByUnique(taxList.get(i),
+                        beginTimeKey);
+
+                    FinanceMonthBean endTurn = financeMonthDAO.findByUnique(taxList.get(i),
+                        endTimeKey);
+
+                    if (i == 0)
+                    {
+                        if (beginTurn != null)
+                        {
+                            beginTotal = beginTurn.getLastAllTotal();
+                        }
+
+                        if (endTurn != null)
+                        {
+                            endTotal = endTurn.getLastAllTotal();
+                        }
+
+                        continue;
+                    }
+
+                    // 需要操作符号
+                    if (i < (taxList.size() - 1))
+                    {
+                        String opr = oprList.get(i - 1);
+
+                        if ("+".equals(opr))
+                        {
+                            if (beginTurn != null)
+                            {
+                                beginTotal += beginTurn.getLastAllTotal();
+                            }
+
+                            if (endTurn != null)
+                            {
+                                endTotal += endTurn.getLastAllTotal();
+                            }
+                        }
+
+                        if ("-".equals(opr))
+                        {
+                            if (beginTurn != null)
+                            {
+                                beginTotal -= beginTurn.getLastAllTotal();
+                            }
+
+                            if (endTurn != null)
+                            {
+                                endTotal -= endTurn.getLastAllTotal();
+                            }
+                        }
+                    }
+                }
+
+                financeRepVO.setBeginMoney(beginTotal);
+
+                financeRepVO.setBeginMoneyStr(FinanceHelper.longToString(beginTotal));
+
+                financeRepVO.setEndMoney(endTotal);
+
+                financeRepVO.setEndMoneyStr(FinanceHelper.longToString(endTotal));
+            }
+
+            // 合计
+            for (FinanceRepVO peach : statList)
+            {
+                long beginTotal = 0L;
+
+                long endTotal = 0L;
+
+                for (FinanceRepVO seach : repList)
+                {
+                    if (seach.getRmethod() == FinaConstant.FINANCEREP_RMETHOD_ALL)
+                    {
+                        continue;
+                    }
+
+                    if (seach.getItemPName().equals(peach.getItemPName()))
+                    {
+                        if (seach.getRmethod() == FinaConstant.FINANCEREP_RMETHOD_ADD)
+                        {
+                            beginTotal += seach.getBeginMoney();
+
+                            endTotal += seach.getEndMoney();
+                        }
+
+                        if (seach.getRmethod() == FinaConstant.FINANCEREP_RMETHOD_DEV)
+                        {
+                            beginTotal -= seach.getBeginMoney();
+
+                            endTotal -= seach.getEndMoney();
+                        }
+                    }
+                }
+
+                peach.setBeginMoney(beginTotal);
+
+                peach.setBeginMoneyStr(FinanceHelper.longToString(beginTotal));
+
+                peach.setEndMoney(endTotal);
+
+                peach.setEndMoneyStr(FinanceHelper.longToString(endTotal));
+            }
+
+            request.setAttribute("resultList", repList);
+        }
+        catch (Exception e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "查询失败");
+
+            _logger.error(e, e);
+
+            return mapping.findForward("error");
+        }
+
+        return mapping.findForward(QUERYTAXREPORT + (CommonTools.parseInt(type) + 1));
+    }
+
+    /**
      * 合计出结转结余(辅助)
      * 
      * @param request
@@ -380,12 +582,40 @@ public class ParentQueryFinaAction extends DispatchAction
     private FinanceItemVO sumHead(HttpServletRequest request, User user)
         throws MYException
     {
-        // 计算出开始日期前的结余(开始日期前扫描)
-        ConditionParse preQueryCondition = getQueryCondition(request, user, 1);
+        // 计算出开始日期前的结余(开始日期前扫描全表,这里可以优化,如果只有科目可以查询月结表)
+        FinanceMonthBean monthTurn = hasMonthTurn(request, user);
+
+        ConditionParse preQueryCondition = null;
+
+        if (monthTurn == null)
+        {
+            preQueryCondition = getQueryCondition(request, user, 1);
+        }
+        else
+        {
+            // 构建条件
+            preQueryCondition = new ConditionParse();
+
+            preQueryCondition.addWhereStr();
+
+            // 开始日期前的结余
+            String beginDate = request.getParameter("beginDate");
+
+            TaxVO tax = (TaxVO)request.getAttribute("tax");
+
+            // 动态级别的查询
+            preQueryCondition.addCondition("FinanceItemBean.taxId" + tax.getLevel(), "=", tax
+                .getId());
+
+            preQueryCondition.addCondition("FinanceItemBean.financeDate", ">=", monthTurn
+                .getDescription());
+
+            preQueryCondition.addCondition("FinanceItemBean.financeDate", "<", beginDate);
+        }
 
         TaxVO tax = (TaxVO)request.getAttribute("tax");
 
-        FinanceItemVO head = sumHeadInner(preQueryCondition, tax);
+        FinanceItemVO head = sumHeadInner(monthTurn, preQueryCondition, tax);
 
         request.getSession().setAttribute("queryTaxFinance1_head", head);
 
@@ -403,15 +633,28 @@ public class ParentQueryFinaAction extends DispatchAction
      * @param tax
      * @return
      */
-    private FinanceItemVO sumHeadInner(ConditionParse preQueryCondition, TaxBean tax)
+    private FinanceItemVO sumHeadInner(FinanceMonthBean monthTurn,
+                                       ConditionParse preQueryCondition, TaxBean tax)
     {
-        // 借方
-        long[] sumMoneryByCondition = financeItemDAO.sumMoneryByCondition(preQueryCondition);
+        // 期初余额
+        long last = 0L;
 
         FinanceItemVO head = new FinanceItemVO();
 
-        // 期初余额
-        long last = 0L;
+        // 借方
+        long[] sumMoneryByCondition = financeItemDAO.sumMoneryByCondition(preQueryCondition);
+
+        if (monthTurn != null)
+        {
+            // 通过月结查询和增量查询
+            sumMoneryByCondition[0] += monthTurn.getInmoneyAllTotal();
+
+            sumMoneryByCondition[1] += monthTurn.getOutmoneyAllTotal();
+        }
+
+        head.setInmoney(sumMoneryByCondition[0]);
+
+        head.setOutmoney(sumMoneryByCondition[1]);
 
         if (tax.getForward() == TaxConstanst.TAX_FORWARD_IN)
         {
@@ -421,9 +664,6 @@ public class ParentQueryFinaAction extends DispatchAction
         {
             last = sumMoneryByCondition[1] - sumMoneryByCondition[0];
         }
-
-        head.setInmoney(sumMoneryByCondition[0]);
-        head.setOutmoney(sumMoneryByCondition[1]);
 
         head.setTaxId(tax.getId());
 
@@ -496,7 +736,7 @@ public class ParentQueryFinaAction extends DispatchAction
 
         allTotal.setTaxId(tax.getId());
 
-        allTotal.setDescription("当前累计");
+        allTotal.setDescription("当年累计(余额是截至查询期末余额)");
 
         allTotal.setInmoney(sumMoneryByCondition[0]);
 
@@ -504,15 +744,15 @@ public class ParentQueryFinaAction extends DispatchAction
 
         fillItemVO(allTotal);
 
-        FinanceItemVO curremt = (FinanceItemVO)request.getSession().getAttribute(
+        FinanceItemVO current = (FinanceItemVO)request.getSession().getAttribute(
             "queryTaxFinance1_currentTotal");
 
         // 累计的需要叠加
         FinanceItemVO head = (FinanceItemVO)request.getSession().getAttribute(
             "queryTaxFinance1_head");
 
-        // 重新计算
-        allTotal.setLastmoney(head.getLastmoney() + curremt.getLastmoney());
+        // 重新计算(结余即期末余额+当期余额)
+        allTotal.setLastmoney(head.getLastmoney() + current.getLastmoney());
 
         allTotal.setShowLastmoney(FinanceHelper.longToString(allTotal.getLastmoney()));
 
@@ -585,6 +825,7 @@ public class ParentQueryFinaAction extends DispatchAction
         }
 
         request.setAttribute("tax", tax);
+
         request.getSession().setAttribute("queryTaxFinance1_tax", tax);
 
         // 动态级别的查询
@@ -604,7 +845,101 @@ public class ParentQueryFinaAction extends DispatchAction
             condtion.addCondition("FinanceItemBean.departmentId", "=", departmentId);
         }
 
+        String productId = request.getParameter("productId");
+
+        if ( !StringTools.isNullOrNone(productId))
+        {
+            condtion.addCondition("FinanceItemBean.productId", "=", productId);
+        }
+
+        String depotId = request.getParameter("depotId");
+
+        if ( !StringTools.isNullOrNone(depotId))
+        {
+            condtion.addCondition("FinanceItemBean.depotId", "=", depotId);
+        }
+
+        String unitId = request.getParameter("unitId");
+
+        if ( !StringTools.isNullOrNone(unitId))
+        {
+            condtion.addCondition("FinanceItemBean.unitId", "=", unitId);
+        }
+
         return condtion;
+    }
+
+    /**
+     * 是否可以使用月结加快统计(有就就是FinanceMonthBean)
+     * 
+     * @param request
+     * @param user
+     * @return
+     * @throws MYException
+     */
+    private FinanceMonthBean hasMonthTurn(HttpServletRequest request, User user)
+        throws MYException
+    {
+        boolean quickQuery = parameterDAO.getBoolean(SysConfigConstant.TAX_QUICK_QUERY);
+
+        // 不启用
+        if ( !quickQuery)
+        {
+            return null;
+        }
+
+        String stafferId = request.getParameter("stafferId");
+
+        String departmentId = request.getParameter("departmentId");
+
+        String beginDate = request.getParameter("beginDate");
+
+        String taxId = request.getParameter("taxId");
+
+        String productId = request.getParameter("productId");
+
+        String depotId = request.getParameter("depotId");
+
+        String unitId = request.getParameter("unitId");
+
+        if (StringTools.isNullOrNone(stafferId) && StringTools.isNullOrNone(departmentId)
+            && StringTools.isNullOrNone(productId) && StringTools.isNullOrNone(depotId)
+            && StringTools.isNullOrNone(unitId))
+        {
+            TaxVO tax = taxDAO.findVO(taxId);
+
+            if (tax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            request.setAttribute("tax", tax);
+
+            request.getSession().setAttribute("queryTaxFinance1_tax", tax);
+
+            Calendar cal = Calendar.getInstance();
+
+            // 本月时间
+            cal.setTime(TimeTools.getDateByFormat(beginDate, TimeTools.SHORT_FORMAT));
+
+            // 下个月的1号
+            cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) - 1);
+
+            String turnMonth = TimeTools.getStringByFormat(new Date(cal.getTime().getTime()),
+                "yyyyMM");
+
+            FinanceMonthBean month = financeMonthDAO.findByUnique(taxId, turnMonth);
+
+            if (month != null)
+            {
+                // 获取月初
+                month.setDescription(beginDate.substring(0, 7) + "-01");
+            }
+
+            return month;
+        }
+
+        return null;
     }
 
     /**
@@ -859,6 +1194,7 @@ public class ParentQueryFinaAction extends DispatchAction
             condtion.addCondition("FinanceItemBean.financeDate", ">=", beginDate);
 
             String endDate = request.getParameter("endDate");
+
             condtion.addCondition("FinanceItemBean.financeDate", "<=", endDate);
 
             if ( !beginDate.substring(0, 4).equals(endDate.substring(0, 4)))
@@ -1070,7 +1406,7 @@ public class ParentQueryFinaAction extends DispatchAction
 
             createTaxQuery(request, taxBean, condtion);
 
-            FinanceItemVO head = sumHeadInner(condtion, taxBean);
+            FinanceItemVO head = sumHeadInner(null, condtion, taxBean);
 
             show.setShowBeginAllmoney(FinanceHelper.longToString(head.getLastmoney()));
 
@@ -1096,6 +1432,7 @@ public class ParentQueryFinaAction extends DispatchAction
                 currentLast = sumCurrMoneryByCondition[1] - sumCurrMoneryByCondition[0];
             }
 
+            // 期初+当期发生=期末
             show.setShowLastmoney(FinanceHelper.longToString(head.getLastmoney() + currentLast));
 
             showList.add(show);
@@ -1213,7 +1550,7 @@ public class ParentQueryFinaAction extends DispatchAction
             condtion = getQueryCondition2(request, user, 1);
             createUnitCondition(taxBean, eachUnitId, condtion);
 
-            FinanceItemVO head = sumHeadInner(condtion, taxBean);
+            FinanceItemVO head = sumHeadInner(null, condtion, taxBean);
 
             show.setBeginAllmoney(head.getLastmoney());
             show.setShowBeginAllmoney(FinanceHelper.longToString(head.getLastmoney()));
@@ -1354,9 +1691,10 @@ public class ParentQueryFinaAction extends DispatchAction
 
             // 期初余额
             condtion = getQueryCondition2(request, user, 1);
+
             createStafferCondition(taxBean, eachStafferId, condtion);
 
-            FinanceItemVO head = sumHeadInner(condtion, taxBean);
+            FinanceItemVO head = sumHeadInner(null, condtion, taxBean);
 
             show.setBeginAllmoney(head.getLastmoney());
             show.setShowBeginAllmoney(FinanceHelper.longToString(head.getLastmoney()));
@@ -1558,6 +1896,40 @@ public class ParentQueryFinaAction extends DispatchAction
     public void setOrgManager(OrgManager orgManager)
     {
         this.orgManager = orgManager;
+    }
+
+    /**
+     * @return the parameterDAO
+     */
+    public ParameterDAO getParameterDAO()
+    {
+        return parameterDAO;
+    }
+
+    /**
+     * @param parameterDAO
+     *            the parameterDAO to set
+     */
+    public void setParameterDAO(ParameterDAO parameterDAO)
+    {
+        this.parameterDAO = parameterDAO;
+    }
+
+    /**
+     * @return the financeRepDAO
+     */
+    public FinanceRepDAO getFinanceRepDAO()
+    {
+        return financeRepDAO;
+    }
+
+    /**
+     * @param financeRepDAO
+     *            the financeRepDAO to set
+     */
+    public void setFinanceRepDAO(FinanceRepDAO financeRepDAO)
+    {
+        this.financeRepDAO = financeRepDAO;
     }
 
 }

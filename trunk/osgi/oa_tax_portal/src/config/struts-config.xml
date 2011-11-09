@@ -31,6 +31,8 @@
 			<forward name="queryTaxFinance2" path="/finance/queryTaxFinance2.jsp" />
 			<forward name="queryTaxFinance3" path="/finance/queryTaxFinance3.jsp" />
 			<forward name="queryTaxFinance4" path="/finance/queryTaxFinance4.jsp" />
+			<forward name="queryTaxReport1" path="/finance/queryTaxReport1.jsp" />
+			<forward name="queryTaxReport2" path="/finance/queryTaxReport2.jsp" />
 		</action>
 		
 	</action-mappings>

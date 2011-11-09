@@ -229,6 +229,10 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
+        <condtion name="taxId2" filed="taxId" caption="科目编码(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
     </item>
 	
 </query>

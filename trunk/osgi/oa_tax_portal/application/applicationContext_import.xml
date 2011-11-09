@@ -85,5 +85,7 @@
 	<osgi:reference id="financeTurnDAO" interface="com.china.center.oa.tax.dao.FinanceTurnDAO" />
 
     <osgi:reference id="financeMonthDAO" interface="com.china.center.oa.tax.dao.FinanceMonthDAO" />
+    
+    <osgi:reference id="financeRepDAO" interface="com.china.center.oa.tax.dao.FinanceRepDAO" />
 	
 </beans>
