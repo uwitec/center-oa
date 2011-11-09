@@ -259,6 +259,7 @@ public class FinanceManagerImpl implements FinanceManager
 
             // 设置起止时间
             bean.setStartTime(changeFormat + "-01 00:00:00");
+
             bean.setEndTime(changeFormat + "-31 23:59:59");
 
             // 损益结转
@@ -309,6 +310,7 @@ public class FinanceManagerImpl implements FinanceManager
             condition.addWhereStr();
 
             condition.addCondition("financeDate", ">=", changeFormat + "-01");
+
             condition.addCondition("financeDate", "<=", changeFormat + "-31");
 
             // 所有的科目都月结
@@ -328,10 +330,12 @@ public class FinanceManagerImpl implements FinanceManager
 
             FinanceHelper.copyTax(taxBean, fmb);
 
+            // 当期发生
             fmb.setInmoneyTotal(inMonetTotal);
 
             fmb.setOutmoneyTotal(outMonetTotal);
 
+            // 当期累计
             if (taxBean.getForward() == TaxConstanst.TAX_FORWARD_IN)
             {
                 fmb.setLastTotal(inMonetTotal - outMonetTotal);
@@ -347,21 +351,23 @@ public class FinanceManagerImpl implements FinanceManager
             FinanceMonthBean lastMonth = financeMonthDAO.findByUnique(taxBean.getId(), lastTurn
                 .getMonthKey());
 
+            // 科目整个系统的累加数
             if (lastMonth != null)
             {
-                // 累加之前所有的值
+                // 累加之前所有的值(滚动累加)
                 fmb.setInmoneyAllTotal(lastMonth.getInmoneyAllTotal() + inMonetTotal);
 
                 fmb.setOutmoneyAllTotal(lastMonth.getOutmoneyAllTotal() + outMonetTotal);
             }
             else
             {
-                // 没有作为初始值
+                // 没有作为初始值(第一个月是没有的)
                 fmb.setInmoneyAllTotal(inMonetTotal);
 
                 fmb.setOutmoneyAllTotal(outMonetTotal);
             }
 
+            // 期末余额
             if (taxBean.getForward() == TaxConstanst.TAX_FORWARD_IN)
             {
                 fmb.setLastAllTotal(fmb.getInmoneyAllTotal() - fmb.getOutmoneyAllTotal());

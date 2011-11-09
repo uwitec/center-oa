@@ -34,4 +34,6 @@
 
 	<bean id="financeMonthDAO" class="com.china.center.oa.tax.dao.impl.FinanceMonthDAOImpl" />
 
+	<bean id="financeRepDAO" class="com.china.center.oa.tax.dao.impl.FinanceRepDAOImpl" />
+
 </beans>

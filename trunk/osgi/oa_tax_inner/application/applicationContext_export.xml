@@ -33,4 +33,6 @@
 
 	<osgi:service ref="financeMonthDAO" interface="com.china.center.oa.tax.dao.FinanceMonthDAO" />
 
+	<osgi:service ref="financeRepDAO" interface="com.china.center.oa.tax.dao.FinanceRepDAO" />
+
 </beans>
