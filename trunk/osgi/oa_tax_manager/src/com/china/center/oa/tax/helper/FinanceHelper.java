@@ -10,6 +10,7 @@ package com.china.center.oa.tax.helper;
 
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.china.center.oa.tax.bean.FinanceBean;
@@ -19,6 +20,7 @@ import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.constanst.TaxConstanst;
 import com.china.center.oa.tax.constanst.TaxItemConstanst;
 import com.china.center.tools.MathTools;
+import com.china.center.tools.StringTools;
 
 
 /**
@@ -192,4 +194,45 @@ public abstract class FinanceHelper
 
         return false;
     }
+
+    public static List<String>[] parserExpr(String expr)
+    {
+        expr = expr.trim();
+
+        List<String> listTax = new ArrayList();
+        List<String> listOpr = new ArrayList();
+
+        String[] split = expr.split("[+-]");
+
+        for (String each : split)
+        {
+            if (StringTools.isNullOrNone(each))
+            {
+                continue;
+            }
+
+            listTax.add(each.trim());
+
+            expr = expr.substring(each.length());
+
+            if (expr.length() > 0)
+            {
+                listOpr.add(String.valueOf(expr.charAt(0)));
+
+                expr = expr.substring(1);
+            }
+        }
+
+        return new List[] {listTax, listOpr};
+    }
+
+    // public static void main(String[] args)
+    // {
+    // String expr = "1201+1202+1211+1221+1231+1232+1241+1243+1244-1251+1261+1271-1281+1291";
+    //
+    // List<String>[] parserExpr = parserExpr(expr);
+    //
+    // System.out.println(parserExpr[0]);
+    // System.out.println(parserExpr[1]);
+    // }
 }

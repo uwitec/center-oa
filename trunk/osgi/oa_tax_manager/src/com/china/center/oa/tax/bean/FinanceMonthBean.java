@@ -45,6 +45,9 @@ public class FinanceMonthBean implements Serializable
 
     private long outmoneyTotal = 0L;
 
+    /**
+     * 当月累计
+     */
     private long lastTotal = 0L;
 
     /**
@@ -54,6 +57,9 @@ public class FinanceMonthBean implements Serializable
 
     private long outmoneyAllTotal = 0L;
 
+    /**
+     * 期末余额
+     */
     private long lastAllTotal = 0L;
 
     @Unique(dependFields = "monthKey")
