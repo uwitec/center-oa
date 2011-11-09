@@ -39,9 +39,9 @@ function load()
              id : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
-             {id: 'add', bclass: 'add', onpress : addBean, auth: '1601'},
-             {id: 'update', bclass: 'update', onpress : updateBean, auth: '1601'},
-             {id: 'del', bclass: 'del',  onpress : delBean, auth: '1601'},
+             {id: 'add', bclass: 'add', onpress : addBean, auth: '0000'},
+             {id: 'update', bclass: 'update', onpress : updateBean, auth: '0000'},
+             {id: 'del', bclass: 'del',  onpress : delBean, auth: '0000'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
