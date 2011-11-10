@@ -63,6 +63,9 @@ public class FinanceMonthVO extends FinanceMonthBean
     @Ignore
     private String showLastAllTotal = "";
 
+    @Ignore
+    private String showMonthTurnTotal = "";
+
     /**
      * default constructor
      */
@@ -236,6 +239,42 @@ public class FinanceMonthVO extends FinanceMonthBean
     }
 
     /**
+     * @return the forward
+     */
+    public int getForward()
+    {
+        return forward;
+    }
+
+    /**
+     * @param forward
+     *            the forward to set
+     */
+    public void setForward(int forward)
+    {
+        this.forward = forward;
+    }
+
+    /**
+     * @return the showMonthTurnTotal
+     */
+    public String getShowMonthTurnTotal()
+    {
+        this.showMonthTurnTotal = FinanceHelper.longToString(super.getMonthTurnTotal());
+
+        return showMonthTurnTotal;
+    }
+
+    /**
+     * @param showMonthTurnTotal
+     *            the showMonthTurnTotal to set
+     */
+    public void setShowMonthTurnTotal(String showMonthTurnTotal)
+    {
+        this.showMonthTurnTotal = showMonthTurnTotal;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -255,6 +294,9 @@ public class FinanceMonthVO extends FinanceMonthBean
             .append(TAB)
             .append("taxName = ")
             .append(this.taxName)
+            .append(TAB)
+            .append("forward = ")
+            .append(this.forward)
             .append(TAB)
             .append("forwardName = ")
             .append(this.forwardName)
@@ -277,26 +319,12 @@ public class FinanceMonthVO extends FinanceMonthBean
             .append("showLastAllTotal = ")
             .append(this.showLastAllTotal)
             .append(TAB)
+            .append("showMonthTurnTotal = ")
+            .append(this.showMonthTurnTotal)
+            .append(TAB)
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the forward
-     */
-    public int getForward()
-    {
-        return forward;
-    }
-
-    /**
-     * @param forward
-     *            the forward to set
-     */
-    public void setForward(int forward)
-    {
-        this.forward = forward;
     }
 
 }

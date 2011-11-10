@@ -24,5 +24,12 @@ import com.china.center.oa.tax.vo.FinanceMonthVO;
  */
 public interface FinanceMonthDAO extends DAO<FinanceMonthBean, FinanceMonthVO>
 {
-
+    /**
+     * 获取负债的当前累计
+     * 
+     * @param taxId
+     * @param year
+     * @return
+     */
+    long sumMonthTurnTotal(String taxId, String beginYear, String endYear);
 }

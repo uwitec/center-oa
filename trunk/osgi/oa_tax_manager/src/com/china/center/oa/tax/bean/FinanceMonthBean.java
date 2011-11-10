@@ -21,7 +21,7 @@ import com.china.center.oa.publics.bean.StafferBean;
 
 
 /**
- * 月结
+ * 月结项
  * 
  * @author ZHUZHU
  * @version 2011-7-27
@@ -39,7 +39,7 @@ public class FinanceMonthBean implements Serializable
     private String stafferId = "";
 
     /**
-     * 当月
+     * 当月发生
      */
     private long inmoneyTotal = 0L;
 
@@ -61,6 +61,11 @@ public class FinanceMonthBean implements Serializable
      * 期末余额
      */
     private long lastAllTotal = 0L;
+
+    /**
+     * 结转的金额
+     */
+    private long monthTurnTotal = 0L;
 
     @Unique(dependFields = "monthKey")
     @Join(tagClass = TaxBean.class, type = JoinType.LEFT)
@@ -455,6 +460,23 @@ public class FinanceMonthBean implements Serializable
     }
 
     /**
+     * @return the monthTurnTotal
+     */
+    public long getMonthTurnTotal()
+    {
+        return monthTurnTotal;
+    }
+
+    /**
+     * @param monthTurnTotal
+     *            the monthTurnTotal to set
+     */
+    public void setMonthTurnTotal(long monthTurnTotal)
+    {
+        this.monthTurnTotal = monthTurnTotal;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -492,6 +514,9 @@ public class FinanceMonthBean implements Serializable
             .append(TAB)
             .append("lastAllTotal = ")
             .append(this.lastAllTotal)
+            .append(TAB)
+            .append("monthTurnTotal = ")
+            .append(this.monthTurnTotal)
             .append(TAB)
             .append("taxId = ")
             .append(this.taxId)

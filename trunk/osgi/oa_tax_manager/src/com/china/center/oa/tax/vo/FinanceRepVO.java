@@ -25,12 +25,18 @@ import com.china.center.oa.tax.bean.FinanceRepBean;
 @Entity(inherit = true)
 public class FinanceRepVO extends FinanceRepBean
 {
+    /**
+     * 本期/年初
+     */
     @Ignore
     private long beginMoney = 0L;
 
     @Ignore
     private String beginMoneyStr = "";
 
+    /**
+     * 期末/累计
+     */
     @Ignore
     private long endMoney = 0L;
 
