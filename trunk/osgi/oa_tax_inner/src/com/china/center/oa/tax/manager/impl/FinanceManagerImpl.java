@@ -269,7 +269,7 @@ public class FinanceManagerImpl implements FinanceManager
             createProfitFinance(user, bean, changeFormat, itemList);
 
             // 产生月结数据(科目/借总额/贷总额/KEY/LOGTIME)
-            createMonthData(user, bean, changeFormat);
+            createMonthData(user, bean, changeFormat, itemList);
 
             // 锁定凭证,不能修改和删除
             int amount = financeDAO.updateLockToEnd(changeFormat + "-01", changeFormat + "-31");
@@ -299,8 +299,10 @@ public class FinanceManagerImpl implements FinanceManager
      * @param bean
      * @param changeFormat
      */
-    private void createMonthData(User user, FinanceTurnBean bean, String changeFormat)
+    private void createMonthData(User user, FinanceTurnBean bean, String changeFormat,
+                                 List<FinanceItemBean> itemList)
     {
+
         List<TaxBean> taxList = taxDAO.listEntityBeans("order by id");
 
         for (TaxBean taxBean : taxList)
@@ -375,6 +377,27 @@ public class FinanceManagerImpl implements FinanceManager
             else
             {
                 fmb.setLastAllTotal(fmb.getOutmoneyAllTotal() - fmb.getInmoneyAllTotal());
+            }
+
+            // 负债类
+            if (taxBean.getPtype().equals(TaxConstanst.TAX_PTYPE_LOSS))
+            {
+                // 结转金额
+                for (FinanceItemBean financeItemBean : itemList)
+                {
+                    if (financeItemBean.getTaxId().equals(taxBean.getId()))
+                    {
+                        if (financeItemBean.getForward() == TaxConstanst.TAX_FORWARD_IN)
+                        {
+                            fmb.setMonthTurnTotal(financeItemBean.getInmoney());
+                        }
+
+                        if (financeItemBean.getForward() == TaxConstanst.TAX_FORWARD_OUT)
+                        {
+                            fmb.setMonthTurnTotal(financeItemBean.getOutmoney());
+                        }
+                    }
+                }
             }
 
             fmb.setLogTime(TimeTools.now());
@@ -640,6 +663,7 @@ public class FinanceManagerImpl implements FinanceManager
         // 利润结转
         long profit = 0L;
 
+        // itemNearList里面有很多的本年利润
         for (FinanceItemBean financeItemBean : itemNearList)
         {
             if (financeItemBean.getTaxId().equals(TaxItemConstanst.YEAR_PROFIT)
@@ -651,7 +675,7 @@ public class FinanceManagerImpl implements FinanceManager
             if (financeItemBean.getTaxId().equals(TaxItemConstanst.YEAR_PROFIT)
                 && financeItemBean.getForward() == TaxConstanst.TAX_FORWARD_OUT)
             {
-                profit = profit + financeItemBean.getInmoney();
+                profit = profit + financeItemBean.getOutmoney();
             }
         }
 

@@ -9,6 +9,7 @@
 package com.china.center.oa.tax.dao.impl;
 
 
+import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.tax.bean.FinanceMonthBean;
 import com.china.center.oa.tax.dao.FinanceMonthDAO;
@@ -25,4 +26,11 @@ import com.china.center.oa.tax.vo.FinanceMonthVO;
  */
 public class FinanceMonthDAOImpl extends BaseDAO<FinanceMonthBean, FinanceMonthVO> implements FinanceMonthDAO
 {
+    public long sumMonthTurnTotal(String taxId, String beginKey, String endKey)
+    {
+        String sql = BeanTools.getSumHead(claz, "monthTurnTotal")
+                     + "where taxId = ? and monthKey >= ? and monthKey <= ?";
+
+        return (long)this.jdbcOperation.queryForDouble(sql, taxId, beginKey, endKey);
+    }
 }
