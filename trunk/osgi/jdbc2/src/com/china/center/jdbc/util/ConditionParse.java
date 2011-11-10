@@ -34,41 +34,32 @@ public class ConditionParse implements Serializable
      */
     public void addCondition(String fieldName, String oper, String conditionValue)
     {
-        if (conditionValue == null)
+        if ( ! (conditionValue == null || "".equals(conditionValue)))
         {
-            conditionValue = "";
-        }
+            String tempOper = oper.trim().toUpperCase();
 
-        String tempOper = oper.trim().toUpperCase();
-
-        if (tempOper.indexOf("LIKE") != -1)
-        {
-            if (conditionValue.startsWith("%") || conditionValue.endsWith("%"))
+            if (tempOper.indexOf("LIKE") != -1)
+            {
+                if (conditionValue.startsWith("%") || conditionValue.endsWith("%"))
+                {
+                    condition.append(" AND ").append(dbValueString(fieldName)).append(" ").append(
+                        dbValueString(oper)).append(" ").append("'").append(
+                        dbValueString(conditionValue)).append("'");
+                }
+                else
+                {
+                    condition.append(" AND ").append(dbValueString(fieldName)).append(" ").append(
+                        dbValueString(oper)).append(" ").append("'%").append(
+                        dbValueString(conditionValue)).append("%'");
+                }
+            }
+            else
             {
                 condition.append(" AND ").append(dbValueString(fieldName)).append(" ").append(
                     dbValueString(oper)).append(" ").append("'").append(
                     dbValueString(conditionValue)).append("'");
             }
-            else
-            {
-                condition.append(" AND ").append(dbValueString(fieldName)).append(" ").append(
-                    dbValueString(oper)).append(" ").append("'%").append(
-                    dbValueString(conditionValue)).append("%'");
-            }
         }
-        else
-        {
-            condition
-                .append(" AND ")
-                .append(dbValueString(fieldName))
-                .append(" ")
-                .append(dbValueString(oper))
-                .append(" ")
-                .append("'")
-                .append(dbValueString(conditionValue))
-                .append("'");
-        }
-
     }
 
     /**
@@ -131,15 +122,13 @@ public class ConditionParse implements Serializable
      */
     public void addIntCondition(String fieldName, String oper, String conditionValue)
     {
-        if (conditionValue == null)
+        if ( ! (conditionValue == null || "".equals(conditionValue)))
         {
-            conditionValue = "";
+            int tempValue = Integer.parseInt(conditionValue);
+            condition.append(" AND ").append(dbValueString(fieldName)).append(" ").append(
+                dbValueString(oper)).append(tempValue);
         }
 
-        int tempValue = Integer.parseInt(conditionValue);
-
-        condition.append(" AND ").append(dbValueString(fieldName)).append(" ").append(
-            dbValueString(oper)).append(tempValue);
     }
 
     public void clear()
