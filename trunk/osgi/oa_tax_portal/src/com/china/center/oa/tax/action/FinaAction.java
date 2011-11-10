@@ -172,6 +172,7 @@ public class FinaAction extends ParentQueryFinaAction
                     obj.getShowLastTotal();
                     obj.getShowOutmoneyAllTotal();
                     obj.getShowOutmoneyTotal();
+                    obj.getShowMonthTurnTotal();
                 }
             });
 

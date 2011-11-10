@@ -58,7 +58,6 @@ import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.tax.bean.FinanceMonthBean;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.bean.UnitBean;
-import com.china.center.oa.tax.constanst.FinaConstant;
 import com.china.center.oa.tax.constanst.TaxConstanst;
 import com.china.center.oa.tax.dao.CheckViewDAO;
 import com.china.center.oa.tax.dao.FinanceDAO;
@@ -427,137 +426,201 @@ public class ParentQueryFinaAction extends DispatchAction
                 }
             });
 
-            List<FinanceRepVO> statList = new ArrayList();
-
-            for (FinanceRepVO financeRepVO : repList)
+            // 资产负债表
+            if ("0".equals(type))
             {
-                if (financeRepVO.getRmethod() == FinaConstant.FINANCEREP_RMETHOD_ALL)
+                for (FinanceRepVO financeRepVO : repList)
                 {
-                    statList.add(financeRepVO);
+                    long beginTotal = 0L;
 
-                    continue;
-                }
+                    long endTotal = 0L;
 
-                // 表达式
-                String expr = financeRepVO.getExpr();
-
-                List<String>[] parserExpr = FinanceHelper.parserExpr(expr);
-
-                List<String> taxList = parserExpr[0];
-
-                List<String> oprList = parserExpr[1];
-
-                long beginTotal = 0L;
-
-                long endTotal = 0L;
-
-                for (int i = 0; i < taxList.size(); i++ )
-                {
-                    FinanceMonthBean beginTurn = financeMonthDAO.findByUnique(taxList.get(i),
-                        beginTimeKey);
-
-                    FinanceMonthBean endTurn = financeMonthDAO.findByUnique(taxList.get(i),
-                        endTimeKey);
-
-                    if (i == 0)
+                    // 允许为空
+                    if (StringTools.isNullOrNone(financeRepVO.getExpr()))
                     {
-                        if (beginTurn != null)
-                        {
-                            beginTotal = beginTurn.getLastAllTotal();
-                        }
+                        financeRepVO.setBeginMoney(beginTotal);
 
-                        if (endTurn != null)
-                        {
-                            endTotal = endTurn.getLastAllTotal();
-                        }
+                        financeRepVO.setBeginMoneyStr(FinanceHelper.longToString(beginTotal));
+
+                        financeRepVO.setEndMoney(endTotal);
+
+                        financeRepVO.setEndMoneyStr(FinanceHelper.longToString(endTotal));
 
                         continue;
                     }
 
-                    // 需要操作符号
-                    if (i < (taxList.size() - 1))
-                    {
-                        String opr = oprList.get(i - 1);
+                    // 表达式
+                    String expr = financeRepVO.getExpr();
 
-                        if ("+".equals(opr))
+                    List<String>[] parserExpr = FinanceHelper.parserExpr(expr);
+
+                    List<String> taxList = parserExpr[0];
+
+                    List<String> oprList = parserExpr[1];
+
+                    for (int i = 0; i < taxList.size(); i++ )
+                    {
+                        FinanceMonthBean beginTurn = financeMonthDAO.findByUnique(taxList.get(i),
+                            beginTimeKey);
+
+                        FinanceMonthBean endTurn = financeMonthDAO.findByUnique(taxList.get(i),
+                            endTimeKey);
+
+                        // 第一个为初始化
+                        if (i == 0)
                         {
                             if (beginTurn != null)
                             {
-                                beginTotal += beginTurn.getLastAllTotal();
+                                beginTotal = beginTurn.getLastAllTotal();
                             }
 
                             if (endTurn != null)
                             {
-                                endTotal += endTurn.getLastAllTotal();
+                                endTotal = endTurn.getLastAllTotal();
                             }
+
+                            continue;
                         }
 
-                        if ("-".equals(opr))
+                        // 需要操作符号
+                        if (i < (taxList.size() - 1))
                         {
-                            if (beginTurn != null)
+                            String opr = oprList.get(i - 1);
+
+                            if ("+".equals(opr))
                             {
-                                beginTotal -= beginTurn.getLastAllTotal();
+                                if (beginTurn != null)
+                                {
+                                    beginTotal += beginTurn.getLastAllTotal();
+                                }
+
+                                if (endTurn != null)
+                                {
+                                    endTotal += endTurn.getLastAllTotal();
+                                }
                             }
 
-                            if (endTurn != null)
+                            if ("-".equals(opr))
                             {
-                                endTotal -= endTurn.getLastAllTotal();
+                                if (beginTurn != null)
+                                {
+                                    beginTotal -= beginTurn.getLastAllTotal();
+                                }
+
+                                if (endTurn != null)
+                                {
+                                    endTotal -= endTurn.getLastAllTotal();
+                                }
                             }
                         }
                     }
+
+                    financeRepVO.setBeginMoney(beginTotal);
+
+                    financeRepVO.setBeginMoneyStr(FinanceHelper.longToString(beginTotal));
+
+                    financeRepVO.setEndMoney(endTotal);
+
+                    financeRepVO.setEndMoneyStr(FinanceHelper.longToString(endTotal));
                 }
-
-                financeRepVO.setBeginMoney(beginTotal);
-
-                financeRepVO.setBeginMoneyStr(FinanceHelper.longToString(beginTotal));
-
-                financeRepVO.setEndMoney(endTotal);
-
-                financeRepVO.setEndMoneyStr(FinanceHelper.longToString(endTotal));
             }
-
-            // 合计
-            for (FinanceRepVO peach : statList)
+            else
             {
-                long beginTotal = 0L;
-
-                long endTotal = 0L;
-
-                for (FinanceRepVO seach : repList)
+                // 损益报表
+                for (FinanceRepVO financeRepVO : repList)
                 {
-                    if (seach.getRmethod() == FinaConstant.FINANCEREP_RMETHOD_ALL)
+                    long beginTotal = 0L;
+
+                    long endTotal = 0L;
+
+                    // 允许为空
+                    if (StringTools.isNullOrNone(financeRepVO.getExpr()))
                     {
+                        financeRepVO.setBeginMoney(beginTotal);
+
+                        financeRepVO.setBeginMoneyStr(FinanceHelper.longToString(beginTotal));
+
+                        financeRepVO.setEndMoney(endTotal);
+
+                        financeRepVO.setEndMoneyStr(FinanceHelper.longToString(endTotal));
+
                         continue;
                     }
 
-                    if (seach.getItemPName().equals(peach.getItemPName()))
-                    {
-                        if (seach.getRmethod() == FinaConstant.FINANCEREP_RMETHOD_ADD)
-                        {
-                            beginTotal += seach.getBeginMoney();
+                    // 表达式
+                    String expr = financeRepVO.getExpr();
 
-                            endTotal += seach.getEndMoney();
+                    List<String>[] parserExpr = FinanceHelper.parserExpr(expr);
+
+                    List<String> taxList = parserExpr[0];
+
+                    List<String> oprList = parserExpr[1];
+
+                    for (int i = 0; i < taxList.size(); i++ )
+                    {
+                        FinanceMonthBean curTurn = financeMonthDAO.findByUnique(taxList.get(i),
+                            endTimeKey);
+
+                        // 当年的累计数(1月到N月)
+                        long sumMonthTurnTotal = financeMonthDAO.sumMonthTurnTotal(taxList.get(i),
+                            year + "01", endTimeKey);
+
+                        // 第一个为初始化
+                        if (i == 0)
+                        {
+                            if (curTurn != null)
+                            {
+                                // 当月发生额
+                                beginTotal = curTurn.getInmoneyTotal();
+                            }
+
+                            // 累计数
+                            endTotal = sumMonthTurnTotal;
+
+                            continue;
                         }
 
-                        if (seach.getRmethod() == FinaConstant.FINANCEREP_RMETHOD_DEV)
+                        // 需要操作符号
+                        if (i < (taxList.size() - 1))
                         {
-                            beginTotal -= seach.getBeginMoney();
+                            String opr = oprList.get(i - 1);
 
-                            endTotal -= seach.getEndMoney();
+                            if ("+".equals(opr))
+                            {
+                                if (curTurn != null)
+                                {
+                                    beginTotal += curTurn.getInmoneyTotal();
+                                }
+
+                                endTotal += sumMonthTurnTotal;
+                            }
+
+                            if ("-".equals(opr))
+                            {
+                                if (curTurn != null)
+                                {
+                                    beginTotal -= curTurn.getInmoneyTotal();
+                                }
+
+                                endTotal -= sumMonthTurnTotal;
+                            }
                         }
                     }
+
+                    financeRepVO.setBeginMoney(beginTotal);
+
+                    financeRepVO.setBeginMoneyStr(FinanceHelper.longToString(beginTotal));
+
+                    financeRepVO.setEndMoney(endTotal);
+
+                    financeRepVO.setEndMoneyStr(FinanceHelper.longToString(endTotal));
                 }
 
-                peach.setBeginMoney(beginTotal);
-
-                peach.setBeginMoneyStr(FinanceHelper.longToString(beginTotal));
-
-                peach.setEndMoney(endTotal);
-
-                peach.setEndMoneyStr(FinanceHelper.longToString(endTotal));
             }
 
-            request.setAttribute("resultList", repList);
+            request.getSession().setAttribute("g_tax_rep_resultList" + type, repList);
+
+            request.getSession().setAttribute("g_tax_rep_type", type);
         }
         catch (Exception e)
         {
@@ -1061,6 +1124,128 @@ public class ParentQueryFinaAction extends DispatchAction
 
                         line.writeLine();
                     }
+                }
+            }
+
+            write.close();
+
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+        }
+
+        return null;
+    }
+
+    /**
+     * 导出报表
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportTaxReport(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        String filenName = "Tax_Report_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            // g_tax_rep_type
+            Object attribute = request.getSession().getAttribute("g_tax_rep_type");
+
+            if (attribute == null)
+            {
+                return ActionTools.toError(mapping, request);
+            }
+
+            String type = attribute.toString();
+
+            List<FinanceRepVO> list = (List<FinanceRepVO>)request.getSession().getAttribute(
+                "g_tax_rep_resultList" + type);
+
+            if ("0".equals(type))
+            {
+                write.writeLine("行次,分类,名称,年初数,期末数,算法");
+
+                for (FinanceRepVO each : list)
+                {
+                    WriteFileBuffer line = new WriteFileBuffer(write);
+
+                    line.writeColumn(each.getItemIndex());
+                    line.writeColumn(each.getItemPName());
+                    line.writeColumn(each.getItemName());
+                    line.writeColumn(changeString(each.getBeginMoneyStr()));
+                    line.writeColumn(changeString(each.getEndMoneyStr()));
+                    line.writeColumn(changeString('[' + each.getExpr() + ']'));
+
+                    line.writeLine();
+                }
+            }
+
+            if ("1".equals(type))
+            {
+                write.writeLine("行次,分类,名称,本初数,本年累计数,算法");
+
+                for (FinanceRepVO each : list)
+                {
+                    WriteFileBuffer line = new WriteFileBuffer(write);
+
+                    line.writeColumn(each.getItemIndex());
+                    line.writeColumn(each.getItemPName());
+                    line.writeColumn(each.getItemName());
+                    line.writeColumn(changeString(each.getBeginMoneyStr()));
+                    line.writeColumn(changeString(each.getEndMoneyStr()));
+                    line.writeColumn(changeString('[' + each.getExpr() + ']'));
+
+                    line.writeLine();
                 }
             }
 

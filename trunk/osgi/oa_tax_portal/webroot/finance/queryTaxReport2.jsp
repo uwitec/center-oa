@@ -11,7 +11,7 @@
 <script language="javascript">
 function exports()
 {
-	document.location.href = '../finance/finance.do?method=exportFinanceItem';
+	document.location.href = '../finance/finance.do?method=exportTaxReport';
 }
 
 function load()
@@ -96,27 +96,35 @@ function query()
 	<p:subBody width="98%">
 		<table width="100%" align="center" cellspacing='1' class="table0" id="dataTable">
 			<tr align=center class="content0">
-				<td align="center" width="12%" class="td_class" onclick="tableSort(this)"><strong>分类</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this)"><strong>名称</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this)"><strong>行次</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>年初数</strong></td>
-				<td align="center" class="td_class" onclick="tableSort(this, true)"><strong>期末数</strong></td>
-			</tr>
+                <td align="center" class="td_class" onclick="tableSort(this, true)"><strong>行次</strong></td>
+                <td align="center" width="15%" class="td_class" onclick="tableSort(this)"><strong>分类</strong></td>
+                <td align="center" width="20%" class="td_class" onclick="tableSort(this)"><strong>名称</strong></td>
+                <td align="center" class="td_class" onclick="tableSort(this, true)"><strong>本期数</strong></td>
+                <td align="center" class="td_class" onclick="tableSort(this, true)"><strong>本年累计数</strong></td>
+            </tr>
 
-			<c:forEach items="${resultList}" var="item"
-				varStatus="vs">
-				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
-					<td align="left" width="12%"  onclick="hrefAndSelect(this)">${item.itemPName}</td>
-					<td align="left" onclick="hrefAndSelect(this)">${item.itemName}</td>
-					<td align="left" onclick="hrefAndSelect(this)">${item.itemIndex}</td>
-					<td align="left" width="8%" onclick="hrefAndSelect(this)" >${item.beginMoneyStr}</td>
-					<td align="left" width="8%" onclick="hrefAndSelect(this)">${item.endMoneyStr}</td>
-				</tr>
-			</c:forEach>
+			<c:forEach items="${g_tax_rep_resultList1}" var="item"
+                varStatus="vs">
+                <tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
+                    <c:if test="${item.rmethod != 99}">
+                    <td align="left" onclick="hrefAndSelect(this)">${item.itemIndex}</td>
+                    <td align="left" width="15%"  onclick="hrefAndSelect(this)">${item.itemPName}</td>
+                    <td align="left" width="20%" onclick="hrefAndSelect(this)" title="${item.expr}">${item.itemName}</td>
+                    <td align="left" onclick="hrefAndSelect(this)" >${item.beginMoneyStr}</td>
+                    <td align="left" onclick="hrefAndSelect(this)">${item.endMoneyStr}</td>
+                    </c:if>
+                    
+                    <c:if test="${item.rmethod == 99}">
+                    <td align="left" onclick="hrefAndSelect(this)"><font color="red"><b>${item.itemIndex}</b></font></td>
+                    <td align="left" width="15%"  onclick="hrefAndSelect(this)"><font color="red"><b>${item.itemPName}</b></font></td>
+                    <td align="left" width="20%" onclick="hrefAndSelect(this)" title="${item.expr}"><font color="red"><b>${item.itemName}</b></font></td>
+                    <td align="left" onclick="hrefAndSelect(this)" ><font color="red"><b>${item.beginMoneyStr}</b></font></td>
+                    <td align="left" onclick="hrefAndSelect(this)"><font color="red"><b>${item.endMoneyStr}</b></font></td>
+                    </c:if>
+                </tr>
+            </c:forEach>
 		</table>
 		
-		<p:formTurning form="formEntry" method="queryTaxFinance1"></p:formTurning>
-
 	</p:subBody>
 
 	<p:line flag="1" />

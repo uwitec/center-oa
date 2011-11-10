@@ -27,11 +27,12 @@ function load()
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
              {display: '月份', name : 'monthKey', width : '5%'},
-             {display: '科目', name : 'taxName', content: '{taxName}({taxId})', sortable : true, cname: 'taxId', width : '35%'},
+             {display: '科目', name : 'taxName', content: '{taxName}({taxId})', sortable : true, cname: 'taxId', width : '25%'},
              {display: '本月借贷', name : 'curr', content: '{showInmoneyTotal}/{showOutmoneyTotal}',  width : '18%'},
-             {display: '本月结余', name : 'showLastTotal',  width : '10%'},
+             {display: '本月结余', name : 'showLastTotal',  width : '8%'},
              {display: '累计借贷', name : 'curr', content: '{showInmoneyAllTotal}/{showOutmoneyAllTotal}',  width : '18%'},
-             {display: '期末余额', name : 'showLastAllTotal',  width : 'auto'}
+             {display: '期末余额', name : 'showLastAllTotal',  width : 'auto'},
+             {display: '结转金额', name : 'showMonthTurnTotal',  width : '10%'}
              ],
          extAtt: {
              //pid : {begin : '<a title=点击查看明细 href=' + gurl + 'findFinance&id={pid}>', end : '</a>'}
