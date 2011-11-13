@@ -62,10 +62,6 @@ function del(id)
     $O('attacmentIds').value = $O('attacmentIds').value.delSubString(id + ';')
 }
 
-function selectTravelApply()
-{
-    window.common.modal('../tcp/apply.do?method=rptQueryTravelApply&load=1&selectMode=1&type=0');
-}
 
 function getTravelApply(oos)
 {
@@ -116,6 +112,10 @@ function getTravelApply(oos)
 
             <p:pro field="stafferId" value="${bean.stafferName}"/>
             <p:pro field="departmentId" value="${bean.departmentName}"/>
+            
+            <p:pro field="stype" cell="0">
+                <p:option type="tcpStype" empty="true"/>
+            </p:pro>
             
             <p:pro field="name" cell="0" innerString="size=60"/>
             
@@ -373,7 +373,7 @@ function getTravelApply(oos)
 	                        <input type="text" name="processer" readonly="readonly" oncheck="notNone" head="下环处理人"/>&nbsp;
 	                        <font color=red>*</font>
 	                        <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-	                            class="button_class" onclick="selectNext('${pluginType}', '${pluginValue}')">&nbsp;&nbsp;
+	                            class="button_class" onclick="initSelectNext()">&nbsp;&nbsp;
 	                        </td>
 	                    </tr>
 	                </table>

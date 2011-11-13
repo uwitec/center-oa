@@ -33,4 +33,15 @@ public interface TcpFlowManager
      */
     boolean drawApprove(User user, String id)
         throws MYException;
+
+    /**
+     * 退领工单
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    boolean odrawApprove(User user, String id)
+        throws MYException;
 }

@@ -325,3 +325,21 @@ function pagePrint()
     $O('ok_b').style.display = 'inline';
     $O('pr').style.display = 'inline';
 }
+
+function initSelectNext()
+{
+	if ($$('stype') == '')
+	{
+		alert('请选择系列');
+		return false;
+	}
+	
+	if ($$('stype') != '2')
+	{
+		selectNext('group', 'A220110406000200001')
+	}
+	else
+	{
+		selectNext('group', 'A220110406000200004')
+	}
+}

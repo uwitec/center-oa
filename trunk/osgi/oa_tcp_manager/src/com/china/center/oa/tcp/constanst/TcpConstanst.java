@@ -77,6 +77,12 @@ public interface TcpConstanst
     int TCP_STATUS_WAIT_BUY = 11;
 
     /**
+     * 待中心总监
+     */
+    @Defined(key = "tcpStatus", value = "待中心总监审批")
+    int TCP_STATUS_WAIT_CCHECK = 12;
+
+    /**
      * 待稽核
      */
     @Defined(key = "tcpStatus", value = "待稽核")
@@ -179,6 +185,24 @@ public interface TcpConstanst
      */
     @Defined(key = "tcpPool", value = "共享池")
     int TCP_POOL_POOL = 1;
+
+    /**
+     * 销售系
+     */
+    @Defined(key = "tcpStype", value = "销售系")
+    int TCP_STYPE_SAIL = 0;
+
+    /**
+     * 职能系
+     */
+    @Defined(key = "tcpStype", value = "职能系")
+    int TCP_STYPE_WORK = 1;
+
+    /**
+     * 管理系
+     */
+    @Defined(key = "tcpStype", value = "管理系")
+    int TCP_STYPE_MANAGER = 2;
 
     /**
      * 差旅费申请及借款

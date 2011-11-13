@@ -59,6 +59,8 @@ public class TcpApplyBean implements Serializable
      */
     private int type = TcpConstanst.TCP_APPLYTYPE_TRAVEL;
 
+    private int stype = TcpConstanst.TCP_STYPE_SAIL;
+
     private int status = TcpConstanst.TCP_STATUS_INIT;
 
     private long total = 0;
@@ -262,6 +264,23 @@ public class TcpApplyBean implements Serializable
     }
 
     /**
+     * @return the stype
+     */
+    public int getStype()
+    {
+        return stype;
+    }
+
+    /**
+     * @param stype
+     *            the stype to set
+     */
+    public void setStype(int stype)
+    {
+        this.stype = stype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -270,15 +289,49 @@ public class TcpApplyBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("TcpApplyBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("name = ").append(this.name).append(TAB).append("flowKey = ").append(this.flowKey).append(TAB).append(
-            "applyId = ").append(this.applyId).append(TAB).append("applyerId = ").append(this.applyerId).append(TAB).append(
-            "departmentId = ").append(this.departmentId).append(TAB).append("type = ").append(this.type).append(TAB).append(
-            "status = ").append(this.status).append(TAB).append("total = ").append(this.total).append(TAB).append(
-            "logTime = ").append(this.logTime).append(TAB).append("description = ").append(this.description).append(TAB).append(
-            " )");
+        retValue
+            .append("TcpApplyBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("name = ")
+            .append(this.name)
+            .append(TAB)
+            .append("flowKey = ")
+            .append(this.flowKey)
+            .append(TAB)
+            .append("applyId = ")
+            .append(this.applyId)
+            .append(TAB)
+            .append("applyerId = ")
+            .append(this.applyerId)
+            .append(TAB)
+            .append("departmentId = ")
+            .append(this.departmentId)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("stype = ")
+            .append(this.stype)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("total = ")
+            .append(this.total)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

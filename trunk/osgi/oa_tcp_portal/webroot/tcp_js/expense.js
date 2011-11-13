@@ -326,3 +326,50 @@ function pagePrint()
     $O('ok_b').style.display = 'inline';
     $O('pr').style.display = 'inline';
 }
+
+function initSelectNext()
+{
+    if ($$('stype') == '')
+    {
+        alert('请选择系列');
+        return false;
+    }
+    
+    if ($$('stype') != '2')
+    {
+        selectNext('group', 'A220110406000200001')
+    }
+    else
+    {
+        selectNext('group', 'A220110406000200004')
+    }
+}
+
+function selectTravelApply()
+{
+    if ($$('stype') == '')
+    {
+        alert('请选择系列');
+        return false;
+    }
+    
+    var ctype;
+    
+    if ($$('type') == 11)
+    {
+    	ctype = 0;
+    }
+    
+    if ($$('type') == 12)
+    {
+        ctype = 1;
+    }
+    
+    if ($$('type') == 13)
+    {
+        ctype = 98;
+    }
+    
+    window.common.modal('../tcp/apply.do?method=rptQueryTravelApply&load=1&selectMode=1&type='+ctype+'&stype=' + $$('stype'));
+}
+

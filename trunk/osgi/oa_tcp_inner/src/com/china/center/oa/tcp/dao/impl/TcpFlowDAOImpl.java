@@ -24,4 +24,8 @@ import com.china.center.oa.tcp.dao.TcpFlowDAO;
  */
 public class TcpFlowDAOImpl extends BaseDAO<TcpFlowBean, TcpFlowBean> implements TcpFlowDAO
 {
+    public TcpFlowBean findByFlowKeyAndNextStatus(String flowKey, int nextStatus)
+    {
+        return this.findUnique("where flowKey = ? and nextStatus = ?", flowKey, nextStatus);
+    }
 }

@@ -46,62 +46,132 @@ public abstract class TCPHelper
     {
         if (bean.getType() != TcpConstanst.TCP_APPLYTYPE_STOCK)
         {
-            if (bean.getTotal() <= 500000)
+            if (bean.getStype() == TcpConstanst.TCP_STYPE_SAIL)
             {
-                bean.setFlowKey(TcpFlowConstant.TRAVELAPPLY_0_5000);
+                if (bean.getTotal() <= 500000)
+                {
+                    bean.setFlowKey(TcpFlowConstant.TRAVELAPPLY_0_5000);
 
-                return;
+                    return;
+                }
+
+                if (bean.getTotal() > 500000 && bean.getTotal() <= 1000000)
+                {
+                    bean.setFlowKey(TcpFlowConstant.TRAVELAPPLY_5000_10000);
+
+                    return;
+                }
+
+                if (bean.getTotal() > 1000000 && bean.getTotal() <= 5000000)
+                {
+                    bean.setFlowKey(TcpFlowConstant.TRAVELAPPLY_10000_50000);
+
+                    return;
+                }
+
+                if (bean.getTotal() > 5000000)
+                {
+                    bean.setFlowKey(TcpFlowConstant.TRAVELAPPLY_50000_MAX);
+
+                    return;
+                }
             }
 
-            if (bean.getTotal() > 500000 && bean.getTotal() <= 1000000)
+            if (bean.getStype() == TcpConstanst.TCP_STYPE_WORK)
             {
-                bean.setFlowKey(TcpFlowConstant.TRAVELAPPLY_5000_10000);
+                if (bean.getTotal() <= 500000)
+                {
+                    bean.setFlowKey(TcpFlowConstant.WORK_APPLY_0_50000);
 
-                return;
+                    return;
+                }
+                else
+                {
+                    bean.setFlowKey(TcpFlowConstant.WORK_APPLY_50000_MAX);
+
+                    return;
+                }
             }
 
-            if (bean.getTotal() > 1000000 && bean.getTotal() <= 5000000)
+            if (bean.getStype() == TcpConstanst.TCP_STYPE_MANAGER)
             {
-                bean.setFlowKey(TcpFlowConstant.TRAVELAPPLY_10000_50000);
+                if (bean.getTotal() <= 500000)
+                {
+                    bean.setFlowKey(TcpFlowConstant.MANAGER_APPLY_0_50000);
 
-                return;
-            }
+                    return;
+                }
+                else
+                {
+                    bean.setFlowKey(TcpFlowConstant.MANAGER_APPLY_50000_MAX);
 
-            if (bean.getTotal() > 5000000)
-            {
-                bean.setFlowKey(TcpFlowConstant.TRAVELAPPLY_50000_MAX);
-
-                return;
+                    return;
+                }
             }
         }
         else
         {
-            if (bean.getTotal() <= 500000)
+            if (bean.getStype() == TcpConstanst.TCP_STYPE_SAIL)
             {
-                bean.setFlowKey(TcpFlowConstant.STOCK_APPLY_0_5000);
+                if (bean.getTotal() <= 500000)
+                {
+                    bean.setFlowKey(TcpFlowConstant.STOCK_APPLY_0_5000);
 
-                return;
+                    return;
+                }
+
+                if (bean.getTotal() > 500000 && bean.getTotal() <= 1000000)
+                {
+                    bean.setFlowKey(TcpFlowConstant.STOCK_APPLY_5000_10000);
+
+                    return;
+                }
+
+                if (bean.getTotal() > 1000000 && bean.getTotal() <= 5000000)
+                {
+                    bean.setFlowKey(TcpFlowConstant.STOCK_APPLY_10000_50000);
+
+                    return;
+                }
+
+                if (bean.getTotal() > 5000000)
+                {
+                    bean.setFlowKey(TcpFlowConstant.STOCK_APPLY_50000_MAX);
+
+                    return;
+                }
             }
 
-            if (bean.getTotal() > 500000 && bean.getTotal() <= 1000000)
+            if (bean.getStype() == TcpConstanst.TCP_STYPE_WORK)
             {
-                bean.setFlowKey(TcpFlowConstant.STOCK_APPLY_5000_10000);
+                if (bean.getTotal() <= 500000)
+                {
+                    bean.setFlowKey(TcpFlowConstant.WORK_STOCK_APPLY_0_50000);
 
-                return;
+                    return;
+                }
+                else
+                {
+                    bean.setFlowKey(TcpFlowConstant.WORK_STOCK_APPLY_50000_MAX);
+
+                    return;
+                }
             }
 
-            if (bean.getTotal() > 1000000 && bean.getTotal() <= 5000000)
+            if (bean.getStype() == TcpConstanst.TCP_STYPE_MANAGER)
             {
-                bean.setFlowKey(TcpFlowConstant.STOCK_APPLY_10000_50000);
+                if (bean.getTotal() <= 500000)
+                {
+                    bean.setFlowKey(TcpFlowConstant.MANAGER_STOCK_APPLY_0_50000);
 
-                return;
-            }
+                    return;
+                }
+                else
+                {
+                    bean.setFlowKey(TcpFlowConstant.MANAGER_STOCK_APPLY_50000_MAX);
 
-            if (bean.getTotal() > 5000000)
-            {
-                bean.setFlowKey(TcpFlowConstant.STOCK_APPLY_50000_MAX);
-
-                return;
+                    return;
+                }
             }
         }
     }
@@ -174,7 +244,8 @@ public abstract class TCPHelper
      */
     public static boolean canTravelApplyDelete(AbstractTcpBean bean)
     {
-        if (bean.getStatus() == TcpConstanst.TCP_STATUS_INIT || bean.getStatus() == TcpConstanst.TCP_STATUS_REJECT)
+        if (bean.getStatus() == TcpConstanst.TCP_STATUS_INIT
+            || bean.getStatus() == TcpConstanst.TCP_STATUS_REJECT)
         {
             return true;
         }
@@ -201,7 +272,8 @@ public abstract class TCPHelper
      */
     public static boolean isTravelApplyInit(TravelApplyBean bean)
     {
-        if (bean.getStatus() == TcpConstanst.TCP_STATUS_INIT || bean.getStatus() == TcpConstanst.TCP_STATUS_REJECT)
+        if (bean.getStatus() == TcpConstanst.TCP_STATUS_INIT
+            || bean.getStatus() == TcpConstanst.TCP_STATUS_REJECT)
         {
             return true;
         }

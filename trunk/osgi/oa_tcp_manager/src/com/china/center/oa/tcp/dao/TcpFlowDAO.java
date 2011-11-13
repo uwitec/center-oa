@@ -23,5 +23,12 @@ import com.china.center.oa.tcp.bean.TcpFlowBean;
  */
 public interface TcpFlowDAO extends DAO<TcpFlowBean, TcpFlowBean>
 {
-
+    /**
+     * findByFlowKeyAndNextStatus
+     * 
+     * @param flowKey
+     * @param nextStatus
+     * @return
+     */
+    TcpFlowBean findByFlowKeyAndNextStatus(String flowKey, int nextStatus);
 }

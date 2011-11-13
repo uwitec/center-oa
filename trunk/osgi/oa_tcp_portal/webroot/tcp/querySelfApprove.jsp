@@ -29,6 +29,7 @@ function load()
              {display: '标识', name : 'applyId', width : '15%'},
              {display: '目的', name : 'name', width : '15%'},
              {display: '申请人', name : 'applyerName', width : '10%'},
+             {display: '系列', name : 'stype', cc: 'tcpStype', width : '5%'},
              {display: '类型', name : 'type', cc: 'tcpType', width : '15%'},
              {display: '部门', name : 'departmentName', width : '10%'},
              {display: '状态', name : 'status', cc: 'tcpStatus', width : '10%'},
@@ -40,6 +41,7 @@ function load()
          },
          buttons : [
              {id: 'update', bclass: 'update',  caption : '处理申请', onpress : updateBean},
+             {id: 'oget1', bclass: 'odraw', caption: '退领', onpress : odrawBean},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -75,6 +77,17 @@ function updateBean2()
 	}
 	else
 	$error('不能操作');
+}
+
+function odrawBean(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {    
+        if(window.confirm('确定退领此报销处理?'))    
+        $ajax(gurl + 'odrawApprove&id=' + getRadioValue('checkb'), callBackFun);
+    }
+    else
+    $error('不能操作');
 }
 
 function doSearch()

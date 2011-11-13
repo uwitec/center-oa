@@ -83,6 +83,7 @@ import com.china.center.oa.tcp.vo.ExpenseApplyVO;
 import com.china.center.oa.tcp.vo.TcpApproveVO;
 import com.china.center.oa.tcp.vo.TcpHandleHisVO;
 import com.china.center.oa.tcp.vo.TravelApplyItemVO;
+import com.china.center.oa.tcp.wrap.AddFinWrap;
 import com.china.center.oa.tcp.wrap.TcpParamWrap;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -148,6 +149,8 @@ public class ExpenseAction extends DispatchAction
 
     private static String QUERYSELFEXPENSE = "tcp.querySelfExpense";
 
+    private static String QUERYALLEXPENSE = "tcp.queryAllExpense";
+
     private static String QUERYSELFAPPROVE = "tcp.querySelfApprove";
 
     private static String QUERYPOOLAPPROVE = "tcp.queryPoolApprove";
@@ -171,8 +174,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward querySelfExpense(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward querySelfExpense(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -205,7 +208,54 @@ public class ExpenseAction extends DispatchAction
                     {
                         if (tcpApproveVO.getPool() == TcpConstanst.TCP_POOL_COMMON)
                         {
-                            vo.setProcesser(vo.getProcesser() + tcpApproveVO.getApproverName() + ';');
+                            vo.setProcesser(vo.getProcesser() + tcpApproveVO.getApproverName()
+                                            + ';');
+                        }
+                    }
+                }
+            });
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryAllExpense
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryAllExpense(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        ActionTools.processJSONQueryCondition(QUERYALLEXPENSE, request, condtion);
+
+        condtion.addCondition("order by ExpenseApplyBean.logTime desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYALLEXPENSE, request, condtion,
+            this.expenseApplyDAO, new HandleResult<ExpenseApplyVO>()
+            {
+                public void handle(ExpenseApplyVO vo)
+                {
+                    TCPHelper.chageVO(vo);
+
+                    // 当前处理人
+                    List<TcpApproveVO> approveList = tcpApproveDAO.queryEntityVOsByFK(vo.getId());
+
+                    for (TcpApproveVO tcpApproveVO : approveList)
+                    {
+                        if (tcpApproveVO.getPool() == TcpConstanst.TCP_POOL_COMMON)
+                        {
+                            vo.setProcesser(vo.getProcesser() + tcpApproveVO.getApproverName()
+                                            + ';');
                         }
                     }
                 }
@@ -224,8 +274,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryPoolApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward queryPoolApprove(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -244,8 +294,8 @@ public class ExpenseAction extends DispatchAction
 
         condtion.addCondition("order by TcpApproveBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion, this.tcpApproveDAO,
-            new HandleResult<TcpApproveVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion,
+            this.tcpApproveDAO, new HandleResult<TcpApproveVO>()
             {
                 public void handle(TcpApproveVO vo)
                 {
@@ -268,8 +318,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryTcpHis(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward queryTcpHis(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -286,8 +336,8 @@ public class ExpenseAction extends DispatchAction
 
         condtion.addCondition("order by TcpHandleHisBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion, this.tcpHandleHisDAO,
-            new HandleResult<TcpHandleHisVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion,
+            this.tcpHandleHisDAO, new HandleResult<TcpHandleHisVO>()
             {
                 public void handle(TcpHandleHisVO vo)
                 {
@@ -308,8 +358,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward querySelfApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward querySelfApprove(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -328,8 +378,8 @@ public class ExpenseAction extends DispatchAction
 
         condtion.addCondition("order by TcpApproveBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion, this.tcpApproveDAO,
-            new HandleResult<TcpApproveVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(cacheKey, request, condtion,
+            this.tcpApproveDAO, new HandleResult<TcpApproveVO>()
             {
                 public void handle(TcpApproveVO vo)
                 {
@@ -350,8 +400,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddExpense(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward preForAddExpense(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         prepareInner(request);
@@ -405,8 +455,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteExpense(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward deleteExpense(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -441,8 +491,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findExpense(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward findExpense(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -570,6 +620,64 @@ public class ExpenseAction extends DispatchAction
                 request.setAttribute("pluginValue", "");
             }
 
+            // 到财务支付(23)需要自动生成凭证的雏形
+            if (bean.getStatus() == 23)
+            {
+                long taxAll = 0;
+
+                if (bean.getPayType() == TcpConstanst.PAYTYPE_PAY_OK)
+                {
+                    taxAll = bean.getRefMoney();
+                }
+
+                if (bean.getPayType() == TcpConstanst.PAYTYPE_PAY_YES)
+                {
+                    taxAll = bean.getRefMoney() + bean.getBorrowTotal();
+                }
+
+                if (bean.getPayType() == TcpConstanst.PAYTYPE_PAY_NO)
+                {
+                    taxAll = bean.getRefMoney() - bean.getLastMoney();
+                }
+
+                List<AddFinWrap> wapList = new ArrayList<AddFinWrap>();
+
+                List<TravelApplyItemVO> itemVOList = bean.getItemVOList();
+
+                for (Iterator iterator = itemVOList.iterator(); iterator.hasNext();)
+                {
+                    TravelApplyItemVO travelApplyItemVO = (TravelApplyItemVO)iterator.next();
+
+                    FeeItemVO feeItem = feeItemDAO.findVO(travelApplyItemVO.getFeeItemId());
+
+                    if (feeItem == null)
+                    {
+                        continue;
+                    }
+
+                    AddFinWrap wrap = new AddFinWrap();
+
+                    wrap.setTaxId(feeItem.getTaxId());
+                    wrap.setTaxName(feeItem.getTaxName());
+
+                    if (iterator.hasNext())
+                    {
+                        wrap.setShowMoney(TCPHelper
+                            .formatNum2(travelApplyItemVO.getMoneys() / 100.0d));
+
+                        taxAll = taxAll - travelApplyItemVO.getMoneys();
+                    }
+                    else
+                    {
+                        wrap.setShowMoney(TCPHelper.formatNum2(taxAll / 100.0d));
+                    }
+
+                    wapList.add(wrap);
+                }
+
+                request.setAttribute("wapList", wapList);
+            }
+
             return mapping.findForward("processExpense" + bean.getType());
         }
 
@@ -587,8 +695,8 @@ public class ExpenseAction extends DispatchAction
      * @throws ServletException
      * @throws IOException
      */
-    public ActionForward downAttachmentFile(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward downAttachmentFile(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
         String path = getAttachmentPath();
@@ -611,7 +719,8 @@ public class ExpenseAction extends DispatchAction
         response.setContentType("application/x-dbf");
 
         response.setHeader("Content-Disposition", "attachment; filename="
-                                                  + StringTools.getStringBySet(bean.getName(), "GBK", "ISO8859-1"));
+                                                  + StringTools.getStringBySet(bean.getName(),
+                                                      "GBK", "ISO8859-1"));
 
         UtilStream us = new UtilStream(new FileInputStream(file), out);
 
@@ -630,8 +739,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addOrUpdateExpense(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward addOrUpdateExpense(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ExpenseApplyBean bean = new ExpenseApplyBean();
@@ -731,8 +840,8 @@ public class ExpenseAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward processExpenseBean(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward processExpenseBean(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -792,7 +901,8 @@ public class ExpenseAction extends DispatchAction
         {
             String[] pcmoneysList = request.getParameterValues("p_cmoneys");
             String[] pcdescriptionList = request.getParameterValues("p_cdescription");
-            List<TravelApplyPayBean> payList = travelApplyPayDAO.queryEntityBeansByFK(param.getId());
+            List<TravelApplyPayBean> payList = travelApplyPayDAO
+                .queryEntityBeansByFK(param.getId());
             for (int i = 0; i < ppid.length; i++ )
             {
                 for (TravelApplyPayBean travelApplyPayBean : payList)
@@ -1155,8 +1265,8 @@ public class ExpenseAction extends DispatchAction
      * @param bean
      * @return
      */
-    private ActionForward parserAttachment(ActionMapping mapping, HttpServletRequest request, RequestDataStream rds,
-                                           ExpenseApplyBean travelApply)
+    private ActionForward parserAttachment(ActionMapping mapping, HttpServletRequest request,
+                                           RequestDataStream rds, ExpenseApplyBean travelApply)
     {
         List<AttachmentBean> attachmentList = new ArrayList<AttachmentBean>();
 

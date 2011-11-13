@@ -325,6 +325,11 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
         // 获得当前的处理环节
         TcpFlowBean token = tcpFlowDAO.findByUnique(bean.getFlowKey(), bean.getStatus());
 
+        if (token == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
         // 群组模式
         if (token.getNextPlugin().startsWith("group"))
         {
@@ -492,8 +497,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
 
                     if (MathTools.doubleToLong2(total) != bean.getBorrowTotal())
                     {
-                        throw new MYException("付款金额[%.2f]不等于公司支付金额[%.2f]", total,
-                            MathTools.longToDouble2(bean.getBorrowTotal()));
+                        throw new MYException("付款金额[%.2f]不等于公司支付金额[%.2f]", total, MathTools
+                            .longToDouble2(bean.getBorrowTotal()));
                     }
                 }
 
@@ -516,8 +521,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
 
                     if (MathTools.doubleToLong2(total) != bean.getLastMoney())
                     {
-                        throw new MYException("员工应偿还借款金额[%.2f]不等于公司财务实际的收款金额[%.2f]",
-                            MathTools.longToDouble2(bean.getLastMoney()), total);
+                        throw new MYException("员工应偿还借款金额[%.2f]不等于公司财务实际的收款金额[%.2f]", MathTools
+                            .longToDouble2(bean.getLastMoney()), total);
                     }
                 }
 
@@ -552,8 +557,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
             {
                 if (bean.getTotal() != bean.getRefMoney() || bean.getTotal() != total)
                 {
-                    throw new MYException("收支平衡下财务入账金额必须是[%.2f]，当前入账金额是[%.2f]",
-                        MathTools.longToDouble2(bean.getRefMoney()), MathTools.longToDouble2(total));
+                    throw new MYException("收支平衡下财务入账金额必须是[%.2f]，当前入账金额是[%.2f]", MathTools
+                        .longToDouble2(bean.getRefMoney()), MathTools.longToDouble2(total));
                 }
             }
 
@@ -562,9 +567,9 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
             {
                 if ( (bean.getRefMoney() + bean.getBorrowTotal()) != total)
                 {
-                    throw new MYException("公司付款给员工下财务入账金额必须是[%.2f]，当前入账金额是[%.2f]",
-                        MathTools.longToDouble2(bean.getRefMoney() + bean.getBorrowTotal()),
-                        MathTools.longToDouble2(total));
+                    throw new MYException("公司付款给员工下财务入账金额必须是[%.2f]，当前入账金额是[%.2f]", MathTools
+                        .longToDouble2(bean.getRefMoney() + bean.getBorrowTotal()), MathTools
+                        .longToDouble2(total));
                 }
             }
 
@@ -573,9 +578,9 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
             {
                 if ( (bean.getRefMoney() - bean.getLastMoney()) != total)
                 {
-                    throw new MYException("员工付款给公司下财务入账金额必须是[%.2f]，当前入账金额是[%.2f]",
-                        MathTools.longToDouble2(bean.getRefMoney() - bean.getLastMoney()),
-                        MathTools.longToDouble2(total));
+                    throw new MYException("员工付款给公司下财务入账金额必须是[%.2f]，当前入账金额是[%.2f]", MathTools
+                        .longToDouble2(bean.getRefMoney() - bean.getLastMoney()), MathTools
+                        .longToDouble2(total));
                 }
             }
 
@@ -594,7 +599,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
             // 结束申请单
             if ( !StringTools.isNullOrNone(bean.getRefId()))
             {
-                travelApplyDAO.updateFeedback(bean.getRefId(), bean.getId(), TcpConstanst.TCP_APPLY_FEEDBACK_YES);
+                travelApplyDAO.updateFeedback(bean.getRefId(), bean.getId(),
+                    TcpConstanst.TCP_APPLY_FEEDBACK_YES);
             }
         }
     }
@@ -636,7 +642,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
         throws MYException
     {
         // 自动生成付款单
-        outBill.setDescription(DefinedCommon.getValue("tcpType", apply.getType()) + "申请借款的付款:" + apply.getId());
+        outBill.setDescription(DefinedCommon.getValue("tcpType", apply.getType()) + "申请借款的付款:"
+                               + apply.getId());
 
         outBill.setLocationId(user.getLocationId());
 
@@ -670,7 +677,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
         throws MYException
     {
         // 自动生成付款单
-        inBill.setDescription(DefinedCommon.getValue("tcpType", apply.getType()) + "申请报销还款金额:" + apply.getId());
+        inBill.setDescription(DefinedCommon.getValue("tcpType", apply.getType()) + "申请报销还款金额:"
+                              + apply.getId());
 
         inBill.setLocationId(user.getLocationId());
 
@@ -772,7 +780,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
             if (bean.getType() != TcpConstanst.TCP_EXPENSETYPE_COMMON)
             {
                 // 解冻申请占用的预算(这样恢复预算)
-                changeBudgetBrrowLockStatus(user, bean.getRefId(), BudgetConstant.BUDGETLOG_STATUS_OK);
+                changeBudgetBrrowLockStatus(user, bean.getRefId(),
+                    BudgetConstant.BUDGETLOG_STATUS_OK);
             }
 
             int oldStatus = bean.getStatus();
@@ -824,7 +833,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
      * @return
      * @throws MYException
      */
-    private int saveApprove(User user, List<String> processList, ExpenseApplyVO bean, int nextStatus, int pool)
+    private int saveApprove(User user, List<String> processList, ExpenseApplyVO bean,
+                            int nextStatus, int pool)
         throws MYException
     {
         // 获得当前的处理环节
@@ -869,6 +879,7 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
                 approve.setStatus(nextStatus);
                 approve.setTotal(bean.getTotal());
                 approve.setType(bean.getType());
+                approve.setStype(bean.getStype());
                 approve.setPool(pool);
 
                 tcpApproveDAO.saveEntityBean(approve);
@@ -879,7 +890,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
             {
                 MailBean mail = new MailBean();
 
-                mail.setTitle(bean.getStafferName() + "的" + DefinedCommon.getValue("tcpType", bean.getType()) + "申请["
+                mail.setTitle(bean.getStafferName() + "的"
+                              + DefinedCommon.getValue("tcpType", bean.getType()) + "申请["
                               + bean.getName() + "]等待您的处理.");
 
                 mail.setContent(mail.getContent());
@@ -929,7 +941,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
      * @param pool
      * @throws MYException
      */
-    private int saveApprove(User user, String processId, ExpenseApplyVO bean, int nextStatus, int pool)
+    private int saveApprove(User user, String processId, ExpenseApplyVO bean, int nextStatus,
+                            int pool)
         throws MYException
     {
         List<String> processList = new ArrayList();
@@ -952,7 +965,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
         throws MYException
     {
         // 通用报销下员工还款是不需要预算的
-        if (bean.getType() == TcpConstanst.TCP_EXPENSETYPE_COMMON && bean.getPayType() == TcpConstanst.PAYTYPE_PAY_NO)
+        if (bean.getType() == TcpConstanst.TCP_EXPENSETYPE_COMMON
+            && bean.getPayType() == TcpConstanst.PAYTYPE_PAY_NO)
         {
             return;
         }
@@ -980,7 +994,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
             if (bean.getType() != TcpConstanst.TCP_EXPENSETYPE_COMMON)
             {
                 // 冻结前面的(这样前面的不占用预算)
-                changeBudgetBrrowLockStatus(user, bean.getRefId(), BudgetConstant.BUDGETLOG_STATUS_TEMP);
+                changeBudgetBrrowLockStatus(user, bean.getRefId(),
+                    BudgetConstant.BUDGETLOG_STATUS_TEMP);
             }
         }
 
@@ -1011,7 +1026,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
                 if (bean.getTotal() != 0)
                 {
                     // 因为稽核有的时候有变化啊
-                    borrowRadio = (bean.getRefMoney() + bean.getBorrowTotal()) / (bean.getTotal() + 0.0d);
+                    borrowRadio = (bean.getRefMoney() + bean.getBorrowTotal())
+                                  / (bean.getTotal() + 0.0d);
                 }
             }
 
@@ -1061,8 +1077,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
 
                 log.setBudgetId(tcpShareVO.getBudgetId());
 
-                BudgetItemBean item = budgetItemDAO.findByBudgetIdAndFeeItemId(tcpShareVO.getBudgetId(),
-                    travelApplyItemVO.getFeeItemId());
+                BudgetItemBean item = budgetItemDAO.findByBudgetIdAndFeeItemId(tcpShareVO
+                    .getBudgetId(), travelApplyItemVO.getFeeItemId());
 
                 if (item == null)
                 {
@@ -1081,7 +1097,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
 
                 log.setLocationId(user.getLocationId());
 
-                log.setLog(DefinedCommon.getValue("tcpType", bean.getType()) + "申请[" + bean.getId() + "]占用预算");
+                log.setLog(DefinedCommon.getValue("tcpType", bean.getType()) + "申请[" + bean.getId()
+                           + "]占用预算");
 
                 log.setLogTime(TimeTools.now());
 
@@ -1190,6 +1207,11 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
                 throw new MYException("只能关联自己的申请,请确认操作");
             }
 
+            if (apply.getStype() != bean.getStype())
+            {
+                throw new MYException("申请系列错误,请确认操作");
+            }
+
             // 检查当前是否有单据关联
             List<ExpenseApplyBean> refList = expenseApplyDAO.queryEntityBeansByFK(bean.getRefId());
 
@@ -1211,9 +1233,9 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
                 // 公司付款金额+借款金额 == 报销金额
                 if (bean.getRefMoney() + bean.getBorrowTotal() != bean.getTotal())
                 {
-                    throw new MYException("公司付款给员工下报销总金额[%s]必须等于借款金额[%s]加公司的付款金额[%s]",
-                        MathTools.longToDoubleStr2(bean.getTotal()), MathTools.longToDoubleStr2(bean.getRefMoney()),
-                        MathTools.longToDoubleStr2(bean.getBorrowTotal()));
+                    throw new MYException("公司付款给员工下报销总金额[%s]必须等于借款金额[%s]加公司的付款金额[%s]", MathTools
+                        .longToDoubleStr2(bean.getTotal()), MathTools.longToDoubleStr2(bean
+                        .getRefMoney()), MathTools.longToDoubleStr2(bean.getBorrowTotal()));
                 }
             }
 
@@ -1224,8 +1246,9 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
                 // 借款金额 == 报销金额
                 if (bean.getRefMoney() + bean.getBorrowTotal() != bean.getTotal())
                 {
-                    throw new MYException("收支平衡下报销总金额[%s]必须等于借款金额[%s]", MathTools.longToDoubleStr2(bean.getTotal()),
-                        MathTools.longToDoubleStr2(bean.getRefMoney()));
+                    throw new MYException("收支平衡下报销总金额[%s]必须等于借款金额[%s]", MathTools
+                        .longToDoubleStr2(bean.getTotal()), MathTools.longToDoubleStr2(bean
+                        .getRefMoney()));
                 }
             }
 
@@ -1236,9 +1259,9 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
                 // 借款金额 == 报销金额+员工支付金额
                 if (bean.getRefMoney() != bean.getTotal() + bean.getLastMoney())
                 {
-                    throw new MYException("员工付款给公司下报销总金额[%s]加员工付款金额[%s]必须等于借款金额[%s]",
-                        MathTools.longToDoubleStr2(bean.getTotal()), MathTools.longToDoubleStr2(bean.getLastMoney()),
-                        MathTools.longToDoubleStr2(bean.getRefMoney()));
+                    throw new MYException("员工付款给公司下报销总金额[%s]加员工付款金额[%s]必须等于借款金额[%s]", MathTools
+                        .longToDoubleStr2(bean.getTotal()), MathTools.longToDoubleStr2(bean
+                        .getLastMoney()), MathTools.longToDoubleStr2(bean.getRefMoney()));
                 }
             }
         }
@@ -1279,6 +1302,7 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
         apply.setApplyId(user.getStafferId());
         apply.setDepartmentId(bean.getDepartmentId());
         apply.setType(bean.getType());
+        apply.setStype(bean.getStype());
         apply.setStatus(TcpConstanst.TCP_STATUS_INIT);
         apply.setTotal(bean.getTotal());
         apply.setLogTime(bean.getLogTime());
@@ -1296,7 +1320,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
      * @param reason
      * @param oprMode
      */
-    private void saveFlowLog(User user, int preStatus, ExpenseApplyBean apply, String reason, int oprMode)
+    private void saveFlowLog(User user, int preStatus, ExpenseApplyBean apply, String reason,
+                             int oprMode)
     {
         FlowLogBean log = new FlowLogBean();
 
@@ -1526,7 +1551,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
 
         for (TravelApplyItemVO travelApplyItemVO : itemVOList)
         {
-            travelApplyItemVO.setShowMoneys(TCPHelper.formatNum2(travelApplyItemVO.getMoneys() / 100.0d));
+            travelApplyItemVO.setShowMoneys(TCPHelper
+                .formatNum2(travelApplyItemVO.getMoneys() / 100.0d));
         }
 
         List<AttachmentBean> attachmentList = attachmentDAO.queryEntityVOsByFK(id);
@@ -1568,7 +1594,7 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
         {
             public int compare(TcpFlowBean o1, TcpFlowBean o2)
             {
-                return o1.getCurrentStatus() - o2.getCurrentStatus();
+                return Integer.parseInt(o1.getId()) - Integer.parseInt(o2.getId());
             }
         });
 
@@ -1579,18 +1605,21 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
             if (bean.getStatus() == tcpFlowBean.getCurrentStatus())
             {
                 sb.append("<font color=red>").append(
-                    DefinedCommon.getValue("tcpStatus", tcpFlowBean.getCurrentStatus())).append("</font>").append("->");
+                    DefinedCommon.getValue("tcpStatus", tcpFlowBean.getCurrentStatus())).append(
+                    "</font>").append("->");
             }
             else
             {
-                sb.append(DefinedCommon.getValue("tcpStatus", tcpFlowBean.getCurrentStatus())).append("->");
+                sb
+                    .append(DefinedCommon.getValue("tcpStatus", tcpFlowBean.getCurrentStatus()))
+                    .append("->");
             }
         }
 
         if (bean.getStatus() == TcpConstanst.TCP_STATUS_END)
         {
-            sb.append("<font color=red>").append(DefinedCommon.getValue("tcpStatus", TcpConstanst.TCP_STATUS_END)).append(
-                "</font>");
+            sb.append("<font color=red>").append(
+                DefinedCommon.getValue("tcpStatus", TcpConstanst.TCP_STATUS_END)).append("</font>");
         }
         else
         {

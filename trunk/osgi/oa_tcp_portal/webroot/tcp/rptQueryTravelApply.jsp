@@ -68,6 +68,7 @@ function closesd()
 	type="hidden" name="method" value="${cacheQueryKey}">
 <input type="hidden" value="1" name="load">
 <input type="hidden" value="${type}" name="type">
+<input type="hidden" value="${stype}" name="stype">
 <input type="hidden" value="${selectMode}" name="selectMode"> 
 
 <p:navigation

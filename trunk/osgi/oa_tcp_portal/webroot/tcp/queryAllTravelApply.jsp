@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<p:link title="办公采购申请管理" link="true" guid="true" cal="true" dialog="true" />
+<p:link title="费用申请管理" link="true" guid="true" cal="true" dialog="true" />
 <script src="../js/common.js"></script>
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
@@ -11,7 +11,7 @@
 <script type="text/javascript">
 
 var gurl = '../tcp/apply.do?method=';
-var addUrl = '../tcp/addTravelApply2.jsp';
+var addUrl = '../tcp/addTravelApply.jsp';
 var ukey = 'TravelApply';
 
 var allDef = getAllDef();
@@ -22,15 +22,15 @@ function load()
      preload();
      
      guidMap = {
-         title: '办公采购申请列表',
-         url: gurl + 'querySelfTravelApply&type=2',
+         title: '全部申请列表',
+         url: gurl + 'queryAllTravelApply',
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},
-             {display: '目的', name : 'name', width : '15%'},
-             {display: '申请人', name : 'stafferName', width : '8%'},
-             {display: '处理人', name : 'processer', width : '8%'},
+             {display: '目的', name : 'name', width : '10%'},
+             {display: '申请人', name : 'stafferName', width : '5%'},
              {display: '系列', name : 'stype', cc: 'tcpStype', width : '5%'},
+             {display: '类型', name : 'type', cc: 'tcpType', width : '12%'},
              {display: '状态', name : 'status', cc: 'tcpStatus', width : '10%'},
              {display: '是否借款', name : 'borrow', cc: 'travelApplyBorrow', width : '5%'},
              {display: '报销', name : 'feedback', cc: 'tcpApplyFeedback', width : '8%'},
@@ -41,9 +41,6 @@ function load()
              id : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
-             {id: 'add', bclass: 'add', onpress : addBean, auth: '0000'},
-             {id: 'update', bclass: 'update', onpress : updateBean, auth: '0000'},
-             {id: 'del', bclass: 'del',  onpress : delBean, auth: '0000'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -61,7 +58,7 @@ function $callBack()
 
 function addBean(opr, grid)
 {
-    $l(gurl + 'preForAdd' + ukey + '&type=2');
+    $l(gurl + 'preForAdd' + ukey + '&type=0');
     //$l(addUrl);
 }
 
@@ -88,7 +85,7 @@ function updateBean()
 
 function doSearch()
 {
-    $modalQuery('../admin/query.do?method=popCommonQuery2&key=tcp.querySelfTravelApply');
+    $modalQuery('../admin/query.do?method=popCommonQuery2&key=tcp.queryAllTravelApply');
 }
 
 </script>

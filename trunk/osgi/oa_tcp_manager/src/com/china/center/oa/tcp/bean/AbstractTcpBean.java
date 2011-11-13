@@ -69,6 +69,12 @@ public abstract class AbstractTcpBean implements Serializable
      */
     protected int type = TcpConstanst.TCP_APPLYTYPE_TRAVEL;
 
+    /**
+     * 0:销售 1:职能 2:管理
+     */
+    @Html(title = "申请系列", must = true, type = Element.SELECT)
+    protected int stype = TcpConstanst.TCP_STYPE_SAIL;
+
     @Html(title = "开始日期", must = true, type = Element.DATE)
     protected String beginDate = "";
 
@@ -732,6 +738,23 @@ public abstract class AbstractTcpBean implements Serializable
     }
 
     /**
+     * @return the stype
+     */
+    public int getStype()
+    {
+        return stype;
+    }
+
+    /**
+     * @param stype
+     *            the stype to set
+     */
+    public void setStype(int stype)
+    {
+        this.stype = stype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -742,26 +765,113 @@ public abstract class AbstractTcpBean implements Serializable
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue.append("AnstractTcpBean ( ").append(super.toString()).append(TAB).append("name = ").append(this.name).append(
-            TAB).append("flowKey = ").append(this.flowKey).append(TAB).append("stafferId = ").append(this.stafferId).append(
-            TAB).append("borrowStafferId = ").append(this.borrowStafferId).append(TAB).append("departmentId = ").append(
-            this.departmentId).append(TAB).append("logTime = ").append(this.logTime).append(TAB).append("refId = ").append(
-            this.refId).append(TAB).append("description = ").append(this.description).append(TAB).append("status = ").append(
-            this.status).append(TAB).append("type = ").append(this.type).append(TAB).append("beginDate = ").append(
-            this.beginDate).append(TAB).append("endDate = ").append(this.endDate).append(TAB).append("total = ").append(
-            this.total).append(TAB).append("borrowTotal = ").append(this.borrowTotal).append(TAB).append("itemList = ").append(
-            this.itemList).append(TAB).append("payList = ").append(this.payList).append(TAB).append("shareList = ").append(
-            this.shareList).append(TAB).append("attachmentList = ").append(this.attachmentList).append(TAB).append(
-            "srcCity = ").append(this.srcCity).append(TAB).append("destCity = ").append(this.destCity).append(TAB).append(
-            "airplaneCharges = ").append(this.airplaneCharges).append(TAB).append("trainCharges = ").append(
-            this.trainCharges).append(TAB).append("busCharges = ").append(this.busCharges).append(TAB).append(
-            "hotelCharges = ").append(this.hotelCharges).append(TAB).append("entertainCharges = ").append(
-            this.entertainCharges).append(TAB).append("allowanceCharges = ").append(this.allowanceCharges).append(TAB).append(
-            "other1Charges = ").append(this.other1Charges).append(TAB).append("other2Charges = ").append(
-            this.other2Charges).append(TAB).append("unitName = ").append(this.unitName).append(TAB).append("address = ").append(
-            this.address).append(TAB).append("customerNames = ").append(this.customerNames).append(TAB).append(
-            "aroundNames = ").append(this.aroundNames).append(TAB).append("companyStafferNames = ").append(
-            this.companyStafferNames).append(TAB).append(" )");
+        retValue
+            .append("AbstractTcpBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("name = ")
+            .append(this.name)
+            .append(TAB)
+            .append("flowKey = ")
+            .append(this.flowKey)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("borrowStafferId = ")
+            .append(this.borrowStafferId)
+            .append(TAB)
+            .append("departmentId = ")
+            .append(this.departmentId)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("refId = ")
+            .append(this.refId)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("stype = ")
+            .append(this.stype)
+            .append(TAB)
+            .append("beginDate = ")
+            .append(this.beginDate)
+            .append(TAB)
+            .append("endDate = ")
+            .append(this.endDate)
+            .append(TAB)
+            .append("total = ")
+            .append(this.total)
+            .append(TAB)
+            .append("borrowTotal = ")
+            .append(this.borrowTotal)
+            .append(TAB)
+            .append("itemList = ")
+            .append(this.itemList)
+            .append(TAB)
+            .append("payList = ")
+            .append(this.payList)
+            .append(TAB)
+            .append("shareList = ")
+            .append(this.shareList)
+            .append(TAB)
+            .append("attachmentList = ")
+            .append(this.attachmentList)
+            .append(TAB)
+            .append("srcCity = ")
+            .append(this.srcCity)
+            .append(TAB)
+            .append("destCity = ")
+            .append(this.destCity)
+            .append(TAB)
+            .append("airplaneCharges = ")
+            .append(this.airplaneCharges)
+            .append(TAB)
+            .append("trainCharges = ")
+            .append(this.trainCharges)
+            .append(TAB)
+            .append("busCharges = ")
+            .append(this.busCharges)
+            .append(TAB)
+            .append("hotelCharges = ")
+            .append(this.hotelCharges)
+            .append(TAB)
+            .append("entertainCharges = ")
+            .append(this.entertainCharges)
+            .append(TAB)
+            .append("allowanceCharges = ")
+            .append(this.allowanceCharges)
+            .append(TAB)
+            .append("other1Charges = ")
+            .append(this.other1Charges)
+            .append(TAB)
+            .append("other2Charges = ")
+            .append(this.other2Charges)
+            .append(TAB)
+            .append("unitName = ")
+            .append(this.unitName)
+            .append(TAB)
+            .append("address = ")
+            .append(this.address)
+            .append(TAB)
+            .append("customerNames = ")
+            .append(this.customerNames)
+            .append(TAB)
+            .append("aroundNames = ")
+            .append(this.aroundNames)
+            .append(TAB)
+            .append("companyStafferNames = ")
+            .append(this.companyStafferNames)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

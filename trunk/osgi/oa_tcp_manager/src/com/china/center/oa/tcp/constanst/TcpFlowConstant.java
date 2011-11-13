@@ -59,6 +59,46 @@ public interface TcpFlowConstant
     String STOCK_APPLY_50000_MAX = "stock-50000+";
 
     /**
+     * 职能系50000+
+     */
+    String WORK_APPLY_50000_MAX = "work-50000+";
+
+    /**
+     * 职能系50000-
+     */
+    String WORK_APPLY_0_50000 = "work-50000-";
+
+    /**
+     * 职能系50000+(采购)
+     */
+    String WORK_STOCK_APPLY_50000_MAX = "work-stock-50000+";
+
+    /**
+     * 职能系50000-(采购)
+     */
+    String WORK_STOCK_APPLY_0_50000 = "work-stock-50000-";
+
+    /**
+     * 管理系50000+
+     */
+    String MANAGER_APPLY_50000_MAX = "manager-50000+";
+
+    /**
+     * 管理系50000-
+     */
+    String MANAGER_APPLY_0_50000 = "manager-50000-";
+
+    /**
+     * 管理系50000+(采购)
+     */
+    String MANAGER_STOCK_APPLY_50000_MAX = "manager-stock-50000+";
+
+    /**
+     * 管理系50000-(采购)
+     */
+    String MANAGER_STOCK_APPLY_0_50000 = "manager-stock-50000-";
+
+    /**
      * 部门经理
      */
     String GROUP_DM = "A220110406000200001";
@@ -102,4 +142,14 @@ public interface TcpFlowConstant
      * 财务入账
      */
     String GROUP_LASTCHECK = "A220110406000200009";
+
+    /**
+     * 中心总监
+     */
+    String GROUP_CENTER_CHECK = "A220110406000200011";
+
+    /**
+     * 锁
+     */
+    String DRAW_LOCK = "TCP_DRAW_LOCK";
 }
