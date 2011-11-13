@@ -640,6 +640,12 @@ public class FinanceManagerImpl implements FinanceManager
 
         financeBean.setItemList(itemList);
 
+        financeBean.setLocks(TaxConstanst.FINANCE_LOCK_YES);
+
+        financeBean.setStatus(TaxConstanst.FINANCE_STATUS_CHECK);
+
+        financeBean.setChecks("程序自动生成的月结凭证,无需核对");
+
         // 入库
         addFinanceBeanWithoutTransactional(user, financeBean);
 
@@ -769,6 +775,12 @@ public class FinanceManagerImpl implements FinanceManager
         itemList.add(itemOutEach);
 
         financeBean.setItemList(itemList);
+
+        financeBean.setLocks(TaxConstanst.FINANCE_LOCK_YES);
+
+        financeBean.setStatus(TaxConstanst.FINANCE_STATUS_CHECK);
+
+        financeBean.setChecks("程序自动生成的月结凭证,无需核对");
 
         // 入库
         addFinanceBeanWithoutTransactional(user, financeBean);
@@ -1065,6 +1077,44 @@ public class FinanceManagerImpl implements FinanceManager
         return deleteFinanceBeanWithoutTransactional(user, id);
     }
 
+    @Transactional(rollbackFor = MYException.class)
+    public String copyFinanceBean(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        FinanceBean bean = financeDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        List<FinanceItemBean> itemList = financeItemDAO.queryEntityBeansByFK(id);
+
+        bean.setItemList(itemList);
+
+        bean.setFinanceDate(TimeTools.now_short());
+
+        // 重置状态
+        bean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_HAND);
+        bean.setStatus(TaxConstanst.FINANCE_STATUS_NOCHECK);
+        bean.setLocks(TaxConstanst.FINANCE_LOCK_NO);
+
+        bean.setRefBill("");
+        bean.setRefOut("");
+        bean.setRefId("");
+        bean.setRefStock("");
+
+        bean.setDescription("拷贝" + id + "生成的凭证");
+        bean.setChecks("");
+        bean.setCreaterId(user.getStafferId());
+
+        addFinanceBeanWithoutTransactional(user, bean);
+
+        return bean.getId();
+    }
+
     public boolean deleteFinanceBeanWithoutTransactional(User user, String id)
         throws MYException
     {
@@ -1348,4 +1398,5 @@ public class FinanceManagerImpl implements FinanceManager
     {
         LOCK_FINANCE = lock_finance;
     }
+
 }

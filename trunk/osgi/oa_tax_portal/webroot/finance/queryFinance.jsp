@@ -41,6 +41,7 @@ function load()
          },
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1802'},
+             {id: 'add1', bclass: 'add', caption: '凭证拷贝', onpress : copyBean, auth: '1802'},
              {id: 'update', bclass: 'update', onpress : updateBean, auth: '1802'},
              {id: 'pass', bclass: 'pass', caption: '总部核对', onpress : checkBean, auth: '1803'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1804'},
@@ -77,6 +78,17 @@ function delBean(opr, grid)
     {    
         if(window.confirm('确定删除?'))    
         $ajax(gurl + 'delete' + ukey + '&id=' + getRadioValue('checkb'), callBackFun);
+    }
+    else
+    $error('不能操作');
+}
+
+function copyBean(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {    
+        if(window.confirm('确定复制此凭证?'))    
+        $l(gurl + 'copy' + ukey + '&id=' + getRadioValue('checkb'));
     }
     else
     $error('不能操作');

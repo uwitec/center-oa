@@ -57,6 +57,17 @@ public interface FinanceManager
         throws MYException;
 
     /**
+     * copyFinanceBean
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    String copyFinanceBean(User user, String id)
+        throws MYException;
+
+    /**
      * 没有事务的删除
      * 
      * @param user

@@ -79,6 +79,7 @@ import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.MathTools;
+import com.china.center.tools.RequestTools;
 import com.china.center.tools.SequenceTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
@@ -768,6 +769,44 @@ public class FinaAction extends ParentQueryFinaAction
     }
 
     /**
+     * copyFinance
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward copyFinance(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        String id = request.getParameter("id");
+
+        CommonTools.removeParamers(request);
+
+        String newId = "";
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            newId = financeManager.copyFinanceBean(user, id);
+
+            request.setAttribute("id", newId);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功复制:" + id);
+        }
+        catch (MYException e)
+        {
+            return ActionTools.toError(e.toString(), mapping, request);
+        }
+
+        return findFinance(mapping, form, request, response);
+    }
+
+    /**
      * checks
      * 
      * @param mapping
@@ -940,7 +979,7 @@ public class FinaAction extends ParentQueryFinaAction
                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
-        String id = request.getParameter("id");
+        String id = RequestTools.getValueFromRequest(request, "id");
 
         String update = request.getParameter("update");
 
