@@ -48,9 +48,9 @@ function getTax(oos)
 {
     var obj = oos[0];
     
-    if (obj.pbottomflag == 1)
+    if (obj.pbottomflag == 0)
     {
-        alert('只能选择父级科目');
+        alert('只能选择子级科目');
         
         return false;
     }

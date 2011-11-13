@@ -138,8 +138,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryBudget(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward queryBudget(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -151,13 +151,14 @@ public class BudgetAction extends DispatchAction
         ActionTools.processJSONQueryCondition(QUERYBUDGET, request, condtion);
 
         // 查询自己的或者通过的
-        condtion.addCondition("and (BudgetBean.stafferId = '" + user.getStafferId() + "' or BudgetBean.status = "
-                              + BudgetConstant.BUDGET_STATUS_PASS + ")");
+        condtion.addCondition("and (BudgetBean.stafferId = '" + user.getStafferId()
+                              + "' or BudgetBean.status = " + BudgetConstant.BUDGET_STATUS_PASS
+                              + ")");
 
         condtion.addCondition("order by BudgetBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYBUDGET, request, condtion, this.budgetDAO,
-            new HandleResult<BudgetVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYBUDGET, request, condtion,
+            this.budgetDAO, new HandleResult<BudgetVO>()
             {
                 public void handle(BudgetVO obj)
                 {
@@ -179,7 +180,8 @@ public class BudgetAction extends DispatchAction
      * @throws ServletException
      */
     public ActionForward rptQueryRunDepartmentBudget(ActionMapping mapping, ActionForm form,
-                                                     HttpServletRequest request, HttpServletResponse reponse)
+                                                     HttpServletRequest request,
+                                                     HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -208,8 +210,8 @@ public class BudgetAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, cacheKey);
 
-            list = budgetDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, cacheKey),
-                PageSeparateTools.getPageSeparate(request, cacheKey));
+            list = budgetDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
+                cacheKey), PageSeparateTools.getPageSeparate(request, cacheKey));
         }
 
         for (BudgetVO budgetVO : list)
@@ -228,7 +230,8 @@ public class BudgetAction extends DispatchAction
      * @param request
      * @param condition
      */
-    private void setQueryRunDepartmentBudgetCondition(HttpServletRequest request, ConditionParse condition)
+    private void setQueryRunDepartmentBudgetCondition(HttpServletRequest request,
+                                                      ConditionParse condition)
     {
         String name = request.getParameter("name");
 
@@ -276,7 +279,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryBudgetForApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward queryBudgetForApprove(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
                                                HttpServletResponse response)
         throws ServletException
     {
@@ -293,9 +297,11 @@ public class BudgetAction extends DispatchAction
         {
             if (userManager.containAuth(user, AuthConstant.BUDGET_ROOT_CHECK))
             {
-                condtion.addIntCondition("BudgetBean.status", "=", BudgetConstant.BUDGET_STATUS_SUBMIT);
+                condtion.addIntCondition("BudgetBean.status", "=",
+                    BudgetConstant.BUDGET_STATUS_SUBMIT);
 
-                condtion.addIntCondition("BudgetBean.type", "=", BudgetConstant.BUDGET_TYPE_COMPANY);
+                condtion
+                    .addIntCondition("BudgetBean.type", "=", BudgetConstant.BUDGET_TYPE_COMPANY);
             }
         }
         // 事业部预算审批
@@ -303,9 +309,11 @@ public class BudgetAction extends DispatchAction
         {
             if (userManager.containAuth(user, AuthConstant.BUDGET_LOCATION_CHECK))
             {
-                condtion.addIntCondition("BudgetBean.status", "=", BudgetConstant.BUDGET_STATUS_SUBMIT);
+                condtion.addIntCondition("BudgetBean.status", "=",
+                    BudgetConstant.BUDGET_STATUS_SUBMIT);
 
-                condtion.addIntCondition("BudgetBean.type", "=", BudgetConstant.BUDGET_TYPE_LOCATION);
+                condtion.addIntCondition("BudgetBean.type", "=",
+                    BudgetConstant.BUDGET_TYPE_LOCATION);
             }
         }
         // 部门预算审批
@@ -313,9 +321,11 @@ public class BudgetAction extends DispatchAction
         {
             if (userManager.containAuth(user, AuthConstant.BUDGET_DEPARTMENT_CHECK))
             {
-                condtion.addIntCondition("BudgetBean.status", "=", BudgetConstant.BUDGET_STATUS_SUBMIT);
+                condtion.addIntCondition("BudgetBean.status", "=",
+                    BudgetConstant.BUDGET_STATUS_SUBMIT);
 
-                condtion.addIntCondition("BudgetBean.type", "=", BudgetConstant.BUDGET_TYPE_DEPARTMENT);
+                condtion.addIntCondition("BudgetBean.type", "=",
+                    BudgetConstant.BUDGET_TYPE_DEPARTMENT);
             }
         }
         else
@@ -327,8 +337,8 @@ public class BudgetAction extends DispatchAction
 
         condtion.addCondition("order by BudgetBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYBUDGETFORAPPROVE, request, condtion, this.budgetDAO,
-            new HandleResult<BudgetVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYBUDGETFORAPPROVE, request,
+            condtion, this.budgetDAO, new HandleResult<BudgetVO>()
             {
                 public void handle(BudgetVO obj)
                 {
@@ -349,7 +359,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryBudgetApplyForApprove(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward queryBudgetApplyForApprove(ActionMapping mapping, ActionForm form,
+                                                    HttpServletRequest request,
                                                     HttpServletResponse response)
         throws ServletException
     {
@@ -366,7 +377,8 @@ public class BudgetAction extends DispatchAction
         {
             if (userManager.containAuth(user, AuthConstant.BUDGET_ROOT_CHECK))
             {
-                condtion.addIntCondition("BudgetBean.type", "=", BudgetConstant.BUDGET_TYPE_COMPANY);
+                condtion
+                    .addIntCondition("BudgetBean.type", "=", BudgetConstant.BUDGET_TYPE_COMPANY);
             }
         }
         // 事业部预算变更审批
@@ -374,7 +386,8 @@ public class BudgetAction extends DispatchAction
         {
             if (userManager.containAuth(user, AuthConstant.BUDGET_LOCATION_CHECK))
             {
-                condtion.addIntCondition("BudgetBean.type", "=", BudgetConstant.BUDGET_TYPE_LOCATION);
+                condtion.addIntCondition("BudgetBean.type", "=",
+                    BudgetConstant.BUDGET_TYPE_LOCATION);
             }
         }
         // 部门预算变更审批
@@ -382,7 +395,8 @@ public class BudgetAction extends DispatchAction
         {
             if (userManager.containAuth(user, AuthConstant.BUDGET_DEPARTMENT_CHECK))
             {
-                condtion.addIntCondition("BudgetBean.type", "=", BudgetConstant.BUDGET_TYPE_DEPARTMENT);
+                condtion.addIntCondition("BudgetBean.type", "=",
+                    BudgetConstant.BUDGET_TYPE_DEPARTMENT);
             }
         }
         else
@@ -392,12 +406,13 @@ public class BudgetAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYBUDGETAPPLYFORAPPROVE, request, condtion);
 
-        condtion.addIntCondition("BudgetApplyBean.status", "=", BudgetConstant.BUDGET_APPLY_STATUS_WAIT_APPROVE);
+        condtion.addIntCondition("BudgetApplyBean.status", "=",
+            BudgetConstant.BUDGET_APPLY_STATUS_WAIT_APPROVE);
 
         condtion.addCondition("order by BudgetApplyBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYBUDGETAPPLYFORAPPROVE, request, condtion,
-            this.budgetApplyDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYBUDGETAPPLYFORAPPROVE, request,
+            condtion, this.budgetApplyDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -412,7 +427,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryBudgetLog(ActionMapping mapping, ActionForm form, final HttpServletRequest request,
+    public ActionForward queryBudgetLog(ActionMapping mapping, ActionForm form,
+                                        final HttpServletRequest request,
                                         HttpServletResponse response)
         throws ServletException
     {
@@ -424,8 +440,8 @@ public class BudgetAction extends DispatchAction
 
         condtion.addCondition("order by BudgetLogBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYBUDGETLOG, request, condtion, this.budgetLogDAO,
-            new HandleResult<BudgetLogVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYBUDGETLOG, request, condtion,
+            this.budgetLogDAO, new HandleResult<BudgetLogVO>()
             {
                 public void handle(BudgetLogVO obj)
                 {
@@ -436,8 +452,9 @@ public class BudgetAction extends DispatchAction
                 public String getHint(List<BudgetLogVO> list)
                 {
                     return "当前合计金额"
-                           + MathTools.formatNum2(budgetLogDAO.sumVOBudgetLogByCondition(PageSeparateTools.getCondition(
-                               request, QUERYBUDGETLOG)) / 100.0d);
+                           + MathTools.formatNum2(budgetLogDAO
+                               .sumVOBudgetLogByCondition(PageSeparateTools.getCondition(request,
+                                   QUERYBUDGETLOG)) / 100.0d);
                 }
             });
 
@@ -454,8 +471,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryAllBudgetLog(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse response)
+    public ActionForward queryAllBudgetLog(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         final String itemId = request.getParameter("itemId");
@@ -525,8 +542,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryRunBudget(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward queryRunBudget(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -544,8 +561,8 @@ public class BudgetAction extends DispatchAction
 
         condtion.addCondition("order by BudgetBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYRUNBUDGET, request, condtion, this.budgetDAO,
-            new HandleResult<BudgetVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYRUNBUDGET, request, condtion,
+            this.budgetDAO, new HandleResult<BudgetVO>()
             {
                 public void handle(BudgetVO obj)
                 {
@@ -568,7 +585,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward querySelfBudgetApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward querySelfBudgetApply(ActionMapping mapping, ActionForm form,
+                                              HttpServletRequest request,
                                               HttpServletResponse response)
         throws ServletException
     {
@@ -584,8 +602,8 @@ public class BudgetAction extends DispatchAction
 
         condtion.addCondition("order by BudgetApplyBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFBUDGETAPPLY, request, condtion,
-            this.budgetApplyDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFBUDGETAPPLY, request,
+            condtion, this.budgetApplyDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -600,8 +618,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryFeeItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward queryFeeItem(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -610,7 +628,8 @@ public class BudgetAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYFEEITEM, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFEEITEM, request, condtion, this.feeItemDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFEEITEM, request, condtion,
+            this.feeItemDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -625,8 +644,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddBudget(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward preForAddBudget(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -691,8 +710,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryReference(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward queryReference(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -733,8 +752,8 @@ public class BudgetAction extends DispatchAction
 
                 for (BudgetBean budgetBean : subBudget)
                 {
-                    BudgetItemBean subBudgetItemBean = budgetItemDAO.findByBudgetIdAndFeeItemId(budgetBean.getId(),
-                        budgetItemBean.getFeeItemId());
+                    BudgetItemBean subBudgetItemBean = budgetItemDAO.findByBudgetIdAndFeeItemId(
+                        budgetBean.getId(), budgetItemBean.getFeeItemId());
 
                     if (subBudgetItemBean != null)
                     {
@@ -752,11 +771,13 @@ public class BudgetAction extends DispatchAction
                 budgetItemBean.setSbudget(MathTools.formatNum(last));
 
                 // 剩余预算
-                budgetItemBean.setSremainMonery(MathTools.formatNum(budgetItemBean.getBudget() - hasUseed));
+                budgetItemBean.setSremainMonery(MathTools.formatNum(budgetItemBean.getBudget()
+                                                                    - hasUseed));
             }
             else
             {
-                budgetItemBean.setSbudget(MathTools.formatNum(budgetItemBean.getBudget() - hasUseed));
+                budgetItemBean.setSbudget(MathTools
+                    .formatNum(budgetItemBean.getBudget() - hasUseed));
             }
         }
 
@@ -773,13 +794,15 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryCurrentBudget(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward rptQueryCurrentBudget(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
                                                HttpServletResponse response)
         throws ServletException
     {
         List<BudgetVO> currentRunBudgetList = budgetDAO.queryCurrentRunBudget();
 
-        request.setAttribute("currentRunBudgetList", BudgetHelper.formatBudgetList(currentRunBudgetList));
+        request.setAttribute("currentRunBudgetList", BudgetHelper
+            .formatBudgetList(currentRunBudgetList));
 
         return mapping.findForward("rptQueryCurrentBudget");
     }
@@ -794,13 +817,14 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryBudgetItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward rptQueryBudgetItem(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("budgetId");
 
-        request.setAttribute("beanList", BudgetHelper.formatBudgetItemList(budgetItemDAO.queryEntityVOsByFK(id)));
+        request.setAttribute("beanList", BudgetHelper.formatBudgetItemList(budgetItemDAO
+            .queryEntityVOsByFK(id)));
 
         return mapping.findForward("rptQueryBudgetItem");
     }
@@ -815,8 +839,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addBudget(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                   HttpServletResponse response)
+    public ActionForward addBudget(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -887,8 +911,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addBudgetApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward addBudgetApply(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -939,8 +963,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addOrUpdateFeeItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward addOrUpdateFeeItem(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -1032,8 +1056,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateBudget(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward updateBudget(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -1104,8 +1128,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryLog(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse response)
+    public ActionForward queryLog(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1129,8 +1153,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward delBudget(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                   HttpServletResponse response)
+    public ActionForward delBudget(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -1165,8 +1189,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward delFeeItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse response)
+    public ActionForward delFeeItem(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -1201,8 +1225,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findBudget(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse response)
+    public ActionForward findBudget(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -1312,8 +1336,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findBudgetApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward findBudgetApply(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1376,12 +1400,23 @@ public class BudgetAction extends DispatchAction
         request.setAttribute("feeItems", feeItems);
 
         // 变更后的
-        List<BudgetItemVO> items = budgetItemDAO.queryEntityVOsByFK(id);
+        List<BudgetItemBean> items = budgetItemDAO.queryEntityBeansByFK(id);
+
+        List<BudgetItemVO> items1 = new ArrayList();
+
+        for (BudgetItemBean budgetItemBean : items)
+        {
+            BudgetItemVO vv = new BudgetItemVO();
+
+            BeanUtil.copyProperties(vv, budgetItemBean);
+
+            items1.add(vv);
+        }
 
         List<BudgetItemVO> itemVOs = vo.getItemVOs();
 
         // format
-        for (Iterator iterator = items.iterator(); iterator.hasNext();)
+        for (Iterator iterator = items1.iterator(); iterator.hasNext();)
         {
             BudgetItemVO budgetItemVO = (BudgetItemVO)iterator.next();
 
@@ -1389,18 +1424,20 @@ public class BudgetAction extends DispatchAction
 
             for (BudgetItemVO each : itemVOs)
             {
+                BudgetHelper.formatBudgetItem(each);
+
                 if (each.getFeeItemId().equals(budgetItemVO.getFeeItemId()))
                 {
                     each.setSchangeMonery(budgetItemVO.getSbudget());
 
-                    iterator.remove();
+                    budgetItemVO.setFeeItemName(each.getFeeItemName());
 
                     break;
                 }
             }
         }
 
-        request.setAttribute("items", items);
+        request.setAttribute("items", items1);
 
         return mapping.findForward("detailBudgetApply");
     }
@@ -1415,8 +1452,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findFeeItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward findFeeItem(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1457,8 +1494,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findBudgetLog(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward findBudgetLog(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1500,8 +1537,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward auditingBudget(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward auditingBudget(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1548,7 +1585,8 @@ public class BudgetAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward auditingBudgetApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward auditingBudgetApply(ActionMapping mapping, ActionForm form,
+                                             HttpServletRequest request,
                                              HttpServletResponse response)
         throws ServletException
     {

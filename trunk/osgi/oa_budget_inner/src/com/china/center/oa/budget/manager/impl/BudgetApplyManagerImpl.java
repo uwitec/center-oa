@@ -171,23 +171,18 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
             // 检查是否超出父级预算
             checkLegality(apply, budget);
 
-            // 末级预算需要验证额外的金额
-            if (budget.getType() == BudgetConstant.BUDGET_TYPE_DEPARTMENT
-                && budget.getLevel() == BudgetConstant.BUDGET_LEVEL_MONTH)
+            String logLevel = BudgetHelper.getLogLevel(budget);
+
+            // CORE 预算变更的核心检查
+            for (BudgetItemBean budgetItemBean : currentItemList)
             {
-                String logLevel = BudgetHelper.getLogLevel(budget);
+                double itemTotal = budgetLogDAO.sumBudgetLogByLevel("budgetItemId" + logLevel,
+                    budgetItemBean.getId()) / 100.0d;
 
-                // CORE 预算变更的核心检查
-                for (BudgetItemBean budgetItemBean : currentItemList)
+                if (MathTools.compare(itemTotal, budgetItemBean.getBudget()) > 0)
                 {
-                    double itemTotal = budgetLogDAO.sumBudgetLogByLevel("budgetItemId" + logLevel,
-                        budgetItemBean.getId()) / 100.0d;
-
-                    if (MathTools.compare(itemTotal, budgetItemBean.getBudget()) > 0)
-                    {
-                        throw new MYException("当前的预算项已经使用和预占的金额达到[%.2f],而更新后的预算只有[%.2f],请确认",
-                            itemTotal, budgetItemBean.getBudget());
-                    }
+                    throw new MYException("当前的预算项已经使用和预占的金额达到[%.2f],而更新后的预算只有[%.2f],请确认",
+                        itemTotal, budgetItemBean.getBudget());
                 }
             }
 
@@ -583,7 +578,7 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
     }
 
     /**
-     * handleCheckAdd
+     * handleCheckAdd(追加)
      * 
      * @param bean
      * @throws MYException
@@ -606,11 +601,12 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
 
             if (currentItem != null)
             {
+                // 预算支持修改变小的
                 if (budgetItemBean.getBudget() < currentItem.getBudget())
                 {
                     throw new MYException("预算项[%s]预算是%s,更改后的预算不能小于%s,您当前修改后的是%s", currentItem
                         .getFeeItemName(), MathTools.formatNum(currentItem.getBudget()), MathTools
-                        .formatNum(currentItem.getRealMonery()), MathTools.formatNum(budgetItemBean
+                        .formatNum(currentItem.getBudget()), MathTools.formatNum(budgetItemBean
                         .getBudget()));
                 }
             }
@@ -633,6 +629,7 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
 
         double currentBudget = budgetItemDAO.sumBudgetTotal(bean.getBudgetId());
 
+        // 预算支持修改变小的
         if (total < currentBudget)
         {
             throw new MYException("当前预算总额是%s,但是你变更后的是%s，不能小于当前总额请重新追加", MathTools
@@ -746,7 +743,7 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
             }
         }
 
-        return pitem.getBudget() >= total;
+        return MathTools.compare(pitem.getBudget(), total) >= 0;
     }
 
     /**
