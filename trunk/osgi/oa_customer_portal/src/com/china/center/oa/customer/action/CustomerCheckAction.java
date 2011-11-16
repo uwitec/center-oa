@@ -89,8 +89,8 @@ public class CustomerCheckAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryCustomerCheck(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward queryCustomerCheck(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -108,8 +108,8 @@ public class CustomerCheckAction extends DispatchAction
 
         condtion.addCondition("order by CustomerCheckBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCUSTOMERCHECK, request, condtion,
-            this.customerCheckDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCUSTOMERCHECK, request,
+            condtion, this.customerCheckDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -124,8 +124,8 @@ public class CustomerCheckAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryCheckItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward queryCheckItem(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -153,7 +153,13 @@ public class CustomerCheckAction extends DispatchAction
                 return JSONTools.writeErrorResponse(response, "没有权限操作");
             }
 
-            if (bean.getBeginTime().compareTo(TimeTools.now()) > 0 || bean.getEndTime().compareTo(TimeTools.now()) < 0)
+            if (bean.getStatus() != CommonConstant.STATUS_PASS)
+            {
+                return JSONTools.writeErrorResponse(response, "没有权限操作");
+            }
+
+            if (bean.getBeginTime().compareTo(TimeTools.now()) > 0
+                || bean.getEndTime().compareTo(TimeTools.now()) < 0)
             {
                 // responseText
                 return JSONTools.writeErrorResponse(response, "超过指定的时间,无法操作");
@@ -169,15 +175,16 @@ public class CustomerCheckAction extends DispatchAction
                 condtion.addCondition("CustomerCheckItemBean.stafferId", "=", user.getStafferId());
             }
 
-            condtion.addIntCondition("CustomerCheckItemBean.status", "=", CommonConstant.STATUS_END);
+            condtion
+                .addIntCondition("CustomerCheckItemBean.status", "=", CommonConstant.STATUS_END);
         }
 
         ActionTools.processJSONQueryCondition(QUERYCHECKITEM + look, request, condtion);
 
         condtion.addCondition("order by CustomerCheckItemBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKITEM + look, request, condtion,
-            this.customerCheckItemDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKITEM + look, request,
+            condtion, this.customerCheckItemDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -192,8 +199,8 @@ public class CustomerCheckAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddCheck(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward preForAddCheck(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         List<StafferBean> list = stafferDAO.listEntityBeans();
@@ -213,8 +220,8 @@ public class CustomerCheckAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addCheck(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse response)
+    public ActionForward addCheck(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         CustomerCheckBean bean = new CustomerCheckBean();
@@ -257,8 +264,8 @@ public class CustomerCheckAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward goonCheck(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                   HttpServletResponse response)
+    public ActionForward goonCheck(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -310,8 +317,8 @@ public class CustomerCheckAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findCheck(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                   HttpServletResponse response)
+    public ActionForward findCheck(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -351,8 +358,8 @@ public class CustomerCheckAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward delCheck(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse response)
+    public ActionForward delCheck(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -387,8 +394,8 @@ public class CustomerCheckAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward passCheck(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                   HttpServletResponse response)
+    public ActionForward passCheck(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -423,8 +430,8 @@ public class CustomerCheckAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward passItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse response)
+    public ActionForward passItem(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -470,8 +477,8 @@ public class CustomerCheckAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rejectItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse response)
+    public ActionForward rejectItem(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -521,8 +528,8 @@ public class CustomerCheckAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rejectCheck(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward rejectCheck(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
