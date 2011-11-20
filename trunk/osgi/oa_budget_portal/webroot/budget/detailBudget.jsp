@@ -104,17 +104,22 @@ function load()
                 <c:if test="${!unit}">
                 <td align="center"><strong>子预算</strong></td>
                 </c:if>
+                
                 <td align="center"><strong>预算金额</strong></td>
+                
                 <c:if test="${!unit}">
                 <td align="center"><strong>未分配预算</strong></td>
                 </c:if>
                 <c:if test="${unit}">
                 <td align="center"><strong>剩余预算</strong></td>
                 </c:if>
+                
                 <td align="center"><strong>已经使用</strong></td>
+                
                 <c:if test="${!unit}">
                 <td align="center"><strong>剩余预算</strong></td>
                 </c:if>
+                
                 <td align="center"><strong>使用率</strong></td>
                 <td align="center"><strong>描述</strong></td>
             </tr>
@@ -122,11 +127,20 @@ function load()
             <c:forEach items="${bean.itemVOs}" var="item" varStatus="vs">
                 <tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
                     <td align="center" onclick="hrefAndSelect(this)">${item.feeItemName}</td>
+                    
                     <c:if test="${!unit}">
                     <td align="center" onclick="hrefAndSelect(this)">${item.description}</td>
                     </c:if>
+                    
                     <td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.budget)}</td>
+                    
+                    <c:if test="${!unit}">
+                    <td align="center" onclick="hrefAndSelect(this)">${item.sbudget}</td>
+                    </c:if>
+                     <c:if test="${unit}">
                     <td align="center" onclick="hrefAndSelect(this)">${item.sremainMonery}</td>
+                    </c:if>
+                    
                     <td align="center" onclick="hrefAndSelect(this)">
                     <a title="点击查看使用明细" href="../budget/budget.do?method=queryAllBudgetLog&load=1&itemId=${item.id}">${item.suseMonery}</a></td>
                     <c:if test="${!unit}">

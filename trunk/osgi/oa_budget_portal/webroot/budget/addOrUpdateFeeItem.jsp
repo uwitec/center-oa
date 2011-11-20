@@ -39,8 +39,12 @@ function load()
     }
 }
 
-function selectTax()
+var g_tax_flag = 1;
+
+function selectTax(flag)
 {
+    g_tax_flag = flag;
+    
     window.common.modal('../tax/tax.do?method=rptQueryTax&load=1&selectMode=1');
 }
 
@@ -55,9 +59,18 @@ function getTax(oos)
         return false;
     }
     
-    $("input[name='taxId']").val(obj.value);
-    
-    $("input[name='taxName']").val(obj.pname);
+    if (g_tax_flag == 1)
+    {
+	    $("input[name='taxId']").val(obj.value);
+	    
+	    $("input[name='taxName']").val(obj.pname);
+    }
+    else
+    {
+        $("input[name='taxId2']").val(obj.value);
+        
+        $("input[name='taxName2']").val(obj.pname);
+    }
 }
 
 </script>
@@ -68,6 +81,7 @@ function getTax(oos)
 	type="hidden" name="method" value="addOrUpdateFeeItem">
 <input id="id" type="hidden" name="id" value="${bean.id}"> 
 <input id="taxId" type="hidden" name="taxId" value="${bean.taxId}"> 
+<input id="taxId" type="hidden" name="taxId2" value="${bean.taxId2}"> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
@@ -96,8 +110,13 @@ function getTax(oos)
 			
 			<p:pro field="taxId" innerString="readonly=true size=60" value="${bean.taxName}">
 			     <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
-                    class="button_class" onclick="selectTax()">&nbsp;
+                    class="button_class" onclick="selectTax(1)">&nbsp;
 			</p:pro>
+			
+			<p:pro field="taxId2" innerString="readonly=true size=60" value="${bean.taxName2}">
+                 <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                    class="button_class" onclick="selectTax(2)">&nbsp;
+            </p:pro>
 
 		</p:table>
 	</p:subBody>

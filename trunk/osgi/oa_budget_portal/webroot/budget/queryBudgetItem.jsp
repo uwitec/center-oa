@@ -23,9 +23,10 @@ function load()
 		 url: '../budget/budget.do?method=queryFeeItem',
 		 colModel : [
 		     {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lname={name}>', width : 40, sortable : false, align: 'center'},
-		     {display: '名称', name : 'name', width : '30%', sortable : false, align: 'left'},
-		     {display: '类型', name : 'type', width : '30%', cc: 'feeItemType', sortable : false, align: 'left'},
-		     {display: '科目', name : 'taxName', width : 'auto', content: '{taxName}({taxCode})', sortable : false}
+		     {display: '名称', name : 'name', width : '20%', sortable : false, align: 'left'},
+		     {display: '类型', name : 'type', width : '20%', cc: 'feeItemType', sortable : false, align: 'left'},
+		     {display: '销售科目', name : 'taxName', width : '20%', content: '{taxName} {taxCode}', sortable : false},
+		     {display: '职能/管理科目', name : 'taxName', width : 'auto', content: '{taxName2} {taxCode2}', sortable : false}
 		     ],
 		 extAtt: {
 		     name : {begin : '<a href=../budget/budget.do?method=findFeeItem&id={id}&update=1>', end : '</a>'}

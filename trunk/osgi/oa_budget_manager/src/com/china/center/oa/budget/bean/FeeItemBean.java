@@ -18,6 +18,7 @@ import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.Unique;
 import com.china.center.jdbc.annotation.enums.Element;
+import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.budget.constant.BudgetConstant;
 import com.china.center.oa.tax.bean.TaxBean;
 
@@ -42,11 +43,18 @@ public class FeeItemBean implements Serializable
     private String name = "";
 
     /**
-     * 关联的费用科目(二级)
+     * 关联的费用科目(报销系)
      */
-    @Join(tagClass = TaxBean.class)
-    @Html(title = "费用科目", name = "taxName", must = true, maxLength = 100)
+    @Join(tagClass = TaxBean.class, alias = "TaxBean1", type = JoinType.LEFT)
+    @Html(title = "费用科目(销售)", name = "taxName", must = true, maxLength = 100)
     private String taxId = "";
+
+    /**
+     * 关联的费用科目(职能/管理系)
+     */
+    @Join(tagClass = TaxBean.class, alias = "TaxBean2", type = JoinType.LEFT)
+    @Html(title = "费用科目(职能/管理)", name = "taxName2", must = true, maxLength = 100)
+    private String taxId2 = "";
 
     /**
      * 预算项属性
@@ -127,6 +135,23 @@ public class FeeItemBean implements Serializable
     }
 
     /**
+     * @return the taxId2
+     */
+    public String getTaxId2()
+    {
+        return taxId2;
+    }
+
+    /**
+     * @param taxId2
+     *            the taxId2 to set
+     */
+    public void setTaxId2(String taxId2)
+    {
+        this.taxId2 = taxId2;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -149,6 +174,9 @@ public class FeeItemBean implements Serializable
             .append(TAB)
             .append("taxId = ")
             .append(this.taxId)
+            .append(TAB)
+            .append("taxId2 = ")
+            .append(this.taxId2)
             .append(TAB)
             .append("type = ")
             .append(this.type)
