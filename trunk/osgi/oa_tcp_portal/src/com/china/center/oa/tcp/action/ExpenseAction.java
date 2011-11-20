@@ -657,8 +657,16 @@ public class ExpenseAction extends DispatchAction
 
                     AddFinWrap wrap = new AddFinWrap();
 
-                    wrap.setTaxId(feeItem.getTaxId());
-                    wrap.setTaxName(feeItem.getTaxName());
+                    if (bean.getStype() == TcpConstanst.TCP_STYPE_SAIL)
+                    {
+                        wrap.setTaxId(feeItem.getTaxId());
+                        wrap.setTaxName(feeItem.getTaxName());
+                    }
+                    else
+                    {
+                        wrap.setTaxId(feeItem.getTaxId2());
+                        wrap.setTaxName(feeItem.getTaxName2());
+                    }
 
                     if (iterator.hasNext())
                     {
