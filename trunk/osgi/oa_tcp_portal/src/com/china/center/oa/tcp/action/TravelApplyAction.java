@@ -185,9 +185,18 @@ public class TravelApplyAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYSELFTRAVELAPPLY, request, condtion);
 
-        condtion.addCondition("TravelApplyBean.stafferId", "=", user.getStafferId());
-
         String type = request.getParameter("type");
+
+        if ("2".equals(type))
+        {
+            condtion.addCondition("AND (TravelApplyBean.stafferId = '" + user.getStafferId()
+                                  + "' OR TravelApplyBean.borrowStafferId = '"
+                                  + user.getStafferId() + "')");
+        }
+        else
+        {
+            condtion.addCondition("TravelApplyBean.stafferId", "=", user.getStafferId());
+        }
 
         condtion.addIntCondition("TravelApplyBean.type", "=", type);
 

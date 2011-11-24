@@ -1202,7 +1202,7 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
                 throw new MYException("申请[%s]已经被报销过,请确认操作", bean.getRefId());
             }
 
-            if ( !apply.getStafferId().equals(user.getStafferId()))
+            if ( !apply.getBorrowStafferId().equals(user.getStafferId()))
             {
                 throw new MYException("只能关联自己的申请,请确认操作");
             }
