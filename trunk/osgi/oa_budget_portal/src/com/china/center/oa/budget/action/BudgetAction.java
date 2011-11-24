@@ -1180,6 +1180,38 @@ public class BudgetAction extends DispatchAction
     }
 
     /**
+     * carryBudget
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward carryBudget(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            budgetManager.initCarryStatus();
+
+            ajax.setSuccess("成功执行");
+        }
+        catch (Exception e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("执行失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
      * delFeeItem
      * 
      * @param mapping

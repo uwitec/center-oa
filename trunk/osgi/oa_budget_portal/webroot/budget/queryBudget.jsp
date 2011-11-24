@@ -51,7 +51,7 @@ function load()
 		     {id: 'update', bclass: 'update', onpress : updateBean, auth: '0502'},
 		     {id: 'del', bclass: 'delete', onpress : delBean, auth: '0502'},
 		     {id: 'log', bclass: 'search', caption: '子预算',  onpress : subBean},
-		     //{id: 'log', bclass: 'search', caption: '相关日志',  onpress : logBean},
+		     {id: 'log2', bclass: 'update', caption: '立即生效',  onpress : doCarry, auth: '0504'},
 		     {id: 'search', bclass: 'search', onpress : doSearch}
 		     ],
 		<p:conf/>

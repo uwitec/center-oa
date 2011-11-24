@@ -152,6 +152,18 @@ function doPass()
     }
 }
 
+function doCarry()
+{
+    if (window.confirm('确定立即生效预算?'))
+    {
+        $ajax('../budget/budget.do?method=carryBudget', callBackFun);
+    }
+    else
+    {
+        $error();
+    }
+}
+
 function doPass1()
 {
     if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').status1 == 2 && getRadio('checkb').etype == 0)
