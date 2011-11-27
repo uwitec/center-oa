@@ -130,8 +130,8 @@ function load()
             <p:pro field="entertainCharges"/>
             <p:pro field="allowanceCharges"/>
             
-            <p:pro field="other1Charges"/>
-            <p:pro field="other2Charges"/>
+            <p:pro field="other1Charges" innerString="readonly=true"/>
+            <p:pro field="other2Charges" innerString="readonly=true"/>
 
         </p:table>
     </p:subBody>

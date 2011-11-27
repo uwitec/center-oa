@@ -373,3 +373,9 @@ function selectTravelApply()
     window.common.modal('../tcp/apply.do?method=rptQueryTravelApply&load=1&selectMode=1&type='+ctype+'&stype=' + $$('stype'));
 }
 
+
+function pagePrint()
+{
+    window.print();
+}
+

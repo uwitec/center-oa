@@ -137,6 +137,12 @@
             <type>select</type>
             <option>$tcpType</option>
         </condtion>
+        <condtion name="payType" caption="付款类型">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$tcpPayType</option>
+        </condtion>
          <condtion name="applyerId" filed="name" caption="申请人" pfix="APPLYER">
              <opr>like</opr>
             <type>text</type>

@@ -684,6 +684,9 @@ function checkMoney2()
           <input type="button" class="button_class" id="sub_b2"
             value="&nbsp;&nbsp;驳回到上一步&nbsp;&nbsp;" onclick="processBean(2)">
           </c:if>
+          &nbsp;&nbsp;<input type="button" name="pr"
+            class="button_class" onclick="pagePrint()"
+            value="&nbsp;&nbsp;打 印&nbsp;&nbsp;">
         </div>
     </p:button>
 	

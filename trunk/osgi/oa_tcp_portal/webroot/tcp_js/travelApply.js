@@ -343,3 +343,8 @@ function initSelectNext()
 		selectNext('group', 'A220110406000200004')
 	}
 }
+
+function pagePrint()
+{
+    window.print();
+}

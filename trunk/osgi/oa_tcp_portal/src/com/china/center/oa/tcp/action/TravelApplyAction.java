@@ -35,14 +35,18 @@ import org.apache.struts.actions.DispatchAction;
 
 import com.center.china.osgi.config.ConfigLoader;
 import com.center.china.osgi.publics.User;
+import com.center.china.osgi.publics.file.writer.WriteFile;
+import com.center.china.osgi.publics.file.writer.WriteFileFactory;
 import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.HandleQueryCondition;
+import com.china.center.actionhelper.common.JSONPageSeparateTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.budget.constant.BudgetConstant;
 import com.china.center.oa.budget.dao.BudgetItemDAO;
 import com.china.center.oa.budget.dao.FeeItemDAO;
@@ -83,6 +87,7 @@ import com.china.center.oa.tcp.vo.TcpHandleHisVO;
 import com.china.center.oa.tcp.vo.TravelApplyItemVO;
 import com.china.center.oa.tcp.vo.TravelApplyVO;
 import com.china.center.oa.tcp.wrap.TcpParamWrap;
+import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.FileTools;
@@ -93,6 +98,7 @@ import com.china.center.tools.SequenceTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 import com.china.center.tools.UtilStream;
+import com.china.center.tools.WriteFileBuffer;
 
 
 /**
@@ -1153,6 +1159,119 @@ public class TravelApplyAction extends DispatchAction
         }
 
         return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * exportTCP
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportTCP(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        String filenName = "TCP_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        response.setContentType("application/x-dbf");
+
+        response.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        ConditionParse condtion = JSONPageSeparateTools.getCondition(request, QUERYSELFAPPROVE);
+
+        int count = this.tcpApproveDAO.countVOByCondition(condtion.toString());
+
+        try
+        {
+            out = response.getOutputStream();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            write.writeLine("日期,标识,目的,申请人,系列,单据类型,部门,付款类型,申请费用,稽核费用");
+
+            PageSeparate page = new PageSeparate();
+
+            page.reset2(count, 2000);
+
+            WriteFileBuffer line = new WriteFileBuffer(write);
+
+            while (page.nextPage())
+            {
+                List<TcpApproveVO> voFList = tcpApproveDAO
+                    .queryEntityVOsByCondition(condtion, page);
+
+                for (TcpApproveVO vo : voFList)
+                {
+                    TCPHelper.getTcpApproveVO(vo);
+
+                    line.reset();
+
+                    line.writeColumn("[" + vo.getLogTime() + "]");
+                    line.writeColumn(vo.getId());
+                    line.writeColumn(StringTools.getExportString(vo.getName()));
+                    line.writeColumn(vo.getApplyerName());
+                    line.writeColumn(ElTools.get("tcpStype", vo.getStype()));
+
+                    line.writeColumn(ElTools.get("tcpType", vo.getType()));
+                    line.writeColumn(changeString(vo.getDepartmentName()));
+                    line.writeColumn(ElTools.get("tcpPayType", vo.getPayType()));
+                    line.writeColumn(changeString(vo.getShowTotal()));
+                    line.writeColumn(changeString(vo.getShowCheckTotal()));
+
+                    line.writeLine();
+                }
+            }
+
+            write.close();
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private String changeString(String str)
+    {
+        return str.replaceAll(",", "");
     }
 
     /**

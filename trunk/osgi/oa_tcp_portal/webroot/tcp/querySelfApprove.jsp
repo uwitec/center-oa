@@ -27,13 +27,13 @@ function load()
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} lurl={url} ltype={type}>', width : 40, align: 'center'},
              {display: '标识', name : 'applyId', width : '15%'},
-             {display: '目的', name : 'name', width : '15%'},
+             {display: '目的', name : 'name', width : '12%'},
              {display: '申请人', name : 'applyerName', width : '10%'},
              {display: '系列', name : 'stype', cc: 'tcpStype', width : '5%'},
-             {display: '类型', name : 'type', cc: 'tcpType', width : '15%'},
+             {display: '类型', name : 'type', cc: 'tcpType', width : '12%'},
              {display: '部门', name : 'departmentName', width : '10%'},
              {display: '状态', name : 'status', cc: 'tcpStatus', width : '10%'},
-             {display: '费用', name : 'showTotal', sortable: true, cname: 'total', width : '8%'},
+             {display: '费用', name : 'showTotal', sortable: true, cname: 'total', content:'{showTotal}/{showCheckTotal}', width : '10%'},
              {display: '时间', name : 'logTime', sortable: true, width : 'auto'}
              ],
          extAtt: {
@@ -42,6 +42,7 @@ function load()
          buttons : [
              {id: 'update', bclass: 'update',  caption : '处理申请', onpress : updateBean},
              {id: 'oget1', bclass: 'odraw', caption: '退领', onpress : odrawBean},
+             {id: 'export', bclass: 'replied',  caption: '导出明细', onpress : exports},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -88,6 +89,11 @@ function odrawBean(opr, grid)
     }
     else
     $error('不能操作');
+}
+
+function exports()
+{
+    document.location.href = gurl + 'exportTCP';
 }
 
 function doSearch()

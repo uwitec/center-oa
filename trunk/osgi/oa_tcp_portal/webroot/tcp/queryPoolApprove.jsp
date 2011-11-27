@@ -26,13 +26,14 @@ function load()
          url: gurl + 'queryPoolApprove',
          colModel : [
              {display: '<input type=checkbox id=flexi_Check onclick=checkAll(this)> 选择', name : 'check', content : '<input type=checkbox name=checkb value={id} lstatus={status} lurl={url}>', width : 40, align: 'center'},
-             {display: '标识', name : 'applyId', width : '15%'},
+             {display: '标识', name : 'applyId', width : '14%'},
              {display: '目的', name : 'name', width : '15%'},
              {display: '申请人', name : 'applyerName', width : '10%'},
              {display: '系列', name : 'stype', cc: 'tcpStype', width : '5%'},
-             {display: '类型', name : 'type', cc: 'tcpType', sortable: true, width : '15%'},
+             {display: '类型', name : 'type', cc: 'tcpType', sortable: true, width : '12%'},
              {display: '状态', name : 'status', cc: 'tcpStatus',  width : '10%'},
              {display: '费用', name : 'showTotal', sortable: true, cname: 'total', width : '8%'},
+             {display: '付款类型', name : 'payType', sortable: false, cc: 'tcpPayType', width : '10%'},
              {display: '时间', name : 'logTime', sortable: true, width : 'auto'}
              ],
          extAtt: {

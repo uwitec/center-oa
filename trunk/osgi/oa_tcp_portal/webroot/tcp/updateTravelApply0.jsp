@@ -183,8 +183,8 @@ function updateInit()
             <p:pro field="entertainCharges" value="${bean.showEntertainCharges}"/>
             <p:pro field="allowanceCharges" value="${bean.showAllowanceCharges}"/>
             
-            <p:pro field="other1Charges" value="${bean.showOther1Charges}"/>
-            <p:pro field="other2Charges" value="${bean.showOther2Charges}"/>
+            <p:pro field="other1Charges" value="${bean.showOther1Charges}" innerString="readonly=true"/>
+            <p:pro field="other2Charges" value="${bean.showOther2Charges}" innerString="readonly=true"/>
 
         </p:table>
     </p:subBody>
