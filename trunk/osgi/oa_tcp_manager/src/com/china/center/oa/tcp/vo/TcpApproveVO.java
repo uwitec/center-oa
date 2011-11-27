@@ -39,6 +39,9 @@ public class TcpApproveVO extends TcpApproveBean
     private String showTotal = "";
 
     @Ignore
+    private String showCheckTotal = "";
+
+    @Ignore
     private String url = "";
 
     /**
@@ -134,6 +137,23 @@ public class TcpApproveVO extends TcpApproveBean
     }
 
     /**
+     * @return the showCheckTotal
+     */
+    public String getShowCheckTotal()
+    {
+        return showCheckTotal;
+    }
+
+    /**
+     * @param showCheckTotal
+     *            the showCheckTotal to set
+     */
+    public void setShowCheckTotal(String showCheckTotal)
+    {
+        this.showCheckTotal = showCheckTotal;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -142,12 +162,31 @@ public class TcpApproveVO extends TcpApproveBean
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("TcpApproveVO ( ").append(super.toString()).append(TAB).append("applyerName = ").append(
-            this.applyerName).append(TAB).append("approverName = ").append(this.approverName).append(TAB).append(
-            "departmentName = ").append(this.departmentName).append(TAB).append("showTotal = ").append(this.showTotal).append(
-            TAB).append("url = ").append(this.url).append(TAB).append(" )");
+        retValue
+            .append("TcpApproveVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("applyerName = ")
+            .append(this.applyerName)
+            .append(TAB)
+            .append("approverName = ")
+            .append(this.approverName)
+            .append(TAB)
+            .append("departmentName = ")
+            .append(this.departmentName)
+            .append(TAB)
+            .append("showTotal = ")
+            .append(this.showTotal)
+            .append(TAB)
+            .append("showCheckTotal = ")
+            .append(this.showCheckTotal)
+            .append(TAB)
+            .append("url = ")
+            .append(this.url)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

@@ -263,4 +263,28 @@ public interface TcpConstanst
      */
     @Defined(key = "tcpApplyFeedback", value = "已关联报销")
     int TCP_APPLY_FEEDBACK_YES = 1;
+
+    /**
+     * 公司付款给员工
+     */
+    @Defined(key = "tcpPayType", value = "公司付款给员工")
+    int PAYTYPE_GPAY_YES = 1;
+
+    /**
+     * 收支均衡
+     */
+    @Defined(key = "tcpPayType", value = "借款报销收支平衡")
+    int PAYTYPE_GPAY_OK = 0;
+
+    /**
+     * 员工付款给公司
+     */
+    @Defined(key = "tcpPayType", value = "员工付款给公司")
+    int PAYTYPE_GPAY_NO = 2;
+
+    /**
+     * 员工付款给公司
+     */
+    @Defined(key = "tcpPayType", value = "员工申请借款")
+    int PAYTYPE_GPAY_BO = 98;
 }

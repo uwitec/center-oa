@@ -69,6 +69,8 @@ public class TcpApproveBean implements Serializable
 
     private int stype = TcpConstanst.TCP_STYPE_SAIL;
 
+    private int payType = TcpConstanst.PAYTYPE_GPAY_OK;
+
     /**
      * 0:归属 1:共享池
      */
@@ -77,6 +79,11 @@ public class TcpApproveBean implements Serializable
     private int status = TcpConstanst.TCP_STATUS_INIT;
 
     private long total = 0;
+
+    /**
+     * 稽核的金额
+     */
+    private long checkTotal = 0;
 
     private String logTime = "";
 
@@ -328,6 +335,40 @@ public class TcpApproveBean implements Serializable
     }
 
     /**
+     * @return the payType
+     */
+    public int getPayType()
+    {
+        return payType;
+    }
+
+    /**
+     * @param payType
+     *            the payType to set
+     */
+    public void setPayType(int payType)
+    {
+        this.payType = payType;
+    }
+
+    /**
+     * @return the checkTotal
+     */
+    public long getCheckTotal()
+    {
+        return checkTotal;
+    }
+
+    /**
+     * @param checkTotal
+     *            the checkTotal to set
+     */
+    public void setCheckTotal(long checkTotal)
+    {
+        this.checkTotal = checkTotal;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -369,6 +410,9 @@ public class TcpApproveBean implements Serializable
             .append("stype = ")
             .append(this.stype)
             .append(TAB)
+            .append("payType = ")
+            .append(this.payType)
+            .append(TAB)
             .append("pool = ")
             .append(this.pool)
             .append(TAB)
@@ -377,6 +421,9 @@ public class TcpApproveBean implements Serializable
             .append(TAB)
             .append("total = ")
             .append(this.total)
+            .append(TAB)
+            .append("checkTotal = ")
+            .append(this.checkTotal)
             .append(TAB)
             .append("logTime = ")
             .append(this.logTime)

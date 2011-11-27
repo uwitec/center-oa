@@ -59,6 +59,8 @@ public class TcpApplyBean implements Serializable
      */
     private int type = TcpConstanst.TCP_APPLYTYPE_TRAVEL;
 
+    private int payType = TcpConstanst.PAYTYPE_GPAY_OK;
+
     private int stype = TcpConstanst.TCP_STYPE_SAIL;
 
     private int status = TcpConstanst.TCP_STATUS_INIT;
@@ -281,6 +283,23 @@ public class TcpApplyBean implements Serializable
     }
 
     /**
+     * @return the payType
+     */
+    public int getPayType()
+    {
+        return payType;
+    }
+
+    /**
+     * @param payType
+     *            the payType to set
+     */
+    public void setPayType(int payType)
+    {
+        this.payType = payType;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -315,6 +334,9 @@ public class TcpApplyBean implements Serializable
             .append(TAB)
             .append("type = ")
             .append(this.type)
+            .append(TAB)
+            .append("payType = ")
+            .append(this.payType)
             .append(TAB)
             .append("stype = ")
             .append(this.stype)

@@ -319,6 +319,7 @@ public abstract class TCPHelper
     public static void getTcpApproveVO(TcpApproveVO vo)
     {
         vo.setShowTotal(MathTools.formatNum(MathTools.longToDouble2(vo.getTotal())));
+        vo.setShowCheckTotal(MathTools.formatNum(MathTools.longToDouble2(vo.getCheckTotal())));
 
         if (vo.getType() <= 10)
         {
