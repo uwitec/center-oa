@@ -760,9 +760,11 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
                 approve.setName(bean.getName());
                 approve.setStatus(nextStatus);
                 approve.setTotal(bean.getTotal());
+                approve.setCheckTotal(bean.getBorrowTotal());
                 approve.setType(bean.getType());
                 approve.setStype(bean.getStype());
                 approve.setPool(pool);
+                approve.setPayType(TcpConstanst.PAYTYPE_GPAY_BO);
 
                 tcpApproveDAO.saveEntityBean(approve);
             }
@@ -1002,6 +1004,7 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
         apply.setTotal(bean.getTotal());
         apply.setLogTime(bean.getLogTime());
         apply.setDescription(bean.getDescription());
+        apply.setPayType(TcpConstanst.PAYTYPE_GPAY_BO);
 
         tcpApplyDAO.saveEntityBean(apply);
     }

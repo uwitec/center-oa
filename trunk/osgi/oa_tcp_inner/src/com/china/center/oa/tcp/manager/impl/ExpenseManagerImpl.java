@@ -878,9 +878,11 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
                 approve.setName(bean.getName());
                 approve.setStatus(nextStatus);
                 approve.setTotal(bean.getTotal());
+                approve.setCheckTotal(bean.getBorrowTotal());
                 approve.setType(bean.getType());
                 approve.setStype(bean.getStype());
                 approve.setPool(pool);
+                approve.setPayType(bean.getPayType());
 
                 tcpApproveDAO.saveEntityBean(approve);
             }
@@ -1307,6 +1309,7 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
         apply.setTotal(bean.getTotal());
         apply.setLogTime(bean.getLogTime());
         apply.setDescription(bean.getDescription());
+        apply.setPayType(bean.getPayType());
 
         tcpApplyDAO.saveEntityBean(apply);
     }

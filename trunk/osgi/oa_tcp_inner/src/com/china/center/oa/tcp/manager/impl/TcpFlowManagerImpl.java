@@ -21,6 +21,7 @@ import com.china.center.oa.group.dao.GroupVSStafferDAO;
 import com.china.center.oa.group.vs.GroupVSStafferBean;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.tcp.bean.AbstractTcpBean;
+import com.china.center.oa.tcp.bean.ExpenseApplyBean;
 import com.china.center.oa.tcp.bean.TcpApproveBean;
 import com.china.center.oa.tcp.bean.TcpFlowBean;
 import com.china.center.oa.tcp.constanst.TcpConstanst;
@@ -198,6 +199,16 @@ public class TcpFlowManagerImpl implements TcpFlowManager
             newApprove.setType(atb.getType());
             newApprove.setStype(atb.getStype());
             newApprove.setPool(TcpConstanst.TCP_POOL_POOL);
+            newApprove.setCheckTotal(atb.getBorrowTotal());
+
+            if (atb instanceof ExpenseApplyBean)
+            {
+                newApprove.setPayType( ((ExpenseApplyBean)atb).getPayType());
+            }
+            else
+            {
+                newApprove.setPayType(TcpConstanst.PAYTYPE_GPAY_BO);
+            }
 
             tcpApproveDAO.saveEntityBean(newApprove);
         }
