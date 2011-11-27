@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: com.china.center.osgi.dym
-Bundle-SymbolicName: com.china.center.osgi.dym
-Bundle-Version: 1.0.0
-Bundle-Activator: com.china.center.osgi.dym.Activator
-Import-Package: org.osgi.framework;version="1.3.0"
-Export-Package: com.china.center.osgi.dym;version="1.0.0"
