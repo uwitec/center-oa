@@ -83,7 +83,7 @@ public abstract class BudgetHelper
     {
         budgetItemVO.setSbudget(MathTools.formatNum2(budgetItemVO.getBudget()));
 
-        budgetItemVO.setBudgetStr(MathTools.formatNum2(budgetItemVO.getBudget()));
+        budgetItemVO.setBudgetStr(MathTools.formatNum(budgetItemVO.getBudget()));
 
         budgetItemVO.setSrealMonery(MathTools.formatNum2(budgetItemVO.getRealMonery()));
 
