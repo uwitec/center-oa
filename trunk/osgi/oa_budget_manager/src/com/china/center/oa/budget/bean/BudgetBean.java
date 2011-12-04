@@ -20,6 +20,7 @@ import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.JCheck;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.annotation.Unique;
 import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.oa.budget.constant.BudgetConstant;
 import com.china.center.oa.publics.bean.LocationBean;
@@ -42,6 +43,7 @@ public class BudgetBean implements Serializable
     @Id
     private String id = "";
 
+    @Unique
     @Html(title = "预算标题", must = true, maxLength = 80)
     private String name = "";
 

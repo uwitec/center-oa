@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.jdbc.expression.Expression;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.budget.bean.BudgetBean;
 import com.china.center.oa.budget.bean.BudgetItemBean;
@@ -462,6 +463,11 @@ public class BudgetManagerImpl implements BudgetManager
             throw new MYException("父预算不存在");
         }
 
+        // 不能重名
+        Expression expression = new Expression(bean, this);
+
+        expression.check("#name &unique @budgetDAO", "名称[" + bean.getName() + "]已经存在");
+
         checkSubmit(bean);
     }
 
@@ -721,6 +727,11 @@ public class BudgetManagerImpl implements BudgetManager
         {
             bean.setLocationId(PublicConstant.CENTER_LOCATION);
         }
+
+        // 不能重名
+        Expression expression = new Expression(bean, this);
+
+        expression.check("#name &unique2 @budgetDAO", "名称[" + bean.getName() + "]已经存在");
 
         checkSubmit(bean);
     }
