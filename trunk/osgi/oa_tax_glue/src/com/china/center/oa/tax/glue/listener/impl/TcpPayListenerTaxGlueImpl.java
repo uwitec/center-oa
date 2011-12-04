@@ -44,6 +44,7 @@ import com.china.center.oa.tcp.bean.TravelApplyBean;
 import com.china.center.oa.tcp.constanst.TcpConstanst;
 import com.china.center.oa.tcp.listener.TcpPayListener;
 import com.china.center.tools.ListTools;
+import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -114,7 +115,8 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
 
             FinanceBean financeBean = new FinanceBean();
 
-            String name = DefinedCommon.getValue("tcpType", bean.getType()) + "申请通过:" + bean.getId() + '.';
+            String name = DefinedCommon.getValue("tcpType", bean.getType()) + "申请通过:"
+                          + bean.getId() + '.';
 
             financeBean.setName(name);
 
@@ -228,7 +230,8 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
 
                 FinanceBean financeBean = new FinanceBean();
 
-                String name = DefinedCommon.getValue("tcpType", bean.getType()) + "申请通过:" + bean.getId() + '.';
+                String name = DefinedCommon.getValue("tcpType", bean.getType()) + "申请通过:"
+                              + bean.getId() + '.';
 
                 financeBean.setName(name);
 
@@ -280,7 +283,8 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
 
                 FinanceBean financeBean = new FinanceBean();
 
-                String name = DefinedCommon.getValue("tcpType", bean.getType()) + "申请通过:" + bean.getId() + '.';
+                String name = DefinedCommon.getValue("tcpType", bean.getType()) + "申请通过:"
+                              + bean.getId() + '.';
 
                 financeBean.setName(name);
 
@@ -317,12 +321,14 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
     /**
      * 财务入账 借:各个费用科目 贷:备用金
      */
-    public void onEndExpenseApply(User user, ExpenseApplyBean bean, List<String> taxIdList, List<Long> moneyList)
+    public void onEndExpenseApply(User user, ExpenseApplyBean bean, List<String> taxIdList,
+                                  List<Long> moneyList, List<String> stafferIdList)
         throws MYException
     {
         FinanceBean financeBean = new FinanceBean();
 
-        String name = DefinedCommon.getValue("tcpType", bean.getType()) + "报销最终通过:" + bean.getId() + '.';
+        String name = DefinedCommon.getValue("tcpType", bean.getType()) + "报销最终通过:" + bean.getId()
+                      + '.';
 
         financeBean.setName(name);
 
@@ -343,7 +349,7 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
         List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
 
         // 各种费用/备用金
-        createAddItem4(user, bean, taxIdList, moneyList, financeBean, itemList);
+        createAddItem4(user, bean, taxIdList, moneyList, financeBean, itemList, stafferIdList);
 
         financeBean.setItemList(itemList);
 
@@ -361,8 +367,9 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
      * @param itemList
      * @throws MYException
      */
-    private void createAddItem1(User user, TravelApplyBean bean, BankBean bank, OutBillBean outBillBean,
-                                FinanceBean financeBean, List<FinanceItemBean> itemList)
+    private void createAddItem1(User user, TravelApplyBean bean, BankBean bank,
+                                OutBillBean outBillBean, FinanceBean financeBean,
+                                List<FinanceItemBean> itemList)
         throws MYException
     {
         // 借款人
@@ -458,8 +465,9 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
      * @param itemList
      * @throws MYException
      */
-    private void createAddItem2(User user, ExpenseApplyBean bean, BankBean bank, OutBillBean outBillBean,
-                                FinanceBean financeBean, List<FinanceItemBean> itemList)
+    private void createAddItem2(User user, ExpenseApplyBean bean, BankBean bank,
+                                OutBillBean outBillBean, FinanceBean financeBean,
+                                List<FinanceItemBean> itemList)
         throws MYException
     {
         // 收款人
@@ -555,8 +563,9 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
      * @param itemList
      * @throws MYException
      */
-    private void createAddItem3(User user, ExpenseApplyBean bean, BankBean bank, InBillBean outBillBean,
-                                FinanceBean financeBean, List<FinanceItemBean> itemList)
+    private void createAddItem3(User user, ExpenseApplyBean bean, BankBean bank,
+                                InBillBean outBillBean, FinanceBean financeBean,
+                                List<FinanceItemBean> itemList)
         throws MYException
     {
         // 收款人
@@ -652,8 +661,9 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
      * @param itemList
      * @throws MYException
      */
-    private void createAddItem4(User user, ExpenseApplyBean bean, List<String> taxIds, List<Long> moneyList,
-                                FinanceBean financeBean, List<FinanceItemBean> itemList)
+    private void createAddItem4(User user, ExpenseApplyBean bean, List<String> taxIds,
+                                List<Long> moneyList, FinanceBean financeBean,
+                                List<FinanceItemBean> itemList, List<String> stafferIdList)
         throws MYException
     {
         // 收款人
@@ -674,6 +684,23 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
         {
             String eachTaxId = taxIds.get(i);
 
+            StafferBean inStaffer = null;
+
+            // 通用报销可能费用的花销人是A，但是收款人是B
+            if (StringTools.isNullOrNone(stafferIdList.get(i)))
+            {
+                inStaffer = staffer;
+            }
+            else
+            {
+                inStaffer = stafferDAO.find(stafferIdList.get(i));
+
+                if (inStaffer == null)
+                {
+                    throw new MYException("数据错误,请确认操作");
+                }
+            }
+
             FinanceItemBean itemIn = new FinanceItemBean();
 
             itemIn.setPareId(pareId);
@@ -684,7 +711,7 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
 
             FinanceHelper.copyFinanceItem(financeBean, itemIn);
 
-            // 其他应收款_备用金(部门/职员)
+            // 费用科目
             TaxBean inTax = taxDAO.findByUnique(eachTaxId);
 
             if (inTax == null)
@@ -704,8 +731,8 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
             itemIn.setDescription(itemIn.getName());
 
             // 辅助核算 部门和职员
-            itemIn.setDepartmentId(staffer.getPrincipalshipId());
-            itemIn.setStafferId(staffer.getId());
+            itemIn.setDepartmentId(inStaffer.getPrincipalshipId());
+            itemIn.setStafferId(inStaffer.getId());
 
             itemList.add(itemIn);
         }

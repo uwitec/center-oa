@@ -119,7 +119,7 @@ function query()
                     <td align="left" width="15%"  onclick="hrefAndSelect(this)"><font color="red"><b>${item.itemPName}</b></font></td>
                     <td align="left" width="20%" onclick="hrefAndSelect(this)" title="${item.expr}"><font color="red"><b>${item.itemName}</b></font></td>
                     <td align="left" onclick="hrefAndSelect(this)" ><font color="red"><b>${item.beginMoneyStr}</b></font></td>
-                    <td align="left" onclick="hrefAndSelect(this)"><font color="red"><b>${item.endMoneyStr}</b></font></td>
+                    <td align="left" onclick="hrefAndSelect(this)"><font color="red"><b>${item.endMoneyStr}(${item.endMoneyChineseStr})</b></font></td>
                     </c:if>
                 </tr>
             </c:forEach>

@@ -58,6 +58,7 @@ import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.tax.bean.FinanceMonthBean;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.bean.UnitBean;
+import com.china.center.oa.tax.constanst.FinaConstant;
 import com.china.center.oa.tax.constanst.TaxConstanst;
 import com.china.center.oa.tax.dao.CheckViewDAO;
 import com.china.center.oa.tax.dao.FinanceDAO;
@@ -618,6 +619,15 @@ public class ParentQueryFinaAction extends DispatchAction
 
             }
 
+            for (FinanceRepVO financeRepVO : repList)
+            {
+                if (financeRepVO.getRmethod() == FinaConstant.FINANCEREP_RMETHOD_ALL)
+                {
+                    financeRepVO.setEndMoneyChineseStr(MathTools.hangeToBig(FinanceHelper
+                        .longToDouble(financeRepVO.getEndMoney())));
+                }
+            }
+
             request.getSession().setAttribute("g_tax_rep_resultList" + type, repList);
 
             request.getSession().setAttribute("g_tax_rep_type", type);
@@ -762,7 +772,16 @@ public class ParentQueryFinaAction extends DispatchAction
 
         currentTotal.setTaxId(tax.getId());
 
-        currentTotal.setDescription("当期合计");
+        if (sumMoneryByCondition[0] == sumMoneryByCondition[1])
+        {
+            currentTotal.setDescription("当期合计:"
+                                        + FinanceHelper
+                                            .longToChineseString(sumMoneryByCondition[0]));
+        }
+        else
+        {
+            currentTotal.setDescription("当期合计");
+        }
 
         currentTotal.setInmoney(sumMoneryByCondition[0]);
 
@@ -2064,6 +2083,10 @@ public class ParentQueryFinaAction extends DispatchAction
         item.setLastmoney(last);
 
         item.setShowLastmoney(FinanceHelper.longToString(last));
+
+        item.getShowChineseInmoney();
+        item.getShowChineseOutmoney();
+        item.getShowChineseLastmoney();
     }
 
     /**

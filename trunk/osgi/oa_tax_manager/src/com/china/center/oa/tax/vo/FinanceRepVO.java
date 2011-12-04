@@ -43,6 +43,9 @@ public class FinanceRepVO extends FinanceRepBean
     @Ignore
     private String endMoneyStr = "";
 
+    @Ignore
+    private String endMoneyChineseStr = "";
+
     /**
      * default constructor
      */
@@ -119,6 +122,23 @@ public class FinanceRepVO extends FinanceRepBean
     }
 
     /**
+     * @return the endMoneyChineseStr
+     */
+    public String getEndMoneyChineseStr()
+    {
+        return endMoneyChineseStr;
+    }
+
+    /**
+     * @param endMoneyChineseStr
+     *            the endMoneyChineseStr to set
+     */
+    public void setEndMoneyChineseStr(String endMoneyChineseStr)
+    {
+        this.endMoneyChineseStr = endMoneyChineseStr;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -144,6 +164,9 @@ public class FinanceRepVO extends FinanceRepBean
             .append(TAB)
             .append("endMoneyStr = ")
             .append(this.endMoneyStr)
+            .append(TAB)
+            .append("endMoneyChineseStr = ")
+            .append(this.endMoneyChineseStr)
             .append(TAB)
             .append(" )");
 

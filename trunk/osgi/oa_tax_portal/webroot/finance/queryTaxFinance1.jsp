@@ -292,10 +292,10 @@ function clearDepartment()
 					</td>
 					<td align="left" onclick="hrefAndSelect(this)">${item.taxId} ${item.taxName}</td>
 					<td align="left" onclick="hrefAndSelect(this)">${item.description}</td>
-					<td align="left" width="8%" onclick="hrefAndSelect(this)" >${item.showInmoney}</td>
-					<td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showOutmoney}</td>
+					<td align="left" width="8%" onclick="hrefAndSelect(this)" title="${item.showChineseInmoney}">${item.showInmoney}</td>
+					<td align="left" width="8%" onclick="hrefAndSelect(this)" title="${item.showChineseOutmoney}">${item.showOutmoney}</td>
 					<td align="left" onclick="hrefAndSelect(this)">${item.forwardName}</td>
-					<td align="left" width="8%" onclick="hrefAndSelect(this)">${item.showLastmoney}</td>
+					<td align="left" width="8%" onclick="hrefAndSelect(this)" title="${item.showChineseLastmoney}">${item.showLastmoney}</td>
 					<td align="left" onclick="hrefAndSelect(this)">${item.departmentName}/${item.stafferName}/${item.unitName}/${item.productName}/${item.depotName}/${item.duty2Name}</td>
 				</tr>
 			</c:forEach>

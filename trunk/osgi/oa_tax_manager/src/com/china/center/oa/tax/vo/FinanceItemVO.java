@@ -81,6 +81,24 @@ public class FinanceItemVO extends FinanceItemBean
     @Ignore
     private String showLastmoney = "";
 
+    /**
+     * 显示金额(中文)
+     */
+    @Ignore
+    private String showChineseInmoney = "";
+
+    /**
+     * 显示金额(中文)
+     */
+    @Ignore
+    private String showChineseOutmoney = "";
+
+    /**
+     * 余额(中文)
+     */
+    @Ignore
+    private String showChineseLastmoney = "";
+
     @Ignore
     private String forwardName = "";
 
@@ -388,6 +406,63 @@ public class FinanceItemVO extends FinanceItemBean
     }
 
     /**
+     * @return the showChineseInmoney
+     */
+    public String getShowChineseInmoney()
+    {
+        this.showChineseInmoney = FinanceHelper.longToChineseString(super.getInmoney());
+
+        return showChineseInmoney;
+    }
+
+    /**
+     * @param showChineseInmoney
+     *            the showChineseInmoney to set
+     */
+    public void setShowChineseInmoney(String showChineseInmoney)
+    {
+        this.showChineseInmoney = showChineseInmoney;
+    }
+
+    /**
+     * @return the showChineseOutmoney
+     */
+    public String getShowChineseOutmoney()
+    {
+        this.showChineseOutmoney = FinanceHelper.longToChineseString(super.getOutmoney());
+
+        return showChineseOutmoney;
+    }
+
+    /**
+     * @param showChineseOutmoney
+     *            the showChineseOutmoney to set
+     */
+    public void setShowChineseOutmoney(String showChineseOutmoney)
+    {
+        this.showChineseOutmoney = showChineseOutmoney;
+    }
+
+    /**
+     * @return the showChineseLastmoney
+     */
+    public String getShowChineseLastmoney()
+    {
+        this.showChineseLastmoney = FinanceHelper.longToChineseString(getLastmoney());
+
+        return showChineseLastmoney;
+    }
+
+    /**
+     * @param showChineseLastmoney
+     *            the showChineseLastmoney to set
+     */
+    public void setShowChineseLastmoney(String showChineseLastmoney)
+    {
+        this.showChineseLastmoney = showChineseLastmoney;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -446,6 +521,15 @@ public class FinanceItemVO extends FinanceItemBean
             .append(TAB)
             .append("showLastmoney = ")
             .append(this.showLastmoney)
+            .append(TAB)
+            .append("showChineseInmoney = ")
+            .append(this.showChineseInmoney)
+            .append(TAB)
+            .append("showChineseOutmoney = ")
+            .append(this.showChineseOutmoney)
+            .append(TAB)
+            .append("showChineseLastmoney = ")
+            .append(this.showChineseLastmoney)
             .append(TAB)
             .append("forwardName = ")
             .append(this.forwardName)

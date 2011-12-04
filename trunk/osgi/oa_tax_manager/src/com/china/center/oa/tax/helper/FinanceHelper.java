@@ -83,9 +83,25 @@ public abstract class FinanceHelper
      */
     public static String longToString(long val)
     {
-        String formatNum = formatNum(val / (TaxConstanst.DOUBLE_TO_INT + 0.0d));
+        String formatNum = formatNum(longToDouble(val));
 
         return formatNum;
+    }
+
+    public static String longToChineseString(long val)
+    {
+        return MathTools.hangeToBig(longToDouble(val));
+    }
+
+    /**
+     * longToDouble
+     * 
+     * @param val
+     * @return
+     */
+    public static double longToDouble(long val)
+    {
+        return val / (TaxConstanst.DOUBLE_TO_INT + 0.0d);
     }
 
     public static String formatNum(double d)
