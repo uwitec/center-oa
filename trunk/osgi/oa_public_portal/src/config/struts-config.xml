@@ -150,5 +150,11 @@
 			type="org.springframework.web.struts.DelegatingActionProxy"
 			validate="false">
 		</action>
+		
+		<action path="/admin/desktop" parameter="method"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+            <forward name="desktop" path="/desktop/desktop.jsp" />
+        </action>
 	</action-mappings>
 </struts-config>

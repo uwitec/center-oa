@@ -37,17 +37,10 @@ function load()
     </c:if>
 	
 </ul>
-<c:if test='${my:dym("com.china.center.oa.flow.portal")}'>
-<div id="fragment-1"><IFRAME height="100%"
-	src="../pers/persional.do?method=queryPersionalDeskTop"
-	id="ifr1" frameborder="0" width="100%" scrolling="auto"></IFRAME></div>
-</c:if>
 
-<c:if test="${!my:dym('com.china.center.oa.flow.portal')}">
 <div id="fragment-1"><IFRAME height="100%"
-    src="test.htm"
-    id="ifr2" frameborder="0" width="100%" scrolling="auto"></IFRAME></div>
-</c:if>
+	src="../admin/desktop.do?method=queryPersionalDeskTop"
+	id="ifr1" frameborder="0" width="100%" scrolling="auto"></IFRAME></div>
 
 <!-- ///////////////////////////////////////////////////////////////////////// -->
 

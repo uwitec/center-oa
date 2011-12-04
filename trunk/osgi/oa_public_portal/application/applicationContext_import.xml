@@ -54,6 +54,8 @@
 	<osgi:reference id="roleDAO" interface="com.china.center.oa.publics.dao.RoleDAO" />
 
 	<osgi:reference id="stafferDAO" interface="com.china.center.oa.publics.dao.StafferDAO" />
+	
+	<osgi:reference id="desktopManager" interface="com.china.center.oa.publics.manager.DesktopManager" />
 
 	<osgi:reference id="systemTemplateFileDAO" interface="com.china.center.oa.publics.dao.SystemTemplateFileDAO" />
 

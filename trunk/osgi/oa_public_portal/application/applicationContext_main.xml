@@ -96,5 +96,8 @@
 		
 	<bean name="/admin/show"
         class="com.china.center.oa.publics.action.ShowAction" />
+        
+    <bean name="/admin/desktop"
+        class="com.china.center.oa.publics.action.DesktopAction" />
 
 </beans>

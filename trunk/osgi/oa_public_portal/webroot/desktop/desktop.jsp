@@ -25,7 +25,7 @@ body
 	width: 48%;
 	float: left;
 	margin-right: 1%;
-	min-height: 400px;
+	height: 250px;
 }
 .serializer
 {
@@ -73,14 +73,15 @@ body
 
 </STYLE>
 </HEAD><BODY>
-<DIV id="sort1" class="groupWrapper">
+<c:forEach items="${wrapList}" var="item" varStatus="vs">
+<DIV id="sort${vs.index + 1}" class="groupWrapper">
 	<DIV id="newsFeeder" class="groupItem" style="left: -14px; top: -56px; display: block; position: static; ">
-		<DIV class="itemHeader" style="-webkit-user-select: none; ">我的邮件<A href="javaScript:void(0)" class="closeEl">[-]</A></DIV>
+		<DIV class="itemHeader" style="-webkit-user-select: none; ">${item.name}<A href="javaScript:void(0)" class="closeEl">[-]</A></DIV>
 		<DIV class="itemContent" style="display: block; overflow-x: visible; overflow-y: visible; ">
-			<c:forEach items="${mailList}" var="item">
+			<c:forEach items="${item.itemList}" var="itemEach">
 			<UL>
-				<LI><a href="../mail/mail.do?method=findMail&id=${item.id}" title="${item.title}">
-				[${item.logTime}] ${my:truncateString(item.title, 0, 45)}</a></LI>
+				<LI><a href="${itemEach.href}" title="${itemEach.tips}">
+				${itemEach.title}</a></LI>
 			</UL>
 		    </c:forEach>
 		</DIV>
@@ -88,22 +89,8 @@ body
 	
 	<P>&nbsp;</P>
 </DIV>
-<DIV id="sort2" class="groupWrapper">
-	<DIV id="news" class="groupItem" style="left: 371px; top: -102px; display: block; position: static; ">
-		<DIV class="itemHeader" style="-webkit-user-select: none; ">待我审批<A href="javaScript:void(0)" class="closeEl">[-]</A></DIV>
-		<DIV class="itemContent" style="display: block; overflow-x: visible; overflow-y: visible; ">
-			<c:forEach items="${flowList}" var="item">
-			<UL>
-                <LI><a href="../flow/instance.do?method=findFlowInstance&id=${item.instanceId}">
-                [${item.logTime}] ${my:truncateString(item.title, 0, 45)}
-                </a></LI>
-			</UL>
-            </c:forEach>
-		</DIV>
-	</DIV>
-	
-	<P>&nbsp;</P>
-</DIV>
+</c:forEach>
+
 <SCRIPT type="text/javascript">
 $(document).ready(
 	function () {
