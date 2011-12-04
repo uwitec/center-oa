@@ -917,7 +917,8 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
 
         final List<String> result = new LinkedList<String>();
 
-        String logTime = "2011-04-01 00:00:00";
+        // String logTime = "2011-04-01 00:00:00";
+        String logTime = TimeTools.now( -30);
 
         // 获得仓区下移动的产品
         List<DepotBean> listEntityBeans = depotDAO.listEntityBeans();
