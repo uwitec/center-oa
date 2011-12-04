@@ -15,25 +15,12 @@
 	  http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"
 	default-autowire="byName" default-init-method="init" default-destroy-method="destroy">
 
-	<bean id="notifyListenerMailImpl" class="com.china.center.oa.mail.listener.impl.NotifyListenerMailImpl" />
-	
-	<bean id="defaultLoadListener" class="com.center.china.osgi.publics.DefaultLoadListener">
-		<property name="listenerManager">
-			<ref bean="notifyManager"/>
-		</property>
-		<property name="listenerList">
-			<list>
-				<ref bean="notifyListenerMailImpl" />
-			</list>
-		</property>
-	</bean>
-	
-	<bean id="desktopListenerMailImpl" class="com.china.center.oa.mail.listener.impl.DesktopListenerMailImpl" />
-
+	<bean id="desktopListenerFlowImpl" class="com.china.center.oa.flow.listener.impl.DesktopListenerFlowImpl" />
+    
     <bean id="defaultLoadDesktopListener" class="com.china.center.oa.publics.listener.DefaultLoadDesktopListener">
         <property name="listenerList">
             <list>
-                <ref bean="desktopListenerMailImpl" />
+                <ref bean="desktopListenerFlowImpl" />
             </list>
         </property>
     </bean>

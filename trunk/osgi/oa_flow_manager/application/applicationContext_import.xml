@@ -35,6 +35,8 @@
 	
 	<osgi:reference id="stafferDAO" interface="com.china.center.oa.publics.dao.StafferDAO" />
 	
+	<osgi:reference id="desktopManager" interface="com.china.center.oa.publics.manager.DesktopManager" />
+	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	
 	<osgi:reference id="stafferVSPriDAO" interface="com.china.center.oa.publics.dao.StafferVSPriDAO" />
