@@ -43,6 +43,7 @@ function load()
              {id: 'add', bclass: 'add', onpress : addBean, auth: '0000'},
              {id: 'update', bclass: 'update', onpress : updateBean, auth: '0000'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '0000'},
+             {id: 'export', bclass: 'replied',  caption: '导出通用模板', onpress : exports},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -83,6 +84,11 @@ function updateBean()
 	}
 	else
 	$error('不能操作');
+}
+
+function exports()
+{
+    document.location.href = '../admin/down.do?method=downTemplateFileByName&fileName=tcp_template.xls';
 }
 
 function doSearch()

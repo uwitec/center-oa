@@ -64,32 +64,35 @@ function del(id)
 
 function checks()
 {
-	if ($$('payType') == 0)
+    if ($$('specialType') == 0)
     {
-        var borrow = 0;
-            
-        var stotal = sumTotal();
-        
-        if (compareNumber(borrow, stotal) != 0)
-        {
-            alert('收支平衡下报销金额必须等于借款金额:' + borrow);
-            
-            return false;
-        }
-    }
-    
-	if ($$('payType') == 1)
-	{
-	    var borrow = sumborrowTotal();
-	        
-	    var stotal = sumTotal();
-	    
-	    if (compareNumber(borrow, stotal) != 0)
+		if ($$('payType') == 0)
 	    {
-	        alert('公司付款给员工下报销金额: '+ stotal +',必须等于公司的付款总金额:' + borrow);
+	        var borrow = 0;
+	            
+	        var stotal = sumTotal();
 	        
-	        return false;
+	        if (compareNumber(borrow, stotal) != 0)
+	        {
+	            alert('收支平衡下报销金额必须等于借款金额:' + borrow);
+	            
+	            return false;
+	        }
 	    }
+	    
+		if ($$('payType') == 1)
+		{
+		    var borrow = sumborrowTotal();
+		        
+		    var stotal = sumTotal();
+		    
+		    if (compareNumber(borrow, stotal) != 0)
+		    {
+		        alert('公司付款给员工下报销金额: '+ stotal +',必须等于公司的付款总金额:' + borrow);
+		        
+		        return false;
+		    }
+		}
 	}
 	
     return true;
@@ -135,8 +138,12 @@ function checks()
             <p:pro field="stafferId" value="${bean.stafferName}"/>
             <p:pro field="departmentId" value="${bean.departmentName}"/>
             
-            <p:pro field="stype" cell="0">
+            <p:pro field="stype">
                 <p:option type="tcpStype" empty="true"/>
+            </p:pro>
+            
+            <p:pro field="specialType">
+                <p:option type="expenseSpecialType"/>
             </p:pro>
             
             <p:pro field="name" cell="0" innerString="size=60"/>
@@ -171,7 +178,7 @@ function checks()
             </p:cell>
             
             <p:cell title="附件" width="8" end="true"><input type="file" name="atts" size="70" class="button_class">  
-            <font color="blue"><span style="cursor: pointer;" onclick="showMoreAtt()" >【更多附件】 </span><b>建议压缩后上传,最大支持10M</b></font>
+            <font color="blue"><span style="cursor: pointer;" onclick="showMoreAtt()" >【更多附件】 </span><b>如果是模板报销只能上传通用报销模板</b></font>
             </p:cell>
             
             <p:cell title="附件N" width="8" id="att_more" end="true">

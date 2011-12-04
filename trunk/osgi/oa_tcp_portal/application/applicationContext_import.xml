@@ -72,6 +72,8 @@
     
     <osgi:reference id="travelApplyManager" interface="com.china.center.oa.tcp.manager.TravelApplyManager" />
 	
+    <osgi:reference id="budgetDAO" interface="com.china.center.oa.budget.dao.BudgetDAO" />
+    
     <osgi:reference id="budgetItemDAO" interface="com.china.center.oa.budget.dao.BudgetItemDAO" />
     
     <osgi:reference id="feeItemDAO" interface="com.china.center.oa.budget.dao.FeeItemDAO" />

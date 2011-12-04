@@ -51,8 +51,12 @@ function load()
             <p:pro field="stafferId" value="${bean.stafferName}"/>
             <p:pro field="departmentId" value="${bean.departmentName}"/>
             
-            <p:pro field="stype" cell="0">
+            <p:pro field="stype">
                 <p:option type="tcpStype" empty="true"/>
+            </p:pro>
+            
+            <p:pro field="specialType">
+                <p:option type="expenseSpecialType"/>
             </p:pro>
             
             <p:pro field="name"/>
@@ -126,16 +130,20 @@ function load()
                     <tr align="center" class="content0">
                         <td width="15%" align="center">开始日期</td>
                         <td width="15%" align="center">结束日期</td>
+                        <td width="15%" align="center">预算</td>
                         <td width="15%" align="center">预算项</td>
                         <td width="10%" align="center">申请金额</td>
+                        <td width="10%" align="center">承担人</td>
                         <td width="40%" align="center">备注</td>
                     </tr>
                     <c:forEach items="${bean.itemVOList}" var="item">
                     <tr align="center" class="content1">
                         <td width="15%" align="center">${item.beginDate}</td>
                         <td width="15%" align="center">${item.endDate}</td>
+                        <td width="15%" align="center">${item.budgetName}</td>
                         <td width="15%" align="center">${item.feeItemName}</td>
                         <td width="10%" align="center">${my:formatNum(item.moneys / 100.0)}</td>
+                        <td width="15%" align="center">${item.feeStafferName}</td>
                         <td width="40%" align="center"><c:out value="${item.description}"/></td>
                     </tr>
                     </c:forEach>
@@ -209,6 +217,7 @@ function load()
                         <td width="35%" align="center">部门</td>
                         <td width="15%" align="center">权签人</td>
                         <td width="10%" align="center">分担比例(%)</td>
+                        <td width="10%" align="center">分担预算</td>
                     </tr>
                     <c:forEach items="${bean.shareVOList}" var="item">
                     <tr align="center" class="content1">
@@ -216,6 +225,7 @@ function load()
                         <td align="center">${item.departmentName}</td>
                         <td align="center">${item.approverName}</td>
                         <td align="center">${item.ratio}</td>
+                        <td align="center">${item.showRealMonery}</td>
                     </tr>
                     </c:forEach>
                 </table>

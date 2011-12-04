@@ -180,7 +180,7 @@ function updateInit()
             <p:pro field="busCharges" value="${bean.showBusCharges}"/>
             <p:pro field="hotelCharges" value="${bean.showHotelCharges}"/>
             
-            <p:pro field="entertainCharges" value="${bean.showEntertainCharges}"/>
+            <p:pro field="entertainCharges" value="${bean.showEntertainCharges}" innerString="readonly=true"/>
             <p:pro field="allowanceCharges" value="${bean.showAllowanceCharges}"/>
             
             <p:pro field="other1Charges" value="${bean.showOther1Charges}" innerString="readonly=true"/>

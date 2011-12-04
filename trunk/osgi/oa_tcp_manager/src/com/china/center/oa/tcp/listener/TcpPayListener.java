@@ -52,7 +52,8 @@ public interface TcpPayListener extends ParentListener
      *            收款单
      * @throws MYException
      */
-    void onPayExpenseApply(User user, ExpenseApplyBean bean, List<OutBillBean> outBillList, List<InBillBean> inBillList)
+    void onPayExpenseApply(User user, ExpenseApplyBean bean, List<OutBillBean> outBillList,
+                           List<InBillBean> inBillList)
         throws MYException;
 
     /**
@@ -64,8 +65,11 @@ public interface TcpPayListener extends ParentListener
      *            付款单
      * @param inBillList
      *            收款单
+     * @param stafferIdList
+     *            职员列表
      * @throws MYException
      */
-    void onEndExpenseApply(User user, ExpenseApplyBean bean, List<String> taxIdList, List<Long> moneyList)
+    void onEndExpenseApply(User user, ExpenseApplyBean bean, List<String> taxIdList,
+                           List<Long> moneyList, List<String> stafferIdList)
         throws MYException;
 }

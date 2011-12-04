@@ -46,6 +46,11 @@ public class TcpShareBean implements Serializable
     private int ratio = 0;
 
     /**
+     * 实际分担金额(到分)
+     */
+    private long realMonery = 0;
+
+    /**
      * default constructor
      */
     public TcpShareBean()
@@ -155,6 +160,23 @@ public class TcpShareBean implements Serializable
     }
 
     /**
+     * @return the realMonery
+     */
+    public long getRealMonery()
+    {
+        return realMonery;
+    }
+
+    /**
+     * @param realMonery
+     *            the realMonery to set
+     */
+    public void setRealMonery(long realMonery)
+    {
+        this.realMonery = realMonery;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -186,6 +208,9 @@ public class TcpShareBean implements Serializable
             .append(TAB)
             .append("ratio = ")
             .append(this.ratio)
+            .append(TAB)
+            .append("realMonery = ")
+            .append(this.realMonery)
             .append(TAB)
             .append(" )");
 

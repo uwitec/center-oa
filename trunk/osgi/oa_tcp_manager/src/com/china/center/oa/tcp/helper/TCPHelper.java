@@ -10,17 +10,20 @@ package com.china.center.oa.tcp.helper;
 
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.vo.FlowLogVO;
 import com.china.center.oa.tcp.bean.AbstractTcpBean;
+import com.china.center.oa.tcp.bean.ExpenseApplyBean;
 import com.china.center.oa.tcp.bean.TravelApplyBean;
 import com.china.center.oa.tcp.constanst.TcpConstanst;
 import com.china.center.oa.tcp.constanst.TcpFlowConstant;
 import com.china.center.oa.tcp.vo.ExpenseApplyVO;
 import com.china.center.oa.tcp.vo.TcpApproveVO;
 import com.china.center.oa.tcp.vo.TcpHandleHisVO;
+import com.china.center.oa.tcp.vo.TcpShareVO;
 import com.china.center.oa.tcp.vo.TravelApplyVO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.MathTools;
@@ -79,7 +82,7 @@ public abstract class TCPHelper
 
             if (bean.getStype() == TcpConstanst.TCP_STYPE_WORK)
             {
-                if (bean.getTotal() <= 500000)
+                if (bean.getTotal() <= 5000000)
                 {
                     bean.setFlowKey(TcpFlowConstant.WORK_APPLY_0_50000);
 
@@ -95,7 +98,7 @@ public abstract class TCPHelper
 
             if (bean.getStype() == TcpConstanst.TCP_STYPE_MANAGER)
             {
-                if (bean.getTotal() <= 500000)
+                if (bean.getTotal() <= 5000000)
                 {
                     bean.setFlowKey(TcpFlowConstant.MANAGER_APPLY_0_50000);
 
@@ -144,7 +147,7 @@ public abstract class TCPHelper
 
             if (bean.getStype() == TcpConstanst.TCP_STYPE_WORK)
             {
-                if (bean.getTotal() <= 500000)
+                if (bean.getTotal() <= 5000000)
                 {
                     bean.setFlowKey(TcpFlowConstant.WORK_STOCK_APPLY_0_50000);
 
@@ -160,7 +163,7 @@ public abstract class TCPHelper
 
             if (bean.getStype() == TcpConstanst.TCP_STYPE_MANAGER)
             {
-                if (bean.getTotal() <= 500000)
+                if (bean.getTotal() <= 5000000)
                 {
                     bean.setFlowKey(TcpFlowConstant.MANAGER_STOCK_APPLY_0_50000);
 
@@ -366,5 +369,35 @@ public abstract class TCPHelper
         vo.setAfterStatusName(DefinedCommon.getValue("tcpStatus", vo.getAfterStatus()));
 
         return vo;
+    }
+
+    public static boolean isTemplateExpense(ExpenseApplyBean bean)
+    {
+        if (bean.getType() == TcpConstanst.TCP_EXPENSETYPE_COMMON
+            && bean.getSpecialType() == TcpConstanst.SPECIALTYPE_TEMPLATE_YES)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * getShareRatio
+     * 
+     * @param shareVOList
+     * @param vo
+     * @return
+     */
+    public static double getShareRatio(List<TcpShareVO> shareVOList, TcpShareVO vo)
+    {
+        long total = 0L;
+
+        for (TcpShareVO tcpShareVO : shareVOList)
+        {
+            total += tcpShareVO.getRealMonery();
+        }
+
+        return ((double)vo.getRealMonery() * 100.0d) / (double)total;
     }
 }

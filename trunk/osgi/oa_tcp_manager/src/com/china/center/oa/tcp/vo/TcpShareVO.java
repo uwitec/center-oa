@@ -10,6 +10,7 @@ package com.china.center.oa.tcp.vo;
 
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Relationship;
 import com.china.center.oa.tcp.bean.TcpShareBean;
 
@@ -33,6 +34,9 @@ public class TcpShareVO extends TcpShareBean
 
     @Relationship(relationField = "budgetId")
     private String budgetName = "";
+
+    @Ignore
+    private String showRealMonery = "";
 
     /**
      * default constructor
@@ -93,6 +97,23 @@ public class TcpShareVO extends TcpShareBean
     }
 
     /**
+     * @return the showRealMonery
+     */
+    public String getShowRealMonery()
+    {
+        return showRealMonery;
+    }
+
+    /**
+     * @param showRealMonery
+     *            the showRealMonery to set
+     */
+    public void setShowRealMonery(String showRealMonery)
+    {
+        this.showRealMonery = showRealMonery;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -115,6 +136,9 @@ public class TcpShareVO extends TcpShareBean
             .append(TAB)
             .append("budgetName = ")
             .append(this.budgetName)
+            .append(TAB)
+            .append("showRealMonery = ")
+            .append(this.showRealMonery)
             .append(TAB)
             .append(" )");
 

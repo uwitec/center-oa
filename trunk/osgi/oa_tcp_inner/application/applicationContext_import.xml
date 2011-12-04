@@ -62,6 +62,8 @@
 	
 	<osgi:reference id="publishMessage" interface="com.china.center.oa.publics.message.PublishMessage" />
 	
+	<osgi:reference id="desktopManager" interface="com.china.center.oa.publics.manager.DesktopManager" />
+	
 	<!-- ************************************************************************************** -->
 	
 	<osgi:reference id="mailMangaer" interface="com.china.center.oa.mail.manager.MailMangaer" />
@@ -71,6 +73,8 @@
 	<osgi:reference id="budgetManager" interface="com.china.center.oa.budget.manager.BudgetManager" />
 	
 	<osgi:reference id="budgetItemDAO" interface="com.china.center.oa.budget.dao.BudgetItemDAO" />
+	
+	<osgi:reference id="budgetDAO" interface="com.china.center.oa.budget.dao.BudgetDAO" />
 	
 	<osgi:reference id="billManager" interface="com.china.center.oa.finance.manager.BillManager" />
 	

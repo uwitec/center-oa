@@ -34,6 +34,8 @@ public class TcpParamWrap implements Serializable
 
     private Object other2 = null;
 
+    private Object other3 = null;
+
     /**
      * default constructor
      */
@@ -144,6 +146,23 @@ public class TcpParamWrap implements Serializable
     }
 
     /**
+     * @return the other3
+     */
+    public Object getOther3()
+    {
+        return other3;
+    }
+
+    /**
+     * @param other3
+     *            the other3 to set
+     */
+    public void setOther3(Object other3)
+    {
+        this.other3 = other3;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -175,6 +194,9 @@ public class TcpParamWrap implements Serializable
             .append(TAB)
             .append("other2 = ")
             .append(this.other2)
+            .append(TAB)
+            .append("other3 = ")
+            .append(this.other3)
             .append(TAB)
             .append(" )");
 

@@ -27,9 +27,11 @@ import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.oa.budget.bean.BudgetBean;
 import com.china.center.oa.budget.bean.BudgetItemBean;
 import com.china.center.oa.budget.bean.BudgetLogBean;
 import com.china.center.oa.budget.constant.BudgetConstant;
+import com.china.center.oa.budget.dao.BudgetDAO;
 import com.china.center.oa.budget.dao.BudgetItemDAO;
 import com.china.center.oa.budget.manager.BudgetManager;
 import com.china.center.oa.finance.bean.InBillBean;
@@ -134,6 +136,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
     private BillManager billManager = null;
 
     private BudgetItemDAO budgetItemDAO = null;
+
+    private BudgetDAO budgetDAO = null;
 
     private AttachmentDAO attachmentDAO = null;
 
@@ -592,7 +596,7 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
                 {
                     // TODO_OSGI 这里是报销结束生成的凭证
                     tcpPayListener.onEndExpenseApply(user, bean, (List<String>)param.getOther(),
-                        (List<Long>)param.getOther2());
+                        (List<Long>)param.getOther2(), (List<String>)param.getOther3());
                 }
             }
 
@@ -792,6 +796,27 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
 
             // 记录操作日志
             saveFlowLog(user, oldStatus, bean, reason, PublicConstant.OPRMODE_REJECT);
+
+            // 通知提交人
+            notifyManager.notifyMessage(bean.getStafferId(), "费用报销:" + bean.getName() + "被"
+                                                             + user.getStafferName() + "驳回,原因:"
+                                                             + reason);
+
+            MailBean mail = new MailBean();
+
+            mail.setTitle("费用报销:" + bean.getName() + "被" + user.getStafferName() + "驳回,原因:"
+                          + reason);
+
+            mail.setContent(mail.getContent());
+
+            mail.setSenderId(StafferConstant.SUPER_STAFFER);
+
+            mail.setReveiveIds(bean.getStafferId());
+
+            mail.setHref(TcpConstanst.TCP_EXPENSE_DETAIL_URL + bean.getId());
+
+            // send mail
+            mailMangaer.addMailWithoutTransactional(UserHelper.getSystemUser(), mail);
         }
         // 驳回到上一步
         else
@@ -1060,38 +1085,157 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
 
         List<TcpShareVO> shareVOList = bean.getShareVOList();
 
+        int ratio = 0;
+
+        for (TcpShareVO tcpShareVO : shareVOList)
+        {
+            ratio += tcpShareVO.getRatio();
+        }
+
         List<BudgetLogBean> logList = new ArrayList();
 
-        long hasUse = 0L;
-
-        for (Iterator iterator = shareVOList.iterator(); iterator.hasNext();)
+        if (ratio == 100)
         {
-            TcpShareVO tcpShareVO = (TcpShareVO)iterator.next();
+            long hasUse = 0L;
+
+            for (Iterator iterator = shareVOList.iterator(); iterator.hasNext();)
+            {
+                TcpShareVO tcpShareVO = (TcpShareVO)iterator.next();
+
+                for (Iterator ite = itemVOList.iterator(); ite.hasNext();)
+                {
+                    TravelApplyItemVO travelApplyItemVO = (TravelApplyItemVO)ite.next();
+
+                    // 预算鉴权()
+                    BudgetLogBean log = new BudgetLogBean();
+
+                    logList.add(log);
+
+                    log.setBudgetId(tcpShareVO.getBudgetId());
+
+                    BudgetItemBean item = budgetItemDAO.findByBudgetIdAndFeeItemId(tcpShareVO
+                        .getBudgetId(), travelApplyItemVO.getFeeItemId());
+
+                    if (item == null)
+                    {
+
+                        throw new MYException("预算[%s]里面缺少预算项[%s],请确认操作",
+                            tcpShareVO.getBudgetName(), travelApplyItemVO.getFeeItemName());
+                    }
+
+                    log.setBudgetItemId(item.getId());
+
+                    log.setDepartmentId(tcpShareVO.getDepartmentId());
+
+                    log.setFeeItemId(travelApplyItemVO.getFeeItemId());
+
+                    log.setFromType(BudgetConstant.BUDGETLOG_FROMTYPE_EXPENSE);
+
+                    log.setLocationId(user.getLocationId());
+
+                    log.setLog(DefinedCommon.getValue("tcpType", bean.getType()) + "申请["
+                               + bean.getId() + "]占用预算");
+
+                    log.setLogTime(TimeTools.now());
+
+                    log.setRefId(bean.getId());
+
+                    log.setRefSubId(travelApplyItemVO.getId());
+
+                    // 使用人
+                    if ( !StringTools.isNullOrNone(travelApplyItemVO.getFeeStafferId()))
+                    {
+                        log.setStafferId(travelApplyItemVO.getFeeStafferId());
+                    }
+                    else
+                    {
+                        log.setStafferId(bean.getBorrowStafferId());
+                    }
+
+                    // 预占
+                    log.setUserType(BudgetConstant.BUDGETLOG_USERTYPE_PRE);
+
+                    // 这里肯定有误差的
+                    long useMoney = 0;
+
+                    if (tcpShareVO.getRatio() != 0)
+                    {
+                        useMoney = Math.round( (tcpShareVO.getRatio() / 100.0) * borrowRadio
+                                              * travelApplyItemVO.getMoneys());
+                    }
+                    else
+                    {
+                        // 直接指定金额(也是百分比啊)
+                        double shareRatio = TCPHelper.getShareRatio(shareVOList, tcpShareVO);
+
+                        useMoney = Math.round( (shareRatio / 100.0) * borrowRadio
+                                              * travelApplyItemVO.getMoneys());
+                    }
+
+                    log.setMonery(useMoney);
+
+                    hasUse += useMoney;
+                }
+            }
+
+            // 处理不能的情况
+            long chae = hasUse - max;
+
+            // 消除误差
+            if (chae != 0)
+            {
+                for (BudgetLogBean budgetLogBean : logList)
+                {
+                    if (budgetLogBean.getMonery() > chae)
+                    {
+                        budgetLogBean.setMonery(budgetLogBean.getMonery() - chae);
+
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            // 直接使用预算
+            long hasUse = 0L;
 
             for (Iterator ite = itemVOList.iterator(); ite.hasNext();)
             {
                 TravelApplyItemVO travelApplyItemVO = (TravelApplyItemVO)ite.next();
+
+                if (StringTools.isNullOrNone(travelApplyItemVO.getBudgetId()))
+                {
+                    throw new MYException("不是模板报销,数据错误,请确认操作");
+                }
 
                 // 预算鉴权()
                 BudgetLogBean log = new BudgetLogBean();
 
                 logList.add(log);
 
-                log.setBudgetId(tcpShareVO.getBudgetId());
+                log.setBudgetId(travelApplyItemVO.getBudgetId());
 
-                BudgetItemBean item = budgetItemDAO.findByBudgetIdAndFeeItemId(tcpShareVO
+                BudgetItemBean item = budgetItemDAO.findByBudgetIdAndFeeItemId(travelApplyItemVO
                     .getBudgetId(), travelApplyItemVO.getFeeItemId());
 
                 if (item == null)
                 {
 
-                    throw new MYException("预算[%s]里面缺少预算项[%s],请确认操作", tcpShareVO.getBudgetName(),
-                        travelApplyItemVO.getFeeItemName());
+                    throw new MYException("预算[%s]里面缺少预算项[%s],请确认操作", travelApplyItemVO
+                        .getBudgetName(), travelApplyItemVO.getFeeItemName());
+                }
+
+                BudgetBean budget = budgetDAO.find(travelApplyItemVO.getBudgetId());
+
+                if (budget == null)
+                {
+                    throw new MYException("预算数据错误,请确认操作");
                 }
 
                 log.setBudgetItemId(item.getId());
 
-                log.setDepartmentId(tcpShareVO.getDepartmentId());
+                log.setDepartmentId(budget.getBudgetDepartment());
 
                 log.setFeeItemId(travelApplyItemVO.getFeeItemId());
 
@@ -1109,36 +1253,43 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
                 log.setRefSubId(travelApplyItemVO.getId());
 
                 // 使用人
-                log.setStafferId(bean.getBorrowStafferId());
+                if ( !StringTools.isNullOrNone(travelApplyItemVO.getFeeStafferId()))
+                {
+                    log.setStafferId(travelApplyItemVO.getFeeStafferId());
+                }
+                else
+                {
+                    log.setStafferId(bean.getBorrowStafferId());
+                }
 
                 // 预占
                 log.setUserType(BudgetConstant.BUDGETLOG_USERTYPE_PRE);
 
                 // 这里肯定有误差的
-                long useMoney = Math.round( (tcpShareVO.getRatio() / 100.0) * borrowRadio
-                                           * travelApplyItemVO.getMoneys());
+                long useMoney = Math.round(borrowRadio * travelApplyItemVO.getMoneys());
 
                 log.setMonery(useMoney);
 
                 hasUse += useMoney;
             }
-        }
 
-        // 处理不能的情况
-        long chae = hasUse - max;
+            // 处理不能的情况
+            long chae = hasUse - max;
 
-        // 消除误差
-        if (chae != 0)
-        {
-            for (BudgetLogBean budgetLogBean : logList)
+            // 消除误差
+            if (chae != 0)
             {
-                if (budgetLogBean.getMonery() > chae)
+                for (BudgetLogBean budgetLogBean : logList)
                 {
-                    budgetLogBean.setMonery(budgetLogBean.getMonery() - chae);
+                    if (budgetLogBean.getMonery() > chae)
+                    {
+                        budgetLogBean.setMonery(budgetLogBean.getMonery() - chae);
 
-                    break;
+                        break;
+                    }
                 }
             }
+
         }
 
         // 进入使用日志,如果超出预算会抛出异常的
@@ -1280,7 +1431,7 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
                 ratioTotal += tcpShareBean.getRatio();
             }
 
-            if (ratioTotal != 100)
+            if (ratioTotal != 100 && ratioTotal != 0)
             {
                 throw new MYException("分担比例之和必须是100");
             }
@@ -1576,6 +1727,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
             {
                 tcpShareVO.setDepartmentName(dep.getFullName());
             }
+
+            tcpShareVO.setShowRealMonery(MathTools.longToDoubleStr2(tcpShareVO.getRealMonery()));
         }
 
         bean.setShareVOList(shareList);
@@ -1972,6 +2125,23 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
     public void setExpenseApplyDAO(ExpenseApplyDAO expenseApplyDAO)
     {
         this.expenseApplyDAO = expenseApplyDAO;
+    }
+
+    /**
+     * @return the budgetDAO
+     */
+    public BudgetDAO getBudgetDAO()
+    {
+        return budgetDAO;
+    }
+
+    /**
+     * @param budgetDAO
+     *            the budgetDAO to set
+     */
+    public void setBudgetDAO(BudgetDAO budgetDAO)
+    {
+        this.budgetDAO = budgetDAO;
     }
 
 }

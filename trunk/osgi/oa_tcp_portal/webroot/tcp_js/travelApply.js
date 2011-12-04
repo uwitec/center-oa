@@ -91,6 +91,13 @@ function checks()
     {
         var borrow = sumborrowTotal();
         
+        if (borrow == 0)
+        {
+        	alert('借款金额不能为0');
+            
+            return false;
+        }
+        
         var stotal = sumTotal();
         
         if (compareNumber(borrow, stotal) > 0)

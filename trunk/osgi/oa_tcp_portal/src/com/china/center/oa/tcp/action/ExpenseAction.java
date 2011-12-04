@@ -35,6 +35,8 @@ import org.apache.struts.actions.DispatchAction;
 
 import com.center.china.osgi.config.ConfigLoader;
 import com.center.china.osgi.publics.User;
+import com.center.china.osgi.publics.file.read.ReadeFileFactory;
+import com.center.china.osgi.publics.file.read.ReaderFile;
 import com.china.center.actionhelper.common.ActionTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
@@ -42,7 +44,10 @@ import com.china.center.actionhelper.json.AjaxResult;
 import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.oa.budget.bean.BudgetBean;
+import com.china.center.oa.budget.bean.FeeItemBean;
 import com.china.center.oa.budget.constant.BudgetConstant;
+import com.china.center.oa.budget.dao.BudgetDAO;
 import com.china.center.oa.budget.dao.BudgetItemDAO;
 import com.china.center.oa.budget.dao.FeeItemDAO;
 import com.china.center.oa.budget.vo.FeeItemVO;
@@ -53,8 +58,10 @@ import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.AttachmentBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
+import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.dao.AttachmentDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
+import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.vo.FlowLogVO;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.dao.FinanceDAO;
@@ -90,6 +97,7 @@ import com.china.center.tools.CommonTools;
 import com.china.center.tools.FileTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
+import com.china.center.tools.RegularExpress;
 import com.china.center.tools.RequestDataStream;
 import com.china.center.tools.SequenceTools;
 import com.china.center.tools.StringTools;
@@ -131,6 +139,8 @@ public class ExpenseAction extends DispatchAction
 
     private BudgetItemDAO budgetItemDAO = null;
 
+    private BudgetDAO budgetDAO = null;
+
     private FeeItemDAO feeItemDAO = null;
 
     private ExpenseApplyDAO expenseApplyDAO = null;
@@ -140,6 +150,8 @@ public class ExpenseAction extends DispatchAction
     private TcpHandleHisDAO tcpHandleHisDAO = null;
 
     private OutBillDAO outBillDAO = null;
+
+    private StafferDAO stafferDAO = null;
 
     private InBillDAO inBillDAO = null;
 
@@ -564,6 +576,12 @@ public class ExpenseAction extends DispatchAction
                 }
             }
 
+            if (TCPHelper.isTemplateExpense(bean))
+            {
+                bean.setItemVOList(null);
+                bean.setShareVOList(null);
+            }
+
             return mapping.findForward("updateExpense" + bean.getType());
         }
 
@@ -644,6 +662,8 @@ public class ExpenseAction extends DispatchAction
 
                 List<TravelApplyItemVO> itemVOList = bean.getItemVOList();
 
+                boolean templateExpense = TCPHelper.isTemplateExpense(bean);
+
                 for (Iterator iterator = itemVOList.iterator(); iterator.hasNext();)
                 {
                     TravelApplyItemVO travelApplyItemVO = (TravelApplyItemVO)iterator.next();
@@ -678,6 +698,15 @@ public class ExpenseAction extends DispatchAction
                     else
                     {
                         wrap.setShowMoney(TCPHelper.formatNum2(taxAll / 100.0d));
+                    }
+
+                    if (templateExpense)
+                    {
+                        wrap.setStafferId(travelApplyItemVO.getFeeStafferId());
+                    }
+                    else
+                    {
+                        wrap.setStafferId(bean.getStafferId());
                     }
 
                     wapList.add(wrap);
@@ -803,6 +832,17 @@ public class ExpenseAction extends DispatchAction
         // 子项的组装
         fillExpense(rds, bean);
 
+        // 这里是通用报销的模板报销的特殊处理
+        if (TCPHelper.isTemplateExpense(bean))
+        {
+            ActionForward parserExcel = parserExcel(mapping, request, bean);
+
+            if (parserExcel != null)
+            {
+                return parserExcel;
+            }
+        }
+
         try
         {
             User user = Helper.getUser(request);
@@ -836,6 +876,227 @@ public class ExpenseAction extends DispatchAction
         }
 
         return mapping.findForward("querySelfExpense" + bean.getType());
+    }
+
+    /**
+     * parserExcel
+     * 
+     * @param mapping
+     * @param request
+     * @param bean
+     * @return
+     */
+    private ActionForward parserExcel(ActionMapping mapping, HttpServletRequest request,
+                                      ExpenseApplyBean bean)
+    {
+        // 解析文件
+        List<AttachmentBean> attachmentList = bean.getAttachmentList();
+
+        if (ListTools.isEmptyOrNull(attachmentList) || attachmentList.size() != 1)
+        {
+            return ActionTools.toError("通用模板报销有且只有一个附件", mapping, request);
+        }
+
+        AttachmentBean attachmentBean = attachmentList.get(0);
+
+        ReaderFile reader = ReadeFileFactory.getXLSReader();
+
+        StringBuilder builder = new StringBuilder();
+
+        List<TravelApplyItemBean> itemList = new ArrayList();
+
+        List<TcpShareBean> shareList = new ArrayList<TcpShareBean>();
+
+        try
+        {
+
+            reader.readFile(this.getAttachmentPath() + attachmentBean.getPath());
+
+            while (reader.hasNext())
+            {
+                String[] obj = (String[])reader.next();
+
+                // 第一行忽略
+                if (reader.getCurrentLineNumber() == 1)
+                {
+                    continue;
+                }
+
+                TravelApplyItemBean item = new TravelApplyItemBean();
+
+                int currentNumber = reader.getCurrentLineNumber();
+
+                if (obj.length >= 5)
+                {
+                    StafferBean sb = stafferDAO.findByUnique(obj[0].trim());
+
+                    if (sb == null)
+                    {
+                        builder
+                            .append("第[" + currentNumber + "]错误:")
+                            .append("人员(费用承担人)没有找到")
+                            .append("<br>");
+
+                        continue;
+                    }
+
+                    item.setFeeStafferId(sb.getId());
+
+                    if ( !RegularExpress.isDouble(obj[2]))
+                    {
+                        builder.append("第[" + currentNumber + "]错误:").append("费用不是数字").append(
+                            "<br>");
+
+                        continue;
+                    }
+
+                    item.setMoneys(MathTools.doubleToLong2(obj[2].trim()));
+
+                    BudgetBean budgetBean = budgetDAO.findByUnique(obj[3].trim());
+
+                    if (budgetBean == null)
+                    {
+                        builder.append("第[" + currentNumber + "]错误:").append("预算名称没有找到").append(
+                            "<br>");
+
+                        continue;
+                    }
+
+                    if (budgetBean.getStatus() != BudgetConstant.BUDGET_STATUS_PASS
+                        || budgetBean.getCarryStatus() != BudgetConstant.BUDGET_CARRY_DOING)
+                    {
+                        builder.append("第[" + currentNumber + "]错误:").append("预算不在执行态中").append(
+                            "<br>");
+
+                        continue;
+                    }
+
+                    // 细化到预算
+                    item.setBudgetId(budgetBean.getId());
+
+                    // 分担的解析
+                    TcpShareBean tcpShare = getTcpShare(shareList, budgetBean.getId());
+
+                    if (tcpShare == null)
+                    {
+                        tcpShare = new TcpShareBean();
+
+                        tcpShare.setApproverId(budgetBean.getSigner());
+                        tcpShare.setBudgetId(budgetBean.getId());
+                        tcpShare.setDepartmentId(budgetBean.getBudgetDepartment());
+                        tcpShare.setRealMonery(item.getMoneys());
+
+                        shareList.add(tcpShare);
+                    }
+                    else
+                    {
+                        tcpShare.setRealMonery(tcpShare.getRealMonery() + item.getMoneys());
+                    }
+
+                    FeeItemBean feeItem = feeItemDAO.findByUnique(obj[4].trim());
+
+                    if (feeItem == null)
+                    {
+                        builder.append("第[" + currentNumber + "]错误:").append("预算项没有找到").append(
+                            "<br>");
+
+                        continue;
+                    }
+
+                    item.setFeeItemId(feeItem.getId());
+
+                    if (obj.length > 5)
+                    {
+                        item.setDescription(obj[5]);
+                    }
+
+                    item.setBeginDate(TimeTools.now_short());
+                    item.setEndDate(TimeTools.now_short());
+
+                    itemList.add(item);
+
+                }
+                else
+                {
+                    builder
+                        .append("第[" + currentNumber + "]错误:")
+                        .append("数据长度不足5格,描述可以为空,其他不可以为空")
+                        .append("<br>");
+
+                    continue;
+                }
+            }
+
+            if (builder.length() != 0)
+            {
+                return ActionTools.toError(builder.toString(), mapping, request);
+            }
+
+            // 重新赋值
+            bean.setItemList(itemList);
+            bean.setShareList(shareList);
+
+            long total = 0L;
+
+            for (TravelApplyItemBean travelApplyItemBean : itemList)
+            {
+                total += travelApplyItemBean.getMoneys();
+            }
+
+            bean.setTotal(total);
+
+            List<TravelApplyPayBean> payList = bean.getPayList();
+
+            long paytotal = 0L;
+
+            for (TravelApplyPayBean each : payList)
+            {
+                paytotal += each.getMoneys();
+            }
+
+            bean.setBorrowTotal(paytotal);
+
+            // 不能溢出的
+            if (paytotal > total)
+            {
+                return ActionTools.toError("总费用金额为:" + MathTools.longToDoubleStr2(total)
+                                           + ",但是请求付款金额为:" + MathTools.longToDoubleStr2(paytotal)
+                                           + ".需要付款金额过大", mapping, request);
+            }
+
+        }
+        catch (Exception e)
+        {
+            _logger.error(e, e);
+
+            return ActionTools.toError("附件解析失败", mapping, request);
+        }
+        finally
+        {
+            try
+            {
+                reader.close();
+            }
+            catch (IOException e)
+            {
+                _logger.error(e, e);
+            }
+        }
+
+        return null;
+    }
+
+    private TcpShareBean getTcpShare(List<TcpShareBean> shareList, String budegId)
+    {
+        for (TcpShareBean tcpShareBean : shareList)
+        {
+            if (tcpShareBean.getBudgetId().equals(budegId))
+            {
+                return tcpShareBean;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -987,15 +1248,20 @@ public class ExpenseAction extends DispatchAction
             }
         }
 
+        // 凭证
         String[] taxIds = request.getParameterValues("taxId");
 
         if (taxIds != null && taxIds.length > 0)
         {
             String[] moneys = request.getParameterValues("t_money");
+            String[] stafferIds = request.getParameterValues("tax_stafferId");
 
             // FinanceItemBean
             List<String> taxList = new ArrayList<String>();
+
             List<Long> longList = new ArrayList<Long>();
+
+            List<String> stafferIdList = new ArrayList<String>();
 
             for (int i = 0; i < taxIds.length; i++ )
             {
@@ -1008,11 +1274,14 @@ public class ExpenseAction extends DispatchAction
                 // 万单位
                 longList.add(MathTools.doubleToLong2(moneys[i]) * 100);
 
+                stafferIdList.add(stafferIds[i]);
             }
 
             param.setOther(taxList);
 
             param.setOther2(longList);
+
+            param.setOther3(stafferIdList);
         }
     }
 
@@ -1714,6 +1983,40 @@ public class ExpenseAction extends DispatchAction
     public void setInBillDAO(InBillDAO inBillDAO)
     {
         this.inBillDAO = inBillDAO;
+    }
+
+    /**
+     * @return the stafferDAO
+     */
+    public StafferDAO getStafferDAO()
+    {
+        return stafferDAO;
+    }
+
+    /**
+     * @param stafferDAO
+     *            the stafferDAO to set
+     */
+    public void setStafferDAO(StafferDAO stafferDAO)
+    {
+        this.stafferDAO = stafferDAO;
+    }
+
+    /**
+     * @return the budgetDAO
+     */
+    public BudgetDAO getBudgetDAO()
+    {
+        return budgetDAO;
+    }
+
+    /**
+     * @param budgetDAO
+     *            the budgetDAO to set
+     */
+    public void setBudgetDAO(BudgetDAO budgetDAO)
+    {
+        this.budgetDAO = budgetDAO;
     }
 
 }

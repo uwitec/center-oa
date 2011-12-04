@@ -125,6 +125,18 @@ public interface TcpConstanst
     int TRAVELAPPLY_BORROW_NO = 0;
 
     /**
+     * 普通报销
+     */
+    @Defined(key = "expenseSpecialType", value = "普通报销")
+    int SPECIALTYPE_TEMPLATE_NO = 0;
+
+    /**
+     * 模板报销
+     */
+    @Defined(key = "expenseSpecialType", value = "模板报销")
+    int SPECIALTYPE_TEMPLATE_YES = 1;
+
+    /**
      * 公司付款给员工
      */
     @Defined(key = "expensePayType", value = "公司付款给员工")

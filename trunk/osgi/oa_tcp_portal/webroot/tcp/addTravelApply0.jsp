@@ -127,7 +127,7 @@ function load()
             <p:pro field="busCharges"/>
             <p:pro field="hotelCharges"/>
             
-            <p:pro field="entertainCharges"/>
+            <p:pro field="entertainCharges" innerString="readonly=true"/>
             <p:pro field="allowanceCharges"/>
             
             <p:pro field="other1Charges" innerString="readonly=true"/>
