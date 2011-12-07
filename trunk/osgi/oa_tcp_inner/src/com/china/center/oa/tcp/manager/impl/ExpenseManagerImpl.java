@@ -168,8 +168,10 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
 
         bean.setStafferId(user.getStafferId());
 
-        // bs就是自己
-        bean.setBorrowStafferId(user.getStafferId());
+        if (StringTools.isNullOrNone(bean.getBorrowStafferId()))
+        {
+            bean.setBorrowStafferId(user.getStafferId());
+        }
 
         bean.setStatus(TcpConstanst.TCP_STATUS_INIT);
 

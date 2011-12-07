@@ -82,8 +82,8 @@ function updateInit()
 <input type="hidden" name="addOrUpdate" value="1"> 
 <input type="hidden" name="id" value="${bean.id}"> 
 <input type="hidden" name="type" value="${bean.type}"> 
-<input type="hidden" name="borrow" value="${bean.borrow}"> 
 <input type="hidden" name="processId" value=""> 
+<input type="hidden" name="borrowStafferId" value="${bean.borrowStafferId}"> 
 <input type="hidden" name="stafferId" value="${g_stafferBean.id}"> 
 <input type="hidden" name="departmentId" value="${g_stafferBean.principalshipId}"> 
 <input
@@ -121,6 +121,15 @@ function updateInit()
             <p:pro field="name" cell="0" innerString="size=60"/>
             
             <p:pro field="beginDate" cell="0"/>
+            
+             <p:pro field="borrow" innerString="onchange='borrowChange()'">
+                <p:option type="travelApplyBorrow"></p:option>
+            </p:pro>
+            
+            <p:pro field="borrowStafferId" value="${bean.borrowStafferName}">
+                <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                        class="button_class" onclick="selectStaffer()">&nbsp;
+            </p:pro>
 
             <p:pro field="description" cell="0" innerString="rows=4 cols=55" />
             
@@ -242,6 +251,75 @@ function updateInit()
 
         </td>
     </tr>
+    
+    <p:title>
+        <td class="caption">
+         <strong>收款明细</strong>
+        </td>
+    </p:title>
+
+    <p:line flag="0" />
+    
+    <tr id="pay_main_tr">
+        <td colspan='2' align='center'>
+        <table width="98%" border="0" cellpadding="0" cellspacing="0"
+            class="border">
+            <tr>
+                <td>
+                <table width="100%" border="0" cellspacing='1' id="tables_pay">
+                    <tr align="center" class="content0">
+                        <td width="10%" align="center">收款方式</td>
+                        <td width="15%" align="center">开户银行</td>
+                        <td width="15%" align="center">户名</td>
+                        <td width="20%" align="center">收款帐号</td>
+                        <td width="10%" align="center">收款金额</td>
+                        <td width="25%" align="center">备注</td>
+                        <td width="5%" align="left"><input type="button" accesskey="B"
+                            value="增加" class="button_class" onclick="addPayTr()"></td>
+                    </tr>
+                    
+                     <c:forEach items="${bean.payList}" var="itemEach" varStatus="vs">
+                     <tr class="content1">
+                     <td align="left">
+                     <select name="p_receiveType" class="select_class" style="width: 100%;" oncheck="notNone" values="${itemEach.receiveType}">
+                        <p:option type="travelApplyReceiveType" empty="true"></p:option>
+                     </select>
+                     </td>
+                     
+                     <td align="left"><input type="text" style="width: 100%"
+                                name="p_bank" value="${itemEach.bankName}" >
+                     </td>
+                     
+                     <td align="left">
+                     <input type="text" style="width: 100%"
+                                name="p_userName" value="${itemEach.userName}" >
+                     </td>
+                     
+                     <td align="left">
+                     <input type="text" style="width: 100%"
+                                name="p_bankNo" value="${itemEach.bankNo}" >
+                     </td>
+                     
+                     <td align="left">
+                     <input type="text" style="width: 100%"
+                                name="p_moneys" value="${my:formatNum(itemEach.moneys / 100.0)}" oncheck="notNone;isFloat3">
+                     </td>
+                     
+                     <td align="left">
+                     <textarea name="p_description" rows="3" style="width: 100%"><c:out value="${itemEach.description}"/></textarea>
+                     </td>
+                    <td width="5%" align="center"><input type=button name="pay_del_bu"
+                        value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
+                     </tr>
+                     </c:forEach>
+                     
+                </table>
+                </td>
+            </tr>
+        </table>
+
+        </td>
+    </tr>
 
     
     <p:title>
@@ -313,7 +391,7 @@ function updateInit()
 	
 	    <p:line flag="0" />
 	    
-	    <tr id="pay_main_tr">
+	    <tr>
 	        <td colspan='2' align='center'>
 	        <table width="98%" border="0" cellpadding="0" cellspacing="0"
 	            class="border">
@@ -431,7 +509,7 @@ function updateInit()
          <td align="left">
          <textarea name="p_description" rows="3" style="width: 100%"></textarea>
          </td>
-        <td width="5%" align="center"><input type=button
+        <td width="5%" align="center"><input type=button name="pay_del_bu"
             value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
     </tr>
     

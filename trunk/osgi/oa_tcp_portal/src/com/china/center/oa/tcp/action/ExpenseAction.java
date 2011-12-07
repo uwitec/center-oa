@@ -1274,7 +1274,14 @@ public class ExpenseAction extends DispatchAction
                 // 万单位
                 longList.add(MathTools.doubleToLong2(moneys[i]) * 100);
 
-                stafferIdList.add(stafferIds[i]);
+                if (stafferIds != null && stafferIds.length > i)
+                {
+                    stafferIdList.add(stafferIds[i]);
+                }
+                else
+                {
+                    stafferIdList.add("");
+                }
             }
 
             param.setOther(taxList);

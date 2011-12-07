@@ -307,17 +307,31 @@ function selectNext(type, value)
 {
     if (type == 'group')
     {
+    	sflag = 0;
     	window.common.modal('../group/group.do?method=rptQueryGroupMember&selectMode=1&load=1&pid=' + value);
     }	
 }
 
 function getStaffers(oo)
 {
-    if (oo.length > 0)
+	if (sflag == 1)
+	{
+	    if (oo.length > 0)
+	    {
+	        var item = oo[0];
+	        $("input[name='borrowStafferName']").val(item.pname);
+	        $("input[name='borrowStafferId']").val(item.value);
+	    }
+	}
+    
+    if (sflag == 0)
     {
-        var item = oo[0];
-        $("input[name='processer']").val(item.pname);
-        $("input[name='processId']").val(item.value);
+	    if (oo.length > 0)
+	    {
+	        var item = oo[0];
+	        $("input[name='processer']").val(item.pname);
+	        $("input[name='processId']").val(item.value);
+	    }
     }
 }
 
@@ -355,3 +369,13 @@ function pagePrint()
 {
     window.print();
 }
+
+var sflag = 0;
+
+function selectStaffer()
+{
+	sflag = 1;
+	window.common.modal('../admin/pop.do?method=rptQueryStaffer&load=1&selectMode=1');
+}
+
+

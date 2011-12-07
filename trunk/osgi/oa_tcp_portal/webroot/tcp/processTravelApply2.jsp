@@ -20,7 +20,7 @@ function load()
     </c:if>
     
     <c:if test="${bean.status == 11}">
-    addPayTr();
+    //addPayTr();
     </c:if>
 }
 
@@ -68,13 +68,6 @@ function processBean(opr)
     <c:if test="${bean.status == 22}">
     if ("0" == opr)
     checkFun = checkMoney;
-    else
-    removePay();
-    </c:if>
-    
-    <c:if test="${bean.status == 11}">
-    if ("0" == opr)
-    checkFun = checkMoney2;
     else
     removePay();
     </c:if>
@@ -383,8 +376,6 @@ function checkMoney2()
             class="border">
             <tr>
                 <td>
-                
-                <c:if test="${bean.status != 11}">
                 <table width="100%" border="0" cellspacing='1' id="tables_pay">
                     <tr align="center" class="content0">
                         <td width="10%" align="center">收款方式</td>
@@ -411,9 +402,9 @@ function checkMoney2()
                         <c:if test="${bean.status == 20 && bean.borrow == 1}">
                         <td align="center">
                          <input type="text" style="width: 100%"
-                    		name="p_cmoneys" value="" oncheck="notNone;isFloat3">
-                    	<input type="hidden" name="p_cid" value="${item.id}">
-                    	</td>
+                            name="p_cmoneys" value="" oncheck="notNone;isFloat3">
+                        <input type="hidden" name="p_cid" value="${item.id}">
+                        </td>
                         <td align="center"><textarea name="p_cdescription" rows="3" style="width: 100%" oncheck="notNone;maxLength(600)"></textarea></td>
                         </c:if>
                         <c:if test="${bean.status != 20}">
@@ -423,23 +414,6 @@ function checkMoney2()
                     </tr>
                     </c:forEach>
                 </table>
-                </c:if>
-                
-                <c:if test="${bean.status == 11}">
-                <table width="100%" border="0" cellspacing='1' id="tables_pay">
-                    <tr align="center" class="content0">
-                        <td width="10%" align="center">收款方式</td>
-                        <td width="15%" align="center">开户银行</td>
-                        <td width="15%" align="center">户名</td>
-                        <td width="20%" align="center">收款帐号</td>
-                        <td width="10%" align="center">收款金额</td>
-                        <td width="25%" align="center">备注</td>
-                        <td width="5%" align="left"><input type="button" accesskey="B"
-                            value="增加" class="button_class" onclick="addPayTr()"></td>
-                    </tr>
-                </table>
-                </c:if>
-                
                 </td>
             </tr>
         </table>

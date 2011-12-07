@@ -91,7 +91,6 @@ import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.FileTools;
-import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
 import com.china.center.tools.RequestDataStream;
 import com.china.center.tools.SequenceTools;
@@ -994,59 +993,6 @@ public class TravelApplyAction extends DispatchAction
             }
 
             param.setOther2(list);
-
-            List<TravelApplyPayBean> payList = new ArrayList<TravelApplyPayBean>();
-
-            List<String> receiveTypeList = ListTools.changeArrayToList(request
-                .getParameterValues("p_receiveType"));
-            List<String> bankList = ListTools.changeArrayToList(request
-                .getParameterValues("p_bank"));
-            List<String> userNameList = ListTools.changeArrayToList(request
-                .getParameterValues("p_userName"));
-            List<String> bankNoList = ListTools.changeArrayToList(request
-                .getParameterValues("p_bankNo"));
-            List<String> pmoneysList = ListTools.changeArrayToList(request
-                .getParameterValues("p_moneys"));
-            List<String> pdescriptionList = ListTools.changeArrayToList(request
-                .getParameterValues("p_description"));
-
-            long m2 = 0L;
-
-            if (receiveTypeList != null && receiveTypeList.size() > 0)
-            {
-                for (int i = 0; i < receiveTypeList.size(); i++ )
-                {
-                    String each = receiveTypeList.get(i);
-
-                    if (StringTools.isNullOrNone(each))
-                    {
-                        continue;
-                    }
-
-                    TravelApplyPayBean pay = new TravelApplyPayBean();
-
-                    pay.setReceiveType(MathTools.parseInt(receiveTypeList.get(i)));
-                    pay.setBankName(bankList.get(i));
-                    pay.setUserName(userNameList.get(i));
-                    pay.setBankNo(bankNoList.get(i));
-                    pay.setMoneys(TCPHelper.doubleToLong2(pmoneysList.get(i)));
-                    pay.setDescription(pdescriptionList.get(i));
-
-                    payList.add(pay);
-                }
-
-                for (TravelApplyPayBean each : payList)
-                {
-                    m2 += each.getMoneys();
-                }
-            }
-
-            if (m1 != m2)
-            {
-                throw new MYException("采购金额和收款金额不一致");
-            }
-
-            param.setOther(payList);
         }
 
         String[] bankIds = request.getParameterValues("bankId");

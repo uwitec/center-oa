@@ -33,6 +33,8 @@ function load()
 {
 	addTr();
 	
+	addPayTr();
+	
 	addShareTr();
 	
 	$v('tr_att_more', false);
@@ -51,6 +53,7 @@ function load()
 <input type="hidden" name="type" value="2"> 
 <input type="hidden" name="borrow" value="1"> 
 <input type="hidden" name="stafferId" value="${g_stafferBean.id}"> 
+<input type="hidden" name="borrowStafferId" value=""> 
 <input type="hidden" name="departmentId" value="${g_stafferBean.principalshipId}"> 
 
 <p:navigation height="22">
@@ -83,6 +86,15 @@ function load()
             <p:pro field="name" cell="0" innerString="size=60"/>
             
             <p:pro field="beginDate" cell="0"/>
+            
+            <p:pro field="borrow" innerString="onchange='borrowChange()'">
+                <p:option type="travelApplyBorrow"></p:option>
+            </p:pro>
+            
+            <p:pro field="borrowStafferId">
+                <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"
+                        class="button_class" onclick="selectStaffer()">&nbsp;
+            </p:pro>
 
             <p:pro field="description" cell="0" innerString="rows=4 cols=55" />
             
@@ -144,6 +156,39 @@ function load()
                             name="allTotal" class="input_class" readonly="readonly" oncheck="notNone">
                             <font color="#FF0000">*</font>
                         </td>
+                    </tr>
+                </table>
+                </td>
+            </tr>
+        </table>
+
+        </td>
+    </tr>
+    
+    <p:title>
+        <td class="caption">
+         <strong>收款明细</strong>
+        </td>
+    </p:title>
+
+    <p:line flag="0" />
+    
+    <tr id="pay_main_tr">
+        <td colspan='2' align='center'>
+        <table width="98%" border="0" cellpadding="0" cellspacing="0"
+            class="border">
+            <tr>
+                <td>
+                <table width="100%" border="0" cellspacing='1' id="tables_pay">
+                    <tr align="center" class="content0">
+                        <td width="10%" align="center">收款方式</td>
+                        <td width="15%" align="center">开户银行</td>
+                        <td width="15%" align="center">户名</td>
+                        <td width="20%" align="center">收款帐号</td>
+                        <td width="10%" align="center">收款金额</td>
+                        <td width="25%" align="center">备注</td>
+                        <td width="5%" align="left"><input type="button" accesskey="B"
+                            value="增加" class="button_class" onclick="addPayTr()"></td>
                     </tr>
                 </table>
                 </td>

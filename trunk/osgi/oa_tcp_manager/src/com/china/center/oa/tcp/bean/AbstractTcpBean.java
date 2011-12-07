@@ -45,6 +45,7 @@ public abstract class AbstractTcpBean implements Serializable
     /**
      * 借款人/被付款人
      */
+    @Html(title = "借款人", name = "borrowStafferName", must = true, maxLength = 40, readonly = true)
     @Join(tagClass = StafferBean.class, alias = "BSB")
     protected String borrowStafferId = "";
 

@@ -81,6 +81,7 @@ import com.china.center.tools.FileTools;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
+import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -159,7 +160,10 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
         bean.setStafferId(user.getStafferId());
 
         // 借款人就是自己
-        bean.setBorrowStafferId(user.getStafferId());
+        if (StringTools.isNullOrNone(bean.getBorrowStafferId()))
+        {
+            bean.setBorrowStafferId(user.getStafferId());
+        }
 
         bean.setStatus(TcpConstanst.TCP_STATUS_INIT);
 
@@ -177,35 +181,27 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
         travelApplyItemDAO.saveAllEntityBeans(itemList);
 
-        // 采购默认全部借款
-        if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_STOCK)
+        if (bean.getBorrow() == TcpConstanst.TRAVELAPPLY_BORROW_YES)
         {
-            bean.setBorrowTotal(bean.getTotal());
+            long temp = 0L;
+
+            List<TravelApplyPayBean> payList = bean.getPayList();
+
+            for (TravelApplyPayBean travelApplyPayBean : payList)
+            {
+                travelApplyPayBean.setId(commonDAO.getSquenceString20());
+                travelApplyPayBean.setParentId(bean.getId());
+
+                temp += travelApplyPayBean.getMoneys();
+            }
+
+            bean.setBorrowTotal(temp);
+
+            travelApplyPayDAO.saveAllEntityBeans(payList);
         }
         else
         {
-            if (bean.getBorrow() == TcpConstanst.TRAVELAPPLY_BORROW_YES)
-            {
-                long temp = 0L;
-
-                List<TravelApplyPayBean> payList = bean.getPayList();
-
-                for (TravelApplyPayBean travelApplyPayBean : payList)
-                {
-                    travelApplyPayBean.setId(commonDAO.getSquenceString20());
-                    travelApplyPayBean.setParentId(bean.getId());
-
-                    temp += travelApplyPayBean.getMoneys();
-                }
-
-                bean.setBorrowTotal(temp);
-
-                travelApplyPayDAO.saveAllEntityBeans(payList);
-            }
-            else
-            {
-                bean.setBorrowTotal(0);
-            }
+            bean.setBorrowTotal(0);
         }
 
         // 合法性校验
@@ -519,25 +515,6 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
             travelApplyDAO.updateTotal(param.getId(), total);
 
-            travelApplyDAO.updateBorrowTotal(param.getId(), total);
-
-            // 更新借款人员是审核人
-            travelApplyDAO.updateBorrowStafferId(param.getId(), user.getStafferId());
-
-            // 先删除
-            travelApplyPayDAO.deleteEntityBeansByFK(bean.getId());
-
-            List<TravelApplyPayBean> payList = (List<TravelApplyPayBean>)param.getOther();
-
-            for (TravelApplyPayBean travelApplyPayBean : payList)
-            {
-                travelApplyPayBean.setId(commonDAO.getSquenceString20());
-                travelApplyPayBean.setParentId(bean.getId());
-            }
-
-            // 重新加入
-            travelApplyPayDAO.saveAllEntityBeans(payList);
-
             // 更新预算(重新加入预占)
             checkBudget(user, bean, 1);
         }
@@ -666,7 +643,7 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
             travelApplyDAO.updateStatus(bean.getId(), bean.getStatus());
 
             // 这里驳回需要删除pay
-            if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_STOCK)
+            if (false && bean.getType() == TcpConstanst.TCP_APPLYTYPE_STOCK)
             {
                 travelApplyPayDAO.deleteEntityBeansByFK(bean.getId());
             }
@@ -1087,7 +1064,11 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
         bean.setStatus(TcpConstanst.TCP_STATUS_INIT);
 
-        bean.setBorrowStafferId(user.getStafferId());
+        // 借款人就是自己
+        if (StringTools.isNullOrNone(bean.getBorrowStafferId()))
+        {
+            bean.setBorrowStafferId(user.getStafferId());
+        }
 
         // 获取flowKey
         TCPHelper.setFlowKey(bean);
@@ -1109,35 +1090,27 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
         travelApplyItemDAO.saveAllEntityBeans(itemList);
 
-        // 采购默认全部借款
-        if (bean.getType() == TcpConstanst.TCP_APPLYTYPE_STOCK)
+        if (bean.getBorrow() == TcpConstanst.TRAVELAPPLY_BORROW_YES)
         {
-            bean.setBorrowTotal(bean.getTotal());
+            long temp = 0L;
+
+            List<TravelApplyPayBean> payList = bean.getPayList();
+
+            for (TravelApplyPayBean travelApplyPayBean : payList)
+            {
+                travelApplyPayBean.setId(commonDAO.getSquenceString20());
+                travelApplyPayBean.setParentId(bean.getId());
+
+                temp += travelApplyPayBean.getMoneys();
+            }
+
+            travelApplyPayDAO.saveAllEntityBeans(payList);
+
+            bean.setBorrowTotal(temp);
         }
         else
         {
-            if (bean.getBorrow() == TcpConstanst.TRAVELAPPLY_BORROW_YES)
-            {
-                long temp = 0L;
-
-                List<TravelApplyPayBean> payList = bean.getPayList();
-
-                for (TravelApplyPayBean travelApplyPayBean : payList)
-                {
-                    travelApplyPayBean.setId(commonDAO.getSquenceString20());
-                    travelApplyPayBean.setParentId(bean.getId());
-
-                    temp += travelApplyPayBean.getMoneys();
-                }
-
-                travelApplyPayDAO.saveAllEntityBeans(payList);
-
-                bean.setBorrowTotal(temp);
-            }
-            else
-            {
-                bean.setBorrowTotal(0);
-            }
+            bean.setBorrowTotal(0);
         }
 
         checkApply(bean);

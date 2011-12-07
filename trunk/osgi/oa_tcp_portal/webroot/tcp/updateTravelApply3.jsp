@@ -296,7 +296,7 @@ function updateInit()
 			         <td align="left">
 			         <textarea name="p_description" rows="3" style="width: 100%"><c:out value="${itemEach.description}"/></textarea>
 			         </td>
-			        <td width="5%" align="center"><input type=button
+			        <td width="5%" align="center"><input type=button name="pay_del_bu"
 			            value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
 			         </tr>
 			         </c:forEach>
@@ -357,7 +357,7 @@ function updateInit()
 			                    name="s_ratio" value="${itemEach.ratio}" oncheck="notNone;isInt">
 			         </td>
 			         
-			        <td width="5%" align="center"><input type=button
+			        <td width="5%" align="center"><input type=button 
 			            value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
 			        </tr>
 			        </c:forEach>
@@ -490,7 +490,7 @@ function updateInit()
          <td align="left">
          <textarea name="p_description" rows="3" style="width: 100%"></textarea>
          </td>
-        <td width="5%" align="center"><input type=button
+        <td width="5%" align="center"><input type=button name="pay_del_bu"
             value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
     </tr>
     
