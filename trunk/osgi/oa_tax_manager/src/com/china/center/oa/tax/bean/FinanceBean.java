@@ -43,7 +43,7 @@ public class FinanceBean implements Serializable
     private String name = "";
 
     /**
-     * 凭证类型(管理还是税务)
+     * 凭证类型
      */
     private int type = TaxConstanst.FINANCE_TYPE_MANAGER;
 

@@ -80,7 +80,7 @@ public class StockItemBean implements Serializable
     private String netAskId = "";
 
     /**
-     * 税务平台的产品
+     * 平台的产品
      */
     private String showId = "";
 

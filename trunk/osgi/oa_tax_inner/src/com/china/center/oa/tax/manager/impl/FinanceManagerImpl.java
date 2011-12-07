@@ -125,7 +125,7 @@ public class FinanceManagerImpl implements FinanceManager
         if (bean.getType() == TaxConstanst.FINANCE_TYPE_DUTY
             && StringTools.isNullOrNone(bean.getDutyId()))
         {
-            throw new MYException("税务凭证必须有纳税实体的属性");
+            throw new MYException("普通凭证必须有纳税实体的属性");
         }
 
         List<FinanceItemBean> itemList = bean.getItemList();

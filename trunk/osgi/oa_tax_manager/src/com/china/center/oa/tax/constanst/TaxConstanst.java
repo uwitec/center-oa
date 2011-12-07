@@ -113,9 +113,9 @@ public interface TaxConstanst
     int FINANCE_TYPE_MANAGER = 0;
 
     /**
-     * 税务凭证
+     * 普通凭证
      */
-    @Defined(key = "financeType", value = "税务凭证")
+    @Defined(key = "financeType", value = "普通凭证")
     int FINANCE_TYPE_DUTY = 1;
 
     /**
