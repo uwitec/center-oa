@@ -23,15 +23,15 @@ import com.china.center.jdbc.annotation.Defined;
 public interface FinanceConstant
 {
     /**
-     * 不入进入税务帐套
+     * 管理属性
      */
-    @Defined(key = "bankType", value = "不入税务帐套")
+    @Defined(key = "bankType", value = "管理属性")
     int BANK_TYPE_NOTDUTY = 0;
 
     /**
-     * 入进入税务帐套
+     * 非管理属性
      */
-    @Defined(key = "bankType", value = "进入税务帐套")
+    @Defined(key = "bankType", value = "非管理属性")
     int BANK_TYPE_INDUTY = 1;
 
     /**
