@@ -114,6 +114,12 @@ function removeTr(obj)
             table.rows[i].className = 'content2';
         }
     }
+    
+    if (inChange)
+    {
+        inChange();
+        outChange();
+    }
 }
 
 function copyTr(obj)
@@ -127,6 +133,14 @@ function copyTr(obj)
     
     var tr = obj.parentNode.parentNode;
     
-    return addTrInner_2(list, tr, table, tr.rowIndex + 1);
+    var trResult = addTrInner_2(list, tr, table, tr.rowIndex + 1);
+    
+    if (inChange)
+    {
+	    inChange();
+	    outChange();
+    }
+    
+    return trResult;
 }
 

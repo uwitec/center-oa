@@ -60,6 +60,7 @@ import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.helper.LoginHelper;
 import com.china.center.oa.publics.manager.MenuManager;
 import com.china.center.oa.publics.manager.UserManager;
+import com.china.center.oa.publics.vo.StafferVO;
 import com.china.center.oa.publics.vo.UserVO;
 import com.china.center.oa.publics.vs.RoleAuthBean;
 import com.china.center.oa.publics.vs.StafferTransferBean;
@@ -141,7 +142,7 @@ public class LoginAction extends DispatchAction
 
         boolean enc = false;
 
-        StafferBean stafferBean = null;
+        StafferVO stafferBean = null;
 
         // 正常登录
         if ( !"99".equals(loginType) && !"98".equals(loginType))
@@ -263,7 +264,7 @@ public class LoginAction extends DispatchAction
                 return mapping.findForward("error");
             }
 
-            stafferBean = stafferDAO.find(user.getStafferId());
+            stafferBean = stafferDAO.findVO(user.getStafferId());
 
             if (stafferBean == null)
             {
@@ -344,7 +345,7 @@ public class LoginAction extends DispatchAction
                 return mapping.findForward("error");
             }
 
-            stafferBean = stafferDAO.find(user.getStafferId());
+            stafferBean = stafferDAO.findVO(user.getStafferId());
 
             if (stafferBean == null)
             {

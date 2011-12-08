@@ -61,6 +61,11 @@ function pagePrint()
 			<p:cell title="调价人">${bean.stafferName}</p:cell>
 			<p:cell title="状态" end="true">${my:get('priceChangeStatus', bean.status)}</p:cell>
 			<p:cell title="调价原因" end="true">${bean.description}</p:cell>
+			
+			<p:cell title="关联凭证" end="true">
+               <a href='../finance/finance.do?method=findFinance&id=${bean.otherId}'>${bean.otherId}</a>
+            </p:cell>
+            
 			<p:cell title="核对状态" end="true">
                ${my:get('pubCheckStatus', bean.checkStatus)}
             </p:cell>

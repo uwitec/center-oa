@@ -68,6 +68,10 @@ function pagePrint()
 			<p:cell title="类型">${my:get('composeType', bean.type)}</p:cell>
 			<p:cell title="时间" end="true">${bean.logTime}</p:cell>
 			
+			<p:cell title="关联凭证" end="true">
+               <a href='../finance/finance.do?method=findFinance&id=${bean.otherId}'>${bean.otherId}</a>
+            </p:cell>
+			
 			<p:cell title="核对状态" end="true">
                ${my:get('pubCheckStatus', bean.checkStatus)}
             </p:cell>

@@ -32,6 +32,9 @@ public class PriceChangeVO extends PriceChangeBean
     private String stafferName = "";
 
     @Ignore
+    private String otherId = "";
+
+    @Ignore
     private List<PriceChangeSrcItemVO> srcVOList = null;
 
     @Ignore
@@ -96,6 +99,23 @@ public class PriceChangeVO extends PriceChangeBean
     }
 
     /**
+     * @return the otherId
+     */
+    public String getOtherId()
+    {
+        return otherId;
+    }
+
+    /**
+     * @param otherId
+     *            the otherId to set
+     */
+    public void setOtherId(String otherId)
+    {
+        this.otherId = otherId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -104,11 +124,25 @@ public class PriceChangeVO extends PriceChangeBean
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("PriceChangeVO ( ").append(super.toString()).append(TAB).append("stafferName = ").append(
-            this.stafferName).append(TAB).append("srcVOList = ").append(this.srcVOList).append(TAB).append(
-            "newVOList = ").append(this.newVOList).append(TAB).append(" )");
+        retValue
+            .append("PriceChangeVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("stafferName = ")
+            .append(this.stafferName)
+            .append(TAB)
+            .append("otherId = ")
+            .append(this.otherId)
+            .append(TAB)
+            .append("srcVOList = ")
+            .append(this.srcVOList)
+            .append(TAB)
+            .append("newVOList = ")
+            .append(this.newVOList)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

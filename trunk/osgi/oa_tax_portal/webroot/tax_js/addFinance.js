@@ -531,3 +531,44 @@ function findData3(value)
     
     return null;
 }
+
+function inChange()
+{
+	var list = document.getElementsByName('inmoney');
+	
+	var total = 0;
+	
+	for (var i = 0; i < list.length; i++)
+	{
+		var v = list[i].value;
+		if (v != '')
+		{
+			total += parseFloat(v);
+		}
+	}
+	
+	inTd = document.getElementById('inHTML');
+	
+	inTd.innerHTML = total;
+}
+
+function outChange()
+{
+    var list = document.getElementsByName('outmoney');
+    
+    var total = 0;
+    
+    for (var i = 0; i < list.length; i++)
+    {
+        var v = list[i].value;
+        if (v != '')
+        {
+            total += parseFloat(v);
+        }
+    }
+    
+    outTd = document.getElementById('outHTML');
+    
+    outTd.innerHTML = total;
+}
+

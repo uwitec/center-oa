@@ -110,6 +110,9 @@ function load()
 	loadForm();
 	
 	initTr();
+	
+	inChange();
+    outChange();
 }
 
 </script>
@@ -223,12 +226,12 @@ function load()
 					         </td>
 					         
 					         <td>
-					         <input type="text" style="width: 100%;"
+					         <input type="text" style="width: 100%;" onkeyup="inChange()" onblur="inChange()"
 					                    name="inmoney" value="${my:formatNum(itemTop.inmoney / 10000.0)}" oncheck="">
 					         </td>
 					                    
 					         <td align="center">
-					         <input type="text" style="width: 100%"
+					         <input type="text" style="width: 100%" onkeyup="outChange()" onblur="outChange()"
 					                    name="outmoney" value="${my:formatNum(itemTop.outmoney / 10000.0)}" oncheck=""></td>
 					                    
 					        <td width="5%" align="center">
@@ -238,9 +241,24 @@ function load()
 					            value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
 					        </tr>
                     </c:forEach>
-                    
-                    
                 </table>
+                <table width="100%" border="0" cellpadding="0" cellspacing="0"
+		            class="border">
+		            <tr>
+		                <td>
+		                <table width="100%" border="0" cellspacing='1' id="tables">
+		                    <tr class="content1">
+		                         <td width="15%">合计</td>
+		                         <td width="40%">&nbsp;</td>
+		                         <td width="25%">&nbsp;</td>
+		                         <td width="8%" id="inHTML"></td>
+		                         <td width="8%" id="outHTML"></td>
+		                         <td width="5%">&nbsp;</td>
+		                    </tr>
+		                </table>
+		                </td>
+		            </tr>
+		        </table>
                 </td>
             </tr>
         </table>
@@ -304,12 +322,12 @@ function load()
          </td>
          
          <td>
-         <input type="text" style="width: 100%;"
+         <input type="text" style="width: 100%;" onkeyup="inChange()" onblur="inChange()"
                     name="inmoney" value="0.0" oncheck="">
          </td>
                     
          <td align="center">
-         <input type="text" style="width: 100%"
+         <input type="text" style="width: 100%" onkeyup="outChange()" onblur="outChange()"
                     name="outmoney" value="0.0" oncheck=""></td>
                     
         <td width="5%" align="center">

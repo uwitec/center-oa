@@ -47,6 +47,9 @@ public class ComposeProductVO extends ComposeProductBean
     private String storageName = "";
 
     @Ignore
+    private String otherId = "";
+
+    @Ignore
     private List<ComposeItemVO> itemVOList = null;
 
     @Ignore
@@ -196,6 +199,23 @@ public class ComposeProductVO extends ComposeProductBean
     }
 
     /**
+     * @return the otherId
+     */
+    public String getOtherId()
+    {
+        return otherId;
+    }
+
+    /**
+     * @param otherId
+     *            the otherId to set
+     */
+    public void setOtherId(String otherId)
+    {
+        this.otherId = otherId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -204,14 +224,40 @@ public class ComposeProductVO extends ComposeProductBean
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("ComposeProductVO ( ").append(super.toString()).append(TAB).append("stafferName = ").append(
-            this.stafferName).append(TAB).append("productName = ").append(this.productName).append(TAB).append(
-            "productCode = ").append(this.productCode).append(TAB).append("deportName = ").append(this.deportName).append(
-            TAB).append("depotpartName = ").append(this.depotpartName).append(TAB).append("storageName = ").append(
-            this.storageName).append(TAB).append("itemVOList = ").append(this.itemVOList).append(TAB).append(
-            "feeVOList = ").append(this.feeVOList).append(TAB).append(" )");
+        retValue
+            .append("ComposeProductVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("stafferName = ")
+            .append(this.stafferName)
+            .append(TAB)
+            .append("productName = ")
+            .append(this.productName)
+            .append(TAB)
+            .append("productCode = ")
+            .append(this.productCode)
+            .append(TAB)
+            .append("deportName = ")
+            .append(this.deportName)
+            .append(TAB)
+            .append("depotpartName = ")
+            .append(this.depotpartName)
+            .append(TAB)
+            .append("storageName = ")
+            .append(this.storageName)
+            .append(TAB)
+            .append("otherId = ")
+            .append(this.otherId)
+            .append(TAB)
+            .append("itemVOList = ")
+            .append(this.itemVOList)
+            .append(TAB)
+            .append("feeVOList = ")
+            .append(this.feeVOList)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

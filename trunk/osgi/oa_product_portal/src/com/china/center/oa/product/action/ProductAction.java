@@ -94,6 +94,8 @@ import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.EnumDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.manager.OrgManager;
+import com.china.center.oa.tax.bean.FinanceBean;
+import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.FileTools;
@@ -149,6 +151,8 @@ public class ProductAction extends DispatchAction
     private EnumDAO enumDAO = null;
 
     private OrgManager orgManager = null;
+
+    private FinanceDAO financeDAO = null;
 
     private ProductVSLocationDAO productVSLocationDAO = null;
 
@@ -1672,6 +1676,13 @@ public class ProductAction extends DispatchAction
             return ActionTools.toError("数据异常,请重新操作", "queryCompose", mapping, request);
         }
 
+        List<FinanceBean> financeBeanList = financeDAO.queryRefFinanceItemByRefId(id);
+
+        if (financeBeanList.size() > 0)
+        {
+            bean.setOtherId(financeBeanList.get(0).getId());
+        }
+
         request.setAttribute("bean", bean);
 
         return mapping.findForward("detailCompose");
@@ -1728,6 +1739,13 @@ public class ProductAction extends DispatchAction
                     map.get(each.getRefId()).add(newEach);
                 }
             }
+        }
+
+        List<FinanceBean> financeBeanList = financeDAO.queryRefFinanceItemByRefId(id);
+
+        if (financeBeanList.size() > 0)
+        {
+            bean.setOtherId(financeBeanList.get(0).getId());
         }
 
         request.setAttribute("map", map);
@@ -2509,5 +2527,22 @@ public class ProductAction extends DispatchAction
     public void setComposeProductManager(ComposeProductManager composeProductManager)
     {
         this.composeProductManager = composeProductManager;
+    }
+
+    /**
+     * @return the financeDAO
+     */
+    public FinanceDAO getFinanceDAO()
+    {
+        return financeDAO;
+    }
+
+    /**
+     * @param financeDAO
+     *            the financeDAO to set
+     */
+    public void setFinanceDAO(FinanceDAO financeDAO)
+    {
+        this.financeDAO = financeDAO;
     }
 }
