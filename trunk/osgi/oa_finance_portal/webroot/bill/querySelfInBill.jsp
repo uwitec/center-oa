@@ -41,6 +41,7 @@ function load()
          buttons : [
              {id: 'update', bclass: 'update', caption: '申请预收退款', onpress : splitInBill},
              {id: 'update1', bclass: 'update', caption: '预收转费用', onpress : splitInBill2},
+             {id: 'update2', bclass: 'update', caption: '预收移交', onpress : changeBill},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -87,6 +88,15 @@ function splitInBill2(opr, grid)
     else
     $error('不能操作');
 }
+
+function changeBill(opr, grid)
+{
+    if (window.confirm('确定是否移交预算?'))
+    {
+        $ajax('../finance/bill.do?method=changeBill', callBackFun);
+    }
+}
+
 
 function doSearch()
 {

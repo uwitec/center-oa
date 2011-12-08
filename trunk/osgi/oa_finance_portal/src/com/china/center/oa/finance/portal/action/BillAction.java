@@ -50,6 +50,7 @@ import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
+import com.china.center.oa.publics.dao.StafferTransferDAO;
 import com.china.center.oa.publics.manager.AuthManager;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.sail.bean.OutBean;
@@ -100,6 +101,8 @@ public class BillAction extends DispatchAction
     private PaymentDAO paymentDAO = null;
 
     private FinanceDAO financeDAO = null;
+
+    private StafferTransferDAO stafferTransferDAO = null;
 
     private static final String QUERYINBILL = "queryInBill";
 
@@ -435,6 +438,40 @@ public class BillAction extends DispatchAction
             User user = Helper.getUser(request);
 
             financeFacade.deleteInBillBean(user.getId(), id);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * 预算移交
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward changeBill(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            User user = Helper.getUser(request);
+
+            billManager.chageBillToTran(user);
 
             ajax.setSuccess("成功操作");
         }
@@ -1310,5 +1347,22 @@ public class BillAction extends DispatchAction
     public void setBillManager(BillManager billManager)
     {
         this.billManager = billManager;
+    }
+
+    /**
+     * @return the stafferTransferDAO
+     */
+    public StafferTransferDAO getStafferTransferDAO()
+    {
+        return stafferTransferDAO;
+    }
+
+    /**
+     * @param stafferTransferDAO
+     *            the stafferTransferDAO to set
+     */
+    public void setStafferTransferDAO(StafferTransferDAO stafferTransferDAO)
+    {
+        this.stafferTransferDAO = stafferTransferDAO;
     }
 }

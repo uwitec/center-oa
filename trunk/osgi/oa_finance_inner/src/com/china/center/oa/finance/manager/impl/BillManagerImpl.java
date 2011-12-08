@@ -28,6 +28,8 @@ import com.china.center.oa.finance.manager.StatBankManager;
 import com.china.center.oa.publics.constant.IDPrefixConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.publics.dao.StafferTransferDAO;
+import com.china.center.oa.publics.vs.StafferTransferBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.dao.OutDAO;
@@ -68,6 +70,8 @@ public class BillManagerImpl implements BillManager
     private StockItemDAO stockItemDAO = null;
 
     private StatBankManager statBankManager = null;
+
+    private StafferTransferDAO stafferTransferDAO = null;
 
     private static Object LOCK = new Object();
 
@@ -641,6 +645,24 @@ public class BillManagerImpl implements BillManager
         return true;
     }
 
+    @Transactional(rollbackFor = MYException.class)
+    public boolean chageBillToTran(User user)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user);
+
+        StafferTransferBean tran = stafferTransferDAO.findByUnique(user.getStafferId());
+
+        if (tran == null)
+        {
+            throw new MYException("当前用户没有移交对象");
+        }
+
+        inBillDAO.chageBillToTran(user.getStafferId(), tran.getDestId());
+
+        return true;
+    }
+
     /**
      * @return the inBillDAO
      */
@@ -793,4 +815,22 @@ public class BillManagerImpl implements BillManager
     {
         this.paymentVSOutDAO = paymentVSOutDAO;
     }
+
+    /**
+     * @return the stafferTransferDAO
+     */
+    public StafferTransferDAO getStafferTransferDAO()
+    {
+        return stafferTransferDAO;
+    }
+
+    /**
+     * @param stafferTransferDAO
+     *            the stafferTransferDAO to set
+     */
+    public void setStafferTransferDAO(StafferTransferDAO stafferTransferDAO)
+    {
+        this.stafferTransferDAO = stafferTransferDAO;
+    }
+
 }

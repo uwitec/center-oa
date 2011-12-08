@@ -37,6 +37,8 @@
     
     <osgi:reference id="flowLogDAO" interface="com.china.center.oa.publics.dao.FlowLogDAO" />
     
+    <osgi:reference id="stafferTransferDAO" interface="com.china.center.oa.publics.dao.StafferTransferDAO" />
+    
     <osgi:reference id="dutyVSInvoiceDAO" interface="com.china.center.oa.publics.dao.DutyVSInvoiceDAO" />
 	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->

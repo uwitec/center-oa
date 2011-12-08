@@ -52,4 +52,6 @@ public interface InBillDAO extends DAO<InBillBean, InBillVO>
     boolean updateSrcMoneys(String id, double srcMoneys);
 
     boolean updateUpdateId(String id, int updateId);
+
+    boolean chageBillToTran(String srcId, String destId);
 }

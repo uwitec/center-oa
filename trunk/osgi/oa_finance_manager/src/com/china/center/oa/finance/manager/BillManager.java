@@ -141,4 +141,15 @@ public interface BillManager
      */
     boolean deleteOutBillBean(User user, String id)
         throws MYException;
+
+    /**
+     * 预收移交
+     * 
+     * @param user
+     * @param dest
+     * @return
+     * @throws MYException
+     */
+    boolean chageBillToTran(User user)
+        throws MYException;
 }
