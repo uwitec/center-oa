@@ -788,6 +788,9 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         }
     }
 
+    /**
+     * 暂时不对外
+     */
     public String coloneOutAndSubmitWithOutAffair(OutBean outBean, User user, int type)
         throws MYException
     {
@@ -1721,22 +1724,25 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     public synchronized int reject(final String fullId, final User user, final String reason)
         throws MYException
     {
-        final OutBean outBean = outDAO.find(fullId);
-
-        if (outBean == null)
+        // LOCK 库存驳回(这里存在库存锁的问题)
+        synchronized (PublicLock.PRODUCT_CORE)
         {
-            throw new MYException("销售单不存在，请重新操作");
+            final OutBean outBean = outDAO.find(fullId);
+
+            if (outBean == null)
+            {
+                throw new MYException("销售单不存在，请重新操作");
+            }
+
+            final List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(fullId);
+
+            // 仓库
+            final String locationId = outBean.getLocation();
+
+            doReject(fullId, user, reason, outBean, baseList, locationId);
+
+            return OutConstant.STATUS_REJECT;
         }
-
-        final List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(fullId);
-
-        // 仓库
-        final String locationId = outBean.getLocation();
-
-        doReject(fullId, user, reason, outBean, baseList, locationId);
-
-        return OutConstant.STATUS_REJECT;
-
     }
 
     /**
