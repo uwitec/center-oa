@@ -30,6 +30,7 @@ import com.china.center.oa.product.manager.ProductManager;
 import com.china.center.oa.product.vs.ProductCombinationBean;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.publics.manager.NotifyManager;
 import com.china.center.tools.FileTools;
 import com.china.center.tools.JPTools;
 import com.china.center.tools.JudgeTools;
@@ -53,6 +54,8 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
     private ProductDAO productDAO = null;
 
     private CommonDAO commonDAO = null;
+
+    private NotifyManager notifyManager = null;
 
     private ProductVSLocationDAO productVSLocationDAO = null;
 
@@ -180,6 +183,9 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
         productVSLocationDAO.deleteEntityBeansByFK(id);
 
         FileTools.deleteFile(getPicPath() + old.getPicPath());
+
+        notifyManager.notifyMessage(old.getCreaterId(), user.getStafferName() + "驳回或者删除了产品申请:"
+                                                        + old.getName());
 
         return true;
     }
@@ -459,6 +465,23 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
     public void setCommonDAO(CommonDAO commonDAO)
     {
         this.commonDAO = commonDAO;
+    }
+
+    /**
+     * @return the notifyManager
+     */
+    public NotifyManager getNotifyManager()
+    {
+        return notifyManager;
+    }
+
+    /**
+     * @param notifyManager
+     *            the notifyManager to set
+     */
+    public void setNotifyManager(NotifyManager notifyManager)
+    {
+        this.notifyManager = notifyManager;
     }
 
 }

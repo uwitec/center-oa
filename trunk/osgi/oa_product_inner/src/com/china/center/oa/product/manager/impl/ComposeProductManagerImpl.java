@@ -169,6 +169,9 @@ public class ComposeProductManagerImpl extends AbstractListenerManager<ComposePr
 
         composeProductDAO.updateStatus(id, ComposeConstant.STATUS_CRO_PASS);
 
+        // 结束时间
+        composeProductDAO.updateLogTime(id, TimeTools.now());
+
         // 修改库存(合成)
         if (bean.getType() == ComposeConstant.COMPOSE_TYPE_COMPOSE)
         {

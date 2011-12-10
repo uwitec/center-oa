@@ -1016,8 +1016,8 @@ public class BudgetManagerImpl implements BudgetManager
 
         plan.setBeginTime(item.getBeginDate() + " 00:00:00");
 
-        // 30天后自动关闭
-        String endTime = TimeTools.getSpecialDateStringByDays(item.getEndDate() + " 23:59:59", 30);
+        // 15天后自动关闭
+        String endTime = TimeTools.getSpecialDateStringByDays(item.getEndDate() + " 23:59:59", 15);
 
         // 结束应该是推后
         plan.setEndTime(endTime);
