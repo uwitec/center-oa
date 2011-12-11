@@ -18,6 +18,7 @@ import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.JoinType;
+import com.china.center.oa.publics.constant.PublicConstant;
 
 
 /**
@@ -37,6 +38,8 @@ public class ComposeFeeBean implements Serializable
 
     @FK
     private String parentId = "";
+
+    private int mtype = PublicConstant.MANAGER_TYPE_MANAGER;
 
     @FK(index = AnoConstant.FK_FIRST)
     @Join(tagClass = ComposeFeeDefinedBean.class, type = JoinType.LEFT)
@@ -158,6 +161,23 @@ public class ComposeFeeBean implements Serializable
     }
 
     /**
+     * @return the mtype
+     */
+    public int getMtype()
+    {
+        return mtype;
+    }
+
+    /**
+     * @param mtype
+     *            the mtype to set
+     */
+    public void setMtype(int mtype)
+    {
+        this.mtype = mtype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -177,6 +197,9 @@ public class ComposeFeeBean implements Serializable
             .append(TAB)
             .append("parentId = ")
             .append(this.parentId)
+            .append(TAB)
+            .append("mtype = ")
+            .append(this.mtype)
             .append(TAB)
             .append("feeItemId = ")
             .append(this.feeItemId)

@@ -87,7 +87,7 @@ function $callBack()
 {
     loadForm();
     
-    highlights($("#mainTable").get(0), ['合成'], 'blue');
+    highlights($("#mainTable").get(0), ['合成', '已合成'], 'blue');
     
     highlights($("#mainTable").get(0), ['分解', '未核对'], 'red');
 }

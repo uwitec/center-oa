@@ -71,6 +71,7 @@ import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.StafferVSIndustryDAO;
+import com.china.center.oa.publics.helper.OATools;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
@@ -145,8 +146,8 @@ public class StorageAction extends DispatchAction
     {
     }
 
-    public ActionForward queryStorage(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward queryStorage(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -155,7 +156,8 @@ public class StorageAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYSTORAGE, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSTORAGE, request, condtion, this.storageDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSTORAGE, request, condtion,
+            this.storageDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -170,7 +172,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryStorageRelation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward queryStorageRelation(ActionMapping mapping, ActionForm form,
+                                              HttpServletRequest request,
                                               HttpServletResponse response)
         throws ServletException
     {
@@ -182,8 +185,8 @@ public class StorageAction extends DispatchAction
 
         final IntegerWrap wrap = new IntegerWrap();
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSTORAGERELATION, request, condtion,
-            this.storageRelationDAO, new HandleResult<StorageRelationVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSTORAGERELATION, request,
+            condtion, this.storageRelationDAO, new HandleResult<StorageRelationVO>()
             {
                 public void handle(StorageRelationVO vo)
                 {
@@ -223,7 +226,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryPublicStorageRelation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward queryPublicStorageRelation(ActionMapping mapping, ActionForm form,
+                                                    HttpServletRequest request,
                                                     HttpServletResponse response)
         throws ServletException
     {
@@ -237,8 +241,8 @@ public class StorageAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYPUBLICSTORAGERELATION, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPUBLICSTORAGERELATION, request, condtion,
-            this.storageRelationDAO, new HandleResult<StorageRelationVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPUBLICSTORAGERELATION, request,
+            condtion, this.storageRelationDAO, new HandleResult<StorageRelationVO>()
             {
                 public void handle(StorageRelationVO vo)
                 {
@@ -271,7 +275,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryDepotStorageRelation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward queryDepotStorageRelation(ActionMapping mapping, ActionForm form,
+                                                   HttpServletRequest request,
                                                    HttpServletResponse response)
         throws ServletException
     {
@@ -279,14 +284,15 @@ public class StorageAction extends DispatchAction
 
         condtion.addWhereStr();
 
-        condtion.addCondition("StorageRelationBean.locationId", "=", request.getParameter("depotId"));
+        condtion.addCondition("StorageRelationBean.locationId", "=", request
+            .getParameter("depotId"));
 
         ActionTools.processJSONQueryCondition(QUERYDEPOTSTORAGERELATION, request, condtion);
 
         condtion.addCondition("order by StorageRelationBean.amount desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYDEPOTSTORAGERELATION, request, condtion,
-            this.storageRelationDAO, new HandleResult<StorageRelationVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYDEPOTSTORAGERELATION, request,
+            condtion, this.storageRelationDAO, new HandleResult<StorageRelationVO>()
             {
                 public void handle(StorageRelationVO vo)
                 {
@@ -318,7 +324,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward querySelfStorageRelation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward querySelfStorageRelation(ActionMapping mapping, ActionForm form,
+                                                  HttpServletRequest request,
                                                   HttpServletResponse response)
         throws ServletException
     {
@@ -332,8 +339,8 @@ public class StorageAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYSELFSTORAGERELATION, request, condtion);
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFSTORAGERELATION, request, condtion,
-            this.storageRelationDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYSELFSTORAGERELATION, request,
+            condtion, this.storageRelationDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -348,8 +355,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryStorageApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse response)
+    public ActionForward queryStorageApply(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -360,7 +367,8 @@ public class StorageAction extends DispatchAction
 
         condtion.addCondition("StorageApplyBean.reveiver", "=", user.getStafferId());
 
-        condtion.addIntCondition("StorageApplyBean.status", "=", StorageConstant.STORAGEAPPLY_STATUS_SUBMIT);
+        condtion.addIntCondition("StorageApplyBean.status", "=",
+            StorageConstant.STORAGEAPPLY_STATUS_SUBMIT);
 
         ActionTools.processJSONQueryCondition(QUERYSTORAGEAPPLY, request, condtion);
 
@@ -380,8 +388,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryStorageLog(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse reponse)
+    public ActionForward queryStorageLog(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         ConditionParse condition = new ConditionParse();
@@ -428,8 +436,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward checkStorageLog(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse reponse)
+    public ActionForward checkStorageLog(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         List<String> checkStorageLog = storageRelationManager.checkStorageLog();
@@ -450,8 +458,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryProductInOut(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse reponse)
+    public ActionForward queryProductInOut(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -594,12 +602,13 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward exportProductInOut(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse reponse)
+    public ActionForward exportProductInOut(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
-        Collection<StorageLogVO> values = (Collection<StorageLogVO>)request.getSession().getAttribute(
-            "g_queryProductInOut_resultList");
+        Collection<StorageLogVO> values = (Collection<StorageLogVO>)request
+            .getSession()
+            .getAttribute("g_queryProductInOut_resultList");
 
         String now = request.getSession().getAttribute("queryProductInOut_now").toString();
 
@@ -635,9 +644,10 @@ public class StorageAction extends DispatchAction
                 }
 
                 write.writeLine(now + ',' + depot.getName() + ','
-                                + each.getProductName().replaceAll(",", " ").replaceAll("\r\n", "") + ',' + code + ','
-                                + each.getPreAmount() + ',' + each.getAfterAmount() + ',' + each.getChangeAmount()
-                                + ',' + each.getAfterAmount1() + ',' + each.getAfterAmount2());
+                                + each.getProductName().replaceAll(",", " ").replaceAll("\r\n", "")
+                                + ',' + code + ',' + each.getPreAmount() + ','
+                                + each.getAfterAmount() + ',' + each.getChangeAmount() + ','
+                                + each.getAfterAmount1() + ',' + each.getAfterAmount2());
             }
 
             write.close();
@@ -730,8 +740,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addStorage(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse response)
+    public ActionForward addStorage(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         StorageBean bean = new StorageBean();
@@ -768,8 +778,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateStorage(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward updateStorage(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         StorageBean bean = new StorageBean();
@@ -806,7 +816,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForMoveDepotpart(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward preForMoveDepotpart(ActionMapping mapping, ActionForm form,
+                                             HttpServletRequest request,
                                              HttpServletResponse response)
         throws ServletException
     {
@@ -831,8 +842,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddStorage(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward preForAddStorage(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         List<DepotBean> depotList = depotDAO.listEntityBeans();
@@ -852,7 +863,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddStorageApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward preForAddStorageApply(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
                                                HttpServletResponse response)
         throws ServletException
     {
@@ -880,8 +892,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addStorageApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward addStorageApply(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         StorageApplyBean bean = new StorageApplyBean();
@@ -936,8 +948,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteStorage(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward deleteStorage(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -972,8 +984,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward passStorageApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward passStorageApply(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -1008,8 +1020,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rejectStorageApply(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                            HttpServletResponse response)
+    public ActionForward rejectStorageApply(ActionMapping mapping, ActionForm form,
+                                            HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -1044,7 +1056,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteStorageRelation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward deleteStorageRelation(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
                                                HttpServletResponse response)
         throws ServletException
     {
@@ -1080,8 +1093,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward initPriceKey(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward initPriceKey(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -1090,8 +1103,8 @@ public class StorageAction extends DispatchAction
 
         int[] initPriceKey2 = outManager.initPriceKey();
 
-        ajax.setSuccess("成功初始化KEY:" + initPriceKey[0] + '/' + initPriceKey2[0] + ",失败:" + initPriceKey[1] + '/'
-                        + initPriceKey2[1]);
+        ajax.setSuccess("成功初始化KEY:" + initPriceKey[0] + '/' + initPriceKey2[0] + ",失败:"
+                        + initPriceKey[1] + '/' + initPriceKey2[1]);
 
         return JSONTools.writeResponse(response, ajax);
     }
@@ -1106,8 +1119,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findStorage(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward findStorage(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -1148,7 +1161,8 @@ public class StorageAction extends DispatchAction
      * @throws ServletException
      */
     public ActionForward preForFindStorageToTransfer(ActionMapping mapping, ActionForm form,
-                                                     HttpServletRequest request, HttpServletResponse response)
+                                                     HttpServletRequest request,
+                                                     HttpServletResponse response)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -1189,10 +1203,14 @@ public class StorageAction extends DispatchAction
 
             if (product != null)
             {
-                storageRelationBean.setProductName(product.getName() + "[" + product.getCode() + "]数量【"
-                                                   + storageRelationBean.getAmount() + "】 价格【"
-                                                   + ElTools.formatNum(storageRelationBean.getPrice()) + "】(" + sname
-                                                   + ")");
+                storageRelationBean.setProductName(product.getName()
+                                                   + "["
+                                                   + product.getCode()
+                                                   + "]数量【"
+                                                   + storageRelationBean.getAmount()
+                                                   + "】 价格【"
+                                                   + ElTools.formatNum(storageRelationBean
+                                                       .getPrice()) + "】(" + sname + ")");
             }
 
             if ( !StringTools.isNullOrNone(pname))
@@ -1220,7 +1238,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward transferStorageRelation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward transferStorageRelation(ActionMapping mapping, ActionForm form,
+                                                 HttpServletRequest request,
                                                  HttpServletResponse reponse)
         throws ServletException
     {
@@ -1236,7 +1255,8 @@ public class StorageAction extends DispatchAction
 
         try
         {
-            productFacade.transferStorageRelation(user.getId(), sourceStorage, dirStorage, relations);
+            productFacade.transferStorageRelation(user.getId(), sourceStorage, dirStorage,
+                relations);
         }
         catch (MYException e)
         {
@@ -1260,8 +1280,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward moveDepotpart(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward moveDepotpart(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String destDepotpartId = request.getParameter("dest");
@@ -1275,8 +1295,8 @@ public class StorageAction extends DispatchAction
 
         try
         {
-            String id = productFacade.transferStorageRelationInDepotpart(user.getId(), sourceRelationId,
-                destDepotpartId, CommonTools.parseInt(amount), apply);
+            String id = productFacade.transferStorageRelationInDepotpart(user.getId(),
+                sourceRelationId, destDepotpartId, CommonTools.parseInt(amount), apply);
 
             request.setAttribute(KeyConstant.MESSAGE, "产品仓区间转移成功,流水号:" + id);
         }
@@ -1300,7 +1320,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryProductInDepotpart(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward rptQueryProductInDepotpart(ActionMapping mapping, ActionForm form,
+                                                    HttpServletRequest request,
                                                     HttpServletResponse reponse)
         throws ServletException
     {
@@ -1324,8 +1345,9 @@ public class StorageAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYPRODUCTINDEPOTPART);
 
-            list = storageRelationDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
-                RPTQUERYPRODUCTINDEPOTPART), PageSeparateTools.getPageSeparate(request, RPTQUERYPRODUCTINDEPOTPART));
+            list = storageRelationDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(
+                request, RPTQUERYPRODUCTINDEPOTPART), PageSeparateTools.getPageSeparate(request,
+                RPTQUERYPRODUCTINDEPOTPART));
         }
 
         for (StorageRelationVO vo : list)
@@ -1364,7 +1386,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryProductInDepot(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward rptQueryProductInDepot(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
                                                 HttpServletResponse reponse)
         throws ServletException
     {
@@ -1388,8 +1411,9 @@ public class StorageAction extends DispatchAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYPRODUCTINDEPOT);
 
-            list = storageRelationDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
-                RPTQUERYPRODUCTINDEPOT), PageSeparateTools.getPageSeparate(request, RPTQUERYPRODUCTINDEPOT));
+            list = storageRelationDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(
+                request, RPTQUERYPRODUCTINDEPOT), PageSeparateTools.getPageSeparate(request,
+                RPTQUERYPRODUCTINDEPOT));
         }
 
         for (StorageRelationVO vo : list)
@@ -1416,7 +1440,8 @@ public class StorageAction extends DispatchAction
      * @throws ServletException
      */
     public ActionForward rptQueryStorageRelationInDepot(ActionMapping mapping, ActionForm form,
-                                                        HttpServletRequest request, HttpServletResponse reponse)
+                                                        HttpServletRequest request,
+                                                        HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -1436,7 +1461,8 @@ public class StorageAction extends DispatchAction
 
         PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYSTORAGERELATIONINDEPOT);
 
-        List<StorageRelationVO> queryList = storageRelationDAO.queryEntityVOsByCondition(condtion, page);
+        List<StorageRelationVO> queryList = storageRelationDAO.queryEntityVOsByCondition(condtion,
+            page);
 
         // 没有过滤直接查询前50个
         if (StringTools.isNullOrNone(sailLocation))
@@ -1504,7 +1530,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward exportStorageRelation(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward exportStorageRelation(ActionMapping mapping, ActionForm form,
+                                               HttpServletRequest request,
                                                HttpServletResponse reponse)
         throws ServletException
     {
@@ -1542,13 +1569,15 @@ public class StorageAction extends DispatchAction
 
                 condtion.addIntCondition("StorageRelationBean.amount", ">", 0);
 
-                List<StorageRelationVO> list = storageRelationDAO.queryEntityVOsByCondition(condtion);
+                List<StorageRelationVO> list = storageRelationDAO
+                    .queryEntityVOsByCondition(condtion);
 
                 for (StorageRelationVO each : list)
                 {
                     if (each.getAmount() > 0)
                     {
-                        String typeName = DefinedCommon.getValue("depotpartType", each.getDepotpartType());
+                        String typeName = DefinedCommon.getValue("depotpartType", each
+                            .getDepotpartType());
 
                         String code = each.getProductCode();
 
@@ -1564,10 +1593,19 @@ public class StorageAction extends DispatchAction
                             sname = "公共";
                         }
 
-                        write.writeLine(now + ',' + locationBean.getName() + ',' + each.getDepotpartName() + ','
-                                        + typeName + ',' + each.getStorageName() + ','
-                                        + each.getProductName().replaceAll(",", " ").replaceAll("\r\n", "") + ','
-                                        + code + ',' + String.valueOf(each.getAmount()) + ','
+                        write.writeLine(now
+                                        + ','
+                                        + locationBean.getName()
+                                        + ','
+                                        + each.getDepotpartName()
+                                        + ','
+                                        + typeName
+                                        + ','
+                                        + each.getStorageName()
+                                        + ','
+                                        + each.getProductName().replaceAll(",", " ").replaceAll(
+                                            "\r\n", "") + ',' + code + ','
+                                        + String.valueOf(each.getAmount()) + ','
                                         + MathTools.formatNum(each.getPrice()) + ',' + sname);
                     }
                 }
@@ -1622,7 +1660,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward exportStorageRelation2(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward exportStorageRelation2(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
                                                 HttpServletResponse reponse)
         throws ServletException
     {
@@ -1654,13 +1693,15 @@ public class StorageAction extends DispatchAction
 
             for (DepotBean locationBean : lList)
             {
-                List<StorageRelationVO> list = storageRelationDAO.queryStorageRelationWithoutPrice(locationBean.getId());
+                List<StorageRelationVO> list = storageRelationDAO
+                    .queryStorageRelationWithoutPrice(locationBean.getId());
 
                 for (StorageRelationVO each : list)
                 {
                     if (each.getAmount() > 0)
                     {
-                        String typeName = DefinedCommon.getValue("depotpartType", each.getDepotpartType());
+                        String typeName = DefinedCommon.getValue("depotpartType", each
+                            .getDepotpartType());
 
                         String code = each.getProductCode();
 
@@ -1671,7 +1712,8 @@ public class StorageAction extends DispatchAction
 
                         String sname = "公共";
 
-                        if ( !StringTools.isNullOrNone(each.getStafferId()) && !"0".equals(each.getStafferId()))
+                        if ( !StringTools.isNullOrNone(each.getStafferId())
+                            && !"0".equals(each.getStafferId()))
                         {
 
                             StafferBean sb = stafferDAO.find(each.getStafferId());
@@ -1682,10 +1724,17 @@ public class StorageAction extends DispatchAction
                             }
                         }
 
-                        write.writeLine(now + ',' + locationBean.getName() + ',' + each.getDepotpartName() + ','
-                                        + typeName + ','
-                                        + each.getProductName().replaceAll(",", " ").replaceAll("\r\n", "") + ','
-                                        + code + ',' + String.valueOf(each.getTotal()) + ',' + sname);
+                        write.writeLine(now
+                                        + ','
+                                        + locationBean.getName()
+                                        + ','
+                                        + each.getDepotpartName()
+                                        + ','
+                                        + typeName
+                                        + ','
+                                        + each.getProductName().replaceAll(",", " ").replaceAll(
+                                            "\r\n", "") + ',' + code + ','
+                                        + String.valueOf(each.getTotal()) + ',' + sname);
                     }
                 }
 
@@ -1739,7 +1788,8 @@ public class StorageAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward exportStorageRelation3(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward exportStorageRelation3(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
                                                 HttpServletResponse reponse)
         throws ServletException
     {
@@ -1769,13 +1819,15 @@ public class StorageAction extends DispatchAction
 
             String now = TimeTools.now("yyyy-MM-dd");
 
-            List<StorageRelationVO> list = storageRelationDAO.queryStorageRelationWithoutPrice(depotpartBean.getLocationId());
+            List<StorageRelationVO> list = storageRelationDAO
+                .queryStorageRelationWithoutPrice(depotpartBean.getLocationId());
 
             for (StorageRelationVO each : list)
             {
                 if (each.getAmount() > 0 && each.getDepotpartId().equals(depotartId))
                 {
-                    String typeName = DefinedCommon.getValue("depotpartType", each.getDepotpartType());
+                    String typeName = DefinedCommon.getValue("depotpartType", each
+                        .getDepotpartType());
 
                     String code = each.getProductCode();
 
@@ -1786,7 +1838,8 @@ public class StorageAction extends DispatchAction
 
                     String sname = "公共";
 
-                    if ( !StringTools.isNullOrNone(each.getStafferId()) && !"0".equals(each.getStafferId()))
+                    if ( !StringTools.isNullOrNone(each.getStafferId())
+                        && !"0".equals(each.getStafferId()))
                     {
 
                         StafferBean sb = stafferDAO.find(each.getStafferId());
@@ -1797,10 +1850,17 @@ public class StorageAction extends DispatchAction
                         }
                     }
 
-                    write.writeLine(now + ',' + depotpartBean.getLocationName() + ',' + each.getDepotpartName() + ','
-                                    + typeName + ','
-                                    + each.getProductName().replaceAll(",", " ").replaceAll("\r\n", "") + ',' + code
-                                    + ',' + String.valueOf(each.getTotal()) + ',' + sname);
+                    write.writeLine(now
+                                    + ','
+                                    + depotpartBean.getLocationName()
+                                    + ','
+                                    + each.getDepotpartName()
+                                    + ','
+                                    + typeName
+                                    + ','
+                                    + each.getProductName().replaceAll(",", " ").replaceAll("\r\n",
+                                        "") + ',' + code + ',' + String.valueOf(each.getTotal())
+                                    + ',' + sname);
                 }
             }
 
@@ -1851,8 +1911,9 @@ public class StorageAction extends DispatchAction
      * @param page
      * @param queryList
      */
-    private void createList(List<StorageRelationVO> list, ConditionParse condtion, String sailLocation,
-                            PageSeparate page, List<StorageRelationVO> queryList, HttpServletRequest request)
+    private void createList(List<StorageRelationVO> list, ConditionParse condtion,
+                            String sailLocation, PageSeparate page,
+                            List<StorageRelationVO> queryList, HttpServletRequest request)
     {
         StafferBean user = Helper.getStaffer(request);
 
@@ -2098,13 +2159,22 @@ public class StorageAction extends DispatchAction
         {
             if (StringTools.isNullOrNone(stafferId))
             {
-                condtion.addCondition("and (StorageRelationBean.stafferId = '0' or StorageRelationBean.stafferId = '"
-                                      + user.getStafferId() + "')");
+                condtion
+                    .addCondition("and (StorageRelationBean.stafferId = '0' or StorageRelationBean.stafferId = '"
+                                  + user.getStafferId() + "')");
             }
             else
             {
                 condtion.addCondition("StorageRelationBean.stafferId", "=", stafferId);
             }
+        }
+
+        // 管理类型处理
+        String mtype = request.getParameter("mtype");
+
+        if (OATools.isCommon(mtype))
+        {
+            condtion.addCondition("ProductBean.reserve4", "=", PublicConstant.MANAGER_TYPE_COMMON);
         }
 
         return condtion;

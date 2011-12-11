@@ -64,6 +64,8 @@ public class ComposeProductBean implements Serializable
 
     private int type = ComposeConstant.COMPOSE_TYPE_COMPOSE;
 
+    private int mtype = PublicConstant.MANAGER_TYPE_MANAGER;
+
     private int amount = 0;
 
     private int status = ComposeConstant.STATUS_SUBMIT;
@@ -382,6 +384,23 @@ public class ComposeProductBean implements Serializable
     }
 
     /**
+     * @return the mtype
+     */
+    public int getMtype()
+    {
+        return mtype;
+    }
+
+    /**
+     * @param mtype
+     *            the mtype to set
+     */
+    public void setMtype(int mtype)
+    {
+        this.mtype = mtype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -422,6 +441,9 @@ public class ComposeProductBean implements Serializable
             .append(TAB)
             .append("type = ")
             .append(this.type)
+            .append(TAB)
+            .append("mtype = ")
+            .append(this.mtype)
             .append(TAB)
             .append("amount = ")
             .append(this.amount)

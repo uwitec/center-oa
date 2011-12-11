@@ -17,6 +17,7 @@ import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.JoinType;
+import com.china.center.oa.publics.constant.PublicConstant;
 
 
 /**
@@ -50,6 +51,8 @@ public class ComposeItemBean implements Serializable
     private String storageId = "";
 
     private String relationId = "";
+
+    private int mtype = PublicConstant.MANAGER_TYPE_MANAGER;
 
     private int amount = 0;
 
@@ -235,6 +238,23 @@ public class ComposeItemBean implements Serializable
     }
 
     /**
+     * @return the mtype
+     */
+    public int getMtype()
+    {
+        return mtype;
+    }
+
+    /**
+     * @param mtype
+     *            the mtype to set
+     */
+    public void setMtype(int mtype)
+    {
+        this.mtype = mtype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -243,15 +263,46 @@ public class ComposeItemBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("ComposeItemBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("parentId = ").append(this.parentId).append(TAB).append("productId = ").append(this.productId).append(
-            TAB).append("deportId = ").append(this.deportId).append(TAB).append("depotpartId = ").append(
-            this.depotpartId).append(TAB).append("storageId = ").append(this.storageId).append(TAB).append(
-            "relationId = ").append(this.relationId).append(TAB).append("amount = ").append(this.amount).append(TAB).append(
-            "price = ").append(this.price).append(TAB).append("logTime = ").append(this.logTime).append(TAB).append(
-            " )");
+        retValue
+            .append("ComposeItemBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("parentId = ")
+            .append(this.parentId)
+            .append(TAB)
+            .append("productId = ")
+            .append(this.productId)
+            .append(TAB)
+            .append("deportId = ")
+            .append(this.deportId)
+            .append(TAB)
+            .append("depotpartId = ")
+            .append(this.depotpartId)
+            .append(TAB)
+            .append("storageId = ")
+            .append(this.storageId)
+            .append(TAB)
+            .append("relationId = ")
+            .append(this.relationId)
+            .append(TAB)
+            .append("mtype = ")
+            .append(this.mtype)
+            .append(TAB)
+            .append("amount = ")
+            .append(this.amount)
+            .append(TAB)
+            .append("price = ")
+            .append(this.price)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

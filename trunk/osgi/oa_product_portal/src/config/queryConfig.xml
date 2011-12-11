@@ -251,6 +251,12 @@
             <type>select</type>
             <option>$pubCheckStatus</option>
         </condtion>
+        <condtion name="mtype" caption="管理类型">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$pubManagerType</option>
+        </condtion>
 	</item>
 	
 	<item name="queryPriceChange" deaultpfix="PriceChangeBean">

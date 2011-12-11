@@ -25,19 +25,24 @@ import com.china.center.oa.product.bean.ComposeFeeBean;
 import com.china.center.oa.product.bean.ComposeFeeDefinedBean;
 import com.china.center.oa.product.bean.ComposeItemBean;
 import com.china.center.oa.product.bean.ComposeProductBean;
+import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.constant.ComposeConstant;
+import com.china.center.oa.product.constant.ProductConstant;
 import com.china.center.oa.product.constant.StorageConstant;
 import com.china.center.oa.product.dao.ComposeFeeDAO;
 import com.china.center.oa.product.dao.ComposeFeeDefinedDAO;
 import com.china.center.oa.product.dao.ComposeItemDAO;
 import com.china.center.oa.product.dao.ComposeProductDAO;
+import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.listener.ComposeProductListener;
 import com.china.center.oa.product.manager.ComposeProductManager;
 import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.product.vo.ComposeFeeDefinedVO;
 import com.china.center.oa.product.vo.ComposeProductVO;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.publics.helper.OATools;
 import com.china.center.oa.publics.message.MessageConstant;
 import com.china.center.oa.publics.message.PublishMessage;
 import com.china.center.tools.JudgeTools;
@@ -62,6 +67,8 @@ public class ComposeProductManagerImpl extends AbstractListenerManager<ComposePr
     private ComposeItemDAO composeItemDAO = null;
 
     private ComposeFeeDAO composeFeeDAO = null;
+
+    private ProductDAO productDAO = null;
 
     private ComposeFeeDefinedDAO composeFeeDefinedDAO = null;
 
@@ -90,9 +97,65 @@ public class ComposeProductManagerImpl extends AbstractListenerManager<ComposePr
     {
         JudgeTools.judgeParameterIsNull(user, bean);
 
+        // 校验
+        checkCompose(bean);
+
         saveInner(bean);
 
         return true;
+    }
+
+    /**
+     * checkAddCompose
+     * 
+     * @param bean
+     * @throws MYException
+     */
+    private void checkCompose(ComposeProductBean bean)
+        throws MYException
+    {
+        // 检查合成逻辑
+        String productId = bean.getProductId();
+
+        ProductBean compose = productDAO.find(productId);
+
+        if (compose == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (compose.getCtype() != ProductConstant.CTYPE_YES)
+        {
+            throw new MYException("目的产品不是合成产品,请确认操作");
+        }
+
+        // MANAGER 合成产品增加的管理逻辑
+        if (OATools.isCommon(compose.getReserve4()))
+        {
+            // 必须都是普通产品才能合成
+            List<ComposeItemBean> itemList = bean.getItemList();
+
+            for (ComposeItemBean composeItemBean : itemList)
+            {
+                ProductBean each = productDAO.find(composeItemBean.getProductId());
+
+                if (each == null)
+                {
+                    throw new MYException("数据错误,请确认操作");
+                }
+
+                if (OATools.getManagerType(each.getReserve4()) != PublicConstant.MANAGER_TYPE_COMMON)
+                {
+                    throw new MYException("合成的源产品的管理类型必须都是普通,错误产品:%s", each.getName());
+                }
+            }
+
+            bean.setMtype(PublicConstant.MANAGER_TYPE_COMMON);
+        }
+        else
+        {
+            bean.setMtype(PublicConstant.MANAGER_TYPE_MANAGER);
+        }
     }
 
     @Transactional(rollbackFor = MYException.class)
@@ -143,6 +206,9 @@ public class ComposeProductManagerImpl extends AbstractListenerManager<ComposePr
                 composeFeeBean.setPrice( -composeFeeBean.getPrice());
             }
         }
+
+        // 校验
+        checkCompose(bean);
 
         saveInner(bean);
 
@@ -432,6 +498,7 @@ public class ComposeProductManagerImpl extends AbstractListenerManager<ComposePr
             for (ComposeItemBean composeItemBean : itemList)
             {
                 composeItemBean.setParentId(bean.getId());
+                composeItemBean.setMtype(bean.getMtype());
             }
         }
 
@@ -444,6 +511,7 @@ public class ComposeProductManagerImpl extends AbstractListenerManager<ComposePr
             for (ComposeFeeBean composeFeeBean : feeList)
             {
                 composeFeeBean.setParentId(bean.getId());
+                composeFeeBean.setMtype(bean.getMtype());
             }
         }
 
@@ -567,5 +635,22 @@ public class ComposeProductManagerImpl extends AbstractListenerManager<ComposePr
     public void setPublishMessage(PublishMessage publishMessage)
     {
         this.publishMessage = publishMessage;
+    }
+
+    /**
+     * @return the productDAO
+     */
+    public ProductDAO getProductDAO()
+    {
+        return productDAO;
+    }
+
+    /**
+     * @param productDAO
+     *            the productDAO to set
+     */
+    public void setProductDAO(ProductDAO productDAO)
+    {
+        this.productDAO = productDAO;
     }
 }

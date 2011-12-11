@@ -32,6 +32,9 @@ public class StorageRelationVO extends StorageRelationBean
     @Relationship(relationField = "productId", tagField = "code")
     private String productCode = "";
 
+    @Relationship(relationField = "productId", tagField = "reserve4")
+    private String productMtype = "";
+
     @Relationship(relationField = "storageId")
     private String storageName = "";
 
@@ -323,6 +326,23 @@ public class StorageRelationVO extends StorageRelationBean
     }
 
     /**
+     * @return the productMtype
+     */
+    public String getProductMtype()
+    {
+        return productMtype;
+    }
+
+    /**
+     * @param productMtype
+     *            the productMtype to set
+     */
+    public void setProductMtype(String productMtype)
+    {
+        this.productMtype = productMtype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -342,6 +362,9 @@ public class StorageRelationVO extends StorageRelationBean
             .append(TAB)
             .append("productCode = ")
             .append(this.productCode)
+            .append(TAB)
+            .append("productMtype = ")
+            .append(this.productMtype)
             .append(TAB)
             .append("storageName = ")
             .append(this.storageName)

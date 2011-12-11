@@ -65,7 +65,8 @@ function pagePrint()
 			<p:cell title="仓库">${bean.deportName}</p:cell>
 			<p:cell title="目的仓区">${bean.depotpartName}</p:cell>
 			<p:cell title="目的储位">${bean.storageName}</p:cell>
-			<p:cell title="类型">${my:get('composeType', bean.type)}</p:cell>
+			<p:cell title="操作类型">${my:get('composeType', bean.type)}</p:cell>
+			<p:cell title="管理类型">${my:get('pubManagerType', bean.mtype)}</p:cell>
 			<p:cell title="时间" end="true">${bean.logTime}</p:cell>
 			
 			<p:cell title="关联凭证" end="true">
