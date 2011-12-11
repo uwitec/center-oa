@@ -28,10 +28,12 @@ import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.dao.ProviderDAO;
 import com.china.center.oa.product.listener.ComposeProductListener;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.publics.helper.OATools;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.FinanceItemBean;
 import com.china.center.oa.tax.bean.TaxBean;
@@ -97,7 +99,17 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
 
             financeBean.setName(name);
 
-            financeBean.setType(TaxConstanst.FINANCE_TYPE_MANAGER);
+            // MANAGER 合成凭证的管理类型处理
+            if (OATools.isManager(bean.getMtype()))
+            {
+                financeBean.setType(TaxConstanst.FINANCE_TYPE_MANAGER);
+                financeBean.setDutyId(PublicConstant.MANAGER_DUTY_ID);
+            }
+            else
+            {
+                financeBean.setType(TaxConstanst.FINANCE_TYPE_DUTY);
+                financeBean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
+            }
 
             financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_PRODUCT_COMPOSE);
 
@@ -126,7 +138,17 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
 
             financeBean.setName(name);
 
-            financeBean.setType(TaxConstanst.FINANCE_TYPE_MANAGER);
+            // MANAGER 合成回滚凭证的管理类型处理
+            if (OATools.isManager(bean.getMtype()))
+            {
+                financeBean.setType(TaxConstanst.FINANCE_TYPE_MANAGER);
+                financeBean.setDutyId(PublicConstant.MANAGER_DUTY_ID);
+            }
+            else
+            {
+                financeBean.setType(TaxConstanst.FINANCE_TYPE_DUTY);
+                financeBean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
+            }
 
             financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_PRODUCT_COMPOSE_BACK);
 

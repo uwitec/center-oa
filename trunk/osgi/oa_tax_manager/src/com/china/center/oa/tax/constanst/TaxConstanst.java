@@ -109,13 +109,13 @@ public interface TaxConstanst
     /**
      * 管理凭证
      */
-    @Defined(key = "financeType", value = "管理凭证")
+    @Defined(key = "financeType", value = "管理")
     int FINANCE_TYPE_MANAGER = 0;
 
     /**
      * 普通凭证
      */
-    @Defined(key = "financeType", value = "普通凭证")
+    @Defined(key = "financeType", value = "普通")
     int FINANCE_TYPE_DUTY = 1;
 
     /**

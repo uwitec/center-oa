@@ -1860,7 +1860,7 @@ public class StockAction extends DispatchAction
                 // 设置不同角色的默认状态
                 Map<Integer, Integer> map = new HashMap<Integer, Integer>();
 
-                // MANAGER
+                // manager
                 map.put(1, StockConstant.STOCK_STATUS_SUBMIT);
 
                 // 采购主管审核
