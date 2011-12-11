@@ -34,6 +34,12 @@
 			<type>select</type>
 			<option>$productStockType</option>
 		</condtion>
+		<condtion name="reserve4" caption="管理类型">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$pubManagerType</option>
+        </condtion>
 	</item>
 	
 	<item name="queryApplyProduct" deaultpfix="ProductBean">

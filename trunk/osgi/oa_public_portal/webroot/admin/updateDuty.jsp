@@ -44,6 +44,10 @@ function addBean()
 			<p:pro field="type" innerString="readonly=true">
 				<p:option type="dutyType"/>
 			</p:pro>
+			
+			<p:pro field="mtype">
+                <p:option type="pubManagerType" empty="true"/>
+            </p:pro>
 
 			<p:pro field="icp"  />
 			

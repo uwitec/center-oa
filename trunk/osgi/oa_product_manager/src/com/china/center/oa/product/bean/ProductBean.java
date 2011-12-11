@@ -355,8 +355,8 @@ public class ProductBean implements Serializable
     @Html(title = "单箱毛重")
     private String reserve3 = "";
 
-    @Html(title = "预留4")
-    private String reserve4 = "";
+    @Html(title = "管理类型", type = Element.SELECT, must = true)
+    private String reserve4 = "0";
 
     @Html(title = "预留5")
     private String reserve5 = "";

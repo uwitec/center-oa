@@ -178,7 +178,11 @@ function load()
 			<p:pro field="reserve1"/>
 			<p:pro field="reserve2"/>
 			<p:pro field="reserve3"/>
-			<p:pro field="reserve4"/>
+			
+			<p:pro field="reserve4">
+                <p:option type="pubManagerType" empty="true"/>
+            </p:pro>
+            
 			<p:pro field="reserve5"/>
 			<p:pro field="reserve6"/>
 			
