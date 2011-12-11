@@ -14,6 +14,7 @@ var gurl = '../product/product.do?method=';
 var addUrl = '../product/addProduct.jsp';
 var ukey = 'Product';
 
+
 var allDef = window.top.topFrame.allDef;
 var guidMap;
 var thisObj;
