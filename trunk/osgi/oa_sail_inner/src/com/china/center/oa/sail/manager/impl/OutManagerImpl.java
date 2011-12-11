@@ -80,6 +80,7 @@ import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
+import com.china.center.oa.publics.helper.OATools;
 import com.china.center.oa.publics.manager.FatalNotify;
 import com.china.center.oa.publics.manager.NotifyManager;
 import com.china.center.oa.publics.vo.InvoiceCreditVO;
@@ -317,6 +318,44 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         setInvoiceId(outBean);
 
+        // 调拨的纳税实体属性
+        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
+            && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT && OATools.getManagerFlag())
+        {
+            int mtype = -1;
+
+            for (int i = 0; i < idsList.length; i++ )
+            {
+                ProductBean product = productDAO.find(idsList[i]);
+
+                if (product == null)
+                {
+                    throw new RuntimeException("产品为空,数据不完备");
+                }
+
+                if (mtype == -1)
+                {
+                    mtype = OATools.getManagerType(product.getReserve4());
+                }
+                else
+                {
+                    if (OATools.getManagerType(product.getReserve4()) != mtype)
+                    {
+                        throw new RuntimeException("调拨的产品管理类型必须一致");
+                    }
+                }
+            }
+
+            if (OATools.isCommon(mtype))
+            {
+                outBean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
+            }
+            else
+            {
+                outBean.setDutyId(PublicConstant.MANAGER_DUTY_ID);
+            }
+        }
+
         // 增加管理员操作在数据库事务中完成
         TransactionTemplate tran = new TransactionTemplate(transactionManager);
         try
@@ -340,6 +379,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                     double total = 0.0d;
 
                     List<BaseBean> baseList = new ArrayList();
+
+                    configOutBean(outBean);
 
                     // 处理每个base
                     for (int i = 0; i < nameList.length; i++ )
@@ -549,6 +590,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                         baseList.add(base);
 
+                        base.setMtype(outBean.getMtype());
+
                         // 增加单个产品到base表
                         baseDAO.saveEntityBean(base);
 
@@ -615,7 +658,14 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                     outBean.setBaseList(baseList);
 
                     // 保存入库单
-                    outDAO.saveEntityBean(outBean);
+                    try
+                    {
+                        saveOutInner(outBean);
+                    }
+                    catch (MYException e1)
+                    {
+                        throw new RuntimeException(e1.toString());
+                    }
 
                     if ( !addSub)
                     {
@@ -670,6 +720,9 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         outBean.setIndustryId2(sb.getIndustryId2());
     }
 
+    /**
+     * 领样转销售
+     */
     public String addSwatchToSail(final User user, final OutBean outBean)
         throws MYException
     {
@@ -708,12 +761,17 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                 public Object doInTransaction(TransactionStatus arg0)
                 {
                     double total = 0.0d;
+
+                    configOutBean(outBean);
+
                     // 组织BaseBean
                     for (BaseBean base : outBean.getBaseList())
                     {
                         base.setId(commonDAO.getSquenceString());
 
                         base.setOutId(outBean.getFullId());
+
+                        base.setMtype(outBean.getMtype());
 
                         // 增加单个产品到base表
                         baseDAO.saveEntityBean(base);
@@ -723,8 +781,15 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                     outBean.setTotal(total);
 
-                    // 保存入库单
-                    outDAO.saveEntityBean(outBean);
+                    try
+                    {
+                        // 保存入库单
+                        saveOutInner(outBean);
+                    }
+                    catch (MYException e)
+                    {
+                        throw new RuntimeException(e.toString());
+                    }
 
                     return Boolean.TRUE;
                 }
@@ -743,7 +808,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         catch (Exception e)
         {
             _logger.error("增加库单错误：", e);
-            throw new MYException("系统错误，请联系管理员");
+            throw new MYException("系统错误，请联系管理员:" + e.getMessage());
         }
 
         return fullId;
@@ -868,7 +933,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         setInvoiceId(outBean);
 
         // 保存入库单
-        outDAO.saveEntityBean(outBean);
+        saveOutInner(outBean);
 
         List<BaseBean> list = outBean.getBaseList();
 
@@ -877,6 +942,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             baseBean.setId(commonDAO.getSquenceString());
 
             baseBean.setOutId(fullId);
+
+            baseBean.setMtype(outBean.getMtype());
 
             // 增加单个产品到base表
             baseDAO.saveEntityBean(baseBean);
@@ -2264,13 +2331,15 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         setInvoiceId(newInBean);
 
         // 保存入库单
-        outDAO.saveEntityBean(newInBean);
+        saveOutInner(newInBean);
 
         for (BaseBean baseBean : newBaseList)
         {
             baseBean.setId(commonDAO.getSquenceString());
 
             baseBean.setOutId(fullId);
+
+            baseBean.setMtype(newInBean.getMtype());
 
             // 增加单个产品到base表
             baseDAO.saveEntityBean(baseBean);
@@ -4619,6 +4688,45 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                 line.writeLine();
             }
             line.writeLine();
+        }
+    }
+
+    /**
+     * 内部实现
+     * 
+     * @param outBean
+     */
+    private void saveOutInner(final OutBean outBean)
+        throws MYException
+    {
+        configOutBean(outBean);
+
+        List<BaseBean> baseList = outBean.getBaseList();
+
+        // MANAGER 管理类型的库单处理
+        if (OATools.isCommon(outBean.getMtype()))
+        {
+            for (BaseBean baseBean : baseList)
+            {
+                ProductBean product = productDAO.find(baseBean.getProductId());
+
+                if (OATools.isManager(product.getReserve4()))
+                {
+                    throw new MYException("库单当前所属的纳税实体是普通类型,当前产品[%s]不是", product.getName());
+                }
+            }
+        }
+
+        outDAO.saveEntityBean(outBean);
+    }
+
+    private void configOutBean(final OutBean outBean)
+    {
+        DutyBean duty = dutyDAO.find(outBean.getDutyId());
+
+        if (duty != null)
+        {
+            outBean.setMtype(duty.getMtype());
         }
     }
 

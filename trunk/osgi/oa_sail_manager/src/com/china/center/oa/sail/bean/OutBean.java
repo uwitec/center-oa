@@ -69,6 +69,8 @@ public class OutBean implements Serializable
      */
     private int type = OutConstant.OUT_TYPE_OUTBILL;
 
+    private int mtype = PublicConstant.MANAGER_TYPE_MANAGER;
+
     /**
      * 是否开票
      */
@@ -1373,6 +1375,23 @@ public class OutBean implements Serializable
     }
 
     /**
+     * @return the mtype
+     */
+    public int getMtype()
+    {
+        return mtype;
+    }
+
+    /**
+     * @param mtype
+     *            the mtype to set
+     */
+    public void setMtype(int mtype)
+    {
+        this.mtype = mtype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -1410,6 +1429,9 @@ public class OutBean implements Serializable
             .append(TAB)
             .append("type = ")
             .append(this.type)
+            .append(TAB)
+            .append("mtype = ")
+            .append(this.mtype)
             .append(TAB)
             .append("hasInvoice = ")
             .append(this.hasInvoice)

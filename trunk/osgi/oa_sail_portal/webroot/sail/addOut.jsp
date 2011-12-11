@@ -18,8 +18,10 @@
 <%@include file="../sail_js/out.jsp"%>
 
 var duesMap = {};
+var duesTypeMap = {};
 <c:forEach items="${dutyList}" var="item">
 duesMap['${item.id}'] = '${item.dues}';
+duesTypeMap['${item.id}'] = '${item.mtype}';
 </c:forEach>
 /**
  * 查询库存
@@ -40,9 +42,12 @@ function opens(obj)
         return false;
     }
     
+    var mtype = duesTypeMap[$$('dutyId')];
+    
     oo = obj;
     
-    window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&sailLocation=${g_staffer.industryId}&showAbs=1&load=1&depotId='+ $$('location') + '&code=' + obj.productcode);
+    window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&sailLocation=${g_staffer.industryId}&showAbs=1&load=1&depotId='
+                    + $$('location') + '&code=' + obj.productcode + '&mtype' + mtype);
 }
 
 function load()

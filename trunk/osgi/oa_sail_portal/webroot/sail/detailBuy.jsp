@@ -265,6 +265,13 @@ function checkBean()
                        </td>
                     </tr>
                     
+                    <tr class="content1">
+                        <td align="right">管理类型：</td>
+                        <td colspan="3">
+                        ${my:get('pubManagerType', bean.mtype)}
+                       </td>
+                    </tr>
+                    
                      <tr class="content1">
                         <td align="right">关联单据：</td>
                         <td colspan="1">

@@ -18,8 +18,10 @@
 <%@include file="../sail_js/out.jsp"%>
 
 var duesMap = {};
+var duesTypeMap = {};
 <c:forEach items="${dutyList}" var="item">
 duesMap['${item.id}'] = '${item.dues}';
+duesTypeMap['${item.id}'] = '${item.mtype}';
 </c:forEach>
 
 /**
@@ -41,9 +43,12 @@ function opens(obj)
         return false;
     }
     
+    var mtype = duesTypeMap[$$('dutyId')];
+    
 	oo = obj;
 	
-	window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&showAbs=1&load=1&depotId='+ $$('location') + '&name=' + encodeURIComponent(obj.value));
+	window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&showAbs=1&load=1&depotId='
+	           + $$('location') + '&name=' + encodeURIComponent(obj.value) + '&mtype' + mtype);
 }
 
 function load()

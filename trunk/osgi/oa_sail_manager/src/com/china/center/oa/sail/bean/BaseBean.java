@@ -15,6 +15,7 @@ import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.oa.publics.constant.PublicConstant;
 
 
 /**
@@ -48,6 +49,8 @@ public class BaseBean implements Serializable
     private String unit = "";
 
     private int amount = 0;
+
+    private int mtype = PublicConstant.MANAGER_TYPE_MANAGER;
 
     private int inway = 0;
 
@@ -551,6 +554,23 @@ public class BaseBean implements Serializable
     }
 
     /**
+     * @return the mtype
+     */
+    public int getMtype()
+    {
+        return mtype;
+    }
+
+    /**
+     * @param mtype
+     *            the mtype to set
+     */
+    public void setMtype(int mtype)
+    {
+        this.mtype = mtype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -591,6 +611,9 @@ public class BaseBean implements Serializable
             .append(TAB)
             .append("amount = ")
             .append(this.amount)
+            .append(TAB)
+            .append("mtype = ")
+            .append(this.mtype)
             .append(TAB)
             .append("inway = ")
             .append(this.inway)
