@@ -789,7 +789,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     }
 
     /**
-     * 暂时不对外
+     * 对外开放(锁和事务由调用的方法保证)
      */
     public String coloneOutAndSubmitWithOutAffair(OutBean outBean, User user, int type)
         throws MYException
@@ -934,13 +934,10 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.china.center.oa.sail.manager.OutManager#submitWithOutAffair(java.lang.String,
-     *      com.center.china.osgi.publics.User)
+    /**
+     * 暂时没有对外开放
      */
-    public synchronized int submitWithOutAffair(final String fullId, final User user, int type)
+    private int submitWithOutAffair(final String fullId, final User user, int type)
         throws MYException
     {
         final OutBean outBean = outDAO.find(fullId);
@@ -1721,7 +1718,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
      * @return
      * @throws Exception
      */
-    public synchronized int reject(final String fullId, final User user, final String reason)
+    public int reject(final String fullId, final User user, final String reason)
         throws MYException
     {
         // LOCK 库存驳回(这里存在库存锁的问题)
@@ -1894,8 +1891,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
      * @return
      * @throws Exception
      */
-    public synchronized int pass(final String fullId, final User user, final int nextStatus,
-                                 final String reason, final String depotpartId)
+    public int pass(final String fullId, final User user, final int nextStatus,
+                    final String reason, final String depotpartId)
         throws MYException
     {
         final OutBean outBean = outDAO.find(fullId);

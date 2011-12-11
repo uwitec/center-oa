@@ -104,9 +104,8 @@ public interface OutManager extends ListenerManager<OutListener>
      * @return
      * @throws MYException
      */
-    int submitWithOutAffair(final String fullId, final User user, int type)
-        throws MYException;
-
+    // int submitWithOutAffair(final String fullId, final User user, int type)
+    // throws MYException;
     /**
      * reject
      * 
