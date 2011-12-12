@@ -2846,6 +2846,10 @@ public class ParentOutAction extends DispatchAction
 
         request.setAttribute("departementList", departementList);
 
+        List<DutyBean> dutyList = dutyDAO.listEntityBeans();
+
+        request.setAttribute("dutyList", dutyList);
+
         request.setAttribute("now", TimeTools.now("yyyy-MM-dd"));
 
         handlerFlow(request, list, true);
@@ -3568,11 +3572,11 @@ public class ParentOutAction extends DispatchAction
             condtion.addCondition("OutBean.customerId", "=", customerId);
         }
 
-        String department = request.getParameter("department");
+        String duty = request.getParameter("duty");
 
-        if ( !StringTools.isNullOrNone(department))
+        if ( !StringTools.isNullOrNone(duty))
         {
-            condtion.addCondition("OutBean.department", "=", department);
+            condtion.addCondition("OutBean.dutyId", "=", duty);
         }
 
         String customerName = request.getParameter("customerName");

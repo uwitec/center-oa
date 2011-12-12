@@ -647,13 +647,13 @@ function hrefAndSelect(obj)
 					</tr>
 					
 					<tr class="content1">
-						<td width="15%" align="center">销售部门</td>
+						<td width="15%" align="center">纳税实体</td>
 						<td align="center">
-						<select name="department"
-							class="select_class" values=${ppmap.department}>
+						<select name="duty"
+							class="select_class" values=${ppmap.duty}>
 							<option value="">--</option>
-							<c:forEach items='${departementList}' var="item">
-								<option value="${item.name}">${item.name}</option>
+							<c:forEach items='${dutyList}' var="item">
+								<option value="${item.id}">${item.name}</option>
 							</c:forEach>
 						</select>
 						</td>
