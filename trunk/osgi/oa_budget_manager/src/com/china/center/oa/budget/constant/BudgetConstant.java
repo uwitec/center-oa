@@ -206,7 +206,7 @@ public interface BudgetConstant
     /**
      * 差旅费
      */
-    String FEE_ITEM_TRAVELLING = "A9201108070000000001";
+    String FEE_ITEM_TRAVELLING = "A1201112140004373609";
 
     /**
      * 预算使用来源-借款
