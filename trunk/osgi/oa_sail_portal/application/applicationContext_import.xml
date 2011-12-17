@@ -97,5 +97,9 @@
     <osgi:reference id="financeDAO" interface="com.china.center.oa.tax.dao.FinanceDAO" />
     
     <osgi:reference id="insVSOutDAO" interface="com.china.center.oa.finance.dao.InsVSOutDAO" />
+    
+    <osgi:reference id="sailConfigDAO" interface="com.china.center.oa.sail.dao.SailConfigDAO" />
+
+    <osgi:reference id="sailConfigManager" interface="com.china.center.oa.sail.manager.SailConfigManager" />
 	
 </beans>

@@ -121,27 +121,27 @@ public interface ProductConstant
     int CTYPE_YES = 1;
 
     /**
-     * 其他类型
+     * 金银章
      */
-    @Defined(key = "productType", value = "其他类型")
+    @Defined(key = "productType", value = "金银章")
     int PRODUCT_TYPE_OTHER = 0;
 
     /**
-     * 纸币
+     * 摆件
      */
-    @Defined(key = "productType", value = "纸币")
+    @Defined(key = "productType", value = "摆件")
     int PRODUCT_TYPE_PAPER = 1;
 
     /**
-     * 金银币
+     * 流通币
      */
-    @Defined(key = "productType", value = "金银币")
+    @Defined(key = "productType", value = "流通币")
     int PRODUCT_TYPE_METAL = 2;
 
     /**
-     * 古币
+     * 旧币
      */
-    @Defined(key = "productType", value = "古币")
+    @Defined(key = "productType", value = "旧币")
     int PRODUCT_TYPE_NUMISMATICS = 3;
 
     /**
@@ -151,16 +151,28 @@ public interface ProductConstant
     int PRODUCT_TYPE_STAMP = 4;
 
     /**
-     * 自卖
+     * 钱币册
      */
-    @Defined(key = "productSailType", value = "自卖")
+    @Defined(key = "productType", value = "钱币册")
+    int PRODUCT_TYPE_MONCE = 5;
+
+    /**
+     * 自有
+     */
+    @Defined(key = "productSailType", value = "自有")
     int SAILTYPE_SELF = 0;
 
     /**
-     * 代销
+     * 经销
      */
-    @Defined(key = "productSailType", value = "代销")
+    @Defined(key = "productSailType", value = "经销")
     int SAILTYPE_REPLACE = 1;
+
+    /**
+     * 定制
+     */
+    @Defined(key = "productSailType", value = "定制")
+    int SAILTYPE_CUSTOMER = 2;
 
     /**
      * 可以调价
@@ -185,4 +197,22 @@ public interface ProductConstant
      */
     @Defined(key = "productCheckType", value = "全检")
     int CHECKTYPE_ALL = 1;
+
+    /**
+     * 新品
+     */
+    @Defined(key = "productStep", value = "新品")
+    String PRODUTC_STEP_NEW = "0";
+
+    @Defined(key = "productStep", value = "成长")
+    String PRODUTC_STEP_INCR = "1";
+
+    @Defined(key = "productStep", value = "正常")
+    String PRODUTC_STEP_COMMONR = "2";
+
+    @Defined(key = "productStep", value = "衰退")
+    String PRODUTC_STEP_SLOW = "3";
+
+    @Defined(key = "productStep", value = "退市")
+    String PRODUTC_STEP_DROP = "4";
 }

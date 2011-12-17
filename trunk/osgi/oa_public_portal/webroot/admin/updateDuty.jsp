@@ -41,7 +41,7 @@ function addBean()
 
 			<p:pro field="name" />
 			
-			<p:pro field="type" innerString="readonly=true">
+			<p:pro field="type">
 				<p:option type="dutyType"/>
 			</p:pro>
 			

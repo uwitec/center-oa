@@ -19,5 +19,24 @@
             <option>$creditItemSecList</option>
         </condtion>
     </item>
+    
+    <item name="querySailConfig" deaultpfix="SailConfigBean">
+        <condtion name="showName" filed="name" caption="品名" pfix="ShowBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="sailType" caption="销售类型">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$productSailType</option>
+        </condtion>
+        <condtion name="productType" caption="销售品类">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$productType</option>
+        </condtion>
+    </item>
 	
 </query>

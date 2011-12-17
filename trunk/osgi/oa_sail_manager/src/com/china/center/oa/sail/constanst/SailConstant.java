@@ -305,4 +305,10 @@ public interface SailConstant
      */
     @Defined(key = "consignPromitType", value = "不满意")
     int CONSIGN_PROMITTYPE_NO = 2;
+
+    @Defined(key = "sailConfigFinType", value = "不开票")
+    int SAILCONFIG_FIN_NO = 0;
+
+    @Defined(key = "sailConfigFinType", value = "开票")
+    int SAILCONFIG_FIN_YES = 1;
 }

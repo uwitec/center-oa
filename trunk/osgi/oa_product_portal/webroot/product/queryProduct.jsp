@@ -34,6 +34,7 @@ function load()
              {display: '虚拟', name : 'abstractType', cc : 'productAbstractType', width : '8%'},
              {display: '合成', name : 'ctype', cc : 'productCtype', width : '8%'},
              {display: '管理', name : 'reserve4', cc : 'pubManagerType', width : '8%'},
+             {display: '阶段', name : 'reserve5', cc : 'productStep', width : '8%'},
              //{display: '库存模型', name : 'stockType', cc : 'productStockType', width : '10%'},
              {display: '批发/零售', name : 'price', content : '{batchPrice}/{sailPrice}', toFixed: 2, width : 'auto'}
              ],

@@ -358,8 +358,8 @@ public class ProductBean implements Serializable
     @Html(title = "管理类型", type = Element.SELECT, must = true)
     private String reserve4 = "0";
 
-    @Html(title = "预留5")
-    private String reserve5 = "";
+    @Html(title = "产品阶段", type = Element.SELECT, must = true)
+    private String reserve5 = ProductConstant.PRODUTC_STEP_NEW;
 
     @Html(title = "预留6")
     private String reserve6 = "";

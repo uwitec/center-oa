@@ -137,7 +137,7 @@ function addBean()
             </p:pro>
 			
 			<p:pro field="sailType">
-				<p:option type="productSailType"/>
+				<p:option type="productSailType" empty="true"/>
 			</p:pro>
 			
 			<p:pro field="adjustPrice">
@@ -175,7 +175,10 @@ function addBean()
 			    <p:option type="pubManagerType" empty="true"/>
 			</p:pro>
 			
-			<p:pro field="reserve5"/>
+			<p:pro field="reserve5">
+                <p:option type="productStep" empty="false"/>
+            </p:pro>
+            
 			<p:pro field="reserve6"/>
 			
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />

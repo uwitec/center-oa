@@ -40,6 +40,12 @@
             <type>select</type>
             <option>$pubManagerType</option>
         </condtion>
+        <condtion name="reserve5" caption="产品阶段">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$productStep</option>
+        </condtion>
 	</item>
 	
 	<item name="queryApplyProduct" deaultpfix="ProductBean">

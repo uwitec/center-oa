@@ -31,4 +31,8 @@
 
 	<bean id="outManager" class="com.china.center.oa.sail.manager.impl.OutManagerImpl" />
 		
+	<bean id="sailConfigDAO" class="com.china.center.oa.sail.dao.impl.SailConfigDAOImpl" />
+
+	<bean id="sailConfigManager" class="com.china.center.oa.sail.manager.impl.SailConfigManagerImpl" />
+
 </beans>

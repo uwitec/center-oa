@@ -82,6 +82,7 @@ import com.china.center.oa.sail.dao.BaseDAO;
 import com.china.center.oa.sail.dao.ConsignDAO;
 import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
+import com.china.center.oa.sail.dao.SailConfigDAO;
 import com.china.center.oa.sail.helper.FlowLogHelper;
 import com.china.center.oa.sail.helper.OutHelper;
 import com.china.center.oa.sail.helper.YYTools;
@@ -3106,5 +3107,22 @@ public class OutAction extends ParentOutAction
     public void setInsVSOutDAO(InsVSOutDAO insVSOutDAO)
     {
         this.insVSOutDAO = insVSOutDAO;
+    }
+
+    /**
+     * @return the sailConfigDAO
+     */
+    public SailConfigDAO getSailConfigDAO()
+    {
+        return sailConfigDAO;
+    }
+
+    /**
+     * @param sailConfigDAO
+     *            the sailConfigDAO to set
+     */
+    public void setSailConfigDAO(SailConfigDAO sailConfigDAO)
+    {
+        this.sailConfigDAO = sailConfigDAO;
     }
 }

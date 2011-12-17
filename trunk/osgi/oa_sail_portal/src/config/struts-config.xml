@@ -27,6 +27,7 @@
 			<forward name="rptQueryOut" path="/sail/rptQueryOut.jsp" />
 			<forward name="rptQueryOutBalance" path="/sail/rptQueryOutBalance.jsp" />
 			<forward name="applyBackPay" path="/sail/applyBackPay.jsp" />
+			<forward name="navigationAddOut1" path="/sail/navigationAddOut1.jsp" />
 		</action>
 		
 		<action path="/sail/transport" parameter="method"
@@ -42,6 +43,15 @@
             <forward name="detailAllConsign" path="/transport/detailAllConsign.jsp" />
             <forward name="queryOut" path="/sail/queryOut.jsp" />
             <forward name="queryTodayConsign" path="/transport/queryTodayConsign.jsp" />
+        </action>
+        
+        <action path="/sail/config" parameter="method"
+            type="org.springframework.web.struts.DelegatingActionProxy"
+            validate="false">
+            <forward name="querySailConfig" path="/sailconfig/querySailConfig.jsp" />
+            <forward name="addSailConfig" path="/sailconfig/addSailConfig.jsp" />
+            <forward name="updateSailConfig" path="/sailconfig/updateSailConfig.jsp" />
+            <forward name="detailSailConfig" path="/sailconfig/detailSailConfig.jsp" />
         </action>
 		
 	</action-mappings>

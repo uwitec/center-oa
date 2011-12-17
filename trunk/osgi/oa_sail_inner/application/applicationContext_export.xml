@@ -29,4 +29,8 @@
 	
 	<osgi:service ref="outManager" interface="com.china.center.oa.sail.manager.OutManager" />
 
+	<osgi:service ref="sailConfigDAO" interface="com.china.center.oa.sail.dao.SailConfigDAO" />
+
+	<osgi:service ref="sailConfigManager" interface="com.china.center.oa.sail.manager.SailConfigManager" />
+
 </beans>

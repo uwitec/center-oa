@@ -90,6 +90,7 @@ import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.ShowDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
+import com.china.center.oa.publics.helper.OATools;
 import com.china.center.oa.publics.manager.AuthManager;
 import com.china.center.oa.publics.manager.FatalNotify;
 import com.china.center.oa.publics.manager.OrgManager;
@@ -109,11 +110,13 @@ import com.china.center.oa.sail.dao.BaseDAO;
 import com.china.center.oa.sail.dao.ConsignDAO;
 import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
+import com.china.center.oa.sail.dao.SailConfigDAO;
 import com.china.center.oa.sail.helper.OutHelper;
 import com.china.center.oa.sail.helper.YYTools;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.sail.vo.OutBalanceVO;
 import com.china.center.oa.sail.vo.OutVO;
+import com.china.center.oa.sail.vo.SailConfigVO;
 import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
@@ -215,6 +218,8 @@ public class ParentOutAction extends DispatchAction
 
     protected DutyVSInvoiceDAO dutyVSInvoiceDAO = null;
 
+    protected SailConfigDAO sailConfigDAO = null;
+
     protected static String QUERYSELFOUT = "querySelfOut";
 
     protected static String QUERYSELFOUTBALANCE = "querySelfOutBalance";
@@ -256,27 +261,47 @@ public class ParentOutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        String flag = request.getParameter("flag");
-
-        try
+        if (OATools.getManagerFlag())
         {
-            innerForPrepare(request, true);
+            List<DutyBean> dutyList = dutyDAO.listEntityBeans();
+
+            request.setAttribute("dutyList", dutyList);
+
+            if (request.getSession().getAttribute("ssmap") == null)
+            {
+                Map ssmap = new HashMap();
+                ssmap.put("ratio", 0);
+                request.getSession().setAttribute("ssmap", ssmap);
+            }
+
+            // 进入导航页面
+            return mapping.findForward("navigationAddOut1");
         }
-        catch (MYException e)
+        else
         {
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
 
-            return mapping.findForward("error");
+            String flag = request.getParameter("flag");
+
+            try
+            {
+                innerForPrepare(request, true);
+            }
+            catch (MYException e)
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+                return mapping.findForward("error");
+            }
+
+            // 增加入库单
+            if ("1".equals(flag))
+            {
+                return mapping.findForward("addBuy");
+            }
+
+            // 销售单
+            return mapping.findForward("addOut");
         }
-
-        // 增加入库单
-        if ("1".equals(flag))
-        {
-            return mapping.findForward("addBuy");
-        }
-
-        // 销售单
-        return mapping.findForward("addOut");
     }
 
     /**
@@ -4371,6 +4396,52 @@ public class ParentOutAction extends DispatchAction
     }
 
     /**
+     * queryShow
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryShow(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        Map<String, String> ssmap = CommonTools.saveParamersToMap(request);
+
+        request.getSession().setAttribute("ssmap", ssmap);
+
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        String dutyId = ssmap.get("duty");
+
+        DutyBean duty = dutyDAO.find(dutyId);
+
+        condtion.addIntCondition("finType" + duty.getType(), "=", ssmap.get("finType"));
+
+        condtion.addIntCondition("ratio" + duty.getType(), "=", ssmap.get("ratio"));
+
+        condtion.addIntCondition("sailType", "=", ssmap.get("sailType"));
+
+        condtion.addIntCondition("productType", "=", ssmap.get("productType"));
+
+        List<SailConfigVO> resultList = sailConfigDAO.queryEntityVOsByCondition(condtion);
+
+        List<DutyBean> dutyList = dutyDAO.listEntityBeans();
+
+        request.setAttribute("dutyList", dutyList);
+
+        request.getSession().setAttribute("g_showList", resultList);
+
+        // 进入导航页面
+        return mapping.findForward("navigationAddOut1");
+    }
+
+    /**
      * getCondition
      * 
      * @param condtion
@@ -4588,4 +4659,5 @@ public class ParentOutAction extends DispatchAction
 
         request.setAttribute("divMap", divMap);
     }
+
 }

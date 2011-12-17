@@ -9,7 +9,7 @@
 package com.china.center.oa.sail.manager.impl;
 
 
-import org.china.center.spring.ex.annotation.Exceptional;
+import org.china.center.spring.iaop.annotation.IntegrationAOP;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.china.center.common.MYException;
@@ -28,7 +28,7 @@ import com.china.center.oa.sail.manager.ConsignManager;
  * @see ConsignManagerImpl
  * @since 3.0
  */
-@Exceptional
+@IntegrationAOP
 public class ConsignManagerImpl implements ConsignManager
 {
     private ConsignDAO consignDAO = null;
