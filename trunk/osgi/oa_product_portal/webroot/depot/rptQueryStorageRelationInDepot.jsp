@@ -93,6 +93,9 @@ function queryAbs()
 <input type="hidden" value="${showAbs}" name="showAbs">
 <input type="hidden" value="${sailLocation}" name="sailLocation">
 <input type="hidden" value="${queryType}" name="queryType">
+<input type="hidden" value="${mtype}" name="mtype">
+<input type="hidden" value="${sailType}" name="sailType">
+<input type="hidden" value="${productType}" name="productType">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">产品库存管理(最多返回前100个)</td>
@@ -124,7 +127,7 @@ function queryAbs()
 				</td>
 				<td width="15%" align="center">库存属性</td>
 				<td align="center">
-				<select name="stafferId" class="select_class" values="${stafferId}">
+				<select name="stafferId" class="select_class" values="${stafferId}" >
 						<option value="">--</option>
 						<option value="0">公共(公共库存)</option>
 						<option value="${user.stafferId}">${user.stafferName}(私有库存)</option>

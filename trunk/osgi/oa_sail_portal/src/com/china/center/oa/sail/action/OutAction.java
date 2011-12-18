@@ -3,6 +3,7 @@ package com.china.center.oa.sail.action;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.PageSeparateTools;
 import com.china.center.actionhelper.json.AjaxResult;
+import com.china.center.actionhelper.jsonimpl.JSONArray;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
@@ -42,9 +44,11 @@ import com.china.center.oa.product.dao.ProviderDAO;
 import com.china.center.oa.product.dao.StorageDAO;
 import com.china.center.oa.product.manager.StorageRelationManager;
 import com.china.center.oa.publics.Helper;
+import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
+import com.china.center.oa.publics.bean.ShowBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.InvoiceConstant;
@@ -65,6 +69,7 @@ import com.china.center.oa.publics.dao.ShowDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
 import com.china.center.oa.publics.helper.LockHelper;
+import com.china.center.oa.publics.helper.OATools;
 import com.china.center.oa.publics.manager.AuthManager;
 import com.china.center.oa.publics.manager.FatalNotify;
 import com.china.center.oa.publics.manager.OrgManager;
@@ -89,6 +94,7 @@ import com.china.center.oa.sail.helper.YYTools;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.sail.vo.OutBalanceVO;
 import com.china.center.oa.sail.vo.OutVO;
+import com.china.center.oa.sail.vo.SailConfigVO;
 import com.china.center.oa.sail.wrap.CreditWrap;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.dao.FinanceDAO;
@@ -1813,6 +1819,14 @@ public class OutAction extends ParentOutAction
                 {
                     request.setAttribute("lock_sw", true);
                 }
+
+                if (OATools.getManagerFlag())
+                {
+                    preForUpdateOut2(request, bean);
+
+                    return mapping.findForward("updateOut2");
+                }
+
                 // 处理修改
                 return mapping.findForward("updateOut");
             }
@@ -2107,6 +2121,64 @@ public class OutAction extends ParentOutAction
         }
 
         return mapping.findForward("detailBuy");
+    }
+
+    /**
+     * preForUpdateOut2
+     * 
+     * @param request
+     * @param bean
+     */
+    private void preForUpdateOut2(HttpServletRequest request, OutVO bean)
+    {
+        // 处理更多逻辑
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        String dutyId = bean.getDutyId();
+
+        DutyBean duty = dutyDAO.find(dutyId);
+
+        // 开票
+        condtion.addIntCondition("finType" + duty.getType(), "=", 1);
+
+        condtion.addIntCondition("ratio" + duty.getType(), "=", bean.getRatio());
+
+        condtion.addIntCondition("sailType", "=", bean.getSailType());
+
+        condtion.addIntCondition("productType", "=", bean.getProductType());
+
+        List<SailConfigVO> resultList = sailConfigDAO.queryEntityVOsByCondition(condtion);
+
+        List<DutyBean> dutyList = dutyDAO.listEntityBeans();
+
+        request.setAttribute("dutyList", dutyList);
+
+        // 查询开单品名(是过滤出来的)
+        List<ShowBean> showList = new ArrayList();
+
+        for (SailConfigVO sailConfigVO : resultList)
+        {
+            ShowBean show = showDAO.find(sailConfigVO.getShowId());
+
+            show.setDutyId(bean.getDutyId());
+
+            showList.add(show);
+        }
+
+        request.setAttribute("sailDuty", duty);
+
+        // 发票的描述
+        String ratio = bean.getRatio();
+
+        request.setAttribute("invoiceDes", "销货发票,税点:" + ratio + "‰(千分值)");
+
+        // 替换之前的
+        JSONArray shows = new JSONArray(showList, true);
+
+        // 替换过滤的show
+        request.setAttribute("showJSON", shows.toString());
     }
 
     /**

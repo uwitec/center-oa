@@ -19,6 +19,7 @@ function load()
 
 function query()
 {
+    $O('method').value = 'queryShow';
 	submit(null, null, null);
 }
 
@@ -27,13 +28,18 @@ function resetAll()
    formEntry.reset();
 }
 
+function nexStep2()
+{
+    $O('method').value = 'navigationAddOut2';
+    submit(null, null, null);
+}
+
 </script>
 
 </head>
 <body class="body_class" onload="load()">
 <form name="formEntry" action="../sail/out.do" method="post">
 <input type="hidden" name="method" value="queryShow"> 
-<input type="hidden" value="1" name="firstLoad">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">增加销售单向导--开票设置</td>
@@ -44,23 +50,39 @@ function resetAll()
 
 	<p:subBody width="98%">
 		<table width="100%" align="center" cellspacing='1' class="table0">
-			<tr class="content1">
+		    <tr class="content1">
+               <td width="15%" align="center">纳税实体</td>
+                        <td align="left">
+                        <select name="duty" style="width: 80%" oncheck="notNone" head="纳税实体"
+                            class="select_class" values=${ssmap.duty} >
+                            <option value="">--</option>
+                            <c:forEach items='${dutyList}' var="item">
+                                <option value="${item.id}">${item.name}(${my:get('dutyType', item.type)})</option>
+                            </c:forEach>
+                        </select>
+                        <font color="#FF0000">*</font>
+                </td>
+                
+                <td width="15%" align="center"></td>
+                <td align="left" colspan="1"></td>
+            </tr>
+		    
+			<tr class="content2">
 				<td width="15%" align="center">是否开票</td>
 				<td align="left">
 				<select name="finType" values="${ssmap.finType}" class="select_class" oncheck="notNone">
-                    <option value="0">不开票</option>
                     <option value="1">开票</option>
                 </select>
 				<font color="#FF0000">*</font>
 				</td>
 				<td width="15%" align="center">税点(‰)</td>
                 <td align="left">
-                <input type="text" name="ratio" style="width: 80%" value="${ssmap.ratio}" oncheck="notNone;isNumber">
+                <input type="text" name="ratio" style="width: 80%" value="${ssmap.ratio}" oncheck="notNone;isInt">
                 <font color="#FF0000">*</font>
                 </td>
 			</tr>
 
-			<tr class="content2">
+			<tr class="content1">
 			    <td width="15%" align="center">销售类型:</td>
                 <td align="left" colspan="1"><select name="sailType"
                     class="select_class" values="${ssmap.sailType}" >
@@ -72,21 +94,6 @@ function resetAll()
                     class="select_class" values="${ssmap.productType}" >
                     <p:option type="productType"/>
                 </select></td>
-            </tr>
-            
-            <tr class="content1">
-               <td width="15%" align="center">纳税实体</td>
-                        <td align="left">
-                        <select name="duty" style="width: 80%"
-                            class="select_class" values=${ssmap.duty} >
-                            <c:forEach items='${dutyList}' var="item">
-                                <option value="${item.id}">${item.name}(${my:get('dutyType', item.type)})</option>
-                            </c:forEach>
-                        </select>
-                </td>
-                
-                <td width="15%" align="center"></td>
-                <td align="left" colspan="1"></td>
             </tr>
 
 			<tr class="content2">
@@ -127,11 +134,15 @@ function resetAll()
 
 	<p:line flag="1" />
 
-    <p:button leftWidth="100%" rightWidth="0%">
-        <div align="right"><input type="button" class="button_class" id="ok_b"
-            style="cursor: pointer" value="&nbsp;&nbsp;下一步&nbsp;&nbsp;"
-            onclick="addBean()"></div>
-    </p:button>
+    <c:if test="${fn:length(g_showList) > 0}">
+	    <p:button leftWidth="100%" rightWidth="0%">
+	        <div align="right">
+		        <input type="button" class="button_class" id="ok_b1"
+		            style="cursor: pointer" value="&nbsp;&nbsp;下一步&nbsp;&nbsp;"
+		            onclick="nexStep2()">
+	        </div>
+	    </p:button>
+    </c:if>
 
     <p:message2/>
 	

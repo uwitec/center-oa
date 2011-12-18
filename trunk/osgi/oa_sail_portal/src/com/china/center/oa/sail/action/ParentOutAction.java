@@ -261,6 +261,25 @@ public class ParentOutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
+        String flag = request.getParameter("flag");
+
+        // 入库单
+        if ("1".equals(flag))
+        {
+            try
+            {
+                innerForPrepare(request, true);
+            }
+            catch (MYException e)
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+                return mapping.findForward("error");
+            }
+
+            return mapping.findForward("addBuy");
+        }
+
         if (OATools.getManagerFlag())
         {
             List<DutyBean> dutyList = dutyDAO.listEntityBeans();
@@ -280,8 +299,6 @@ public class ParentOutAction extends DispatchAction
         else
         {
 
-            String flag = request.getParameter("flag");
-
             try
             {
                 innerForPrepare(request, true);
@@ -293,15 +310,82 @@ public class ParentOutAction extends DispatchAction
                 return mapping.findForward("error");
             }
 
-            // 增加入库单
-            if ("1".equals(flag))
-            {
-                return mapping.findForward("addBuy");
-            }
-
             // 销售单
             return mapping.findForward("addOut");
         }
+    }
+
+    /**
+     * navigationAddOut2
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward navigationAddOut2(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        // 是否锁定库存
+        if (storageRelationManager.isStorageRelationLock())
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "库存被锁定,不能开单");
+
+            return mapping.findForward("error");
+        }
+
+        try
+        {
+            innerForPrepare(request, true);
+        }
+        catch (MYException e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+            return mapping.findForward("error");
+        }
+
+        List<SailConfigVO> resultList = (List<SailConfigVO>)request.getSession().getAttribute(
+            "g_showList");
+
+        Map ssmap = (Map)request.getSession().getAttribute("ssmap");
+
+        // 查询开单品名(是过滤出来的)
+        List<ShowBean> showList = new ArrayList();
+
+        for (SailConfigVO sailConfigVO : resultList)
+        {
+            ShowBean show = showDAO.find(sailConfigVO.getShowId());
+
+            show.setDutyId(ssmap.get("duty").toString());
+
+            showList.add(show);
+        }
+
+        DutyBean sailDuty = dutyDAO.find(ssmap.get("duty").toString());
+
+        request.setAttribute("sailDuty", sailDuty);
+
+        // 发票的描述
+        String ratio = ssmap.get("ratio").toString();
+
+        request.setAttribute("invoiceDes", "销货发票,税点:" + ratio + "‰(千分值)");
+
+        // 替换之前的
+        JSONArray shows = new JSONArray(showList, true);
+
+        // 替换过滤的show
+        request.setAttribute("showJSON", shows.toString());
+
+        List<DutyBean> dutyList = dutyDAO.listEntityBeans();
+
+        request.setAttribute("dutyList2", dutyList);
+
+        // 销售单
+        return mapping.findForward("addOut2");
     }
 
     /**
@@ -2036,6 +2120,26 @@ public class ParentOutAction extends DispatchAction
             if (sb != null && sb.getBlack() == StafferConstant.BLACK_YES)
             {
                 outBean.setReserve3(OutConstant.OUT_SAIL_TYPE_MONEY);
+            }
+
+            // 销售属性的设置
+            if (OATools.getManagerFlag())
+            {
+                if (StringTools.isNullOrNone(outBean.getFullId()))
+                {
+                    Map ssmap = (Map)request.getSession().getAttribute("ssmap");
+
+                    if (ssmap == null)
+                    {
+                        request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+
+                        return mapping.findForward("error");
+                    }
+
+                    outBean.setSailType(ssmap.get("sailType").toString());
+                    outBean.setProductType(ssmap.get("productType").toString());
+                    outBean.setRatio(ssmap.get("ratio").toString());
+                }
             }
 
             action = processCommonOut(mapping, request, user, saves, fullId, outBean, map);

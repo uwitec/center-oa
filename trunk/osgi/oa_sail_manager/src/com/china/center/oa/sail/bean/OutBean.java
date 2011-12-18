@@ -275,6 +275,21 @@ public class OutBean implements Serializable
     private String reserve9 = "";
 
     /**
+     * 改造后增加了销售类型
+     */
+    private String sailType = "";
+
+    /**
+     * 销售的产品类型
+     */
+    private String productType = "";
+
+    /**
+     * 税率
+     */
+    private String ratio = "";
+
+    /**
      * 预占客户信用等级金额(优先使用客户的)
      */
     private double curcredit = 0.0d;
@@ -1392,6 +1407,57 @@ public class OutBean implements Serializable
     }
 
     /**
+     * @return the sailType
+     */
+    public String getSailType()
+    {
+        return sailType;
+    }
+
+    /**
+     * @param sailType
+     *            the sailType to set
+     */
+    public void setSailType(String sailType)
+    {
+        this.sailType = sailType;
+    }
+
+    /**
+     * @return the productType
+     */
+    public String getProductType()
+    {
+        return productType;
+    }
+
+    /**
+     * @param productType
+     *            the productType to set
+     */
+    public void setProductType(String productType)
+    {
+        this.productType = productType;
+    }
+
+    /**
+     * @return the ratio
+     */
+    public String getRatio()
+    {
+        return ratio;
+    }
+
+    /**
+     * @param ratio
+     *            the ratio to set
+     */
+    public void setRatio(String ratio)
+    {
+        this.ratio = ratio;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -1573,6 +1639,15 @@ public class OutBean implements Serializable
             .append(TAB)
             .append("reserve9 = ")
             .append(this.reserve9)
+            .append(TAB)
+            .append("sailType = ")
+            .append(this.sailType)
+            .append(TAB)
+            .append("productType = ")
+            .append(this.productType)
+            .append(TAB)
+            .append("ratio = ")
+            .append(this.ratio)
             .append(TAB)
             .append("curcredit = ")
             .append(this.curcredit)

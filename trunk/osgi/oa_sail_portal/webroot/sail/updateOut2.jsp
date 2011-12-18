@@ -58,7 +58,7 @@ function load()
     loadForm();
     
      //load show
-    loadShow();
+    loadShow(true);
     
     loadForm();
     
@@ -154,6 +154,9 @@ function changePrice()
 <input type=hidden name="showNameList" value="" />
 <input type=hidden name="customercreditlevel" value="" />
 <input type=hidden name="refOutFullId" value="${bean.refOutFullId}" />
+<input type=hidden name="sailType" value="${bean.sailType}" />
+<input type=hidden name="productType" value="${bean.productType}" />
+<input type=hidden name="ratio" value="${bean.ratio}" />
 <input type=hidden name="inputPriceList"> 
 <p:navigation
 	height="22">
@@ -284,7 +287,7 @@ function changePrice()
                         <td align="right">纳税实体：</td>
                         <td colspan="1">
                         <select name="dutyId" class="select_class" style="width: 240px"  readonly=true
-                            values="${bean.dutyId}" onchange="loadShow();changePrice();">
+                            values="${bean.dutyId}" onchange="loadShow(true);changePrice();">
                             <c:forEach items="${dutyList}" var="item">
                             <option value="${item.id}">${item.name} (${item.dues}‰)</option>
                             </c:forEach>
@@ -293,15 +296,10 @@ function changePrice()
                     </tr>
                     
                     <tr class="content2">
-                        <td align="right">发票类型：</td>
+                        <td align="right">类型：</td>
                         <td colspan="3">
-                        <select name="invoiceId" class="select_class" head="发票类型" style="width: 400px" values="${bean.invoiceId}">
-                           <option value="">没有发票</option>
-                            <c:forEach items="${invoiceList}" var="item">
-                            <option value="${item.id}">${item.fullName}</option>
-                            </c:forEach>
-                        </select>
-                        <font color="#FF0000">*</font></td>
+                        ${invoiceDes}/销售类型:${my:get2('productSailType', bean.sailType)}/销售类别:${my:get2('productType', bean.productType)}
+                        </td>
                     </tr>
 
 					<tr class="content1">

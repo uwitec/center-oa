@@ -2177,6 +2177,21 @@ public class StorageAction extends DispatchAction
             condtion.addCondition("ProductBean.reserve4", "=", PublicConstant.MANAGER_TYPE_COMMON);
         }
 
+        // 过滤销售类型和产品类型
+        String sailType = request.getParameter("sailType");
+
+        if ( !StringTools.isNullOrNone(sailType))
+        {
+            condtion.addCondition("ProductBean.sailType", "=", sailType);
+        }
+
+        String productType = request.getParameter("productType");
+
+        if ( !StringTools.isNullOrNone(productType))
+        {
+            condtion.addCondition("ProductBean.type", "=", productType);
+        }
+
         return condtion;
     }
 

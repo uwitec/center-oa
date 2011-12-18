@@ -19,7 +19,7 @@
 
 var duesMap = {};
 var duesTypeMap = {};
-<c:forEach items="${dutyList}" var="item">
+<c:forEach items="${dutyList2}" var="item">
 duesMap['${item.id}'] = '${item.dues}';
 duesTypeMap['${item.id}'] = '${item.mtype}';
 </c:forEach>
@@ -47,7 +47,7 @@ function opens(obj)
     oo = obj;
     
     window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&sailLocation=${g_staffer.industryId}&showAbs=1&load=1&depotId='
-                    + $$('location') + '&code=' + obj.productcode + '&mtype=' + mtype);
+                    + $$('location') + '&code=' + obj.productcode + '&mtype=' + mtype + '&sailType=' + ${ssmap.sailType} + '&productType=' + ${ssmap.productType});
 }
 
 function load()
@@ -57,11 +57,13 @@ function load()
     loadForm();
     
      //load show
-    loadShow();
+    loadShow(true);
     
     loadForm();
     
     managerChange();
+    
+    changePrice();
 }
 
 function changePrice()
@@ -232,21 +234,17 @@ function changePrice()
                         <font color="#FF0000">*</font></td>
                         <td align="right">纳税实体：</td>
                         <td colspan="1">
-                        <select name="dutyId" class="select_class" style="width: 240px" oncheck="notNone;" onchange="loadShow();changePrice();">
-                            <option value="">--</option>
-                            <c:forEach items="${dutyList}" var="item">
-                            <option value="${item.id}">${item.name} (${item.dues}‰)</option>
-                            </c:forEach>
+                        <select name="dutyId" class="select_class" style="width: 240px" oncheck="notNone;" onchange="loadShow(true);changePrice();">
+                            <option value="${sailDuty.id}">${sailDuty.name} (${sailDuty.dues}‰)</option>
                         </select>
                         <font color="#FF0000">*</font></td>
                     </tr>
                     
                     <tr class="content2">
-                        <td align="right">发票类型：</td>
+                        <td align="right">类型：</td>
                         <td colspan="3">
-                        <select name="invoiceId" class="select_class" head="发票类型" style="width: 400px">
-                        </select>
-                        <font color="#FF0000">*</font></td>
+                        ${invoiceDes}/销售类型:${my:get2('productSailType', ssmap.sailType)}/销售类别:${my:get2('productType', ssmap.productType)}
+                        </td>
                     </tr>
 
 					<tr class="content1">
