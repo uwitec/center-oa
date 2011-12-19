@@ -27,6 +27,8 @@
             validate="false">
             <forward name="addInvoiceins" path="/invoiceins/addInvoiceins.jsp" />
             <forward name="addInvoiceins2" path="/invoiceins/addInvoiceins2.jsp" />
+            <forward name="navigationAddInvoiceins1" path="/invoiceins/navigationAddInvoiceins1.jsp" />
+            <forward name="navigationAddInvoiceins2" path="/invoiceins/navigationAddInvoiceins2.jsp" />
             <forward name="queryInvoiceins" path="/invoiceins/queryInvoiceins.jsp" />
             <forward name="detailInvoiceins" path="/invoiceins/detailInvoiceins.jsp" />
         </action>

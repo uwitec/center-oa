@@ -12,8 +12,12 @@ package com.china.center.oa.finance.portal.action;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -66,8 +70,12 @@ import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.ShowDAO;
 import com.china.center.oa.publics.manager.StafferManager;
 import com.china.center.oa.publics.vs.DutyVSInvoiceBean;
+import com.china.center.oa.sail.bean.BaseBalanceBean;
+import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
+import com.china.center.oa.sail.dao.BaseBalanceDAO;
+import com.china.center.oa.sail.dao.BaseDAO;
 import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.tools.BeanUtil;
@@ -106,6 +114,10 @@ public class InvoiceinsAction extends DispatchAction
     private StafferManager stafferManager = null;
 
     private OutDAO outDAO = null;
+
+    private BaseDAO baseDAO = null;
+
+    private BaseBalanceDAO baseBalanceDAO = null;
 
     private InvoiceDAO invoiceDAO = null;
 
@@ -157,6 +169,41 @@ public class InvoiceinsAction extends DispatchAction
         request.setAttribute("stafferList", stafferList);
 
         return mapping.findForward("addInvoiceins");
+    }
+
+    /**
+     * 2012以后的开票
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward preForAddInvoiceins1(ActionMapping mapping, ActionForm form,
+                                              HttpServletRequest request,
+                                              HttpServletResponse response)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        prepare(request);
+
+        // 查询开单品名
+        List<ShowBean> showList = showDAO.listEntityBeans();
+
+        JSONArray shows = new JSONArray(showList, true);
+
+        request.setAttribute("showJSON", shows.toString());
+
+        // 获得财务审批的权限人(1604)
+        List<StafferBean> stafferList = stafferManager
+            .queryStafferByAuthId(AuthConstant.INVOICEINS_OPR);
+
+        request.setAttribute("stafferList", stafferList);
+
+        return mapping.findForward("navigationAddInvoiceins1");
     }
 
     /**
@@ -484,6 +531,156 @@ public class InvoiceinsAction extends DispatchAction
     }
 
     /**
+     * 向导页面从1到2
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward navigationAddInvoiceins(ActionMapping mapping, ActionForm form,
+                                                 HttpServletRequest request,
+                                                 HttpServletResponse reponse)
+        throws ServletException
+    {
+        request.removeAttribute("bean");
+
+        InvoiceinsBean bean = new InvoiceinsBean();
+
+        BeanUtil.getBean(bean, request);
+
+        request.setAttribute("bean", bean);
+
+        request.getSession().setAttribute("bean", bean);
+
+        Map<String, String> pmap = CommonTools.saveParamersToMap(request);
+
+        request.setAttribute("pmap", pmap);
+
+        String outId = request.getParameter("outId");
+
+        // 选择的销售单哦(委托单最终也是销售单)
+        if (StringTools.isNullOrNone(outId))
+        {
+            return ActionTools.toError("没有开票的销售单", mapping, request);
+        }
+
+        String[] split = outId.split(";");
+
+        Map<String, Double> insMap = new HashMap();
+
+        // 处理每个销售单,进行合并开单品名和价格
+        for (int i = 0; i < split.length; i++ )
+        {
+            int type = 0;
+
+            OutBean outBean = outDAO.find(split[i]);
+
+            OutBalanceBean outBalanceBean = null;
+
+            if (outBean == null)
+            {
+                outBalanceBean = outBalanceDAO.find(split[i]);
+
+                if (outBalanceBean == null)
+                {
+                    return ActionTools.toError(split[i] + "的销售单不存在", mapping, request);
+                }
+
+                // 原始的单据
+                outBean = outDAO.find(outBalanceBean.getOutId());
+
+                if (outBean == null)
+                {
+                    return ActionTools.toError(split[i] + "的销售单不存在", mapping, request);
+                }
+
+                type = 1;
+            }
+
+            if (StringTools.isNullOrNone(outBean.getRatio()))
+            {
+                return ActionTools.toError(split[i] + "的销售单不是新格式的销售单,因为没有指定税率", mapping, request);
+            }
+
+            if (type == 0)
+            {
+                // 所有的销售单项目
+                List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(split[i]);
+
+                for (BaseBean baseBean : baseList)
+                {
+                    if (insMap.get(baseBean.getShowId()) == null)
+                    {
+                        insMap.put(baseBean.getShowId(), (baseBean.getValue() - baseBean
+                            .getInvoiceMoney()));
+                    }
+                    else
+                    {
+                        double total = insMap.get(baseBean.getShowId());
+
+                        insMap.put(baseBean.getShowId(), total
+                                                         + (baseBean.getValue() - baseBean
+                                                             .getInvoiceMoney()));
+                    }
+                }
+            }
+            else
+            {
+                // 结算单
+                List<BaseBalanceBean> baseList = baseBalanceDAO.queryEntityBeansByFK(split[i]);
+
+                for (BaseBalanceBean baseBalanceBean : baseList)
+                {
+                    BaseBean base = baseDAO.find(baseBalanceBean.getBaseId());
+
+                    String showId = base.getShowId();
+
+                    double eachTotal = baseBalanceBean.getAmount() * baseBalanceBean.getSailPrice();
+
+                    if (insMap.get(showId) == null)
+                    {
+                        insMap.put(showId, (eachTotal - baseBalanceBean.getInvoiceMoney()));
+                    }
+                    else
+                    {
+                        double total = insMap.get(showId);
+
+                        insMap.put(showId, total + (eachTotal - baseBalanceBean.getInvoiceMoney()));
+                    }
+                }
+            }
+        }
+
+        Set<Entry<String, Double>> entrySet = insMap.entrySet();
+
+        List<ShowBean> showList = new ArrayList();
+
+        for (Entry<String, Double> entry : entrySet)
+        {
+            ShowBean show = showDAO.find(entry.getKey());
+
+            show.setDescription(MathTools.formatNum(entry.getValue()));
+
+            showList.add(show);
+        }
+
+        request.setAttribute("showList", showList);
+
+        prepare(request);
+
+        // 获得财务审批的权限人(1604)
+        List<StafferBean> stafferList = stafferManager
+            .queryStafferByAuthId(AuthConstant.INVOICEINS_OPR);
+
+        request.setAttribute("stafferList", stafferList);
+
+        return mapping.findForward("navigationAddInvoiceins2");
+    }
+
+    /**
      * addInvoiceins
      * 
      * @param mapping
@@ -521,6 +718,51 @@ public class InvoiceinsAction extends DispatchAction
         request.setAttribute("mode", mode);
 
         RequestTools.menuInitQuery(request);
+
+        return mapping.findForward("queryInvoiceins");
+    }
+
+    /**
+     * 导航结束
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward addInvoiceinsInNavigation(ActionMapping mapping, ActionForm form,
+                                                   HttpServletRequest request,
+                                                   HttpServletResponse response)
+        throws ServletException
+    {
+        try
+        {
+            InvoiceinsBean bean = (InvoiceinsBean)request.getSession().getAttribute("bean");
+
+            createInsInNavigation(request, bean);
+
+            User user = Helper.getUser(request);
+
+            financeFacade.addInvoiceinsBean(user.getId(), bean);
+
+            request.setAttribute(KeyConstant.MESSAGE, "成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
+        }
+
+        CommonTools.removeParamers(request);
+
+        request.setAttribute("mode", "0");
+
+        RequestTools.menuInitQuery(request);
+
+        request.getSession().removeAttribute("bean");
 
         return mapping.findForward("queryInvoiceins");
     }
@@ -690,6 +932,244 @@ public class InvoiceinsAction extends DispatchAction
 
             bean.setRefIds(buffer.toString());
         }
+
+        return bean;
+    }
+
+    private InvoiceinsItemBean findInvoiceinsItem(List<InvoiceinsItemBean> list, String showId)
+    {
+        for (InvoiceinsItemBean invoiceinsItemBean : list)
+        {
+            if (invoiceinsItemBean.getShowId().equals(showId))
+            {
+                return invoiceinsItemBean;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 导航最后一步
+     * 
+     * @param request
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    private InvoiceinsBean createInsInNavigation(HttpServletRequest request, InvoiceinsBean bean)
+        throws MYException
+    {
+        String[] showIds = request.getParameterValues("showId");
+        String[] specials = request.getParameterValues("special");
+        String[] units = request.getParameterValues("sunit");
+        String[] totals = request.getParameterValues("total");
+
+        List<InvoiceinsItemBean> itemList = new ArrayList<InvoiceinsItemBean>();
+
+        for (int i = 0; i < showIds.length; i++ )
+        {
+            // 只有大于0的
+            if (MathTools.parseDouble(totals[i]) > 0)
+            {
+                InvoiceinsItemBean item = new InvoiceinsItemBean();
+
+                item.setShowId(showIds[i]);
+                item.setShowName(showDAO.find(showIds[i]).getName());
+                item.setAmount(1);
+                item.setPrice(MathTools.parseDouble(totals[i]));
+                item.setMoneys(MathTools.parseDouble(totals[i]));
+                item.setSpecial(specials[i].trim());
+                item.setUnit(units[i].trim());
+
+                itemList.add(item);
+            }
+        }
+
+        if (ListTools.isEmptyOrNull(itemList))
+        {
+            throw new MYException("没有开票项");
+        }
+
+        double total = 0.0d;
+
+        for (InvoiceinsItemBean invoiceinsItemBean : itemList)
+        {
+            total += invoiceinsItemBean.getMoneys();
+        }
+
+        bean.setMoneys(total);
+
+        User user = Helper.getUser(request);
+
+        bean.setLocationId(user.getLocationId());
+
+        bean.setStafferId(user.getStafferId());
+
+        String outId = request.getParameter("outId");
+
+        List<InsVSOutBean> vsList = new ArrayList<InsVSOutBean>();
+
+        String[] split = outId.split(";");
+
+        for (int i = 0; i < split.length; i++ )
+        {
+            OutBean out = outDAO.find(split[i]);
+
+            OutBalanceBean balance = null;
+
+            int type = FinanceConstant.INSVSOUT_TYPE_OUT;
+
+            if (out == null)
+            {
+                balance = outBalanceDAO.find(split[i]);
+
+                if (balance == null)
+                {
+                    throw new MYException("数据错误,请确认操作");
+                }
+                else
+                {
+                    type = FinanceConstant.INSVSOUT_TYPE_BALANCE;
+                }
+
+                out = outDAO.find(balance.getOutId());
+            }
+
+            // 销售单
+            if (type == FinanceConstant.INSVSOUT_TYPE_OUT)
+            {
+                List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(out.getFullId());
+
+                for (BaseBean baseBean : baseList)
+                {
+                    InvoiceinsItemBean findInvoiceinsItem = findInvoiceinsItem(itemList, baseBean
+                        .getShowId());
+
+                    // 此品名没有开票
+                    if (findInvoiceinsItem == null)
+                    {
+                        continue;
+                    }
+
+                    double canUse = findInvoiceinsItem.getPrice();
+
+                    if (canUse <= 0)
+                    {
+                        continue;
+                    }
+
+                    InsVSOutBean vs = new InsVSOutBean();
+
+                    vs.setOutId(split[i]);
+
+                    vs.setType(type);
+
+                    vs.setBaseId(baseBean.getId());
+
+                    // 剩余需要开票的金额
+                    double imoney = baseBean.getValue() - baseBean.getInvoiceMoney();
+
+                    if (canUse >= imoney)
+                    {
+                        vs.setMoneys(imoney);
+
+                        findInvoiceinsItem.setPrice(canUse - imoney);
+                    }
+                    else
+                    {
+                        vs.setMoneys(canUse);
+
+                        findInvoiceinsItem.setPrice(0.0);
+                    }
+
+                    vsList.add(vs);
+                }
+            }
+            else
+            {
+                List<BaseBalanceBean> baseList = baseBalanceDAO.queryEntityBeansByFK(split[i]);
+
+                for (BaseBalanceBean baseBalanceBean : baseList)
+                {
+                    BaseBean base = baseDAO.find(baseBalanceBean.getBaseId());
+
+                    InvoiceinsItemBean findInvoiceinsItem = findInvoiceinsItem(itemList, base
+                        .getShowId());
+
+                    // 此品名没有开票
+                    if (findInvoiceinsItem == null)
+                    {
+                        continue;
+                    }
+
+                    double canUse = findInvoiceinsItem.getPrice();
+
+                    if (canUse <= 0)
+                    {
+                        continue;
+                    }
+
+                    InsVSOutBean vs = new InsVSOutBean();
+
+                    vs.setOutId(split[i]);
+
+                    vs.setType(type);
+
+                    vs.setBaseId(baseBalanceBean.getId());
+
+                    // 剩余需要开票的金额
+                    double imoney = (baseBalanceBean.getAmount() * baseBalanceBean.getSailPrice())
+                                    - baseBalanceBean.getInvoiceMoney();
+
+                    if (canUse >= imoney)
+                    {
+                        vs.setMoneys(imoney);
+
+                        findInvoiceinsItem.setPrice(canUse - imoney);
+                    }
+                    else
+                    {
+                        vs.setMoneys(canUse);
+
+                        findInvoiceinsItem.setPrice(0.0);
+                    }
+
+                    vsList.add(vs);
+                }
+            }
+
+        }
+
+        bean.setVsList(vsList);
+
+        for (InvoiceinsItemBean invoiceinsItemBean2 : itemList)
+        {
+            if (invoiceinsItemBean2.getPrice() > 0)
+            {
+                throw new MYException("开票金额过多,请确认操作");
+            }
+        }
+
+        // 恢复price
+        for (InvoiceinsItemBean invoiceinsItemBean2 : itemList)
+        {
+            invoiceinsItemBean2.setPrice(invoiceinsItemBean2.getMoneys());
+        }
+
+        bean.setItemList(itemList);
+
+        StringBuffer buffer = new StringBuffer();
+
+        for (InsVSOutBean insVSOutBean : vsList)
+        {
+            if ( !buffer.toString().contains(insVSOutBean.getOutId()))
+            {
+                buffer.append(insVSOutBean.getOutId()).append(';');
+            }
+        }
+
+        bean.setRefIds(buffer.toString());
 
         return bean;
     }
@@ -1012,5 +1492,39 @@ public class InvoiceinsAction extends DispatchAction
     public void setStafferManager(StafferManager stafferManager)
     {
         this.stafferManager = stafferManager;
+    }
+
+    /**
+     * @return the baseDAO
+     */
+    public BaseDAO getBaseDAO()
+    {
+        return baseDAO;
+    }
+
+    /**
+     * @param baseDAO
+     *            the baseDAO to set
+     */
+    public void setBaseDAO(BaseDAO baseDAO)
+    {
+        this.baseDAO = baseDAO;
+    }
+
+    /**
+     * @return the baseBalanceDAO
+     */
+    public BaseBalanceDAO getBaseBalanceDAO()
+    {
+        return baseBalanceDAO;
+    }
+
+    /**
+     * @param baseBalanceDAO
+     *            the baseBalanceDAO to set
+     */
+    public void setBaseBalanceDAO(BaseBalanceDAO baseBalanceDAO)
+    {
+        this.baseBalanceDAO = baseBalanceDAO;
     }
 }

@@ -54,7 +54,8 @@ function load()
          },
          buttons : [
              <c:if test="${mode == 0}">
-             {id: 'add', bclass: 'add', caption: '申请开票', onpress : addBean, auth: '1401'},
+             {id: 'add', bclass: 'add', caption: '申请开票(2012前)', onpress : addBean, auth: '1401'},
+             {id: 'add1', bclass: 'add', caption: '申请开票(2012后)', onpress : addBean1, auth: '1401'},
              </c:if>
              <c:if test="${mode == 1}">
              {id: 'pass', bclass: 'pass', caption: '处理', onpress : doProcess, auth: '1604'},
@@ -82,6 +83,12 @@ function $callBack()
 function addBean(opr, grid)
 {
     $l(gurl + 'preForAdd' + ukey + '&mode=' + mode);
+    //$l(addUrl);
+}
+
+function addBean1(opr, grid)
+{
+    $l(gurl + 'preForAdd' + ukey + '1&mode=' + mode);
     //$l(addUrl);
 }
 

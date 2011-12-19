@@ -27,13 +27,19 @@ import com.china.center.oa.finance.manager.InvoiceinsManager;
 import com.china.center.oa.finance.vo.InvoiceinsVO;
 import com.china.center.oa.finance.vs.InsVSOutBean;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.sail.bean.BaseBalanceBean;
+import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
+import com.china.center.oa.sail.dao.BaseBalanceDAO;
+import com.china.center.oa.sail.dao.BaseDAO;
 import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.ListTools;
+import com.china.center.tools.MathTools;
+import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -59,6 +65,10 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
     private InsVSOutDAO insVSOutDAO = null;
 
     private OutDAO outDAO = null;
+
+    private BaseDAO baseDAO = null;
+
+    private BaseBalanceDAO baseBalanceDAO = null;
 
     /*
      * (non-Javadoc)
@@ -118,6 +128,7 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
             insVSOutDAO.saveAllEntityBeans(vsList);
         }
 
+        // 这里仅仅是提交,审核通过后才能修改单据的状态
         return true;
     }
 
@@ -192,6 +203,130 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
                     (insVSOutBean.getMoneys() + balance.getInvoiceMoney()),
                     OutConstant.INVOICESTATUS_INIT);
             }
+        }
+    }
+
+    private void handlerEachInAdd2(InsVSOutBean insVSOutBean)
+        throws MYException
+    {
+        if (insVSOutBean.getType() == FinanceConstant.INSVSOUT_TYPE_OUT)
+        {
+            // 销售单
+            OutBean out = outDAO.find(insVSOutBean.getOutId());
+
+            if (out == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            BaseBean base = baseDAO.find(insVSOutBean.getBaseId());
+
+            // 溢出的
+            if (MathTools.compare(insVSOutBean.getMoneys() + base.getInvoiceMoney(), base
+                .getValue()) > 0)
+            {
+                throw new MYException("单据[%s]开票溢出,开票金额[%.2f],销售项金额[%.2f]", out.getFullId(),
+                    (insVSOutBean.getMoneys() + base.getInvoiceMoney()), base.getValue());
+            }
+
+            if (MathTools.compare(insVSOutBean.getMoneys() + base.getInvoiceMoney(), base
+                .getValue()) <= 0)
+            {
+                baseDAO.updateInvoice(base.getId(), (insVSOutBean.getMoneys() + base
+                    .getInvoiceMoney()));
+            }
+
+            // 更新主单据
+            updateOut(out);
+        }
+        else
+        {
+            // 结算清单
+            OutBalanceBean balance = outBalanceDAO.find(insVSOutBean.getOutId());
+
+            if (balance == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            BaseBalanceBean bbb = baseBalanceDAO.find(insVSOutBean.getBaseId());
+
+            double baseTotal = bbb.getAmount() * bbb.getSailPrice();
+
+            if (MathTools.compare(insVSOutBean.getMoneys() + bbb.getInvoiceMoney(), baseTotal) > 0)
+            {
+                throw new MYException("委托结算单项[%s]开票溢出,开票金额[%.2f],销售金额[%.2f]", balance.getId(),
+                    (insVSOutBean.getMoneys() + bbb.getInvoiceMoney()), baseTotal);
+            }
+
+            if (MathTools.compare(insVSOutBean.getMoneys() + bbb.getInvoiceMoney(), baseTotal) <= 0)
+            {
+                baseBalanceDAO.updateInvoice(bbb.getId(), (insVSOutBean.getMoneys() + bbb
+                    .getInvoiceMoney()));
+            }
+
+            updateOutBalance(balance);
+        }
+    }
+
+    /**
+     * 更新销售单的开票状态
+     * 
+     * @param out
+     */
+    private void updateOut(OutBean out)
+    {
+        List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(out.getFullId());
+
+        double total = 0.0d;
+
+        for (BaseBean baseBean : baseList)
+        {
+            total += baseBean.getInvoiceMoney();
+        }
+
+        // 全部开票
+        if (MathTools.compare(total, out.getTotal()) >= 0)
+        {
+            // 更新开票状态-结束
+            outDAO.updateInvoiceStatus(out.getFullId(), out.getTotal(),
+                OutConstant.INVOICESTATUS_END);
+        }
+        else
+        {
+            // 更新开票状态-过程
+            outDAO.updateInvoiceStatus(out.getFullId(), total, OutConstant.INVOICESTATUS_INIT);
+        }
+    }
+
+    /**
+     * updateOutBalance
+     * 
+     * @param balance
+     */
+    private void updateOutBalance(OutBalanceBean balance)
+    {
+        List<OutBalanceBean> baseList = outBalanceDAO.queryEntityBeansByFK(balance.getId());
+
+        double total = 0.0d;
+
+        for (OutBalanceBean baseBean : baseList)
+        {
+            total += baseBean.getInvoiceMoney();
+        }
+
+        // 全部开票
+        if (MathTools.compare(total, balance.getTotal()) >= 0)
+        {
+            // 更新开票状态-结束
+            outBalanceDAO.updateInvoiceStatus(balance.getId(), balance.getTotal(),
+                OutConstant.INVOICESTATUS_END);
+        }
+        else
+        {
+            // 更新开票状态-过程
+            outBalanceDAO.updateInvoiceStatus(balance.getId(), total,
+                OutConstant.INVOICESTATUS_INIT);
         }
     }
 
@@ -317,7 +452,15 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
         {
             for (InsVSOutBean insVSOutBean : vsList)
             {
-                handlerEachInAdd(insVSOutBean);
+                if (StringTools.isNullOrNone(insVSOutBean.getBaseId()))
+                {
+                    handlerEachInAdd(insVSOutBean);
+                }
+                else
+                {
+                    // 新的开单规则
+                    handlerEachInAdd2(insVSOutBean);
+                }
             }
         }
 
@@ -463,5 +606,39 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
     public void setOutBalanceDAO(OutBalanceDAO outBalanceDAO)
     {
         this.outBalanceDAO = outBalanceDAO;
+    }
+
+    /**
+     * @return the baseDAO
+     */
+    public BaseDAO getBaseDAO()
+    {
+        return baseDAO;
+    }
+
+    /**
+     * @param baseDAO
+     *            the baseDAO to set
+     */
+    public void setBaseDAO(BaseDAO baseDAO)
+    {
+        this.baseDAO = baseDAO;
+    }
+
+    /**
+     * @return the baseBalanceDAO
+     */
+    public BaseBalanceDAO getBaseBalanceDAO()
+    {
+        return baseBalanceDAO;
+    }
+
+    /**
+     * @param baseBalanceDAO
+     *            the baseBalanceDAO to set
+     */
+    public void setBaseBalanceDAO(BaseBalanceDAO baseBalanceDAO)
+    {
+        this.baseBalanceDAO = baseBalanceDAO;
     }
 }

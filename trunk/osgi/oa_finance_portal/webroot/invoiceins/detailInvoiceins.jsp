@@ -136,8 +136,9 @@ function rejectBean()
 		<p:table cells="1">
 
 			<tr align="center" class="content0">
-				<td width="40%" align="center">类型</td>
+				<td width="20%" align="center">类型</td>
 				<td width="40%" align="center">单据</td>
+				<td width="20%" align="center">子项</td>
 				<td width="30%" align="center">开票金额</td>
 			</tr>
 			
@@ -152,6 +153,7 @@ function rejectBean()
                 <a href="../sail/out.do?method=findOutBalance&id=${item.outId}">${item.outId}</a>
                 </c:if>
                 </td>
+                <td align="center">${item.baseId}</td>
                 <td align="center">${my:formatNum(item.moneys)}</td>
             </tr>
             </c:forEach>

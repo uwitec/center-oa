@@ -62,5 +62,7 @@
     <osgi:reference id="stockItemDAO" interface="com.china.center.oa.stock.dao.StockItemDAO" />
     
     <osgi:reference id="customerManager" interface="com.china.center.oa.customer.manager.CustomerManager" />
+    
+    <osgi:reference id="baseBalanceDAO" interface="com.china.center.oa.sail.dao.BaseBalanceDAO" />
 	
 </beans>

@@ -37,11 +37,20 @@ public class InsVSOutBean implements Serializable
     @FK(index = AnoConstant.FK_FIRST)
     private String insId = "";
 
+    /**
+     * 销售单ID和结算单的ID
+     */
     @FK(index = AnoConstant.FK_DEFAULT)
     private String outId = "";
 
     /**
-     * 结算单ID
+     * 子项ID
+     */
+    @FK(index = AnoConstant.FK_SECOND)
+    private String baseId = "";
+
+    /**
+     * 结算单ID(废弃)
      */
     private String outBalanceId = "";
 
@@ -165,6 +174,23 @@ public class InsVSOutBean implements Serializable
     }
 
     /**
+     * @return the baseId
+     */
+    public String getBaseId()
+    {
+        return baseId;
+    }
+
+    /**
+     * @param baseId
+     *            the baseId to set
+     */
+    public void setBaseId(String baseId)
+    {
+        this.baseId = baseId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -175,10 +201,32 @@ public class InsVSOutBean implements Serializable
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue.append("InsVSOutBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("insId = ").append(this.insId).append(TAB).append("outId = ").append(this.outId).append(TAB).append(
-            "outBalanceId = ").append(this.outBalanceId).append(TAB).append("type = ").append(this.type).append(TAB).append(
-            "moneys = ").append(this.moneys).append(TAB).append(" )");
+        retValue
+            .append("InsVSOutBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("insId = ")
+            .append(this.insId)
+            .append(TAB)
+            .append("outId = ")
+            .append(this.outId)
+            .append(TAB)
+            .append("baseId = ")
+            .append(this.baseId)
+            .append(TAB)
+            .append("outBalanceId = ")
+            .append(this.outBalanceId)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("moneys = ")
+            .append(this.moneys)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }
