@@ -11,6 +11,7 @@ package com.china.center.oa.sail.dao.impl;
 
 import java.util.List;
 
+import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.sail.bean.BaseBalanceBean;
@@ -52,5 +53,14 @@ public class BaseBalanceDAOImpl extends BaseDAO<BaseBalanceBean, BaseBalanceVO> 
         }
 
         return sum;
+    }
+
+    public boolean updateInvoice(String id, double invoiceMoney)
+    {
+        String sql = BeanTools.getUpdateHead(claz) + "set invoiceMoney = ? where id = ?";
+
+        jdbcOperation.update(sql, invoiceMoney, id);
+
+        return true;
     }
 }

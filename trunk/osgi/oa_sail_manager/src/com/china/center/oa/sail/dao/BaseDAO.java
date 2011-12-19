@@ -31,4 +31,6 @@ public interface BaseDAO extends DAO<BaseBean, BaseBean>
     List<BaseBean> queryBaseByOutTime(String outTime, PageSeparate pageSeparate);
 
     boolean updateCostPricekey(String id, String costPricekey);
+
+    boolean updateInvoice(String id, double invoiceMoney);
 }

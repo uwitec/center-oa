@@ -50,6 +50,11 @@ public class BaseBalanceBean implements Serializable
     private int amount = 0;
 
     /**
+     * 开发票的金额(已经开票的金额)
+     */
+    private double invoiceMoney = 0.0d;
+
+    /**
      * default constructor
      */
     public BaseBalanceBean()
@@ -194,6 +199,23 @@ public class BaseBalanceBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the invoiceMoney
+     */
+    public double getInvoiceMoney()
+    {
+        return invoiceMoney;
+    }
+
+    /**
+     * @param invoiceMoney
+     *            the invoiceMoney to set
+     */
+    public void setInvoiceMoney(double invoiceMoney)
+    {
+        this.invoiceMoney = invoiceMoney;
     }
 
 }

@@ -58,6 +58,7 @@ function press()
 <input type="hidden" value="${stafferId}" name="stafferId"> 
 <input type="hidden" value="${dutyId}" name="dutyId"> 
 <input type="hidden" value="${invoiceId}" name="invoiceId"> 
+<input type="hidden" value="${invoiceId2}" name="invoiceId2"> 
 <input type="hidden" value="${customerId}" name="customerId"> 
 <input type="hidden" value="${mode}" name="mode"> 
 <input type="hidden" value="${selectMode}" name="selectMode"> 

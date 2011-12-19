@@ -10,9 +10,9 @@
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/cnchina.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
-<script language="JavaScript" src="../js/key.js"></script>
 <script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../js/json.js"></script>
+<script language="JavaScript" src="../js/key.js"></script>
 <script language="JavaScript" src="../sail_js/addOut.js"></script>
 <script language="JavaScript" src="../js/plugin/highlight/jquery.highlight.js"></script>
 <script language="javascript">
@@ -25,7 +25,7 @@ function load()
     
     loadForm();
     
-    loadShow();
+    //loadShow(true);
     
     loadForm();
 
@@ -483,7 +483,7 @@ function checkBean()
 							
 						<td  align="center">
 						<select name="outProductName" style="WIDTH: 150px;" quick=true>
-							<p:option type="123"></p:option>
+							<p:option type="showList"></p:option>
 						</select>
 						</td>
 
@@ -528,8 +528,8 @@ function checkBean()
 							style="width: 100%" name="rstafferName"></td>
 							
 						<td align="center">
-						<select name="outProductName" style="WIDTH: 150px;" quick=true values="${fristBase.showId}">
-							<p:option type="123"></p:option>
+						<select name="outProductName" style="WIDTH: 150px;" quick="true" values="${fristBase.showId}">
+							<p:option type="showList"></p:option>
 						</select>
 						</td>
 
@@ -574,7 +574,8 @@ function checkBean()
                             style="width: 100%" name="rstafferName"></td>
                             
                         <td align="center">
-                        <select name="outProductName" style="WIDTH: 150px;" quick=true values="${fristBase.showId}">
+                        <select name="outProductName" style="WIDTH: 150px;" quick="true" values="${fristBase.showId}">
+                        <p:option type="showList"></p:option>
                         </select>
                         </td>
 

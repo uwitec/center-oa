@@ -3708,6 +3708,13 @@ public class ParentOutAction extends DispatchAction
             condtion.addCondition("OutBean.dutyId", "=", duty);
         }
 
+        String invoiceStatus = request.getParameter("invoiceStatus");
+
+        if ( !StringTools.isNullOrNone(invoiceStatus))
+        {
+            condtion.addIntCondition("OutBean.invoiceStatus", "=", invoiceStatus);
+        }
+
         String customerName = request.getParameter("customerName");
 
         if ( !StringTools.isNullOrNone(customerName))

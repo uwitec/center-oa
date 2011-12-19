@@ -1769,6 +1769,10 @@ public class OutAction extends ParentOutAction
             List<InsVSOutBean> insList = insVSOutDAO.queryEntityBeansByFK(outId);
 
             request.setAttribute("insList", insList);
+
+            List<ShowBean> showList = showDAO.listEntityBeans();
+
+            request.setAttribute("showList", showList);
         }
         catch (Exception e)
         {
@@ -2341,7 +2345,27 @@ public class OutAction extends ParentOutAction
 
         if ( !StringTools.isNullOrNone(invoiceId))
         {
+            // CORE 限制销售单开票的时间点
+            condtion.addCondition("OutBean.outTime", "<=", "2011-12-31");
+
             condtion.addCondition("OutBean.invoiceId", "=", invoiceId);
+        }
+
+        String invoiceId2 = request.getParameter("invoiceId2");
+
+        if ( !StringTools.isNullOrNone(invoiceId2))
+        {
+            // 17个税点的
+            if (InvoiceConstant.INVOICE_INSTACE_DK_17.equals(invoiceId2)
+                || InvoiceConstant.INVOICE_INSTACE_NDK_17.equals(invoiceId2))
+            {
+                condtion.addCondition("OutBean.ratio", "=", "170");
+            }
+
+            if (InvoiceConstant.INVOICE_INSTACE_NDK_2.equals(invoiceId2))
+            {
+                condtion.addCondition("OutBean.ratio", "=", "20");
+            }
         }
 
         if ( !StringTools.isNullOrNone(dutyId))
@@ -2456,7 +2480,27 @@ public class OutAction extends ParentOutAction
 
         if ( !StringTools.isNullOrNone(invoiceId))
         {
+            // CORE 限制销售单开票的时间点
+            condtion.addCondition("OutBean.outTime", "<=", "2011-12-31");
+
             condtion.addCondition("OutBean.invoiceId", "=", invoiceId);
+        }
+
+        String invoiceId2 = request.getParameter("invoiceId2");
+
+        if ( !StringTools.isNullOrNone(invoiceId2))
+        {
+            // 17个税点的
+            if (InvoiceConstant.INVOICE_INSTACE_DK_17.equals(invoiceId2)
+                || InvoiceConstant.INVOICE_INSTACE_NDK_17.equals(invoiceId2))
+            {
+                condtion.addCondition("OutBean.ratio", "=", "170");
+            }
+
+            if (InvoiceConstant.INVOICE_INSTACE_NDK_2.equals(invoiceId2))
+            {
+                condtion.addCondition("OutBean.ratio", "=", "20");
+            }
         }
 
         if ( !StringTools.isNullOrNone(dutyId))

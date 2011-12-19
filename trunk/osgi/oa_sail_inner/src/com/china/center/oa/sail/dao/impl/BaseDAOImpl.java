@@ -11,6 +11,7 @@ package com.china.center.oa.sail.dao.impl;
 
 import java.util.List;
 
+import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.dao.BaseDAO;
@@ -46,6 +47,15 @@ public class BaseDAOImpl extends com.china.center.jdbc.inter.impl.BaseDAO<BaseBe
     public boolean updateCostPricekey(String id, String costPricekey)
     {
         return this.jdbcOperation.updateField("costPriceKey", costPricekey, id, claz) > 0;
+    }
+
+    public boolean updateInvoice(String id, double invoiceMoney)
+    {
+        String sql = BeanTools.getUpdateHead(claz) + "set invoiceMoney = ? where id = ?";
+
+        jdbcOperation.update(sql, invoiceMoney, id);
+
+        return true;
     }
 
 }

@@ -122,7 +122,8 @@ function res()
 	$O("stafferName").value = '';
 	setSelectIndex($O('status'), 0);
 	setSelectIndex($O('pay'), 0);
-	setSelectIndex($O('department'), 0);
+	setSelectIndex($O('duty'), 0);
+	setSelectIndex($O('invoiceStatus'), 0);
 }
 
 var jmap = new Object();
@@ -660,6 +661,20 @@ function hrefAndSelect(obj)
 						<td width="15%" align="center">销售人员</td>
 						<td align="center"><input type="text" name="stafferName" value="${ppmap.stafferName}"></td>
 					</tr>
+					
+					<tr class="content2">
+                        <td width="15%" align="center">开票状态</td>
+                        <td align="center" colspan="1"><select name="invoiceStatus" values="${ppmap.invoiceStatus}"
+                            class="select_class">
+                            <option value="">--</option>
+                            <option value="0">可开票</option>
+                            <option value="1">全部开票</option>
+                        </select></td>
+                        
+                        <td width="15%" align="center"></td>
+                        <td align="center">
+                        </td>
+                    </tr>
 
 					<tr class="content2">
 

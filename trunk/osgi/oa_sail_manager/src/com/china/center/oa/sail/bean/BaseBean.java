@@ -102,6 +102,11 @@ public class BaseBean implements Serializable
     private double value = 0.0d;
 
     /**
+     * 开发票的金额(已经开票的金额)
+     */
+    private double invoiceMoney = 0.0d;
+
+    /**
      * 成本
      */
     private String description = "";
@@ -571,6 +576,23 @@ public class BaseBean implements Serializable
     }
 
     /**
+     * @return the invoiceMoney
+     */
+    public double getInvoiceMoney()
+    {
+        return invoiceMoney;
+    }
+
+    /**
+     * @param invoiceMoney
+     *            the invoiceMoney to set
+     */
+    public void setInvoiceMoney(double invoiceMoney)
+    {
+        this.invoiceMoney = invoiceMoney;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -647,6 +669,9 @@ public class BaseBean implements Serializable
             .append(TAB)
             .append("value = ")
             .append(this.value)
+            .append(TAB)
+            .append("invoiceMoney = ")
+            .append(this.invoiceMoney)
             .append(TAB)
             .append("description = ")
             .append(this.description)

@@ -41,4 +41,6 @@ public interface BaseBalanceDAO extends DAO<BaseBalanceBean, BaseBalanceVO>
      * @return
      */
     int sumPassBaseBalance(String baseId);
+
+    boolean updateInvoice(String id, double invoiceMoney);
 }
