@@ -93,6 +93,7 @@ import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.EnumDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
+import com.china.center.oa.publics.helper.OATools;
 import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.dao.FinanceDAO;
@@ -599,6 +600,8 @@ public class ProductAction extends DispatchAction
 
         String ctype = request.getParameter("ctype");
 
+        String mtype = request.getParameter("mtype");
+
         if ( !StringTools.isNullOrNone(name))
         {
             condtion.addCondition("ProductBean.name", "like", name);
@@ -622,6 +625,11 @@ public class ProductAction extends DispatchAction
         if ( !StringTools.isNullOrNone(ctype))
         {
             condtion.addIntCondition("ProductBean.ctype", "=", ProductConstant.CTYPE_YES);
+        }
+
+        if (OATools.getManagerFlag() && !StringTools.isNullOrNone(mtype))
+        {
+            condtion.addCondition("ProductBean.reserve4", "=", mtype);
         }
     }
 

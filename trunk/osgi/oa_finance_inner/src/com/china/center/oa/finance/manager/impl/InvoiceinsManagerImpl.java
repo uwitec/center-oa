@@ -26,7 +26,9 @@ import com.china.center.oa.finance.dao.InvoiceinsItemDAO;
 import com.china.center.oa.finance.manager.InvoiceinsManager;
 import com.china.center.oa.finance.vo.InvoiceinsVO;
 import com.china.center.oa.finance.vs.InsVSOutBean;
+import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.sail.bean.BaseBalanceBean;
 import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
@@ -68,6 +70,8 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
 
     private BaseDAO baseDAO = null;
 
+    private DutyDAO dutyDAO = null;
+
     private BaseBalanceDAO baseBalanceDAO = null;
 
     /*
@@ -100,6 +104,15 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
         {
             bean.setStatus(FinanceConstant.INVOICEINS_STATUS_SUBMIT);
         }
+
+        DutyBean duty = dutyDAO.find(bean.getDutyId());
+
+        if (duty == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        bean.setMtype(duty.getMtype());
 
         invoiceinsDAO.saveEntityBean(bean);
 
@@ -640,5 +653,22 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
     public void setBaseBalanceDAO(BaseBalanceDAO baseBalanceDAO)
     {
         this.baseBalanceDAO = baseBalanceDAO;
+    }
+
+    /**
+     * @return the dutyDAO
+     */
+    public DutyDAO getDutyDAO()
+    {
+        return dutyDAO;
+    }
+
+    /**
+     * @param dutyDAO
+     *            the dutyDAO to set
+     */
+    public void setDutyDAO(DutyDAO dutyDAO)
+    {
+        this.dutyDAO = dutyDAO;
     }
 }

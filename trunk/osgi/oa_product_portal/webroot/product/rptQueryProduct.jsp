@@ -76,6 +76,7 @@ function pop(obj)
 <input type="hidden" value="${abstractType}" name="abstractType">
 <input type="hidden" value="${ctype}" name="ctype">
 <input type="hidden" value="${status}" name="status">
+<input type="hidden" value="${mtype}" name="mtype">
 
 <p:navigation
 	height="22">
@@ -117,6 +118,7 @@ function pop(obj)
 				<td align="center">选择</td>
 				<td align="center" class="td_class"><strong>名称</strong></td>
 				<td align="center" class="td_class"><strong>编码</strong></td>
+				<td align="center" class="td_class"><strong>管理</strong></td>
 				<td align="center" class="td_class"><strong>图片</strong></td>
 			</tr>
 
@@ -126,6 +128,7 @@ function pop(obj)
 						pname="${item.name}" pcode="${item.code}" value="${item.id}"/></td>
 					<td align="center" onclick="hrefAndSelect(this)" ondblclick="sures()">${item.name}</td>
 					<td align="center" onclick="hrefAndSelect(this)" ondblclick="sures()">${item.code}</td>
+					<td align="center" onclick="hrefAndSelect(this)" ondblclick="sures()">${my:get2('pubManagerType', item.reserve4)}</td>
 					<td align="center">
 					<span style="cursor: pointer;"
 							 href="${rootUrl}pic${item.picPath}?${random}" onclick="pop(this)" title="点击查看原图">

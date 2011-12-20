@@ -43,6 +43,8 @@
     
     <osgi:reference id="flowLogDAO" interface="com.china.center.oa.publics.dao.FlowLogDAO" />
     
+    <osgi:reference id="dutyDAO" interface="com.china.center.oa.publics.dao.DutyDAO" />
+    
     <osgi:reference id="parameterDAO" interface="com.china.center.oa.publics.dao.ParameterDAO" />
     
     <osgi:reference id="stafferTransferDAO" interface="com.china.center.oa.publics.dao.StafferTransferDAO" />

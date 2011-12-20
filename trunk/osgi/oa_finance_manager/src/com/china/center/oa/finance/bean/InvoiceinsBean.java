@@ -25,6 +25,7 @@ import com.china.center.oa.finance.vs.InsVSOutBean;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.sail.bean.UnitViewBean;
 
 
@@ -56,6 +57,11 @@ public class InvoiceinsBean implements Serializable
      * 类型
      */
     private int type = FinanceConstant.INVOICEINS_TYPE_COMMON;
+
+    /**
+     * mtype
+     */
+    private int mtype = PublicConstant.MANAGER_TYPE_COMMON;
 
     /**
      * 纳税实例
@@ -426,6 +432,23 @@ public class InvoiceinsBean implements Serializable
     }
 
     /**
+     * @return the mtype
+     */
+    public int getMtype()
+    {
+        return mtype;
+    }
+
+    /**
+     * @param mtype
+     *            the mtype to set
+     */
+    public void setMtype(int mtype)
+    {
+        this.mtype = mtype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -451,6 +474,9 @@ public class InvoiceinsBean implements Serializable
             .append(TAB)
             .append("type = ")
             .append(this.type)
+            .append(TAB)
+            .append("mtype = ")
+            .append(this.mtype)
             .append(TAB)
             .append("dutyId = ")
             .append(this.dutyId)
