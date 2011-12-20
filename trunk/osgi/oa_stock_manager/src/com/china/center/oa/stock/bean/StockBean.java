@@ -94,6 +94,12 @@ public class StockBean implements Serializable
     @Html(title = "询价方式", type = Element.SELECT, must = true)
     private int type = PriceConstant.PRICE_ASK_TYPE_NET;
 
+    /**
+     * mtype
+     */
+    @Html(title = "管理类型", must = true, type = Element.SELECT)
+    private int mtype = PublicConstant.MANAGER_TYPE_COMMON;
+
     @Html(title = "采购模式", type = Element.SELECT, must = true)
     private int mode = StockConstant.STOCK_MODE_SAIL;
 
@@ -675,6 +681,23 @@ public class StockBean implements Serializable
     }
 
     /**
+     * @return the mtype
+     */
+    public int getMtype()
+    {
+        return mtype;
+    }
+
+    /**
+     * @param mtype
+     *            the mtype to set
+     */
+    public void setMtype(int mtype)
+    {
+        this.mtype = mtype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -727,6 +750,9 @@ public class StockBean implements Serializable
             .append(TAB)
             .append("type = ")
             .append(this.type)
+            .append(TAB)
+            .append("mtype = ")
+            .append(this.mtype)
             .append(TAB)
             .append("mode = ")
             .append(this.mode)

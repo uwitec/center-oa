@@ -18,6 +18,7 @@ import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.bean.ProviderBean;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.stock.constant.StockConstant;
 
 
@@ -71,6 +72,8 @@ public class StockItemBean implements Serializable
     private int productNum = 0;
 
     private int status = StockConstant.STOCK_ITEM_STATUS_INIT;
+
+    private int mtype = PublicConstant.MANAGER_TYPE_COMMON;
 
     /**
      * 拿货
@@ -580,6 +583,23 @@ public class StockItemBean implements Serializable
     }
 
     /**
+     * @return the mtype
+     */
+    public int getMtype()
+    {
+        return mtype;
+    }
+
+    /**
+     * @param mtype
+     *            the mtype to set
+     */
+    public void setMtype(int mtype)
+    {
+        this.mtype = mtype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -623,6 +643,9 @@ public class StockItemBean implements Serializable
             .append(TAB)
             .append("status = ")
             .append(this.status)
+            .append(TAB)
+            .append("mtype = ")
+            .append(this.mtype)
             .append(TAB)
             .append("fechProduct = ")
             .append(this.fechProduct)

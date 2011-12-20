@@ -65,6 +65,7 @@ import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.ShowDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.UserDAO;
+import com.china.center.oa.publics.helper.OATools;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.publics.vo.FlowLogVO;
 import com.china.center.oa.stock.action.helper.PriceAskHelper;
@@ -1021,6 +1022,27 @@ public class StockAction extends DispatchAction
                     {
                         return ActionTools.toError("还没有全部询价,不能配置税务属性", mapping, request);
                     }
+                }
+
+                // 过滤管理
+                if (OATools.getManagerFlag())
+                {
+                    List<DutyBean> dutyList = new ArrayList();;
+
+                    if (vo.getMtype() == PublicConstant.MANAGER_TYPE_COMMON)
+                    {
+                        DutyBean defalit = dutyDAO.find(PublicConstant.DEFAULR_DUTY_ID);
+
+                        dutyList.add(defalit);
+                    }
+                    else
+                    {
+                        DutyBean manager = dutyDAO.find(PublicConstant.MANAGER_DUTY_ID);
+
+                        dutyList.add(manager);
+                    }
+
+                    request.setAttribute("dutyList", dutyList);
                 }
 
                 return mapping.findForward("updateStockDutyConfig");

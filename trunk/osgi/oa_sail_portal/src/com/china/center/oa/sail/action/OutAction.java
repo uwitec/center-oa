@@ -2124,6 +2124,11 @@ public class OutAction extends ParentOutAction
             bean.setStatus(OutConstant.STATUS_SEC_PASS);
         }
 
+        // 这里的发票应该是全部的
+        List<InvoiceBean> invoiceList = invoiceDAO.listEntityBeans();
+
+        request.setAttribute("invoiceList", invoiceList);
+
         return mapping.findForward("detailBuy");
     }
 

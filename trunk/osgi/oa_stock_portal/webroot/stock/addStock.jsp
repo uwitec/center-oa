@@ -154,15 +154,22 @@ function init()
 
 function selectProduct(index)
 {
+    if ($$('mtype') == '')
+    {
+        alert('请选择管理类型');
+        return false;
+    }    
+    
 	cindex = index;
 	
 	if ($$('type') == 0)
 	{
-	   window.common.modal(RPT_PRODUCT);
+	   //../product/product.do?method=rptQueryProduct&firstLoad=1&selectMode=1&abstractType=0&status=0
+	   window.common.modal(RPT_PRODUCT + '&mtype=' + $$('mtype'));
 	}
 	else
 	{
-	   window.common.modal(RPT_PRODUCT);
+	   window.common.modal(RPT_PRODUCT + '&mtype=' + $$('mtype'));
 	}
 }
 
@@ -304,6 +311,10 @@ function clearValues()
             
             <p:pro field="mode">
                 <option value="0">销售采购</option>
+            </p:pro>
+            
+            <p:pro field="mtype">
+                <p:option type="pubManagerType" empty="true"/>
             </p:pro>
 
 			<p:pro field="flow" innerString="quick='true'" outString="支持简拼选择">

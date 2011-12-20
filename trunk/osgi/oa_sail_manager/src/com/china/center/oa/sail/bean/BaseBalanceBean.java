@@ -18,6 +18,7 @@ import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.Unique;
+import com.china.center.oa.publics.constant.PublicConstant;
 
 
 /**
@@ -53,6 +54,8 @@ public class BaseBalanceBean implements Serializable
      * 开发票的金额(已经开票的金额)
      */
     private double invoiceMoney = 0.0d;
+
+    private int mtype = PublicConstant.MANAGER_TYPE_COMMON;
 
     /**
      * default constructor
@@ -164,6 +167,40 @@ public class BaseBalanceBean implements Serializable
     }
 
     /**
+     * @return the invoiceMoney
+     */
+    public double getInvoiceMoney()
+    {
+        return invoiceMoney;
+    }
+
+    /**
+     * @param invoiceMoney
+     *            the invoiceMoney to set
+     */
+    public void setInvoiceMoney(double invoiceMoney)
+    {
+        this.invoiceMoney = invoiceMoney;
+    }
+
+    /**
+     * @return the mtype
+     */
+    public int getMtype()
+    {
+        return mtype;
+    }
+
+    /**
+     * @param mtype
+     *            the mtype to set
+     */
+    public void setMtype(int mtype)
+    {
+        this.mtype = mtype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -196,26 +233,15 @@ public class BaseBalanceBean implements Serializable
             .append("amount = ")
             .append(this.amount)
             .append(TAB)
+            .append("invoiceMoney = ")
+            .append(this.invoiceMoney)
+            .append(TAB)
+            .append("mtype = ")
+            .append(this.mtype)
+            .append(TAB)
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the invoiceMoney
-     */
-    public double getInvoiceMoney()
-    {
-        return invoiceMoney;
-    }
-
-    /**
-     * @param invoiceMoney
-     *            the invoiceMoney to set
-     */
-    public void setInvoiceMoney(double invoiceMoney)
-    {
-        this.invoiceMoney = invoiceMoney;
     }
 
 }

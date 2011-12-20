@@ -10,7 +10,29 @@
 <script language="javascript">
 function addBean()
 {
-	submit('确定修改销售规则?');
+	submit('确定增加销售规则?', null, check);
+}
+
+function check()
+{
+    for (var i = 0; i <=5; i++)
+    {
+        var type = $$('finType' + i);
+        
+        if (type == 1)
+        {
+            if (parseInt($$('ratio' + i)) <= 0)
+            {
+                alert('开票的时候税点必须大于0');
+                
+                $f('ratio' + i);
+                
+                return false;
+            }
+        }
+    }
+    
+    return true;
 }
 </script>
 

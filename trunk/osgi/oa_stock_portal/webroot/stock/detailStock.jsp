@@ -117,6 +117,10 @@ function showDiv(id)
             <p:pro field="mode" cell="1">
             <p:option type="stockMode"></p:option>
             </p:pro>
+            
+            <p:pro field="mtype" cell="2">
+            <p:option type="pubManagerType"></p:option>
+            </p:pro>
 
 			<p:cells celspan="2" title="备注">
 			${bean.description}

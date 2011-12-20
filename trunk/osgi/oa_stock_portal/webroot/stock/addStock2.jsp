@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="处理采购" />
+<p:link title="处理采购(废弃)" />
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>

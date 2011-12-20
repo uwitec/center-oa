@@ -132,6 +132,9 @@ public class StockListenerSailImpl extends AbstractListenerManager<FechProductLi
 
             out.setDutyId(each.getDutyId());
 
+            // 管理类型
+            out.setMtype(bean.getMtype());
+
             out.setInvoiceId(each.getInvoiceType());
 
             out.setDescription("采购单自动转换成入库单,采购单单号:" + bean.getId());
@@ -148,6 +151,8 @@ public class StockListenerSailImpl extends AbstractListenerManager<FechProductLi
             baseBean.setShowId(item.getShowId());
 
             baseBean.setCostPrice(item.getPrice());
+
+            baseBean.setMtype(bean.getMtype());
 
             baseBean.setProductId(item.getProductId());
             baseBean.setCostPriceKey(StorageRelationHelper.getPriceKey(item.getPrice()));

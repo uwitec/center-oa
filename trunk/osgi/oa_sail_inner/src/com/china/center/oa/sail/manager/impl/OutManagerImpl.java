@@ -2997,6 +2997,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         bean.setId(commonDAO.getSquenceString20());
 
+        bean.setMtype(out.getMtype());
+
         outBalanceDAO.saveEntityBean(bean);
 
         List<BaseBalanceBean> baseBalanceList = bean.getBaseBalanceList();
@@ -3008,6 +3010,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             baseBalanceBean.setParentId(bean.getId());
 
             baseBalanceBean.setOutId(bean.getOutId());
+
+            baseBalanceBean.setMtype(out.getMtype());
         }
 
         baseBalanceDAO.saveAllEntityBeans(baseBalanceList);

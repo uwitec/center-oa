@@ -51,6 +51,8 @@ public class OutBalanceBean implements Serializable
 
     private int type = OutConstant.OUTBALANCE_TYPE_SAIL;
 
+    private int mtype = PublicConstant.MANAGER_TYPE_COMMON;
+
     /**
      * 0:没有付款 1:付款
      */
@@ -379,74 +381,6 @@ public class OutBalanceBean implements Serializable
     }
 
     /**
-     * Constructs a <code>String</code> with all attributes in name = value format.
-     * 
-     * @return a <code>String</code> representation of this object.
-     */
-    public String toString()
-    {
-        final String TAB = ",";
-
-        StringBuilder retValue = new StringBuilder();
-
-        retValue
-            .append("OutBalanceBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("outId = ")
-            .append(this.outId)
-            .append(TAB)
-            .append("total = ")
-            .append(this.total)
-            .append(TAB)
-            .append("status = ")
-            .append(this.status)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("pay = ")
-            .append(this.pay)
-            .append(TAB)
-            .append("payMoney = ")
-            .append(this.payMoney)
-            .append(TAB)
-            .append("logTime = ")
-            .append(this.logTime)
-            .append(TAB)
-            .append("customerId = ")
-            .append(this.customerId)
-            .append(TAB)
-            .append("stafferId = ")
-            .append(this.stafferId)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append("reason = ")
-            .append(this.reason)
-            .append(TAB)
-            .append("invoiceStatus = ")
-            .append(this.invoiceStatus)
-            .append(TAB)
-            .append("invoiceMoney = ")
-            .append(this.invoiceMoney)
-            .append(TAB)
-            .append("dirDepot = ")
-            .append(this.dirDepot)
-            .append(TAB)
-            .append("baseBalanceList = ")
-            .append(this.baseBalanceList)
-            .append(TAB)
-            .append(" )");
-
-        return retValue.toString();
-    }
-
-    /**
      * @return the checks
      */
     public String getChecks()
@@ -478,6 +412,100 @@ public class OutBalanceBean implements Serializable
     public void setCheckStatus(int checkStatus)
     {
         this.checkStatus = checkStatus;
+    }
+
+    /**
+     * @return the mtype
+     */
+    public int getMtype()
+    {
+        return mtype;
+    }
+
+    /**
+     * @param mtype
+     *            the mtype to set
+     */
+    public void setMtype(int mtype)
+    {
+        this.mtype = mtype;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("OutBalanceBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("outId = ")
+            .append(this.outId)
+            .append(TAB)
+            .append("total = ")
+            .append(this.total)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("mtype = ")
+            .append(this.mtype)
+            .append(TAB)
+            .append("pay = ")
+            .append(this.pay)
+            .append(TAB)
+            .append("payMoney = ")
+            .append(this.payMoney)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("customerId = ")
+            .append(this.customerId)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("reason = ")
+            .append(this.reason)
+            .append(TAB)
+            .append("invoiceStatus = ")
+            .append(this.invoiceStatus)
+            .append(TAB)
+            .append("invoiceMoney = ")
+            .append(this.invoiceMoney)
+            .append(TAB)
+            .append("dirDepot = ")
+            .append(this.dirDepot)
+            .append(TAB)
+            .append("checks = ")
+            .append(this.checks)
+            .append(TAB)
+            .append("checkStatus = ")
+            .append(this.checkStatus)
+            .append(TAB)
+            .append("baseBalanceList = ")
+            .append(this.baseBalanceList)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 
 }

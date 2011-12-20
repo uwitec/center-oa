@@ -36,6 +36,7 @@ import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.helper.AuthHelper;
+import com.china.center.oa.publics.helper.OATools;
 import com.china.center.oa.stock.bean.PriceAskBean;
 import com.china.center.oa.stock.bean.PriceAskProviderBean;
 import com.china.center.oa.stock.bean.StockBean;
@@ -119,7 +120,7 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
             throw new MYException("区域不存在");
         }
 
-        // TODO 修改为定长
+        // 修改为定长
         bean.setId(lb.getCode() + "_CG" + TimeTools.now("yyyyMMddHHmm")
                    + commonDAO.getSquenceString());
 
@@ -139,6 +140,19 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
         for (StockItemBean stockItemBean : items)
         {
             stockItemBean.setStockId(bean.getId());
+
+            if (OATools.getManagerFlag())
+            {
+                ProductBean product = productDAO.find(stockItemBean.getProductId());
+
+                // 判断是否同类
+                if ( !String.valueOf(bean.getMtype()).equals(product.getReserve4()))
+                {
+                    throw new MYException("产品的管理类型和采购的管理类型不一致");
+                }
+            }
+
+            stockItemBean.setMtype(bean.getMtype());
 
             stockItemDAO.saveEntityBean(stockItemBean);
         }
@@ -1129,6 +1143,19 @@ public class StockManagerImpl extends AbstractListenerManager<StockListener> imp
         for (StockItemBean stockItemBean : items)
         {
             stockItemBean.setStockId(bean.getId());
+
+            if (OATools.getManagerFlag())
+            {
+                ProductBean product = productDAO.find(stockItemBean.getProductId());
+
+                // 判断是否同类
+                if ( !String.valueOf(bean.getMtype()).equals(product.getReserve4()))
+                {
+                    throw new MYException("产品的管理类型和采购的管理类型不一致");
+                }
+            }
+
+            stockItemBean.setMtype(bean.getMtype());
 
             stockItemDAO.saveEntityBean(stockItemBean);
         }
