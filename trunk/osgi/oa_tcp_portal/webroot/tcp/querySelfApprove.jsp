@@ -33,7 +33,7 @@ function load()
              {display: '类型', name : 'type', cc: 'tcpType', width : '12%'},
              {display: '部门', name : 'departmentName', width : '10%'},
              {display: '状态', name : 'status', cc: 'tcpStatus', width : '10%'},
-             {display: '费用', name : 'showTotal', sortable: true, cname: 'total', content:'{showTotal}/{showCheckTotal}', width : '10%'},
+             {display: '费用/借款', name : 'showTotal', sortable: true, cname: 'total', content:'{showTotal}/{showCheckTotal}', width : '10%'},
              {display: '时间', name : 'logTime', sortable: true, width : 'auto'}
              ],
          extAtt: {

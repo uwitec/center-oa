@@ -51,7 +51,6 @@ function load()
 <input type="hidden" name="addOrUpdate" value="0"> 
 <input type="hidden" name="processId" value=""> 
 <input type="hidden" name="type" value="2"> 
-<input type="hidden" name="borrow" value="1"> 
 <input type="hidden" name="stafferId" value="${g_stafferBean.id}"> 
 <input type="hidden" name="borrowStafferId" value=""> 
 <input type="hidden" name="departmentId" value="${g_stafferBean.principalshipId}"> 
