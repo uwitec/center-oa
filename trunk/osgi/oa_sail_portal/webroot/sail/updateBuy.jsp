@@ -16,6 +16,13 @@
 <script language="javascript">
 <%@include file="../sail_js/buy.jsp"%>
 
+var duesMap = {};
+var duesTypeMap = {};
+<c:forEach items="${dutyList}" var="item">
+duesMap['${item.id}'] = '${item.dues}';
+duesTypeMap['${item.id}'] = '${item.mtype}';
+</c:forEach>
+
 /**
  * 查询库存
  */
@@ -23,10 +30,29 @@ function opens(obj)
 {
     oo = obj;
     
+    if ($$('dutyId') == '')
+    {
+        alert('请选择纳税实体');
+        
+        return false;
+    }
+    
+    //调拨的时候只能选择永银和乐丰 90201008080000000001/10201103130001000053
+    if ($$('outType') == 1)
+    {
+        if ($$('dutyId') != '90201008080000000001' && $$('dutyId') != '10201103130001000053')
+        {
+            alert('调拨的时候纳税实体只能选择永银收藏品或者南京悦丰');
+            return false;
+        }
+    }
+    
+    var mtype = duesTypeMap[$$('dutyId')];
+    
     if (g_url_query == 0)
-    window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&queryType=1&showAbs=1&load=1&depotId='+ $$('location') + '&code=' + obj.productcode);
+    window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&queryType=1&showAbs=1&load=1&depotId='+ $$('location') + '&code=' + obj.productcode + '&mtype=' + mtype);
     else
-    window.common.modal('../product/product.do?method=rptQueryProduct&load=1&selectMode=1&abstractType=0&status=0');
+    window.common.modal('../product/product.do?method=rptQueryProduct&load=1&selectMode=1&abstractType=0&status=0' + '&mtype=' + mtype);
 }
 
 </script>

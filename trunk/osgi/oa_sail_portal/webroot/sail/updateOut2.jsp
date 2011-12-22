@@ -4,7 +4,7 @@
 
 <html>
 <head>
-<p:link title="修改销售单" />
+<p:link title="修改销售单(导航)" />
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/math.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>

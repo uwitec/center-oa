@@ -318,44 +318,6 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         setInvoiceId(outBean);
 
-        // 调拨的纳税实体属性
-        if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
-            && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT && OATools.getManagerFlag())
-        {
-            int mtype = -1;
-
-            for (int i = 0; i < idsList.length; i++ )
-            {
-                ProductBean product = productDAO.find(idsList[i]);
-
-                if (product == null)
-                {
-                    throw new RuntimeException("产品为空,数据不完备");
-                }
-
-                if (mtype == -1)
-                {
-                    mtype = OATools.getManagerType(product.getReserve4());
-                }
-                else
-                {
-                    if (OATools.getManagerType(product.getReserve4()) != mtype)
-                    {
-                        throw new RuntimeException("调拨的产品管理类型必须一致");
-                    }
-                }
-            }
-
-            if (OATools.isCommon(mtype))
-            {
-                outBean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
-            }
-            else
-            {
-                outBean.setDutyId(PublicConstant.MANAGER_DUTY_ID);
-            }
-        }
-
         // 增加管理员操作在数据库事务中完成
         TransactionTemplate tran = new TransactionTemplate(transactionManager);
         try
@@ -4708,15 +4670,41 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         List<BaseBean> baseList = outBean.getBaseList();
 
         // MANAGER 管理类型的库单处理
-        if (OATools.isCommon(outBean.getMtype()))
+        if (OATools.getManagerFlag())
         {
-            for (BaseBean baseBean : baseList)
+            if (OATools.isCommon(outBean.getMtype()))
             {
-                ProductBean product = productDAO.find(baseBean.getProductId());
-
-                if (OATools.isManager(product.getReserve4()))
+                for (BaseBean baseBean : baseList)
                 {
-                    throw new MYException("库单当前所属的纳税实体是普通类型,当前产品[%s]不是", product.getName());
+                    ProductBean product = productDAO.find(baseBean.getProductId());
+
+                    if (OATools.isManager(product.getReserve4()))
+                    {
+                        throw new MYException("库单当前所属的纳税实体是普通类型,当前产品[%s]不是", product.getName());
+                    }
+                }
+            }
+            else
+            {
+                // 管理的开单类型必须一致
+                int mtype = -1;
+
+                for (BaseBean baseBean : baseList)
+                {
+                    ProductBean product = productDAO.find(baseBean.getProductId());
+
+                    if (mtype == -1)
+                    {
+                        mtype = OATools.getManagerType(product.getReserve4());
+                    }
+                    else
+                    {
+                        if (OATools.getManagerType(product.getReserve4()) != mtype)
+                        {
+                            throw new MYException("库单里面的产品管理属性必须完全一致,当前产品[%s]不是", product.getName());
+                        }
+                    }
+
                 }
             }
         }

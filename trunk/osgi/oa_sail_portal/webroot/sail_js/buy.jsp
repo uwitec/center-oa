@@ -84,6 +84,16 @@ function check()
         alert('请选择库单类型');
         return false;
     }
+    
+    //调拨的时候只能选择永银和乐丰 90201008080000000001/10201103130001000053
+    if ($$('outType') == 1)
+    {
+        if ($$('dutyId') != '90201008080000000001' && $$('dutyId') != '10201103130001000053')
+        {
+            alert('调拨的时候纳税实体只能选择永银收藏品或者南京悦丰');
+            return false;
+        }
+    }
 
     var proNames = document.getElementsByName('productName');
     var units = document.getElementsByName('unit');
@@ -313,9 +323,10 @@ function managerChange()
         showTr('invoice_tr', false);
     }
     
+    //调拨处理
     if ($$('outType') == 1)
     {
-         showTr('duty_tr', false);
+         showTr('duty_tr', true);
          showTr('invoice_tr', false);
     }
     
