@@ -293,6 +293,27 @@ public class ParentOutAction extends DispatchAction
                 request.getSession().setAttribute("ssmap", ssmap);
             }
 
+            List<ShowBean> showList = showDAO.queryEntityBeansByFK("0");
+
+            List showIdList = (List)request.getSession().getAttribute("showIds");
+
+            if (showIdList != null)
+            {
+                for (ShowBean showBean : showList)
+                {
+                    if (showIdList.contains(showBean.getId()))
+                    {
+                        showBean.setDescription("1");
+                    }
+                    else
+                    {
+                        showBean.setDescription("0");
+                    }
+                }
+            }
+
+            request.getSession().setAttribute("g_showList", showList);
+
             // 进入导航页面
             return mapping.findForward("navigationAddOut1");
         }
@@ -348,17 +369,16 @@ public class ParentOutAction extends DispatchAction
             return mapping.findForward("error");
         }
 
-        List<SailConfigVO> resultList = (List<SailConfigVO>)request.getSession().getAttribute(
-            "g_showList");
-
         Map ssmap = (Map)request.getSession().getAttribute("ssmap");
+
+        List<String> showIdList = (List<String>)request.getSession().getAttribute("showIds");
 
         // 查询开单品名(是过滤出来的)
         List<ShowBean> showList = new ArrayList();
 
-        for (SailConfigVO sailConfigVO : resultList)
+        for (String each : showIdList)
         {
-            ShowBean show = showDAO.find(sailConfigVO.getShowId());
+            ShowBean show = showDAO.find(each);
 
             show.setDutyId(ssmap.get("duty").toString());
 
@@ -369,8 +389,9 @@ public class ParentOutAction extends DispatchAction
 
         request.setAttribute("sailDuty", sailDuty);
 
-        // 发票的描述
-        String ratio = ssmap.get("ratio").toString();
+        String ratio = request.getParameter("sailId");
+
+        ssmap.put("ratio", ratio);
 
         request.setAttribute("invoiceDes", "销货发票,税点:" + ratio + "‰(千分值)");
 
@@ -4522,31 +4543,109 @@ public class ParentOutAction extends DispatchAction
     {
         Map<String, String> ssmap = CommonTools.saveParamersToMap(request);
 
+        String[] showIds = request.getParameterValues("showId");
+
+        // showIds
+        List<String> showIdList = new ArrayList();
+
+        if (showIds != null && showIds.length > 0)
+        {
+            for (String string : showIds)
+            {
+                showIdList.add(string);
+            }
+        }
+
+        request.getSession().setAttribute("showIds", showIdList);
+
         request.getSession().setAttribute("ssmap", ssmap);
 
-        ConditionParse condtion = new ConditionParse();
-
-        condtion.addWhereStr();
+        List<SailConfigVO> resultList = new ArrayList();
 
         String dutyId = ssmap.get("duty");
 
         DutyBean duty = dutyDAO.find(dutyId);
 
-        condtion.addIntCondition("finType" + duty.getType(), "=", ssmap.get("finType"));
+        for (String showId : showIdList)
+        {
+            ConditionParse condtion = new ConditionParse();
 
-        condtion.addIntCondition("ratio" + duty.getType(), "=", ssmap.get("ratio"));
+            condtion.addWhereStr();
 
-        condtion.addIntCondition("sailType", "=", ssmap.get("sailType"));
+            condtion.addIntCondition("finType" + duty.getType(), "=", ssmap.get("finType"));
 
-        condtion.addIntCondition("productType", "=", ssmap.get("productType"));
+            condtion.addIntCondition("ratio" + duty.getType(), ">", 0);
 
-        List<SailConfigVO> resultList = sailConfigDAO.queryEntityVOsByCondition(condtion);
+            condtion.addIntCondition("sailType", "=", ssmap.get("sailType"));
+
+            condtion.addIntCondition("productType", "=", ssmap.get("productType"));
+
+            condtion.addCondition("showId", "=", showId);
+
+            List<SailConfigVO> eachtList = sailConfigDAO.queryEntityVOsByCondition(condtion);
+
+            if (resultList.isEmpty())
+            {
+                resultList.addAll(eachtList);
+            }
+            else
+            {
+                for (Iterator iterator = resultList.iterator(); iterator.hasNext();)
+                {
+                    SailConfigVO sailConfigVO = (SailConfigVO)iterator.next();
+
+                    boolean hasIn = false;
+
+                    for (SailConfigVO each : eachtList)
+                    {
+                        String property1 = BeanUtil.getProperty(sailConfigVO, "ratio"
+                                                                              + duty.getType());
+                        String property2 = BeanUtil.getProperty(each, "ratio" + duty.getType());
+
+                        if ( !"".equals(property1) && property1.equals(property2))
+                        {
+                            hasIn = true;
+                            break;
+                        }
+                    }
+
+                    if ( !hasIn)
+                    {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+
+        for (SailConfigVO sailConfigVO : resultList)
+        {
+            String property1 = BeanUtil.getProperty(sailConfigVO, "ratio" + duty.getType());
+
+            sailConfigVO.setRatio0(CommonTools.parseInt(property1));
+        }
+
+        List<ShowBean> showList = (List<ShowBean>)request.getSession().getAttribute("g_showList");
+
+        if (showIdList != null)
+        {
+            for (ShowBean showBean : showList)
+            {
+                if (showIdList.contains(showBean.getId()))
+                {
+                    showBean.setDescription("1");
+                }
+                else
+                {
+                    showBean.setDescription("0");
+                }
+            }
+        }
 
         List<DutyBean> dutyList = dutyDAO.listEntityBeans();
 
         request.setAttribute("dutyList", dutyList);
 
-        request.getSession().setAttribute("g_showList", resultList);
+        request.getSession().setAttribute("navigationList", resultList);
 
         // 进入导航页面
         return mapping.findForward("navigationAddOut1");

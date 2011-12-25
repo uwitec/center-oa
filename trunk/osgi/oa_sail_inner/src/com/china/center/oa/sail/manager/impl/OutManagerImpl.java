@@ -342,8 +342,6 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                     List<BaseBean> baseList = new ArrayList();
 
-                    configOutBean(outBean);
-
                     // 处理每个base
                     for (int i = 0; i < nameList.length; i++ )
                     {
@@ -723,8 +721,6 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                 public Object doInTransaction(TransactionStatus arg0)
                 {
                     double total = 0.0d;
-
-                    configOutBean(outBean);
 
                     // 组织BaseBean
                     for (BaseBean base : outBean.getBaseList())

@@ -66,7 +66,24 @@ function nexStep2()
                 <td width="15%" align="center"></td>
                 <td align="left" colspan="1"></td>
             </tr>
+            
+            <tr class="content2">
+                <td width="15%" align="center">开票品名</td>
+                <td align="left" colspan="3">
+                <c:forEach items="${g_showList}" var="item" varStatus="vs">
+                <input name="showId" type="checkbox" value="${item.id}"
+                <c:if test="${item.description == '1'}">
+                checked="checked"
+                </c:if>
+                >${item.name}&nbsp;&nbsp;
+                <c:if test="${vs.index % 8 == 0 && vs.index > 0}">
+                <br>
+                </c:if>
+                </c:forEach>
+                </td>
+            </tr>
 		    
+		    <!--  
 			<tr class="content2">
 				<td width="15%" align="center">是否开票</td>
 				<td align="left">
@@ -81,6 +98,7 @@ function nexStep2()
                 <font color="#FF0000">*</font>
                 </td>
 			</tr>
+			-->
 
 			<tr class="content1">
 			    <td width="15%" align="center">销售类型:</td>
@@ -95,6 +113,7 @@ function nexStep2()
                     <p:option type="productType"/>
                 </select></td>
             </tr>
+            
 
 			<tr class="content2">
 				<td colspan="4" align="right"><input type="button" onclick="query()"
@@ -115,17 +134,23 @@ function nexStep2()
 	<p:subBody width="98%">
 		<table width="100%" align="center" cellspacing='1' class="table0" id="senfe">
 			<tr align=center class="content0">
+				<td align="center" class="td_class" onclick="tableSort(this)"><strong>选择</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"><strong>品名</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"><strong>销售类型</strong></td>
 				<td align="center" class="td_class" onclick="tableSort(this)"><strong>销售品类</strong></td>
+				<td align="center" class="td_class" onclick="tableSort(this)"><strong>税率</strong></td>
 			</tr>
 
-			<c:forEach items="${g_showList}" var="item"
+			<c:forEach items="${navigationList}" var="item"
 				varStatus="vs">
 				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
+					<td align="center" onclick="hrefAndSelect(this)">
+					<input type="radio" name="sailId" value="${item.ratio0}" ${vs.index == 0 ? "checked=checked" : ""}/>
+					</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.showName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('productSailType', item.sailType)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('productType', item.productType)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${item.ratio0}‰</td>
 				</tr>
 			</c:forEach>
 		</table>
