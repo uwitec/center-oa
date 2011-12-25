@@ -54,9 +54,9 @@ function load()
              //name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
-             {id: 'get', bclass: 'draw', caption: '认领', onpress : drawBean},
+             {id: 'get', bclass: 'draw', caption: '认领(2012以前)', onpress : drawBean},
+             {id: 'get1', bclass: 'draw', caption: '认领(通用)', onpress : drawBean2},
              {id: 'oget1', bclass: 'odraw', caption: '退领', onpress : odrawBean},
-             //{id: 'oget2', bclass: 'update', caption: '关联销售', onpress : refBean},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -86,11 +86,9 @@ function drawBean(opr, grid)
     $error('不能操作');
 }
 
-function refBean(opr, grid)
+function drawBean2(opr, grid)
 {
-    if (getRadio('checkb') && getRadioValue('checkb') 
-        && getRadio('checkb').lstatus == 1 
-        && getRadio('checkb').luseall == 0)
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 0)
     {    
         $l(gurl + 'find' + ukey + '&mode=1&id=' + getRadioValue('checkb'));
     }

@@ -21,6 +21,7 @@ import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.publics.bean.DutyBean;
+import com.china.center.oa.publics.constant.PublicConstant;
 
 
 /**
@@ -41,8 +42,14 @@ public class BankBean implements Serializable
     @Html(title = "帐户", must = true, maxLength = 40)
     private String name = "";
 
+    /**
+     * 暂时不使用
+     */
     @Html(title = "类型", type = Element.SELECT)
     private int type = FinanceConstant.BANK_TYPE_NOTDUTY;
+
+    @Html(title = "管理类型", must = true, type = Element.SELECT)
+    private int mtype = PublicConstant.MANAGER_TYPE_COMMON;
 
     @FK
     @Join(tagClass = DutyBean.class)
@@ -382,6 +389,40 @@ public class BankBean implements Serializable
     }
 
     /**
+     * @return the taxType
+     */
+    public int getTaxType()
+    {
+        return taxType;
+    }
+
+    /**
+     * @param taxType
+     *            the taxType to set
+     */
+    public void setTaxType(int taxType)
+    {
+        this.taxType = taxType;
+    }
+
+    /**
+     * @return the mtype
+     */
+    public int getMtype()
+    {
+        return mtype;
+    }
+
+    /**
+     * @param mtype
+     *            the mtype to set
+     */
+    public void setMtype(int mtype)
+    {
+        this.mtype = mtype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -405,6 +446,9 @@ public class BankBean implements Serializable
             .append("type = ")
             .append(this.type)
             .append(TAB)
+            .append("mtype = ")
+            .append(this.mtype)
+            .append(TAB)
             .append("dutyId = ")
             .append(this.dutyId)
             .append(TAB)
@@ -413,6 +457,9 @@ public class BankBean implements Serializable
             .append(TAB)
             .append("code2 = ")
             .append(this.code2)
+            .append(TAB)
+            .append("taxType = ")
+            .append(this.taxType)
             .append(TAB)
             .append("parentTaxId = ")
             .append(this.parentTaxId)
@@ -447,23 +494,6 @@ public class BankBean implements Serializable
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the taxType
-     */
-    public int getTaxType()
-    {
-        return taxType;
-    }
-
-    /**
-     * @param taxType
-     *            the taxType to set
-     */
-    public void setTaxType(int taxType)
-    {
-        this.taxType = taxType;
     }
 
 }

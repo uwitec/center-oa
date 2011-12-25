@@ -66,5 +66,9 @@
     <osgi:reference id="customerManager" interface="com.china.center.oa.customer.manager.CustomerManager" />
     
     <osgi:reference id="baseBalanceDAO" interface="com.china.center.oa.sail.dao.BaseBalanceDAO" />
+    
+    <osgi:reference id="bankDAO" interface="com.china.center.oa.finance.dao.BankDAO" />
+    
+    <osgi:reference id="billManager" interface="com.china.center.oa.finance.manager.BillManager" />
 	
 </beans>

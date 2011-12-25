@@ -37,6 +37,8 @@ import com.china.center.oa.finance.helper.BillHelper;
 import com.china.center.oa.finance.listener.PaymentApplyListener;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.PaymentApplyManager;
+import com.china.center.oa.finance.vo.InBillVO;
+import com.china.center.oa.finance.vo.PaymentVO;
 import com.china.center.oa.finance.vs.PaymentVSOutBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.constant.IDPrefixConstant;
@@ -46,6 +48,7 @@ import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.helper.LockHelper;
+import com.china.center.oa.publics.helper.OATools;
 import com.china.center.oa.publics.wrap.ResultBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
@@ -137,6 +140,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
             bean.setType(FinanceConstant.PAYAPPLY_TYPE_BING);
         }
 
+        // 销售单绑定(销售与收款单直接关联)
         if (oldType == FinanceConstant.PAYAPPLY_TYPE_BING)
         {
             for (PaymentVSOutBean vsItem : vsList)
@@ -149,8 +153,24 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
                     throw new MYException("单据[%s]已经申请付款,请审批付款后再提交新的申请", vsItem.getOutId());
                 }
 
+                OutBean out = outDAO.find(vsItem.getOutId());
+
                 // 更新预付金额
-                InBillBean bill = inBillDAO.find(vsItem.getBillId());
+                InBillVO bill = inBillDAO.findVO(vsItem.getBillId());
+
+                if (bill == null)
+                {
+                    throw new MYException("数据错误,请确认操作");
+                }
+
+                // 2012后
+                if (OATools.getManagerFlag() && out.getOutTime().compareTo("2012-01-01") >= 0)
+                {
+                    if ( !out.getDutyId().equals(bill.getDutyId()))
+                    {
+                        throw new MYException("勾款认领时不可跨纳税实体扣款,请确认操作");
+                    }
+                }
 
                 if (bill.getStatus() != FinanceConstant.INBILL_STATUS_NOREF)
                 {
@@ -166,7 +186,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
         // 界面上直接回款绑定销售和预收
         if (oldType == FinanceConstant.PAYAPPLY_TYPE_PAYMENT)
         {
-            PaymentBean payment = paymentDAO.find(bean.getPaymentId());
+            PaymentVO payment = paymentDAO.findVO(bean.getPaymentId());
 
             if (payment == null)
             {
@@ -187,12 +207,23 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
             {
                 if ( !StringTools.isNullOrNone(vsItem.getOutId()))
                 {
-                    // 校验是否一个销售单被多次绑定
+                    // 校验是否一个销售单被多次绑定(因为委托单里面也是关联销售单的)
                     int count = paymentApplyDAO.countApplyByOutId(vsItem.getOutId());
 
                     if (count > 0)
                     {
                         throw new MYException("单据[%s]已经申请付款,请审批付款后再提交新的申请", vsItem.getOutId());
+                    }
+
+                    OutBean out = outDAO.find(vsItem.getOutId());
+
+                    // 2012后
+                    if (OATools.getManagerFlag() && out.getOutTime().compareTo("2012-01-01") >= 0)
+                    {
+                        if ( !out.getDutyId().equals(payment.getDutyId()))
+                        {
+                            throw new MYException("勾款认领时不可跨纳税实体扣款,请确认操作");
+                        }
                     }
                 }
             }
@@ -203,6 +234,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
         // 业务员勾款(销售单界面勾款)
         if (oldType == FinanceConstant.PAYAPPLY_TYPE_TEMP)
         {
+            // 只有一个销售单
             String outId = vsList.get(0).getOutId();
 
             // 校验是否一个销售单被多次申请付款
@@ -211,6 +243,13 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
             if (count > 0)
             {
                 throw new MYException("单据[%s]已经申请付款,请审批付款后再提交新的申请", outId);
+            }
+
+            OutBean out = outDAO.find(outId);
+
+            if (out == null)
+            {
+                throw new MYException("数据错误,请确认操作");
             }
 
             String outBalanceId = vsList.get(0).getOutBalanceId();
@@ -222,13 +261,6 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
             // 600
             if (StringTools.isNullOrNone(outBalanceId))
             {
-                OutBean out = outDAO.find(outId);
-
-                if (out == null)
-                {
-                    throw new MYException("数据错误,请确认操作");
-                }
-
                 lastMoney = outManager.outNeedPayMoney(user, outId);
             }
             else
@@ -271,11 +303,20 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
                 }
 
                 // 更新预付金额
-                InBillBean bill = inBillDAO.find(vsItem.getBillId());
+                InBillVO bill = inBillDAO.findVO(vsItem.getBillId());
 
                 if (bill.getStatus() != FinanceConstant.INBILL_STATUS_NOREF)
                 {
                     throw new MYException("关联的收款单必须是预收,请确认操作");
+                }
+
+                // 2012后
+                if (OATools.getManagerFlag() && out.getOutTime().compareTo("2012-01-01") >= 0)
+                {
+                    if ( !out.getDutyId().equals(bill.getDutyId()))
+                    {
+                        throw new MYException("勾款认领时不可跨纳税实体扣款,请确认操作");
+                    }
                 }
 
                 vsItem.setMoneys(bill.getMoneys());

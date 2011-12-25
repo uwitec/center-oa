@@ -70,6 +70,10 @@ function pagePrint()
                <p:option type="billLock" />
             </p:pro>
             
+            <p:pro field="mtype" cell="2">
+            <p:option type="pubManagerType"></p:option>
+            </p:pro>
+            
             <p:cell title="帐号">
                ${bean.bankName}
             </p:cell>

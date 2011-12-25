@@ -6,11 +6,11 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
-        <condtion name="type" caption="类型">
+        <condtion name="mtype" caption="管理">
             <opr>=</opr>
             <datatype>1</datatype>
             <type>select</type>
-            <option>$bankType</option>
+            <option>$pubManagerType</option>
         </condtion>
         <condtion name="dutyId" caption="纳税实体">
             <opr>=</opr>

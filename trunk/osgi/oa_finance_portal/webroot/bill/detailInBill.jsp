@@ -76,6 +76,10 @@ function pagePrint()
 			<p:cell title="客户">
                ${bean.customerName}
             </p:cell>
+            
+            <p:pro field="mtype" cell="2">
+            <p:option type="pubManagerType"></p:option>
+            </p:pro>
 			
 			<p:cell title="销售/委托/其他">
 			<c:choose>

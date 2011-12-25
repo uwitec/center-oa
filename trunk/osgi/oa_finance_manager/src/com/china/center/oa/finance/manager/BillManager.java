@@ -47,6 +47,9 @@ public interface BillManager
     boolean addInBillBeanWithoutTransaction(User user, InBillBean bean)
         throws MYException;
 
+    boolean saveInBillInner(InBillBean bean)
+        throws MYException;
+
     boolean updateInBillBean(User user, InBillBean bean)
         throws MYException;
 

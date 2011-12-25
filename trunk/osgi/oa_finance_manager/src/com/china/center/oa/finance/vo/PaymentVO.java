@@ -34,6 +34,12 @@ public class PaymentVO extends PaymentBean
     @Relationship(relationField = "customerId")
     private String customerName = "";
 
+    @Relationship(relationField = "bankId", tagField = "mtype")
+    private int mtype = 0;
+
+    @Relationship(relationField = "bankId", tagField = "dutyId")
+    private String dutyId = "";
+
     /**
      * default constructor
      */
@@ -93,6 +99,40 @@ public class PaymentVO extends PaymentBean
     }
 
     /**
+     * @return the mtype
+     */
+    public int getMtype()
+    {
+        return mtype;
+    }
+
+    /**
+     * @param mtype
+     *            the mtype to set
+     */
+    public void setMtype(int mtype)
+    {
+        this.mtype = mtype;
+    }
+
+    /**
+     * @return the dutyId
+     */
+    public String getDutyId()
+    {
+        return dutyId;
+    }
+
+    /**
+     * @param dutyId
+     *            the dutyId to set
+     */
+    public void setDutyId(String dutyId)
+    {
+        this.dutyId = dutyId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -115,6 +155,12 @@ public class PaymentVO extends PaymentBean
             .append(TAB)
             .append("customerName = ")
             .append(this.customerName)
+            .append(TAB)
+            .append("mtype = ")
+            .append(this.mtype)
+            .append(TAB)
+            .append("dutyId = ")
+            .append(this.dutyId)
             .append(TAB)
             .append(" )");
 

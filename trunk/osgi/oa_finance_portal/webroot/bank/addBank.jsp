@@ -78,12 +78,8 @@ function getTax(oos)
 
 			<p:pro field="name" innerString="size=60"/>
 			
-			<p:pro field="type">
-				<p:option type="bankType"/>
-			</p:pro>
-			
 			<p:pro field="dutyId">
-                <p:option type="dutyList"/>
+                <p:option type="$dutyList"/>
             </p:pro>
             
             <p:pro field="taxType">

@@ -54,6 +54,7 @@ function press()
 <form name="formEntry" action="../finance/bank.do" method="post"><input
 	type="hidden" name="method" value="rptQueryBank">
 <input type="hidden" value="1" name="load"> 
+<input type="hidden" value="${dutyread}" name="dutyread"> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">帐户管理</td>
@@ -71,7 +72,11 @@ function press()
 					
 				<td width="15%" align="center">纳税实体</td>
 				<td align="left" width="35%">
-				<select name="dutyId" style="width: 80%" values="${dutyId}">
+				<select name="dutyId" style="width: 80%" values="${dutyId}" 
+				<c:if test="${'1' == dutyread}">
+				readonly=true
+				</c:if>
+				>
 				    <option value="">--</option>
 				    <p:option type="dutyList"></p:option>
 				</select>

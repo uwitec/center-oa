@@ -114,6 +114,8 @@ function selectPublic()
 <input type="hidden" name="method" value="drawPayment"> 
 <input type="hidden" name="customerId" value=""> 
 <input type="hidden" name="id" value="${bean.id}"> 
+<input type="hidden" name="mtype" value="${bean.mtype}"> 
+<input type="hidden" name="dutyId" value="${bean.dutyId}"> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
@@ -124,7 +126,7 @@ function selectPublic()
 <p:body width="98%">
 
 	<p:title>
-		<td class="caption"><strong>回款基本信息：(如果金额过多回款可以分为多个预收的收款单)</strong></td>
+		<td class="caption"><strong>回款基本信息：(如果金额过多回款可以分为多个预收的收款单,销售委托单只能选择到2012前)</strong></td>
 	</p:title>
 
 	<p:line flag="0" />

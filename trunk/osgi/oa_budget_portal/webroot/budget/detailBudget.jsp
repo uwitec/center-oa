@@ -99,7 +99,7 @@ function load()
         <table width="100%" align="center" cellspacing='1' class="table0"
             id="result">
             <tr align=center class="content0">
-                <td align="center"><strong>预算项</strong></td>
+                <td align="center" width="10%"><strong>预算项</strong></td>
                 
                 <c:if test="${!unit}">
                 <td align="center"><strong>子预算</strong></td>
@@ -126,7 +126,7 @@ function load()
 
             <c:forEach items="${bean.itemVOs}" var="item" varStatus="vs">
                 <tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
-                    <td align="center" onclick="hrefAndSelect(this)">${item.feeItemName}</td>
+                    <td align="center" onclick="hrefAndSelect(this)" width="10%">${item.feeItemName}</td>
                     
                     <c:if test="${!unit}">
                     <td align="center" onclick="hrefAndSelect(this)">${item.description}</td>

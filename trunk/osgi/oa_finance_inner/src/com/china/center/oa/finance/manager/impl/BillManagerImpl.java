@@ -15,19 +15,23 @@ import org.springframework.transaction.annotation.Transactional;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.bean.PaymentBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
+import com.china.center.oa.finance.dao.BankDAO;
 import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.dao.PaymentVSOutDAO;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.StatBankManager;
+import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.constant.IDPrefixConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.StafferTransferDAO;
 import com.china.center.oa.publics.vs.StafferTransferBean;
 import com.china.center.oa.sail.bean.OutBean;
@@ -60,6 +64,10 @@ public class BillManagerImpl implements BillManager
     private OutDAO outDAO = null;
 
     private CommonDAO commonDAO = null;
+
+    private BankDAO bankDAO = null;
+
+    private DutyDAO dutyDAO = null;
 
     private PaymentDAO paymentDAO = null;
 
@@ -159,14 +167,64 @@ public class BillManagerImpl implements BillManager
         }
     }
 
-    private boolean saveInBillInner(InBillBean bean)
+    public boolean saveInBillInner(InBillBean bean)
+        throws MYException
     {
         if (bean.getSrcMoneys() == 0.0)
         {
             bean.setSrcMoneys(bean.getMoneys());
         }
 
+        // 设置mtype
+        setMtype(bean);
+
         return inBillDAO.saveEntityBean(bean);
+    }
+
+    /**
+     * setMtype
+     * 
+     * @param bean
+     * @throws MYException
+     */
+    private void setMtype(InBillBean bean)
+        throws MYException
+    {
+        BankBean bank = bankDAO.find(bean.getBankId());
+
+        if (bank == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        DutyBean duty = dutyDAO.find(bank.getDutyId());
+
+        if (duty == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        bean.setMtype(duty.getMtype());
+    }
+
+    private void setMtype(OutBillBean bean)
+        throws MYException
+    {
+        BankBean bank = bankDAO.find(bean.getBankId());
+
+        if (bank == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        DutyBean duty = dutyDAO.find(bank.getDutyId());
+
+        if (duty == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        bean.setMtype(duty.getMtype());
     }
 
     @Transactional(rollbackFor = MYException.class)
@@ -287,11 +345,14 @@ public class BillManagerImpl implements BillManager
     }
 
     private boolean saveOutBillInner(OutBillBean bean)
+        throws MYException
     {
         if (bean.getSrcMoneys() == 0.0)
         {
             bean.setSrcMoneys(bean.getMoneys());
         }
+
+        setMtype(bean);
 
         return outBillDAO.saveEntityBean(bean);
     }
@@ -424,8 +485,10 @@ public class BillManagerImpl implements BillManager
      * @param id
      * @param bean
      * @return
+     * @throws MYException
      */
     private InBillBean saveInBill(User user, String id, OutBillBean bean)
+        throws MYException
     {
         // 生成收款单
         InBillBean inbill = new InBillBean();
@@ -831,6 +894,40 @@ public class BillManagerImpl implements BillManager
     public void setStafferTransferDAO(StafferTransferDAO stafferTransferDAO)
     {
         this.stafferTransferDAO = stafferTransferDAO;
+    }
+
+    /**
+     * @return the bankDAO
+     */
+    public BankDAO getBankDAO()
+    {
+        return bankDAO;
+    }
+
+    /**
+     * @param bankDAO
+     *            the bankDAO to set
+     */
+    public void setBankDAO(BankDAO bankDAO)
+    {
+        this.bankDAO = bankDAO;
+    }
+
+    /**
+     * @return the dutyDAO
+     */
+    public DutyDAO getDutyDAO()
+    {
+        return dutyDAO;
+    }
+
+    /**
+     * @param dutyDAO
+     *            the dutyDAO to set
+     */
+    public void setDutyDAO(DutyDAO dutyDAO)
+    {
+        this.dutyDAO = dutyDAO;
     }
 
 }

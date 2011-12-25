@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,7 @@ import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
+import com.china.center.oa.publics.helper.OATools;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
@@ -179,10 +181,6 @@ public class FinanceAction extends DispatchAction
                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
-        List<DutyBean> dutyList = dutyDAO.listEntityBeans();
-
-        request.setAttribute("dutyList", dutyList);
-
         return mapping.findForward("addBank");
     }
 
@@ -782,9 +780,10 @@ public class FinanceAction extends DispatchAction
 
             User user = Helper.getUser(request);
 
+            // 认领
             financeFacade.drawPaymentBean(user.getId(), id, customerId);
 
-            // 付款申请
+            // 绑定
             addApply(request, id, customerId, user);
 
             request.setAttribute(KeyConstant.MESSAGE, "成功操作");
@@ -1306,6 +1305,19 @@ public class FinanceAction extends DispatchAction
 
         List<InBillVO> billList = inBillDAO.queryEntityVOsByCondition(condtion);
 
+        if (OATools.getManagerFlag() && out.getOutTime().compareTo("2012-01-01") >= 0)
+        {
+            for (Iterator iterator = billList.iterator(); iterator.hasNext();)
+            {
+                InBillVO inBillVO = (InBillVO)iterator.next();
+
+                if ( !inBillVO.getDutyId().equals(out.getDutyId()))
+                {
+                    iterator.remove();
+                }
+            }
+        }
+
         request.setAttribute("billList", billList);
 
         return mapping.findForward("refBill");
@@ -1762,6 +1774,7 @@ public class FinanceAction extends DispatchAction
 
             request.setAttribute("financeBeanList", financeBeanList);
 
+            // 明细
             return mapping.findForward("detailPayment");
         }
 
@@ -1777,6 +1790,7 @@ public class FinanceAction extends DispatchAction
             }
         }
 
+        // 2012以后的单据认领
         if ("1".equals(mode))
         {
             return mapping.findForward("drawPayment2");

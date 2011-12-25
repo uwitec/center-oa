@@ -45,6 +45,9 @@ public class InBillBean implements Serializable
     @Html(title = "类型", type = Element.SELECT)
     private int type = FinanceConstant.INBILL_TYPE_SAILOUT;
 
+    @Html(title = "管理类型", must = true, type = Element.SELECT)
+    private int mtype = PublicConstant.MANAGER_TYPE_COMMON;
+
     /**
      * 已经收取 预收(关联的销售单还没有正式生效) 未关联(还没有和销售单关联)(这个只有在销售收入下才有意义哦)
      */
@@ -516,6 +519,23 @@ public class InBillBean implements Serializable
     }
 
     /**
+     * @return the mtype
+     */
+    public int getMtype()
+    {
+        return mtype;
+    }
+
+    /**
+     * @param mtype
+     *            the mtype to set
+     */
+    public void setMtype(int mtype)
+    {
+        this.mtype = mtype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -526,19 +546,80 @@ public class InBillBean implements Serializable
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue.append("InBillBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
-            TAB).append("type = ").append(this.type).append(TAB).append("status = ").append(this.status).append(TAB).append(
-            "createType = ").append(this.createType).append(TAB).append("lock = ").append(this.lock).append(TAB).append(
-            "bankId = ").append(this.bankId).append(TAB).append("outId = ").append(this.outId).append(TAB).append(
-            "outBalanceId = ").append(this.outBalanceId).append(TAB).append("moneys = ").append(this.moneys).append(TAB).append(
-            "srcMoneys = ").append(this.srcMoneys).append(TAB).append("customerId = ").append(this.customerId).append(
-            TAB).append("stafferId = ").append(this.stafferId).append(TAB).append("ownerId = ").append(this.ownerId).append(
-            TAB).append("locationId = ").append(this.locationId).append(TAB).append("destBankId = ").append(
-            this.destBankId).append(TAB).append("refBillId = ").append(this.refBillId).append(TAB).append(
-            "paymentId = ").append(this.paymentId).append(TAB).append("logTime = ").append(this.logTime).append(TAB).append(
-            "description = ").append(this.description).append(TAB).append("checks = ").append(this.checks).append(TAB).append(
-            "checkStatus = ").append(this.checkStatus).append(TAB).append("updateId = ").append(this.updateId).append(
-            TAB).append(" )");
+        retValue
+            .append("InBillBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("mtype = ")
+            .append(this.mtype)
+            .append(TAB)
+            .append("status = ")
+            .append(this.status)
+            .append(TAB)
+            .append("createType = ")
+            .append(this.createType)
+            .append(TAB)
+            .append("lock = ")
+            .append(this.lock)
+            .append(TAB)
+            .append("bankId = ")
+            .append(this.bankId)
+            .append(TAB)
+            .append("outId = ")
+            .append(this.outId)
+            .append(TAB)
+            .append("outBalanceId = ")
+            .append(this.outBalanceId)
+            .append(TAB)
+            .append("moneys = ")
+            .append(this.moneys)
+            .append(TAB)
+            .append("srcMoneys = ")
+            .append(this.srcMoneys)
+            .append(TAB)
+            .append("customerId = ")
+            .append(this.customerId)
+            .append(TAB)
+            .append("stafferId = ")
+            .append(this.stafferId)
+            .append(TAB)
+            .append("ownerId = ")
+            .append(this.ownerId)
+            .append(TAB)
+            .append("locationId = ")
+            .append(this.locationId)
+            .append(TAB)
+            .append("destBankId = ")
+            .append(this.destBankId)
+            .append(TAB)
+            .append("refBillId = ")
+            .append(this.refBillId)
+            .append(TAB)
+            .append("paymentId = ")
+            .append(this.paymentId)
+            .append(TAB)
+            .append("logTime = ")
+            .append(this.logTime)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append("checks = ")
+            .append(this.checks)
+            .append(TAB)
+            .append("checkStatus = ")
+            .append(this.checkStatus)
+            .append(TAB)
+            .append("updateId = ")
+            .append(this.updateId)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

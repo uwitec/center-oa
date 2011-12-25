@@ -43,6 +43,9 @@ public class OutBillVO extends OutBillBean
     @Relationship(relationField = "ownerId")
     private String ownerName = "";
 
+    @Relationship(relationField = "bankId", tagField = "dutyId")
+    private String dutyId = "";
+
     /**
      * default constructor
      */
@@ -153,6 +156,23 @@ public class OutBillVO extends OutBillBean
     }
 
     /**
+     * @return the dutyId
+     */
+    public String getDutyId()
+    {
+        return dutyId;
+    }
+
+    /**
+     * @param dutyId
+     *            the dutyId to set
+     */
+    public void setDutyId(String dutyId)
+    {
+        this.dutyId = dutyId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -184,6 +204,9 @@ public class OutBillVO extends OutBillBean
             .append(TAB)
             .append("ownerName = ")
             .append(this.ownerName)
+            .append(TAB)
+            .append("dutyId = ")
+            .append(this.dutyId)
             .append(TAB)
             .append(" )");
 

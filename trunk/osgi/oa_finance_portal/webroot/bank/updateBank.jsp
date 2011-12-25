@@ -19,6 +19,7 @@ function addBean()
 <form name="formEntry" action="../finance/bank.do" method="post">
 <input type="hidden" name="method" value="updateBank">
 <input type="hidden" name="id" value="${bean.id}">
+<input type="hidden" name="mtype" value="${bean.mtype}">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
@@ -40,10 +41,6 @@ function addBean()
 		<p:table cells="1">
 
 			<p:pro field="name" innerString="size=60"/>
-            
-            <p:pro field="type">
-                <p:option type="bankType"/>
-            </p:pro>
             
             <p:pro field="dutyId">
                 <p:option type="dutyList"/>

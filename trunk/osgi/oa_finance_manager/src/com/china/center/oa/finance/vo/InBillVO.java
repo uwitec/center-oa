@@ -40,6 +40,9 @@ public class InBillVO extends InBillBean
     @Relationship(relationField = "paymentId", tagField = "description")
     private String paymentDes = "";
 
+    @Relationship(relationField = "bankId", tagField = "dutyId")
+    private String dutyId = "";
+
     /**
      * default constructor
      */
@@ -116,6 +119,40 @@ public class InBillVO extends InBillBean
     }
 
     /**
+     * @return the paymentDes
+     */
+    public String getPaymentDes()
+    {
+        return paymentDes;
+    }
+
+    /**
+     * @param paymentDes
+     *            the paymentDes to set
+     */
+    public void setPaymentDes(String paymentDes)
+    {
+        this.paymentDes = paymentDes;
+    }
+
+    /**
+     * @return the dutyId
+     */
+    public String getDutyId()
+    {
+        return dutyId;
+    }
+
+    /**
+     * @param dutyId
+     *            the dutyId to set
+     */
+    public void setDutyId(String dutyId)
+    {
+        this.dutyId = dutyId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -142,26 +179,15 @@ public class InBillVO extends InBillBean
             .append("ownerName = ")
             .append(this.ownerName)
             .append(TAB)
+            .append("paymentDes = ")
+            .append(this.paymentDes)
+            .append(TAB)
+            .append("dutyId = ")
+            .append(this.dutyId)
+            .append(TAB)
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the paymentDes
-     */
-    public String getPaymentDes()
-    {
-        return paymentDes;
-    }
-
-    /**
-     * @param paymentDes
-     *            the paymentDes to set
-     */
-    public void setPaymentDes(String paymentDes)
-    {
-        this.paymentDes = paymentDes;
     }
 
 }

@@ -42,8 +42,10 @@ import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.dao.StatBankDAO;
 import com.china.center.oa.finance.listener.BankListener;
 import com.china.center.oa.finance.manager.BankManager;
+import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.constant.SysConfigConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.tools.FileTools;
 import com.china.center.tools.JudgeTools;
@@ -76,6 +78,8 @@ public class BankManagerImpl extends AbstractListenerManager<BankListener> imple
 
     private InBillDAO inBillDAO = null;
 
+    private DutyDAO dutyDAO = null;
+
     private OutBillDAO outBillDAO = null;
 
     /**
@@ -102,6 +106,15 @@ public class BankManagerImpl extends AbstractListenerManager<BankListener> imple
         Expression exp = new Expression(bean, this);
 
         exp.check("#name &unique @bankDAO", "名称已经存在");
+
+        DutyBean duty = dutyDAO.find(bean.getDutyId());
+
+        if (duty == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        bean.setMtype(duty.getMtype());
 
         bankDAO.saveEntityBean(bean);
 
@@ -168,6 +181,15 @@ public class BankManagerImpl extends AbstractListenerManager<BankListener> imple
         Expression exp = new Expression(bean, this);
 
         exp.check("#name &unique2 @bankDAO", "名称已经存在");
+
+        DutyBean duty = dutyDAO.find(bean.getDutyId());
+
+        if (duty == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        bean.setMtype(duty.getMtype());
 
         bankDAO.updateEntityBean(bean);
 
@@ -488,6 +510,23 @@ public class BankManagerImpl extends AbstractListenerManager<BankListener> imple
     public void setOutBillDAO(OutBillDAO outBillDAO)
     {
         this.outBillDAO = outBillDAO;
+    }
+
+    /**
+     * @return the dutyDAO
+     */
+    public DutyDAO getDutyDAO()
+    {
+        return dutyDAO;
+    }
+
+    /**
+     * @param dutyDAO
+     *            the dutyDAO to set
+     */
+    public void setDutyDAO(DutyDAO dutyDAO)
+    {
+        this.dutyDAO = dutyDAO;
     }
 
 }

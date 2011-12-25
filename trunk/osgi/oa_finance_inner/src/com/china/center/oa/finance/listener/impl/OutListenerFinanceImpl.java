@@ -23,6 +23,7 @@ import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.helper.BillHelper;
 import com.china.center.oa.finance.listener.BillListener;
+import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.BillOutManager;
 import com.china.center.oa.publics.constant.PluginNameConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
@@ -53,6 +54,8 @@ public class OutListenerFinanceImpl extends AbstractListenerManager<BillListener
     private InBillDAO inBillDAO = null;
 
     private OutBillDAO outBillDAO = null;
+
+    private BillManager billManager = null;
 
     private CommonDAO commonDAO = null;
 
@@ -462,7 +465,7 @@ public class OutListenerFinanceImpl extends AbstractListenerManager<BillListener
             {
                 String id = inBillBean.getId();
 
-                // 后生成对冲的单据(且必须是)
+                // 后生成对冲的单据(因为被锁定了)(且必须是)
                 inBillBean.setId(commonDAO.getSquenceString20());
                 inBillBean.setMoneys( -inBillBean.getMoneys());
                 inBillBean.setSrcMoneys( -inBillBean.getMoneys());
@@ -472,7 +475,8 @@ public class OutListenerFinanceImpl extends AbstractListenerManager<BillListener
                 inBillBean.setRefBillId(id);
                 inBillBean.setLock(FinanceConstant.BILL_LOCK_NO);
                 inBillBean.setLogTime(TimeTools.now());
-                inBillDAO.saveEntityBean(inBillBean);
+
+                billManager.saveInBillInner(inBillBean);
             }
         }
     }
@@ -621,6 +625,23 @@ public class OutListenerFinanceImpl extends AbstractListenerManager<BillListener
     public void setCommonDAO(CommonDAO commonDAO)
     {
         this.commonDAO = commonDAO;
+    }
+
+    /**
+     * @return the billManager
+     */
+    public BillManager getBillManager()
+    {
+        return billManager;
+    }
+
+    /**
+     * @param billManager
+     *            the billManager to set
+     */
+    public void setBillManager(BillManager billManager)
+    {
+        this.billManager = billManager;
     }
 
 }
