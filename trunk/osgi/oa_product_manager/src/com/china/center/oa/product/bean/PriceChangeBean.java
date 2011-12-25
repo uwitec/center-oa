@@ -49,6 +49,9 @@ public class PriceChangeBean implements Serializable
      */
     private int status = PriceChangeConstant.STATUS_COMMON;
 
+    @Html(title = "管理类型", must = true, type = Element.SELECT)
+    private int mtype = PublicConstant.MANAGER_TYPE_COMMON;
+
     @Html(title = "调价原因", type = Element.TEXTAREA, maxLength = 200)
     private String description = "";
 
@@ -226,6 +229,23 @@ public class PriceChangeBean implements Serializable
     }
 
     /**
+     * @return the mtype
+     */
+    public int getMtype()
+    {
+        return mtype;
+    }
+
+    /**
+     * @param mtype
+     *            the mtype to set
+     */
+    public void setMtype(int mtype)
+    {
+        this.mtype = mtype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -251,6 +271,9 @@ public class PriceChangeBean implements Serializable
             .append(TAB)
             .append("status = ")
             .append(this.status)
+            .append(TAB)
+            .append("mtype = ")
+            .append(this.mtype)
             .append(TAB)
             .append("description = ")
             .append(this.description)

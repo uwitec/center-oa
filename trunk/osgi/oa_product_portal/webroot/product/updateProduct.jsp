@@ -181,7 +181,7 @@ function addBean()
 			<p:pro field="reserve2"/>
 			<p:pro field="reserve3"/>
 			
-			<p:pro field="reserve4">
+			<p:pro field="reserve4" innerString="readonly=true">
                 <p:option type="pubManagerType" empty="true"/>
             </p:pro>
             

@@ -59,7 +59,10 @@ function pagePrint()
 		<p:table cells="2">
 			<p:cell title="时间">${bean.logTime}</p:cell>
 			<p:cell title="调价人">${bean.stafferName}</p:cell>
+            <p:cell title="管理属性" end="true">${my:get('pubManagerType', bean.mtype)}</p:cell>
+            
 			<p:cell title="状态" end="true">${my:get('priceChangeStatus', bean.status)}</p:cell>
+			
 			<p:cell title="调价原因" end="true">${bean.description}</p:cell>
 			
 			<p:cell title="关联凭证" end="true">

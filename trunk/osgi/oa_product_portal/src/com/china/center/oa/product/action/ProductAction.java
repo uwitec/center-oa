@@ -1374,6 +1374,8 @@ public class ProductAction extends DispatchAction
 
         List<StorageRelationVO> relationList = new LinkedList<StorageRelationVO>();
 
+        int mtype = -1;
+
         for (String each : set)
         {
             if (StringTools.isNullOrNone(each))
@@ -1395,6 +1397,22 @@ public class ProductAction extends DispatchAction
             {
                 error.append("产品[" + product.getCode() + "]不支持调价").append("<br>");
                 continue;
+            }
+
+            if (OATools.getManagerFlag())
+            {
+                if (mtype == -1)
+                {
+                    mtype = CommonTools.parseInt(product.getReserve4());
+                }
+                else
+                {
+                    if (mtype != CommonTools.parseInt(product.getReserve4()))
+                    {
+                        error.append("产品[" + product.getCode() + "]管理属性不匹配").append("<br>");
+                        continue;
+                    }
+                }
             }
 
             ConditionParse condition = new ConditionParse();

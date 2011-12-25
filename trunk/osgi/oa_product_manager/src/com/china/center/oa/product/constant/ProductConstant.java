@@ -127,9 +127,9 @@ public interface ProductConstant
     int PRODUCT_TYPE_OTHER = 0;
 
     /**
-     * 摆件
+     * 金银币
      */
-    @Defined(key = "productType", value = "摆件")
+    @Defined(key = "productType", value = "金银币")
     int PRODUCT_TYPE_PAPER = 1;
 
     /**
@@ -153,7 +153,7 @@ public interface ProductConstant
     /**
      * 钱币册
      */
-    @Defined(key = "productType", value = "钱币册")
+    // @Defined(key = "productType", value = "钱币册")
     int PRODUCT_TYPE_MONCE = 5;
 
     /**
@@ -199,15 +199,15 @@ public interface ProductConstant
     int CHECKTYPE_ALL = 1;
 
     /**
-     * 新品
+     * 出生
      */
-    @Defined(key = "productStep", value = "新品")
+    @Defined(key = "productStep", value = "出生")
     String PRODUTC_STEP_NEW = "0";
 
     @Defined(key = "productStep", value = "成长")
     String PRODUTC_STEP_INCR = "1";
 
-    @Defined(key = "productStep", value = "正常")
+    @Defined(key = "productStep", value = "成熟")
     String PRODUTC_STEP_COMMONR = "2";
 
     @Defined(key = "productStep", value = "衰退")

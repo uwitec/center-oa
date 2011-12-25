@@ -37,6 +37,8 @@ import com.china.center.oa.product.vo.PriceChangeVO;
 import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.publics.helper.OATools;
+import com.china.center.tools.CommonTools;
 import com.china.center.tools.JudgeTools;
 
 
@@ -295,6 +297,8 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
 
         List<PriceChangeNewItemBean> newList = bean.getNewList();
 
+        int mtype = -1;
+
         for (PriceChangeSrcItemBean each : srcList)
         {
             ProductChangeWrap wrap = new ProductChangeWrap();
@@ -310,6 +314,23 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
             wrap.setType(StorageConstant.OPR_DDEPOTPART_CHANGE);
             wrap.setSerializeId(sid);
             wrap.setRefId(commonDAO.getSquenceString());
+
+            if (OATools.getManagerFlag())
+            {
+                ProductBean product = productDAO.find(each.getProductId());
+
+                if (mtype == -1)
+                {
+                    mtype = CommonTools.parseInt(product.getReserve4());
+                }
+                else
+                {
+                    if (mtype != CommonTools.parseInt(product.getReserve4()))
+                    {
+                        throw new MYException("产品[" + product.getCode() + "]管理属性不匹配");
+                    }
+                }
+            }
 
             storageRelationManager.changeStorageRelationWithoutTransaction(user, wrap, true);
 
@@ -356,6 +377,11 @@ public class PriceChangeManagerImpl extends AbstractListenerManager<PriceChangeL
 
                 throw new MYException("调价后产品[%s]数量不匹配,请确认操作", product.getName());
             }
+        }
+
+        if (mtype != -1)
+        {
+            bean.setMtype(mtype);
         }
     }
 
