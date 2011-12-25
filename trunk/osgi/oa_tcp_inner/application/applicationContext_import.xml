@@ -76,6 +76,8 @@
 	
 	<osgi:reference id="budgetDAO" interface="com.china.center.oa.budget.dao.BudgetDAO" />
 	
+	<osgi:reference id="bankDAO" interface="com.china.center.oa.finance.dao.BankDAO" />
+	
 	<osgi:reference id="billManager" interface="com.china.center.oa.finance.manager.BillManager" />
 	
 

@@ -113,15 +113,6 @@ function showFlowLogTr()
     showTr = !showTr;
 }
 
-var g_obj;
-function selectBank(obj)
-{
-    g_obj = obj;
-    
-    //单选
-    window.common.modal('../finance/bank.do?method=rptQueryBank&load=1');
-}
-
 function getBank(obj)
 {
     g_obj.value = obj.pname;
@@ -256,6 +247,7 @@ function checkMoney2()
 <input type="hidden" name="processId" value=""> 
 <input type="hidden" name="id" value="${bean.id}"> 
 <input type="hidden" name="payType" value="${bean.payType}"> 
+<input type="hidden" name="dutyId" value="${bean.dutyId}"> 
 
 <p:navigation height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"

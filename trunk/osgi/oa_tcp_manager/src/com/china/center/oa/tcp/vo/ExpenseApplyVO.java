@@ -39,6 +39,9 @@ public class ExpenseApplyVO extends ExpenseApplyBean
     @Relationship(relationField = "departmentId")
     private String departmentName = "";
 
+    @Relationship(relationField = "dutyId")
+    private String dutyName = "";
+
     /**
      * 当前处理人
      */
@@ -403,6 +406,23 @@ public class ExpenseApplyVO extends ExpenseApplyBean
     }
 
     /**
+     * @return the dutyName
+     */
+    public String getDutyName()
+    {
+        return dutyName;
+    }
+
+    /**
+     * @param dutyName
+     *            the dutyName to set
+     */
+    public void setDutyName(String dutyName)
+    {
+        this.dutyName = dutyName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -425,6 +445,9 @@ public class ExpenseApplyVO extends ExpenseApplyBean
             .append(TAB)
             .append("departmentName = ")
             .append(this.departmentName)
+            .append(TAB)
+            .append("dutyName = ")
+            .append(this.dutyName)
             .append(TAB)
             .append("processer = ")
             .append(this.processer)

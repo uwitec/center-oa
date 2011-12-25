@@ -24,10 +24,13 @@ import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.finance.manager.BillManager;
+import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.IDPrefixConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.oa.publics.dao.DutyDAO;
+import com.china.center.oa.publics.helper.OATools;
 import com.china.center.oa.tax.bean.CheckViewBean;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.FinanceItemBean;
@@ -75,6 +78,8 @@ public class FinanceManagerImpl implements FinanceManager
 
     private TaxDAO taxDAO = null;
 
+    private DutyDAO dutyDAO = null;
+
     private FinanceTurnDAO financeTurnDAO = null;
 
     private FinanceMonthDAO financeMonthDAO = null;
@@ -115,6 +120,11 @@ public class FinanceManagerImpl implements FinanceManager
         // 入库时间
         bean.setLogTime(TimeTools.now());
 
+        if (OATools.getManagerFlag() && StringTools.isNullOrNone(bean.getDutyId()))
+        {
+            throw new MYException("凭证必须有纳税实体的属性");
+        }
+
         // 默认纳税实体
         if (bean.getType() == TaxConstanst.FINANCE_TYPE_MANAGER
             && StringTools.isNullOrNone(bean.getDutyId()))
@@ -127,6 +137,10 @@ public class FinanceManagerImpl implements FinanceManager
         {
             throw new MYException("普通凭证必须有纳税实体的属性");
         }
+
+        DutyBean duty = dutyDAO.find(bean.getDutyId());
+
+        bean.setType(duty.getMtype());
 
         List<FinanceItemBean> itemList = bean.getItemList();
 
@@ -155,6 +169,8 @@ public class FinanceManagerImpl implements FinanceManager
             FinanceHelper.copyFinanceItem(bean, financeItemBean);
 
             financeItemBean.setPid(bean.getId());
+
+            financeItemBean.setType(bean.getType());
 
             String taxId = financeItemBean.getTaxId();
 
@@ -644,7 +660,7 @@ public class FinanceManagerImpl implements FinanceManager
 
         financeBean.setStatus(TaxConstanst.FINANCE_STATUS_CHECK);
 
-        financeBean.setChecks("程序自动生成的月结凭证,无需核对");
+        financeBean.setChecks("月结凭证,无需核对");
 
         // 入库
         addFinanceBeanWithoutTransactional(user, financeBean);
@@ -780,7 +796,7 @@ public class FinanceManagerImpl implements FinanceManager
 
         financeBean.setStatus(TaxConstanst.FINANCE_STATUS_CHECK);
 
-        financeBean.setChecks("程序自动生成的月结凭证,无需核对");
+        financeBean.setChecks("月结凭证,无需核对");
 
         // 入库
         addFinanceBeanWithoutTransactional(user, financeBean);
@@ -886,6 +902,11 @@ public class FinanceManagerImpl implements FinanceManager
 
         checkTime(bean);
 
+        if (OATools.getManagerFlag() && StringTools.isNullOrNone(bean.getDutyId()))
+        {
+            throw new MYException("凭证必须有纳税实体的属性");
+        }
+
         // 默认纳税实体
         if (bean.getType() == TaxConstanst.FINANCE_TYPE_MANAGER
             && StringTools.isNullOrNone(bean.getDutyId()))
@@ -898,6 +919,10 @@ public class FinanceManagerImpl implements FinanceManager
         {
             throw new MYException("税务凭证必须有纳税实体的属性");
         }
+
+        DutyBean duty = dutyDAO.find(bean.getDutyId());
+
+        bean.setType(duty.getMtype());
 
         List<FinanceItemBean> itemList = bean.getItemList();
 
@@ -926,6 +951,8 @@ public class FinanceManagerImpl implements FinanceManager
             FinanceHelper.copyFinanceItem(bean, financeItemBean);
 
             financeItemBean.setLogTime(TimeTools.now());
+
+            financeItemBean.setType(bean.getType());
 
             String taxId = financeItemBean.getTaxId();
 
@@ -1001,6 +1028,8 @@ public class FinanceManagerImpl implements FinanceManager
         financeItemDAO.deleteEntityBeansByFK(bean.getId());
 
         financeItemDAO.saveAllEntityBeans(itemList);
+
+        operationLog.info(user.getStafferName() + "修改了凭证:" + old);
 
         return true;
     }
@@ -1397,6 +1426,23 @@ public class FinanceManagerImpl implements FinanceManager
     public synchronized static void setLOCK_FINANCE(boolean lock_finance)
     {
         LOCK_FINANCE = lock_finance;
+    }
+
+    /**
+     * @return the dutyDAO
+     */
+    public DutyDAO getDutyDAO()
+    {
+        return dutyDAO;
+    }
+
+    /**
+     * @param dutyDAO
+     *            the dutyDAO to set
+     */
+    public void setDutyDAO(DutyDAO dutyDAO)
+    {
+        this.dutyDAO = dutyDAO;
     }
 
 }

@@ -1367,6 +1367,9 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
                 throw new MYException("申请系列错误,请确认操作");
             }
 
+            // 报销的纳税和申请的一致
+            bean.setDutyId(apply.getDutyId());
+
             // 检查当前是否有单据关联
             List<ExpenseApplyBean> refList = expenseApplyDAO.queryEntityBeansByFK(bean.getRefId());
 
@@ -1419,6 +1422,11 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
                         .getLastMoney()), MathTools.longToDoubleStr2(bean.getRefMoney()));
                 }
             }
+        }
+        else
+        {
+            // 默认
+            bean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
         }
 
         if (bean.getShareList() != null)

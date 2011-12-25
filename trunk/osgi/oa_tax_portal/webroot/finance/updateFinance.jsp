@@ -122,6 +122,7 @@ function load()
 <form name="formEntry" action="../finance/finance.do" method="post">
 <input type="hidden" name="method" value="updateFinance"> 
 <input type="hidden" name="id" value="${bean.id}"> 
+<input type="hidden" name="type" value="${bean.type}"> 
 
 <p:navigation height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
@@ -144,11 +145,6 @@ function load()
 			<p:tr align="left">
 			凭证日期：
 			<p:plugin name="financeDate" size="20" type="0" oncheck="cnow(12)" value="${bean.financeDate}"/>
-	         凭证类型：
-			<select name="type" class="select_class" style="width: 15%;" oncheck="notNone" values="${bean.type}" readonly="true">
-		         <option value="">--</option>
-		         <p:option type="financeType"/>
-	         </select>
 			凭证归属：
 			<select name="dutyId" class="select_class" style="width: 15%;" oncheck="notNone" values="${bean.dutyId}">
 		         <option value="">--</option>

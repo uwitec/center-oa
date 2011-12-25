@@ -54,4 +54,13 @@ public interface TravelApplyDAO extends DAO<TravelApplyBean, TravelApplyVO>
      * @return
      */
     int updateBorrowStafferId(String id, String borrowStafferId);
+
+    /**
+     * updateDutyId
+     * 
+     * @param id
+     * @param borrowStafferId
+     * @return
+     */
+    int updateDutyId(String id, String dutyId);
 }

@@ -23,7 +23,6 @@ import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.publics.bean.StafferBean;
-import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
@@ -336,7 +335,7 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
 
         financeBean.setRefId(bean.getId());
 
-        financeBean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
+        financeBean.setDutyId(bean.getDutyId());
 
         financeBean.setCreaterId(user.getStafferId());
 

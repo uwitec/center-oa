@@ -39,6 +39,9 @@ public class TravelApplyVO extends TravelApplyBean
     @Relationship(relationField = "departmentId")
     private String departmentName = "";
 
+    @Relationship(relationField = "dutyId")
+    private String dutyName = "";
+
     /**
      * 当前处理人
      */
@@ -386,6 +389,40 @@ public class TravelApplyVO extends TravelApplyBean
     }
 
     /**
+     * @return the flowDescription
+     */
+    public String getFlowDescription()
+    {
+        return flowDescription;
+    }
+
+    /**
+     * @param flowDescription
+     *            the flowDescription to set
+     */
+    public void setFlowDescription(String flowDescription)
+    {
+        this.flowDescription = flowDescription;
+    }
+
+    /**
+     * @return the dutyName
+     */
+    public String getDutyName()
+    {
+        return dutyName;
+    }
+
+    /**
+     * @param dutyName
+     *            the dutyName to set
+     */
+    public void setDutyName(String dutyName)
+    {
+        this.dutyName = dutyName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -409,8 +446,14 @@ public class TravelApplyVO extends TravelApplyBean
             .append("departmentName = ")
             .append(this.departmentName)
             .append(TAB)
+            .append("dutyName = ")
+            .append(this.dutyName)
+            .append(TAB)
             .append("processer = ")
             .append(this.processer)
+            .append(TAB)
+            .append("flowDescription = ")
+            .append(this.flowDescription)
             .append(TAB)
             .append("itemVOList = ")
             .append(this.itemVOList)
@@ -451,22 +494,5 @@ public class TravelApplyVO extends TravelApplyBean
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the flowDescription
-     */
-    public String getFlowDescription()
-    {
-        return flowDescription;
-    }
-
-    /**
-     * @param flowDescription
-     *            the flowDescription to set
-     */
-    public void setFlowDescription(String flowDescription)
-    {
-        this.flowDescription = flowDescription;
     }
 }

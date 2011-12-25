@@ -131,15 +131,6 @@ function getBank(obj)
     hobj.value = obj.value;
 }
 
-var g_taxobj;
-function selectTax(obj)
-{
-    g_taxobj = obj;
-    
-    //单选
-     window.common.modal('../tax/tax.do?method=rptQueryTax&load=1&selectMode=1&pid=5504&bottomFlag=1');
-}
-
 function getTax(oos)
 {
 	var obj = oos[0];
@@ -256,6 +247,7 @@ function checkMoney2()
 <input type="hidden" name="processId" value=""> 
 <input type="hidden" name="id" value="${bean.id}"> 
 <input type="hidden" name="payType" value="${bean.payType}"> 
+<input type="hidden" name="dutyId" value="${bean.dutyId}"> 
 
 <p:navigation height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"

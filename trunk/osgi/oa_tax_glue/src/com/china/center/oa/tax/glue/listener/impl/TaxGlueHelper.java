@@ -12,6 +12,9 @@ package com.china.center.oa.tax.glue.listener.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.china.center.common.MYException;
+import com.china.center.oa.publics.constant.PublicConstant;
+import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.dao.TaxDAO;
 
@@ -34,28 +37,46 @@ public abstract class TaxGlueHelper
      * @param bankId
      * @param taxDAO
      * @return
+     * @throws MYException
      */
     public static boolean bankGoon(String bankId, TaxDAO taxDAO)
+        throws MYException
     {
         // 这里暂时不启用
         TaxBean inTax = taxDAO.findByBankId(bankId);
 
         if (inTax == null)
         {
-            badLog.error("Miss Bakn tax:" + bankId);
-
-            return false;
+            badLog.error("缺少银行科目:" + bankId);
+            throw new MYException("缺少银行科目:" + bankId);
         }
 
         TaxBean outTax = taxDAO.findTempByBankId(bankId);
 
         if (outTax == null)
         {
-            badLog.error("Miss Temp tax:" + bankId);
-
-            return false;
+            badLog.error("缺少银行临时科目:" + bankId);
+            throw new MYException("缺少银行临时科目:" + bankId);
         }
 
         return true;
+    }
+
+    /**
+     * setDutyId
+     * 
+     * @param financeBean
+     * @param mtype
+     */
+    public static void setDutyId(FinanceBean financeBean, int mtype)
+    {
+        if (mtype == PublicConstant.MANAGER_TYPE_MANAGER)
+        {
+            financeBean.setDutyId(PublicConstant.MANAGER_DUTY_ID);
+        }
+        else
+        {
+            financeBean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
+        }
     }
 }

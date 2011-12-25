@@ -32,8 +32,10 @@ import com.china.center.oa.budget.bean.BudgetLogBean;
 import com.china.center.oa.budget.constant.BudgetConstant;
 import com.china.center.oa.budget.dao.BudgetItemDAO;
 import com.china.center.oa.budget.manager.BudgetManager;
+import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
+import com.china.center.oa.finance.dao.BankDAO;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.group.dao.GroupVSStafferDAO;
 import com.china.center.oa.group.vs.GroupVSStafferBean;
@@ -115,6 +117,8 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
     private TravelApplyPayDAO travelApplyPayDAO = null;
 
     private CommonDAO commonDAO = null;
+
+    private BankDAO bankDAO = null;
 
     private TcpHandleHisDAO tcpHandleHisDAO = null;
 
@@ -448,16 +452,42 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
             }
         }
 
+        if (oldStatus == TcpConstanst.TCP_STATUS_WAIT_PAY)
+        {
+            String dutyId = param.getDutyId();
+
+            if (dutyId == null)
+            {
+                throw new MYException("缺少纳税实体,请确认操作");
+            }
+
+            travelApplyDAO.updateDutyId(bean.getId(), dutyId);
+        }
+
         if (oldStatus == TcpConstanst.TCP_STATUS_WAIT_PAY
             && bean.getBorrow() == TcpConstanst.TRAVELAPPLY_BORROW_YES)
         {
             // 财务付款
             List<OutBillBean> outBillList = (List<OutBillBean>)param.getOther();
 
+            String dutyId = param.getDutyId();
+
             double total = 0.0d;
             StringBuffer idBuffer = new StringBuffer();
             for (OutBillBean outBill : outBillList)
             {
+                BankBean bank = bankDAO.find(outBill.getBankId());
+
+                if (bank == null)
+                {
+                    throw new MYException("数据错误,请确认操作");
+                }
+
+                if ( !bank.getDutyId().equals(dutyId))
+                {
+                    throw new MYException("银行和纳税实体不对应,请确认操作");
+                }
+
                 // 生成付款单
                 createOutBill(user, outBill, bean);
 
@@ -1612,6 +1642,23 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
     public void setTcpHandleHisDAO(TcpHandleHisDAO tcpHandleHisDAO)
     {
         this.tcpHandleHisDAO = tcpHandleHisDAO;
+    }
+
+    /**
+     * @return the bankDAO
+     */
+    public BankDAO getBankDAO()
+    {
+        return bankDAO;
+    }
+
+    /**
+     * @param bankDAO
+     *            the bankDAO to set
+     */
+    public void setBankDAO(BankDAO bankDAO)
+    {
+        this.bankDAO = bankDAO;
     }
 
 }

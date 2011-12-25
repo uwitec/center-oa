@@ -52,4 +52,9 @@ public class TravelApplyDAOImpl extends BaseDAO<TravelApplyBean, TravelApplyVO> 
     {
         return this.jdbcOperation.updateField("borrowStafferId", borrowStafferId, id, this.claz);
     }
+
+    public int updateDutyId(String id, String dutyId)
+    {
+        return this.jdbcOperation.updateField("dutyId", dutyId, id, this.claz);
+    }
 }

@@ -115,6 +115,8 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
 
             financeBean.setRefId(bean.getId());
 
+            TaxGlueHelper.setDutyId(financeBean, bean.getMtype());
+
             financeBean.setDescription(financeBean.getName());
 
             financeBean.setFinanceDate(TimeTools.now_short());
@@ -153,6 +155,8 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
             financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_PRODUCT_COMPOSE_BACK);
 
             financeBean.setRefId(bean.getId());
+
+            TaxGlueHelper.setDutyId(financeBean, bean.getMtype());
 
             financeBean.setDescription(financeBean.getName());
 

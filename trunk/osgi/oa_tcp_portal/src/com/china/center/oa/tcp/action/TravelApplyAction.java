@@ -57,6 +57,7 @@ import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.AttachmentBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.dao.AttachmentDAO;
+import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.vo.FlowLogVO;
 import com.china.center.oa.tax.bean.FinanceBean;
@@ -143,6 +144,8 @@ public class TravelApplyAction extends DispatchAction
     private ExpenseApplyDAO expenseApplyDAO = null;
 
     private OutBillDAO outBillDAO = null;
+
+    private DutyDAO dutyDAO = null;
 
     private FinanceDAO financeDAO = null;
 
@@ -1025,6 +1028,13 @@ public class TravelApplyAction extends DispatchAction
 
             param.setOther(outBillList);
         }
+
+        String dutyId = request.getParameter("dutyId");
+
+        if (dutyId != null)
+        {
+            param.setDutyId(dutyId);
+        }
     }
 
     /**
@@ -1899,6 +1909,23 @@ public class TravelApplyAction extends DispatchAction
     public void setExpenseApplyDAO(ExpenseApplyDAO expenseApplyDAO)
     {
         this.expenseApplyDAO = expenseApplyDAO;
+    }
+
+    /**
+     * @return the dutyDAO
+     */
+    public DutyDAO getDutyDAO()
+    {
+        return dutyDAO;
+    }
+
+    /**
+     * @param dutyDAO
+     *            the dutyDAO to set
+     */
+    public void setDutyDAO(DutyDAO dutyDAO)
+    {
+        this.dutyDAO = dutyDAO;
     }
 
 }

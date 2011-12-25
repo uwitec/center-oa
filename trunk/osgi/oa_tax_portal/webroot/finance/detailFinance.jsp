@@ -146,7 +146,7 @@ function updateBean()
 			<tr align="center" class="content${(vs.index + 1) % 2}">
 				<td align="center">${item.pareId}</td>
 				<td align="center">${item.description}</td>
-				<td align="center">${item.taxName}</td>
+				<td align="center">${item.taxName}(${item.taxId})</td>
 				<td align="center">${item.departmentName}/${item.stafferName}/${item.unitName}/${item.productName}/${item.depotName}/${item.duty2Name}</td>
 				<td align="center">${item.showInmoney}</td>
 				<td align="center">${item.showOutmoney}</td>

@@ -10,6 +10,7 @@ package com.china.center.oa.tax.constanst;
 
 
 import com.china.center.jdbc.annotation.Defined;
+import com.china.center.oa.publics.constant.PublicConstant;
 
 
 /**
@@ -110,13 +111,13 @@ public interface TaxConstanst
      * 管理凭证
      */
     @Defined(key = "financeType", value = "管理")
-    int FINANCE_TYPE_MANAGER = 0;
+    int FINANCE_TYPE_MANAGER = PublicConstant.MANAGER_TYPE_MANAGER;
 
     /**
      * 普通凭证
      */
     @Defined(key = "financeType", value = "普通")
-    int FINANCE_TYPE_DUTY = 1;
+    int FINANCE_TYPE_DUTY = PublicConstant.MANAGER_TYPE_COMMON;
 
     /**
      * 手工凭证

@@ -30,6 +30,8 @@ public class TcpParamWrap implements Serializable
 
     private String type = "";
 
+    private String dutyId = "";
+
     private Object other = null;
 
     private Object other2 = null;
@@ -163,6 +165,23 @@ public class TcpParamWrap implements Serializable
     }
 
     /**
+     * @return the dutyId
+     */
+    public String getDutyId()
+    {
+        return dutyId;
+    }
+
+    /**
+     * @param dutyId
+     *            the dutyId to set
+     */
+    public void setDutyId(String dutyId)
+    {
+        this.dutyId = dutyId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -188,6 +207,9 @@ public class TcpParamWrap implements Serializable
             .append(TAB)
             .append("type = ")
             .append(this.type)
+            .append(TAB)
+            .append("dutyId = ")
+            .append(this.dutyId)
             .append(TAB)
             .append("other = ")
             .append(this.other)

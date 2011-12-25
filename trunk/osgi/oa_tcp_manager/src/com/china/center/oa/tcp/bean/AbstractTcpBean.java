@@ -17,7 +17,9 @@ import com.china.center.jdbc.annotation.Html;
 import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.enums.Element;
+import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.publics.bean.AttachmentBean;
+import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.tcp.constanst.TcpConstanst;
@@ -91,6 +93,10 @@ public abstract class AbstractTcpBean implements Serializable
      * 借款总金额/报销公司支付金额
      */
     protected long borrowTotal = 0L;
+
+    @Html(title = "纳税实体", must = true, type = Element.SELECT)
+    @Join(tagClass = DutyBean.class, type = JoinType.LEFT)
+    protected String dutyId = "";
 
     /**
      * 费用子项
@@ -756,6 +762,23 @@ public abstract class AbstractTcpBean implements Serializable
     }
 
     /**
+     * @return the dutyId
+     */
+    public String getDutyId()
+    {
+        return dutyId;
+    }
+
+    /**
+     * @param dutyId
+     *            the dutyId to set
+     */
+    public void setDutyId(String dutyId)
+    {
+        this.dutyId = dutyId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -832,6 +855,9 @@ public abstract class AbstractTcpBean implements Serializable
             .append(TAB)
             .append("destCity = ")
             .append(this.destCity)
+            .append(TAB)
+            .append("dutyId = ")
+            .append(this.dutyId)
             .append(TAB)
             .append("airplaneCharges = ")
             .append(this.airplaneCharges)

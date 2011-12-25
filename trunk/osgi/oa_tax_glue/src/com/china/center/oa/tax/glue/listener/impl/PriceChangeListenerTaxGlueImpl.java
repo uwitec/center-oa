@@ -106,6 +106,8 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
 
         financeBean.setLogTime(TimeTools.now());
 
+        TaxGlueHelper.setDutyId(financeBean, bean.getMtype());
+
         List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
 
         createItem(user, bean, financeBean, itemList);
@@ -530,6 +532,8 @@ public class PriceChangeListenerTaxGlueImpl implements PriceChangeListener
         financeBean.setFinanceDate(TimeTools.now_short());
 
         financeBean.setLogTime(TimeTools.now());
+
+        TaxGlueHelper.setDutyId(financeBean, bean.getMtype());
 
         List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
 

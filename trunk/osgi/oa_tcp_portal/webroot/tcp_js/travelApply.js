@@ -379,3 +379,19 @@ function selectStaffer()
 }
 
 
+var g_obj;
+function selectBank(obj)
+{
+	if ($$('dutyId') == '')
+	{
+		alert('请选择纳税实体');
+		return false;
+	}
+	
+    g_obj = obj;
+    
+    //单选
+    window.common.modal('../finance/bank.do?method=rptQueryBank&load=1&dutyread=1&dutyId=' + $$('dutyId'));
+}
+
+

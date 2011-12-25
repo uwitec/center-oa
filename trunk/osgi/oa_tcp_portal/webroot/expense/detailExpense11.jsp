@@ -51,8 +51,12 @@ function load()
             <p:pro field="stafferId" value="${bean.stafferName}"/>
             <p:pro field="departmentId" value="${bean.departmentName}"/>
             
-            <p:pro field="stype" cell="0">
+            <p:pro field="stype">
                 <p:option type="tcpStype" empty="true"/>
+            </p:pro>
+            
+            <p:pro field="dutyId">
+                <p:option type="$dutyList" empty="true"/>
             </p:pro>
             
             <p:pro field="name"/>

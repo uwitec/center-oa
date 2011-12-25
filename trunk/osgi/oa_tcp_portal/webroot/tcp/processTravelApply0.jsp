@@ -95,15 +95,6 @@ function showFlowLogTr()
     showTr = !showTr;
 }
 
-var g_obj;
-function selectBank(obj)
-{
-    g_obj = obj;
-    
-    //单选
-    window.common.modal('../finance/bank.do?method=rptQueryBank&load=1');
-}
-
 function getBank(obj)
 {
     g_obj.value = obj.pname;
@@ -458,7 +449,7 @@ function checkMoney()
         </td>
     </tr>
     
-    <c:if test="${bean.status == 22 && bean.borrow == 1}">
+    <c:if test="${bean.status == 22}">
 	    <p:title>
 	        <td class="caption">
 	         <strong>财务支付-支付金额:${bean.showBorrowTotal}</strong>
@@ -469,6 +460,24 @@ function checkMoney()
 	    
 	    <tr>
 	        <td colspan='2' align='center'>
+	        <table width="98%" border="0" cellpadding="0" cellspacing="0"
+                class="border">
+                <tr>
+                    <td>
+                    <table width="100%" border="0" cellspacing='1'>
+                    <tr align="center" class="content0">
+                        <td width="20%" align="center">纳税实体</td>
+                        <td align="left" colspan="3">
+                        <select name="dutyId" style="width: 240px" oncheck="notNone">
+			                <p:option type="$dutyList" empty="true"/>
+			            </select>
+                        <font color=red>*</font></td>
+                    </tr>
+                    </table>
+                    </td>
+                </tr>
+            </table>
+            <c:if test="${bean.status == 22 && bean.borrow == 1}">
 	        <table width="98%" border="0" cellpadding="0" cellspacing="0"
 	            class="border">
 	            <tr>
@@ -485,6 +494,7 @@ function checkMoney()
 	                </td>
 	            </tr>
 	        </table>
+	        </c:if>
 	
 	        </td>
 	    </tr>

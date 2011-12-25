@@ -99,14 +99,6 @@ function showFlowLogTr()
     showTr = !showTr;
 }
 
-var g_obj;
-function selectBank(obj)
-{
-    g_obj = obj;
-    
-    //单选
-    window.common.modal('../finance/bank.do?method=rptQueryBank&load=1');
-}
 
 function getBank(obj)
 {
@@ -506,22 +498,40 @@ function checkMoney2()
         </td>
     </tr>
     
-    <c:if test="${bean.status == 22 && bean.borrow == 1}">
-	    <p:title>
-	        <td class="caption">
-	         <strong>财务支付-支付金额:${bean.showBorrowTotal}</strong>
-	        </td>
-	    </p:title>
-	
-	    <p:line flag="0" />
-	    
-	    <tr>
-	        <td colspan='2' align='center'>
-	        <table width="98%" border="0" cellpadding="0" cellspacing="0"
-	            class="border">
-	            <tr>
-	                <td>
-	                <table width="100%" border="0" cellspacing='1' id="tables_realPay">
+    <c:if test="${bean.status == 22}">
+        <p:title>
+            <td class="caption">
+             <strong>财务支付-支付金额:${bean.showBorrowTotal}</strong>
+            </td>
+        </p:title>
+    
+        <p:line flag="0" />
+        
+        <tr>
+            <td colspan='2' align='center'>
+            <table width="98%" border="0" cellpadding="0" cellspacing="0"
+                class="border">
+                <tr>
+                    <td>
+                    <table width="100%" border="0" cellspacing='1'>
+                    <tr align="center" class="content0">
+                        <td width="20%" align="center">纳税实体</td>
+                        <td align="left" colspan="3">
+                        <select name="dutyId" style="width: 240px" oncheck="notNone">
+                            <p:option type="$dutyList" empty="true"/>
+                        </select>
+                        <font color=red>*</font></td>
+                    </tr>
+                    </table>
+                    </td>
+                </tr>
+            </table>
+            <c:if test="${bean.status == 22 && bean.borrow == 1}">
+            <table width="98%" border="0" cellpadding="0" cellspacing="0"
+                class="border">
+                <tr>
+                    <td>
+                    <table width="100%" border="0" cellspacing='1' id="tables_realPay">
                     <tr align="center" class="content0">
                         <td width="30%" align="center">银行</td>
                         <td width="30%" align="center">付款类型</td>
@@ -529,15 +539,16 @@ function checkMoney2()
                         <td width="5%" align="left"><input type="button" accesskey="A"
                             value="增加" class="button_class" onclick="addTr()"></td>
                     </tr>
-               		</table>
-	                </td>
-	            </tr>
-	        </table>
-	
-	        </td>
-	    </tr>
-	    
-	    <p:line flag="0" />
+                    </table>
+                    </td>
+                </tr>
+            </table>
+            </c:if>
+    
+            </td>
+        </tr>
+        
+        <p:line flag="0" />
     </c:if>
     
     <p:title>
