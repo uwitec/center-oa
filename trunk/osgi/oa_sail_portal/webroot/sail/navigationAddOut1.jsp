@@ -159,7 +159,7 @@ function nexStep2()
 
 	<p:line flag="1" />
 
-    <c:if test="${fn:length(g_showList) > 0}">
+    <c:if test="${fn:length(navigationList) > 0}">
 	    <p:button leftWidth="100%" rightWidth="0%">
 	        <div align="right">
 		        <input type="button" class="button_class" id="ok_b1"
