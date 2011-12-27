@@ -221,6 +221,7 @@ function checkBean()
 						</select><font color="#FF0000">*</font></td>
 					</tr>
 					
+					<!--  
 					<tr class="content2">
 						<td align="right">联系人：</td>
 						<td><input type="text" name="connector" maxlength="14" value="${bean.connector}"
@@ -228,6 +229,8 @@ function checkBean()
 						<td align="right">联系电话：</td>
 						<td><input type="text" name="phone" maxlength="20" readonly="readonly" value="${bean.phone}"></td>
 					</tr>
+					-->
+					
 					<tr class="content1">
 						<td align="right">经手人：</td>
 						<td><input type="text" name="stafferName" maxlength="14"

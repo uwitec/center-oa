@@ -1668,6 +1668,8 @@ public class OutAction extends ParentOutAction
             newOut.setType(OutConstant.OUT_TYPE_OUTBILL);
             newOut.setOutType(OutConstant.OUTTYPE_OUT_COMMON);
             newOut.setRefOutFullId(outId);
+            newOut.setDutyId(bean.getDutyId());
+            newOut.setMtype(bean.getMtype());
             newOut.setDescription("领样转销售,领样单据:" + outId);
             newOut.setDepartment(bean.getDepartment());
             newOut.setLocation(bean.getLocation());

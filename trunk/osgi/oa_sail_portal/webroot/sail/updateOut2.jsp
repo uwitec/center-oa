@@ -289,7 +289,7 @@ function changePrice()
                         <select name="dutyId" class="select_class" style="width: 240px"  readonly=true
                             values="${bean.dutyId}" onchange="loadShow(true);changePrice();">
                             <c:forEach items="${dutyList}" var="item">
-                            <option value="${item.id}">${item.name} (${item.dues}‰)</option>
+                            <option value="${item.id}">${item.name}</option>
                             </c:forEach>
                         </select>
                         <font color="#FF0000">*</font></td>

@@ -176,7 +176,8 @@ function opens(obj)
 					<tr class="content2" id="duty_tr">
 					    <td align="right">纳税实体：</td>
                         <td colspan="3">
-                        <select name="dutyId" class="select_class" style="width: 240px" values="${bean.dutyId}">
+                        <select name="dutyId" class="select_class" style="width: 240px" values="${bean.dutyId}" oncheck="notNone;" readonly=true>
+                            <option value="">--</option>
                             <c:forEach items="${dutyList}" var="item">
                             <option value="${item.id}">${item.name}</option>
                             </c:forEach>

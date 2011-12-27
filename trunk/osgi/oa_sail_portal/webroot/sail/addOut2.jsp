@@ -235,7 +235,7 @@ function changePrice()
                         <td align="right">纳税实体：</td>
                         <td colspan="1">
                         <select name="dutyId" class="select_class" style="width: 240px" oncheck="notNone;" onchange="loadShow(true);changePrice();">
-                            <option value="${sailDuty.id}">${sailDuty.name} (${sailDuty.dues}‰)</option>
+                            <option value="${sailDuty.id}">${sailDuty.name} </option>
                         </select>
                         <font color="#FF0000">*</font></td>
                     </tr>

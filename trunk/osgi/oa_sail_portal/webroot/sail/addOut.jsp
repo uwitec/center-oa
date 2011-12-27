@@ -235,7 +235,7 @@ function changePrice()
                         <select name="dutyId" class="select_class" style="width: 240px" oncheck="notNone;" onchange="loadShow();changePrice();">
                             <option value="">--</option>
                             <c:forEach items="${dutyList}" var="item">
-                            <option value="${item.id}">${item.name} (${item.dues}‰)</option>
+                            <option value="${item.id}">${item.name}</option>
                             </c:forEach>
                         </select>
                         <font color="#FF0000">*</font></td>
