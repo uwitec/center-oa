@@ -2373,6 +2373,11 @@ public class OutAction extends ParentOutAction
             {
                 condtion.addCondition("OutBean.ratio", "=", "20");
             }
+
+            if (InvoiceConstant.INVOICE_INSTACE_NDK_3.equals(invoiceId2))
+            {
+                condtion.addCondition("OutBean.ratio", "=", "30");
+            }
         }
 
         if ( !StringTools.isNullOrNone(dutyId))
@@ -2507,6 +2512,11 @@ public class OutAction extends ParentOutAction
             if (InvoiceConstant.INVOICE_INSTACE_NDK_2.equals(invoiceId2))
             {
                 condtion.addCondition("OutBean.ratio", "=", "20");
+            }
+
+            if (InvoiceConstant.INVOICE_INSTACE_NDK_3.equals(invoiceId2))
+            {
+                condtion.addCondition("OutBean.ratio", "=", "30");
             }
         }
 
