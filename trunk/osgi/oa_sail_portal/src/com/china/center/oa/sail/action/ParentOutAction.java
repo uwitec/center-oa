@@ -98,6 +98,7 @@ import com.china.center.oa.publics.manager.StafferManager;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.publics.vo.DutyVO;
 import com.china.center.oa.publics.vs.DutyVSInvoiceBean;
+import com.china.center.oa.publics.vs.RoleAuthBean;
 import com.china.center.oa.sail.bean.BaseBalanceBean;
 import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.ConsignBean;
@@ -815,6 +816,31 @@ public class ParentOutAction extends DispatchAction
         return mapping.findForward("rptProvider");
     }
 
+    protected boolean containAuth(User user, String authId)
+    {
+        if (StringTools.isNullOrNone(authId))
+        {
+            return true;
+        }
+
+        if (authId.equals(AuthConstant.PUNLIC_AUTH))
+        {
+            return true;
+        }
+
+        List<RoleAuthBean> authList = user.getAuth();
+
+        for (RoleAuthBean roleAuthBean : authList)
+        {
+            if (roleAuthBean.getAuthId().equals(authId))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * export销售单
      * 
@@ -837,6 +863,8 @@ public class ParentOutAction extends DispatchAction
 
         String filenName = null;
 
+        User user = (User)request.getSession().getAttribute("user");
+
         if (OldPageSeparateTools.getPageSeparate(request, exportKey).getRowCount() > 1500)
         {
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "导出的记录数不能超过1500");
@@ -852,6 +880,28 @@ public class ParentOutAction extends DispatchAction
         if (outList.size() == 0)
         {
             return null;
+        }
+
+        OutVO outVO = outList.get(0);
+
+        if (outVO.getType() == 0)
+        {
+            if ( !containAuth(user, AuthConstant.SAIL_QUERY_EXPORT))
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "没有权限");
+
+                return mapping.findForward("error");
+            }
+
+        }
+        else
+        {
+            if ( !containAuth(user, AuthConstant.BUY_EXPORT))
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "没有权限");
+
+                return mapping.findForward("error");
+            }
         }
 
         reponse.setContentType("application/x-dbf");

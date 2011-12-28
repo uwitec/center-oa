@@ -430,9 +430,12 @@ function load()
 			<input
 			type="button" class="button_class"
 			value="&nbsp;&nbsp;删 除&nbsp;&nbsp;" onclick="del()" />&nbsp;&nbsp;
+	    <c:if test="${my:auth(user, '1506')}">
 		<input
 			type="button" class="button_class"
-			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" /></div>
+			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />
+		</c:if>
+			</div>
 		</td>
 		<td width="0%"></td>
 	</tr>

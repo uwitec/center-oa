@@ -902,10 +902,11 @@ function hrefAndSelect(obj)
         <input type="button" class="button_class"
                 value="&nbsp;&nbsp;申请退款&nbsp;&nbsp;" onClick="applyBackPay()"/>&nbsp;&nbsp;
         </c:if>
-        
+        <c:if test="${my:auth(user, '1417')}">
         <input
                 type="button" class="button_class"
                 value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;
+        </c:if>
         
 		</div>
 		</td>

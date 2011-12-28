@@ -661,11 +661,11 @@ function hrefAndSelect(obj)
                 class="button_class" value="&nbsp;&nbsp;驳回退库&nbsp;&nbsp;"
                 onclick="rejectBack()" />&nbsp;&nbsp;
         </c:if>
-        
+        <c:if test="${my:auth(user, '1506')}">
         <input
             type="button" class="button_class"
             value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;
-        
+        </c:if>
 		</div>
 		</td>
 		<td width="0%"></td>

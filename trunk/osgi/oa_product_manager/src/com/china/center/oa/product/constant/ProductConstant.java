@@ -151,9 +151,9 @@ public interface ProductConstant
     int PRODUCT_TYPE_STAMP = 4;
 
     /**
-     * 钱币册
+     * 其他
      */
-    // @Defined(key = "productType", value = "钱币册")
+    @Defined(key = "productType", value = "其他")
     int PRODUCT_TYPE_MONCE = 5;
 
     /**

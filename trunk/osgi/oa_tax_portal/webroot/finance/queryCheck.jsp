@@ -118,7 +118,7 @@ function checkBean()
 		$.messager.prompt('总部核对', '请核对说明', '', function(msg){
                 if (msg)
                 {
-                    $ajax(gurl + 'checks&id=' + getRadioValue('checkb') + '&type=' + getRadio('checkb').ltype , {'reason' : msg}, 
+                    $ajax2(gurl + 'checks&id=' + getRadioValue('checkb') + '&type=' + getRadio('checkb').ltype , {'reason' : msg}, 
                         callBackFun);
                 }
                

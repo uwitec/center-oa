@@ -614,10 +614,12 @@ function load()
         <input
             type="button" class="button_class"
             value="&nbsp;委托代销退货&nbsp;" onclick="balance2()" />&nbsp;&nbsp;
+        <c:if test="${my:auth(user, '1417')}">
 		<input
 			type="button" class="button_class"
 			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" /></div>
 		</td>
+		</c:if>
 		<td width="0%"></td>
 	</tr>
 	
