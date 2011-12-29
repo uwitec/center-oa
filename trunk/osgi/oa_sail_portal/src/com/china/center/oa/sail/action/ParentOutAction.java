@@ -283,40 +283,19 @@ public class ParentOutAction extends DispatchAction
 
         if (OATools.getManagerFlag())
         {
-            List<DutyBean> dutyList = dutyDAO.listEntityBeans();
-
-            request.setAttribute("dutyList", dutyList);
-
-            if (request.getSession().getAttribute("ssmap") == null)
+            try
             {
-                Map ssmap = new HashMap();
-                ssmap.put("ratio", 0);
-                request.getSession().setAttribute("ssmap", ssmap);
+                innerForPrepare(request, true);
+            }
+            catch (MYException e)
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+                return mapping.findForward("error");
             }
 
-            List<ShowBean> showList = showDAO.queryEntityBeansByFK("0");
-
-            List showIdList = (List)request.getSession().getAttribute("showIds");
-
-            if (showIdList != null)
-            {
-                for (ShowBean showBean : showList)
-                {
-                    if (showIdList.contains(showBean.getId()))
-                    {
-                        showBean.setDescription("1");
-                    }
-                    else
-                    {
-                        showBean.setDescription("0");
-                    }
-                }
-            }
-
-            request.getSession().setAttribute("g_showList", showList);
-
-            // 进入导航页面
-            return mapping.findForward("navigationAddOut1");
+            // 销售单
+            return mapping.findForward("addOut3");
         }
         else
         {
@@ -2196,21 +2175,11 @@ public class ParentOutAction extends DispatchAction
             // 销售属性的设置
             if (OATools.getManagerFlag())
             {
-                if (StringTools.isNullOrNone(outBean.getFullId()))
-                {
-                    Map ssmap = (Map)request.getSession().getAttribute("ssmap");
+                InvoiceBean invoiceBean = invoiceDAO.find(outBean.getInvoiceId());
 
-                    if (ssmap == null)
-                    {
-                        request.setAttribute(KeyConstant.ERROR_MESSAGE, "数据错误");
+                int ratio = (int) (invoiceBean.getVal() * 10);
 
-                        return mapping.findForward("error");
-                    }
-
-                    outBean.setSailType(ssmap.get("sailType").toString());
-                    outBean.setProductType(ssmap.get("productType").toString());
-                    outBean.setRatio(ssmap.get("ratio").toString());
-                }
+                outBean.setRatio(String.valueOf(ratio));
             }
 
             action = processCommonOut(mapping, request, user, saves, fullId, outBean, map);

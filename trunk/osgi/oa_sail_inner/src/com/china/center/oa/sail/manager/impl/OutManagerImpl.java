@@ -63,6 +63,7 @@ import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
+import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.InvoiceCreditBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.NotifyBean;
@@ -76,6 +77,7 @@ import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.dao.InvoiceCreditDAO;
+import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
@@ -99,6 +101,7 @@ import com.china.center.oa.sail.dao.ConsignDAO;
 import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.dao.OutUniqueDAO;
+import com.china.center.oa.sail.dao.SailConfigDAO;
 import com.china.center.oa.sail.helper.OutHelper;
 import com.china.center.oa.sail.helper.YYTools;
 import com.china.center.oa.sail.listener.OutListener;
@@ -108,6 +111,7 @@ import com.china.center.oa.sail.vo.OutVO;
 import com.china.center.oa.sail.wrap.CreditWrap;
 import com.china.center.osgi.dym.DynamicBundleTools;
 import com.china.center.tools.BeanUtil;
+import com.china.center.tools.CommonTools;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.ListTools;
 import com.china.center.tools.MathTools;
@@ -168,9 +172,13 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
     private FlowLogDAO flowLogDAO = null;
 
+    private SailConfigDAO sailConfigDAO = null;
+
     private OutUniqueDAO outUniqueDAO = null;
 
     private NotifyManager notifyManager = null;
+
+    private InvoiceDAO invoiceDAO = null;
 
     private FatalNotify fatalNotify = null;
 
@@ -316,6 +324,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             outBean.setTotal(0.0d);
         }
 
+        // 行业属性
         setInvoiceId(outBean);
 
         // 增加管理员操作在数据库事务中完成
@@ -540,6 +549,52 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             && !deport.getLocationId().equals(outBean.getLocation()))
                         {
                             throw new RuntimeException("销售必须在一个仓库下面");
+                        }
+
+                        // MANAGER 销售单校验销售规则
+                        if (OATools.getManagerFlag()
+                            && outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+                        {
+                            if (CommonTools.parseInt(outBean.getSailType()) != product
+                                .getSailType()
+                                || CommonTools.parseInt(outBean.getProductType()) != product
+                                    .getType())
+                            {
+                                throw new RuntimeException("销售的时候产品的销售类型和产品类型必须一致:"
+                                                           + product.getName());
+                            }
+
+                            // 检验开单的合法性
+                            InvoiceBean invoiceBean = invoiceDAO.find(outBean.getInvoiceId());
+
+                            DutyBean duty = dutyDAO.find(outBean.getDutyId());
+
+                            int ratio = (int) (invoiceBean.getVal() * 10);
+
+                            ConditionParse sailCondtion = new ConditionParse();
+
+                            sailCondtion.addWhereStr();
+
+                            sailCondtion.addIntCondition("finType" + duty.getType(), "=",
+                                SailConstant.SAILCONFIG_FIN_YES);
+
+                            sailCondtion.addIntCondition("ratio" + duty.getType(), "=", ratio);
+
+                            sailCondtion.addIntCondition("productType", "=", outBean
+                                .getProductType());
+
+                            sailCondtion.addIntCondition("sailType", "=", outBean.getSailType());
+
+                            sailCondtion.addCondition("showId", "=", base.getShowId());
+
+                            int countByCondition = sailConfigDAO.countByCondition(sailCondtion
+                                .toString());
+
+                            if (countByCondition <= 0)
+                            {
+                                throw new RuntimeException("销售的产品包括类型和开单的品名不符合销售规则:"
+                                                           + product.getName());
+                            }
                         }
 
                         // 调拨的时候有bug啊
@@ -4741,6 +4796,40 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     public void setStorageRelationDAO(StorageRelationDAO storageRelationDAO)
     {
         this.storageRelationDAO = storageRelationDAO;
+    }
+
+    /**
+     * @return the invoiceDAO
+     */
+    public InvoiceDAO getInvoiceDAO()
+    {
+        return invoiceDAO;
+    }
+
+    /**
+     * @param invoiceDAO
+     *            the invoiceDAO to set
+     */
+    public void setInvoiceDAO(InvoiceDAO invoiceDAO)
+    {
+        this.invoiceDAO = invoiceDAO;
+    }
+
+    /**
+     * @return the sailConfigDAO
+     */
+    public SailConfigDAO getSailConfigDAO()
+    {
+        return sailConfigDAO;
+    }
+
+    /**
+     * @param sailConfigDAO
+     *            the sailConfigDAO to set
+     */
+    public void setSailConfigDAO(SailConfigDAO sailConfigDAO)
+    {
+        this.sailConfigDAO = sailConfigDAO;
     }
 
 }

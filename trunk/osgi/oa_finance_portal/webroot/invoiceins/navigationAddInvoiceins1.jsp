@@ -36,7 +36,56 @@ function check()
 
 function loadShow()
 {
-
+    var json = showJSON;
+    
+    var pid = $$('dutyId');
+    
+    var showArr = document.getElementsByName('showId');
+    
+    for (var i = 0; i < showArr.length; i++)
+    {
+        var each = showArr[i];
+        
+        removeAllItem(each);
+        
+        setOption(each, "", "--");
+        
+        for (var j = 0; j < json.length; j++)
+        {
+            var item = json[j];
+            
+            if (item.dutyId == pid)
+            {
+                setOption(each, item.id, item.name);
+            }
+        }
+    }
+    
+    var vsjson = vsJSON;
+    
+    var dutyObj = $O('dutyId');
+    
+    var invObj = $O('invoiceId');
+    
+    removeAllItem(invObj);
+    
+    if (invMap[dutyObj.value] == '3')
+    {
+        setOption(invObj, '', '没有发票');
+    }
+    
+    for (var i = 0; i < vsjson.length; i++)
+    {
+        var item = vsjson[i];
+        
+        if (item.dutyType == invMap[dutyObj.value])
+        {
+            setOption(invObj, item.invoiceId, invFullMap[item.invoiceId]);
+        }
+    }
+    
+    $O('outId').value = '';
+    $O('mayMoney').value = '0.0';
 }
 
 function opens()
@@ -165,10 +214,7 @@ function cc(obj, index)
             </p:pro>
 
 			<p:pro field="invoiceId" innerString="style='WIDTH: 340px;'">
-			    <option value="90000000000000000003">销货-->增值专用发票(一般纳税人)[可抵扣](17.00%)</option>
-                <option value="90000000000000000004">销货-->增值普通发票(一般纳税人)[不可抵扣](17.00%)</option>
-                <option value="90000000000000000007">销货-->旧货专用发票[不可抵扣](2.00%)</option>
-                <option value="90000000000000000005">销货-->增值普通发票(小规模)[不可抵扣](3.00%)</option>
+	
 			</p:pro>
 
 			<p:cell title="开票客户" end="true">

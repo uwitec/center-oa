@@ -99,7 +99,7 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
 
             financeBean.setName(name);
 
-            // MANAGER 合成凭证的管理类型处理
+            // MANAGER 合成凭证的管理类型处理DE
             if (OATools.isManager(bean.getMtype()))
             {
                 financeBean.setType(TaxConstanst.FINANCE_TYPE_MANAGER);

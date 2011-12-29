@@ -7,8 +7,10 @@
 			<forward name="addOut" path="/sail/addOut.jsp" />
 			<forward name="addOut1" path="/sail/addOut1.jsp" />
 			<forward name="addOut2" path="/sail/addOut2.jsp" />
+			<forward name="addOut3" path="/sail/addOut3.jsp" />
 			<forward name="updateOut" path="/sail/updateOut.jsp" />
 			<forward name="updateOut2" path="/sail/updateOut2.jsp" />
+			<forward name="updateOut3" path="/sail/updateOut3.jsp" />
 			<forward name="querySelfOut" path="/sail/querySelfOut.jsp" />
 			<forward name="queryOut" path="/sail/queryOut.jsp" />
 			<forward name="listOut1" path="/sail/listOut1.jsp" />

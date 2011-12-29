@@ -35,6 +35,12 @@ public class StorageRelationVO extends StorageRelationBean
     @Relationship(relationField = "productId", tagField = "reserve4")
     private String productMtype = "";
 
+    @Relationship(relationField = "productId", tagField = "type")
+    private int productType = 0;
+
+    @Relationship(relationField = "productId", tagField = "sailType")
+    private int productSailType = 0;
+
     @Relationship(relationField = "storageId")
     private String storageName = "";
 
@@ -79,6 +85,9 @@ public class StorageRelationVO extends StorageRelationBean
 
     @Ignore
     private double costPrice = 0.0d;
+
+    @Ignore
+    private String showJOSNStr = "";
 
     /**
      * default constructor
@@ -343,6 +352,57 @@ public class StorageRelationVO extends StorageRelationBean
     }
 
     /**
+     * @return the productType
+     */
+    public int getProductType()
+    {
+        return productType;
+    }
+
+    /**
+     * @param productType
+     *            the productType to set
+     */
+    public void setProductType(int productType)
+    {
+        this.productType = productType;
+    }
+
+    /**
+     * @return the productSailType
+     */
+    public int getProductSailType()
+    {
+        return productSailType;
+    }
+
+    /**
+     * @param productSailType
+     *            the productSailType to set
+     */
+    public void setProductSailType(int productSailType)
+    {
+        this.productSailType = productSailType;
+    }
+
+    /**
+     * @return the showJOSNStr
+     */
+    public String getShowJOSNStr()
+    {
+        return showJOSNStr;
+    }
+
+    /**
+     * @param showJOSNStr
+     *            the showJOSNStr to set
+     */
+    public void setShowJOSNStr(String showJOSNStr)
+    {
+        this.showJOSNStr = showJOSNStr;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -365,6 +425,12 @@ public class StorageRelationVO extends StorageRelationBean
             .append(TAB)
             .append("productMtype = ")
             .append(this.productMtype)
+            .append(TAB)
+            .append("productType = ")
+            .append(this.productType)
+            .append(TAB)
+            .append("productSailType = ")
+            .append(this.productSailType)
             .append(TAB)
             .append("storageName = ")
             .append(this.storageName)
@@ -401,6 +467,9 @@ public class StorageRelationVO extends StorageRelationBean
             .append(TAB)
             .append("costPrice = ")
             .append(this.costPrice)
+            .append(TAB)
+            .append("showJOSNStr = ")
+            .append(this.showJOSNStr)
             .append(TAB)
             .append(" )");
 

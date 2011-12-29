@@ -1037,6 +1037,7 @@ public class StockAction extends DispatchAction
                     }
                     else
                     {
+
                         DutyBean manager = dutyDAO.find(PublicConstant.MANAGER_DUTY_ID);
 
                         dutyList.add(manager);

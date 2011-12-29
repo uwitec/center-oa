@@ -1828,9 +1828,7 @@ public class OutAction extends ParentOutAction
 
                 if (OATools.getManagerFlag())
                 {
-                    preForUpdateOut2(request, bean);
-
-                    return mapping.findForward("updateOut2");
+                    return mapping.findForward("updateOut3");
                 }
 
                 // 处理修改
@@ -2140,7 +2138,7 @@ public class OutAction extends ParentOutAction
      * @param request
      * @param bean
      */
-    private void preForUpdateOut2(HttpServletRequest request, OutVO bean)
+    protected void preForUpdateOut2(HttpServletRequest request, OutVO bean)
     {
         // 处理更多逻辑
         ConditionParse condtion = new ConditionParse();
@@ -2352,32 +2350,18 @@ public class OutAction extends ParentOutAction
 
         if ( !StringTools.isNullOrNone(invoiceId))
         {
-            // CORE 限制销售单开票的时间点
+            // CORE 限制销售单开票的时间点(2012前)
             condtion.addCondition("OutBean.outTime", "<=", "2011-12-31");
 
             condtion.addCondition("OutBean.invoiceId", "=", invoiceId);
         }
 
+        // 2012后
         String invoiceId2 = request.getParameter("invoiceId2");
 
         if ( !StringTools.isNullOrNone(invoiceId2))
         {
-            // 17个税点的
-            if (InvoiceConstant.INVOICE_INSTACE_DK_17.equals(invoiceId2)
-                || InvoiceConstant.INVOICE_INSTACE_NDK_17.equals(invoiceId2))
-            {
-                condtion.addCondition("OutBean.ratio", "=", "170");
-            }
-
-            if (InvoiceConstant.INVOICE_INSTACE_NDK_2.equals(invoiceId2))
-            {
-                condtion.addCondition("OutBean.ratio", "=", "20");
-            }
-
-            if (InvoiceConstant.INVOICE_INSTACE_NDK_3.equals(invoiceId2))
-            {
-                condtion.addCondition("OutBean.ratio", "=", "30");
-            }
+            condtion.addCondition("OutBean.invoiceId", "=", invoiceId2);
         }
 
         if ( !StringTools.isNullOrNone(dutyId))
@@ -2492,7 +2476,7 @@ public class OutAction extends ParentOutAction
 
         if ( !StringTools.isNullOrNone(invoiceId))
         {
-            // CORE 限制销售单开票的时间点
+            // CORE 限制销售单开票的时间点(2012前)
             condtion.addCondition("OutBean.outTime", "<=", "2011-12-31");
 
             condtion.addCondition("OutBean.invoiceId", "=", invoiceId);
@@ -2500,24 +2484,10 @@ public class OutAction extends ParentOutAction
 
         String invoiceId2 = request.getParameter("invoiceId2");
 
+        // 2012后
         if ( !StringTools.isNullOrNone(invoiceId2))
         {
-            // 17个税点的
-            if (InvoiceConstant.INVOICE_INSTACE_DK_17.equals(invoiceId2)
-                || InvoiceConstant.INVOICE_INSTACE_NDK_17.equals(invoiceId2))
-            {
-                condtion.addCondition("OutBean.ratio", "=", "170");
-            }
-
-            if (InvoiceConstant.INVOICE_INSTACE_NDK_2.equals(invoiceId2))
-            {
-                condtion.addCondition("OutBean.ratio", "=", "20");
-            }
-
-            if (InvoiceConstant.INVOICE_INSTACE_NDK_3.equals(invoiceId2))
-            {
-                condtion.addCondition("OutBean.ratio", "=", "30");
-            }
+            condtion.addCondition("OutBean.invoiceId", "=", invoiceId2);
         }
 
         if ( !StringTools.isNullOrNone(dutyId))

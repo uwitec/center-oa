@@ -13,7 +13,7 @@
 <script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../js/json.js"></script>
 <script language="JavaScript" src="../js/jquery/jquery.js"></script>
-<script language="JavaScript" src="../sail_js/addOut.js"></script>
+<script language="JavaScript" src="../sail_js/addOut3.js"></script>
 <script language="javascript">
 <%@include file="../sail_js/out.jsp"%>
 
@@ -43,12 +43,20 @@ function opens(obj)
         return false;
     }
     
+     //invoiceId
+    if ($$('invoiceId') == '')
+    {
+        alert('请选择发票类型');
+        
+        return false;
+    }
+    
     var mtype = duesTypeMap[$$('dutyId')];
     
 	oo = obj;
 	
 	window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&showAbs=1&load=1&depotId='
-	           + $$('location') + '&name=' + encodeURIComponent(obj.value));
+	           + $$('location') + '&name=' + encodeURIComponent(obj.value) + '&mtype=' + mtype + '&dutyId=' + $$('dutyId') + '&invoiceId=' + $$('invoiceId'));
 }
 
 function load()
@@ -155,6 +163,8 @@ function changePrice()
 <input type=hidden name="customercreditlevel" value="" />
 <input type=hidden name="refOutFullId" value="${bean.refOutFullId}" />
 <input type=hidden name="inputPriceList"> 
+<input type=hidden name="sailType" value="${bean.sailType}"> 
+<input type=hidden name="productType" value="${bean.productType}"> 
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">库单管理 &gt;&gt; 修改销售单(如果需要增加开发票品名,请到 公共资源-->配置管理)</td>
@@ -284,7 +294,7 @@ function changePrice()
                         <td align="right">纳税实体：</td>
                         <td colspan="1">
                         <select name="dutyId" class="select_class" style="width: 240px"  readonly=true
-                            values="${bean.dutyId}" onchange="loadShow();changePrice();">
+                            values="${bean.dutyId}" onchange="loadShow();changePrice();delAllItem();">
                             <c:forEach items="${dutyList}" var="item">
                             <option value="${item.id}">${item.name} </option>
                             </c:forEach>
@@ -295,7 +305,7 @@ function changePrice()
                     <tr class="content2">
                         <td align="right">发票类型：</td>
                         <td colspan="3">
-                        <select name="invoiceId" class="select_class" head="发票类型" style="width: 400px" values="${bean.invoiceId}">
+                        <select name="invoiceId" class="select_class" head="发票类型" style="width: 400px" values="${bean.invoiceId}" onchange="delAllItem();">
                            <option value="">没有发票</option>
                             <c:forEach items="${invoiceList}" var="item">
                             <option value="${item.id}">${item.fullName}</option>
@@ -402,7 +412,6 @@ function changePrice()
 							
 						<td  align="center">
 						<select name="outProductName" style="WIDTH: 150px;" quick=true>
-							<p:option type="123"></p:option>
 						</select>
 						</td>
 
@@ -452,6 +461,8 @@ function changePrice()
 							
 						<td align="center">
 						<select name="outProductName" style="WIDTH: 150px;" quick=true values="${fristBase.showId}">
+						<option value="">--</option>
+						<option value="${fristBase.showId}">${fristBase.showName}</option>
 						</select>
 						</td>
 
@@ -500,10 +511,12 @@ function changePrice()
                             
                         <td align="center">
                         <select name="outProductName" style="WIDTH: 150px;" quick=true values="${fristBase.showId}">
+                        <option value="">--</option>
+                        <option value="${fristBase.showId}">${fristBase.showName}</option>
                         </select>
                         </td>
 
-                        <td align="center"><input type=button value="删除" class=button_class onclick="removeTr(this)"></td>
+                        <td align="center"><input type=button value="删除" name=eachDel class=button_class onclick="removeTr(this)"></td>
                     </tr>
                     </c:forEach>
 				</table>

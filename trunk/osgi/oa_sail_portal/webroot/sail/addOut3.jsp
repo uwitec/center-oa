@@ -4,7 +4,7 @@
 
 <html>
 <head>
-<p:link title="填写销售单" />
+<p:link title="填写销售单(2012后)" />
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/math.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
@@ -13,7 +13,7 @@
 <script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../js/jquery/jquery.js"></script>
 <script language="JavaScript" src="../js/json.js"></script>
-<script language="JavaScript" src="../sail_js/addOut.js"></script>
+<script language="JavaScript" src="../sail_js/addOut3.js"></script>
 <script language="javascript">
 <%@include file="../sail_js/out.jsp"%>
 
@@ -42,12 +42,20 @@ function opens(obj)
         return false;
     }
     
+    //invoiceId
+    if ($$('invoiceId') == '')
+    {
+        alert('请选择发票类型');
+        
+        return false;
+    }
+    
     var mtype = duesTypeMap[$$('dutyId')];
     
     oo = obj;
     
     window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&sailLocation=${g_staffer.industryId}&showAbs=1&load=1&depotId='
-                    + $$('location') + '&code=' + obj.productcode + '&mtype=' + mtype);
+                    + $$('location') + '&code=' + obj.productcode + '&mtype=' + mtype + '&dutyId=' + $$('dutyId') + '&invoiceId=' + $$('invoiceId'));
 }
 
 function load()
@@ -97,9 +105,11 @@ function changePrice()
 <input type=hidden name="customercreditlevel" value="" />
 <input type=hidden name="id" value="" />
 <input type=hidden name="inputPriceList"> 
+<input type=hidden name="sailType" value=""> 
+<input type=hidden name="productType" value=""> 
 <p:navigation
 	height="22">
-	<td width="550" class="navigation">库单管理 &gt;&gt; 填写销售单</td>
+	<td width="550" class="navigation">库单管理 &gt;&gt; 填写销售单3</td>
 				<td width="85"></td>
 </p:navigation> <br>
 
@@ -232,7 +242,7 @@ function changePrice()
                         <font color="#FF0000">*</font></td>
                         <td align="right">纳税实体：</td>
                         <td colspan="1">
-                        <select name="dutyId" class="select_class" style="width: 240px" oncheck="notNone;" onchange="loadShow();changePrice();">
+                        <select name="dutyId" class="select_class" style="width: 240px" oncheck="notNone;" onchange="loadShow();changePrice();delAllItem();">
                             <option value="">--</option>
                             <c:forEach items="${dutyList}" var="item">
                             <option value="${item.id}">${item.name}</option>
@@ -244,7 +254,7 @@ function changePrice()
                     <tr class="content2">
                         <td align="right">发票类型：</td>
                         <td colspan="3">
-                        <select name="invoiceId" class="select_class" head="发票类型" style="width: 400px">
+                        <select name="invoiceId" class="select_class" head="发票类型" style="width: 400px" onchange="delAllItem();">
                         </select>
                         <font color="#FF0000">*</font></td>
                     </tr>
@@ -308,6 +318,8 @@ function changePrice()
 							price=""
 							stafferid=""
 							depotpartid=""
+							producttype=""
+							productsailtype=""
 							readonly="readonly"
 							style="width: 100%; cursor: hand">
 						</td>
@@ -356,8 +368,6 @@ function changePrice()
                             price=""
                             stafferid=""
                             depotpartid=""
-                            producttype=""
-                            productsailtype=""
 							readonly="readonly"
 							style="width: 100%; cursor: pointer"></td>
 

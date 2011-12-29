@@ -45,6 +45,8 @@
 	
 	<osgi:reference id="dutyDAO" interface="com.china.center.oa.publics.dao.DutyDAO" />
 	
+	<osgi:reference id="invoiceDAO" interface="com.china.center.oa.publics.dao.InvoiceDAO" />
+	
 	<osgi:reference id="locationManager" interface="com.china.center.oa.publics.manager.LocationManager" />
 	
 	<osgi:reference id="queryManager" interface="com.china.center.oa.publics.manager.QueryManager" />
@@ -96,5 +98,7 @@
 	<osgi:reference id="providerManager" interface="com.china.center.oa.product.manager.ProviderManager" />
 	
 	<osgi:reference id="storageRelationDAO" interface="com.china.center.oa.product.dao.StorageRelationDAO" />
+	
+	<osgi:reference id="sailConfigDAO" interface="com.china.center.oa.sail.dao.SailConfigDAO" />
 
 </beans>
