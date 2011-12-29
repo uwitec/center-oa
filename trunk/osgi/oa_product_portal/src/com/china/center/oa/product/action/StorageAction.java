@@ -67,12 +67,20 @@ import com.china.center.oa.product.vo.StorageLogVO;
 import com.china.center.oa.product.vo.StorageRelationVO;
 import com.china.center.oa.product.vs.ProductVSLocationBean;
 import com.china.center.oa.publics.Helper;
+import com.china.center.oa.publics.bean.DutyBean;
+import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.PublicConstant;
+import com.china.center.oa.publics.dao.DutyDAO;
+import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.StafferVSIndustryDAO;
 import com.china.center.oa.publics.helper.OATools;
+import com.china.center.oa.sail.bean.SailConfigBean;
+import com.china.center.oa.sail.constanst.SailConstant;
+import com.china.center.oa.sail.dao.SailConfigDAO;
 import com.china.center.oa.sail.manager.OutManager;
+import com.china.center.oa.sail.vo.SailConfigVO;
 import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -107,7 +115,13 @@ public class StorageAction extends DispatchAction
 
     private StafferDAO stafferDAO = null;
 
+    private InvoiceDAO invoiceDAO = null;
+
+    private DutyDAO dutyDAO = null;
+
     private OutManager outManager = null;
+
+    private SailConfigDAO sailConfigDAO = null;
 
     private StorageLogDAO storageLogDAO = null;
 
@@ -1474,6 +1488,24 @@ public class StorageAction extends DispatchAction
             createList(list, condtion, sailLocation, page, queryList, request);
         }
 
+        // 纳税实体
+        String dutyId = request.getParameter("dutyId");
+
+        String invoiceId = request.getParameter("invoiceId");
+
+        InvoiceBean invoiceBean = null;
+        DutyBean duty = null;
+        int ratio = 0;
+
+        if ( !StringTools.isNullOrNone(dutyId) && !StringTools.isNullOrNone(invoiceId))
+        {
+            invoiceBean = invoiceDAO.find(invoiceId);
+
+            duty = dutyDAO.find(dutyId);
+
+            ratio = (int) (invoiceBean.getVal() * 10);
+        }
+
         for (Iterator iterator = list.iterator(); iterator.hasNext();)
         {
             StorageRelationVO vo = (StorageRelationVO)iterator.next();
@@ -1507,6 +1539,55 @@ public class StorageAction extends DispatchAction
                 vo.setBatchPrice(product.getBatchPrice());
 
                 vo.setCostPrice(product.getCost());
+            }
+
+            if ( !StringTools.isNullOrNone(dutyId) && !StringTools.isNullOrNone(invoiceId))
+            {
+                ConditionParse sailCondtion = new ConditionParse();
+
+                sailCondtion.addWhereStr();
+
+                sailCondtion.addIntCondition("finType" + duty.getType(), "=",
+                    SailConstant.SAILCONFIG_FIN_YES);
+
+                sailCondtion.addIntCondition("ratio" + duty.getType(), "=", ratio);
+
+                sailCondtion.addIntCondition("productType", "=", vo.getProductType());
+
+                sailCondtion.addIntCondition("sailType", "=", vo.getProductSailType());
+
+                sailCondtion.addCondition("group by showId");
+
+                List<SailConfigVO> voList = sailConfigDAO.queryEntityVOsByCondition(sailCondtion);
+
+                // 防止没有开票的品名
+                if (voList.isEmpty())
+                {
+                    continue;
+                }
+
+                // [{id:'1223', name:'hello'},{}]
+                StringBuffer json = new StringBuffer();
+
+                json.append("[");
+
+                for (Iterator iterator2 = voList.iterator(); iterator2.hasNext();)
+                {
+                    SailConfigVO sailConfigVO = (SailConfigVO)iterator2.next();
+
+                    json.append("{").append("\"id\" : \"").append(sailConfigVO.getShowId()).append(
+                        "\" , ").append("\"name\" : \"").append(sailConfigVO.getShowName()).append(
+                        "\"}");
+
+                    if (iterator2.hasNext())
+                    {
+                        json.append(" , ");
+                    }
+                }
+
+                json.append("]");
+
+                vo.setShowJOSNStr(json.toString());
             }
         }
 
@@ -2181,16 +2262,62 @@ public class StorageAction extends DispatchAction
         // 过滤销售类型和产品类型
         String sailType = request.getParameter("sailType");
 
-        if ( !StringTools.isNullOrNone(sailType))
-        {
-            condtion.addCondition("ProductBean.sailType", "=", sailType);
-        }
-
         String productType = request.getParameter("productType");
 
-        if ( !StringTools.isNullOrNone(productType))
+        // 纳税实体
+        String dutyId = request.getParameter("dutyId");
+
+        String invoiceId = request.getParameter("invoiceId");
+
+        // 这里是存在销售类型的时候就可以使用
+        if ( !StringTools.isNullOrNone(sailType) && !StringTools.isNullOrNone(productType))
         {
+            condtion.addCondition("ProductBean.sailType", "=", sailType);
             condtion.addCondition("ProductBean.type", "=", productType);
+        }
+        else
+        {
+            if ( !StringTools.isNullOrNone(dutyId) && !StringTools.isNullOrNone(invoiceId))
+            {
+                InvoiceBean invoiceBean = invoiceDAO.find(invoiceId);
+
+                DutyBean duty = dutyDAO.find(dutyId);
+
+                int ratio = (int) (invoiceBean.getVal() * 10);
+
+                ConditionParse sailCondtion = new ConditionParse();
+
+                sailCondtion.addWhereStr();
+
+                sailCondtion.addIntCondition("finType" + duty.getType(), "=",
+                    SailConstant.SAILCONFIG_FIN_YES);
+
+                sailCondtion.addIntCondition("ratio" + duty.getType(), "=", ratio);
+
+                sailCondtion.addCondition("group by sailType, productType");
+
+                // 销售类型和销售品类的组合
+                List<SailConfigBean> configList = sailConfigDAO
+                    .queryEntityBeansByCondition(sailCondtion);
+
+                condtion.addCondition("and (");
+
+                for (Iterator iterator = configList.iterator(); iterator.hasNext();)
+                {
+                    SailConfigBean sailConfigBean = (SailConfigBean)iterator.next();
+
+                    condtion.addCondition("(ProductBean.type = " + sailConfigBean.getProductType()
+                                          + " and ProductBean.sailType = "
+                                          + sailConfigBean.getSailType() + ")");
+
+                    if (iterator.hasNext())
+                    {
+                        condtion.addCondition("or");
+                    }
+                }
+
+                condtion.addCondition(")");
+            }
         }
 
         return condtion;
@@ -2415,5 +2542,56 @@ public class StorageAction extends DispatchAction
     public void setOutManager(OutManager outManager)
     {
         this.outManager = outManager;
+    }
+
+    /**
+     * @return the invoiceDAO
+     */
+    public InvoiceDAO getInvoiceDAO()
+    {
+        return invoiceDAO;
+    }
+
+    /**
+     * @param invoiceDAO
+     *            the invoiceDAO to set
+     */
+    public void setInvoiceDAO(InvoiceDAO invoiceDAO)
+    {
+        this.invoiceDAO = invoiceDAO;
+    }
+
+    /**
+     * @return the sailConfigDAO
+     */
+    public SailConfigDAO getSailConfigDAO()
+    {
+        return sailConfigDAO;
+    }
+
+    /**
+     * @param sailConfigDAO
+     *            the sailConfigDAO to set
+     */
+    public void setSailConfigDAO(SailConfigDAO sailConfigDAO)
+    {
+        this.sailConfigDAO = sailConfigDAO;
+    }
+
+    /**
+     * @return the dutyDAO
+     */
+    public DutyDAO getDutyDAO()
+    {
+        return dutyDAO;
+    }
+
+    /**
+     * @param dutyDAO
+     *            the dutyDAO to set
+     */
+    public void setDutyDAO(DutyDAO dutyDAO)
+    {
+        this.dutyDAO = dutyDAO;
     }
 }

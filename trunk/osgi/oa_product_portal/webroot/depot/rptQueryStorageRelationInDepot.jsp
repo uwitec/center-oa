@@ -96,6 +96,8 @@ function queryAbs()
 <input type="hidden" value="${mtype}" name="mtype">
 <input type="hidden" value="${sailType}" name="sailType">
 <input type="hidden" value="${productType}" name="productType">
+<input type="hidden" value="${dutyId}" name="dutyId">
+<input type="hidden" value="${invoiceId}" name="invoiceId">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">产品库存管理(最多返回前100个)</td>
@@ -137,7 +139,7 @@ function queryAbs()
 
 			<tr class="content1">
 				<td colspan="4" align="right">
-				<c:if test="${showAbs == 1}">
+				<c:if test="${showAbs == 9999}">
 				<input type="button"
                     onclick="queryAbs()" class="button_class"
                     value="&nbsp;&nbsp;虚拟产品&nbsp;&nbsp;">
@@ -184,6 +186,9 @@ function queryAbs()
 					pdepotpartid="${item.depotpartId}"
 					pname="${item.productName}" 
 					pcode="${item.productCode}" 
+					pshowjosn='${item.showJOSNStr}' 
+					pproducttype="${item.productType}" 
+					pproductsailtype="${item.productSailType}" 
 					pprice="${my:formatNum(item.price)}" 
 					pbatchprice="${my:formatNum(item.batchPrice)}" 
 					pcostprice="${my:formatNum(item.costPrice)}" 

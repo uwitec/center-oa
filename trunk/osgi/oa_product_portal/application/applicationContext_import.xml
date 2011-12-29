@@ -25,6 +25,10 @@
 	
 	<osgi:reference id="stafferDAO" interface="com.china.center.oa.publics.dao.StafferDAO" />
 	
+	<osgi:reference id="invoiceDAO" interface="com.china.center.oa.publics.dao.InvoiceDAO" />
+	
+	<osgi:reference id="dutyDAO" interface="com.china.center.oa.publics.dao.DutyDAO" />
+	
 	<osgi:reference id="orgManager" interface="com.china.center.oa.publics.manager.OrgManager" />
 	
 	<osgi:reference id="stafferVSIndustryDAO" interface="com.china.center.oa.publics.dao.StafferVSIndustryDAO" />
@@ -84,5 +88,7 @@
 	<osgi:reference id="outManager" interface="com.china.center.oa.sail.manager.OutManager" />
 	
 	<osgi:reference id="financeDAO" interface="com.china.center.oa.tax.dao.FinanceDAO" />
+	
+	<osgi:reference id="sailConfigDAO" interface="com.china.center.oa.sail.dao.SailConfigDAO" />
 	
 </beans>
