@@ -170,6 +170,7 @@ function queryAbs()
 				<td align="center" onclick="tableSort(this)" class="td_class"><strong>仓区</strong></td>
 				<td align="center" onclick="tableSort(this)" class="td_class"><strong>储位</strong></td>
 				<td align="center" onclick="tableSort(this)" class="td_class"><strong>产品</strong></td>
+				<td align="center" onclick="tableSort(this)" class="td_class"><strong>类型</strong></td>
 				<td align="center" onclick="tableSort(this, true)" class="td_class"><strong>可发数量</strong></td>
 				<td align="center" onclick="tableSort(this, true)" class="td_class"><strong>价格</strong></td>
 				<td align="center" onclick="tableSort(this, true)" class="td_class"><strong>批发价</strong></td>
@@ -185,6 +186,7 @@ function queryAbs()
 					pdepotpartname="${item.depotpartName}"
 					pdepotpartid="${item.depotpartId}"
 					pname="${item.productName}" 
+					pmtype="${item.productMtype}" 
 					pcode="${item.productCode}" 
 					pshowjosn='${item.showJOSNStr}' 
 					pproducttype="${item.productType}" 
@@ -196,6 +198,7 @@ function queryAbs()
 					<td align="center" onclick="hrefAndSelect(this)">${item.depotpartName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.storageName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.productName}(${item.productCode})</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:get('pubManagerType', item.productMtype)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.mayAmount}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.price)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.batchPrice)}</td>

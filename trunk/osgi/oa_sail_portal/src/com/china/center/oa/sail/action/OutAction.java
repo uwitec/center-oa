@@ -1828,7 +1828,7 @@ public class OutAction extends ParentOutAction
 
                 if (OATools.getManagerFlag())
                 {
-                    return mapping.findForward("updateOut3");
+                    return mapping.findForward("updateOut4");
                 }
 
                 // 处理修改

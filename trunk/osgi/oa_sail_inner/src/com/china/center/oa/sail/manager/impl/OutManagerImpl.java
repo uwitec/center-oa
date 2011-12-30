@@ -553,7 +553,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                         // MANAGER 销售单校验销售规则
                         if (OATools.getManagerFlag()
-                            && outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+                            && outBean.getType() == OutConstant.OUT_TYPE_OUTBILL && false)
                         {
                             if (CommonTools.parseInt(outBean.getSailType()) != product
                                 .getSailType()
@@ -4737,7 +4737,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
             else
             {
-                // 管理的开单类型必须一致
+                // 管理的开单类型必须一致(要么全部是普通,要么全部是管理)
                 int mtype = -1;
 
                 for (BaseBean baseBean : baseList)

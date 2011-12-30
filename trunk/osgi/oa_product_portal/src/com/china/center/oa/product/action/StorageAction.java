@@ -2253,8 +2253,8 @@ public class StorageAction extends DispatchAction
         // MANAGER 核心的产品库存查询过滤,管理类型处理
         String mtype = request.getParameter("mtype");
 
-        // 只能选择一种
-        if (OATools.getManagerFlag() && !StringTools.isNullOrNone(mtype))
+        // 如果是普通的只能买普通的
+        if (OATools.getManagerFlag() && OATools.isCommon(mtype))
         {
             condtion.addCondition("ProductBean.reserve4", "=", mtype);
         }

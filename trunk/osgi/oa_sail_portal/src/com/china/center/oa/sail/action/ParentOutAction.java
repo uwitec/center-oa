@@ -295,7 +295,7 @@ public class ParentOutAction extends DispatchAction
             }
 
             // 销售单
-            return mapping.findForward("addOut3");
+            return mapping.findForward("addOut4");
         }
         else
         {
