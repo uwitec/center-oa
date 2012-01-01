@@ -351,7 +351,7 @@ function checkBean()
                      <tr class="content1">
                         <td align="right">管理描述：</td>
                         <td colspan="3">
-                       发票类型:销货发票,税点${bean.ratio}‰/销售类型:${my:get2('productSailType', bean.sailType)}/销售类别:${my:get2('productType', bean.productType)}
+                       销售类型:${my:get2('productSailType', bean.sailType)}/销售类别:${my:get2('productType', bean.productType)}
                        </td>
                     </tr>
                         
