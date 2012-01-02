@@ -131,6 +131,11 @@ public class DownFileAction extends DispatchAction
     {
         String fileName = request.getParameter("fileName");
 
+        if (fileName.contains("/") || fileName.contains("\\"))
+        {
+            return null;
+        }
+
         String path = Helper.getRootPath();
 
         path = path + "template/" + fileName;
