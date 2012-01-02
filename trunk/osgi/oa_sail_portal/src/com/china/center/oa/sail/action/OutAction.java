@@ -92,6 +92,7 @@ import com.china.center.oa.sail.helper.FlowLogHelper;
 import com.china.center.oa.sail.helper.OutHelper;
 import com.china.center.oa.sail.helper.YYTools;
 import com.china.center.oa.sail.manager.OutManager;
+import com.china.center.oa.sail.manager.SailManager;
 import com.china.center.oa.sail.vo.OutBalanceVO;
 import com.china.center.oa.sail.vo.OutVO;
 import com.china.center.oa.sail.vo.SailConfigVO;
@@ -127,8 +128,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rejectBack(ActionMapping mapping, ActionForm form,
-                                    HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward rejectBack(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                    HttpServletResponse reponse)
         throws ServletException
     {
         String fullId = request.getParameter("outId");
@@ -153,8 +154,7 @@ public class OutAction extends ParentOutAction
             return mapping.findForward("error");
         }
 
-        if (bean.getStatus() == OutConstant.STATUS_SAVE
-            || bean.getStatus() == OutConstant.STATUS_REJECT
+        if (bean.getStatus() == OutConstant.STATUS_SAVE || bean.getStatus() == OutConstant.STATUS_REJECT
             || bean.getStatus() == OutConstant.BUY_STATUS_SUBMIT)
         {
             try
@@ -198,8 +198,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward processInvoke(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward processInvoke(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse reponse)
         throws ServletException
     {
         String fullId = request.getParameter("outId");
@@ -277,8 +277,7 @@ public class OutAction extends ParentOutAction
 
             if (StringTools.isNullOrNone(depotpartId))
             {
-                DepotpartBean defaultOKDepotpart = depotpartDAO.findDefaultOKDepotpart(outBean
-                    .getDestinationId());
+                DepotpartBean defaultOKDepotpart = depotpartDAO.findDefaultOKDepotpart(outBean.getDestinationId());
 
                 if (defaultOKDepotpart == null)
                 {
@@ -315,8 +314,7 @@ public class OutAction extends ParentOutAction
 
             try
             {
-                String ful = outManager.coloneOutAndSubmitAffair(newOut, user,
-                    StorageConstant.OPR_STORAGE_REDEPLOY);
+                String ful = outManager.coloneOutAndSubmitAffair(newOut, user, StorageConstant.OPR_STORAGE_REDEPLOY);
 
                 request.setAttribute(KeyConstant.MESSAGE, fullId + "成功自动接收:" + ful);
             }
@@ -324,8 +322,7 @@ public class OutAction extends ParentOutAction
             {
                 _logger.warn(e, e);
 
-                request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不能自动接收，请核实:"
-                                                                + e.getErrorContent());
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不能自动接收，请核实:" + e.getErrorContent());
 
                 return mapping.findForward("error");
             }
@@ -354,8 +351,7 @@ public class OutAction extends ParentOutAction
             {
                 _logger.warn(e, e);
 
-                request
-                    .setAttribute(KeyConstant.ERROR_MESSAGE, "库单不能转调，请核实:" + e.getErrorContent());
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不能转调，请核实:" + e.getErrorContent());
 
                 return mapping.findForward("error");
             }
@@ -399,8 +395,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward querySelfCredit(ActionMapping mapping, ActionForm form,
-                                         HttpServletRequest request, HttpServletResponse response)
+    public ActionForward querySelfCredit(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                         HttpServletResponse response)
         throws ServletException
     {
         StafferBean staffer = Helper.getStaffer(request);
@@ -440,8 +436,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findCreditDetail(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse response)
+    public ActionForward findCreditDetail(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -449,16 +445,16 @@ public class OutAction extends ParentOutAction
         StafferBean staffer = Helper.getStaffer(request);
 
         // 自己使用
-        double st = outDAO.sumNoPayAndAvouchBusinessByStafferId(staffer.getId(), staffer
-            .getIndustryId(), YYTools.getStatBeginDate(), YYTools.getStatEndDate());
+        double st = outDAO.sumNoPayAndAvouchBusinessByStafferId(staffer.getId(), staffer.getIndustryId(),
+            YYTools.getStatBeginDate(), YYTools.getStatEndDate());
 
         // 担保
-        double mt = outDAO.sumNoPayAndAvouchBusinessByManagerId2(staffer.getId(), YYTools
-            .getStatBeginDate(), YYTools.getStatEndDate());
+        double mt = outDAO.sumNoPayAndAvouchBusinessByManagerId2(staffer.getId(), YYTools.getStatBeginDate(),
+            YYTools.getStatEndDate());
 
         // 被担保
-        double bei = outDAO.sumNoPayAndAvouchBusinessByManagerId3(staffer.getId(), YYTools
-            .getStatBeginDate(), YYTools.getStatEndDate());
+        double bei = outDAO.sumNoPayAndAvouchBusinessByManagerId3(staffer.getId(), YYTools.getStatBeginDate(),
+            YYTools.getStatEndDate());
 
         double total = staffer.getCredit() * staffer.getLever();
 
@@ -469,8 +465,7 @@ public class OutAction extends ParentOutAction
         for (InvoiceCreditVO invoiceCreditVO : vsList)
         {
             buffer.append(invoiceCreditVO.getInvoiceName()).append("下的信用额度:").append(
-                MathTools.formatNum(invoiceCreditVO.getCredit() * staffer.getLever())).append(
-                "<br>");
+                MathTools.formatNum(invoiceCreditVO.getCredit() * staffer.getLever())).append("<br>");
         }
 
         String msg0 = "总信用额度:" + MathTools.formatNum(total) + "<br>";
@@ -521,8 +516,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward passOutBalance(ActionMapping mapping, ActionForm form,
-                                        HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward passOutBalance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                        HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -559,8 +554,7 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward passOutBalanceToDepot(ActionMapping mapping, ActionForm form,
-                                               HttpServletRequest request,
+    public ActionForward passOutBalanceToDepot(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                                HttpServletResponse reponse)
         throws ServletException
     {
@@ -609,8 +603,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rejectOutBalance(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward rejectOutBalance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -647,8 +641,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteOutBalance(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward deleteOutBalance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -755,8 +749,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward checksOutBalance(ActionMapping mapping, ActionForm form,
-                                          HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward checksOutBalance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                          HttpServletResponse reponse)
         throws ServletException
     {
         String fullId = request.getParameter("id");
@@ -865,8 +859,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward fourcePayOut(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward fourcePayOut(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse reponse)
         throws ServletException
     {
         String fullId = request.getParameter("outId");
@@ -928,8 +922,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward payOut2(ActionMapping mapping, ActionForm form,
-                                 HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward payOut2(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                 HttpServletResponse reponse)
         throws ServletException
     {
         String fullId = request.getParameter("outId");
@@ -991,8 +985,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward payOut3(ActionMapping mapping, ActionForm form,
-                                 HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward payOut3(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                 HttpServletResponse reponse)
         throws ServletException
     {
         String fullId = request.getParameter("outId");
@@ -1056,8 +1050,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateInvoice(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward updateInvoice(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse reponse)
         throws ServletException
     {
         String fullId = request.getParameter("outId");
@@ -1105,6 +1099,53 @@ public class OutAction extends ParentOutAction
     }
 
     /**
+     * updateInvoiceStatus
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward updateInvoiceStatus(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                             HttpServletResponse reponse)
+        throws ServletException
+    {
+        String fullId = request.getParameter("outId");
+
+        String invoiceMoney = request.getParameter("invoiceMoney");
+
+        User user = (User)request.getSession().getAttribute("user");
+
+        try
+        {
+            sailManager.updateInvoiceStatus(user, fullId, CommonTools.parseFloat(invoiceMoney),
+                OutConstant.INVOICESTATUS_END);
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理错误:" + e.getErrorContent());
+
+            return mapping.findForward("error");
+        }
+
+        request.setAttribute(KeyConstant.MESSAGE, "成功更新发票状态:" + fullId);
+
+        CommonTools.saveParamers(request);
+
+        RequestTools.actionInitQuery(request);
+
+        String queryType = RequestTools.getValueFromRequest(request, "queryType");
+
+        request.setAttribute("queryType", queryType);
+
+        return queryOut(mapping, form, request, reponse);
+    }
+
+    /**
      * 坏账取消
      * 
      * @param mapping
@@ -1114,8 +1155,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward payOut4(ActionMapping mapping, ActionForm form,
-                                 HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward payOut4(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                 HttpServletResponse reponse)
         throws ServletException
     {
         String fullId = request.getParameter("outId");
@@ -1177,8 +1218,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward modifyOutStatus(ActionMapping mapping, ActionForm form,
-                                         HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward modifyOutStatus(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                         HttpServletResponse reponse)
         throws ServletException
     {
         long begin = System.currentTimeMillis();
@@ -1252,8 +1293,7 @@ public class OutAction extends ParentOutAction
                 {
                     try
                     {
-                        resultStatus = outManager.submit(out.getFullId(), user,
-                            StorageConstant.OPR_STORAGE_OUTBILLIN);
+                        resultStatus = outManager.submit(out.getFullId(), user, StorageConstant.OPR_STORAGE_OUTBILLIN);
 
                         request.setAttribute(KeyConstant.MESSAGE, out.getFullId() + "库单成功提交!");
                     }
@@ -1261,8 +1301,7 @@ public class OutAction extends ParentOutAction
                     {
                         _logger.warn(e, e);
 
-                        request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理异常："
-                                                                        + e.getErrorContent());
+                        request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理异常：" + e.getErrorContent());
 
                         return mapping.findForward("error");
                     }
@@ -1273,8 +1312,7 @@ public class OutAction extends ParentOutAction
                 {
                     try
                     {
-                        resultStatus = outManager.pass(fullId, user, OutConstant.BUY_STATUS_SUBMIT,
-                            reason, depotpartId);
+                        resultStatus = outManager.pass(fullId, user, OutConstant.BUY_STATUS_SUBMIT, reason, depotpartId);
                     }
                     catch (MYException e)
                     {
@@ -1286,8 +1324,7 @@ public class OutAction extends ParentOutAction
                     }
                 }
                 // 进入库单 库管--分经理--总裁--董事长
-                else if (out.getType() == OutConstant.OUT_TYPE_INBILL
-                         && statuss != OutConstant.STATUS_SUBMIT)
+                else if (out.getType() == OutConstant.OUT_TYPE_INBILL && statuss != OutConstant.STATUS_SUBMIT)
                 {
                     if (out.getOutType() == OutConstant.OUTTYPE_IN_COMMON
                         || out.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT)
@@ -1302,8 +1339,8 @@ public class OutAction extends ParentOutAction
                     {
                         try
                         {
-                            resultStatus = outManager.pass(fullId, user,
-                                OutConstant.STATUS_CEO_CHECK, reason, depotpartId);
+                            resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_CEO_CHECK, reason,
+                                depotpartId);
                         }
                         catch (MYException e)
                         {
@@ -1320,8 +1357,8 @@ public class OutAction extends ParentOutAction
                     {
                         try
                         {
-                            resultStatus = outManager.pass(fullId, user,
-                                OutConstant.STATUS_CHAIRMA_CHECK, reason, depotpartId);
+                            resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_CHAIRMA_CHECK, reason,
+                                depotpartId);
                         }
                         catch (MYException e)
                         {
@@ -1338,8 +1375,7 @@ public class OutAction extends ParentOutAction
                     {
                         try
                         {
-                            resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_PASS,
-                                reason, depotpartId);
+                            resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_PASS, reason, depotpartId);
                         }
                         catch (MYException e)
                         {
@@ -1376,8 +1412,7 @@ public class OutAction extends ParentOutAction
                     {
                         try
                         {
-                            resultStatus = outManager.submit(fullId, user,
-                                StorageConstant.OPR_STORAGE_OUTBILL);
+                            resultStatus = outManager.submit(fullId, user, StorageConstant.OPR_STORAGE_OUTBILL);
                         }
                         catch (MYException e)
                         {
@@ -1394,8 +1429,7 @@ public class OutAction extends ParentOutAction
                     {
                         try
                         {
-                            resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_SUBMIT,
-                                reason, depotpartId);
+                            resultStatus = outManager.pass(fullId, user, OutConstant.STATUS_SUBMIT, reason, depotpartId);
                         }
                         catch (MYException e)
                         {
@@ -1408,8 +1442,7 @@ public class OutAction extends ParentOutAction
                     }
 
                     // 结算中心通过 物流管理员 库管通过 总裁通过
-                    if (statuss == OutConstant.STATUS_MANAGER_PASS
-                        || statuss == OutConstant.STATUS_FLOW_PASS
+                    if (statuss == OutConstant.STATUS_MANAGER_PASS || statuss == OutConstant.STATUS_FLOW_PASS
                         || statuss == OutConstant.STATUS_PASS)
                     {
                         // 这里需要计算客户的信用金额-是否报送物流中心经理审批
@@ -1417,8 +1450,7 @@ public class OutAction extends ParentOutAction
 
                         // 如果是黑名单的客户(且没有付款)
                         if (outCredit && out.getReserve3() == OutConstant.OUT_SAIL_TYPE_MONEY
-                            && out.getType() == OutConstant.OUT_TYPE_OUTBILL
-                            && out.getPay() == OutConstant.PAY_NOT)
+                            && out.getType() == OutConstant.OUT_TYPE_OUTBILL && out.getPay() == OutConstant.PAY_NOT)
                         {
                             try
                             {
@@ -1426,8 +1458,7 @@ public class OutAction extends ParentOutAction
                             }
                             catch (MYException e)
                             {
-                                request
-                                    .setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+                                request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
 
                                 return mapping.findForward("error");
                             }
@@ -1436,8 +1467,7 @@ public class OutAction extends ParentOutAction
 
                             if (newOut.getPay() == OutConstant.PAY_NOT)
                             {
-                                request.setAttribute(KeyConstant.ERROR_MESSAGE,
-                                    "只有结算中心确定已经回款后才可以审批此销售单");
+                                request.setAttribute(KeyConstant.ERROR_MESSAGE, "只有结算中心确定已经回款后才可以审批此销售单");
 
                                 return mapping.findForward("error");
                             }
@@ -1445,8 +1475,7 @@ public class OutAction extends ParentOutAction
 
                         try
                         {
-                            resultStatus = outManager.pass(fullId, user, statuss, reason,
-                                depotpartId);
+                            resultStatus = outManager.pass(fullId, user, statuss, reason, depotpartId);
                         }
                         catch (MYException e)
                         {
@@ -1492,26 +1521,20 @@ public class OutAction extends ParentOutAction
 
                 }
 
-                importLog.info(fullId + ":" + user.getStafferName() + ";form:" + oldStatus + ";to"
-                               + resultStatus + "(SUCCESS)");
+                importLog.info(fullId + ":" + user.getStafferName() + ";form:" + oldStatus + ";to" + resultStatus
+                               + "(SUCCESS)");
 
                 RequestTools.actionInitQuery(request);
 
                 if (realOut.getType() == OutConstant.OUT_TYPE_OUTBILL)
                 {
-                    request.setAttribute(KeyConstant.MESSAGE, "单据["
-                                                              + fullId
-                                                              + "]操作成功,下一步是:"
-                                                              + OutHelper.getStatus(realOut
-                                                                  .getStatus()));
+                    request.setAttribute(KeyConstant.MESSAGE, "单据[" + fullId + "]操作成功,下一步是:"
+                                                              + OutHelper.getStatus(realOut.getStatus()));
                 }
                 else
                 {
-                    request.setAttribute(KeyConstant.MESSAGE, "单据["
-                                                              + fullId
-                                                              + "]操作成功,下一步是:"
-                                                              + OutHelper.getStatus2(realOut
-                                                                  .getStatus()));
+                    request.setAttribute(KeyConstant.MESSAGE, "单据[" + fullId + "]操作成功,下一步是:"
+                                                              + OutHelper.getStatus2(realOut.getStatus()));
                 }
 
                 if (realOut.getType() == OutConstant.OUT_TYPE_OUTBILL)
@@ -1552,8 +1575,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward swatchToSail(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward swatchToSail(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse reponse)
         throws ServletException
     {
         synchronized (S_LOCK)
@@ -1589,8 +1612,7 @@ public class OutAction extends ParentOutAction
                 if (outManager.isSwatchToSail(outBean.getFullId()) && !OutHelper.isSailEnd(outBean))
                 {
                     // 异常不能增加,只能有一个当前的
-                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "领样转销售只能存在一个未审批结束的,未审批单据:"
-                                                                    + outBean.getFullId());
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "领样转销售只能存在一个未审批结束的,未审批单据:" + outBean.getFullId());
 
                     return mapping.findForward("error");
                 }
@@ -1713,8 +1735,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findOut(ActionMapping mapping, ActionForm form,
-                                 HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward findOut(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                 HttpServletResponse reponse)
         throws ServletException
     {
         String outId = RequestTools.getValueFromRequest(request, "outId");
@@ -1745,8 +1767,7 @@ public class OutAction extends ParentOutAction
 
             List<FlowLogBean> logs = flowLogDAO.queryEntityBeansByFK(outId);
 
-            List<FlowLogVO> voList = ListTools.changeList(logs, FlowLogVO.class,
-                FlowLogHelper.class, "getOutLogVO");
+            List<FlowLogVO> voList = ListTools.changeList(logs, FlowLogVO.class, FlowLogHelper.class, "getOutLogVO");
 
             request.setAttribute("bean", bean);
 
@@ -1860,8 +1881,7 @@ public class OutAction extends ParentOutAction
             }
 
             // 查询目的库的良品仓区
-            List<DepotpartBean> depotpartList = depotpartDAO.queryOkDepotpartInDepot(bean
-                .getDestinationId());
+            List<DepotpartBean> depotpartList = depotpartDAO.queryOkDepotpartInDepot(bean.getDestinationId());
 
             request.setAttribute("depotpartList", depotpartList);
 
@@ -1871,8 +1891,8 @@ public class OutAction extends ParentOutAction
         // 修改发票类型
         if ("6".equals(fow))
         {
-            List<InvoiceBean> invoiceList = invoiceDAO.queryEntityBeansByCondition(
-                "where forward = ?", InvoiceConstant.INVOICE_FORWARD_OUT);
+            List<InvoiceBean> invoiceList = invoiceDAO.queryEntityBeansByCondition("where forward = ?",
+                InvoiceConstant.INVOICE_FORWARD_OUT);
 
             request.setAttribute("invoiceList", invoiceList);
 
@@ -1897,8 +1917,7 @@ public class OutAction extends ParentOutAction
 
                 for (OutBean outBean : refList)
                 {
-                    if (outManager.isSwatchToSail(outBean.getFullId())
-                        && !OutHelper.isSailEnd(outBean))
+                    if (outManager.isSwatchToSail(outBean.getFullId()) && !OutHelper.isSailEnd(outBean))
                     {
                         // 异常不能增加,只能有一个当前的
                         request.setAttribute(KeyConstant.ERROR_MESSAGE, "领样转销售只能存在一个未审批结束的,请重新操作");
@@ -2200,8 +2219,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryOut(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward rptQueryOut(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -2228,8 +2247,8 @@ public class OutAction extends ParentOutAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYOUT);
 
-            list = outDAO.queryEntityBeansByCondition(PageSeparateTools.getCondition(request,
-                RPTQUERYOUT), PageSeparateTools.getPageSeparate(request, RPTQUERYOUT));
+            list = outDAO.queryEntityBeansByCondition(PageSeparateTools.getCondition(request, RPTQUERYOUT),
+                PageSeparateTools.getPageSeparate(request, RPTQUERYOUT));
         }
 
         request.setAttribute("list", list);
@@ -2247,8 +2266,8 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryOutBalance(ActionMapping mapping, ActionForm form,
-                                            HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward rptQueryOutBalance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                            HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -2275,10 +2294,8 @@ public class OutAction extends ParentOutAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYOUTBALANCE);
 
-            list = outBalanceDAO
-                .queryEntityVOsByCondition(PageSeparateTools.getCondition(request,
-                    RPTQUERYOUTBALANCE), PageSeparateTools.getPageSeparate(request,
-                    RPTQUERYOUTBALANCE));
+            list = outBalanceDAO.queryEntityVOsByCondition(PageSeparateTools.getCondition(request, RPTQUERYOUTBALANCE),
+                PageSeparateTools.getPageSeparate(request, RPTQUERYOUTBALANCE));
         }
 
         request.setAttribute("list", list);
@@ -2408,8 +2425,7 @@ public class OutAction extends ParentOutAction
 
             condtion.addIntCondition("OutBean.badDebts", ">", 0);
 
-            condtion.addIntCondition("OutBean.badDebtsCheckStatus", "=",
-                OutConstant.BADDEBTSCHECKSTATUS_NO);
+            condtion.addIntCondition("OutBean.badDebtsCheckStatus", "=", OutConstant.BADDEBTSCHECKSTATUS_NO);
         }
 
         condtion.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_OUTBILL);
@@ -2535,8 +2551,7 @@ public class OutAction extends ParentOutAction
      * @return
      * @throws ServletException
      */
-    public ActionForward exportAllStafferCredit(ActionMapping mapping, ActionForm form,
-                                                HttpServletRequest request,
+    public ActionForward exportAllStafferCredit(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                                 HttpServletResponse reponse)
         throws ServletException
     {
@@ -3228,4 +3243,22 @@ public class OutAction extends ParentOutAction
     {
         this.sailConfigDAO = sailConfigDAO;
     }
+
+    /**
+     * @return the sailManager
+     */
+    public SailManager getSailManager()
+    {
+        return sailManager;
+    }
+
+    /**
+     * @param sailManager
+     *            the sailManager to set
+     */
+    public void setSailManager(SailManager sailManager)
+    {
+        this.sailManager = sailManager;
+    }
+
 }

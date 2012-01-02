@@ -115,6 +115,7 @@ import com.china.center.oa.sail.dao.SailConfigDAO;
 import com.china.center.oa.sail.helper.OutHelper;
 import com.china.center.oa.sail.helper.YYTools;
 import com.china.center.oa.sail.manager.OutManager;
+import com.china.center.oa.sail.manager.SailManager;
 import com.china.center.oa.sail.vo.OutBalanceVO;
 import com.china.center.oa.sail.vo.OutVO;
 import com.china.center.oa.sail.vo.SailConfigVO;
@@ -145,6 +146,8 @@ public class ParentOutAction extends DispatchAction
     protected final Log importLog = LogFactory.getLog("sec");
 
     protected UserDAO userDAO = null;
+
+    protected SailManager sailManager = null;
 
     protected OutQueryDAO outQueryDAO = null;
 

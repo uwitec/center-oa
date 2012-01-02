@@ -289,6 +289,41 @@ function payOut4()
     }
 }
 
+function updateInvoiceStatus()
+{
+    if (isEnd() && getRadio('fullId').invoiceStatus != 1)
+    {
+        $.messager.prompt('修改发票状态', '请输入销售单已开票金额', '0.0', function(value, isOk){
+                if (isOk)
+                {
+                    if (isFloat(value))
+                    {
+                        getObj('method').value = 'updateInvoiceStatus';
+            
+			            getObj('invoiceMoney').value = value;
+			            
+			            getObj('outId').value = getRadioValue("fullId");
+			            
+			            adminForm.submit();
+                    }
+                    else
+                    {
+                        alert('只能输入金额');
+                        $Dbuttons(false);
+                    }
+                }
+                else
+                {
+                    $Dbuttons(false);
+                }
+            });
+    }
+    else
+    {
+        alert('不能操作');
+    }
+}
+
 function centerCheck()
 {
     if (isEnd())
@@ -563,6 +598,7 @@ function hrefAndSelect(obj)
 <input type="hidden" value="${ppmap.radioIndex}" name="radioIndex">
 <input type="hidden" value="" name="reason">
 <input type="hidden" value="" name="baddebts">
+<input type="hidden" value="" name="invoiceMoney">
 
 <c:set var="fg" value='销售'/>
 
@@ -882,6 +918,13 @@ function hrefAndSelect(obj)
                 value="&nbsp;&nbsp;确认坏账&nbsp;&nbsp;" onClick="payOut3()"/>&nbsp;&nbsp;
         <input type="button" class="button_class"
                 value="&nbsp;&nbsp;坏账取消&nbsp;&nbsp;" onClick="payOut4()"/>&nbsp;&nbsp;
+        
+        <c:if test="${my:auth(user, '1418')}">
+        <input
+                type="button" class="button_class"
+                value="&nbsp;修改发票状态&nbsp;" onclick="updateInvoiceStatus()" />&nbsp;&nbsp;
+        </c:if>
+        
 		</c:if>
 		
 		<c:if test="${queryType == '6'}">

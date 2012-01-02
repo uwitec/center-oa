@@ -35,4 +35,6 @@
 
 	<bean id="sailConfigManager" class="com.china.center.oa.sail.manager.impl.SailConfigManagerImpl" />
 
+	<bean id="sailManager" class="com.china.center.oa.sail.manager.impl.SailManagerImpl" />
+
 </beans>
