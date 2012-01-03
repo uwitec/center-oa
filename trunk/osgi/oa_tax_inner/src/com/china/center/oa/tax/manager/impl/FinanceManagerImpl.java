@@ -11,6 +11,7 @@ package com.china.center.oa.tax.manager.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -126,14 +127,12 @@ public class FinanceManagerImpl implements FinanceManager
         }
 
         // 默认纳税实体
-        if (bean.getType() == TaxConstanst.FINANCE_TYPE_MANAGER
-            && StringTools.isNullOrNone(bean.getDutyId()))
+        if (bean.getType() == TaxConstanst.FINANCE_TYPE_MANAGER && StringTools.isNullOrNone(bean.getDutyId()))
         {
             bean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
         }
 
-        if (bean.getType() == TaxConstanst.FINANCE_TYPE_DUTY
-            && StringTools.isNullOrNone(bean.getDutyId()))
+        if (bean.getType() == TaxConstanst.FINANCE_TYPE_DUTY && StringTools.isNullOrNone(bean.getDutyId()))
         {
             throw new MYException("普通凭证必须有纳税实体的属性");
         }
@@ -239,8 +238,7 @@ public class FinanceManagerImpl implements FinanceManager
         financeDAO.saveEntityBean(bean);
 
         // 手工增加增加成功后需要更新
-        if (bean.getCreateType() == TaxConstanst.FINANCE_CREATETYPE_HAND
-            && !StringTools.isNullOrNone(bean.getRefId()))
+        if (bean.getCreateType() == TaxConstanst.FINANCE_CREATETYPE_HAND && !StringTools.isNullOrNone(bean.getRefId()))
         {
             billManager.updateBillBeanChecksWithoutTransactional(user, bean.getRefId(),
                 "增加手工凭证自动更新收款单核对状态:" + FinanceHelper.createFinanceLink(bean.getId()));
@@ -315,10 +313,8 @@ public class FinanceManagerImpl implements FinanceManager
      * @param bean
      * @param changeFormat
      */
-    private void createMonthData(User user, FinanceTurnBean bean, String changeFormat,
-                                 List<FinanceItemBean> itemList)
+    private void createMonthData(User user, FinanceTurnBean bean, String changeFormat, List<FinanceItemBean> itemList)
     {
-
         List<TaxBean> taxList = taxDAO.listEntityBeans("order by id");
 
         for (TaxBean taxBean : taxList)
@@ -366,8 +362,7 @@ public class FinanceManagerImpl implements FinanceManager
             // 获取最近的一个月
             FinanceTurnVO lastTurn = financeTurnDAO.findLastVO();
 
-            FinanceMonthBean lastMonth = financeMonthDAO.findByUnique(taxBean.getId(), lastTurn
-                .getMonthKey());
+            FinanceMonthBean lastMonth = financeMonthDAO.findByUnique(taxBean.getId(), lastTurn.getMonthKey());
 
             // 科目整个系统的累加数
             if (lastMonth != null)
@@ -395,25 +390,30 @@ public class FinanceManagerImpl implements FinanceManager
                 fmb.setLastAllTotal(fmb.getOutmoneyAllTotal() - fmb.getInmoneyAllTotal());
             }
 
-            // 负债类
+            // 损益类
             if (taxBean.getPtype().equals(TaxConstanst.TAX_PTYPE_LOSS))
             {
-                // 结转金额
+                // 结转金额(每个损益科目)
+                long total = 0L;
+
+                // 因为每个duty生成一个,所以这里是循环获取所有
                 for (FinanceItemBean financeItemBean : itemList)
                 {
                     if (financeItemBean.getTaxId().equals(taxBean.getId()))
                     {
                         if (financeItemBean.getForward() == TaxConstanst.TAX_FORWARD_IN)
                         {
-                            fmb.setMonthTurnTotal(financeItemBean.getInmoney());
+                            total += financeItemBean.getInmoney();
                         }
 
                         if (financeItemBean.getForward() == TaxConstanst.TAX_FORWARD_OUT)
                         {
-                            fmb.setMonthTurnTotal(financeItemBean.getOutmoney());
+                            total += financeItemBean.getOutmoney();
                         }
                     }
                 }
+
+                fmb.setMonthTurnTotal(total);
             }
 
             fmb.setLogTime(TimeTools.now());
@@ -442,8 +442,7 @@ public class FinanceManagerImpl implements FinanceManager
 
             if ( !nextKey.equals(bean.getMonthKey()))
             {
-                throw new MYException("上次结转的是[%s],本次结转的是[%s],应该结转的是[%s],请确认操作", monthKey, bean
-                    .getMonthKey(), nextKey);
+                throw new MYException("上次结转的是[%s],本次结转的是[%s],应该结转的是[%s],请确认操作", monthKey, bean.getMonthKey(), nextKey);
             }
         }
 
@@ -483,189 +482,215 @@ public class FinanceManagerImpl implements FinanceManager
      * @param changeFormat
      * @throws MYException
      */
-    private List<FinanceItemBean> createTurnFinance(User user, FinanceTurnBean bean,
-                                                    String changeFormat)
+    private List<FinanceItemBean> createTurnFinance(User user, FinanceTurnBean bean, String changeFormat)
         throws MYException
     {
-        // 产生凭证(结转/利润结转)
-        List<TaxBean> taxList = taxDAO.queryEntityBeansByFK(TaxConstanst.TAX_PTYPE_LOSS);
 
-        FinanceBean financeBean = new FinanceBean();
+        List<FinanceItemBean> resultList = new LinkedList<FinanceItemBean>();
+        List<DutyBean> dutyList = dutyDAO.listEntityBeans();
 
-        String name = user.getStafferName() + "损益结转" + bean.getMonthKey();
-
-        financeBean.setName(name);
-
-        financeBean.setType(TaxConstanst.FINANCE_TYPE_MANAGER);
-
-        financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TURN);
-
-        financeBean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
-
-        financeBean.setCreaterId(user.getStafferId());
-
-        financeBean.setDescription(financeBean.getName());
-
-        // 这里的日期是本月最后一天哦
-        financeBean.setFinanceDate(TimeTools.getMonthEnd(changeFormat + "-01"));
-
-        financeBean.setLogTime(TimeTools.now());
-
-        List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
-
-        String pare = commonDAO.getSquenceString();
-
-        // 本年利润
-        String itemTaxId = TaxItemConstanst.YEAR_PROFIT;
-
-        TaxBean yearTax = taxDAO.findByUnique(itemTaxId);
-
-        if (yearTax == null)
+        // 每个纳税实体生成一个凭证
+        for (DutyBean dutyBean : dutyList)
         {
-            throw new MYException("数据错误,请确认操作");
+            List<FinanceItemBean> itemList = new LinkedList<FinanceItemBean>();
+
+            // 产生凭证(结转/利润结转)
+            List<TaxBean> taxList = taxDAO.queryEntityBeansByFK(TaxConstanst.TAX_PTYPE_LOSS);
+
+            FinanceBean financeBean = new FinanceBean();
+
+            String name = user.getStafferName() + "损益结转" + bean.getMonthKey() + ":" + dutyBean.getName();
+
+            financeBean.setName(name);
+
+            financeBean.setDutyId(dutyBean.getId());
+
+            financeBean.setType(dutyBean.getMtype());
+
+            financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_TURN);
+
+            financeBean.setCreaterId(user.getStafferId());
+
+            financeBean.setDescription(financeBean.getName());
+
+            // 这里的日期是本月最后一天哦
+            financeBean.setFinanceDate(TimeTools.getMonthEnd(changeFormat + "-01"));
+
+            financeBean.setLogTime(TimeTools.now());
+
+            String pare = commonDAO.getSquenceString();
+
+            // 本年利润
+            String itemTaxId = TaxItemConstanst.YEAR_PROFIT;
+
+            TaxBean yearTax = taxDAO.findByUnique(itemTaxId);
+
+            if (yearTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            for (TaxBean taxBean : taxList)
+            {
+                if (taxBean.getBottomFlag() == TaxConstanst.TAX_BOTTOMFLAG_ROOT)
+                {
+                    continue;
+                }
+
+                ConditionParse condition = new ConditionParse();
+
+                condition.addWhereStr();
+
+                condition.addCondition("financeDate", ">=", changeFormat + "-01");
+                condition.addCondition("financeDate", "<=", changeFormat + "-31");
+
+                condition.addCondition("dutyId", "=", dutyBean.getId());
+
+                condition.addCondition("taxId", "=", taxBean.getId());
+
+                // 每个纳税实体的统计就是全部
+                long inMonetTotal = financeItemDAO.sumInByCondition(condition);
+
+                long outMonetTotal = financeItemDAO.sumOutByCondition(condition);
+
+                if (inMonetTotal == 0 && outMonetTotal == 0)
+                {
+                    continue;
+                }
+
+                // 空的删除
+                if ( (inMonetTotal == outMonetTotal) && (itemList.size() != 0))
+                {
+                    continue;
+                }
+
+                // 借方(损益每月都结转的,所以损益的期初都是0)(借:本年利润 贷损益,这里的辅助核算型可以为空的)
+                if (taxBean.getForward() == TaxConstanst.TAX_FORWARD_IN)
+                {
+                    String eachName = "借:本年利润,贷:" + taxBean.getName();
+
+                    // 借:本年利润 贷:损益科目
+                    FinanceItemBean itemInEach = new FinanceItemBean();
+
+                    itemInEach.setPareId(pare);
+
+                    itemInEach.setName(eachName);
+
+                    itemInEach.setDutyId(financeBean.getDutyId());
+
+                    itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+                    FinanceHelper.copyFinanceItem(financeBean, itemInEach);
+
+                    // 科目拷贝
+                    FinanceHelper.copyTax(yearTax, itemInEach);
+
+                    itemInEach.setInmoney(inMonetTotal - outMonetTotal);
+
+                    itemInEach.setOutmoney(0);
+
+                    itemInEach.setDescription(eachName);
+
+                    itemList.add(itemInEach);
+
+                    FinanceItemBean itemOutEach = new FinanceItemBean();
+
+                    itemOutEach.setPareId(pare);
+
+                    itemOutEach.setName(eachName);
+
+                    itemOutEach.setDutyId(financeBean.getDutyId());
+
+                    itemOutEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+                    FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
+
+                    // 科目拷贝
+                    FinanceHelper.copyTax(taxBean, itemOutEach);
+
+                    itemOutEach.setInmoney(0);
+
+                    itemOutEach.setOutmoney(inMonetTotal - outMonetTotal);
+
+                    itemOutEach.setDescription(eachName);
+
+                    itemList.add(itemOutEach);
+                }
+                else
+                {
+                    String eachName = "借:" + taxBean.getName() + ",贷:本年利润";
+
+                    // 借:损益科目 贷:本年利润
+                    FinanceItemBean itemInEach = new FinanceItemBean();
+
+                    itemInEach.setPareId(pare);
+
+                    itemInEach.setName(eachName);
+
+                    itemInEach.setDutyId(financeBean.getDutyId());
+
+                    itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+                    FinanceHelper.copyFinanceItem(financeBean, itemInEach);
+
+                    // 科目拷贝
+                    FinanceHelper.copyTax(taxBean, itemInEach);
+
+                    itemInEach.setInmoney(outMonetTotal - inMonetTotal);
+
+                    itemInEach.setOutmoney(0);
+
+                    itemInEach.setDescription(eachName);
+
+                    itemList.add(itemInEach);
+
+                    // 贷方
+                    FinanceItemBean itemOutEach = new FinanceItemBean();
+
+                    itemOutEach.setPareId(pare);
+
+                    itemOutEach.setName(eachName);
+
+                    itemOutEach.setDutyId(financeBean.getDutyId());
+
+                    itemOutEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+                    FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
+
+                    // 科目拷贝
+                    FinanceHelper.copyTax(yearTax, itemOutEach);
+
+                    itemOutEach.setInmoney(0);
+
+                    itemOutEach.setOutmoney(outMonetTotal - inMonetTotal);
+
+                    itemOutEach.setDescription(eachName);
+
+                    itemList.add(itemOutEach);
+                }
+            }
+
+            // 如果都是空,不增加
+            if (itemList.isEmpty())
+            {
+                continue;
+            }
+
+            financeBean.setItemList(itemList);
+
+            resultList.addAll(itemList);
+
+            financeBean.setLocks(TaxConstanst.FINANCE_LOCK_YES);
+
+            financeBean.setStatus(TaxConstanst.FINANCE_STATUS_CHECK);
+
+            financeBean.setChecks("月结凭证,无需核对");
+
+            // 入库
+            addFinanceBeanWithoutTransactional(user, financeBean);
         }
 
-        for (TaxBean taxBean : taxList)
-        {
-            if (taxBean.getBottomFlag() == TaxConstanst.TAX_BOTTOMFLAG_ROOT)
-            {
-                continue;
-            }
-
-            ConditionParse condition = new ConditionParse();
-
-            condition.addWhereStr();
-
-            condition.addCondition("financeDate", ">=", changeFormat + "-01");
-            condition.addCondition("financeDate", "<=", changeFormat + "-31");
-
-            condition.addCondition("taxId", "=", taxBean.getId());
-
-            long inMonetTotal = financeItemDAO.sumInByCondition(condition);
-
-            long outMonetTotal = financeItemDAO.sumOutByCondition(condition);
-
-            if (inMonetTotal == 0 && outMonetTotal == 0)
-            {
-                continue;
-            }
-
-            // 空的删除
-            if ( (inMonetTotal == outMonetTotal) && (itemList.size() != 0))
-            {
-                continue;
-            }
-
-            // 借方(损益每月都结转的,所以损益的期初都是0)(借:本年利润 贷损益,这里的辅助核算型可以为空的)
-            if (taxBean.getForward() == TaxConstanst.TAX_FORWARD_IN)
-            {
-                String eachName = "借:本年利润,贷:" + taxBean.getName();
-
-                // 借:本年利润 贷:损益科目
-                FinanceItemBean itemInEach = new FinanceItemBean();
-
-                itemInEach.setPareId(pare);
-
-                itemInEach.setName(eachName);
-
-                itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
-
-                FinanceHelper.copyFinanceItem(financeBean, itemInEach);
-
-                // 科目拷贝
-                FinanceHelper.copyTax(yearTax, itemInEach);
-
-                itemInEach.setInmoney(inMonetTotal - outMonetTotal);
-
-                itemInEach.setOutmoney(0);
-
-                itemInEach.setDescription(eachName);
-
-                itemList.add(itemInEach);
-
-                FinanceItemBean itemOutEach = new FinanceItemBean();
-
-                itemOutEach.setPareId(pare);
-
-                itemOutEach.setName(eachName);
-
-                itemOutEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
-
-                FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
-
-                // 科目拷贝
-                FinanceHelper.copyTax(taxBean, itemOutEach);
-
-                itemOutEach.setInmoney(0);
-
-                itemOutEach.setOutmoney(inMonetTotal - outMonetTotal);
-
-                itemOutEach.setDescription(eachName);
-
-                itemList.add(itemOutEach);
-            }
-            else
-            {
-                String eachName = "借:" + taxBean.getName() + ",贷:本年利润";
-
-                // 借:损益科目 贷:本年利润
-                FinanceItemBean itemInEach = new FinanceItemBean();
-
-                itemInEach.setPareId(pare);
-
-                itemInEach.setName(eachName);
-
-                itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
-
-                FinanceHelper.copyFinanceItem(financeBean, itemInEach);
-
-                // 科目拷贝
-                FinanceHelper.copyTax(taxBean, itemInEach);
-
-                itemInEach.setInmoney(outMonetTotal - inMonetTotal);
-
-                itemInEach.setOutmoney(0);
-
-                itemInEach.setDescription(eachName);
-
-                itemList.add(itemInEach);
-
-                // 贷方
-                FinanceItemBean itemOutEach = new FinanceItemBean();
-
-                itemOutEach.setPareId(pare);
-
-                itemOutEach.setName(eachName);
-
-                itemOutEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
-
-                FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
-
-                // 科目拷贝
-                FinanceHelper.copyTax(yearTax, itemOutEach);
-
-                itemOutEach.setInmoney(0);
-
-                itemOutEach.setOutmoney(outMonetTotal - inMonetTotal);
-
-                itemOutEach.setDescription(eachName);
-
-                itemList.add(itemOutEach);
-            }
-        }
-
-        financeBean.setItemList(itemList);
-
-        financeBean.setLocks(TaxConstanst.FINANCE_LOCK_YES);
-
-        financeBean.setStatus(TaxConstanst.FINANCE_STATUS_CHECK);
-
-        financeBean.setChecks("月结凭证,无需核对");
-
-        // 入库
-        addFinanceBeanWithoutTransactional(user, financeBean);
-
-        return itemList;
+        return resultList;
     }
 
     /**
@@ -677,131 +702,148 @@ public class FinanceManagerImpl implements FinanceManager
      * @return
      * @throws MYException
      */
-    private List<FinanceItemBean> createProfitFinance(User user, FinanceTurnBean bean,
-                                                      String changeFormat,
+    private List<FinanceItemBean> createProfitFinance(User user, FinanceTurnBean bean, String changeFormat,
                                                       List<FinanceItemBean> itemNearList)
         throws MYException
     {
-        // 利润结转
-        long profit = 0L;
+        List<FinanceItemBean> resultList = new LinkedList<FinanceItemBean>();
 
-        // itemNearList里面有很多的本年利润
-        for (FinanceItemBean financeItemBean : itemNearList)
+        List<DutyBean> dutyList = dutyDAO.listEntityBeans();
+
+        // 每个纳税实体生成一个凭证
+        for (DutyBean dutyBean : dutyList)
         {
-            if (financeItemBean.getTaxId().equals(TaxItemConstanst.YEAR_PROFIT)
-                && financeItemBean.getForward() == TaxConstanst.TAX_FORWARD_IN)
+            // 利润结转
+            long profit = 0L;
+
+            // itemNearList里面有很多的本年利润
+            for (FinanceItemBean financeItemBean : itemNearList)
             {
-                profit = profit - financeItemBean.getInmoney();
+                if (financeItemBean.getTaxId().equals(TaxItemConstanst.YEAR_PROFIT)
+                    && financeItemBean.getForward() == TaxConstanst.TAX_FORWARD_IN
+                    && financeItemBean.getDutyId().equals(dutyBean.getId()))
+                {
+                    profit = profit - financeItemBean.getInmoney();
+                }
+
+                if (financeItemBean.getTaxId().equals(TaxItemConstanst.YEAR_PROFIT)
+                    && financeItemBean.getForward() == TaxConstanst.TAX_FORWARD_OUT
+                    && financeItemBean.getDutyId().equals(dutyBean.getId()))
+                {
+                    profit = profit + financeItemBean.getOutmoney();
+                }
             }
 
-            if (financeItemBean.getTaxId().equals(TaxItemConstanst.YEAR_PROFIT)
-                && financeItemBean.getForward() == TaxConstanst.TAX_FORWARD_OUT)
+            // 没有利润结转
+            if (profit == 0)
             {
-                profit = profit + financeItemBean.getOutmoney();
+                continue;
             }
+
+            FinanceBean financeBean = new FinanceBean();
+
+            String name = user.getStafferName() + "利润结转:" + bean.getMonthKey() + ":" + dutyBean.getName();
+
+            financeBean.setName(name);
+
+            financeBean.setType(dutyBean.getMtype());
+
+            financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_PROFIT);
+
+            financeBean.setDutyId(dutyBean.getId());
+
+            financeBean.setCreaterId(user.getStafferId());
+
+            financeBean.setDescription(financeBean.getName());
+
+            // 这里的日期是本月最后一天哦
+            financeBean.setFinanceDate(TimeTools.getMonthEnd(changeFormat + "-01"));
+
+            financeBean.setLogTime(TimeTools.now());
+
+            List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
+
+            // 凭证对
+            String pare = commonDAO.getSquenceString();
+
+            // 本年利润
+            String itemTaxId = TaxItemConstanst.YEAR_PROFIT;
+
+            TaxBean yearTax = taxDAO.findByUnique(itemTaxId);
+
+            if (yearTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 未分配利润
+            TaxBean noProfit = taxDAO.findByUnique(TaxItemConstanst.NO_PROFIT);
+
+            if (noProfit == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            String eachName = "借:本年利润,贷:未分配利润";
+
+            // 借:本年利润 贷:损益科目
+            FinanceItemBean itemInEach = new FinanceItemBean();
+
+            itemInEach.setPareId(pare);
+
+            itemInEach.setName(eachName);
+
+            itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemInEach);
+
+            // 科目拷贝
+            FinanceHelper.copyTax(yearTax, itemInEach);
+
+            itemInEach.setInmoney(profit);
+
+            itemInEach.setOutmoney(0);
+
+            itemInEach.setDescription(eachName);
+
+            itemList.add(itemInEach);
+
+            FinanceItemBean itemOutEach = new FinanceItemBean();
+
+            itemOutEach.setPareId(pare);
+
+            itemOutEach.setName(eachName);
+
+            itemOutEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
+
+            // 科目拷贝
+            FinanceHelper.copyTax(noProfit, itemOutEach);
+
+            itemOutEach.setInmoney(0);
+
+            itemOutEach.setOutmoney(profit);
+
+            itemOutEach.setDescription(eachName);
+
+            itemList.add(itemOutEach);
+
+            financeBean.setItemList(itemList);
+
+            financeBean.setLocks(TaxConstanst.FINANCE_LOCK_YES);
+
+            financeBean.setStatus(TaxConstanst.FINANCE_STATUS_CHECK);
+
+            financeBean.setChecks("月结凭证,无需核对");
+
+            // 入库
+            addFinanceBeanWithoutTransactional(user, financeBean);
+
+            resultList.addAll(itemList);
         }
 
-        FinanceBean financeBean = new FinanceBean();
-
-        String name = user.getStafferName() + "利润结转:" + bean.getMonthKey();
-
-        financeBean.setName(name);
-
-        financeBean.setType(TaxConstanst.FINANCE_TYPE_MANAGER);
-
-        financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_PROFIT);
-
-        financeBean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
-
-        financeBean.setCreaterId(user.getStafferId());
-
-        financeBean.setDescription(financeBean.getName());
-
-        // 这里的日期是本月最后一天哦
-        financeBean.setFinanceDate(TimeTools.getMonthEnd(changeFormat + "-01"));
-
-        financeBean.setLogTime(TimeTools.now());
-
-        List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
-
-        // 凭证对
-        String pare = commonDAO.getSquenceString();
-
-        // 本年利润
-        String itemTaxId = TaxItemConstanst.YEAR_PROFIT;
-
-        TaxBean yearTax = taxDAO.findByUnique(itemTaxId);
-
-        if (yearTax == null)
-        {
-            throw new MYException("数据错误,请确认操作");
-        }
-
-        // 未分配利润
-        TaxBean noProfit = taxDAO.findByUnique(TaxItemConstanst.NO_PROFIT);
-
-        if (noProfit == null)
-        {
-            throw new MYException("数据错误,请确认操作");
-        }
-
-        String eachName = "借:本年利润,贷:未分配利润";
-
-        // 借:本年利润 贷:损益科目
-        FinanceItemBean itemInEach = new FinanceItemBean();
-
-        itemInEach.setPareId(pare);
-
-        itemInEach.setName(eachName);
-
-        itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
-
-        FinanceHelper.copyFinanceItem(financeBean, itemInEach);
-
-        // 科目拷贝
-        FinanceHelper.copyTax(yearTax, itemInEach);
-
-        itemInEach.setInmoney(profit);
-
-        itemInEach.setOutmoney(0);
-
-        itemInEach.setDescription(eachName);
-
-        itemList.add(itemInEach);
-
-        FinanceItemBean itemOutEach = new FinanceItemBean();
-
-        itemOutEach.setPareId(pare);
-
-        itemOutEach.setName(eachName);
-
-        itemOutEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
-
-        FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
-
-        // 科目拷贝
-        FinanceHelper.copyTax(noProfit, itemOutEach);
-
-        itemOutEach.setInmoney(0);
-
-        itemOutEach.setOutmoney(profit);
-
-        itemOutEach.setDescription(eachName);
-
-        itemList.add(itemOutEach);
-
-        financeBean.setItemList(itemList);
-
-        financeBean.setLocks(TaxConstanst.FINANCE_LOCK_YES);
-
-        financeBean.setStatus(TaxConstanst.FINANCE_STATUS_CHECK);
-
-        financeBean.setChecks("月结凭证,无需核对");
-
-        // 入库
-        addFinanceBeanWithoutTransactional(user, financeBean);
-
-        return itemList;
+        return resultList;
     }
 
     /**
@@ -814,8 +856,7 @@ public class FinanceManagerImpl implements FinanceManager
     private void checkItem(FinanceItemBean financeItemBean, TaxBean tax)
         throws MYException
     {
-        if (tax.getUnit() == TaxConstanst.TAX_CHECK_YES
-            && StringTools.isNullOrNone(financeItemBean.getUnitId()))
+        if (tax.getUnit() == TaxConstanst.TAX_CHECK_YES && StringTools.isNullOrNone(financeItemBean.getUnitId()))
         {
             throw new MYException("科目[%s]下辅助核算型-单位必须存在,请确认操作", tax.getName());
         }
@@ -826,26 +867,22 @@ public class FinanceManagerImpl implements FinanceManager
             throw new MYException("科目[%s]下辅助核算型-部门必须存在,请确认操作", tax.getName());
         }
 
-        if (tax.getStaffer() == TaxConstanst.TAX_CHECK_YES
-            && StringTools.isNullOrNone(financeItemBean.getStafferId()))
+        if (tax.getStaffer() == TaxConstanst.TAX_CHECK_YES && StringTools.isNullOrNone(financeItemBean.getStafferId()))
         {
             throw new MYException("科目[%s]下辅助核算型-职员必须存在,请确认操作", tax.getName());
         }
 
-        if (tax.getProduct() == TaxConstanst.TAX_CHECK_YES
-            && StringTools.isNullOrNone(financeItemBean.getProductId()))
+        if (tax.getProduct() == TaxConstanst.TAX_CHECK_YES && StringTools.isNullOrNone(financeItemBean.getProductId()))
         {
             throw new MYException("科目[%s]下辅助核算型-产品必须存在,请确认操作", tax.getName());
         }
 
-        if (tax.getDepot() == TaxConstanst.TAX_CHECK_YES
-            && StringTools.isNullOrNone(financeItemBean.getDepotId()))
+        if (tax.getDepot() == TaxConstanst.TAX_CHECK_YES && StringTools.isNullOrNone(financeItemBean.getDepotId()))
         {
             throw new MYException("科目[%s]下辅助核算型-仓库必须存在,请确认操作", tax.getName());
         }
 
-        if (tax.getDuty() == TaxConstanst.TAX_CHECK_YES
-            && StringTools.isNullOrNone(financeItemBean.getDuty2Id()))
+        if (tax.getDuty() == TaxConstanst.TAX_CHECK_YES && StringTools.isNullOrNone(financeItemBean.getDuty2Id()))
         {
             throw new MYException("科目[%s]下辅助核算型-纳税实体必须存在,请确认操作", tax.getName());
         }
@@ -871,8 +908,7 @@ public class FinanceManagerImpl implements FinanceManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        if (old.getStatus() == TaxConstanst.FINANCE_STATUS_CHECK
-            || old.getLocks() == TaxConstanst.FINANCE_LOCK_YES)
+        if (old.getStatus() == TaxConstanst.FINANCE_STATUS_CHECK || old.getLocks() == TaxConstanst.FINANCE_LOCK_YES)
         {
             throw new MYException("已经被核对(锁定)不能修改,请重新操作");
         }
@@ -908,14 +944,12 @@ public class FinanceManagerImpl implements FinanceManager
         }
 
         // 默认纳税实体
-        if (bean.getType() == TaxConstanst.FINANCE_TYPE_MANAGER
-            && StringTools.isNullOrNone(bean.getDutyId()))
+        if (bean.getType() == TaxConstanst.FINANCE_TYPE_MANAGER && StringTools.isNullOrNone(bean.getDutyId()))
         {
             bean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
         }
 
-        if (bean.getType() == TaxConstanst.FINANCE_TYPE_DUTY
-            && StringTools.isNullOrNone(bean.getDutyId()))
+        if (bean.getType() == TaxConstanst.FINANCE_TYPE_DUTY && StringTools.isNullOrNone(bean.getDutyId()))
         {
             throw new MYException("税务凭证必须有纳税实体的属性");
         }
@@ -1015,8 +1049,8 @@ public class FinanceManagerImpl implements FinanceManager
 
         if (bean.getInmoney() != old.getInmoney())
         {
-            throw new MYException("原单据金额[%s],当前金额[%s]不等,凭证增加错误", FinanceHelper.longToString(bean
-                .getInmoney()), FinanceHelper.longToString(old.getInmoney()));
+            throw new MYException("原单据金额[%s],当前金额[%s]不等,凭证增加错误", FinanceHelper.longToString(bean.getInmoney()),
+                FinanceHelper.longToString(old.getInmoney()));
         }
 
         // CORE 核对借贷必相等的原则
@@ -1049,8 +1083,7 @@ public class FinanceManagerImpl implements FinanceManager
             throw new MYException("凭证时间不能大于[%s]", TimeTools.now_short());
         }
 
-        String monthKey = TimeTools.changeFormat(bean.getFinanceDate(), TimeTools.SHORT_FORMAT,
-            "yyyyMM");
+        String monthKey = TimeTools.changeFormat(bean.getFinanceDate(), TimeTools.SHORT_FORMAT, "yyyyMM");
 
         List<FinanceTurnBean> turnList = financeTurnDAO.listEntityBeans("order by monthKey desc");
 

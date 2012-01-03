@@ -204,6 +204,18 @@ function clearDepartment()
             </tr>
             
             <tr class="content1">
+			    <td width="15%" align="center">所属纳税:</td>
+                <td align="left" colspan="1"><select name="dutyId"
+                    class="select_class" values="${dutyId}" style="width: 80%">
+                   <p:option type="$dutyList" empty="true"/>
+                </select></td>
+                
+                <td width="15%" align="center"></td>
+                <td align="left" colspan="1">
+                </td>
+            </tr>
+            
+            <tr class="content1">
                 <td width="15%" align="center">职员</td>
                 <td align="left" colspan="1"><input type="text" name="stafferName" style="width: 70%" value="${stafferName}" readonly="readonly">
                 <input type="button" value="&nbsp;...&nbsp;" name="qout" id="qout"

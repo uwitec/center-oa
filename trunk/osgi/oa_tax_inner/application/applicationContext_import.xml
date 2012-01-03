@@ -56,6 +56,8 @@
 	
 	<osgi:reference id="dutyDAO" interface="com.china.center.oa.publics.dao.DutyDAO" />
 	
+	<osgi:reference id="dutyManager" interface="com.china.center.oa.publics.manager.DutyManager" />
+	
 	<osgi:reference id="fatalNotify" interface="com.china.center.oa.publics.manager.FatalNotify" />
 	
 	<osgi:reference id="publishMessage" interface="com.china.center.oa.publics.message.PublishMessage" />

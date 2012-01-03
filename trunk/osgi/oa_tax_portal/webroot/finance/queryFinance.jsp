@@ -48,7 +48,7 @@ function load()
              {id: 'search', bclass: 'search', onpress : doSearch},
              {id: 'export', bclass: 'replied',  caption: '导出明细', onpress : exports}
              ],
-        <p:conf/>
+        <p:conf queryMode="0"/>
      };
      
      $("#mainTable").flexigrid(guidMap, thisObj);

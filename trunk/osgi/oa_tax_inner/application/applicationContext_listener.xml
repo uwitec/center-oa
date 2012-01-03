@@ -44,5 +44,18 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="dutyListenerTaxImpl" class="com.china.center.oa.tax.listener.impl.DutyListenerTaxImpl" />
+    
+    <bean id="defaultLoadDutyListener" class="com.center.china.osgi.publics.DefaultLoadListener">
+		<property name="listenerManager">
+			<ref bean="dutyManager"/>
+		</property>
+		<property name="listenerList">
+			<list>
+				<ref bean="dutyListenerTaxImpl" />
+			</list>
+		</property>
+	</bean>
 	
 </beans>
