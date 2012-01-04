@@ -1145,9 +1145,9 @@ public class InvoiceinsAction extends DispatchAction
 
         for (InvoiceinsItemBean invoiceinsItemBean2 : itemList)
         {
-            if (invoiceinsItemBean2.getPrice() > 0)
+            if (MathTools.compare(invoiceinsItemBean2.getPrice(), 0) > 0)
             {
-                throw new MYException("开票金额过多,请确认操作");
+                throw new MYException("开票金额过多,请确认操作:" + invoiceinsItemBean2.getPrice());
             }
         }
 
