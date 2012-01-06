@@ -98,6 +98,9 @@ function opens()
     
     var inStr = $O('invoiceId').value;
     
+    if ($O('customerId').value == '99')
+    window.common.modal('../sail/out.do?method=rptQueryOut&mode=1&selectMode=1&stafferId=${user.stafferId}&invoiceStatus=0&load=1&dutyId=' + $$('dutyId') + '&customerId=' + $$('customerId') + '&invoiceId2=' + inStr);
+    else
     window.common.modal('../sail/out.do?method=rptQueryOut&mode=1&selectMode=1&invoiceStatus=0&load=1&dutyId=' + $$('dutyId') + '&customerId=' + $$('customerId') + '&invoiceId2=' + inStr);
 }
 
@@ -111,7 +114,7 @@ function openBalance()
     
     var inStr = $O('invoiceId').value;
     
-    window.common.modal('../sail/out.do?method=rptQueryOutBalance&mode=1&type=0&selectMode=1&invoiceStatus=0&load=1&dutyId=' + $$('dutyId') + '&customerId=' + $$('customerId') + '&invoiceId2=' + inStr);
+    window.common.modal('../sail/out.do?method=rptQueryOutBalance&mode=1&type=0&stafferId=${user.stafferId}&selectMode=1&invoiceStatus=0&load=1&dutyId=' + $$('dutyId') + '&customerId=' + $$('customerId') + '&invoiceId2=' + inStr);
 }
 
 
@@ -158,6 +161,12 @@ function getCustomer(obj)
 {
     $O('customerId').value = obj.value;
     $O('cname').value = obj.pname;
+}
+
+function selectPublic()
+{
+    $O('customerId').value = '99';
+    $O('cname').value = '公共客户';
 }
 
 function cc(obj, index)
@@ -221,7 +230,9 @@ function cc(obj, index)
                 <input type="text" size="60" readonly="readonly" name="cname" oncheck="notNone;"> 
                 <font color="red">*</font>
                 <input type="button" value="&nbsp;选 择&nbsp;" name="qout1" id="qout1"
-                    class="button_class" onclick="selectCus()">
+                    class="button_class" onclick="selectCus()">&nbsp;
+                 <input type="button" value="&nbsp;公共客户&nbsp;" name="qout2" id="qout2"
+                    class="button_class" onclick="selectPublic()">
             </p:cell>
 			
 			<p:cell title="关联单据" end="true">
