@@ -326,10 +326,11 @@ function load()
 							name="BtnReset" value="&nbsp;&nbsp;重 置&nbsp;&nbsp;" type="reset"></td>
 					</tr>
 					<tr height="15">
-                        <td colspan="2" class="forumRowHighlight" align="left" width="39%"
+                        <td colspan="1" class="forumRowHighlight" align="left" width="39%"
                             valign="middle">
                             [${ggMap.SA}]&nbsp;&nbsp;<font color=red>${errorInfo}</font></td>
                             <c:remove var="errorInfo" scope="session" />
+                        <td align="right" class="forumRowHighlight"><a target="_blank" href="../admin/copyright.htm">版权声明</a></td>
                     </tr>
 				</tbody>
 			</table>
