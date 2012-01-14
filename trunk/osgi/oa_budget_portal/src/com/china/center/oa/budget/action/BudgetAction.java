@@ -550,10 +550,10 @@ public class BudgetAction extends DispatchAction
 
         condtion.addWhereStr();
 
-        User user = Helper.getUser(request);
+        // User user = Helper.getUser(request);
 
         // only can query pass and self budget
-        condtion.addCondition("BudgetBean.stafferId", "=", user.getStafferId());
+        // condtion.addCondition("BudgetBean.stafferId", "=", user.getStafferId());
 
         condtion.addIntCondition("BudgetBean.status", "=", BudgetConstant.BUDGET_STATUS_PASS);
 
@@ -1341,14 +1341,12 @@ public class BudgetAction extends DispatchAction
             return mapping.findForward("updateBudget");
         }
         // forward 变更
-        else if ("2".equals(update) && bean.getStatus() == BudgetConstant.BUDGET_STATUS_PASS
-                 && user.getStafferId().equals(bean.getStafferId()))
+        else if ("2".equals(update) && bean.getStatus() == BudgetConstant.BUDGET_STATUS_PASS)
         {
             return mapping.findForward("updateBudget2");
         }
         // forward 追加
-        else if ("3".equals(update) && bean.getStatus() == BudgetConstant.BUDGET_STATUS_PASS
-                 && user.getStafferId().equals(bean.getStafferId()))
+        else if ("3".equals(update) && bean.getStatus() == BudgetConstant.BUDGET_STATUS_PASS)
         {
             return mapping.findForward("updateBudget3");
         }

@@ -168,7 +168,7 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
             List<BudgetItemBean> newList = compareItemListAndModifyCurrentItemListReturnNewItemList(
                 apply.getBudgetId(), applyItemList, currentItemList);
 
-            // 检查是否超出父级预算
+            // 合法检查
             checkLegality(apply, budget);
 
             String logLevel = BudgetHelper.getLogLevel(budget);
@@ -183,6 +183,30 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
                 {
                     throw new MYException("当前的预算项已经使用和预占的金额达到[%.2f],而更新后的预算只有[%.2f],请确认",
                         itemTotal, budgetItemBean.getBudget());
+                }
+
+                // 还需要检查子预算子和,防止预算超标
+                List<BudgetBean> subBudget = budgetDAO.querySubmitBudgetByParentId(apply
+                    .getBudgetId());
+
+                double total = 0.0d;
+
+                // 计算子项之和
+                for (BudgetBean budgetBean : subBudget)
+                {
+                    BudgetItemBean subBudgetItemBean = budgetItemDAO.findByBudgetIdAndFeeItemId(
+                        budgetBean.getId(), budgetItemBean.getFeeItemId());
+
+                    if (subBudgetItemBean != null)
+                    {
+                        total += subBudgetItemBean.getBudget();
+                    }
+                }
+
+                if (MathTools.compare(total, budgetItemBean.getBudget()) > 0)
+                {
+                    throw new MYException("当前的预算项的子项金额达到[%.2f],而更新后的预算只有[%.2f],请确认", total,
+                        budgetItemBean.getBudget());
                 }
             }
 
