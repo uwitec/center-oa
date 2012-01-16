@@ -108,10 +108,13 @@ function load()
 <form name="formEntry" action="../finance/finance.do" method="post">
 <input type="hidden" name="method" value="addFinance"> 
 <input type="hidden" name="refId" value="${refId}"> 
+<input type="hidden" name="tempFlag" value="${tempFlag}">
+
+<c:set var="showName" value="${tempFlag == '1' ? '临时' : ''}"></c:set>
 
 <p:navigation height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javaScript:window.history.go(-1);">凭证管理</span> &gt;&gt; 增加凭证</td>
+		onclick="javaScript:window.history.go(-1);">凭证管理</span> &gt;&gt; 增加${showName}凭证</td>
 	<td width="85"></td>
 </p:navigation>
 

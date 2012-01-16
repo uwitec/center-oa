@@ -16,6 +16,7 @@
 			type="org.springframework.web.struts.DelegatingActionProxy"
 			validate="false">
 			<forward name="queryFinance" path="/finance/queryFinance.jsp" />
+			<forward name="queryTempFinance" path="/finance/queryTempFinance.jsp" />
 			<forward name="queryCheckView" path="/finance/queryCheck.jsp" />
 			<forward name="addFinance" path="/finance/addFinance.jsp" />
 			<forward name="updateFinance" path="/finance/updateFinance.jsp" />

@@ -36,4 +36,8 @@
 
 	<bean id="financeRepDAO" class="com.china.center.oa.tax.dao.impl.FinanceRepDAOImpl" />
 
+	<bean id="financeTempDAO" class="com.china.center.oa.tax.dao.impl.FinanceTempDAOImpl" />
+
+	<bean id="financeItemTempDAO" class="com.china.center.oa.tax.dao.impl.FinanceItemTempDAOImpl" />
+
 </beans>

@@ -25,7 +25,26 @@ import com.china.center.oa.tax.bean.FinanceTurnBean;
  */
 public interface FinanceManager
 {
+    /**
+     * 事务的
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
     boolean addFinanceBean(User user, FinanceBean bean)
+        throws MYException;
+
+    /**
+     * 事务的
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    boolean addTempFinanceBean(User user, FinanceBean bean)
         throws MYException;
 
     /**
@@ -42,6 +61,9 @@ public interface FinanceManager
     boolean updateFinanceBean(User user, FinanceBean bean)
         throws MYException;
 
+    boolean updateTempFinanceBean(User user, FinanceBean bean)
+        throws MYException;
+
     /**
      * addFinanceBeanWithoutTransactional(无事务的)
      * 
@@ -54,6 +76,9 @@ public interface FinanceManager
         throws MYException;
 
     boolean deleteFinanceBean(User user, String id)
+        throws MYException;
+
+    boolean deleteTempFinanceBean(User user, String id)
         throws MYException;
 
     /**
@@ -88,5 +113,16 @@ public interface FinanceManager
         throws MYException;
 
     boolean updateFinanceCheck(User user, String id, String reason)
+        throws MYException;
+
+    /**
+     * 移动凭证
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean moveTempFinanceBeanToRelease(User user, String id)
         throws MYException;
 }

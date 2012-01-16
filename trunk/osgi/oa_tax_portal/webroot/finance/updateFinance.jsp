@@ -123,10 +123,13 @@ function load()
 <input type="hidden" name="method" value="updateFinance"> 
 <input type="hidden" name="id" value="${bean.id}"> 
 <input type="hidden" name="type" value="${bean.type}"> 
+<input type="hidden" name="tempFlag" value="${tempFlag}">
+
+<c:set var="showName" value="${tempFlag == '1' ? '临时' : ''}"></c:set>
 
 <p:navigation height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javaScript:window.history.go(-1);">凭证管理</span> &gt;&gt; 修改凭证</td>
+		onclick="javaScript:window.history.go(-1);">凭证管理</span> &gt;&gt; 修改${showName}凭证</td>
 	<td width="85"></td>
 </p:navigation>
 

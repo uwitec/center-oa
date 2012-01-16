@@ -35,7 +35,9 @@ import com.china.center.oa.publics.helper.OATools;
 import com.china.center.oa.tax.bean.CheckViewBean;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.FinanceItemBean;
+import com.china.center.oa.tax.bean.FinanceItemTempBean;
 import com.china.center.oa.tax.bean.FinanceMonthBean;
+import com.china.center.oa.tax.bean.FinanceTempBean;
 import com.china.center.oa.tax.bean.FinanceTurnBean;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.constanst.CheckConstant;
@@ -44,13 +46,16 @@ import com.china.center.oa.tax.constanst.TaxItemConstanst;
 import com.china.center.oa.tax.dao.CheckViewDAO;
 import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.oa.tax.dao.FinanceItemDAO;
+import com.china.center.oa.tax.dao.FinanceItemTempDAO;
 import com.china.center.oa.tax.dao.FinanceMonthDAO;
+import com.china.center.oa.tax.dao.FinanceTempDAO;
 import com.china.center.oa.tax.dao.FinanceTurnDAO;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.helper.FinanceHelper;
 import com.china.center.oa.tax.helper.TaxHelper;
 import com.china.center.oa.tax.manager.FinanceManager;
 import com.china.center.oa.tax.vo.FinanceTurnVO;
+import com.china.center.tools.BeanUtil;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
@@ -70,6 +75,10 @@ public class FinanceManagerImpl implements FinanceManager
     private final Log operationLog = LogFactory.getLog("opr");
 
     private FinanceDAO financeDAO = null;
+
+    private FinanceTempDAO financeTempDAO = null;
+
+    private FinanceItemTempDAO financeItemTempDAO = null;
 
     private CommonDAO commonDAO = null;
 
@@ -102,6 +111,22 @@ public class FinanceManagerImpl implements FinanceManager
     public boolean addFinanceBeanWithoutTransactional(User user, FinanceBean bean)
         throws MYException
     {
+        return addInner(user, bean, true);
+    }
+
+    /**
+     * addInner
+     * 
+     * @param user
+     * @param bean
+     * @param mainTable
+     *            是否增加到主表
+     * @return
+     * @throws MYException
+     */
+    private boolean addInner(User user, FinanceBean bean, boolean mainTable)
+        throws MYException
+    {
         JudgeTools.judgeParameterIsNull(user, bean, bean.getItemList());
 
         bean.setId(commonDAO.getSquenceString20(IDPrefixConstant.ID_FINANCE_PREFIX));
@@ -127,12 +152,14 @@ public class FinanceManagerImpl implements FinanceManager
         }
 
         // 默认纳税实体
-        if (bean.getType() == TaxConstanst.FINANCE_TYPE_MANAGER && StringTools.isNullOrNone(bean.getDutyId()))
+        if (bean.getType() == TaxConstanst.FINANCE_TYPE_MANAGER
+            && StringTools.isNullOrNone(bean.getDutyId()))
         {
             bean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
         }
 
-        if (bean.getType() == TaxConstanst.FINANCE_TYPE_DUTY && StringTools.isNullOrNone(bean.getDutyId()))
+        if (bean.getType() == TaxConstanst.FINANCE_TYPE_DUTY
+            && StringTools.isNullOrNone(bean.getDutyId()))
         {
             throw new MYException("普通凭证必须有纳税实体的属性");
         }
@@ -233,12 +260,34 @@ public class FinanceManagerImpl implements FinanceManager
         // CORE 核对借贷必相等的原则
         checkPare(pareMap);
 
-        financeItemDAO.saveAllEntityBeans(itemList);
+        if (mainTable)
+        {
+            financeItemDAO.saveAllEntityBeans(itemList);
 
-        financeDAO.saveEntityBean(bean);
+            financeDAO.saveEntityBean(bean);
+        }
+        else
+        {
+            // 保存到临时的
+            FinanceTempBean temp = new FinanceTempBean();
+
+            BeanUtil.copyProperties(temp, bean);
+
+            financeTempDAO.saveEntityBean(temp);
+
+            for (FinanceItemBean eachItem : itemList)
+            {
+                FinanceItemTempBean tempItem = new FinanceItemTempBean();
+
+                BeanUtil.copyProperties(tempItem, eachItem);
+
+                financeItemTempDAO.saveEntityBean(tempItem);
+            }
+        }
 
         // 手工增加增加成功后需要更新
-        if (bean.getCreateType() == TaxConstanst.FINANCE_CREATETYPE_HAND && !StringTools.isNullOrNone(bean.getRefId()))
+        if (bean.getCreateType() == TaxConstanst.FINANCE_CREATETYPE_HAND
+            && !StringTools.isNullOrNone(bean.getRefId()))
         {
             billManager.updateBillBeanChecksWithoutTransactional(user, bean.getRefId(),
                 "增加手工凭证自动更新收款单核对状态:" + FinanceHelper.createFinanceLink(bean.getId()));
@@ -313,7 +362,8 @@ public class FinanceManagerImpl implements FinanceManager
      * @param bean
      * @param changeFormat
      */
-    private void createMonthData(User user, FinanceTurnBean bean, String changeFormat, List<FinanceItemBean> itemList)
+    private void createMonthData(User user, FinanceTurnBean bean, String changeFormat,
+                                 List<FinanceItemBean> itemList)
     {
         List<TaxBean> taxList = taxDAO.listEntityBeans("order by id");
 
@@ -362,7 +412,8 @@ public class FinanceManagerImpl implements FinanceManager
             // 获取最近的一个月
             FinanceTurnVO lastTurn = financeTurnDAO.findLastVO();
 
-            FinanceMonthBean lastMonth = financeMonthDAO.findByUnique(taxBean.getId(), lastTurn.getMonthKey());
+            FinanceMonthBean lastMonth = financeMonthDAO.findByUnique(taxBean.getId(), lastTurn
+                .getMonthKey());
 
             // 科目整个系统的累加数
             if (lastMonth != null)
@@ -442,7 +493,8 @@ public class FinanceManagerImpl implements FinanceManager
 
             if ( !nextKey.equals(bean.getMonthKey()))
             {
-                throw new MYException("上次结转的是[%s],本次结转的是[%s],应该结转的是[%s],请确认操作", monthKey, bean.getMonthKey(), nextKey);
+                throw new MYException("上次结转的是[%s],本次结转的是[%s],应该结转的是[%s],请确认操作", monthKey, bean
+                    .getMonthKey(), nextKey);
             }
         }
 
@@ -482,7 +534,8 @@ public class FinanceManagerImpl implements FinanceManager
      * @param changeFormat
      * @throws MYException
      */
-    private List<FinanceItemBean> createTurnFinance(User user, FinanceTurnBean bean, String changeFormat)
+    private List<FinanceItemBean> createTurnFinance(User user, FinanceTurnBean bean,
+                                                    String changeFormat)
         throws MYException
     {
 
@@ -499,7 +552,8 @@ public class FinanceManagerImpl implements FinanceManager
 
             FinanceBean financeBean = new FinanceBean();
 
-            String name = user.getStafferName() + "损益结转" + bean.getMonthKey() + ":" + dutyBean.getName();
+            String name = user.getStafferName() + "损益结转" + bean.getMonthKey() + ":"
+                          + dutyBean.getName();
 
             financeBean.setName(name);
 
@@ -702,7 +756,8 @@ public class FinanceManagerImpl implements FinanceManager
      * @return
      * @throws MYException
      */
-    private List<FinanceItemBean> createProfitFinance(User user, FinanceTurnBean bean, String changeFormat,
+    private List<FinanceItemBean> createProfitFinance(User user, FinanceTurnBean bean,
+                                                      String changeFormat,
                                                       List<FinanceItemBean> itemNearList)
         throws MYException
     {
@@ -742,7 +797,8 @@ public class FinanceManagerImpl implements FinanceManager
 
             FinanceBean financeBean = new FinanceBean();
 
-            String name = user.getStafferName() + "利润结转:" + bean.getMonthKey() + ":" + dutyBean.getName();
+            String name = user.getStafferName() + "利润结转:" + bean.getMonthKey() + ":"
+                          + dutyBean.getName();
 
             financeBean.setName(name);
 
@@ -856,7 +912,8 @@ public class FinanceManagerImpl implements FinanceManager
     private void checkItem(FinanceItemBean financeItemBean, TaxBean tax)
         throws MYException
     {
-        if (tax.getUnit() == TaxConstanst.TAX_CHECK_YES && StringTools.isNullOrNone(financeItemBean.getUnitId()))
+        if (tax.getUnit() == TaxConstanst.TAX_CHECK_YES
+            && StringTools.isNullOrNone(financeItemBean.getUnitId()))
         {
             throw new MYException("科目[%s]下辅助核算型-单位必须存在,请确认操作", tax.getName());
         }
@@ -867,22 +924,26 @@ public class FinanceManagerImpl implements FinanceManager
             throw new MYException("科目[%s]下辅助核算型-部门必须存在,请确认操作", tax.getName());
         }
 
-        if (tax.getStaffer() == TaxConstanst.TAX_CHECK_YES && StringTools.isNullOrNone(financeItemBean.getStafferId()))
+        if (tax.getStaffer() == TaxConstanst.TAX_CHECK_YES
+            && StringTools.isNullOrNone(financeItemBean.getStafferId()))
         {
             throw new MYException("科目[%s]下辅助核算型-职员必须存在,请确认操作", tax.getName());
         }
 
-        if (tax.getProduct() == TaxConstanst.TAX_CHECK_YES && StringTools.isNullOrNone(financeItemBean.getProductId()))
+        if (tax.getProduct() == TaxConstanst.TAX_CHECK_YES
+            && StringTools.isNullOrNone(financeItemBean.getProductId()))
         {
             throw new MYException("科目[%s]下辅助核算型-产品必须存在,请确认操作", tax.getName());
         }
 
-        if (tax.getDepot() == TaxConstanst.TAX_CHECK_YES && StringTools.isNullOrNone(financeItemBean.getDepotId()))
+        if (tax.getDepot() == TaxConstanst.TAX_CHECK_YES
+            && StringTools.isNullOrNone(financeItemBean.getDepotId()))
         {
             throw new MYException("科目[%s]下辅助核算型-仓库必须存在,请确认操作", tax.getName());
         }
 
-        if (tax.getDuty() == TaxConstanst.TAX_CHECK_YES && StringTools.isNullOrNone(financeItemBean.getDuty2Id()))
+        if (tax.getDuty() == TaxConstanst.TAX_CHECK_YES
+            && StringTools.isNullOrNone(financeItemBean.getDuty2Id()))
         {
             throw new MYException("科目[%s]下辅助核算型-纳税实体必须存在,请确认操作", tax.getName());
         }
@@ -895,20 +956,114 @@ public class FinanceManagerImpl implements FinanceManager
         return addFinanceBeanWithoutTransactional(user, bean);
     }
 
+    @IntegrationAOP(auth = AuthConstant.FINANCE_OPR)
+    @Transactional(rollbackFor = MYException.class)
+    public boolean moveTempFinanceBeanToRelease(User user, String id)
+        throws MYException
+    {
+        FinanceTempBean temp = financeTempDAO.find(id);
+
+        if (temp == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        List<FinanceItemTempBean> tempItemList = financeItemTempDAO.queryEntityBeansByFK(id);
+
+        // 删除临时凭证
+        financeTempDAO.deleteEntityBean(id);
+
+        // 删除临时凭证项
+        financeItemTempDAO.deleteEntityBeansByFK(id);
+
+        // 增加新凭证
+        FinanceBean bean = new FinanceBean();
+
+        BeanUtil.copyProperties(bean, temp);
+
+        List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
+
+        for (FinanceItemTempBean financeItemTempBean : tempItemList)
+        {
+            FinanceItemBean item = new FinanceItemBean();
+
+            BeanUtil.copyProperties(item, financeItemTempBean);
+
+            itemList.add(item);
+        }
+
+        bean.setItemList(itemList);
+
+        addFinanceBeanWithoutTransactional(user, bean);
+
+        return true;
+    }
+
+    @IntegrationAOP(auth = AuthConstant.FINANCE_OPR)
+    @Transactional(rollbackFor = MYException.class)
+    public boolean addTempFinanceBean(User user, FinanceBean bean)
+        throws MYException
+    {
+        return addInner(user, bean, false);
+    }
+
     @Transactional(rollbackFor = MYException.class)
     public boolean updateFinanceBean(User user, FinanceBean bean)
         throws MYException
     {
+        return updateInner(user, bean, true);
+    }
+
+    @IntegrationAOP(auth = AuthConstant.FINANCE_OPR)
+    @Transactional(rollbackFor = MYException.class)
+    public boolean updateTempFinanceBean(User user, FinanceBean bean)
+        throws MYException
+    {
+        return updateInner(user, bean, false);
+    }
+
+    /**
+     * updateInner
+     * 
+     * @param user
+     * @param bean
+     * @return
+     * @throws MYException
+     */
+    private boolean updateInner(User user, FinanceBean bean, boolean mainTable)
+        throws MYException
+    {
         JudgeTools.judgeParameterIsNull(user, bean, bean.getItemList());
 
-        FinanceBean old = financeDAO.find(bean.getId());
+        FinanceBean old = null;
+
+        if (mainTable)
+        {
+            old = financeDAO.find(bean.getId());
+        }
+        else
+        {
+            FinanceTempBean temp = financeTempDAO.find(bean.getId());
+
+            if (temp == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            FinanceBean fb = new FinanceBean();
+
+            BeanUtil.copyProperties(fb, temp);
+
+            old = fb;
+        }
 
         if (old == null)
         {
             throw new MYException("数据错误,请确认操作");
         }
 
-        if (old.getStatus() == TaxConstanst.FINANCE_STATUS_CHECK || old.getLocks() == TaxConstanst.FINANCE_LOCK_YES)
+        if (old.getStatus() == TaxConstanst.FINANCE_STATUS_CHECK
+            || old.getLocks() == TaxConstanst.FINANCE_LOCK_YES)
         {
             throw new MYException("已经被核对(锁定)不能修改,请重新操作");
         }
@@ -944,12 +1099,14 @@ public class FinanceManagerImpl implements FinanceManager
         }
 
         // 默认纳税实体
-        if (bean.getType() == TaxConstanst.FINANCE_TYPE_MANAGER && StringTools.isNullOrNone(bean.getDutyId()))
+        if (bean.getType() == TaxConstanst.FINANCE_TYPE_MANAGER
+            && StringTools.isNullOrNone(bean.getDutyId()))
         {
             bean.setDutyId(PublicConstant.DEFAULR_DUTY_ID);
         }
 
-        if (bean.getType() == TaxConstanst.FINANCE_TYPE_DUTY && StringTools.isNullOrNone(bean.getDutyId()))
+        if (bean.getType() == TaxConstanst.FINANCE_TYPE_DUTY
+            && StringTools.isNullOrNone(bean.getDutyId()))
         {
             throw new MYException("税务凭证必须有纳税实体的属性");
         }
@@ -1049,19 +1206,43 @@ public class FinanceManagerImpl implements FinanceManager
 
         if (bean.getInmoney() != old.getInmoney())
         {
-            throw new MYException("原单据金额[%s],当前金额[%s]不等,凭证增加错误", FinanceHelper.longToString(bean.getInmoney()),
-                FinanceHelper.longToString(old.getInmoney()));
+            throw new MYException("原单据金额[%s],当前金额[%s]不等,凭证增加错误", FinanceHelper.longToString(bean
+                .getInmoney()), FinanceHelper.longToString(old.getInmoney()));
         }
 
         // CORE 核对借贷必相等的原则
         checkPare(pareMap);
 
-        financeDAO.updateEntityBean(bean);
+        if (mainTable)
+        {
+            financeDAO.updateEntityBean(bean);
 
-        // 先删除
-        financeItemDAO.deleteEntityBeansByFK(bean.getId());
+            // 先删除
+            financeItemDAO.deleteEntityBeansByFK(bean.getId());
 
-        financeItemDAO.saveAllEntityBeans(itemList);
+            financeItemDAO.saveAllEntityBeans(itemList);
+        }
+        else
+        {
+            // 修改到临时的
+            FinanceTempBean temp = new FinanceTempBean();
+
+            BeanUtil.copyProperties(temp, bean);
+
+            financeTempDAO.updateEntityBean(temp);
+
+            // 先删除
+            financeItemTempDAO.deleteEntityBeansByFK(bean.getId());
+
+            for (FinanceItemBean eachItem : itemList)
+            {
+                FinanceItemTempBean tempItem = new FinanceItemTempBean();
+
+                BeanUtil.copyProperties(tempItem, eachItem);
+
+                financeItemTempDAO.saveEntityBean(tempItem);
+            }
+        }
 
         operationLog.info(user.getStafferName() + "修改了凭证:" + old);
 
@@ -1083,7 +1264,8 @@ public class FinanceManagerImpl implements FinanceManager
             throw new MYException("凭证时间不能大于[%s]", TimeTools.now_short());
         }
 
-        String monthKey = TimeTools.changeFormat(bean.getFinanceDate(), TimeTools.SHORT_FORMAT, "yyyyMM");
+        String monthKey = TimeTools.changeFormat(bean.getFinanceDate(), TimeTools.SHORT_FORMAT,
+            "yyyyMM");
 
         List<FinanceTurnBean> turnList = financeTurnDAO.listEntityBeans("order by monthKey desc");
 
@@ -1137,6 +1319,20 @@ public class FinanceManagerImpl implements FinanceManager
         throws MYException
     {
         return deleteFinanceBeanWithoutTransactional(user, id);
+    }
+
+    @IntegrationAOP(auth = AuthConstant.FINANCE_OPR)
+    @Transactional(rollbackFor = MYException.class)
+    public boolean deleteTempFinanceBean(User user, String id)
+        throws MYException
+    {
+        // 删除凭证
+        financeTempDAO.deleteEntityBean(id);
+
+        // 删除凭证项
+        financeItemTempDAO.deleteEntityBeansByFK(id);
+
+        return true;
     }
 
     @Transactional(rollbackFor = MYException.class)
@@ -1476,6 +1672,40 @@ public class FinanceManagerImpl implements FinanceManager
     public void setDutyDAO(DutyDAO dutyDAO)
     {
         this.dutyDAO = dutyDAO;
+    }
+
+    /**
+     * @return the financeTempDAO
+     */
+    public FinanceTempDAO getFinanceTempDAO()
+    {
+        return financeTempDAO;
+    }
+
+    /**
+     * @param financeTempDAO
+     *            the financeTempDAO to set
+     */
+    public void setFinanceTempDAO(FinanceTempDAO financeTempDAO)
+    {
+        this.financeTempDAO = financeTempDAO;
+    }
+
+    /**
+     * @return the financeItemTempDAO
+     */
+    public FinanceItemTempDAO getFinanceItemTempDAO()
+    {
+        return financeItemTempDAO;
+    }
+
+    /**
+     * @param financeItemTempDAO
+     *            the financeItemTempDAO to set
+     */
+    public void setFinanceItemTempDAO(FinanceItemTempDAO financeItemTempDAO)
+    {
+        this.financeItemTempDAO = financeItemTempDAO;
     }
 
 }

@@ -11,7 +11,7 @@
 
 function updateBean()
 {
-    document.location.href = '../finance/finance.do?method=findFinance&update=1&id=${bean.id}';
+    document.location.href = '../finance/finance.do?method=findFinance&tempFlag=${tempFlag}&update=1&id=${bean.id}';
 }
 
 
@@ -22,6 +22,7 @@ function updateBean()
 <body class="body_class">
 <form name="formEntry">
 <input type="hidden" name="id" value="${bean.id}">
+<input type="hidden" name="tempFlag" value="${tempFlag}">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">凭证明细</td>

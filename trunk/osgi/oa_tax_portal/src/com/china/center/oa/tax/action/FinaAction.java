@@ -49,8 +49,10 @@ import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.DutyDAO;
+import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
+import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.sail.dao.UnitViewDAO;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.tax.bean.FinanceBean;
@@ -63,7 +65,10 @@ import com.china.center.oa.tax.constanst.TaxConstanst;
 import com.china.center.oa.tax.dao.CheckViewDAO;
 import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.oa.tax.dao.FinanceItemDAO;
+import com.china.center.oa.tax.dao.FinanceItemTempDAO;
 import com.china.center.oa.tax.dao.FinanceMonthDAO;
+import com.china.center.oa.tax.dao.FinanceRepDAO;
+import com.china.center.oa.tax.dao.FinanceTempDAO;
 import com.china.center.oa.tax.dao.FinanceTurnDAO;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.dao.UnitDAO;
@@ -71,8 +76,10 @@ import com.china.center.oa.tax.facade.TaxFacade;
 import com.china.center.oa.tax.helper.FinanceHelper;
 import com.china.center.oa.tax.manager.FinanceManager;
 import com.china.center.oa.tax.vo.CheckViewVO;
+import com.china.center.oa.tax.vo.FinanceItemTempVO;
 import com.china.center.oa.tax.vo.FinanceItemVO;
 import com.china.center.oa.tax.vo.FinanceMonthVO;
+import com.china.center.oa.tax.vo.FinanceTempVO;
 import com.china.center.oa.tax.vo.FinanceTurnVO;
 import com.china.center.oa.tax.vo.FinanceVO;
 import com.china.center.osgi.jsp.ElTools;
@@ -131,6 +138,43 @@ public class FinaAction extends ParentQueryFinaAction
             this.financeDAO, new HandleResult<FinanceVO>()
             {
                 public void handle(FinanceVO obj)
+                {
+                    obj.getShowInmoney();
+                    obj.getShowOutmoney();
+                }
+            });
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryTempFinance
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryTempFinance(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        Map<String, String> initMap = initTempLogTime(request, condtion);
+
+        ActionTools.processJSONQueryCondition(QUERYTEMPFINANCE, request, condtion, initMap);
+
+        condtion.addCondition("order by FinanceTempBean.logTime desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYTEMPFINANCE, request, condtion,
+            this.financeTempDAO, new HandleResult<FinanceTempVO>()
+            {
+                public void handle(FinanceTempVO obj)
                 {
                     obj.getShowInmoney();
                     obj.getShowOutmoney();
@@ -573,6 +617,28 @@ public class FinaAction extends ParentQueryFinaAction
         return changeMap;
     }
 
+    private Map<String, String> initTempLogTime(HttpServletRequest request, ConditionParse condtion)
+    {
+        Map<String, String> changeMap = new HashMap<String, String>();
+
+        String alogTime = request.getParameter("afinanceDate");
+
+        String blogTime = request.getParameter("bfinanceDate");
+
+        if (StringTools.isNullOrNone(alogTime) && StringTools.isNullOrNone(blogTime))
+        {
+            changeMap.put("afinanceDate", TimeTools.now_short( -30));
+
+            changeMap.put("bfinanceDate", TimeTools.now_short(1));
+
+            condtion.addCondition("FinanceTempBean.financeDate", ">=", TimeTools.now_short( -30));
+
+            condtion.addCondition("FinanceTempBean.financeDate", "<=", TimeTools.now_short(1));
+        }
+
+        return changeMap;
+    }
+
     private Map<String, String> initItemLogTime(HttpServletRequest request, ConditionParse condtion)
     {
         Map<String, String> changeMap = new HashMap<String, String>();
@@ -628,6 +694,8 @@ public class FinaAction extends ParentQueryFinaAction
     {
         FinanceBean bean = new FinanceBean();
 
+        String tempFlag = request.getParameter("tempFlag");
+
         try
         {
             BeanUtil.getBean(bean, request);
@@ -636,7 +704,15 @@ public class FinaAction extends ParentQueryFinaAction
 
             User user = Helper.getUser(request);
 
-            taxFacade.addFinanceBean(user.getId(), bean);
+            // 是否增加
+            if ( !"1".equals(tempFlag))
+            {
+                taxFacade.addFinanceBean(user.getId(), bean);
+            }
+            else
+            {
+                financeManager.addTempFinanceBean(user, bean);
+            }
 
             request.setAttribute(KeyConstant.MESSAGE, "成功操作:" + bean.getName());
         }
@@ -648,8 +724,6 @@ public class FinaAction extends ParentQueryFinaAction
         }
 
         CommonTools.removeParamers(request);
-
-        request.setAttribute("bean", bean);
 
         return preForAddFinance(mapping, form, request, response);
     }
@@ -708,6 +782,8 @@ public class FinaAction extends ParentQueryFinaAction
     {
         FinanceBean bean = new FinanceBean();
 
+        String tempFlag = request.getParameter("tempFlag");
+
         try
         {
             BeanUtil.getBean(bean, request);
@@ -716,7 +792,14 @@ public class FinaAction extends ParentQueryFinaAction
 
             User user = Helper.getUser(request);
 
-            taxFacade.updateFinanceBean(user.getId(), bean);
+            if ( !"1".equals(tempFlag))
+            {
+                taxFacade.updateFinanceBean(user.getId(), bean);
+            }
+            else
+            {
+                financeManager.updateTempFinanceBean(user, bean);
+            }
 
             request.setAttribute(KeyConstant.MESSAGE, "成功操作:" + bean.getName());
         }
@@ -729,7 +812,14 @@ public class FinaAction extends ParentQueryFinaAction
 
         CommonTools.removeParamers(request);
 
-        return mapping.findForward(QUERYFINANCE);
+        if ( !"1".equals(tempFlag))
+        {
+            return mapping.findForward(QUERYFINANCE);
+        }
+        else
+        {
+            return mapping.findForward(QUERYTEMPFINANCE);
+        }
     }
 
     /**
@@ -755,6 +845,79 @@ public class FinaAction extends ParentQueryFinaAction
             User user = Helper.getUser(request);
 
             taxFacade.deleteFinanceBean(user.getId(), id);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * deleteTempFinance
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward deleteTempFinance(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            User user = Helper.getUser(request);
+
+            financeManager.deleteTempFinanceBean(user, id);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * moveTempFinanceBeanToRelease
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward moveTempFinanceBeanToRelease(ActionMapping mapping, ActionForm form,
+                                                      HttpServletRequest request,
+                                                      HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            User user = Helper.getUser(request);
+
+            financeManager.moveTempFinanceBeanToRelease(user, id);
 
             ajax.setSuccess("成功操作");
         }
@@ -983,34 +1146,79 @@ public class FinaAction extends ParentQueryFinaAction
 
         String update = request.getParameter("update");
 
-        FinanceVO bean = financeDAO.findVO(id);
+        String tempFlag = request.getParameter("tempFlag");
 
-        if (bean == null)
+        request.setAttribute("tempFlag", tempFlag);
+
+        if ( !"1".equals(tempFlag))
         {
-            return ActionTools.toError("数据异常,请重新操作", mapping, request);
-        }
+            FinanceVO bean = financeDAO.findVO(id);
 
-        List<FinanceItemVO> voList = financeItemDAO.queryEntityVOsByFK(id);
-
-        for (FinanceItemVO item : voList)
-        {
-            fillItemVO(item);
-        }
-
-        bean.setItemVOList(voList);
-
-        request.setAttribute("bean", bean);
-
-        if ("1".equals(update))
-        {
-            if (bean.getStatus() == TaxConstanst.FINANCE_STATUS_CHECK)
+            if (bean == null)
             {
-                return ActionTools.toError("已经被核对(锁定)不能修改,请重新操作", mapping, request);
+                return ActionTools.toError("数据异常,请重新操作", mapping, request);
             }
 
-            preInner(request);
+            List<FinanceItemVO> voList = financeItemDAO.queryEntityVOsByFK(id);
 
-            return mapping.findForward("updateFinance");
+            for (FinanceItemVO item : voList)
+            {
+                fillItemVO(item);
+            }
+
+            bean.setItemVOList(voList);
+
+            request.setAttribute("bean", bean);
+
+            if ("1".equals(update))
+            {
+                if (bean.getStatus() == TaxConstanst.FINANCE_STATUS_CHECK)
+                {
+                    return ActionTools.toError("已经被核对(锁定)不能修改,请重新操作", mapping, request);
+                }
+
+                preInner(request);
+
+                return mapping.findForward("updateFinance");
+            }
+        }
+        else
+        {
+            FinanceTempVO bean = financeTempDAO.findVO(id);
+
+            if (bean == null)
+            {
+                return ActionTools.toError("数据异常,请重新操作", mapping, request);
+            }
+
+            List<FinanceItemTempVO> voList = financeItemTempDAO.queryEntityVOsByFK(id);
+
+            List<FinanceItemVO> itemList = new ArrayList<FinanceItemVO>();
+
+            for (FinanceItemTempVO financeItemTempBean : voList)
+            {
+                FinanceItemVO item = new FinanceItemVO();
+
+                BeanUtil.copyProperties(item, financeItemTempBean);
+
+                itemList.add(item);
+            }
+
+            for (FinanceItemVO item : itemList)
+            {
+                fillItemVO(item);
+            }
+
+            bean.setItemVOList(itemList);
+
+            request.setAttribute("bean", bean);
+
+            if ("1".equals(update))
+            {
+                preInner(request);
+
+                return mapping.findForward("updateFinance");
+            }
         }
 
         return mapping.findForward("detailFinance");
@@ -1250,6 +1458,11 @@ public class FinaAction extends ParentQueryFinaAction
                                           HttpServletRequest request, HttpServletResponse response)
     {
         preInner(request);
+
+        // 是否是临时
+        String tempFlag = request.getParameter("tempFlag");
+
+        request.setAttribute("tempFlag", tempFlag);
 
         return mapping.findForward("addFinance");
     }
@@ -1781,6 +1994,91 @@ public class FinaAction extends ParentQueryFinaAction
     public void setFinanceMonthDAO(FinanceMonthDAO financeMonthDAO)
     {
         this.financeMonthDAO = financeMonthDAO;
+    }
+
+    /**
+     * @return the orgManager
+     */
+    public OrgManager getOrgManager()
+    {
+        return orgManager;
+    }
+
+    /**
+     * @param orgManager
+     *            the orgManager to set
+     */
+    public void setOrgManager(OrgManager orgManager)
+    {
+        this.orgManager = orgManager;
+    }
+
+    /**
+     * @return the parameterDAO
+     */
+    public ParameterDAO getParameterDAO()
+    {
+        return parameterDAO;
+    }
+
+    /**
+     * @param parameterDAO
+     *            the parameterDAO to set
+     */
+    public void setParameterDAO(ParameterDAO parameterDAO)
+    {
+        this.parameterDAO = parameterDAO;
+    }
+
+    /**
+     * @return the financeRepDAO
+     */
+    public FinanceRepDAO getFinanceRepDAO()
+    {
+        return financeRepDAO;
+    }
+
+    /**
+     * @param financeRepDAO
+     *            the financeRepDAO to set
+     */
+    public void setFinanceRepDAO(FinanceRepDAO financeRepDAO)
+    {
+        this.financeRepDAO = financeRepDAO;
+    }
+
+    /**
+     * @return the financeTempDAO
+     */
+    public FinanceTempDAO getFinanceTempDAO()
+    {
+        return financeTempDAO;
+    }
+
+    /**
+     * @param financeTempDAO
+     *            the financeTempDAO to set
+     */
+    public void setFinanceTempDAO(FinanceTempDAO financeTempDAO)
+    {
+        this.financeTempDAO = financeTempDAO;
+    }
+
+    /**
+     * @return the financeItemTempDAO
+     */
+    public FinanceItemTempDAO getFinanceItemTempDAO()
+    {
+        return financeItemTempDAO;
+    }
+
+    /**
+     * @param financeItemTempDAO
+     *            the financeItemTempDAO to set
+     */
+    public void setFinanceItemTempDAO(FinanceItemTempDAO financeItemTempDAO)
+    {
+        this.financeItemTempDAO = financeItemTempDAO;
     }
 
 }

@@ -63,8 +63,10 @@ import com.china.center.oa.tax.constanst.TaxConstanst;
 import com.china.center.oa.tax.dao.CheckViewDAO;
 import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.oa.tax.dao.FinanceItemDAO;
+import com.china.center.oa.tax.dao.FinanceItemTempDAO;
 import com.china.center.oa.tax.dao.FinanceMonthDAO;
 import com.china.center.oa.tax.dao.FinanceRepDAO;
+import com.china.center.oa.tax.dao.FinanceTempDAO;
 import com.china.center.oa.tax.dao.FinanceTurnDAO;
 import com.china.center.oa.tax.dao.TaxDAO;
 import com.china.center.oa.tax.dao.UnitDAO;
@@ -134,7 +136,13 @@ public class ParentQueryFinaAction extends DispatchAction
 
     protected FinanceRepDAO financeRepDAO = null;
 
+    protected FinanceTempDAO financeTempDAO = null;
+
+    protected FinanceItemTempDAO financeItemTempDAO = null;
+
     protected static final String QUERYFINANCE = "queryFinance";
+
+    protected static final String QUERYTEMPFINANCE = "queryTempFinance";
 
     protected static final String QUERYFINANCEMONTH = "queryFinanceMonth";
 
@@ -164,8 +172,8 @@ public class ParentQueryFinaAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryTaxFinance1(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse reponse)
+    public ActionForward queryTaxFinance1(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -207,14 +215,17 @@ public class ParentQueryFinaAction extends DispatchAction
             {
                 PageSeparateTools.processSeparate(request, QUERYTAXFINANCE1);
 
-                list = financeItemDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request,
-                    QUERYTAXFINANCE1), OldPageSeparateTools.getPageSeparate(request, QUERYTAXFINANCE1));
+                list = financeItemDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(
+                    request, QUERYTAXFINANCE1), OldPageSeparateTools.getPageSeparate(request,
+                    QUERYTAXFINANCE1));
 
                 head = (FinanceItemVO)request.getSession().getAttribute("queryTaxFinance1_head");
 
-                currentTotal = (FinanceItemVO)request.getSession().getAttribute("queryTaxFinance1_currentTotal");
+                currentTotal = (FinanceItemVO)request.getSession().getAttribute(
+                    "queryTaxFinance1_currentTotal");
 
-                allTotal = (FinanceItemVO)request.getSession().getAttribute("queryTaxFinance1_allTotal");
+                allTotal = (FinanceItemVO)request.getSession().getAttribute(
+                    "queryTaxFinance1_allTotal");
             }
         }
         catch (Exception e)
@@ -232,7 +243,8 @@ public class ParentQueryFinaAction extends DispatchAction
         if ("0".equals(queryType))
         {
             // 这里的分类账有个特点就是余额需要递增
-            PageSeparate pageSeparate = OldPageSeparateTools.getPageSeparate(request, QUERYTAXFINANCE1);
+            PageSeparate pageSeparate = OldPageSeparateTools.getPageSeparate(request,
+                QUERYTAXFINANCE1);
 
             TaxBean tax = (TaxBean)request.getSession().getAttribute("queryTaxFinance1_tax");
 
@@ -245,8 +257,8 @@ public class ParentQueryFinaAction extends DispatchAction
                 newPage.setRowCount( (pageSeparate.getNowPage() - 1) * pageSeparate.getPageSize());
                 newPage.setPageSize(newPage.getRowCount());
 
-                long[] sumVOn = financeItemDAO.sumVOMoneryByCondition(OldPageSeparateTools.getCondition(request,
-                    QUERYTAXFINANCE1), newPage);
+                long[] sumVOn = financeItemDAO.sumVOMoneryByCondition(OldPageSeparateTools
+                    .getCondition(request, QUERYTAXFINANCE1), newPage);
 
                 // 余额
                 ptotal = TaxHelper.getLastMoney(tax, sumVOn);
@@ -317,8 +329,8 @@ public class ParentQueryFinaAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryTaxFinance3(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse reponse)
+    public ActionForward queryTaxFinance3(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -354,10 +366,12 @@ public class ParentQueryFinaAction extends DispatchAction
             {
                 PageSeparateTools.processSeparate(request, QUERYTAXFINANCE3);
 
-                list = financeItemDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request,
-                    QUERYTAXFINANCE3), OldPageSeparateTools.getPageSeparate(request, QUERYTAXFINANCE3));
+                list = financeItemDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(
+                    request, QUERYTAXFINANCE3), OldPageSeparateTools.getPageSeparate(request,
+                    QUERYTAXFINANCE3));
 
-                currentTotal = (FinanceItemVO)request.getSession().getAttribute("queryTaxFinance1_currentTotal");
+                currentTotal = (FinanceItemVO)request.getSession().getAttribute(
+                    "queryTaxFinance1_currentTotal");
             }
         }
         catch (Exception e)
@@ -391,8 +405,8 @@ public class ParentQueryFinaAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryTaxReport(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse reponse)
+    public ActionForward queryTaxReport(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         request.getSession().setAttribute("EXPORT_FINANCEITE_KEY", QUERYTAXREPORT);
@@ -455,9 +469,11 @@ public class ParentQueryFinaAction extends DispatchAction
 
                     for (int i = 0; i < taxList.size(); i++ )
                     {
-                        FinanceMonthBean beginTurn = financeMonthDAO.findByUnique(taxList.get(i), beginTimeKey);
+                        FinanceMonthBean beginTurn = financeMonthDAO.findByUnique(taxList.get(i),
+                            beginTimeKey);
 
-                        FinanceMonthBean endTurn = financeMonthDAO.findByUnique(taxList.get(i), endTimeKey);
+                        FinanceMonthBean endTurn = financeMonthDAO.findByUnique(taxList.get(i),
+                            endTimeKey);
 
                         // 第一个为初始化
                         if (i == 0)
@@ -551,11 +567,12 @@ public class ParentQueryFinaAction extends DispatchAction
 
                     for (int i = 0; i < taxList.size(); i++ )
                     {
-                        FinanceMonthBean curTurn = financeMonthDAO.findByUnique(taxList.get(i), endTimeKey);
+                        FinanceMonthBean curTurn = financeMonthDAO.findByUnique(taxList.get(i),
+                            endTimeKey);
 
                         // 当年的累计数(1月到N月)
-                        long sumMonthTurnTotal = financeMonthDAO.sumMonthTurnTotal(taxList.get(i), year + "01",
-                            endTimeKey);
+                        long sumMonthTurnTotal = financeMonthDAO.sumMonthTurnTotal(taxList.get(i),
+                            year + "01", endTimeKey);
 
                         // 第一个为初始化
                         if (i == 0)
@@ -614,7 +631,8 @@ public class ParentQueryFinaAction extends DispatchAction
             {
                 if (financeRepVO.getRmethod() == FinaConstant.FINANCEREP_RMETHOD_ALL)
                 {
-                    financeRepVO.setEndMoneyChineseStr(MathTools.hangeToBig(FinanceHelper.longToDouble(financeRepVO.getEndMoney())));
+                    financeRepVO.setEndMoneyChineseStr(MathTools.hangeToBig(FinanceHelper
+                        .longToDouble(financeRepVO.getEndMoney())));
                 }
             }
 
@@ -667,9 +685,11 @@ public class ParentQueryFinaAction extends DispatchAction
             TaxVO tax = (TaxVO)request.getAttribute("tax");
 
             // 动态级别的查询
-            preQueryCondition.addCondition("FinanceItemBean.taxId" + tax.getLevel(), "=", tax.getId());
+            preQueryCondition.addCondition("FinanceItemBean.taxId" + tax.getLevel(), "=", tax
+                .getId());
 
-            preQueryCondition.addCondition("FinanceItemBean.financeDate", ">=", monthTurn.getDescription());
+            preQueryCondition.addCondition("FinanceItemBean.financeDate", ">=", monthTurn
+                .getDescription());
 
             preQueryCondition.addCondition("FinanceItemBean.financeDate", "<", beginDate);
         }
@@ -694,7 +714,8 @@ public class ParentQueryFinaAction extends DispatchAction
      * @param tax
      * @return
      */
-    private FinanceItemVO sumHeadInner(FinanceMonthBean monthTurn, ConditionParse preQueryCondition, TaxBean tax)
+    private FinanceItemVO sumHeadInner(FinanceMonthBean monthTurn,
+                                       ConditionParse preQueryCondition, TaxBean tax)
     {
         // 期初余额
         long last = 0L;
@@ -746,7 +767,8 @@ public class ParentQueryFinaAction extends DispatchAction
      * @return
      * @throws MYException
      */
-    private FinanceItemVO sumCurrentTotal(HttpServletRequest request, User user, ConditionParse condtion)
+    private FinanceItemVO sumCurrentTotal(HttpServletRequest request, User user,
+                                          ConditionParse condtion)
         throws MYException
     {
         TaxVO tax = (TaxVO)request.getAttribute("tax");
@@ -760,7 +782,9 @@ public class ParentQueryFinaAction extends DispatchAction
 
         if (sumMoneryByCondition[0] == sumMoneryByCondition[1])
         {
-            currentTotal.setDescription("当期合计:" + FinanceHelper.longToChineseString(sumMoneryByCondition[0]));
+            currentTotal.setDescription("当期合计:"
+                                        + FinanceHelper
+                                            .longToChineseString(sumMoneryByCondition[0]));
         }
         else
         {
@@ -810,10 +834,12 @@ public class ParentQueryFinaAction extends DispatchAction
 
         fillItemVO(allTotal);
 
-        FinanceItemVO current = (FinanceItemVO)request.getSession().getAttribute("queryTaxFinance1_currentTotal");
+        FinanceItemVO current = (FinanceItemVO)request.getSession().getAttribute(
+            "queryTaxFinance1_currentTotal");
 
         // 累计的需要叠加
-        FinanceItemVO head = (FinanceItemVO)request.getSession().getAttribute("queryTaxFinance1_head");
+        FinanceItemVO head = (FinanceItemVO)request.getSession().getAttribute(
+            "queryTaxFinance1_head");
 
         // 重新计算(结余即期末余额+当期余额)
         allTotal.setLastmoney(head.getLastmoney() + current.getLastmoney());
@@ -873,7 +899,8 @@ public class ParentQueryFinaAction extends DispatchAction
             String endDate = request.getParameter("endDate");
 
             // 从当年1月
-            condtion.addCondition("FinanceItemBean.financeDate", ">=", endDate.substring(0, 4) + "-01-01");
+            condtion.addCondition("FinanceItemBean.financeDate", ">=", endDate.substring(0, 4)
+                                                                       + "-01-01");
 
             condtion.addCondition("FinanceItemBean.financeDate", "<=", endDate);
         }
@@ -996,7 +1023,8 @@ public class ParentQueryFinaAction extends DispatchAction
             // 下个月的1号
             cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) - 1);
 
-            String turnMonth = TimeTools.getStringByFormat(new Date(cal.getTime().getTime()), "yyyyMM");
+            String turnMonth = TimeTools.getStringByFormat(new Date(cal.getTime().getTime()),
+                "yyyyMM");
 
             FinanceMonthBean month = financeMonthDAO.findByUnique(taxId, turnMonth);
 
@@ -1022,8 +1050,8 @@ public class ParentQueryFinaAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward exportTaxQuery(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse reponse)
+    public ActionForward exportTaxQuery(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         OutputStream out = null;
@@ -1056,9 +1084,14 @@ public class ParentQueryFinaAction extends DispatchAction
             if (type.equals(QUERYTAXFINANCE2))
             {
 
-                String queryType = request.getSession().getAttribute("EXPORT_FINANCEITE_QUERYTYPE").toString();
+                String queryType = request
+                    .getSession()
+                    .getAttribute("EXPORT_FINANCEITE_QUERYTYPE")
+                    .toString();
 
-                List<FinanceShowVO> showList = (List<FinanceShowVO>)request.getSession().getAttribute("resultList_2");
+                List<FinanceShowVO> showList = (List<FinanceShowVO>)request
+                    .getSession()
+                    .getAttribute("resultList_2");
 
                 if ("0".equals(queryType))
                 {
@@ -1178,8 +1211,8 @@ public class ParentQueryFinaAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward exportTaxReport(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse reponse)
+    public ActionForward exportTaxReport(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         OutputStream out = null;
@@ -1304,7 +1337,8 @@ public class ParentQueryFinaAction extends DispatchAction
      * @return
      * @throws MYException
      */
-    protected ConditionParse getQueryCondition3(HttpServletRequest request, User user, int type, String parentTax)
+    protected ConditionParse getQueryCondition3(HttpServletRequest request, User user, int type,
+                                                String parentTax)
         throws MYException
     {
         ConditionParse condtion = new ConditionParse();
@@ -1407,7 +1441,8 @@ public class ParentQueryFinaAction extends DispatchAction
             String endDate = request.getParameter("endDate");
 
             // 从当年1月
-            condtion.addCondition("FinanceItemBean.financeDate", ">=", endDate.substring(0, 4) + "-01-01");
+            condtion.addCondition("FinanceItemBean.financeDate", ">=", endDate.substring(0, 4)
+                                                                       + "-01-01");
 
             condtion.addCondition("FinanceItemBean.financeDate", "<=", endDate);
         }
@@ -1433,8 +1468,8 @@ public class ParentQueryFinaAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryTaxFinance2(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse reponse)
+    public ActionForward queryTaxFinance2(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         User user = Helper.getUser(request);
@@ -1689,7 +1724,8 @@ public class ParentQueryFinaAction extends DispatchAction
         if ( !StringTools.isNullOrNone(stafferId) && StringTools.isNullOrNone(unitId))
         {
             // 先查询出本期发生的单位
-            unitList.addAll(financeItemDAO.queryDistinctUnitByStafferId(stafferId, beginDate, endDate));
+            unitList.addAll(financeItemDAO.queryDistinctUnitByStafferId(stafferId, beginDate,
+                endDate));
         }
         else if (StringTools.isNullOrNone(stafferId) && StringTools.isNullOrNone(unitId))
         {
@@ -2076,56 +2112,4 @@ public class ParentQueryFinaAction extends DispatchAction
         item.getShowChineseOutmoney();
         item.getShowChineseLastmoney();
     }
-
-    /**
-     * @return the orgManager
-     */
-    public OrgManager getOrgManager()
-    {
-        return orgManager;
-    }
-
-    /**
-     * @param orgManager
-     *            the orgManager to set
-     */
-    public void setOrgManager(OrgManager orgManager)
-    {
-        this.orgManager = orgManager;
-    }
-
-    /**
-     * @return the parameterDAO
-     */
-    public ParameterDAO getParameterDAO()
-    {
-        return parameterDAO;
-    }
-
-    /**
-     * @param parameterDAO
-     *            the parameterDAO to set
-     */
-    public void setParameterDAO(ParameterDAO parameterDAO)
-    {
-        this.parameterDAO = parameterDAO;
-    }
-
-    /**
-     * @return the financeRepDAO
-     */
-    public FinanceRepDAO getFinanceRepDAO()
-    {
-        return financeRepDAO;
-    }
-
-    /**
-     * @param financeRepDAO
-     *            the financeRepDAO to set
-     */
-    public void setFinanceRepDAO(FinanceRepDAO financeRepDAO)
-    {
-        this.financeRepDAO = financeRepDAO;
-    }
-
 }

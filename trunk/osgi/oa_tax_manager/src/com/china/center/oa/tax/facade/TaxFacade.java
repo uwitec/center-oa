@@ -24,6 +24,10 @@ import com.china.center.oa.tax.bean.TaxBean;
  */
 public interface TaxFacade
 {
+    Object FINANCE_LOCK = new Object();
+
+    Object CHECK_LOCK = new Object();
+
     boolean addTaxBean(String userId, TaxBean bean)
         throws MYException;
 

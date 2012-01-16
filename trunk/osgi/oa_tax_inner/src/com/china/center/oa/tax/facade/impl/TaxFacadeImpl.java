@@ -38,10 +38,6 @@ public class TaxFacadeImpl extends AbstarctFacade implements TaxFacade
 
     private UserManager userManager = null;
 
-    private static Object FINANCE_LOCK = new Object();
-
-    private static Object CHECK_LOCK = new Object();
-
     /**
      * default constructor
      */
