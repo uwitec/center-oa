@@ -31,6 +31,25 @@ import com.china.center.oa.finance.bean.PaymentBean;
  */
 public interface FinanceFacade
 {
+    /**
+     * 回款操作锁
+     */
+    Object PAYMENT_LOCK = new Object();
+
+    Object PAYMENT_APPLY_LOCK = new Object();
+
+    Object INBILL_LOCK = new Object();
+
+    Object OUTBILL_LOCK = new Object();
+
+    Object INVOICEINS_LOCK = new Object();
+
+    Object STOCKPAYAPPLY_LOCK = new Object();
+
+    Object BACKPAYAPPLY_LOCK = new Object();
+
+    Object BILLAPPLY_LOCK = new Object();
+
     boolean addBankBean(String userId, BankBean bean)
         throws MYException;
 

@@ -61,25 +61,6 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
     private BackPayApplyManager backPayApplyManager = null;
 
     /**
-     * 回款操作锁
-     */
-    private static Object PAYMENT_LOCK = new Object();
-
-    private static Object PAYMENT_APPLY_LOCK = new Object();
-
-    private static Object INBILL_LOCK = new Object();
-
-    private static Object OUTBILL_LOCK = new Object();
-
-    private static Object INVOICEINS_LOCK = new Object();
-
-    private static Object STOCKPAYAPPLY_LOCK = new Object();
-
-    private static Object BACKPAYAPPLY_LOCK = new Object();
-
-    private static Object BILLAPPLY_LOCK = new Object();
-
-    /**
      * default constructor
      */
     public FinanceFacadeImpl()
