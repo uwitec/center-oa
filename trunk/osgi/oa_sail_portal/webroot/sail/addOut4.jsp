@@ -4,7 +4,7 @@
 
 <html>
 <head>
-<p:link title="填写销售单" />
+<p:link title="填写销售单(now)" />
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/math.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
@@ -235,9 +235,7 @@ function changePrice()
                         <td colspan="1">
                         <select name="dutyId" class="select_class" style="width: 240px" oncheck="notNone;" onchange="loadShow();changePrice();delAllItem();">
                             <option value="">--</option>
-                            <c:forEach items="${dutyList}" var="item">
-                            <option value="${item.id}">${item.name}</option>
-                            </c:forEach>
+                            <p:option type="$dutyList2"/>
                         </select>
                         <font color="#FF0000">*</font></td>
                     </tr>

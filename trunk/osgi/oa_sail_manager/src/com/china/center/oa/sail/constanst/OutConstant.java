@@ -402,4 +402,10 @@ public interface OutConstant
      */
     int BADDEBTSCHECKSTATUS_YES = 1;
 
+    @Defined(key = "outVtype", value = "默认")
+    int VTYPE_DEFAULT = 0;
+
+    @Defined(key = "outVtype", value = "抽象")
+    int VTYPE_ABS = 1;
+
 }
