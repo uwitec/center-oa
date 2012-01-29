@@ -77,6 +77,7 @@ function getTax(oos)
 		<p:table cells="1">
 
 			<p:pro field="name" innerString="size=60"/>
+			<p:pro field="bankNo" innerString="size=60"/>
 			
 			<p:pro field="dutyId">
                 <p:option type="$dutyList"/>

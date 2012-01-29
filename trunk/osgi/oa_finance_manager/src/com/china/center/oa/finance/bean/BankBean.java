@@ -39,8 +39,14 @@ public class BankBean implements Serializable
     @Id
     private String id = "";
 
-    @Html(title = "帐户", must = true, maxLength = 40)
+    @Html(title = "名称", must = true, maxLength = 40)
     private String name = "";
+
+    /**
+     * 帐号
+     */
+    @Html(title = "帐号", must = true, maxLength = 100)
+    private String bankNo = "";
 
     /**
      * 暂时不使用
@@ -423,6 +429,23 @@ public class BankBean implements Serializable
     }
 
     /**
+     * @return the bankNo
+     */
+    public String getBankNo()
+    {
+        return bankNo;
+    }
+
+    /**
+     * @param bankNo
+     *            the bankNo to set
+     */
+    public void setBankNo(String bankNo)
+    {
+        this.bankNo = bankNo;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -431,67 +454,19 @@ public class BankBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("BankBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("name = ")
-            .append(this.name)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("mtype = ")
-            .append(this.mtype)
-            .append(TAB)
-            .append("dutyId = ")
-            .append(this.dutyId)
-            .append(TAB)
-            .append("code = ")
-            .append(this.code)
-            .append(TAB)
-            .append("code2 = ")
-            .append(this.code2)
-            .append(TAB)
-            .append("taxType = ")
-            .append(this.taxType)
-            .append(TAB)
-            .append("parentTaxId = ")
-            .append(this.parentTaxId)
-            .append(TAB)
-            .append("parentTaxId2 = ")
-            .append(this.parentTaxId2)
-            .append(TAB)
-            .append("unit = ")
-            .append(this.unit)
-            .append(TAB)
-            .append("department = ")
-            .append(this.department)
-            .append(TAB)
-            .append("staffer = ")
-            .append(this.staffer)
-            .append(TAB)
-            .append("depot = ")
-            .append(this.depot)
-            .append(TAB)
-            .append("product = ")
-            .append(this.product)
-            .append(TAB)
-            .append("duty = ")
-            .append(this.duty)
-            .append(TAB)
-            .append("total = ")
-            .append(this.total)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append(" )");
+        retValue.append("BankBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(TAB).append(
+            "name = ").append(this.name).append(TAB).append("bankNo = ").append(this.bankNo).append(TAB).append(
+            "type = ").append(this.type).append(TAB).append("mtype = ").append(this.mtype).append(TAB).append(
+            "dutyId = ").append(this.dutyId).append(TAB).append("code = ").append(this.code).append(TAB).append(
+            "code2 = ").append(this.code2).append(TAB).append("taxType = ").append(this.taxType).append(TAB).append(
+            "parentTaxId = ").append(this.parentTaxId).append(TAB).append("parentTaxId2 = ").append(this.parentTaxId2).append(
+            TAB).append("unit = ").append(this.unit).append(TAB).append("department = ").append(this.department).append(
+            TAB).append("staffer = ").append(this.staffer).append(TAB).append("depot = ").append(this.depot).append(TAB).append(
+            "product = ").append(this.product).append(TAB).append("duty = ").append(this.duty).append(TAB).append(
+            "total = ").append(this.total).append(TAB).append("description = ").append(this.description).append(TAB).append(
+            " )");
 
         return retValue.toString();
     }

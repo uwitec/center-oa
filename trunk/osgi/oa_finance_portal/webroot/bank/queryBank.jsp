@@ -27,8 +27,9 @@ function load()
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id}>', width : 40, align: 'center'},
              {display: '名称', name : 'name', width : '35%'},
-             {display: '类型', name : 'mtype', cc: 'pubManagerType', width : '10%'},
-             {display: '纳税实体', name : 'dutyName', width : '25%'},
+             {display: '帐号', name : 'bankNo', width : '15%'},
+             {display: '类型', name : 'mtype', cc: 'pubManagerType', width : '8%'},
+             {display: '纳税实体', name : 'dutyName', width : '20%'},
              {display: '当前余额', name : 'total', toFixed: 2, width : '10%'},
              {display: '备注', name : 'description', width : 'auto'}
              ],
