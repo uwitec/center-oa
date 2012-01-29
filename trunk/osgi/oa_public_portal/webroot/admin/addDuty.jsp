@@ -47,6 +47,10 @@ function addBean()
 			<p:pro field="mtype">
                 <p:option type="pubManagerType" empty="true"/>
             </p:pro>
+            
+            <p:pro field="showType">
+				<p:option type="dutyShowType"/>
+			</p:pro>
 
 			<p:pro field="icp"  />
 			

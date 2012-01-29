@@ -29,8 +29,9 @@ function load()
              {display: '名称', name : 'name', width : '25%'},
              {display: '类型', name : 'type', cc: 'dutyType', width : '10%'},
              {display: '管理', name : 'mtype', cc: 'pubManagerType', width : '10%'},
+             {display: '显示', name : 'showType', cc: 'dutyShowType', width : '10%'},
              {display: '税点(‰)', name : 'dues', width : '10%'},
-             {display: '税务证号', name : 'icp', width : '20%'},
+             {display: '税务证号', name : 'icp', width : '10%'},
              {display: '其他', name : 'description', width : 'auto'}
              ],
          extAtt: {
@@ -52,6 +53,7 @@ function $callBack()
 {
     loadForm();
     
+    highlights($("#mainTable").get(0), ['不显示'], 'red');
 }
 
 function addBean(opr, grid)
