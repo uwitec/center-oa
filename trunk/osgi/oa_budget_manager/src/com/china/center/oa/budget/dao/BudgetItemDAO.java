@@ -26,10 +26,6 @@ public interface BudgetItemDAO extends DAO<BudgetItemBean, BudgetItemVO>
 {
     double sumBudgetTotal(String budgetId);
 
-    double sumRealTotal(String budgetId);
-
-    double sumRealTotalInSubBudget(String budgetId, String feeItemId);
-
     BudgetItemBean findByBudgetIdAndFeeItemId(String budgetId, String feeItemId);
 
     BudgetItemVO findVOByBudgetIdAndFeeItemId(String budgetId, String feeItemId);

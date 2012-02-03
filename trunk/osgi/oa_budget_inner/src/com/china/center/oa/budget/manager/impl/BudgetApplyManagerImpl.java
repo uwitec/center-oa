@@ -31,6 +31,7 @@ import com.china.center.oa.budget.dao.FeeItemDAO;
 import com.china.center.oa.budget.helper.BudgetHelper;
 import com.china.center.oa.budget.listener.BudgetListener;
 import com.china.center.oa.budget.manager.BudgetApplyManager;
+import com.china.center.oa.budget.manager.BudgetManager;
 import com.china.center.oa.budget.vo.BudgetItemVO;
 import com.china.center.oa.publics.bean.LogBean;
 import com.china.center.oa.publics.bean.NotifyBean;
@@ -72,6 +73,8 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
     private LogDAO logDAO = null;
 
     private BudgetLogDAO budgetLogDAO = null;
+
+    private BudgetManager budgetManager = null;
 
     private OrgManager orgManager = null;
 
@@ -199,7 +202,8 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
 
                     if (subBudgetItemBean != null)
                     {
-                        total += subBudgetItemBean.getBudget();
+                        total += BudgetHelper
+                            .getBudgetItemRealBudget(budgetBean, subBudgetItemBean);
                     }
                 }
 
@@ -545,6 +549,8 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
     }
 
     /**
+     * 变更
+     * 
      * @param bean
      * @throws MYException
      */
@@ -567,12 +573,14 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
             // the modify budge must bigger than realMonery
             if (currentItem != null)
             {
-                if (budgetItemBean.getBudget() < currentItem.getRealMonery())
+                // 当前最大占用
+                double itemSubTotal = budgetManager.sumPreAndUseInEachBudgetItem(currentItem);
+
+                if (MathTools.compare(itemSubTotal, budgetItemBean.getBudget()) > 0)
                 {
                     throw new MYException("预算项[%s]已经使用了%s,所以更改后的预算不能小于%s,您当前修改后的是%s", currentItem
-                        .getFeeItemName(), MathTools.formatNum(currentItem.getRealMonery()),
-                        MathTools.formatNum(currentItem.getRealMonery()), MathTools
-                            .formatNum(budgetItemBean.getBudget()));
+                        .getFeeItemName(), MathTools.formatNum(itemSubTotal), MathTools
+                        .formatNum(itemSubTotal), MathTools.formatNum(budgetItemBean.getBudget()));
                 }
             }
             else
@@ -594,7 +602,7 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
 
         double currentBudget = budgetItemDAO.sumBudgetTotal(bean.getBudgetId());
 
-        if (currentBudget < total)
+        if (MathTools.compare(currentBudget, total) < 0)
         {
             throw new MYException("当前预算总额是%s,但是你变更后的是%s，不能大于当前总额请重新变更", MathTools
                 .formatNum(currentBudget), MathTools.formatNum(total));
@@ -626,7 +634,7 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
             if (currentItem != null)
             {
                 // 预算支持修改变小的
-                if (budgetItemBean.getBudget() < currentItem.getBudget())
+                if (MathTools.compare(budgetItemBean.getBudget(), currentItem.getBudget()) < 0)
                 {
                     throw new MYException("预算项[%s]预算是%s,更改后的预算不能小于%s,您当前修改后的是%s", currentItem
                         .getFeeItemName(), MathTools.formatNum(currentItem.getBudget()), MathTools
@@ -654,7 +662,7 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
         double currentBudget = budgetItemDAO.sumBudgetTotal(bean.getBudgetId());
 
         // 预算支持修改变小的
-        if (total < currentBudget)
+        if (MathTools.compare(total, currentBudget) < 0)
         {
             throw new MYException("当前预算总额是%s,但是你变更后的是%s，不能小于当前总额请重新追加", MathTools
                 .formatNum(currentBudget), MathTools.formatNum(total));
@@ -763,7 +771,7 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
 
             if (subFeeItem != null)
             {
-                total += subFeeItem.getUseMonery();
+                total += BudgetHelper.getBudgetItemRealBudget(budgetBean, subFeeItem);
             }
         }
 
@@ -952,6 +960,23 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
     public void setBudgetLogDAO(BudgetLogDAO budgetLogDAO)
     {
         this.budgetLogDAO = budgetLogDAO;
+    }
+
+    /**
+     * @return the budgetManager
+     */
+    public BudgetManager getBudgetManager()
+    {
+        return budgetManager;
+    }
+
+    /**
+     * @param budgetManager
+     *            the budgetManager to set
+     */
+    public void setBudgetManager(BudgetManager budgetManager)
+    {
+        this.budgetManager = budgetManager;
     }
 
 }

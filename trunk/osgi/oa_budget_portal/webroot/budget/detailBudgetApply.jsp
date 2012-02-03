@@ -92,7 +92,7 @@ function load()
                     <tr align="center" class="content0">
                         <td width="20%" align="center">(当前)预算项</td>
                         <td width="15%" align="center">预算金额(当前/更新后)</td>
-                        <td width="15%" align="center">使用金额</td>
+                        <td width="15%" align="center">未分配金额</td>
                         <td width="15%" align="center">预用金额</td>
                         <td width="50%" align="center">描述</td>
                     </tr>
@@ -116,7 +116,7 @@ function load()
                                 
                             <td width="15%" align="center"><input type="text"
                                 id="f_item_budget" style="width: 100%;" oncheck="isFloat"
-                                head="预算金额" value="${item.srealMonery}" maxlength="12"
+                                head="预算金额" value="${item.snoAssignMonery}" maxlength="12"
                                 name="item_budget"></td>
                                 
                             <td width="15%" align="center"><input type="text"

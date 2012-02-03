@@ -21,8 +21,10 @@ import com.china.center.common.MYException;
 import com.china.center.oa.budget.bean.BudgetBean;
 import com.china.center.oa.budget.bean.BudgetItemBean;
 import com.china.center.oa.budget.constant.BudgetConstant;
+import com.china.center.oa.budget.dao.BudgetLogDAO;
 import com.china.center.oa.budget.dao.impl.BudgetDAOImpl;
 import com.china.center.oa.budget.dao.impl.BudgetItemDAOImpl;
+import com.china.center.oa.budget.helper.BudgetHelper;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.LogBean;
 import com.china.center.oa.publics.bean.PlanBean;
@@ -30,7 +32,7 @@ import com.china.center.oa.publics.constant.ModuleConstant;
 import com.china.center.oa.publics.constant.OperationConstant;
 import com.china.center.oa.publics.dao.LogDAO;
 import com.china.center.oa.publics.manager.CarryPlan;
-import com.china.center.tools.ListTools;
+import com.china.center.tools.MathTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -52,6 +54,8 @@ public class BudgetEndPlanManagerImpl implements CarryPlan
     private BudgetDAOImpl budgetDAO = null;
 
     private LogDAO logDAO = null;
+
+    private BudgetLogDAO budgetLogDAO = null;
 
     /**
      * default constructor
@@ -98,44 +102,61 @@ public class BudgetEndPlanManagerImpl implements CarryPlan
             return true;
         }
 
-        List<BudgetBean> subItem = budgetDAO.queryEntityBeansByFK(bean.getId());
+        // 当前合计
+        double total = 0.0d;
 
         // process subItem
-        if ( !ListTools.isEmptyOrNull(subItem))
+        List<BudgetItemBean> items = budgetItemDAO.queryEntityBeansByFK(bean.getId());
+
+        String logLevel = BudgetHelper.getLogLevel(bean);
+
+        // 更新子项的预算使用
+        for (BudgetItemBean budgetItemBean : items)
         {
-            List<BudgetItemBean> items = budgetItemDAO.queryEntityBeansByFK(bean.getId());
+            double itemSubTotal = budgetLogDAO.sumBudgetLogByLevel("budgetItemId" + logLevel,
+                budgetItemBean.getId()) / 100.0d;
 
-            // process total in sub
-            for (BudgetItemBean budgetItemBean : items)
-            {
-                double itemSubTotal = budgetItemDAO.sumRealTotalInSubBudget(bean.getId(),
-                    budgetItemBean.getFeeItemId());
+            total += itemSubTotal;
 
-                budgetItemBean.setRealMonery(itemSubTotal);
+            budgetItemBean.setUseMonery(itemSubTotal);
 
-                // update budgetItem
-                budgetItemDAO.updateEntityBean(budgetItemBean);
-            }
+            // update budgetItem
+            budgetItemDAO.updateEntityBean(budgetItemBean);
         }
 
-        double total = budgetItemDAO.sumRealTotal(budgetId);
-
-        // get current real monery
-        bean.setRealMonery(total);
-
+        // 结束处理
         if (end)
         {
             bean.setStatus(BudgetConstant.BUDGET_STATUS_END);
+
+            // 计算执行结果
+            if (MathTools.compare(total, bean.getTotal()) == 0)
+            {
+                bean.setCarryStatus(BudgetConstant.BUDGET_CARRY_BALANCE);
+            }
+
+            if (MathTools.compare(total, bean.getTotal()) > 0)
+            {
+                bean.setCarryStatus(BudgetConstant.BUDGET_CARRY_OVER);
+            }
+
+            if (MathTools.compare(total, bean.getTotal()) < 0)
+            {
+                bean.setCarryStatus(BudgetConstant.BUDGET_CARRY_LESS);
+            }
 
             // FIX BUG update UseMoney
             budgetItemDAO.updateUseMoneyEqualsRealMoney(budgetId);
 
             log(Helper.getSystemUser(), budgetId, OperationConstant.OPERATION_END,
                 "到达预算截至时间,系统自动结束此预算");
-        }
 
-        // update BudgetBean
-        budgetDAO.updateEntityBean(bean);
+            // get current real monery
+            bean.setRealMonery(total);
+
+            // update BudgetBean
+            budgetDAO.updateEntityBean(bean);
+        }
 
         return true;
     }
@@ -196,5 +217,22 @@ public class BudgetEndPlanManagerImpl implements CarryPlan
     public void setLogDAO(LogDAO logDAO)
     {
         this.logDAO = logDAO;
+    }
+
+    /**
+     * @return the budgetLogDAO
+     */
+    public BudgetLogDAO getBudgetLogDAO()
+    {
+        return budgetLogDAO;
+    }
+
+    /**
+     * @param budgetLogDAO
+     *            the budgetLogDAO to set
+     */
+    public void setBudgetLogDAO(BudgetLogDAO budgetLogDAO)
+    {
+        this.budgetLogDAO = budgetLogDAO;
     }
 }

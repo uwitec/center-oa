@@ -81,13 +81,17 @@ function load()
                ${my:formatNum(bean.total)}
             </p:cell>
             
+            <p:cell title="实际使用">
+               ${my:formatNum(bean.realMonery)}
+            </p:cell>
+            
             <p:cell title="权签人">
                ${bean.signerName}
             </p:cell>
             
-            <p:cells celspan="2" title="提交人">
+            <p:cell title="提交人">
             ${bean.stafferName}
-            </p:cells>
+            </p:cell>
             
             <p:pro field="description" cell="2" innerString="rows=4 cols=60"/>
 		</p:table>
@@ -129,13 +133,13 @@ function load()
                     <td align="center" onclick="hrefAndSelect(this)" width="10%">${item.feeItemName}</td>
                     
                     <c:if test="${!unit}">
-                    <td align="center" onclick="hrefAndSelect(this)">${item.description}</td>
+                    <td align="center" onclick="hrefAndSelect(this)">${item.subDescription}</td>
                     </c:if>
                     
                     <td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.budget)}</td>
                     
                     <c:if test="${!unit}">
-                    <td align="center" onclick="hrefAndSelect(this)">${item.sbudget}</td>
+                    <td align="center" onclick="hrefAndSelect(this)">${item.snoAssignMonery}</td>
                     </c:if>
                      <c:if test="${unit}">
                     <td align="center" onclick="hrefAndSelect(this)">${item.sremainMonery}</td>
@@ -146,7 +150,14 @@ function load()
                     <c:if test="${!unit}">
                         <td align="center" onclick="hrefAndSelect(this)">${item.sremainMonery}</td>
                     </c:if>
+                    
+                    <c:if test="${item.budget > 0}">
                     <td align="center" onclick="hrefAndSelect(this)">${my:formatNum((item.suseMonery / item.budget) * 100.0)}%</td>
+                    </c:if>
+                     <c:if test="${item.budget == 0}">
+                    <td align="center" onclick="hrefAndSelect(this)">0.00%</td>
+                    </c:if>
+                    
                     <td align="center" onclick="hrefAndSelect(this)">${item.description}</td>
                 </tr>
             </c:forEach>

@@ -16,6 +16,7 @@ import java.util.Map;
 import com.china.center.common.MYException;
 import com.china.center.oa.budget.bean.BudgetApplyBean;
 import com.china.center.oa.budget.bean.BudgetBean;
+import com.china.center.oa.budget.bean.BudgetItemBean;
 import com.china.center.oa.budget.constant.BudgetConstant;
 import com.china.center.oa.budget.vo.BudgetItemVO;
 import com.china.center.oa.budget.vo.BudgetLogVO;
@@ -201,6 +202,40 @@ public abstract class BudgetHelper
         }
 
         return true;
+    }
+
+    /**
+     * 获取实际的预算(执行中的采用执行预算,结束的使用真正预算,这样才能释放预算)
+     * 
+     * @param budgetBean
+     * @param budgetItemBean
+     * @return
+     */
+    public static double getBudgetItemRealBudget(BudgetBean budgetBean,
+                                                 BudgetItemBean budgetItemBean)
+    {
+        if (budgetBean.getStatus() != BudgetConstant.BUDGET_STATUS_END)
+        {
+            return budgetItemBean.getBudget();
+        }
+        else
+        {
+            // 实际使用的啊
+            return budgetItemBean.getRealMonery();
+        }
+    }
+
+    /**
+     * getLinkName
+     * 
+     * @param budgetBean
+     * @return
+     */
+    public static String getLinkName(BudgetBean budgetBean)
+    {
+        // budget/budget.do?method=findBudget&update=1&id=
+        return "<a href='../budget/budget.do?method=findBudget&id=" + budgetBean.getId() + "'>"
+               + budgetBean.getName() + "</a> ";
     }
 
     /**

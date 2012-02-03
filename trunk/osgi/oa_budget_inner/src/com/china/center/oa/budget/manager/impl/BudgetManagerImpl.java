@@ -251,64 +251,6 @@ public class BudgetManagerImpl implements BudgetManager
     }
 
     /**
-     * recursive update budget
-     * 
-     * @param itemBean
-     * @param hasSub
-     * @throws MYException
-     */
-    public void recursiveUpdate(BudgetItemBean itemBean, boolean hasSub)
-        throws MYException
-    {
-        if (hasSub)
-        {
-            // if has subItem, count sub
-            double sumRealTotalInSubBudget = budgetItemDAO.sumRealTotalInSubBudget(itemBean
-                .getBudgetId(), itemBean.getFeeItemId());
-
-            itemBean.setRealMonery(sumRealTotalInSubBudget);
-        }
-
-        budgetItemDAO.updateEntityBean(itemBean);
-
-        // update budget realmoney
-        double realMoney = budgetItemDAO.sumRealTotal(itemBean.getBudgetId());
-
-        budgetDAO.updateRealMoney(itemBean.getBudgetId(), realMoney);
-
-        BudgetBean budget = budgetDAO.find(itemBean.getBudgetId());
-
-        if (budget == null)
-        {
-            throw new MYException("数据不完备");
-        }
-
-        // top budget
-        if (budget.getParentId().equals(BudgetConstant.BUDGET_ROOT))
-        {
-            return;
-        }
-
-        BudgetBean parent = budgetDAO.find(budget.getParentId());
-
-        if (parent == null)
-        {
-            throw new MYException("数据不完备");
-        }
-
-        // parent item
-        BudgetItemBean parentItem = budgetItemDAO.findByBudgetIdAndFeeItemId(parent.getId(),
-            itemBean.getFeeItemId());
-
-        if (parentItem == null)
-        {
-            throw new MYException("数据不完备");
-        }
-
-        recursiveUpdate(parentItem, true);
-    }
-
-    /**
      * 检查预算使用的合法性
      * 
      * @param bill
@@ -880,6 +822,20 @@ public class BudgetManagerImpl implements BudgetManager
         return true;
     }
 
+    public double sumHasUseInEachBudget(BudgetBean budget)
+    {
+        List<BudgetItemBean> itemList = budgetItemDAO.queryEntityBeansByFK(budget.getId());
+
+        double total = 0.0d;
+
+        for (BudgetItemBean budgetItemBean : itemList)
+        {
+            total += sumHasUseInEachBudgetItem(budgetItemBean);
+        }
+
+        return total;
+    }
+
     public double sumPreAndUseInEachBudget(BudgetBean budget)
     {
         List<BudgetItemBean> itemList = budgetItemDAO.queryEntityBeansByFK(budget.getId());
@@ -894,7 +850,7 @@ public class BudgetManagerImpl implements BudgetManager
         return total;
     }
 
-    public double sumPreAndUseInEachBudgetItem(BudgetItemBean budgetItemBean)
+    public double sumHasUseInEachBudgetItem(BudgetItemBean budgetItemBean)
     {
         BudgetBean budget = budgetDAO.find(budgetItemBean.getBudgetId());
 
@@ -909,6 +865,33 @@ public class BudgetManagerImpl implements BudgetManager
             .getId()) / 100.0d;
 
         return itemTotal;
+    }
+
+    public double sumPreAndUseInEachBudgetItem(BudgetItemBean budgetItemBean)
+    {
+        BudgetBean budget = budgetDAO.find(budgetItemBean.getBudgetId());
+
+        if (budget == null)
+        {
+            return 0.0;
+        }
+
+        List<BudgetBean> subBudget = budgetDAO.querySubmitBudgetByParentId(budget.getId());
+
+        double total = 0.0d;
+
+        for (BudgetBean budgetBean : subBudget)
+        {
+            BudgetItemBean subBudgetItemBean = budgetItemDAO.findByBudgetIdAndFeeItemId(budgetBean
+                .getId(), budgetItemBean.getFeeItemId());
+
+            if (subBudgetItemBean != null)
+            {
+                total += BudgetHelper.getBudgetItemRealBudget(budgetBean, subBudgetItemBean);
+            }
+        }
+
+        return total;
     }
 
     /**
@@ -1215,7 +1198,7 @@ public class BudgetManagerImpl implements BudgetManager
             vo.setBudgetFullDepartmentName(org.getFullName());
         }
 
-        double hasUsed = this.sumPreAndUseInEachBudget(vo);
+        double hasUsed = this.sumHasUseInEachBudget(vo);
 
         vo.setSrealMonery(MathTools.formatNum(hasUsed));
 
@@ -1227,7 +1210,7 @@ public class BudgetManagerImpl implements BudgetManager
         {
             BudgetHelper.formatBudgetItem(budgetItemBean);
 
-            double hasUseed = this.sumPreAndUseInEachBudgetItem(budgetItemBean);
+            double hasUseed = this.sumHasUseInEachBudgetItem(budgetItemBean);
 
             budgetItemBean.setSuseMonery(MathTools.formatNum(hasUseed));
 
@@ -1238,6 +1221,7 @@ public class BudgetManagerImpl implements BudgetManager
 
                 String subDesc = "";
 
+                // 这里的total是执行中的分配预算和结束的实际使用之和
                 double total = 0.0d;
 
                 for (BudgetBean budgetBean : subBudget)
@@ -1247,18 +1231,19 @@ public class BudgetManagerImpl implements BudgetManager
 
                     if (subBudgetItemBean != null)
                     {
-                        subDesc += budgetBean.getName() + " ";
+                        subDesc += BudgetHelper.getLinkName(budgetBean);
 
-                        total += subBudgetItemBean.getBudget();
+                        total += BudgetHelper
+                            .getBudgetItemRealBudget(budgetBean, subBudgetItemBean);
                     }
                 }
 
-                budgetItemBean.setDescription(subDesc);
+                budgetItemBean.setSubDescription(subDesc);
 
                 double last = budgetItemBean.getBudget() - total;
 
                 // 未分配的预算
-                budgetItemBean.setSbudget(MathTools.formatNum(last));
+                budgetItemBean.setSnoAssignMonery(MathTools.formatNum(last));
 
                 // 剩余预算
                 budgetItemBean.setSremainMonery(MathTools.formatNum(budgetItemBean.getBudget()
@@ -1451,4 +1436,5 @@ public class BudgetManagerImpl implements BudgetManager
     {
         this.orgManager = orgManager;
     }
+
 }

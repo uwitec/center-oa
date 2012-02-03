@@ -64,7 +64,7 @@ function closesd()
                 <td align="center"><strong>预算项</strong></td>
                 
                 <c:if test="${!unit}">
-                <td align="center"><strong>子预算</strong></td>
+                <td align="center" width="40%"><strong>子预算</strong></td>
                 </c:if>
                 <td align="center"><strong>预算金额</strong></td>
                 <c:if test="${!unit}">
@@ -83,10 +83,10 @@ function closesd()
                 <tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
                     <td align="center" onclick="hrefAndSelect(this)">${item.feeItemName}</td>
                     <c:if test="${!unit}">
-                    <td align="center" onclick="hrefAndSelect(this)">${item.description}</td>
+                    <td align="center" onclick="hrefAndSelect(this)">${item.subDescription}</td>
                     </c:if>
                     <td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.budget)}</td>
-                    <td align="center" onclick="hrefAndSelect(this)">${item.sbudget}</td>
+                    <td align="center" onclick="hrefAndSelect(this)">${item.snoAssignMonery}</td>
                     <td align="center" onclick="hrefAndSelect(this)">${item.suseMonery}</td>
                     <c:if test="${!unit}">
                         <td align="center" onclick="hrefAndSelect(this)">${item.sremainMonery}</td>

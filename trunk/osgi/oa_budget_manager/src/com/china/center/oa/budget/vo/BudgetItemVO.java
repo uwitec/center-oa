@@ -32,6 +32,9 @@ public class BudgetItemVO extends BudgetItemBean
     @Relationship(relationField = "budgetId")
     private String budgetName = "";
 
+    /**
+     * 
+     */
     @Ignore
     private String budgetStr = "";
 
@@ -40,6 +43,12 @@ public class BudgetItemVO extends BudgetItemBean
      */
     @Ignore
     private String sbudget = "";
+
+    /**
+     * 未分配的
+     */
+    @Ignore
+    private String snoAssignMonery = "";
 
     @Ignore
     private String srealMonery = "";
@@ -55,6 +64,9 @@ public class BudgetItemVO extends BudgetItemBean
 
     @Ignore
     private String schangeMonery = "";
+
+    @Ignore
+    private String subDescription = "";
 
     public BudgetItemVO()
     {
@@ -190,6 +202,40 @@ public class BudgetItemVO extends BudgetItemBean
     }
 
     /**
+     * @return the subDescription
+     */
+    public String getSubDescription()
+    {
+        return subDescription;
+    }
+
+    /**
+     * @param subDescription
+     *            the subDescription to set
+     */
+    public void setSubDescription(String subDescription)
+    {
+        this.subDescription = subDescription;
+    }
+
+    /**
+     * @return the snoAssignMonery
+     */
+    public String getSnoAssignMonery()
+    {
+        return snoAssignMonery;
+    }
+
+    /**
+     * @param snoAssignMonery
+     *            the snoAssignMonery to set
+     */
+    public void setSnoAssignMonery(String snoAssignMonery)
+    {
+        this.snoAssignMonery = snoAssignMonery;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -216,6 +262,9 @@ public class BudgetItemVO extends BudgetItemBean
             .append("sbudget = ")
             .append(this.sbudget)
             .append(TAB)
+            .append("snoAssignMonery = ")
+            .append(this.snoAssignMonery)
+            .append(TAB)
             .append("srealMonery = ")
             .append(this.srealMonery)
             .append(TAB)
@@ -227,6 +276,9 @@ public class BudgetItemVO extends BudgetItemBean
             .append(TAB)
             .append("schangeMonery = ")
             .append(this.schangeMonery)
+            .append(TAB)
+            .append("subDescription = ")
+            .append(this.subDescription)
             .append(TAB)
             .append(" )");
 

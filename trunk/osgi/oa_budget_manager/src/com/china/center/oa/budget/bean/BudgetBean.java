@@ -95,6 +95,9 @@ public class BudgetBean implements Serializable
     @Html(title = "预算分类", must = true, type = Element.SELECT)
     private int level = BudgetConstant.BUDGET_LEVEL_YEAR;
 
+    /**
+     * 预算总金额
+     */
     private double total = 0.0d;
 
     @Html(title = "销售总额", must = true, maxLength = 20, oncheck = JCheck.ONLY_FLOAT)

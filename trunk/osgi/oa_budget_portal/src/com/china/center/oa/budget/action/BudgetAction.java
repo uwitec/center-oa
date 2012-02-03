@@ -146,14 +146,14 @@ public class BudgetAction extends DispatchAction
 
         condtion.addWhereStr();
 
-        User user = Helper.getUser(request);
+        // User user = Helper.getUser(request);
 
         ActionTools.processJSONQueryCondition(QUERYBUDGET, request, condtion);
 
         // 查询自己的或者通过的
-        condtion.addCondition("and (BudgetBean.stafferId = '" + user.getStafferId()
-                              + "' or BudgetBean.status = " + BudgetConstant.BUDGET_STATUS_PASS
-                              + ")");
+        // condtion.addCondition("and (BudgetBean.stafferId = '" + user.getStafferId()
+        // + "' or BudgetBean.status = " + BudgetConstant.BUDGET_STATUS_PASS
+        // + ")");
 
         condtion.addCondition("order by BudgetBean.logTime desc");
 
@@ -738,10 +738,11 @@ public class BudgetAction extends DispatchAction
         // handle item
         for (BudgetItemVO budgetItemBean : items)
         {
-            double hasUseed = budgetManager.sumPreAndUseInEachBudgetItem(budgetItemBean);
+            double hasUseed = budgetManager.sumHasUseInEachBudgetItem(budgetItemBean);
 
             budgetItemBean.setSuseMonery(MathTools.formatNum(hasUseed));
 
+            // 查询父级预算的详细
             if ( !isUnit)
             {
                 List<BudgetBean> subBudget = budgetDAO.querySubmitBudgetByParentId(parentId);
@@ -757,18 +758,20 @@ public class BudgetAction extends DispatchAction
 
                     if (subBudgetItemBean != null)
                     {
-                        subDesc += budgetBean.getName() + " ";
 
-                        total += subBudgetItemBean.getBudget();
+                        subDesc += BudgetHelper.getLinkName(budgetBean);
+
+                        total += BudgetHelper
+                            .getBudgetItemRealBudget(budgetBean, subBudgetItemBean);
                     }
                 }
 
-                budgetItemBean.setDescription(subDesc);
+                budgetItemBean.setSubDescription(subDesc);
 
                 double last = budgetItemBean.getBudget() - total;
 
                 // 为分配的预算
-                budgetItemBean.setSbudget(MathTools.formatNum(last));
+                budgetItemBean.setSnoAssignMonery(MathTools.formatNum(last));
 
                 // 剩余预算
                 budgetItemBean.setSremainMonery(MathTools.formatNum(budgetItemBean.getBudget()
@@ -1672,7 +1675,7 @@ public class BudgetAction extends DispatchAction
             obj.setBudgetFullDepartmentName(org.getFullName());
         }
 
-        double hasUsed = budgetManager.sumPreAndUseInEachBudget(obj);
+        double hasUsed = budgetManager.sumHasUseInEachBudget(obj);
 
         obj.setSrealMonery(MathTools.formatNum(hasUsed));
     }

@@ -27,7 +27,7 @@ public interface BudgetLogDAO extends DAO<BudgetLogBean, BudgetLogVO>
 {
     long sumBudgetLogByBudgetItemId(String budgetItemId);
 
-    long sumBudgetLogByLevel(String level, String levelId);
+    long sumBudgetLogByLevel(String budgetLevelName, String budgetItemId);
 
     /**
      * 统计金额

@@ -57,63 +57,6 @@ public class BudgetItemDAOImpl extends BaseDAO<BudgetItemBean, BudgetItemVO> imp
     }
 
     /**
-     * countRealTotal
-     * 
-     * @param budgetId
-     * @return
-     */
-    public double sumRealTotal(String budgetId)
-    {
-        final List<Double> ruslt = new ArrayList<Double>();
-        jdbcOperation.query(
-            "select sum(realMonery) as rst from T_CENTER_BUDGETITEM where budgetId = ?",
-            new Object[] {budgetId}, new RowCallbackHandler()
-            {
-                public void processRow(ResultSet rst)
-                    throws SQLException
-                {
-                    ruslt.add(rst.getDouble("rst"));
-                }
-            });
-
-        if (ListTools.isEmptyOrNull(ruslt))
-        {
-            return 0.0;
-        }
-
-        return ruslt.get(0);
-    }
-
-    /**
-     * @param budgetId
-     * @param feeItemId
-     * @return
-     */
-    public double sumRealTotalInSubBudget(String budgetId, String feeItemId)
-    {
-        final List<Double> ruslt = new ArrayList<Double>();
-        jdbcOperation
-            .query(
-                "select sum(t1.realMonery) as rst from T_CENTER_BUDGETITEM t1, T_CENTER_BUDGET t2 "
-                    + "where t1.budgetId = t2.id and t1.feeItemId = ? and  t2.id in (select id from T_CENTER_BUDGET t3 where t3.parentId = ?)",
-                new Object[] {feeItemId, budgetId}, new RowCallbackHandler()
-                {
-                    public void processRow(ResultSet rst)
-                        throws SQLException
-                    {
-                        ruslt.add(rst.getDouble("rst"));
-                    }
-                });
-
-        if (ListTools.isEmptyOrNull(ruslt))
-        {
-            return 0.0;
-        }
-
-        return ruslt.get(0);
-    }
-
-    /**
      * findByBudgetIdAndFeeItemId
      * 
      * @param budgetId
@@ -144,7 +87,7 @@ public class BudgetItemDAOImpl extends BaseDAO<BudgetItemBean, BudgetItemVO> imp
     public boolean updateUseMoneyEqualsRealMoney(String budgetId)
     {
         this.jdbcOperation.update(BeanTools.getUpdateHead(claz)
-                                  + "set useMonery = realMonery where budgetId = ?", budgetId);
+                                  + "set realMonery = useMonery where budgetId = ?", budgetId);
         return true;
     }
 }
