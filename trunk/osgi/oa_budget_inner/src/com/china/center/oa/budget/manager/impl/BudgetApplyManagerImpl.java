@@ -179,7 +179,8 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
             // CORE 预算变更的核心检查
             for (BudgetItemBean budgetItemBean : currentItemList)
             {
-                double itemTotal = budgetLogDAO.sumBudgetLogByLevel("budgetItemId" + logLevel,
+                double itemTotal = budgetLogDAO.sumUsedAndPreBudgetLogByLevel("budgetItemId"
+                                                                              + logLevel,
                     budgetItemBean.getId()) / 100.0d;
 
                 if (MathTools.compare(itemTotal, budgetItemBean.getBudget()) > 0)
@@ -241,37 +242,6 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
         logApply(apply, user, apply.getBudgetId(), OperationConstant.OPERATION_PASS, "通过预算变更");
 
         return true;
-    }
-
-    public double sumPreAndUseInEachBudget(BudgetBean budget)
-    {
-        List<BudgetItemBean> itemList = budgetItemDAO.queryEntityBeansByFK(budget.getId());
-
-        double total = 0.0d;
-
-        for (BudgetItemBean budgetItemBean : itemList)
-        {
-            total += sumPreAndUseInEachBudgetItem(budgetItemBean);
-        }
-
-        return total;
-    }
-
-    public double sumPreAndUseInEachBudgetItem(BudgetItemBean budgetItemBean)
-    {
-        BudgetBean budget = budgetDAO.find(budgetItemBean.getBudgetId());
-
-        if (budget == null)
-        {
-            return 0.0;
-        }
-
-        String level = BudgetHelper.getLogLevel(budget);
-
-        double itemTotal = budgetLogDAO.sumBudgetLogByLevel("budgetItemId" + level, budgetItemBean
-            .getId()) / 100.0d;
-
-        return itemTotal;
     }
 
     protected void searchAllUnitSub(String rootId, List<BudgetBean> endBudgetList)

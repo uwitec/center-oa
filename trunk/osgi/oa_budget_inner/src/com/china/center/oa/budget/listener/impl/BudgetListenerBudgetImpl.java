@@ -35,7 +35,7 @@ public class BudgetListenerBudgetImpl implements BudgetListener
     }
 
     /**
-     * 返回预算已经使用的金额
+     * 返回预算已经使用的金额(包括预占的)
      */
     public double onSumPreAndUseInEachBudgetItemChange(User user, BudgetItemBean changeItem)
     {

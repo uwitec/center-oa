@@ -239,7 +239,7 @@ public interface BudgetConstant
     int BUDGETLOG_STATUS_OK = 0;
 
     /**
-     * 临时
+     * 临时(因为申请占用了部分预算,报销的时候先把申请的预算冻结,然后把报销的预算占用,这样避免重复占用预算)
      */
     @Defined(key = "budgetLogStatus", value = "临时(不占用预算)")
     int BUDGETLOG_STATUS_TEMP = 1;

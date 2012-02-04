@@ -201,7 +201,7 @@ public class BudgetManagerImpl implements BudgetManager
             // 预算总金额
             long total = MathTools.doubleToLong2(budgetItem.getBudget());
 
-            // 当前已经使用
+            // 当前已经使用&&预占
             long currentUse = budgetLogDAO.sumBudgetLogByBudgetItemId(eachBudgetItem);
 
             long lastUse = currentUse;
@@ -1210,6 +1210,7 @@ public class BudgetManagerImpl implements BudgetManager
         {
             BudgetHelper.formatBudgetItem(budgetItemBean);
 
+            // 这里的是实际使用
             double hasUseed = this.sumHasUseInEachBudgetItem(budgetItemBean);
 
             budgetItemBean.setSuseMonery(MathTools.formatNum(hasUseed));

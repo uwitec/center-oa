@@ -127,6 +127,9 @@ public class BudgetEndPlanManagerImpl implements CarryPlan
         // 结束处理
         if (end)
         {
+            // 取消预占的(因为结束了)
+            budgetLogDAO.updatePreToZeroByBudgetId(budgetId);
+
             bean.setStatus(BudgetConstant.BUDGET_STATUS_END);
 
             // 计算执行结果
