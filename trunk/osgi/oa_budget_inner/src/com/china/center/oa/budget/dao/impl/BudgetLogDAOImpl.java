@@ -69,10 +69,19 @@ public class BudgetLogDAOImpl extends BaseDAO<BudgetLogBean, BudgetLogVO> implem
 
     public int updatePreToZeroByBudgetId(String budgetId)
     {
+        // 把预占的先备份
         String sql = BeanTools.getUpdateHead(this.claz)
-                     + "set monery = 0 where budgetId = ? and userType = 0";
+                     + "set bakmonery = monery where budgetId = ? and userType = 0 and bakmonery = 0";
 
-        return this.jdbcOperation.update(sql, budgetId);
+        this.jdbcOperation.update(sql, budgetId);
+
+        // 清0
+        sql = BeanTools.getUpdateHead(this.claz)
+              + "set monery = 0 where budgetId = ? and userType = 0";
+
+        this.jdbcOperation.update(sql, budgetId);
+
+        return 0;
     }
 
     public long sumVOBudgetLogByCondition(ConditionParse condition)

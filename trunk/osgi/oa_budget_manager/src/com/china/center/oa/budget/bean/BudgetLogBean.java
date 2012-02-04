@@ -85,6 +85,11 @@ public class BudgetLogBean implements Serializable
      */
     private long monery = 0L;
 
+    /**
+     * 备份一下
+     */
+    private long bakmonery = 0L;
+
     private String locationId = "";
 
     /**
@@ -540,6 +545,23 @@ public class BudgetLogBean implements Serializable
     }
 
     /**
+     * @return the bakmonery
+     */
+    public long getBakmonery()
+    {
+        return bakmonery;
+    }
+
+    /**
+     * @param bakmonery
+     *            the bakmonery to set
+     */
+    public void setBakmonery(long bakmonery)
+    {
+        this.bakmonery = bakmonery;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -583,6 +605,9 @@ public class BudgetLogBean implements Serializable
             .append(TAB)
             .append("monery = ")
             .append(this.monery)
+            .append(TAB)
+            .append("bakmonery = ")
+            .append(this.bakmonery)
             .append(TAB)
             .append("locationId = ")
             .append(this.locationId)
