@@ -1027,7 +1027,7 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
         {
             if (bean.getType() != TcpConstanst.TCP_EXPENSETYPE_COMMON)
             {
-                // 冻结前面的(这样前面的不占用预算)
+                // 冻结前面的(这样前面的不占用预算)(因为申请占用了部分预算,报销的时候先把申请的预算冻结,然后把报销的预算占用,这样避免重复占用预算)
                 changeBudgetBrrowLockStatus(user, bean.getRefId(),
                     BudgetConstant.BUDGETLOG_STATUS_TEMP);
             }
