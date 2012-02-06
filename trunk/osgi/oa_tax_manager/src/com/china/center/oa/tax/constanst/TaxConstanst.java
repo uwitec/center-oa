@@ -210,6 +210,12 @@ public interface TaxConstanst
     int FINANCE_CREATETYPE_OUT_DUICHONG = 27;
 
     /**
+     * 入库-B单入库对冲
+     */
+    @Defined(key = "financeCreateType", value = "入库-B单入库对冲")
+    int FINANCE_CREATETYPE_OUT_BDUI = 28;
+
+    /**
      * 销售-销售出库
      */
     @Defined(key = "financeCreateType", value = "销售-销售出库")
