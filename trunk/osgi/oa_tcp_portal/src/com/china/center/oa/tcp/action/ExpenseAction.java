@@ -1510,7 +1510,7 @@ public class ExpenseAction extends DispatchAction
 
         if ( !ListTools.isEmptyOrNull(budgetIdeList))
         {
-            // 费用分担(只有通用报销的时候需要)
+            // 费用分担(只有通用报销的时候需要,也不是的要是申请过时了,也要重新指定)
             List<TcpShareBean> shareList = new ArrayList<TcpShareBean>();
 
             bean.setShareList(shareList);

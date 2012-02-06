@@ -221,7 +221,8 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
 
         List<TcpShareBean> shareList = null;
 
-        if (bean.getType() != TcpConstanst.TCP_EXPENSETYPE_COMMON)
+        // 默认从父级申请拷贝过来
+        if (ListTools.isEmptyOrNull(bean.getShareList()))
         {
             // 从父申请里面拷贝分担比例
             shareList = tcpShareDAO.queryEntityBeansByFK(bean.getRefId());
@@ -1612,7 +1613,7 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
 
         List<TcpShareBean> shareList = null;
 
-        if (bean.getType() != TcpConstanst.TCP_EXPENSETYPE_COMMON)
+        if (ListTools.isEmptyOrNull(bean.getShareList()))
         {
             // 从父申请里面拷贝分担比例
             shareList = tcpShareDAO.queryEntityBeansByFK(bean.getRefId());

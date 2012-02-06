@@ -208,6 +208,38 @@ function getTravelApply(oos)
         </td>
     </tr>
     
+    
+    <p:title>
+        <td class="caption">
+         <strong>费用分担</strong>
+        </td>
+    </p:title>
+
+    <p:line flag="0" />
+    
+    <tr>
+        <td colspan='2' align='center'>
+        <table width="98%" border="0" cellpadding="0" cellspacing="0"
+            class="border">
+            <tr>
+                <td>
+                <table width="100%" border="0" cellspacing='1' id="tables_share">
+                    <tr align="center" class="content0">
+                        <td width="35%" align="center">月度预算</td>
+                        <td width="35%" align="center">部门</td>
+                        <td width="15%" align="center">权签人</td>
+                        <td width="10%" align="center">分担比例(%)</td>
+                        <td width="5%" align="left"><input type="button" accesskey="B"
+                            value="增加" class="button_class" onclick="addShareTr()"></td>
+                    </tr>
+                </table>
+                </td>
+            </tr>
+        </table>
+
+        </td>
+    </tr>
+    
     <p:title>
         <td class="caption">
          <strong>提交/审核</strong>
