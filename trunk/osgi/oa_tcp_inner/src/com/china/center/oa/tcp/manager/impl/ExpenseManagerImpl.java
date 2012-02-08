@@ -982,6 +982,11 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
     {
         List<String> processList = new ArrayList();
 
+        if (StringTools.isNullOrNone(processId))
+        {
+            throw new MYException("审批的人不能为空");
+        }
+
         processList.add(processId);
 
         return saveApprove(user, processList, bean, nextStatus, pool);
