@@ -216,8 +216,8 @@ public class BudgetManagerImpl implements BudgetManager
                 if (currentUse > total)
                 {
                     throw new MYException(
-                        "预算[%s]下的预算项[%s]使用超值,当前预算项总金额[%f],已经使用金额[%f],剩余可使用金额[%f],请确认操作", budgetItem
-                            .getBudgetName(), budgetItem.getFeeItemName(), MathTools
+                        "预算[%s]下的预算项[%s]使用超值,当前预算项总金额[%.2f],已经使用金额[%.2f],剩余可使用金额[%.2f],请确认操作",
+                        budgetItem.getBudgetName(), budgetItem.getFeeItemName(), MathTools
                             .longToDouble2(total), MathTools.longToDouble2(lastUse), MathTools
                             .longToDouble2(total - lastUse));
                 }
@@ -240,8 +240,8 @@ public class BudgetManagerImpl implements BudgetManager
             if (currentUse > total)
             {
                 throw new MYException(
-                    "预算[%s]下的预算项[%s]使用超值,当前预算项总金额[%f],已经使用金额[%f],剩余可使用金额[%f],请确认操作", budgetItem
-                        .getBudgetName(), budgetItem.getFeeItemName(), MathTools
+                    "预算[%s]下的预算项[%s]使用超值,当前预算项总金额[%.2f],已经使用金额[%.2f],剩余可使用金额[%.2f],请确认操作",
+                    budgetItem.getBudgetName(), budgetItem.getFeeItemName(), MathTools
                         .longToDouble2(total), MathTools.longToDouble2(currentUse), MathTools
                         .longToDouble2(total - currentUse));
             }
