@@ -118,7 +118,7 @@ function load()
                 <td align="center"><strong>剩余预算</strong></td>
                 </c:if>
                 
-                <td align="center"><strong>已经使用</strong></td>
+                <td align="center"><strong>实际使用/预占+实际</strong></td>
                 
                 <c:if test="${!unit}">
                 <td align="center"><strong>剩余预算</strong></td>
@@ -146,7 +146,9 @@ function load()
                     </c:if>
                     
                     <td align="center" onclick="hrefAndSelect(this)">
-                    <a title="点击查看使用明细" href="../budget/budget.do?method=queryAllBudgetLog&load=1&itemId=${item.id}">${item.suseMonery}</a></td>
+                    <a title="点击查看使用明细" href="../budget/budget.do?method=queryAllBudgetLog&load=1&itemId=${item.id}">${item.suseMonery}/${item.spreAndUseMonery}</a>
+                    </td>
+                    
                     <c:if test="${!unit}">
                         <td align="center" onclick="hrefAndSelect(this)">${item.sremainMonery}</td>
                     </c:if>

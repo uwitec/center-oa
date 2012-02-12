@@ -544,7 +544,7 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
             if (currentItem != null)
             {
                 // 当前最大占用
-                double itemSubTotal = budgetManager.sumPreAndUseInEachBudgetItem(currentItem);
+                double itemSubTotal = budgetManager.sumMaxUseInEachBudgetItem(currentItem);
 
                 if (MathTools.compare(itemSubTotal, budgetItemBean.getBudget()) > 0)
                 {

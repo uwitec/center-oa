@@ -112,7 +112,7 @@ public interface BudgetManager
     void initCarryStatus();
 
     /**
-     * 合计所有的递归使用的子项(当前实际使用的情况)
+     * 合计所有的递归使用的子项(当前实际使用的情况)(用于显示)
      * 
      * @param budgetItemBean
      * @return
@@ -120,12 +120,20 @@ public interface BudgetManager
     double sumHasUseInEachBudgetItem(BudgetItemBean budgetItemBean);
 
     /**
-     * 合计子项的预占和使用(要么是预算,要么是结束的时候实际使用,多用于修改的最大校验)
+     * 当前实际&&预占使用的情况(只有正式的)(用于显示)
      * 
      * @param budgetItemBean
      * @return
      */
     double sumPreAndUseInEachBudgetItem(BudgetItemBean budgetItemBean);
+
+    /**
+     * 合计子项的预占和使用(要么是预算,要么是结束的时候实际使用,多用于修改的最大校验)
+     * 
+     * @param budgetItemBean
+     * @return
+     */
+    double sumMaxUseInEachBudgetItem(BudgetItemBean budgetItemBean);
 
     /**
      * 统计预算实际使用金额(当前实际使用的情况,仅仅包括实际使用的,不包括预占的)
@@ -141,5 +149,5 @@ public interface BudgetManager
      * @param budget
      * @return
      */
-    double sumPreAndUseInEachBudget(BudgetBean budget);
+    double sumMaxUseInEachBudget(BudgetBean budget);
 }

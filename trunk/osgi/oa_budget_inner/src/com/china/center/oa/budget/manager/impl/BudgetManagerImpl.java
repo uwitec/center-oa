@@ -836,7 +836,7 @@ public class BudgetManagerImpl implements BudgetManager
         return total;
     }
 
-    public double sumPreAndUseInEachBudget(BudgetBean budget)
+    public double sumMaxUseInEachBudget(BudgetBean budget)
     {
         List<BudgetItemBean> itemList = budgetItemDAO.queryEntityBeansByFK(budget.getId());
 
@@ -844,7 +844,7 @@ public class BudgetManagerImpl implements BudgetManager
 
         for (BudgetItemBean budgetItemBean : itemList)
         {
-            total += sumPreAndUseInEachBudgetItem(budgetItemBean);
+            total += sumMaxUseInEachBudgetItem(budgetItemBean);
         }
 
         return total;
@@ -876,6 +876,30 @@ public class BudgetManagerImpl implements BudgetManager
             return 0.0;
         }
 
+        String level = BudgetHelper.getLogLevel(budget);
+
+        double itemTotal = budgetLogDAO.sumUsedAndPreBudgetLogByLevel("budgetItemId" + level,
+            budgetItemBean.getId()) / 100.0d;
+
+        return itemTotal;
+    }
+
+    public double sumMaxUseInEachBudgetItem(BudgetItemBean budgetItemBean)
+    {
+        BudgetBean budget = budgetDAO.find(budgetItemBean.getBudgetId());
+
+        if (budget == null)
+        {
+            return 0.0;
+        }
+
+        // 如果是最小的预算,则返回item的
+        if (BudgetHelper.isUnitBudget(budget))
+        {
+            return BudgetHelper.getBudgetItemRealBudget(budget, budgetItemBean);
+        }
+
+        // 下面是子预算
         List<BudgetBean> subBudget = budgetDAO.querySubmitBudgetByParentId(budget.getId());
 
         double total = 0.0d;
@@ -1213,6 +1237,8 @@ public class BudgetManagerImpl implements BudgetManager
             // 这里的是实际使用
             double hasUseed = this.sumHasUseInEachBudgetItem(budgetItemBean);
 
+            double preAndUse = this.sumPreAndUseInEachBudgetItem(budgetItemBean);
+
             budgetItemBean.setSuseMonery(MathTools.formatNum(hasUseed));
 
             // 父预算
@@ -1249,6 +1275,8 @@ public class BudgetManagerImpl implements BudgetManager
                 // 剩余预算
                 budgetItemBean.setSremainMonery(MathTools.formatNum(budgetItemBean.getBudget()
                                                                     - hasUseed));
+
+                budgetItemBean.setSpreAndUseMonery(MathTools.formatNum(preAndUse));
             }
             else
             {
@@ -1257,6 +1285,8 @@ public class BudgetManagerImpl implements BudgetManager
 
                 budgetItemBean.setSremainMonery(MathTools.formatNum(budgetItemBean.getBudget()
                                                                     - hasUseed));
+
+                budgetItemBean.setSpreAndUseMonery(MathTools.formatNum(preAndUse));
             }
         }
 

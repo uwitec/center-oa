@@ -62,6 +62,12 @@ public class BudgetItemVO extends BudgetItemBean
     @Ignore
     private String sremainMonery = "";
 
+    /**
+     * 预占&&实际(正式的哦)
+     */
+    @Ignore
+    private String spreAndUseMonery = "";
+
     @Ignore
     private String schangeMonery = "";
 
@@ -236,6 +242,23 @@ public class BudgetItemVO extends BudgetItemBean
     }
 
     /**
+     * @return the spreAndUseMonery
+     */
+    public String getSpreAndUseMonery()
+    {
+        return spreAndUseMonery;
+    }
+
+    /**
+     * @param spreAndUseMonery
+     *            the spreAndUseMonery to set
+     */
+    public void setSpreAndUseMonery(String spreAndUseMonery)
+    {
+        this.spreAndUseMonery = spreAndUseMonery;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -273,6 +296,9 @@ public class BudgetItemVO extends BudgetItemBean
             .append(TAB)
             .append("sremainMonery = ")
             .append(this.sremainMonery)
+            .append(TAB)
+            .append("spreAndUseMonery = ")
+            .append(this.spreAndUseMonery)
             .append(TAB)
             .append("schangeMonery = ")
             .append(this.schangeMonery)
