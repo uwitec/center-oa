@@ -116,7 +116,7 @@ function press()
 						value="${item.id}" ${vs.index== 0 ? "checked" : ""}/></td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.name}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.total)}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${my:get('bankType', item.type)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:get('pubManagerType', item.mtype)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.dutyName}</td>
 				</tr>
 			</c:forEach>

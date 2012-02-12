@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="客户列表" />
+<p:link title="公共客户列表" />
 <base target="_self">
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
@@ -47,12 +47,6 @@ function press()
     window.common.enter(querys);
 } 
 
-function querySelfPublic()
-{
-    $O('method').value = 'rptQuerySelfPublicCustomer';
-    formEntry.submit();
-}
-
 </script>
 
 </head>
@@ -68,32 +62,7 @@ function querySelfPublic()
 </p:navigation> <br>
 
 <p:body width="100%">
-	<p:subBody width="90%">
-		<table width="100%" align="center" cellspacing='1' class="table0"
-			id="result">
-			<tr class="content1">
-				<td width="15%" align="center">客户名称</td>
-				<td align="center"><input type="text" name="name" onkeypress="press()"
-					value="${name}"></td>
-				<td width="15%" align="center">客户编码</td>
-				<td align="center"><input type="text" name="code" onkeypress="press()"
-					value="${code}"></td>
-			</tr>
-
-			<tr class="content1">
-				<td colspan="4" align="right">
-				<!--  
-				<input type="button"
-                    onclick="querySelfPublic()" class="button_class"
-                    value="&nbsp;&nbsp;公共客户&nbsp;&nbsp;">
-                -->
-				&nbsp;&nbsp;<input type="button"
-					onclick="querys()" class="button_class"
-					value="&nbsp;&nbsp;查 询&nbsp;&nbsp;"></td>
-		</table>
-
-	</p:subBody>
-
+	
 	<p:title>
 		<td class="caption"><strong>客户列表：</strong></td>
 	</p:title>
@@ -118,7 +87,7 @@ function querySelfPublic()
 				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
 					<td align="center"><input type="radio" name="beans" pval="${my:formatNum(item.creditVal)}"
 					    plever="${item.lever}"
-					    pstype="0"
+					    pstype="1"
 					    pconnector="${item.connector}"
 					    phandphone="${item.handphone}"
 					    pcreditlevelid="${item.creditLevelId}"
@@ -134,8 +103,6 @@ function querySelfPublic()
 			</c:forEach>
 		</table>
 			
-		<p:formTurning form="formEntry" method="rptQuerySelfCustomer"></p:formTurning>
-
 	</p:subBody>
 
 	<p:line flag="1" />

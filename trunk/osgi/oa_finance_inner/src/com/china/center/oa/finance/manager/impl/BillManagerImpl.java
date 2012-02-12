@@ -614,7 +614,7 @@ public class BillManagerImpl implements BillManager
             throw new MYException("分拆金额不能小于0,请确认操作");
         }
 
-        if (bill.getMoneys() < newMoney)
+        if (MathTools.compare(bill.getMoneys(), newMoney) < 0)
         {
             throw new MYException("金额不足,无法分拆,请确认操作");
         }

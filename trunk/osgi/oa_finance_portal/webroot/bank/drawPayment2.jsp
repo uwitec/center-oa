@@ -49,10 +49,19 @@ function selectCus()
     window.common.modal('../customer/customer.do?method=rptQuerySelfCustomer&stafferId=${user.stafferId}&load=1');
 }
 
+function selectPubCus()
+{
+    window.common.modal('../customer/customer.do?method=rptQueryPublicCustomer&stafferId=${user.stafferId}&load=1');
+}
+
+var g_pstype = 0;
+
 function getCustomer(obj)
 {
     $O('customerId').value = obj.value;
     $O('cname').value = obj.pname;
+    
+    g_pstype = obj.pstype;
 }
 
 var g_index = 1;
@@ -67,7 +76,14 @@ function opens(index)
     
     g_index = index;
     
-    window.common.modal('../sail/out.do?method=rptQueryOut&selectMode=0&mode=0&load=1&stafferId=${user.stafferId}&customerId=' + $$('customerId') + '&dutyId=' + $$('dutyId'));
+    if (g_pstype == 0 || $O('customerId').value == '99')
+    {
+        window.common.modal('../sail/out.do?method=rptQueryOut&selectMode=0&mode=0&load=1&stafferId=${user.stafferId}&customerId=' + $$('customerId') + '&dutyId=' + $$('dutyId'));
+    }
+    else
+    {
+        window.common.modal('../sail/out.do?method=rptQueryOut&selectMode=0&mode=0&load=1&customerId=' + $$('customerId') + '&dutyId=' + $$('dutyId'));    
+    }
 }
 
 function openBalance(index)
@@ -171,7 +187,7 @@ function selectPublic()
                 <input type="button" value="&nbsp;选 择&nbsp;" name="qout1" id="qout1"
                     class="button_class" onclick="selectCus()">&nbsp;
                 <input type="button" value="&nbsp;公共客户&nbsp;" name="qout2" id="qout2"
-                    class="button_class" onclick="selectPublic()">
+                    class="button_class" onclick="selectPubCus()">
             </p:cell>
             
             <c:forEach begin="1" end="5" var="item">

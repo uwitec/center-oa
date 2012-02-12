@@ -27,6 +27,8 @@
 			<forward name="queryCustomerDistribute" path="/customer/queryCustomerDistribute.jsp" />
 			<forward name="rptQueryAllCustomer" path="/customer/rptQueryAllCustomer.jsp" />
 			<forward name="rptQuerySelfCustomer" path="/customer/rptQuerySelfCustomer.jsp" />
+			<forward name="rptQueryPublicCustomer" path="/customer/rptQueryPublicCustomer.jsp" />
+			<forward name="rptQuerySelfPublicCustomer" path="/customer/rptQuerySelfPublicCustomer.jsp" />
 			<forward name="interposeLever" path="/customer/interposeLever.jsp" />
 			<forward name="applyAssignPer" path="/customer/applyAssignPer.jsp" />
 		</action>

@@ -30,6 +30,8 @@
 	
 	<osgi:reference id="stafferDAO" interface="com.china.center.oa.publics.dao.StafferDAO" />
 	
+	<osgi:reference id="dutyDAO" interface="com.china.center.oa.publics.dao.DutyDAO" />
+	
 	<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 	
 	<osgi:reference id="assignApplyDAO" interface="com.china.center.oa.customer.dao.AssignApplyDAO" />

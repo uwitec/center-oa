@@ -18,10 +18,10 @@ import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
-import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.vs.PaymentVSOutBean;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.sail.bean.UnitViewBean;
 
 
 /**
@@ -45,7 +45,7 @@ public class PaymentApplyBean implements Serializable
     @FK
     private String paymentId = "";
 
-    @Join(tagClass = CustomerBean.class)
+    @Join(tagClass = UnitViewBean.class)
     private String customerId = "";
 
     /**
