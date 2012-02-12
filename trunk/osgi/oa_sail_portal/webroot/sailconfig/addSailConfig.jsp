@@ -3,111 +3,98 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="增加销售规则" />
+<p:link title="增加结算价格" />
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="javascript">
 function addBean()
 {
-	submit('确定增加销售规则?', null, check);
+	submit('确定增加结算价格?', null, null);
 }
 
-function check()
+function selectProduct()
 {
-    for (var i = 0; i <=5; i++)
-    {
-        var type = $$('finType' + i);
-        
-        if (type == 1)
-        {
-            if (parseInt($$('ratio' + i)) <= 0)
-            {
-                alert('开票的时候税点必须大于0');
-                
-                $f('ratio' + i);
-                
-                return false;
-            }
-        }
-    }
-    
-    return true;
+    window.common.modal('../product/product.do?method=rptQueryProduct&load=1&selectMode=1');
 }
+
+function getProduct(oos)
+{
+    var obj = oos[0];
+    
+    $O('productName').value = obj.pname;   
+    $O('productId').value = obj.value;   
+}
+
+//选择职位
+function selectPrin()
+{
+    window.common.modal('../admin/org.do?method=popOrg');
+}
+
+function setOrgFromPop(id, name, level)
+{
+    $O('industryId').value = id;
+    
+    $O('industryName').value = name;
+}
+
+function clears()
+{
+    $O('productId').value = '公共';
+    $O('productName').value = '';
+}
+
+
 </script>
 
 </head>
 <body class="body_class">
-<form name="formEntry" action="../sail/config.do" method="post"><input
-	type="hidden" name="method" value="addSailConfig">
+<form name="formEntry" action="../sail/config.do" method="post">
+<input type="hidden" name="method" value="addSailConfig">
+<input type="hidden" name="industryId" value="">
+<input type="hidden" name="productId" value="0">
+
 <p:navigation
 	height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
-		onclick="javascript:history.go(-1)">销售规则管理</span> &gt;&gt; 增加销售规则</td>
+		onclick="javascript:history.go(-1)">结算价格管理</span> &gt;&gt; 增加结算价格</td>
 	<td width="85"></td>
+	
 </p:navigation> <br>
 
 <p:body width="98%">
 
 	<p:title>
-		<td class="caption"><strong>销售规则基本信息：</strong></td>
+		<td class="caption"><strong>结算价格基本信息：</strong></td>
 	</p:title>
 
 	<p:line flag="0" />
 
 	<p:subBody width="100%">
-		<p:class value="com.china.center.oa.sail.bean.SailConfigBean" />
+		<p:class value="com.china.center.oa.sail.bean.SailConfBean" />
 
-		<p:table cells="2">
+		<p:table cells="1">
 		    
-		    <p:cells title="开票品名" celspan="2">
-	            <c:forEach items="${showList}" var="item" varStatus="vs">
-	            <input type="checkbox" name="showIds" value="${item.id}">${item.name}&nbsp;&nbsp;
-	            <c:if test="${(vs.index + 1) % 7 == 0}">
-	            <br/>
-	            </c:if>
-	            </c:forEach>
-            </p:cells>
+		    <p:pro field="sailType">
+                <p:option type="productSailType" empty="true"/>
+            </p:pro>
 
-			<p:pro field="sailType">
-				<p:option type="productSailType"/>
+			<p:pro field="productId" value="公共" innerString="size=60">
+			     <input type="button" value="&nbsp;选择产品&nbsp;" name="qout1" id="qout1"
+                    class="button_class" onclick="selectProduct()">&nbsp;
+                 <input type="button" value="&nbsp;清 空&nbsp;" name="qout" id="qout"
+                        class="button_class" onclick="clears()">&nbsp;&nbsp;
 			</p:pro>
 			
-			<p:pro field="productType">
-                <p:option type="productType"/>
+			<p:pro field="industryId" innerString="size=60">
+                 <input type="button" value="&nbsp;选择事业部&nbsp;" name="qout2" id="qout2"
+                    class="button_class" onclick="selectPrin()">&nbsp;
             </p:pro>
-
-			<p:pro field="finType0">
-                <p:option type="sailConfigFinType"/>
-            </p:pro>
-			<p:pro field="ratio0" value="0"/>
-			
-			<p:pro field="finType4">
-                <p:option type="sailConfigFinType"/>
-            </p:pro>
-            <p:pro field="ratio4" value="0"/>
             
-            <p:pro field="finType5">
-                <p:option type="sailConfigFinType"/>
-            </p:pro>
-            <p:pro field="ratio5" value="0"/>
-			
-			<p:pro field="finType1">
-                <p:option type="sailConfigFinType"/>
-            </p:pro>
-            <p:pro field="ratio1" value="0"/>
+            <p:pro field="pratio" value="0" innerString="size=60 oncheck='isMathNumber'"/>
             
-            <p:pro field="finType2">
-                <p:option type="sailConfigFinType"/>
-            </p:pro>
-            <p:pro field="ratio2" value="0"/>
-            
-            <p:pro field="finType3">
-                <p:option type="sailConfigFinType"/>
-            </p:pro>
-            <p:pro field="ratio3" value="0"/>
-            
-
+            <p:pro field="iratio" value="0" innerString="size=60 oncheck='isMathNumber'"/>
 			
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
 

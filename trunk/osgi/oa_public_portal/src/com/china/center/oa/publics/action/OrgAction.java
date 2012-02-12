@@ -92,8 +92,8 @@ public class OrgAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryOrg(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                  HttpServletResponse response)
+    public ActionForward queryOrg(ActionMapping mapping, ActionForm form,
+                                  HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         preForListAllOrgTree(request);
@@ -111,8 +111,8 @@ public class OrgAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryStafferOrg(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                         HttpServletResponse response)
+    public ActionForward queryStafferOrg(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         try
@@ -150,6 +150,23 @@ public class OrgAction extends DispatchAction
         preForListAllOrgTree(request);
 
         return mapping.findForward("popOrg");
+    }
+
+    /**
+     * rptQueryOrg
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward rptQueryOrg(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        return popOrg(mapping, form, request, response);
     }
 
     /**
@@ -198,7 +215,8 @@ public class OrgAction extends DispatchAction
         for (PrincipalshipBean principalshipBean : plist)
         {
             // 查询下一级岗位
-            List<PrincipalshipBean> vos = principalshipDAO.querySubPrincipalship(principalshipBean.getId());
+            List<PrincipalshipBean> vos = principalshipDAO.querySubPrincipalship(principalshipBean
+                .getId());
 
             List<StafferOrgWrap> wraps = new ArrayList<StafferOrgWrap>();
 
@@ -232,7 +250,8 @@ public class OrgAction extends DispatchAction
     private void createWrap(List<StafferOrgWrap> wraps, PrincipalshipBean orgBean)
     {
         // 子组织下的人员
-        List<StafferVSPriVO> pplist = stafferVSPriDAO.queryEntityVOsByFK(orgBean.getId(), AnoConstant.FK_FIRST);
+        List<StafferVSPriVO> pplist = stafferVSPriDAO.queryEntityVOsByFK(orgBean.getId(),
+            AnoConstant.FK_FIRST);
 
         if (pplist.isEmpty())
         {
@@ -285,8 +304,8 @@ public class OrgAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward preForAddOrg(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward preForAddOrg(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         preForListAllOrgTree(request);
@@ -379,8 +398,8 @@ public class OrgAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateOrg(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                   HttpServletResponse response)
+    public ActionForward updateOrg(ActionMapping mapping, ActionForm form,
+                                   HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         PrincipalshipBean bean = new PrincipalshipBean();
@@ -472,8 +491,8 @@ public class OrgAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findOrg(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward findOrg(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String update = request.getParameter("update");
