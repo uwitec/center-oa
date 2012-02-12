@@ -405,6 +405,7 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
 
         // 辅助核算 产品/仓库
         itemIn1.setProductId(compose.getProductId());
+        itemIn1.setProductAmountIn( -compose.getAmount());
 
         itemIn1.setDepotId(compose.getDeportId());
 
@@ -470,6 +471,7 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
 
             eachItemIn.setDepartmentId(staffer.getPrincipalshipId());
 
+            // 这里不需要数量啊
             eachItemIn.setProductId(compose.getProductId());
             eachItemIn.setDepotId(compose.getDeportId());
 
@@ -523,6 +525,7 @@ public class ComposeProductListenerTaxGlueImpl implements ComposeProductListener
 
             // 辅助核算 产品/仓库
             itemOut1.setProductId(composeItemBean.getProductId());
+            itemOut1.setProductAmountOut( -composeItemBean.getAmount());
             itemOut1.setDepotId(composeItemBean.getDeportId());
 
             itemList.add(itemOut1);

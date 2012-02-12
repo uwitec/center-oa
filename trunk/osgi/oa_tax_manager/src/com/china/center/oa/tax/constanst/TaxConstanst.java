@@ -212,7 +212,7 @@ public interface TaxConstanst
     /**
      * 入库-B单入库对冲
      */
-    @Defined(key = "financeCreateType", value = "入库-B单入库对冲")
+    // @Defined(key = "financeCreateType", value = "入库-B单入库对冲")
     int FINANCE_CREATETYPE_OUT_BDUI = 28;
 
     /**
@@ -396,6 +396,12 @@ public interface TaxConstanst
     int UNIT_TYPE_PROVIDE = 1;
 
     /**
+     * 纳税实体
+     */
+    @Defined(key = "unitType", value = "纳税实体")
+    int UNIT_TYPE_DUTY = 2;
+
+    /**
      * 默认级别
      */
     int TAX_LEVEL_DEFAULT = 0;
@@ -462,4 +468,5 @@ public interface TaxConstanst
      * 结转的LOCK
      */
     String FINANCETURN_OPR_LOCK = "FINANCETURN_OPR_LOCK";
+
 }

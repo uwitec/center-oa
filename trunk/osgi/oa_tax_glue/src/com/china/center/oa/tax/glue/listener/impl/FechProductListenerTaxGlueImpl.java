@@ -190,6 +190,9 @@ public class FechProductListenerTaxGlueImpl implements FechProductListener
         itemIn1.setDepotId(out.getLocation());
         itemIn1.setProductId(each.getProductId());
 
+        // 采购数量
+        itemIn1.setProductAmountIn(each.getAmount());
+
         itemList.add(itemIn1);
 
         // 贷方
