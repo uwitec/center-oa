@@ -402,10 +402,16 @@ public interface OutConstant
      */
     int BADDEBTSCHECKSTATUS_YES = 1;
 
-    @Defined(key = "outVtype", value = "默认")
+    /**
+     * 普通单据
+     */
+    @Defined(key = "outVtype", value = "普通单据")
     int VTYPE_DEFAULT = 0;
 
-    @Defined(key = "outVtype", value = "抽象")
-    int VTYPE_ABS = 1;
+    /**
+     * 关注单据
+     */
+    @Defined(key = "outVtype", value = "关注单据")
+    int VTYPE_SPECIAL = 1;
 
 }

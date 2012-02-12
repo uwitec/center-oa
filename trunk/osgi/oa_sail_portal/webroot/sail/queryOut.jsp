@@ -124,6 +124,7 @@ function res()
 	setSelectIndex($O('pay'), 0);
 	setSelectIndex($O('duty'), 0);
 	setSelectIndex($O('invoiceStatus'), 0);
+	setSelectIndex($O('vtype'), 0);
 }
 
 var jmap = new Object();
@@ -707,8 +708,11 @@ function hrefAndSelect(obj)
                             <option value="1">全部开票</option>
                         </select></td>
                         
-                        <td width="15%" align="center"></td>
-                        <td align="center">
+                        <td width="15%" align="center">关注状态</td>
+                        <td align="center" colspan="1"><select name="vtype" values="${ppmap.vtype}"
+                            class="select_class">
+                            <p:option type="outVtype" empty="true"></p:option>
+                        </select>
                         </td>
                     </tr>
 

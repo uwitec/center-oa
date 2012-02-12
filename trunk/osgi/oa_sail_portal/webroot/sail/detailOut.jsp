@@ -342,6 +342,13 @@ function checkBean()
                     </tr>
                     
                     <tr class="content1">
+                        <td align="right">关注类型：</td>
+                        <td colspan="3">
+                        ${my:get('outVtype', bean.vtype)}
+                       </td>
+                    </tr>
+                    
+                    <tr class="content1">
                         <td align="right">管理类型：</td>
                         <td colspan="3">
                         ${my:get('pubManagerType', bean.mtype)}

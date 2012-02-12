@@ -38,7 +38,7 @@ public interface OutManager extends ListenerManager<OutListener>
         throws MYException;
 
     /**
-     * coloneOutAndSubmitAffair(自动生成入库单)
+     * coloneOutAndSubmitAffair(接受调拨生成入库单)
      * 
      * @param outBean
      * @param user
@@ -72,7 +72,7 @@ public interface OutManager extends ListenerManager<OutListener>
         throws MYException;
 
     /**
-     * 采购入库的操作(没有事务)
+     * 采购入库的操作/调拨回滚(没有事务)
      * 
      * @param outBean
      * @param user
@@ -329,6 +329,11 @@ public interface OutManager extends ListenerManager<OutListener>
      * @return
      */
     int[] initPriceKey();
+
+    /**
+     * 初始化销售单的产品销售类型(管理还是普通)
+     */
+    void initPmtype();
 
     /**
      * 导出信用

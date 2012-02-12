@@ -374,11 +374,12 @@ function load()
 	name="statuss">
 	<input type="hidden" value="1"
     name="selfQuery">
+<input type="hidden" value="${vtype}" name="vtype">
 <c:set var="fg" value='销售'/>
 
 <p:navigation
     height="22">
-    <td width="550" class="navigation">库单管理 &gt;&gt; 我的销售单</td>
+    <td width="550" class="navigation">库单管理 &gt;&gt; 我的销售单${vtype}</td>
                 <td width="85"></td>
 </p:navigation> <br>
 

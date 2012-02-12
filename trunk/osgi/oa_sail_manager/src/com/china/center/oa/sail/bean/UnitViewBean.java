@@ -35,6 +35,9 @@ public class UnitViewBean implements Serializable
 
     private String code = "";
 
+    /**
+     * 0:客户 1:供应商 2:实体
+     */
     private int type = 0;
 
     /**

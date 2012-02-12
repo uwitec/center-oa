@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.china.center.common.taglib.DefinedCommon;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
@@ -221,6 +222,24 @@ public abstract class OutHelper
         if (outBean.getType() == OutConstant.OUT_TYPE_INBILL
             && outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT
             && outBean.getReserve1() == OutConstant.MOVEOUT_IN)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 是否是管理销售普通产品
+     * 
+     * @param outBean
+     * @return
+     */
+    public static boolean isManagerSail(OutBean outBean)
+    {
+        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL
+            && !PublicConstant.DEFAULR_DUTY_ID.equals(outBean.getDutyId())
+            && outBean.getPmtype() == PublicConstant.MANAGER_TYPE_COMMON)
         {
             return true;
         }
