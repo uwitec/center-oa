@@ -84,6 +84,10 @@ function rejectBean()
                ${bean.stafferName}
             </p:cell>
             
+            <p:cell title="审核人">
+               ${bean.processName}
+            </p:cell>
+            
             <p:cell title="总金额">
                ${my:formatNum(bean.moneys)}
             </p:cell>
