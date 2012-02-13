@@ -1204,10 +1204,10 @@ public class FinanceManagerImpl implements FinanceManager
                 FinanceHelper.longToString(outTotal));
         }
 
+        // 修改总金额可以的
         if (bean.getInmoney() != old.getInmoney())
         {
-            throw new MYException("原单据金额[%s],当前金额[%s]不等,凭证增加错误", FinanceHelper.longToString(bean
-                .getInmoney()), FinanceHelper.longToString(old.getInmoney()));
+            operationLog.warn("原单据金额和当前金额不等,凭证修改提示.NEW:" + bean + " // OLD:" + old);
         }
 
         // CORE 核对借贷必相等的原则

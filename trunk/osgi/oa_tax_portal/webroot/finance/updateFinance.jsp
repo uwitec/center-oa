@@ -95,7 +95,7 @@ function checks()
 		return false;
 	}
 	
-	if (formatNum(total, 2) != formatNum(inotal, 2))
+	if (formatNum(total, 2) != formatNum(inotal, 2) && false)
 	{
 	    alert('原金额必须是:' + formatNum(total, 2) + ',当前金额:' + formatNum(inotal, 2));
                 
