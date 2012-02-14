@@ -131,6 +131,19 @@ public interface FinanceFacade
         throws MYException;
 
     /**
+     * 稽核通过
+     * 
+     * @param userId
+     * @param id
+     * @param stafferId
+     * @param reason
+     * @return
+     * @throws MYException
+     */
+    boolean passCheck(String userId, String id, String reason)
+        throws MYException;
+
+    /**
      * 驳回(需要同步)
      * 
      * @param stafferId
@@ -260,6 +273,9 @@ public interface FinanceFacade
         throws MYException;
 
     boolean passInvoiceinsBean(String userId, String id)
+        throws MYException;
+
+    boolean checkInvoiceinsBean(String userId, String id)
         throws MYException;
 
     boolean rejectInvoiceinsBean(String userId, String id)

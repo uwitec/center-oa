@@ -27,6 +27,8 @@ import com.china.center.oa.finance.manager.InvoiceinsManager;
 import com.china.center.oa.finance.vo.InvoiceinsVO;
 import com.china.center.oa.finance.vs.InsVSOutBean;
 import com.china.center.oa.publics.bean.DutyBean;
+import com.china.center.oa.publics.constant.InvoiceConstant;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.sail.bean.BaseBalanceBean;
@@ -90,26 +92,27 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
 
         bean.setLogTime(TimeTools.now());
 
+        DutyBean duty = dutyDAO.find(bean.getDutyId());
+
+        if (duty == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
         // 对分公司的直接OK
         if (bean.getType() == FinanceConstant.INVOICEINS_TYPE_DUTY)
         {
             bean.setStatus(FinanceConstant.INVOICEINS_STATUS_END);
 
-            if ( !bean.getInvoiceId().equals("90000000000000000003"))
+            if ( !bean.getInvoiceId().equals(InvoiceConstant.INVOICE_INSTACE_DK_17))
             {
                 throw new MYException("发票只能是:增值专用发票(一般纳税人)[可抵扣](17.00%)");
             }
         }
         else
         {
-            bean.setStatus(FinanceConstant.INVOICEINS_STATUS_SUBMIT);
-        }
-
-        DutyBean duty = dutyDAO.find(bean.getDutyId());
-
-        if (duty == null)
-        {
-            throw new MYException("数据错误,请确认操作");
+            // 设置状态
+            fillStatus(bean);
         }
 
         bean.setMtype(duty.getMtype());
@@ -143,6 +146,55 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
 
         // 这里仅仅是提交,审核通过后才能修改单据的状态
         return true;
+    }
+
+    /**
+     * fillStatus
+     * 
+     * @param bean
+     */
+    private void fillStatus(InvoiceinsBean bean)
+    {
+        bean.setStatus(FinanceConstant.INVOICEINS_STATUS_SUBMIT);
+
+        List<InsVSOutBean> vsList = bean.getVsList();
+
+        // 这里需要判断是否是关注单据
+        if ( !ListTools.isEmptyOrNull(vsList))
+        {
+            for (InsVSOutBean insVSOutBean : vsList)
+            {
+                if (insVSOutBean.getType() == FinanceConstant.INSVSOUT_TYPE_OUT)
+                {
+                    OutBean out = outDAO.find(insVSOutBean.getOutId());
+
+                    if ( !out.getDutyId().equals(bean.getDutyId()))
+                    {
+                        bean.setVtype(PublicConstant.VTYPE_SPECIAL);
+
+                        bean.setStatus(FinanceConstant.INVOICEINS_STATUS_CHECK);
+
+                        break;
+                    }
+                }
+
+                if (insVSOutBean.getType() == FinanceConstant.INSVSOUT_TYPE_BALANCE)
+                {
+                    OutBalanceBean ob = outBalanceDAO.find(insVSOutBean.getOutId());
+
+                    OutBean out = outDAO.find(ob.getOutId());
+
+                    if ( !out.getDutyId().equals(bean.getDutyId()))
+                    {
+                        bean.setVtype(PublicConstant.VTYPE_SPECIAL);
+
+                        bean.setStatus(FinanceConstant.INVOICEINS_STATUS_CHECK);
+
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -476,6 +528,32 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
                 }
             }
         }
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean checkInvoiceinsBean(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        InvoiceinsBean bean = invoiceinsDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bean.getStatus() != FinanceConstant.INVOICEINS_STATUS_CHECK)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 财务审核
+        bean.setStatus(FinanceConstant.INVOICEINS_STATUS_SUBMIT);
+
+        invoiceinsDAO.updateEntityBean(bean);
 
         return true;
     }

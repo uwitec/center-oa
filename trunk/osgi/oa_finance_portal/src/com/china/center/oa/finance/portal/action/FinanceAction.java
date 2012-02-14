@@ -156,6 +156,8 @@ public class FinanceAction extends DispatchAction
 
     private static final String QUERYPAYMENTAPPLY = "queryPaymentApply";
 
+    private static final String QUERYPAYMENTAPPLYCHECK = "queryPaymentApplyCheck";
+
     private static final String QUERYSTAT = "queryStat";
 
     private static final String QUERYSELFPAYMENTAPPLY = "querySelfPaymentApply";
@@ -284,6 +286,38 @@ public class FinanceAction extends DispatchAction
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPAYMENTAPPLY, request, condtion,
             this.paymentApplyDAO);
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * queryPaymentApplyCheck
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryPaymentApplyCheck(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
+                                                HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        ActionTools.processJSONQueryCondition(QUERYPAYMENTAPPLYCHECK, request, condtion);
+
+        condtion.addIntCondition("PaymentApplyBean.status", "=",
+            FinanceConstant.PAYAPPLY_STATUS_CHECK);
+
+        condtion.addCondition("order by PaymentApplyBean.logTime desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPAYMENTAPPLYCHECK, request,
+            condtion, this.paymentApplyDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -1844,7 +1878,8 @@ public class FinanceAction extends DispatchAction
 
         request.setAttribute("vsList", vsList);
 
-        if (bean.getStatus() != FinanceConstant.PAYAPPLY_STATUS_INIT)
+        if (bean.getStatus() != FinanceConstant.PAYAPPLY_STATUS_INIT
+            && bean.getStatus() != FinanceConstant.PAYAPPLY_STATUS_CHECK)
         {
             return mapping.findForward("detailPaymentApply");
         }
@@ -1875,11 +1910,24 @@ public class FinanceAction extends DispatchAction
 
         String reason = request.getParameter("reason");
 
+        String returnUrl = "queryPaymentApply";
+
         try
         {
             User user = Helper.getUser(request);
 
-            financeFacade.passPaymentApply(user.getId(), id, reason);
+            PaymentApplyBean paymentApplyBean = paymentApplyDAO.find(id);
+
+            if (paymentApplyBean.getStatus() == FinanceConstant.PAYAPPLY_STATUS_INIT)
+            {
+                financeFacade.passPaymentApply(user.getId(), id, reason);
+            }
+            else
+            {
+                financeFacade.passCheck(user.getId(), id, reason);
+
+                returnUrl = "queryPaymentApplyCheck";
+            }
 
             request.setAttribute(KeyConstant.MESSAGE, "成功操作");
         }
@@ -1892,7 +1940,7 @@ public class FinanceAction extends DispatchAction
 
         CommonTools.removeParamers(request);
 
-        return mapping.findForward("queryPaymentApply");
+        return mapping.findForward(returnUrl);
     }
 
     /**

@@ -30,6 +30,7 @@ import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.dao.StatBankDAO;
 import com.china.center.oa.finance.manager.StatBankManager;
 import com.china.center.oa.publics.dao.CommonDAO;
+import com.china.center.tools.MathTools;
 import com.china.center.tools.TimeTools;
 
 
@@ -245,7 +246,7 @@ public class StatBankManagerImpl implements StatBankManager
         // 获取没有认领的回款
         double sumNotUserByBankId = paymentDAO.sumNotUserByBankId(bankId);
 
-        // 总收入
+        // 总收入(本月收入+上月结余+回款没有认领的)
         double inTotal = inBillDAO.sumByCondition(inCon) + lastStat.getTotal() + sumNotUserByBankId;
 
         ConditionParse outCon = new ConditionParse();
@@ -258,10 +259,17 @@ public class StatBankManagerImpl implements StatBankManager
 
         outCon.addCondition("OutBillBean.logTime", "<=", endTime);
 
+        // 付款的
         double outTotal = outBillDAO.sumByCondition(outCon);
 
         // 月结余
         double lastTotal = inTotal - outTotal;
+
+        // 防止-0.0000000000009等
+        if (MathTools.compare(lastTotal, 0.0d) == 0)
+        {
+            return 0.0d;
+        }
 
         // 本月统计
         return lastTotal;

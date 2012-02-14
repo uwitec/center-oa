@@ -123,6 +123,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
         List<PaymentVSOutBean> vsList = bean.getVsList();
 
+        // 校验是否是特殊单据
         for (PaymentVSOutBean vsItem : vsList)
         {
             vsItem.setId(commonDAO.getSquenceString20());
@@ -130,6 +131,9 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
             vsItem.setParentId(bean.getId());
 
             vsItem.setLogTime(bean.getLogTime());
+
+            // 处理每个节点(如果就是待稽核)
+            fillEachItem(bean, vsItem);
         }
 
         // 原来的type
@@ -217,8 +221,9 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
                     OutBean out = outDAO.find(vsItem.getOutId());
 
-                    // 2012后
-                    if (OATools.getManagerFlag() && out.getOutTime().compareTo("2012-01-01") >= 0)
+                    // 2012后(废除)
+                    if (OATools.getManagerFlag() && out.getOutTime().compareTo("2012-01-01") >= 0
+                        && false)
                     {
                         if ( !out.getDutyId().equals(payment.getDutyId()))
                         {
@@ -366,6 +371,83 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
     }
 
     /**
+     * 处理每个节点
+     * 
+     * @param bean
+     * @param vsItem
+     */
+    private void fillEachItem(PaymentApplyBean bean, PaymentVSOutBean vsItem)
+    {
+        if (bean.getType() == FinanceConstant.PAYAPPLY_TYPE_CHANGEFEE)
+        {
+            return;
+        }
+
+        String dutyId = "";
+
+        String bdutyId = "";
+
+        if ( !StringTools.isNullOrNone(vsItem.getOutId()))
+        {
+            OutBean out = outDAO.find(vsItem.getOutId());
+
+            if (out != null)
+            {
+                dutyId = out.getDutyId();
+            }
+        }
+
+        if ( !StringTools.isNullOrNone(vsItem.getOutBalanceId()))
+        {
+            OutBalanceBean outBalanceBean = outBalanceDAO.find(vsItem.getOutBalanceId());
+
+            if (outBalanceBean != null)
+            {
+                OutBean out = outDAO.find(outBalanceBean.getOutId());
+
+                if (out != null)
+                {
+                    dutyId = out.getDutyId();
+                }
+            }
+        }
+
+        // 客户预收直接返回(没有任何关联)
+        if (StringTools.isNullOrNone(dutyId))
+        {
+            return;
+        }
+
+        if ( !StringTools.isNullOrNone(vsItem.getBillId()))
+        {
+            InBillVO inbill = inBillDAO.findVO(vsItem.getBillId());
+
+            if (inbill != null)
+            {
+                bdutyId = inbill.getDutyId();
+            }
+        }
+
+        if ( !StringTools.isNullOrNone(vsItem.getPaymentId()))
+        {
+            PaymentVO paymentBean = paymentDAO.findVO(vsItem.getPaymentId());
+
+            if (paymentBean != null)
+            {
+                bdutyId = paymentBean.getDutyId();
+            }
+        }
+
+        // 关注单据
+        if ( !dutyId.equals(bdutyId))
+        {
+            bean.setVtype(PublicConstant.VTYPE_SPECIAL);
+
+            bean.setStatus(FinanceConstant.PAYAPPLY_STATUS_CHECK);
+        }
+    }
+
+    /**
      * 是否存在退款申请
      * 
      * @param billId
@@ -408,7 +490,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
         log.setAfterStatus(FinanceConstant.PAYAPPLY_STATUS_INIT);
 
-        log.setPreStatus(FinanceConstant.PAYAPPLY_STATUS_INIT);
+        log.setPreStatus(bean.getStatus());
 
         flowLogDAO.saveEntityBean(log);
     }
@@ -560,7 +642,29 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
             listener.onPassBean(user, apply);
         }
 
-        savePassLog(user, apply, reason);
+        savePassLog(user, FinanceConstant.PAYAPPLY_STATUS_INIT, apply, reason);
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean passCheck(User user, String id, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        PaymentApplyBean apply = paymentApplyDAO.find(id);
+
+        if (apply == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        apply.setStatus(FinanceConstant.PAYAPPLY_STATUS_INIT);
+
+        paymentApplyDAO.updateEntityBean(apply);
+
+        savePassLog(user, FinanceConstant.PAYAPPLY_STATUS_CHECK, apply, reason);
 
         return true;
     }
@@ -954,6 +1058,11 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
             throw new MYException("数据错误,请确认操作");
         }
 
+        if (apply.getStatus() != FinanceConstant.PAYAPPLY_STATUS_INIT)
+        {
+            throw new MYException("状态不正确,请确认操作");
+        }
+
         List<PaymentVSOutBean> vsList = paymentVSOutDAO.queryEntityBeansByFK(id);
 
         double total = 0.0d;
@@ -996,7 +1105,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
         return apply;
     }
 
-    private void savePassLog(User user, PaymentApplyBean apply, String reason)
+    private void savePassLog(User user, int oldStatus, PaymentApplyBean apply, String reason)
     {
         FlowLogBean log = new FlowLogBean();
 
@@ -1010,9 +1119,9 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
         log.setLogTime(TimeTools.now());
 
-        log.setPreStatus(FinanceConstant.PAYAPPLY_STATUS_INIT);
+        log.setPreStatus(oldStatus);
 
-        log.setAfterStatus(FinanceConstant.PAYAPPLY_STATUS_PASS);
+        log.setAfterStatus(apply.getStatus());
 
         flowLogDAO.saveEntityBean(log);
     }
@@ -1124,6 +1233,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
             vsItem.setParentId(bean.getId());
 
             vsItem.setLogTime(bean.getLogTime());
+
+            fillEachItem(bean, vsItem);
         }
 
         paymentApplyDAO.updateEntityBean(bean);

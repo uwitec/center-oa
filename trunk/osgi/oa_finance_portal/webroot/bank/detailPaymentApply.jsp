@@ -3,7 +3,7 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="收款申请" />
+<p:link title="收款申请"/>
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
@@ -35,6 +35,10 @@
 		<p:class value="com.china.center.oa.finance.bean.PaymentApplyBean" />
 
 		<p:table cells="1">
+		
+		    <p:cell title="标识">
+               ${bean.id}
+            </p:cell>
 
 			<p:cell title="申请人">
                ${bean.stafferName}
@@ -50,6 +54,10 @@
             
             <p:cell title="回款导入">
                ${bean.paymentId}
+            </p:cell>
+            
+            <p:cell title="关注类型">
+               <font color="red">${my:get('pubVtype', bean.vtype)}</font>
             </p:cell>
 
 			<p:cell title="时间">

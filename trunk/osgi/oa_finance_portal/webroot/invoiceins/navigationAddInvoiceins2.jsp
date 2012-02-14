@@ -23,9 +23,20 @@ var invFullMap = {};
   invMap['${item.id}'] = '${item.type}';
 </c:forEach>
 
+var msg = '开单纳税实体与开票纳税实体不一致，审批过程长，请慎重选择。';
+
+var errorType = '${errorType}';
+
 function addBean()
 {
-	submit('确定申请增加发票?', null, check);
+    if ('1' == errorType)
+    {
+	   submit(msg + '确定申请增加发票?', null, check);
+	}
+	else
+	{
+	   submit('确定申请增加发票?', null, check);
+	}
 }
 
 function check()

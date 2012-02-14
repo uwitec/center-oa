@@ -99,9 +99,9 @@ function opens()
     var inStr = $O('invoiceId').value;
     
     if ($O('customerId').value == '99')
-    window.common.modal('../sail/out.do?method=rptQueryOut&mode=1&selectMode=1&stafferId=${user.stafferId}&invoiceStatus=0&load=1&dutyId=' + $$('dutyId') + '&customerId=' + $$('customerId') + '&invoiceId2=' + inStr);
+    window.common.modal('../sail/out.do?method=rptQueryOut&mode=1&selectMode=1&stafferId=${user.stafferId}&invoiceStatus=0&load=1&dutyId2=' + $$('dutyId') + '&customerId=' + $$('customerId') + '&invoiceId2=' + inStr);
     else
-    window.common.modal('../sail/out.do?method=rptQueryOut&mode=1&selectMode=1&invoiceStatus=0&load=1&dutyId=' + $$('dutyId') + '&customerId=' + $$('customerId') + '&invoiceId2=' + inStr);
+    window.common.modal('../sail/out.do?method=rptQueryOut&mode=1&selectMode=1&invoiceStatus=0&load=1&dutyId2=' + $$('dutyId') + '&customerId=' + $$('customerId') + '&invoiceId2=' + inStr);
 }
 
 function openBalance()

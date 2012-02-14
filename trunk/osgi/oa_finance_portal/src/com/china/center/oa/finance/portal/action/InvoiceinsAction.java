@@ -360,10 +360,14 @@ public class InvoiceinsAction extends DispatchAction
             condtion.addIntCondition("InvoiceinsBean.status", "=",
                 FinanceConstant.INVOICEINS_STATUS_SUBMIT);
         }
-        // 出纳查询
         else if ("2".equals(mode))
         {
-            // condtion.addCondition("InvoiceinsBean.locationId", "=", user.getLocationId());
+        }
+        // 稽核
+        else if ("3".equals(mode))
+        {
+            condtion.addIntCondition("InvoiceinsBean.status", "=",
+                FinanceConstant.INVOICEINS_STATUS_CHECK);
         }
         else
         {
@@ -571,6 +575,8 @@ public class InvoiceinsAction extends DispatchAction
 
         Map<String, Double> insMap = new HashMap();
 
+        request.setAttribute("errorType", "0");
+
         // 处理每个销售单,进行合并开单品名和价格
         for (int i = 0; i < split.length; i++ )
         {
@@ -598,6 +604,12 @@ public class InvoiceinsAction extends DispatchAction
                 }
 
                 type = 1;
+            }
+
+            // 是否提示
+            if ( !bean.getDutyId().equals(outBean.getDutyId()))
+            {
+                request.setAttribute("errorType", "1");
             }
 
             if (StringTools.isNullOrNone(outBean.getRatio()))
@@ -1232,7 +1244,17 @@ public class InvoiceinsAction extends DispatchAction
         {
             User user = Helper.getUser(request);
 
-            financeFacade.passInvoiceinsBean(user.getId(), id);
+            InvoiceinsBean invoiceinsBean = invoiceinsDAO.find(id);
+
+            if (invoiceinsBean.getStatus() == FinanceConstant.INVOICEINS_STATUS_SUBMIT)
+            {
+                financeFacade.passInvoiceinsBean(user.getId(), id);
+            }
+
+            if (invoiceinsBean.getStatus() == FinanceConstant.INVOICEINS_STATUS_CHECK)
+            {
+                financeFacade.checkInvoiceinsBean(user.getId(), id);
+            }
 
             request.setAttribute(KeyConstant.MESSAGE, "成功操作");
         }

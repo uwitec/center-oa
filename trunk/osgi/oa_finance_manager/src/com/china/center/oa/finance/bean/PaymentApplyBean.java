@@ -21,6 +21,7 @@ import com.china.center.jdbc.annotation.Table;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.finance.vs.PaymentVSOutBean;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.sail.bean.UnitViewBean;
 
 
@@ -63,6 +64,14 @@ public class PaymentApplyBean implements Serializable
      */
     private int type = FinanceConstant.PAYAPPLY_TYPE_PAYMENT;
 
+    /**
+     * 单据类型
+     */
+    private int vtype = PublicConstant.VTYPE_DEFAULT;
+
+    /**
+     * status
+     */
     private int status = FinanceConstant.PAYAPPLY_STATUS_INIT;
 
     @Join(tagClass = StafferBean.class)
@@ -311,6 +320,23 @@ public class PaymentApplyBean implements Serializable
     }
 
     /**
+     * @return the vtype
+     */
+    public int getVtype()
+    {
+        return vtype;
+    }
+
+    /**
+     * @param vtype
+     *            the vtype to set
+     */
+    public void setVtype(int vtype)
+    {
+        this.vtype = vtype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -342,6 +368,9 @@ public class PaymentApplyBean implements Serializable
             .append(TAB)
             .append("type = ")
             .append(this.type)
+            .append(TAB)
+            .append("vtype = ")
+            .append(this.vtype)
             .append(TAB)
             .append("status = ")
             .append(this.status)

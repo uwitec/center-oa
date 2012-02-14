@@ -336,6 +336,28 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
+    public boolean checkInvoiceinsBean(String userId, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (INVOICEINS_LOCK)
+        {
+            if (containAuth(user, AuthConstant.INVOICEINS_CHECK))
+            {
+                return invoiceinsManager.checkInvoiceinsBean(user, id);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
     public boolean rejectInvoiceinsBean(String userId, String id)
         throws MYException
     {
@@ -347,7 +369,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
 
         synchronized (INVOICEINS_LOCK)
         {
-            if (containAuth(user, AuthConstant.INVOICEINS_OPR))
+            if (containAuth(user, AuthConstant.INVOICEINS_OPR, AuthConstant.INVOICEINS_CHECK))
             {
                 return invoiceinsManager.rejectInvoiceinsBean(user, id);
             }
@@ -410,6 +432,28 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
+    public boolean passCheck(String userId, String id, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (PAYMENT_APPLY_LOCK)
+        {
+            if (containAuth(user, AuthConstant.INBILL_CHECK))
+            {
+                return paymentApplyManager.passCheck(user, id, reason);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
     public boolean rejectPaymentApply(String userId, String id, String reason)
         throws MYException
     {
@@ -421,7 +465,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
 
         synchronized (PAYMENT_APPLY_LOCK)
         {
-            if (containAuth(user, AuthConstant.INBILL_APPROVE))
+            if (containAuth(user, AuthConstant.INBILL_APPROVE, AuthConstant.INBILL_CHECK))
             {
                 return paymentApplyManager.rejectPaymentApply(user, id, reason);
             }

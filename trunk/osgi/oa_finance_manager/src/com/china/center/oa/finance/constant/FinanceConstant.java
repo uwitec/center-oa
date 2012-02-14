@@ -131,6 +131,12 @@ public interface FinanceConstant
     int PAYAPPLY_STATUS_INIT = 0;
 
     /**
+     * 待稽核
+     */
+    @Defined(key = "payApplyStatus", value = "待稽核")
+    int PAYAPPLY_STATUS_CHECK = 3;
+
+    /**
      * 通过
      */
     @Defined(key = "payApplyStatus", value = "通过")
@@ -344,6 +350,12 @@ public interface FinanceConstant
      */
     @Defined(key = "invoiceinsStatus", value = "待财务审核")
     int INVOICEINS_STATUS_SUBMIT = 1;
+
+    /**
+     * 待稽核
+     */
+    @Defined(key = "invoiceinsStatus", value = "待稽核")
+    int INVOICEINS_STATUS_CHECK = 2;
 
     /**
      * 结束

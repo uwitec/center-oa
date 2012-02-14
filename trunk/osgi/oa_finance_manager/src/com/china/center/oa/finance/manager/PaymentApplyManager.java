@@ -44,7 +44,7 @@ public interface PaymentApplyManager extends ListenerManager<PaymentApplyListene
         throws MYException;
 
     /**
-     * 通过(需要同步)
+     * 通过(需要同步，其实是结束的方法)
      * 
      * @param stafferId
      * @param id
@@ -52,6 +52,18 @@ public interface PaymentApplyManager extends ListenerManager<PaymentApplyListene
      * @throws MYException
      */
     boolean passPaymentApply(User user, String id, String reason)
+        throws MYException;
+
+    /**
+     * 通过待稽核
+     * 
+     * @param user
+     * @param id
+     * @param reason
+     * @return
+     * @throws MYException
+     */
+    boolean passCheck(User user, String id, String reason)
         throws MYException;
 
     /**

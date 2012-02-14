@@ -78,11 +78,11 @@ function opens(index)
     
     if (g_pstype == 0 || $O('customerId').value == '99')
     {
-        window.common.modal('../sail/out.do?method=rptQueryOut&selectMode=0&mode=0&load=1&stafferId=${user.stafferId}&customerId=' + $$('customerId') + '&dutyId=' + $$('dutyId'));
+        window.common.modal('../sail/out.do?method=rptQueryOut&selectMode=0&mode=0&load=1&stafferId=${user.stafferId}&customerId=' + $$('customerId') + '&dutyId2=' + $$('dutyId'));
     }
     else
     {
-        window.common.modal('../sail/out.do?method=rptQueryOut&selectMode=0&mode=0&load=1&customerId=' + $$('customerId') + '&dutyId=' + $$('dutyId'));    
+        window.common.modal('../sail/out.do?method=rptQueryOut&selectMode=0&mode=0&load=1&customerId=' + $$('customerId') + '&dutyId2=' + $$('dutyId'));    
     }
 }
 

@@ -124,6 +124,12 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
+        <condtion name="vtype" caption="关注类型">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$pubVtype</option>
+        </condtion>
     </item>
     
     <item name="queryPaymentApply" deaultpfix="PaymentApplyBean">
@@ -161,9 +167,17 @@
             <type>select</type>
             <option>$payApplyStatus</option>
         </condtion>
+        <condtion name="vtype" caption="关注类型">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$pubVtype</option>
+        </condtion>
     </item>
     
     <item name="querySelfPaymentApply" alias="queryPaymentApply"/>
+    
+    <item name="queryPaymentApplyCheck" alias="queryPaymentApply"/>
     
     <item name="queryInBill" deaultpfix="InBillBean">
         <condtion name="alogTime" filed="logTime" caption="开始时间">

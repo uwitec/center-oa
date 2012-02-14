@@ -17,6 +17,7 @@
             <forward name="detailPaymentApply" path="/bank/detailPaymentApply.jsp" />
             <forward name="handlePaymentApply" path="/bank/handlePaymentApply.jsp" />
             <forward name="queryPaymentApply" path="/bank/queryPaymentApply.jsp" />
+            <forward name="queryPaymentApplyCheck" path="/bank/queryPaymentApplyCheck.jsp" />
             <forward name="queryPayment" path="/bank/queryPayment.jsp" />
             <forward name="querySelfPaymentApply" path="/bank/querySelfPaymentApply.jsp" />
             <forward name="refBill" path="/bank/refBill.jsp" />

@@ -51,6 +51,9 @@ public class InvoiceinsBean implements Serializable
     @Join(tagClass = InvoiceBean.class)
     private String invoiceId = "";
 
+    /**
+     * status
+     */
     private int status = FinanceConstant.INVOICEINS_STATUS_INIT;
 
     /**
@@ -62,6 +65,11 @@ public class InvoiceinsBean implements Serializable
      * mtype
      */
     private int mtype = PublicConstant.MANAGER_TYPE_COMMON;
+
+    /**
+     * 关注类型
+     */
+    private int vtype = PublicConstant.VTYPE_DEFAULT;
 
     /**
      * 纳税实例
@@ -449,6 +457,23 @@ public class InvoiceinsBean implements Serializable
     }
 
     /**
+     * @return the vtype
+     */
+    public int getVtype()
+    {
+        return vtype;
+    }
+
+    /**
+     * @param vtype
+     *            the vtype to set
+     */
+    public void setVtype(int vtype)
+    {
+        this.vtype = vtype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -477,6 +502,9 @@ public class InvoiceinsBean implements Serializable
             .append(TAB)
             .append("mtype = ")
             .append(this.mtype)
+            .append(TAB)
+            .append("vtype = ")
+            .append(this.vtype)
             .append(TAB)
             .append("dutyId = ")
             .append(this.dutyId)

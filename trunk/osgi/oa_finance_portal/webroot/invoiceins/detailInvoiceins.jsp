@@ -92,6 +92,10 @@ function rejectBean()
                ${my:formatNum(bean.moneys)}
             </p:cell>
             
+             <p:cell title="关注类型">
+               <font color="red">${my:get('pubVtype', bean.vtype)}</font>
+            </p:cell>
+            
             <p:cell title="开票时间">
                ${bean.logTime}
             </p:cell>
@@ -171,7 +175,7 @@ function rejectBean()
 	<p:button leftWidth="100%" rightWidth="0%">
 		<div align="right">
 		
-		<c:if test="${bean.status == 1 && mode == 1}">
+		<c:if test="${(bean.status == 1 || bean.status == 2) && (mode == 1 || mode == 3)}">
                 <input type="button" class="button_class"
                     id="ok_p" style="cursor: pointer" value="&nbsp;&nbsp;通 过&nbsp;&nbsp;"
                     onclick="passBean()">&nbsp;&nbsp;

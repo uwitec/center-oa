@@ -49,6 +49,9 @@ public class PaymentVSOutBean implements Serializable
 
     private String paymentId = "";
 
+    /**
+     * 收款单
+     */
     private String billId = "";
 
     /**

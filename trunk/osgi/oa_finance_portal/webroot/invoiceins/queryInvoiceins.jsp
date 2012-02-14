@@ -65,6 +65,9 @@ function load()
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1605'},
              {id: 'export', bclass: 'replied', caption: '导出查询结果', onpress : exports, auth: '1604'},
              </c:if>
+             <c:if test="${mode == 3}">
+             {id: 'pass', bclass: 'pass', caption: '处理', onpress : doProcess2, auth: '1610'},
+             </c:if>
              
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
@@ -110,6 +113,16 @@ function delBean(opr, grid)
 }
 
 function doProcess()
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {   
+        $l(gurl + 'find' + ukey + '&update=1&id=' + getRadioValue('checkb') + '&mode=' + mode);
+    }
+    else
+    $error('不能操作');
+}
+
+function doProcess2()
 {
     if (getRadio('checkb') && getRadioValue('checkb'))
     {   
