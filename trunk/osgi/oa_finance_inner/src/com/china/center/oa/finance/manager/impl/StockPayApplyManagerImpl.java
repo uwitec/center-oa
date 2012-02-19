@@ -35,6 +35,8 @@ import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.manager.UserManager;
+import com.china.center.oa.stock.bean.StockBean;
+import com.china.center.oa.stock.dao.StockDAO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.JudgeTools;
 import com.china.center.tools.MathTools;
@@ -60,6 +62,8 @@ public class StockPayApplyManagerImpl extends AbstractListenerManager<StockPayAp
     private BillManager billManager = null;
 
     private CommonDAO commonDAO = null;
+
+    private StockDAO stockDAO = null;
 
     private ParameterDAO parameterDAO = null;
 
@@ -138,6 +142,7 @@ public class StockPayApplyManagerImpl extends AbstractListenerManager<StockPayAp
 
         StringBuffer idBuffer = new StringBuffer();
 
+        int mtype = -1;
         for (String id : idList)
         {
             StockPayApplyBean bean = stockPayApplyDAO.find(id);
@@ -161,6 +166,26 @@ public class StockPayApplyManagerImpl extends AbstractListenerManager<StockPayAp
                 if ( !pid.equals(bean.getProvideId()))
                 {
                     throw new MYException("供应商一致才能合并,请确认操作");
+                }
+            }
+
+            StockBean stock = stockDAO.find(bean.getStockId());
+
+            if (stock == null)
+            {
+                throw new MYException("只有采购付款才可以合并,请确认操作");
+            }
+
+            // 管理属性必须一致
+            if (mtype == -1)
+            {
+                mtype = stock.getMtype();
+            }
+            else
+            {
+                if (mtype != stock.getMtype())
+                {
+                    throw new MYException("不同属性的产品不能合并申请付款,请确认操作");
                 }
             }
 
@@ -664,5 +689,22 @@ public class StockPayApplyManagerImpl extends AbstractListenerManager<StockPayAp
     public void setUserManager(UserManager userManager)
     {
         this.userManager = userManager;
+    }
+
+    /**
+     * @return the stockDAO
+     */
+    public StockDAO getStockDAO()
+    {
+        return stockDAO;
+    }
+
+    /**
+     * @param stockDAO
+     *            the stockDAO to set
+     */
+    public void setStockDAO(StockDAO stockDAO)
+    {
+        this.stockDAO = stockDAO;
     }
 }

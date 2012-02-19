@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,6 +64,8 @@ import com.china.center.tools.TimeTools;
 @Exceptional
 public class ComposeProductManagerImpl extends AbstractListenerManager<ComposeProductListener> implements ComposeProductManager
 {
+    private final Log oprLogger = LogFactory.getLog("opr");
+
     private ComposeProductDAO composeProductDAO = null;
 
     private ComposeItemDAO composeItemDAO = null;
@@ -277,11 +281,26 @@ public class ComposeProductManagerImpl extends AbstractListenerManager<ComposePr
     {
         JudgeTools.judgeParameterIsNull(user, id);
 
+        // 判断是否可以删除
+        ComposeProductBean compose = composeProductDAO.find(id);
+
+        if (compose == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (compose.getStatus() == ComposeConstant.STATUS_CRO_PASS)
+        {
+            throw new MYException("已经合成不能删除,请确认操作");
+        }
+
         composeProductDAO.deleteEntityBean(id);
 
         composeItemDAO.deleteEntityBeansByFK(id);
 
         composeFeeDAO.deleteEntityBeansByFK(id);
+
+        oprLogger.info(user.getStafferName() + "驳回删除了合成单:" + compose);
 
         return true;
     }

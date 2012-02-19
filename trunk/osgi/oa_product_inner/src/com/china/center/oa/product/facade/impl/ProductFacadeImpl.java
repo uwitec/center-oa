@@ -71,6 +71,8 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
 
     private StorageApplyManager storageApplyManager = null;
 
+    private static Object COMPOSE_LOCK = new Object();
+
     /**
      * default constructor
      */
@@ -842,8 +844,33 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
     public boolean lastPassComposeProduct(String userId, String id)
         throws MYException
     {
-        // LOCK 合成产品
-        synchronized (PublicLock.PRODUCT_CORE)
+        // LOCK 合成产品(两个锁)
+        synchronized (COMPOSE_LOCK)
+        {
+            synchronized (PublicLock.PRODUCT_CORE)
+            {
+                JudgeTools.judgeParameterIsNull(userId);
+
+                User user = userManager.findUser(userId);
+
+                checkUser(user);
+
+                if (containAuth(user, AuthConstant.PRODUCT_CD_CRO))
+                {
+                    return composeProductManager.lastPassComposeProduct(user, id);
+                }
+                else
+                {
+                    throw noAuth();
+                }
+            }
+        }
+    }
+
+    public boolean passComposeProduct(String userId, String id)
+        throws MYException
+    {
+        synchronized (COMPOSE_LOCK)
         {
             JudgeTools.judgeParameterIsNull(userId);
 
@@ -851,9 +878,9 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
 
             checkUser(user);
 
-            if (containAuth(user, AuthConstant.PRODUCT_CD_CRO))
+            if (containAuth(user, AuthConstant.PRODUCT_CD_MANGAER))
             {
-                return composeProductManager.lastPassComposeProduct(user, id);
+                return composeProductManager.passComposeProduct(user, id);
             }
             else
             {
@@ -862,60 +889,47 @@ public class ProductFacadeImpl extends AbstarctFacade implements ProductFacade
         }
     }
 
-    public boolean passComposeProduct(String userId, String id)
-        throws MYException
-    {
-        JudgeTools.judgeParameterIsNull(userId);
-
-        User user = userManager.findUser(userId);
-
-        checkUser(user);
-
-        if (containAuth(user, AuthConstant.PRODUCT_CD_MANGAER))
-        {
-            return composeProductManager.passComposeProduct(user, id);
-        }
-        else
-        {
-            throw noAuth();
-        }
-    }
-
     public boolean rollbackComposeProduct(String userId, String id)
         throws MYException
     {
-        JudgeTools.judgeParameterIsNull(userId);
-
-        User user = userManager.findUser(userId);
-
-        checkUser(user);
-
-        if (containAuth(user, AuthConstant.PRODUCT_CD))
+        synchronized (COMPOSE_LOCK)
         {
-            return composeProductManager.rollbackComposeProduct(user, id);
-        }
-        else
-        {
-            throw noAuth();
+            JudgeTools.judgeParameterIsNull(userId);
+
+            User user = userManager.findUser(userId);
+
+            checkUser(user);
+
+            if (containAuth(user, AuthConstant.PRODUCT_CD))
+            {
+                return composeProductManager.rollbackComposeProduct(user, id);
+            }
+            else
+            {
+                throw noAuth();
+            }
         }
     }
 
     public boolean rejectComposeProduct(String userId, String id)
         throws MYException
     {
-        JudgeTools.judgeParameterIsNull(userId);
-
-        User user = userManager.findUser(userId);
-
-        checkUser(user);
-
-        if (containAuth(user, AuthConstant.PRODUCT_CD_MANGAER, AuthConstant.PRODUCT_CD_CRO))
+        synchronized (COMPOSE_LOCK)
         {
-            return composeProductManager.rejectComposeProduct(user, id);
-        }
-        else
-        {
-            throw noAuth();
+            JudgeTools.judgeParameterIsNull(userId);
+
+            User user = userManager.findUser(userId);
+
+            checkUser(user);
+
+            if (containAuth(user, AuthConstant.PRODUCT_CD_MANGAER, AuthConstant.PRODUCT_CD_CRO))
+            {
+                return composeProductManager.rejectComposeProduct(user, id);
+            }
+            else
+            {
+                throw noAuth();
+            }
         }
     }
 
