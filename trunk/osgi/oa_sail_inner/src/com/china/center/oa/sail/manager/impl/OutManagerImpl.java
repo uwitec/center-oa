@@ -2298,7 +2298,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
     /**
      * CORE 生成对称的B单据(核心逻辑,当前已经废除)<br>
-     * 1.永银收藏品 销售 经纬公司 P产品 B单据<br>
+     * 1.收藏品 销售 经纬公司 P产品 B单据<br>
      * 2.经纬公司 入库 P产品 C单据
      * 
      * @param outBean
@@ -2309,7 +2309,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                                       final List<BaseBean> baseList)
         throws MYException
     {
-        // 1.永银收藏品 销售 经纬公司 P产品 B单据
+        // 1.收藏品 销售 经纬公司 P产品 B单据
         OutBean newOutBean = new OutBean();
 
         // 拷贝基本属性
