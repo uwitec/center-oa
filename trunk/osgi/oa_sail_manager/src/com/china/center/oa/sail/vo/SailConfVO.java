@@ -28,6 +28,9 @@ public class SailConfVO extends SailConfBean
     @Relationship(relationField = "productId")
     private String productName = "公共";
 
+    @Relationship(relationField = "productId", tagField = "sailPrice")
+    private double sailPrice = 0.0d;
+
     @Relationship(relationField = "industryId")
     private String industryName = "";
 
@@ -73,6 +76,23 @@ public class SailConfVO extends SailConfBean
     }
 
     /**
+     * @return the sailPrice
+     */
+    public double getSailPrice()
+    {
+        return sailPrice;
+    }
+
+    /**
+     * @param sailPrice
+     *            the sailPrice to set
+     */
+    public void setSailPrice(double sailPrice)
+    {
+        this.sailPrice = sailPrice;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -83,17 +103,10 @@ public class SailConfVO extends SailConfBean
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue
-            .append("SailConfVO ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("productName = ")
-            .append(this.productName)
-            .append(TAB)
-            .append("industryName = ")
-            .append(this.industryName)
-            .append(TAB)
-            .append(" )");
+        retValue.append("SailConfVO ( ").append(super.toString()).append(TAB).append(
+            "productName = ").append(this.productName).append(TAB).append("sailPrice = ").append(
+            this.sailPrice).append(TAB).append("industryName = ").append(this.industryName).append(
+            TAB).append(" )");
 
         return retValue.toString();
     }

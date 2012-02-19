@@ -26,9 +26,11 @@ function load()
          url: gurl + 'query' + ukey,
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} ppareid={pareId}>', width : 40, align: 'center'},
-             {display: '品名', name : 'productName', width : '25%'},
+             {display: '类型', name : 'type', cc: 'sailConfType',  width : '10%'},
+             {display: '品名', name : 'productName', width : '20%'},
+             {display: '产品类型', name : 'productType', cc: 'productType',  width : '10%'},
              {display: '销售类型', name : 'sailType', cc: 'productSailType',  width : '10%'},
-             {display: '事业部', name : 'industryName',  width : '25%'},
+             {display: '事业部', name : 'industryName',  width : '15%'},
              {display: '总部结算率(‰)', name : 'pratio',  width : '10%'},
              {display: '事业部结算率(‰)', name : 'iratio',  width : 'auto'}
              ],

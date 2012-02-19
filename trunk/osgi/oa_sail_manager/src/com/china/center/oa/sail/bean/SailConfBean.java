@@ -19,8 +19,8 @@ import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.product.bean.ProductBean;
-import com.china.center.oa.product.constant.ProductConstant;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
+import com.china.center.oa.sail.constanst.SailConstant;
 
 
 /**
@@ -38,19 +38,28 @@ public class SailConfBean implements Serializable
     @Id
     private String id = "";
 
-    @Html(title = "销售类型", type = Element.SELECT, must = true)
-    private int sailType = ProductConstant.SAILTYPE_SELF;
+    /**
+     * ProductConstant.SAILTYPE_SELF
+     */
+    @Html(title = "销售类型", type = Element.SELECT)
+    private int sailType = -1;
 
     /**
-     * 0:产品 1:all
+     * 产品类型/ProductConstant.PRODUCT_TYPE_OTHER
      */
-    private int type = 0;
+    @Html(title = "产品类型", type = Element.SELECT)
+    private int productType = -1;
+
+    /**
+     * 0:产品(0) 1:产品类型(1) 2：销售类型(2)
+     */
+    private int type = SailConstant.SAILCONFIG_ONLYPRODUCT;
 
     @Html(title = "品名", type = Element.INPUT, name = "productName", readonly = true)
     @Join(tagClass = ProductBean.class, type = JoinType.LEFT)
     private String productId = "";
 
-    @Html(title = "事业部", type = Element.INPUT, name = "industryName", readonly = true, must = true)
+    @Html(title = "事业部", type = Element.SELECT, must = true)
     @Join(tagClass = PrincipalshipBean.class)
     private String industryId = "";
 
@@ -247,6 +256,23 @@ public class SailConfBean implements Serializable
     }
 
     /**
+     * @return the productType
+     */
+    public int getProductType()
+    {
+        return productType;
+    }
+
+    /**
+     * @param productType
+     *            the productType to set
+     */
+    public void setProductType(int productType)
+    {
+        this.productType = productType;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -266,6 +292,9 @@ public class SailConfBean implements Serializable
             .append(TAB)
             .append("sailType = ")
             .append(this.sailType)
+            .append(TAB)
+            .append("productType = ")
+            .append(this.productType)
             .append(TAB)
             .append("type = ")
             .append(this.type)

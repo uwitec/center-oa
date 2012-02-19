@@ -7,6 +7,7 @@
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
+<script language="JavaScript" src="../js/math.js"></script>
 <script language="javascript">
 function addBean()
 {
@@ -24,6 +25,7 @@ function getProduct(oos)
     
     $O('productName').value = obj.pname;   
     $O('productId').value = obj.value;   
+    $O('sailPrice').value = obj.psailprice;   
 }
 
 //选择职位
@@ -41,8 +43,112 @@ function setOrgFromPop(id, name, level)
 
 function clears()
 {
-    $O('productId').value = '公共';
-    $O('productName').value = '';
+    $O('productId').value = '';
+    $O('productName').value = '公共';
+}
+
+function autoCalculation()
+{
+    var dir = parseFloat($O('dirSailPrice').value);
+    
+    var src = parseFloat($O('sailPrice').value);
+    
+    var pratio = parseInt($O('pratio').value);
+    
+    var iratio = parseInt($O('iratio').value);
+    
+    //返回
+    if (src == 0)
+    {
+        return;
+    }
+    
+    if (pratio != 0 && iratio != 0)
+    {
+        //计算价格
+        var dest = src * ((1000 + pratio) / 1000.0) * ((1000 + iratio) / 1000.0);
+        
+        $O('dirSailPrice').value = formatNum(dest, 2);
+        
+        return;
+    }
+    
+    //这里dir就不计算
+    if (dir == 0)
+    {
+        return;
+    }
+    
+    if (math_compare(src, dir) > 0)
+    {
+        alert('目标结算价必须大于原结算价');
+        
+        return;
+    }
+    
+    if (pratio == 0 && iratio == 0)
+    {
+        //都是0就平均分担
+        var avg = Math.sqrt(dir / src) * 1000.0 - 1000;
+        
+        var savg = formatNumToInt(avg);
+        
+        $O('pratio').value = savg;
+        $O('iratio').value = savg;
+        
+        return;
+    }
+    
+    if (pratio != 0)
+    {
+        var tmp = (dir / src) / (1 + (pratio / 1000.0));
+        
+        if (math_compare(tmp, 1) < 0)
+        {
+            alert('总部结算率过高');
+            return;
+        }
+        
+        var savg = formatNumToInt((tmp - 1) * 1000);
+        
+        $O('iratio').value = savg;
+        
+        return;
+    }
+    else
+    {
+        var tmp = (dir / src) / (1 + (iratio / 1000.0));
+        
+        if (math_compare(tmp, 1) < 0)
+        {
+            alert('事业部结算率过高');
+            return;
+        }
+        
+        var savg = formatNumToInt((tmp - 1) * 1000);
+        
+        $O('pratio').value = savg;
+        
+        return;
+    }
+}
+
+function formatNumToInt(val)
+{
+    var savg = formatNum(val, 0);
+    
+    if (savg.charAt(savg.length - 1) == '.')
+    {
+        return savg.substring(0, savg.length - 1);
+    }
+    
+    return savg;
+}
+
+function resetRadio()
+{
+    $O('pratio').value = 0;
+    $O('iratio').value = 0;
 }
 
 
@@ -52,8 +158,8 @@ function clears()
 <body class="body_class">
 <form name="formEntry" action="../sail/config.do" method="post">
 <input type="hidden" name="method" value="addSailConfig">
-<input type="hidden" name="industryId" value="">
 <input type="hidden" name="productId" value="0">
+
 
 <p:navigation
 	height="22">
@@ -79,6 +185,10 @@ function clears()
 		    <p:pro field="sailType">
                 <p:option type="productSailType" empty="true"/>
             </p:pro>
+            
+            <p:pro field="productType">
+                <p:option type="productType" empty="true"/>
+            </p:pro>
 
 			<p:pro field="productId" value="公共" innerString="size=60">
 			     <input type="button" value="&nbsp;选择产品&nbsp;" name="qout1" id="qout1"
@@ -87,14 +197,25 @@ function clears()
                         class="button_class" onclick="clears()">&nbsp;&nbsp;
 			</p:pro>
 			
-			<p:pro field="industryId" innerString="size=60">
-                 <input type="button" value="&nbsp;选择事业部&nbsp;" name="qout2" id="qout2"
-                    class="button_class" onclick="selectPrin()">&nbsp;
+			<p:cell title="原结算价">
+			   <input type="text" name="sailPrice" id="sailPrice" value="0.0" readonly="readonly">
+			</p:cell>
+			
+			<p:pro field="industryId" innerString="style='width:240px'">
+                <p:option type="industryList" empty="true"/>
             </p:pro>
             
             <p:pro field="pratio" value="0" innerString="size=60 oncheck='isMathNumber'"/>
             
             <p:pro field="iratio" value="0" innerString="size=60 oncheck='isMathNumber'"/>
+            
+            <p:cell title="目标结算价">
+               <input type="text" name="dirSailPrice" id="dirSailPrice" value="0.0" oncheck="isFloat">&nbsp;
+               <input type="button" value="&nbsp;自动计算&nbsp;" name="qout3" id="qout3"
+                    class="button_class" onclick="autoCalculation()">&nbsp;
+                 <input type="button" value="&nbsp;重置结算率&nbsp;" name="qout4" id="qout4"
+                    class="button_class" onclick="resetRadio()">
+            </p:cell>
 			
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
 

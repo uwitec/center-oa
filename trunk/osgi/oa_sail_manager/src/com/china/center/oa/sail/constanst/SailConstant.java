@@ -311,4 +311,22 @@ public interface SailConstant
 
     @Defined(key = "sailConfigFinType", value = "开票")
     int SAILCONFIG_FIN_YES = 1;
+
+    /**
+     * 独立产品
+     */
+    @Defined(key = "sailConfType", value = "独立产品")
+    int SAILCONFIG_ONLYPRODUCT = 0;
+
+    /**
+     * 产品类型
+     */
+    @Defined(key = "sailConfType", value = "产品类型")
+    int SAILCONFIG_PRODUCTTYPE = 1;
+
+    /**
+     * 销售类型
+     */
+    @Defined(key = "sailConfType", value = "销售类型")
+    int SAILCONFIG_SAILTTYPE = 2;
 }

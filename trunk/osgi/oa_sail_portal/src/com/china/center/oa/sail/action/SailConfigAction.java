@@ -9,6 +9,8 @@
 package com.china.center.oa.sail.action;
 
 
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,7 +31,9 @@ import com.china.center.actionhelper.query.HandleResult;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.publics.Helper;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.dao.ShowDAO;
+import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.sail.bean.SailConfBean;
 import com.china.center.oa.sail.dao.SailConfDAO;
 import com.china.center.oa.sail.dao.SailConfigDAO;
@@ -37,6 +41,7 @@ import com.china.center.oa.sail.manager.SailConfigManager;
 import com.china.center.oa.sail.vo.SailConfVO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
+import com.china.center.tools.StringTools;
 
 
 /**
@@ -58,6 +63,8 @@ public class SailConfigAction extends DispatchAction
     private ShowDAO showDAO = null;
 
     private SailConfDAO sailConfDAO = null;
+
+    private OrgManager orgManager = null;
 
     private static final String QUERYSAILCONFIG = "querySailConfig";
 
@@ -115,6 +122,16 @@ public class SailConfigAction extends DispatchAction
                                              HttpServletResponse response)
         throws ServletException
     {
+        List<PrincipalshipBean> industryList = orgManager.listAllIndustry();
+
+        for (PrincipalshipBean principalshipBean : industryList)
+        {
+            principalshipBean.setName(principalshipBean.getParentName() + "-->"
+                                      + principalshipBean.getName());
+        }
+
+        request.setAttribute("industryList", industryList);
+
         return mapping.findForward("addSailConfig");
     }
 
@@ -134,9 +151,22 @@ public class SailConfigAction extends DispatchAction
     {
         SailConfBean bean = new SailConfBean();
 
+        String sailType = request.getParameter("sailType");
+        String productType = request.getParameter("productType");
+
         try
         {
             BeanUtil.getBean(bean, request);
+
+            if (StringTools.isNullOrNone(sailType))
+            {
+                bean.setSailType( -1);
+            }
+
+            if (StringTools.isNullOrNone(productType))
+            {
+                bean.setProductType( -1);
+            }
 
             User user = Helper.getUser(request);
 
@@ -172,9 +202,22 @@ public class SailConfigAction extends DispatchAction
     {
         SailConfBean bean = new SailConfBean();
 
+        String sailType = request.getParameter("sailType");
+        String productType = request.getParameter("sailType");
+
         try
         {
             BeanUtil.getBean(bean, request);
+
+            if (StringTools.isNullOrNone(sailType))
+            {
+                bean.setSailType( -1);
+            }
+
+            if (StringTools.isNullOrNone(productType))
+            {
+                bean.setProductType( -1);
+            }
 
             User user = Helper.getUser(request);
 
@@ -333,5 +376,22 @@ public class SailConfigAction extends DispatchAction
     public void setSailConfDAO(SailConfDAO sailConfDAO)
     {
         this.sailConfDAO = sailConfDAO;
+    }
+
+    /**
+     * @return the orgManager
+     */
+    public OrgManager getOrgManager()
+    {
+        return orgManager;
+    }
+
+    /**
+     * @param orgManager
+     *            the orgManager to set
+     */
+    public void setOrgManager(OrgManager orgManager)
+    {
+        this.orgManager = orgManager;
     }
 }

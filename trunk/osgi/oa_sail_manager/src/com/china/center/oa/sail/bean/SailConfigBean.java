@@ -25,7 +25,7 @@ import com.china.center.oa.sail.constanst.SailConstant;
 
 
 /**
- * SailConfigBean
+ * SailConfigBean(废弃)
  * 
  * @author ZHUZHU
  * @version 2011-12-17

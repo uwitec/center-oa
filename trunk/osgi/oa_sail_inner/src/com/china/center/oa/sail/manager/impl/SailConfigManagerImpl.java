@@ -23,6 +23,7 @@ import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.ShowDAO;
 import com.china.center.oa.sail.bean.SailConfBean;
 import com.china.center.oa.sail.bean.SailConfigBean;
+import com.china.center.oa.sail.constanst.SailConstant;
 import com.china.center.oa.sail.dao.SailConfDAO;
 import com.china.center.oa.sail.dao.SailConfigDAO;
 import com.china.center.oa.sail.helper.SailConfigHelper;
@@ -119,20 +120,42 @@ public class SailConfigManagerImpl implements SailConfigManager
 
         bean.setId(commonDAO.getSquenceString20());
 
-        if (StringTools.isNullOrNone(bean.getProductId()))
+        if ( !StringTools.isNullOrNone(bean.getProductId()) && !"0".equals(bean.getProductId()))
         {
-            bean.setProductId("0");
+            bean.setType(SailConstant.SAILCONFIG_ONLYPRODUCT);
 
-            bean.setType(1);
+            bean.setSailType( -1);
+
+            bean.setProductType( -1);
         }
         else
         {
-            bean.setType(0);
+            if (bean.getProductType() == -1 && bean.getSailType() == -1)
+            {
+                throw new MYException("数据错误");
+            }
+
+            bean.setProductId("0");
+
+            if (bean.getProductType() != -1)
+            {
+                bean.setType(SailConstant.SAILCONFIG_PRODUCTTYPE);
+
+                bean.setSailType( -1);
+            }
+
+            if (bean.getSailType() != -1)
+            {
+                bean.setType(SailConstant.SAILCONFIG_SAILTTYPE);
+
+                bean.setProductType( -1);
+            }
         }
 
         Expression exp = new Expression(bean, this);
 
-        exp.check("#sailType && #productId && #industryId &unique @sailConfDAO", "结算价格配置组合已经存在");
+        exp.check("#sailType && #productType && #productId && #industryId &unique @sailConfDAO",
+            "结算价格配置组合已经存在");
 
         return sailConfDAO.saveEntityBean(bean);
     }
@@ -159,24 +182,47 @@ public class SailConfigManagerImpl implements SailConfigManager
             throw new MYException("数据错误,请确认操作");
         }
 
+        bean.setProductType(old.getProductType());
         bean.setSailType(old.getSailType());
         bean.setProductId(old.getProductId());
         bean.setIndustryId(old.getIndustryId());
 
-        if (StringTools.isNullOrNone(bean.getProductId()))
+        if ( !StringTools.isNullOrNone(bean.getProductId()) && !"0".equals(bean.getProductId()))
         {
-            bean.setProductId("0");
+            bean.setType(SailConstant.SAILCONFIG_ONLYPRODUCT);
 
-            bean.setType(1);
+            bean.setSailType( -1);
+
+            bean.setProductType( -1);
         }
         else
         {
-            bean.setType(0);
+            if (bean.getProductType() == -1 && bean.getSailType() == -1)
+            {
+                throw new MYException("数据错误");
+            }
+
+            bean.setProductId("0");
+
+            if (bean.getProductType() != -1)
+            {
+                bean.setType(SailConstant.SAILCONFIG_PRODUCTTYPE);
+
+                bean.setSailType( -1);
+            }
+
+            if (bean.getSailType() != -1)
+            {
+                bean.setType(SailConstant.SAILCONFIG_SAILTTYPE);
+
+                bean.setProductType( -1);
+            }
         }
 
         Expression exp = new Expression(bean, this);
 
-        exp.check("#sailType && #productId && #industryId &unique2 @sailConfDAO", "销售组合已经存在");
+        exp.check("#sailType && #productType && #productId && #industryId &unique2 @sailConfDAO",
+            "结算价格配置组合已经存在");
 
         return sailConfDAO.updateEntityBean(bean);
     }
