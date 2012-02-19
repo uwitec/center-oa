@@ -125,8 +125,9 @@ public interface StorageConstant
     int OPR_STORAGE_REDEPLOY_ROLLBACK = 14;
 
     /**
-     * 公共的职员
+     * 公共的职员(特殊处理)
      */
+    @Defined(key = "pubStaffer", value = "私有")
     String PUBLIC_STAFFER = "0";
 
     /**

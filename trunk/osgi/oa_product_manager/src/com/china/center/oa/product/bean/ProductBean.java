@@ -299,9 +299,9 @@ public class ProductBean implements Serializable
     private double batchPrice = 0.0d;
 
     /**
-     * 零售价
+     * 结算价(销售价)
      */
-    @Html(title = "零售价", type = Element.DOUBLE, must = true)
+    @Html(title = "结算价", type = Element.DOUBLE, must = true)
     private double sailPrice = 0.0d;
 
     /**

@@ -118,6 +118,7 @@ function pop(obj)
 				<td align="center">选择</td>
 				<td align="center" class="td_class"><strong>名称</strong></td>
 				<td align="center" class="td_class"><strong>编码</strong></td>
+				<td align="center" class="td_class"><strong>结算价</strong></td>
 				<td align="center" class="td_class"><strong>管理</strong></td>
 				<td align="center" class="td_class"><strong>图片</strong></td>
 			</tr>
@@ -125,9 +126,10 @@ function pop(obj)
 			<c:forEach items="${beanList}" var="item" varStatus="vs">
 				<tr class="${vs.index % 2 == 0 ? 'content1' : 'content2'}">
 					<td align="center"><input type='${selectMode == 1 ? "radio" : "checkbox"}' name="beans"
-						pname="${item.name}" pcode="${item.code}" value="${item.id}"/></td>
+					psailprice="${my:formatNum(item.sailPrice)}"	pname="${item.name}" pcode="${item.code}" value="${item.id}"/></td>
 					<td align="center" onclick="hrefAndSelect(this)" ondblclick="sures()">${item.name}</td>
 					<td align="center" onclick="hrefAndSelect(this)" ondblclick="sures()">${item.code}</td>
+					<td align="center" onclick="hrefAndSelect(this)" ondblclick="sures()">${my:formatNum(item.sailPrice)}</td>
 					<td align="center" onclick="hrefAndSelect(this)" ondblclick="sures()">${my:get2('pubManagerType', item.reserve4)}</td>
 					<td align="center">
 					<span style="cursor: pointer;"

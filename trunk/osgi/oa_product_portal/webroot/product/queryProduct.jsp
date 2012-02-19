@@ -36,7 +36,7 @@ function load()
              {display: '管理', name : 'reserve4', cc : 'pubManagerType', width : '8%'},
              {display: '阶段', name : 'reserve5', cc : 'productStep', width : '8%'},
              //{display: '库存模型', name : 'stockType', cc : 'productStockType', width : '10%'},
-             {display: '批发/零售', name : 'price', content : '{batchPrice}/{sailPrice}', toFixed: 2, width : 'auto'}
+             {display: '结算价', name : 'sailPrice', toFixed: 2, width : 'auto'}
              ],
          extAtt: {
              name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
@@ -45,7 +45,7 @@ function load()
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1003'},
              {id: 'update', bclass: 'update', onpress : updateBean, auth: '1003'},
              {id: 'update1', bclass: 'update', caption : '配置销售范围', onpress : configBean, auth: '1003'},
-             {id: 'update2', bclass: 'update', caption : '批发/零售价', onpress : configPrice, auth: '1003'},
+             {id: 'update2', bclass: 'update', caption : '批发/结算价', onpress : configPrice, auth: '1003'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1003'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
@@ -250,11 +250,11 @@ function doSearch()
    </div>
 </div>
 
-<div id="dlg1" title="调整批发价和零售价" style="width:320px;">
+<div id="dlg1" title="调整批发价和结算价" style="width:320px;">
     <div style="padding:20px;height:200px;" id="dia_inner1" title="">
     成本价：<input type="text" name="cost" readonly="readonly" disabled="disabled"/><br>
     批发价：<input type="text" name="batchPrice" oncheck="notNone;isFloat"/><br>
-    零售价：<input type="text" name="sailPrice" oncheck="notNone;isFloat"/>
+    结算价：<input type="text" name="sailPrice" oncheck="notNone;isFloat"/>
    </div>
 </div>
 <p:query/>

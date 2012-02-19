@@ -191,6 +191,12 @@
 			<type>select</type>
 			<option>$depotpartType</option>
 		</condtion>
+		<condtion name="stafferId" caption="私有">
+            <opr>&lt;&gt;</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$pubStaffer</option>
+        </condtion>
 	</item>
 	
 	<item name="queryPublicStorageRelation" alias="queryStorageRelation"/>
@@ -221,6 +227,12 @@
             <datatype>1</datatype>
             <type>select</type>
             <option>$depotpartType</option>
+        </condtion>
+        <condtion name="stafferId" caption="私有">
+            <opr>&lt;&gt;</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$pubStaffer</option>
         </condtion>
     </item>
 	
