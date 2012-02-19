@@ -721,6 +721,46 @@ public class FinanceAction extends DispatchAction
     }
 
     /**
+     * 核对
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward checkPaymentApply(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            String checks = request.getParameter("checks");
+
+            String checkrefId = request.getParameter("checkrefId");
+
+            User user = Helper.getUser(request);
+
+            financeFacade.checkPaymentApply(user.getId(), id, checks, checkrefId);
+
+            ajax.setSuccess("成功核对");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("核对失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
      * batchDeletePayment
      * 
      * @param mapping

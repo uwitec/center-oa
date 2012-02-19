@@ -3,12 +3,42 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="收款申请"/>
+<p:link title="收款申请" link="true" guid="true" cal="true" dialog="true" />
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
+<script src="../stockapply_js/scheck.js"></script>
 <script language="javascript">
+function checkSubmit(checks, checkrefId)
+{
+    if (checks == '' || checkrefId == '')
+    {
+        alert('意见和关联单据不能为空');
+        
+        return false;
+    }
+    
+    closeCheckDiv();
+    
+    $ajax2('../finance/bank.do?method=checkPaymentApply&id=${bean.id}', {'checks' : checks, 'checkrefId' : checkrefId}, 
+                        callBackFun1);
+}
+
+function callBackFun1(data)
+{
+    alert(data.msg);
+    
+    if (data.ret == 0)
+    {
+        $('#checkCell_SEC').html('已核对 / ' + $('#checks').val() + ' / ' + $('#checkrefId').val());
+    }
+}
+
+function checkBean()
+{
+    openCheckDiv();
+}
 
 </script>
 
@@ -58,6 +88,10 @@
             
             <p:cell title="关注类型">
                <font color="red">${my:get('pubVtype', bean.vtype)}</font>
+            </p:cell>
+            
+            <p:cell title="核对信息" id="checkCell">
+               ${my:get('pubCheckStatus', bean.checkStatus)} / ${bean.checks} / ${bean.checkrefId}
             </p:cell>
 
 			<p:cell title="时间">
@@ -127,6 +161,11 @@
 
 	<p:button leftWidth="100%" rightWidth="0%">
 		<div align="right">
+		    <input
+            type="button" name="ba" class="button_class"
+            onclick="checkBean()"
+            value="&nbsp;&nbsp;总部核对&nbsp;&nbsp;">&nbsp;&nbsp;
+            
             <input
             type="button" name="ba" class="button_class"
             onclick="javascript:history.go(-1)"

@@ -19,6 +19,7 @@
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
 <script src="../js/plugin/highlight/jquery.highlight.js"></script>
+<script src="../stockapply_js/scheck.js"></script>
 <script type="text/javascript">
 
 var gurl = '../finance/invoiceins.do?method=';
@@ -63,6 +64,7 @@ function load()
              <c:if test="${mode == 2}">
              {id: 'add2', bclass: 'add', caption: '对分公司开票', onpress : addBean2, auth: '1604'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1605'},
+             {id: 'check', bclass: 'pass', caption: '总部核对', onpress : checkBean, auth: '1608'},
              {id: 'export', bclass: 'replied', caption: '导出查询结果', onpress : exports, auth: '1604'},
              </c:if>
              <c:if test="${mode == 3}">
@@ -137,6 +139,31 @@ function exports()
     document.location.href = '../finance/invoiceins.do?method=exportInvoiceins';
 }
 
+function checkSubmit(checks, checkrefId)
+{
+    if (checks == '' || checkrefId == '')
+    {
+        alert('意见和关联单据不能为空');
+        
+        return false;
+    }
+    
+    closeCheckDiv();
+    
+    $ajax2(gurl + 'checkInvoiceins&id=' + getRadioValue('checkb'), {'checks' : checks, 'checkrefId' : checkrefId}, 
+                        callBackFun);
+}
+
+function checkBean()
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {   
+       openCheckDiv();
+    }
+    else
+    $error('不能操作');
+}
+
 function doSearch()
 {
     $modalQuery('../admin/query.do?method=popCommonQuery2&key=query' + ukey);
@@ -150,5 +177,5 @@ function doSearch()
 </form>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
-<p:query/>
+<p:query height="300px"/>
 </body>

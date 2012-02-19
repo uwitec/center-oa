@@ -37,6 +37,17 @@ public interface InvoiceinsManager
     boolean rejectInvoiceinsBean(User user, String id)
         throws MYException;
 
+    /**
+     * 总部核对
+     * 
+     * @param stafferId
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean checkInvoiceinsBean2(User user, String id, String checks, String refId)
+        throws MYException;
+
     boolean deleteInvoiceinsBean(User user, String id)
         throws MYException;
 

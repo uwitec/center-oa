@@ -155,6 +155,32 @@ public interface FinanceFacade
         throws MYException;
 
     /**
+     * 总部核对
+     * 
+     * @param userId
+     * @param id
+     * @param checks
+     * @param refId
+     * @return
+     * @throws MYException
+     */
+    boolean checkPaymentApply(String userId, String id, String checks, String refId)
+        throws MYException;
+
+    /**
+     * 总部核对
+     * 
+     * @param userId
+     * @param id
+     * @param checks
+     * @param refId
+     * @return
+     * @throws MYException
+     */
+    boolean checkInvoiceinsBean2(String userId, String id, String checks, String refId)
+        throws MYException;
+
+    /**
      * 分拆
      * 
      * @param user

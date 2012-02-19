@@ -76,4 +76,15 @@ public interface PaymentApplyManager extends ListenerManager<PaymentApplyListene
      */
     boolean rejectPaymentApply(User user, String id, String reason)
         throws MYException;
+
+    /**
+     * 总部核对
+     * 
+     * @param stafferId
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean checkPaymentApply(User user, String id, String checks, String refId)
+        throws MYException;
 }

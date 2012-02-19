@@ -131,6 +131,12 @@ public interface FinanceConstant
     int PAYAPPLY_STATUS_INIT = 0;
 
     /**
+     * 驳回
+     */
+    @Defined(key = "payApplyStatus", value = "驳回")
+    int PAYAPPLY_STATUS_REJECT = 2;
+
+    /**
      * 待稽核
      */
     @Defined(key = "payApplyStatus", value = "待稽核")
@@ -141,12 +147,6 @@ public interface FinanceConstant
      */
     @Defined(key = "payApplyStatus", value = "通过")
     int PAYAPPLY_STATUS_PASS = 1;
-
-    /**
-     * 驳回
-     */
-    @Defined(key = "payApplyStatus", value = "驳回")
-    int PAYAPPLY_STATUS_REJECT = 2;
 
     /**
      * 回款转收款(就是回款转预收)

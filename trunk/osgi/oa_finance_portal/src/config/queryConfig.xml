@@ -130,6 +130,12 @@
             <type>select</type>
             <option>$pubVtype</option>
         </condtion>
+        <condtion name="checkStatus" caption="核对状态">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$pubCheckStatus</option>
+        </condtion>
     </item>
     
     <item name="queryPaymentApply" deaultpfix="PaymentApplyBean">
@@ -172,6 +178,12 @@
             <datatype>1</datatype>
             <type>select</type>
             <option>$pubVtype</option>
+        </condtion>
+        <condtion name="checkStatus" caption="核对状态">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$pubCheckStatus</option>
         </condtion>
     </item>
     

@@ -3,11 +3,12 @@
 <%@include file="../common/common.jsp"%>
 <html>
 <head>
-<p:link title="发票" />
+<p:link title="发票" link="true" guid="true" cal="true" dialog="true" />
 <script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
 <script language="JavaScript" src="../js/key.js"></script>
+<script src="../stockapply_js/scheck.js"></script>
 <script language="javascript">
 
 function passBean()
@@ -23,6 +24,37 @@ function rejectBean()
     
     submit('确定驳回?', null, null);
 }
+
+function checkSubmit(checks, checkrefId)
+{
+    if (checks == '' || checkrefId == '')
+    {
+        alert('意见和关联单据不能为空');
+        
+        return false;
+    }
+    
+    closeCheckDiv();
+    
+    $ajax2('../finance/invoiceins.do?method=checkInvoiceins&id=${bean.id}', {'checks' : checks, 'checkrefId' : checkrefId}, 
+                        callBackFun1);
+}
+
+function callBackFun1(data)
+{
+    alert(data.msg);
+    
+    if (data.ret == 0)
+    {
+        $('#checkCell_SEC').html('已核对 / ' + $('#checks').val() + ' / ' + $('#checkrefId').val());
+    }
+}
+
+function checkBean()
+{
+    openCheckDiv();
+}
+
 
 </script>
 
@@ -98,6 +130,10 @@ function rejectBean()
             
             <p:cell title="开票时间">
                ${bean.logTime}
+            </p:cell>
+            
+            <p:cell title="核对信息" id="checkCell">
+               ${my:get('pubCheckStatus', bean.checkStatus)} / ${bean.checks} / ${bean.checkrefId}
             </p:cell>
 
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
@@ -183,7 +219,14 @@ function rejectBean()
                 id="re_b" style="cursor: pointer" value="&nbsp;&nbsp;驳 回&nbsp;&nbsp;"
                 onclick="rejectBean()">&nbsp;&nbsp;
          </c:if>
-            
+         
+         <c:if test="${bean.status == 99}">
+	        <input
+	            type="button" name="ba" class="button_class"
+	            onclick="checkBean()"
+	            value="&nbsp;&nbsp;总部核对&nbsp;&nbsp;">&nbsp;&nbsp;    
+         </c:if>
+       
 		<input
             type="button" name="ba" class="button_class"
             onclick="javascript:history.go(-1)"

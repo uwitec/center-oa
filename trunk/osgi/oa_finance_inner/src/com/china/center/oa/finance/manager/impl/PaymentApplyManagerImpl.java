@@ -1191,6 +1191,28 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
         return true;
     }
 
+    @Transactional(rollbackFor = MYException.class)
+    public boolean checkPaymentApply(User user, String id, String checks, String refId)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        PaymentApplyBean apply = paymentApplyDAO.find(id);
+
+        if (apply == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        apply.setCheckStatus(PublicConstant.CHECK_STATUS_END);
+        apply.setChecks(checks + " [" + TimeTools.now() + ']');
+        apply.setCheckrefId(refId);
+
+        paymentApplyDAO.updateEntityBean(apply);
+
+        return true;
+    }
+
     private void saveRejectLog(User user, PaymentApplyBean apply, String reason)
     {
         FlowLogBean log = new FlowLogBean();

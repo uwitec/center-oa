@@ -8,6 +8,7 @@
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
 <script src="../js/plugin/highlight/jquery.highlight.js"></script>
+<script src="../stockapply_js/scheck.js"></script>
 <script type="text/javascript">
 
 var gurl = '../finance/bank.do?method=';
@@ -39,6 +40,7 @@ function load()
          },
          buttons : [
              {id: 'pass', caption: '处理',bclass: 'update', auth: '1606', onpress : doProcess},
+             {id: 'check', bclass: 'pass', caption: '总部核对', onpress : checkBean, auth: '1608'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -80,6 +82,31 @@ function doProcess()
     if (getRadio('checkb') && getRadio('checkb').lstatus == 0)
     {   
         $l(gurl + 'find' + ukey + '&update=1&id=' + getRadioValue('checkb'));
+    }
+    else
+    $error('不能操作');
+}
+
+function checkSubmit(checks, checkrefId)
+{
+    if (checks == '' || checkrefId == '')
+    {
+        alert('意见和关联单据不能为空');
+        
+        return false;
+    }
+    
+    closeCheckDiv();
+    
+    $ajax2(gurl + 'checkPaymentApply&id=' + getRadioValue('checkb'), {'checks' : checks, 'checkrefId' : checkrefId}, 
+                        callBackFun);
+}
+
+function checkBean()
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {   
+       openCheckDiv();
     }
     else
     $error('不能操作');

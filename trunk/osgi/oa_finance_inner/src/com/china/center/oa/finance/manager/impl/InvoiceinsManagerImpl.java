@@ -581,6 +581,28 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
         return true;
     }
 
+    @Transactional(rollbackFor = MYException.class)
+    public boolean checkInvoiceinsBean2(User user, String id, String checks, String refId)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        InvoiceinsBean bean = invoiceinsDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        bean.setCheckStatus(PublicConstant.CHECK_STATUS_END);
+        bean.setChecks(checks + " [" + TimeTools.now() + ']');
+        bean.setCheckrefId(refId);
+
+        invoiceinsDAO.updateEntityBean(bean);
+
+        return true;
+    }
+
     public InvoiceinsVO findVO(String id)
     {
         InvoiceinsVO vo = invoiceinsDAO.findVO(id);

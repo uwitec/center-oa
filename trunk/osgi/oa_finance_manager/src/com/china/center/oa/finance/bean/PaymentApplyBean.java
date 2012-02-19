@@ -88,6 +88,18 @@ public class PaymentApplyBean implements Serializable
 
     private String description = "";
 
+    /**
+     * 总部核对信息
+     */
+    private String checks = "";
+
+    /**
+     * 关联单据
+     */
+    private String checkrefId = "";
+
+    private int checkStatus = PublicConstant.CHECK_STATUS_INIT;
+
     @Ignore
     private List<PaymentVSOutBean> vsList = null;
 
@@ -337,6 +349,57 @@ public class PaymentApplyBean implements Serializable
     }
 
     /**
+     * @return the checks
+     */
+    public String getChecks()
+    {
+        return checks;
+    }
+
+    /**
+     * @param checks
+     *            the checks to set
+     */
+    public void setChecks(String checks)
+    {
+        this.checks = checks;
+    }
+
+    /**
+     * @return the checkrefId
+     */
+    public String getCheckrefId()
+    {
+        return checkrefId;
+    }
+
+    /**
+     * @param checkrefId
+     *            the checkrefId to set
+     */
+    public void setCheckrefId(String checkrefId)
+    {
+        this.checkrefId = checkrefId;
+    }
+
+    /**
+     * @return the checkStatus
+     */
+    public int getCheckStatus()
+    {
+        return checkStatus;
+    }
+
+    /**
+     * @param checkStatus
+     *            the checkStatus to set
+     */
+    public void setCheckStatus(int checkStatus)
+    {
+        this.checkStatus = checkStatus;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -389,6 +452,15 @@ public class PaymentApplyBean implements Serializable
             .append(TAB)
             .append("description = ")
             .append(this.description)
+            .append(TAB)
+            .append("checks = ")
+            .append(this.checks)
+            .append(TAB)
+            .append("checkrefId = ")
+            .append(this.checkrefId)
+            .append(TAB)
+            .append("checkStatus = ")
+            .append(this.checkStatus)
             .append(TAB)
             .append("vsList = ")
             .append(this.vsList)

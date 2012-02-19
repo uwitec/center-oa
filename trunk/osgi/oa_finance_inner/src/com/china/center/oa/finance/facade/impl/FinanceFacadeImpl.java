@@ -476,6 +476,50 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
+    public boolean checkPaymentApply(String userId, String id, String checks, String refId)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (PAYMENT_APPLY_LOCK)
+        {
+            if (containAuth(user, AuthConstant.BILL_QUERY_ALL))
+            {
+                return paymentApplyManager.checkPaymentApply(user, id, checks, refId);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
+    public boolean checkInvoiceinsBean2(String userId, String id, String checks, String refId)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(userId, id);
+
+        User user = userManager.findUser(userId);
+
+        checkUser(user);
+
+        synchronized (INVOICEINS_LOCK)
+        {
+            if (containAuth(user, AuthConstant.BILL_QUERY_ALL))
+            {
+                return invoiceinsManager.checkInvoiceinsBean2(user, id, checks, refId);
+            }
+            else
+            {
+                throw noAuth();
+            }
+        }
+    }
+
     public boolean updatePaymentApply(String userId, PaymentApplyBean bean)
         throws MYException
     {
