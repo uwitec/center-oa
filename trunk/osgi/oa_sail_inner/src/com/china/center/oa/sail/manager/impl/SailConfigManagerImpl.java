@@ -18,7 +18,10 @@ import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.jdbc.expression.Expression;
+import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.publics.bean.ShowBean;
+import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.ShowDAO;
 import com.china.center.oa.sail.bean.SailConfBean;
@@ -273,6 +276,72 @@ public class SailConfigManagerImpl implements SailConfigManager
         SailConfigHelper.changeVO(obj);
 
         return obj;
+    }
+
+    public SailConfBean findProductConf(StafferBean sb, ProductBean productBean)
+    {
+        ConditionParse con = new ConditionParse();
+
+        con.addWhereStr();
+
+        con.addIntCondition("type", "=", SailConstant.SAILCONFIG_ONLYPRODUCT);
+
+        con.addCondition("productId", "=", productBean.getId());
+
+        con.addCondition("industryId", "=", sb.getIndustryId());
+
+        List<SailConfBean> conf = sailConfDAO.queryEntityBeansByCondition(con.toString());
+
+        if (conf.size() > 0)
+        {
+            return conf.get(0);
+        }
+
+        // 然后就是产品类型
+        con.clear();
+
+        con.addWhereStr();
+
+        con.addIntCondition("type", "=", SailConstant.SAILCONFIG_PRODUCTTYPE);
+
+        con.addIntCondition("productType", "=", productBean.getType());
+
+        con.addCondition("industryId", "=", sb.getIndustryId());
+
+        conf = sailConfDAO.queryEntityBeansByCondition(con.toString());
+
+        if (conf.size() > 0)
+        {
+            return conf.get(0);
+        }
+
+        // 然后就是产品类型
+        con.clear();
+
+        con.addWhereStr();
+
+        con.addIntCondition("type", "=", SailConstant.SAILCONFIG_SAILTTYPE);
+
+        con.addIntCondition("sailType", "=", productBean.getSailType());
+
+        con.addCondition("industryId", "=", sb.getIndustryId());
+
+        conf = sailConfDAO.queryEntityBeansByCondition(con.toString());
+
+        if (conf.size() > 0)
+        {
+            return conf.get(0);
+        }
+
+        // 返回默认的
+        SailConfBean result = new SailConfBean();
+
+        result.setIratio(0);
+
+        result.setPratio(0);
+
+        // 先查询产品
+        return result;
     }
 
     /**

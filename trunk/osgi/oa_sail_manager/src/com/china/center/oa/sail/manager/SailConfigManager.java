@@ -13,6 +13,8 @@ import java.util.List;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.product.bean.ProductBean;
+import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.sail.bean.SailConfBean;
 import com.china.center.oa.sail.bean.SailConfigBean;
 import com.china.center.oa.sail.vo.SailConfigVO;
@@ -48,4 +50,13 @@ public interface SailConfigManager
 
     boolean deleteConf(User user, String id)
         throws MYException;
+
+    /**
+     * 查询配置
+     * 
+     * @param sb
+     * @param productBean
+     * @return
+     */
+    SailConfBean findProductConf(StafferBean sb, ProductBean productBean);
 }
