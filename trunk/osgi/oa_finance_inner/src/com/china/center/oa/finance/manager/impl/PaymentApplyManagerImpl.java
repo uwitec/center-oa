@@ -316,7 +316,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
                 }
 
                 // 2012后
-                if (OATools.getManagerFlag() && out.getOutTime().compareTo("2012-01-01") >= 0)
+                if (OATools.getManagerFlag() && out.getOutTime().compareTo("2012-01-01") >= 0
+                    && false)
                 {
                     if ( !out.getDutyId().equals(bill.getDutyId()))
                     {

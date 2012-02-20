@@ -1379,7 +1379,7 @@ public class FinanceAction extends DispatchAction
 
         List<InBillVO> billList = inBillDAO.queryEntityVOsByCondition(condtion);
 
-        if (OATools.getManagerFlag() && out.getOutTime().compareTo("2012-01-01") >= 0)
+        if (OATools.getManagerFlag() && out.getOutTime().compareTo("2012-01-01") >= 0 && false)
         {
             for (Iterator iterator = billList.iterator(); iterator.hasNext();)
             {
