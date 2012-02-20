@@ -91,4 +91,6 @@
 	
 	<osgi:reference id="sailConfigDAO" interface="com.china.center.oa.sail.dao.SailConfigDAO" />
 	
+	<osgi:reference id="sailConfigManager" interface="com.china.center.oa.sail.manager.SailConfigManager" />
+	
 </beans>

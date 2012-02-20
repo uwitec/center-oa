@@ -86,6 +86,12 @@ public class StorageRelationVO extends StorageRelationBean
     @Ignore
     private double costPrice = 0.0d;
 
+    /**
+     * 增量后的成本
+     */
+    @Ignore
+    private double addPrice = 0.0d;
+
     @Ignore
     private String showJOSNStr = "";
 
@@ -403,6 +409,23 @@ public class StorageRelationVO extends StorageRelationBean
     }
 
     /**
+     * @return the addPrice
+     */
+    public double getAddPrice()
+    {
+        return addPrice;
+    }
+
+    /**
+     * @param addPrice
+     *            the addPrice to set
+     */
+    public void setAddPrice(double addPrice)
+    {
+        this.addPrice = addPrice;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -467,6 +490,9 @@ public class StorageRelationVO extends StorageRelationBean
             .append(TAB)
             .append("costPrice = ")
             .append(this.costPrice)
+            .append(TAB)
+            .append("addPrice = ")
+            .append(this.addPrice)
             .append(TAB)
             .append("showJOSNStr = ")
             .append(this.showJOSNStr)

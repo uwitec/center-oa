@@ -33,6 +33,7 @@ function load()
              {display: '类型', name : 'type', cc : 'productType', width : '8%'},
              {display: '虚拟', name : 'abstractType', cc : 'productAbstractType', width : '8%'},
              {display: '库存模型', name : 'stockType', cc : 'productStockType', width : '10%'},
+             {display: '结算价', name : 'sailPrice', toFixed: 2, width : '10%'},
              {display: '时间', name : 'logTime', sortable : true, width : 'auto'}
              ],
          extAtt: {

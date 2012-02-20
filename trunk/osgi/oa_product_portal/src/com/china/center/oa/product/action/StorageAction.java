@@ -80,7 +80,7 @@ import com.china.center.oa.sail.bean.SailConfigBean;
 import com.china.center.oa.sail.constanst.SailConstant;
 import com.china.center.oa.sail.dao.SailConfigDAO;
 import com.china.center.oa.sail.manager.OutManager;
-import com.china.center.oa.sail.vo.SailConfigVO;
+import com.china.center.oa.sail.manager.SailConfigManager;
 import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
@@ -118,6 +118,8 @@ public class StorageAction extends DispatchAction
     private InvoiceDAO invoiceDAO = null;
 
     private DutyDAO dutyDAO = null;
+
+    private SailConfigManager sailConfigManager = null;
 
     private OutManager outManager = null;
 
@@ -1488,24 +1490,6 @@ public class StorageAction extends DispatchAction
             createList(list, condtion, sailLocation, page, queryList, request);
         }
 
-        // 纳税实体
-        String dutyId = request.getParameter("dutyId");
-
-        String invoiceId = request.getParameter("invoiceId");
-
-        InvoiceBean invoiceBean = null;
-        DutyBean duty = null;
-        int ratio = 0;
-
-        if ( !StringTools.isNullOrNone(dutyId) && !StringTools.isNullOrNone(invoiceId))
-        {
-            invoiceBean = invoiceDAO.find(invoiceId);
-
-            duty = dutyDAO.find(dutyId);
-
-            ratio = (int) (invoiceBean.getVal() * 10);
-        }
-
         for (Iterator iterator = list.iterator(); iterator.hasNext();)
         {
             StorageRelationVO vo = (StorageRelationVO)iterator.next();
@@ -1541,54 +1525,14 @@ public class StorageAction extends DispatchAction
                 vo.setCostPrice(product.getCost());
             }
 
-            if ( !StringTools.isNullOrNone(dutyId) && !StringTools.isNullOrNone(invoiceId))
-            {
-                ConditionParse sailCondtion = new ConditionParse();
+            // SailConfBean sailConf = sailConfigManager.findProductConf(Helper.getStaffer(request),
+            // product);
 
-                sailCondtion.addWhereStr();
+            // 最新的成本(一致的)
+            // vo.setAddPrice(product.getSailPrice() * (1 + sailConf.getPratio() / 1000.0d)
+            // * (1 + sailConf.getIratio() / 1000.0d));
 
-                sailCondtion.addIntCondition("finType" + duty.getType(), "=",
-                    SailConstant.SAILCONFIG_FIN_YES);
-
-                sailCondtion.addIntCondition("ratio" + duty.getType(), "=", ratio);
-
-                sailCondtion.addIntCondition("productType", "=", vo.getProductType());
-
-                sailCondtion.addIntCondition("sailType", "=", vo.getProductSailType());
-
-                sailCondtion.addCondition("group by showId");
-
-                List<SailConfigVO> voList = sailConfigDAO.queryEntityVOsByCondition(sailCondtion);
-
-                // 防止没有开票的品名
-                if (voList.isEmpty())
-                {
-                    continue;
-                }
-
-                // [{id:'1223', name:'hello'},{}]
-                StringBuffer json = new StringBuffer();
-
-                json.append("[");
-
-                for (Iterator iterator2 = voList.iterator(); iterator2.hasNext();)
-                {
-                    SailConfigVO sailConfigVO = (SailConfigVO)iterator2.next();
-
-                    json.append("{").append("\"id\" : \"").append(sailConfigVO.getShowId()).append(
-                        "\" , ").append("\"name\" : \"").append(sailConfigVO.getShowName()).append(
-                        "\"}");
-
-                    if (iterator2.hasNext())
-                    {
-                        json.append(" , ");
-                    }
-                }
-
-                json.append("]");
-
-                vo.setShowJOSNStr(json.toString());
-            }
+            vo.setAddPrice(product.getSailPrice());
         }
 
         // 查询仓库下的良品仓
@@ -2593,5 +2537,22 @@ public class StorageAction extends DispatchAction
     public void setDutyDAO(DutyDAO dutyDAO)
     {
         this.dutyDAO = dutyDAO;
+    }
+
+    /**
+     * @return the sailConfigManager
+     */
+    public SailConfigManager getSailConfigManager()
+    {
+        return sailConfigManager;
+    }
+
+    /**
+     * @param sailConfigManager
+     *            the sailConfigManager to set
+     */
+    public void setSailConfigManager(SailConfigManager sailConfigManager)
+    {
+        this.sailConfigManager = sailConfigManager;
     }
 }

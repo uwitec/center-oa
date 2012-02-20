@@ -144,9 +144,13 @@ function inits()
 			
 			<p:pro field="lever"/>
 			
-			<p:pro field="black" cell="0">
+			<p:pro field="black">
                 <p:option type="stafferBlack"></p:option>
             </p:pro>
+            
+            <p:cell title="事业部">
+                ${bean.industryName}
+            </p:cell>
 
 			<p:pro field="address" cell="0" innerString="size=80"
 				value="${bean.address}" />
