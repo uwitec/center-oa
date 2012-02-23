@@ -95,6 +95,7 @@ import com.china.center.oa.sail.bean.ConsignBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.bean.OutUniqueBean;
+import com.china.center.oa.sail.bean.SailConfBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.constanst.SailConstant;
 import com.china.center.oa.sail.dao.BaseBalanceDAO;
@@ -108,6 +109,7 @@ import com.china.center.oa.sail.helper.OutHelper;
 import com.china.center.oa.sail.helper.YYTools;
 import com.china.center.oa.sail.listener.OutListener;
 import com.china.center.oa.sail.manager.OutManager;
+import com.china.center.oa.sail.manager.SailConfigManager;
 import com.china.center.oa.sail.vo.BaseBalanceVO;
 import com.china.center.oa.sail.vo.OutVO;
 import com.china.center.oa.sail.wrap.CreditWrap;
@@ -187,6 +189,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     private BaseBalanceDAO baseBalanceDAO = null;
 
     private OutBalanceDAO outBalanceDAO = null;
+
+    private SailConfigManager sailConfigManager = null;
 
     private StorageRelationManager storageRelationManager = null;
 
@@ -269,9 +273,16 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         // 含税价
         final String[] priceList = request.getParameter("priceList").split("~");
+
         // 输入价格
         final String[] inputPriceList = request.getParameter("inputPriceList").split("~");
+
+        // 显示成本
+        final String[] showCostList = request.getParameter("showCostList").split("~");
+
+        // 成本
         final String[] desList = request.getParameter("desList").split("~");
+
         final String[] otherList = request.getParameter("otherList").split("~");
 
         _logger.info(fullId + "/nameList/" + request.getParameter("nameList"));
@@ -328,6 +339,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         // 行业属性
         setInvoiceId(outBean);
+
+        final StafferBean stafferBean = stafferDAO.find(user.getStafferId());
 
         // 增加管理员操作在数据库事务中完成
         TransactionTemplate tran = new TransactionTemplate(transactionManager);
@@ -422,34 +435,38 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL
                             && outBean.getOutType() != OutConstant.OUTTYPE_OUT_SWATCH)
                         {
-                            // 输入价格
-                            base.setInputPrice(MathTools.parseDouble(inputPriceList[i]));
-
-                            DutyBean duty = dutyDAO.find(outBean.getDutyId());
-
-                            if (duty == null)
+                            // 丢弃
+                            if (false)
                             {
-                                throw new RuntimeException("纳税实体不存在,请确认操作");
-                            }
+                                // 输入价格
+                                base.setInputPrice(MathTools.parseDouble(inputPriceList[i]));
 
-                            double inputPrice = base.getInputPrice();
+                                DutyBean duty = dutyDAO.find(outBean.getDutyId());
 
-                            double outPrice = base.getPrice();
+                                if (duty == null)
+                                {
+                                    throw new RuntimeException("纳税实体不存在,请确认操作");
+                                }
 
-                            double a = MathTools.round2(inputPrice * (1000 + duty.getDues())
-                                                        / 1000.0d);
+                                double inputPrice = base.getInputPrice();
 
-                            double b = outPrice;
+                                double outPrice = base.getPrice();
 
-                            if ( !MathTools.equal2(a, b))
-                            {
-                                _logger.error("error price1:" + a);
-                                _logger.error("error price2:" + b);
+                                double a = MathTools.round2(inputPrice * (1000 + duty.getDues())
+                                                            / 1000.0d);
 
-                                _logger.error("error price3:" + ((long)Math.round(a * 1000)));
-                                _logger.error("error price4:" + ((long)Math.round(b * 1000)));
+                                double b = outPrice;
 
-                                throw new RuntimeException("卖出价格非含税价格,请重新操作");
+                                if ( !MathTools.equal2(a, b))
+                                {
+                                    _logger.error("error price1:" + a);
+                                    _logger.error("error price2:" + b);
+
+                                    _logger.error("error price3:" + ((long)Math.round(a * 1000)));
+                                    _logger.error("error price4:" + ((long)Math.round(b * 1000)));
+
+                                    throw new RuntimeException("卖出价格非含税价格,请重新操作");
+                                }
                             }
                         }
                         else
@@ -564,7 +581,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             throw new RuntimeException("销售必须在一个仓库下面");
                         }
 
-                        // MANAGER 销售单校验销售规则
+                        // MANAGER 销售单校验销售规则(废弃)
                         if (OATools.getManagerFlag()
                             && outBean.getType() == OutConstant.OUT_TYPE_OUTBILL && false)
                         {
@@ -615,6 +632,19 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
                         // 其实也是成本
                         base.setDescription(desList[i].trim());
+
+                        // 获取销售配置
+                        SailConfBean sailConf = sailConfigManager.findProductConf(stafferBean,
+                            product);
+
+                        // 总部结算价
+                        base.setPprice(base.getCostPrice() * (1 + sailConf.getPratio() / 1000.0));
+
+                        // 事业部结算价
+                        base.setIprice(base.getCostPrice() * (1 + sailConf.getIratio() / 1000.0));
+
+                        // 显示成本
+                        base.setInputPrice(MathTools.parseDouble(showCostList[i]));
 
                         baseList.add(base);
 
@@ -5189,5 +5219,22 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     public void setSailConfigDAO(SailConfigDAO sailConfigDAO)
     {
         this.sailConfigDAO = sailConfigDAO;
+    }
+
+    /**
+     * @return the sailConfigManager
+     */
+    public SailConfigManager getSailConfigManager()
+    {
+        return sailConfigManager;
+    }
+
+    /**
+     * @param sailConfigManager
+     *            the sailConfigManager to set
+     */
+    public void setSailConfigManager(SailConfigManager sailConfigManager)
+    {
+        this.sailConfigManager = sailConfigManager;
     }
 }

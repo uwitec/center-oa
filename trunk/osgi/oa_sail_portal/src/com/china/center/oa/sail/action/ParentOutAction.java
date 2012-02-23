@@ -4899,6 +4899,10 @@ public class ParentOutAction extends DispatchAction
 
         String queryType = RequestTools.getValueFromRequest(request, "queryType");
 
+        // 是否可以看到真实的成本
+        boolean containAuth = userManager.containAuth(Helper.getUser(request).getId(),
+            AuthConstant.SAIL_QUERY_COST);
+
         if (list != null)
         {
             for (Object each : list)
@@ -4925,6 +4929,15 @@ public class ParentOutAction extends DispatchAction
 
                                 break;
                             }
+                        }
+                    }
+
+                    if ( !containAuth)
+                    {
+                        for (BaseBean baseBean : baseList)
+                        {
+                            // 显示成本
+                            baseBean.setCostPrice(baseBean.getInputPrice());
                         }
                     }
 

@@ -80,9 +80,15 @@ public class StorageRelationVO extends StorageRelationBean
     @Ignore
     private int errorAmount = 0;
 
+    /**
+     * 产品批发价
+     */
     @Ignore
     private double batchPrice = 0.0d;
 
+    /**
+     * 产品成本价
+     */
     @Ignore
     private double costPrice = 0.0d;
 

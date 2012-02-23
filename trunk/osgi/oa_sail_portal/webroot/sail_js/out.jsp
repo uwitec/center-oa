@@ -286,7 +286,7 @@ function check(isAdd)
         }
         
         if (!isFloat(inputPrices[i].value))
-        {
+        {f
             alert('数据错误,产品输入价格只能是浮点数!');
             inputPrices[i].focus();
             return false;
@@ -305,7 +305,10 @@ function check(isAdd)
         $O('inputPriceList').value = $O('inputPriceList').value + inputPrices[i].value + '~';
     }
 
-    var desList = document.getElementsByName('desciprt');
+    //成本
+    var desList = document.getElementsByName('costPrice');
+    
+    var desciprtList = document.getElementsByName('desciprt');
     
     for (var i = 1; i < desList.length; i++)
     {
@@ -324,9 +327,9 @@ function check(isAdd)
         }
         
         if (parseFloat(trim(prices[i].value)) != 0 
-            && (parseFloat(trim(prices[i].value)) < parseFloat(trim(desList[i].value))))
+            && (parseFloat(trim(prices[i].value)) < parseFloat(trim(desciprtList[i].value))))
         {
-            if (!window.confirm('产品含税销售价['+prices[i].value+']低于成本价['+desList[i].value+'],你确定?'))
+            if (!window.confirm('产品销售价['+prices[i].value+']低于成本价['+desciprtList[i].value+'],你确定?'))
             {
                  inputPrices[i].focus();
                  return false;
@@ -337,7 +340,12 @@ function check(isAdd)
     for (var i = 1; i < values.length; i++)
     {
         $O('totalList').value = $O('totalList').value + values[i].value + '~';
+        
+        //真正的成本
         $O('desList').value = $O('desList').value + desList[i].value + '~';
+        
+        //显示成本
+        $O('showCostList').value = $O('showCostList').value + desciprtList[i].value + '~';
     }
 
     for (var i = 1; i < units.length; i++)

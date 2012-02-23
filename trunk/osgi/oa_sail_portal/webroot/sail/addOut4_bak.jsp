@@ -91,7 +91,6 @@ function changePrice()
 	type=hidden name="customerId" /> <input type=hidden name="type"
 	value='0' /> <input type=hidden name="saves" value="" />
 <input type=hidden name="desList" value="" />
-<input type=hidden name="showCostList" value="" />
 <input type=hidden name="otherList" value="" />
 <input type=hidden name="showIdList" value="" />
 <input type=hidden name="showNameList" value="" />
@@ -290,7 +289,7 @@ function changePrice()
 						<td width="5%" align="center">单位</td>
 						<td width="5%" align="center">数量</td>
 						<td width="10%" align="center">单价</td>
-						<td width="10%" align="center">销售价</td>
+						<td width="10%" align="center">含税价</td>
 						<td width="10%" align="left">金额<span id="total"></span></td>
 						<td width="10%" align="center">成本</td>
 						<td width="15%" align="center">类型</td>
@@ -335,7 +334,7 @@ function changePrice()
 							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
 						<td align="center"><input type="text" readonly="readonly"
-							style="width: 100%" name="desciprt"><input type="hidden" name="costPrice" value=""></td>
+							style="width: 100%" name="desciprt"></td>
 							
 						<td align="center"><input type="text" readonly="readonly"
 							style="width: 100%" name="rstafferName"></td>
@@ -381,7 +380,7 @@ function changePrice()
 							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
 						<td align="center"><input type="text" id="unDesciprt" readonly="readonly"
-							style="width: 100%" name="desciprt"><input type="hidden" id="unCostPrice" name="costPrice" value=""></td>
+							style="width: 100%" name="desciprt"></td>
 							
 						<td align="center"><input type="text" id="unRstafferName" readonly="readonly"
 							style="width: 100%" name="rstafferName"></td>

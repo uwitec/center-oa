@@ -66,7 +66,7 @@ function autoCalculation()
     if (pratio != 0 && iratio != 0)
     {
         //计算价格
-        var dest = src * ((1000 + pratio) / 1000.0) * ((1000 + iratio) / 1000.0);
+        var dest = src +  src * (pratio / 1000.0) + src * (iratio / 1000.0);
         
         $O('dirSailPrice').value = formatNum(dest, 2);
         
@@ -89,9 +89,9 @@ function autoCalculation()
     if (pratio == 0 && iratio == 0)
     {
         //都是0就平均分担
-        var avg = Math.sqrt(dir / src) * 1000.0 - 1000;
+        var avg = (dir - src) / (src + 0.0) / 2;
         
-        var savg = formatNumToInt(avg);
+        var savg = formatNumToInt(avg * 1000);
         
         $O('pratio').value = savg;
         $O('iratio').value = savg;
@@ -101,15 +101,15 @@ function autoCalculation()
     
     if (pratio != 0)
     {
-        var tmp = (dir / src) / (1 + (pratio / 1000.0));
+        var tmp = (dir - src) / (src + 0.0) - (pratio / 1000.0);
         
-        if (math_compare(tmp, 1) < 0)
+        if (math_compare(tmp, 0) < 0)
         {
             alert('总部结算率过高');
             return;
         }
         
-        var savg = formatNumToInt((tmp - 1) * 1000);
+        var savg = formatNumToInt(tmp * 1000);
         
         $O('iratio').value = savg;
         
@@ -117,15 +117,15 @@ function autoCalculation()
     }
     else
     {
-        var tmp = (dir / src) / (1 + (iratio / 1000.0));
+        var tmp = (dir - src) / (src + 0.0) - (iratio / 1000.0);
         
-        if (math_compare(tmp, 1) < 0)
+        if (math_compare(tmp, 0) < 0)
         {
             alert('事业部结算率过高');
             return;
         }
         
-        var savg = formatNumToInt((tmp - 1) * 1000);
+        var savg = formatNumToInt(tmp * 1000);
         
         $O('pratio').value = savg;
         

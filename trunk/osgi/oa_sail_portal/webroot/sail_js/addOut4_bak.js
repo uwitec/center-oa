@@ -21,8 +21,7 @@ function ccs(obj)
 	
 	var p = os.cells[3].childNodes[0].value;
 	
-	//var dues = parseInt(duesMap[$$('dutyId')], 10) + 1000;
-	var dues = 1000;
+	var dues = parseInt(duesMap[$$('dutyId')], 10) + 1000;
 	
 	//个人领样没有税
 	if ($$('outType') == 1)
@@ -187,7 +186,7 @@ function removeTr(obj)
 
 function toUnqueStr1(ele)
 {
-	return ele.ppid + '-' + ele.prealprice + '-' + ele.pstafferid + '-' + ele.pdepotpartid;
+	return ele.ppid + '-' + ele.pprice + '-' + ele.pstafferid + '-' + ele.pdepotpartid;
 }
 
 function toUnqueStr2(ele)
@@ -237,7 +236,6 @@ function clears()
 	document.getElementById('unAmount').title = '';
 	document.getElementById('unInputPrice').value = '';
 	document.getElementById('unPrice').value = '';
-	document.getElementById('unCostPrice').value = '';
 	document.getElementById('unProductName').value = '';
 	document.getElementById('unProductName').productid = '';
 	document.getElementById('unProductName').productcode = '';
@@ -251,7 +249,6 @@ function clearsAll()
 	clearArray(document.getElementsByName('productName'));
 	clearArray(document.getElementsByName('amount'), true);
 	clearArray(document.getElementsByName('price'));
-	clearArray(document.getElementsByName('costPrice'));
 	clearArray(document.getElementsByName('inputPrice'));
 	clearArray(document.getElementsByName('value'));
 	clearArray(document.getElementsByName('desciprt'));
@@ -356,7 +353,6 @@ function getProductRelation(ox)
     {
         indes = 1;
         
-        // oo就是选择的输入框
         if (!setObj(oo, ox[0]))
         {
             alert('选择的产品的类型不一致(要么普通要么管理):' + ox[0].pname);
@@ -366,14 +362,9 @@ function getProductRelation(ox)
         var os = oo.parentNode.parentNode;
         os.cells[2].childNodes[0].title = '当前产品的最大数量:' + ox[0].pamount;
         os.cells[2].childNodes[0].oncheck = 'range(0, ' + ox[0].pamount + ')';
-        
-        os.cells[3].childNodes[0].value = ox[0].pprice;
-        
-        //显示价格
+        os.cells[3].childNodes[0].value = ox[0].pbatchprice;
+        os.cells[3].childNodes[0].cost = ox[0].pcostprice;
         os.cells[6].childNodes[0].value = ox[0].pprice;
-        //实际成本
-        os.cells[6].childNodes[1].value = ox[0].prealprice;
-        
         os.cells[7].childNodes[0].value =  ox[0].pdepotpartname + '-->' + ox[0].pstaffername;
     }
     
@@ -397,15 +388,10 @@ function getProductRelation(ox)
         
         inps[1].title = '当前产品的最大数量:' + ox[i].pamount;
         inps[1].oncheck = 'range(0, ' + ox[i].pamount + ')';
-        inps[2].value = ox[i].pprice;
-        
-        //显示价格
+        inps[2].value = ox[i].pbatchprice;
+        inps[2].cost = ox[i].pcostprice;
         inps[5].value = ox[i].pprice;
-        
-        //实际成本
-        inps[6].value = ox[i].prealprice;
-        
-        inps[7].value = ox[i].pdepotpartname + '-->' + ox[i].pstaffername;
+        inps[6].value = ox[i].pdepotpartname + '-->' + ox[i].pstaffername;
     }
 }
 
@@ -466,9 +452,7 @@ function setObj(src, dest)
     src.productcode = dest.pcode;
     
     src.productid = dest.value;
-    
-    //真实价格
-    src.price = dest.prealprice;
+    src.price = dest.pprice;
     src.stafferid = dest.pstafferid;
     src.depotpartid = dest.pdepotpartid;
     

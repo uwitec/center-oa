@@ -1921,18 +1921,8 @@ public class ProductAction extends DispatchAction
             return JSONTools.writeResponse(response, ajax);
         }
 
-        double oldBatchPrice = bean.getBatchPrice();
-        double oldSailPrice = bean.getSailPrice();
-
         double newBatchPrice = CommonTools.parseFloat(batchPrice);
         double newSailPrice = CommonTools.parseFloat(sailPrice);
-
-        if (oldBatchPrice > newBatchPrice || oldSailPrice > newSailPrice)
-        {
-            ajax.setError("只能提高批发价和零售价,请重新操作");
-
-            return JSONTools.writeResponse(response, ajax);
-        }
 
         bean.setBatchPrice(newBatchPrice);
         bean.setSailPrice(newSailPrice);

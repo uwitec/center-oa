@@ -76,6 +76,7 @@ import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.StafferVSIndustryDAO;
 import com.china.center.oa.publics.helper.OATools;
+import com.china.center.oa.sail.bean.SailConfBean;
 import com.china.center.oa.sail.bean.SailConfigBean;
 import com.china.center.oa.sail.constanst.SailConstant;
 import com.china.center.oa.sail.dao.SailConfigDAO;
@@ -1525,14 +1526,12 @@ public class StorageAction extends DispatchAction
                 vo.setCostPrice(product.getCost());
             }
 
-            // SailConfBean sailConf = sailConfigManager.findProductConf(Helper.getStaffer(request),
-            // product);
+            SailConfBean sailConf = sailConfigManager.findProductConf(Helper.getStaffer(request),
+                product);
 
             // 最新的成本(一致的)
-            // vo.setAddPrice(product.getSailPrice() * (1 + sailConf.getPratio() / 1000.0d)
-            // * (1 + sailConf.getIratio() / 1000.0d));
-
-            vo.setAddPrice(product.getSailPrice());
+            vo.setAddPrice(product.getSailPrice()
+                           * (1 + sailConf.getPratio() / 1000.0d + sailConf.getIratio() / 1000.0d));
         }
 
         // 查询仓库下的良品仓

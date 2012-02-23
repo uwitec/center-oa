@@ -442,8 +442,7 @@ function checkBean()
 						<td width="15%" align="center">品名</td>
 						<td width="5%" align="center">单位</td>
 						<td width="5%" align="center">数量</td>
-						<td width="10%" align="center">输入价</td>
-						<td width="10%" align="center">销售价(含税)</td>
+						<td width="10%" align="center">销售价</td>
 						<td width="10%" align="center">金额<span id="total"></span></td>
 						<td width="10%" align="center" id="cost_td">成本</td>
 						<td width="20%" align="center">类型</td>
@@ -473,10 +472,6 @@ function checkBean()
 						<td align="center"><input type="text"
 							style="width: 100%" maxlength="6" onkeyup="cc(this)"
 							name="amount"></td>
-							
-						<td align="center"><input type="text"
-                            style="width: 100%" maxlength="8" onkeyup="cc(this)"
-                            onblur="blu(this)" name="inputPrice"></td>
 
 						<td align="center"><input type="text"
 							style="width: 100%" maxlength="8" onkeyup="cc(this)"
@@ -522,9 +517,6 @@ function checkBean()
 						<td align="center"><input type="text" style="width: 100%" id="unAmount" value="${fristBase.amount}"
 							maxlength="6" onkeyup="cc(this)" name="amount"></td>
 						
-						<td align="center"><input type="text" style="width: 100%" id="unInputPrice" value="${my:formatNum(fristBase.inputPrice)}"
-                            maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="inputPrice"></td>
-
 						<td align="center"><input type="text" style="width: 100%" id="unPrice" value="${my:formatNum(fristBase.price)}"
 							maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
 
@@ -568,9 +560,6 @@ function checkBean()
                         <td align="center"><input type="text" style="width: 100%"  value="${fristBase.amount}"
                             maxlength="6" onkeyup="cc(this)" name="amount"></td>
                             
-                        <td align="center"><input type="text" style="width: 100%" value="${my:formatNum(fristBase.inputPrice)}"
-                            maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="inputPrice"></td>
-
                         <td align="center"><input type="text" style="width: 100%"  value="${my:formatNum(fristBase.price)}"
                             maxlength="8" onkeyup="cc(this)" onblur="blu(this)" name="price"></td>
 
