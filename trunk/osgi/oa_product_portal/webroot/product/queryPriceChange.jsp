@@ -56,8 +56,8 @@ function load()
          },
          buttons : [
              {id: 'update1', bclass: 'edit', caption: '锁定库存', onpress : lock, auth: '1006'},
-             {id: 'add', bclass: 'add', caption: '产品调价', onpress : openImport, auth: '1006'},
-             {id: 'del', bclass: 'odraw',  caption: '调价回滚', onpress : rollback, auth: '1006'},
+             {id: 'add', bclass: 'add', caption: '产品调价', onpress : openImport, auth: '1006x'},
+             {id: 'del', bclass: 'odraw',  caption: '调价回滚', onpress : rollback, auth: '1006x'},
              {id: 'update2', bclass: 'edit',  caption: '解锁库存', onpress : unlock, auth: '1006'},
              {id: 'pass', bclass: 'pass', caption: '总部核对', onpress : checkBean, auth: '1803'},
              {id: 'search', bclass: 'search', onpress : doSearch}

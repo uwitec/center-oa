@@ -11,6 +11,7 @@ package com.china.center.oa.product.dao;
 
 import com.china.center.jdbc.inter.DAO;
 import com.china.center.oa.product.bean.DepotBean;
+import com.china.center.oa.product.vo.DepotVO;
 
 
 /**
@@ -21,7 +22,7 @@ import com.china.center.oa.product.bean.DepotBean;
  * @see DepotDAO
  * @since 1.0
  */
-public interface DepotDAO extends DAO<DepotBean, DepotBean>
+public interface DepotDAO extends DAO<DepotBean, DepotVO>
 {
 
 }

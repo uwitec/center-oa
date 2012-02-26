@@ -16,7 +16,7 @@ import com.china.center.jdbc.annotation.Defined;
  * ComposeConstant
  * 
  * @author ZHUZHU
- * @version 2010-10-2
+ * @version 2010-10-3
  * @see ComposeConstant
  * @since 1.0
  */

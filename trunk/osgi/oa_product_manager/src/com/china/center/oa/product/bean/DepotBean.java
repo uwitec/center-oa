@@ -14,10 +14,13 @@ import java.io.Serializable;
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Html;
 import com.china.center.jdbc.annotation.Id;
+import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.Unique;
 import com.china.center.jdbc.annotation.enums.Element;
+import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.product.constant.DepotConstant;
+import com.china.center.oa.publics.bean.PrincipalshipBean;
 
 
 /**
@@ -38,6 +41,13 @@ public class DepotBean implements Serializable
     @Unique
     @Html(title = "名称", must = true)
     private String name = "";
+
+    /**
+     * 所属事业部
+     */
+    @Html(title = "事业部", type = Element.SELECT, must = true)
+    @Join(tagClass = PrincipalshipBean.class, type = JoinType.LEFT)
+    private String industryId = "";
 
     /**
      * 仓库类型
@@ -107,35 +117,6 @@ public class DepotBean implements Serializable
     }
 
     /**
-     * Constructs a <code>String</code> with all attributes in name = value format.
-     * 
-     * @return a <code>String</code> representation of this object.
-     */
-    public String toString()
-    {
-        final String TAB = ",";
-
-        StringBuilder retValue = new StringBuilder();
-
-        retValue
-            .append("DepotBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("name = ")
-            .append(this.name)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append(" )");
-
-        return retValue.toString();
-    }
-
-    /**
      * @return the type
      */
     public int getType()
@@ -150,6 +131,42 @@ public class DepotBean implements Serializable
     public void setType(int type)
     {
         this.type = type;
+    }
+
+    /**
+     * @return the industryId
+     */
+    public String getIndustryId()
+    {
+        return industryId;
+    }
+
+    /**
+     * @param industryId
+     *            the industryId to set
+     */
+    public void setIndustryId(String industryId)
+    {
+        this.industryId = industryId;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuffer retValue = new StringBuffer();
+
+        retValue.append("DepotBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(TAB).append(
+            "name = ").append(this.name).append(TAB).append("industryId = ").append(this.industryId).append(TAB).append(
+            "type = ").append(this.type).append(TAB).append("description = ").append(this.description).append(TAB).append(
+            " )");
+
+        return retValue.toString();
     }
 
 }

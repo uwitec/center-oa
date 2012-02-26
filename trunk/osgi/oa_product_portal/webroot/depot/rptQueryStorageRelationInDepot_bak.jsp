@@ -98,7 +98,6 @@ function queryAbs()
 <input type="hidden" value="${productType}" name="productType">
 <input type="hidden" value="${dutyId}" name="dutyId">
 <input type="hidden" value="${invoiceId}" name="invoiceId">
-<input type="hidden" value="${costMode}" name="costMode">
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">产品库存管理(最多返回前100个)</td>
@@ -190,7 +189,7 @@ function queryAbs()
 					pshowjosn='${item.showJOSNStr}' 
 					pproducttype="${item.productType}" 
 					pproductsailtype="${item.productSailType}" 
-					pprice="${my:formatNum(item.addPrice)}" 
+					pprice="${my:formatNum(item.price)}" 
 					prealprice="${my:formatNum(item.price)}" 
 					pbatchprice="${my:formatNum(item.batchPrice)}" 
 					pcostprice="${my:formatNum(item.costPrice)}" 
@@ -200,7 +199,7 @@ function queryAbs()
 					<td align="center" onclick="hrefAndSelect(this)">${item.productName}(${item.productCode})</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('pubManagerType', item.productMtype)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.mayAmount}</td>
-					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.addPrice)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.price)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>
 				</tr>
 			</c:forEach>

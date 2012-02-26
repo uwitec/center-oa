@@ -12,6 +12,7 @@ package com.china.center.oa.product.dao.impl;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.dao.DepotDAO;
+import com.china.center.oa.product.vo.DepotVO;
 
 
 /**
@@ -22,6 +23,6 @@ import com.china.center.oa.product.dao.DepotDAO;
  * @see DepotDAOImpl
  * @since 1.0
  */
-public class DepotDAOImpl extends BaseDAO<DepotBean, DepotBean> implements DepotDAO
+public class DepotDAOImpl extends BaseDAO<DepotBean, DepotVO> implements DepotDAO
 {
 }

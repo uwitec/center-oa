@@ -31,6 +31,7 @@ import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.dao.DepotDAO;
 import com.china.center.oa.product.facade.ProductFacade;
 import com.china.center.oa.publics.Helper;
+import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 
@@ -39,7 +40,7 @@ import com.china.center.tools.CommonTools;
  * DepotAction
  * 
  * @author ZHUZHU
- * @version 2010-6-27
+ * @version 2010-6-28
  * @see DepotAction
  * @since 1.0
  */
@@ -51,6 +52,8 @@ public class DepotAction extends DispatchAction
 
     private DepotDAO depotDAO = null;
 
+    private OrgManager orgManager = null;
+
     private static final String QUERYDEPOT = "queryDepot";
 
     /**
@@ -60,8 +63,8 @@ public class DepotAction extends DispatchAction
     {
     }
 
-    public ActionForward queryDepot(ActionMapping mapping, ActionForm form,
-                                    HttpServletRequest request, HttpServletResponse response)
+    public ActionForward queryDepot(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                    HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -70,8 +73,7 @@ public class DepotAction extends DispatchAction
 
         ActionTools.processJSONQueryCondition(QUERYDEPOT, request, condtion);
 
-        String jsonstr = ActionTools.queryBeanByJSONAndToString(QUERYDEPOT, request, condtion,
-            this.depotDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYDEPOT, request, condtion, this.depotDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -86,8 +88,8 @@ public class DepotAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addDepot(ActionMapping mapping, ActionForm form,
-                                  HttpServletRequest request, HttpServletResponse response)
+    public ActionForward addDepot(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                  HttpServletResponse response)
         throws ServletException
     {
         DepotBean bean = new DepotBean();
@@ -124,8 +126,8 @@ public class DepotAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateDepot(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse response)
+    public ActionForward updateDepot(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse response)
         throws ServletException
     {
         DepotBean bean = new DepotBean();
@@ -162,8 +164,8 @@ public class DepotAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteDepot(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse response)
+    public ActionForward deleteDepot(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -198,8 +200,8 @@ public class DepotAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findDepot(ActionMapping mapping, ActionForm form,
-                                   HttpServletRequest request, HttpServletResponse response)
+    public ActionForward findDepot(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                   HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -257,6 +259,23 @@ public class DepotAction extends DispatchAction
     public void setDepotDAO(DepotDAO depotDAO)
     {
         this.depotDAO = depotDAO;
+    }
+
+    /**
+     * @return the orgManager
+     */
+    public OrgManager getOrgManager()
+    {
+        return orgManager;
+    }
+
+    /**
+     * @param orgManager
+     *            the orgManager to set
+     */
+    public void setOrgManager(OrgManager orgManager)
+    {
+        this.orgManager = orgManager;
     }
 
 }
