@@ -101,7 +101,7 @@ function addBean()
 
                         <td align="center">${my:formatNum(fristBase.price)}</td>
 
-                        <td align="center">${fristBase.description}</td>
+                        <td align="center">${fristBase.costPrice}</td>
                         
                         <td align="center">${fristBase.inway}</td>
                         

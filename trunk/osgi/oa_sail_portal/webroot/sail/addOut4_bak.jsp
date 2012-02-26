@@ -13,9 +13,9 @@
 <script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../js/jquery/jquery.js"></script>
 <script language="JavaScript" src="../js/json.js"></script>
-<script language="JavaScript" src="../sail_js/addOut4.js"></script>
+<script language="JavaScript" src="../sail_js/addOut4_bak.js"></script>
 <script language="javascript">
-<%@include file="../sail_js/out.jsp"%>
+<%@include file="../sail_js/out_bak.jsp"%>
 
 var duesMap = {};
 var duesTypeMap = {};
@@ -98,6 +98,7 @@ function changePrice()
 <input type=hidden name="id" value="" />
 <input type=hidden name="inputPriceList"> 
 <input type=hidden name="mtype" value="" />
+<input type=hidden name="showCostList" value="" />
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">库单管理 &gt;&gt; 填写销售单0</td>

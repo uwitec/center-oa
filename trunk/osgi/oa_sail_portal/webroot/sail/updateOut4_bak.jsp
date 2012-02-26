@@ -13,9 +13,9 @@
 <script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../js/json.js"></script>
 <script language="JavaScript" src="../js/jquery/jquery.js"></script>
-<script language="JavaScript" src="../sail_js/addOut4.js"></script>
+<script language="JavaScript" src="../sail_js/addOut4_bak.js"></script>
 <script language="javascript">
-<%@include file="../sail_js/out.jsp"%>
+<%@include file="../sail_js/out_bak.jsp"%>
 
 var duesMap = {};
 var duesTypeMap = {};
@@ -151,12 +151,12 @@ function changePrice()
 <input type=hidden name="desList" value="" />
 <input type=hidden name="otherList" value="" />
 <input type=hidden name="showIdList" value="" />
-<input type=hidden name="showCostList" value="" />
 <input type=hidden name="showNameList" value="" />
 <input type=hidden name="customercreditlevel" value="" />
 <input type=hidden name="refOutFullId" value="${bean.refOutFullId}" />
 <input type=hidden name="mtype" value="${bean.mtype}" />
 <input type=hidden name="inputPriceList"> 
+<input type=hidden name="showCostList" value="" />
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">库单管理 &gt;&gt; 修改销售单0(如果需要增加开发票品名,请到 公共资源-->配置管理)</td>
@@ -183,7 +183,7 @@ function changePrice()
 								<td width="35">&nbsp;</td>
 								<td width="6"><img src="../images/dot_r.gif" width="6"
 									height="6"></td>
-								<td class="caption"><strong>填写销售单信息:<font color=red>${hasOver}</font> ${g_stafferBean.industryName}下您的信用额度还剩下:${credit}</strong>
+								<td class="caption"><strong>填写销售单信息:<font color=red>${hasOver}</font> 您的信用额度还剩下:${credit}</strong>
 								<font color="blue">产品仓库：</font>
 								<select name="location" class="select_class"  onchange="clearsAll()" values="${bean.location}" readonly=true>
 									<c:forEach items='${locationList}' var="item">
@@ -347,7 +347,7 @@ function changePrice()
 						<td width="5%" align="center">单位</td>
 						<td width="5%" align="center">数量</td>
 						<td width="10%" align="center">单价</td>
-						<td width="10%" align="center">销售价</td>
+						<td width="10%" align="center">含税价</td>
 						<td width="10%" align="left">金额<span id="total"></span></td>
 						<td width="10%" align="center">成本</td>
 						<td width="20%" align="center">类型</td>
@@ -397,7 +397,7 @@ function changePrice()
 							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
 						<td align="center"><input type="text" readonly="readonly"
-							style="width: 100%" name="desciprt"><input type="hidden" name="costPrice" value="${my:formatNum(fristBase.costPrice)}"></td>
+							style="width: 100%" name="desciprt"></td>
 							
 						<td align="center"><input type="text" readonly="readonly"
 							style="width: 100%" name="rstafferName"></td>
@@ -437,7 +437,7 @@ function changePrice()
 						<td align="center"><input type="text" style="width: 100%" id="unAmount" value="${fristBase.amount}"
 							maxlength="6" onkeyup="cc(this)" name="amount"></td>
 							
-						<td align="center"><input type="text" style="width: 100%" id="unInputPrice" value="${my:formatNum(fristBase.price)}"
+						<td align="center"><input type="text" style="width: 100%" id="unInputPrice" value="${my:formatNum(fristBase.inputPrice)}"
                             cost="" maxlength="13" onkeyup="cc(this)" onblur="blu(this)" name="inputPrice"></td>
 
 						<td align="center"><input type="text" style="width: 100%" readonly="readonly" id="unPrice" value="${my:formatNum(fristBase.price)}" 
@@ -446,8 +446,8 @@ function changePrice()
 						<td align="center"><input type="text" value="${my:formatNum(fristBase.value)}"
 							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
-						<td align="center"><input type="text" id="unDesciprt" readonly="readonly" value="${my:formatNum(fristBase.inputPrice)}"
-							style="width: 100%" name="desciprt"><input type="hidden" id="unCostPrice" name="costPrice" value="${my:formatNum(fristBase.costPrice)}"></td>
+						<td align="center"><input type="text" id="unDesciprt" readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
+							style="width: 100%" name="desciprt"></td>
 							
 						<td align="center"><input type="text" id="unRstafferName" readonly="readonly" value="${fristBase.depotpartName}-->${fristBase.ownerName}"
 							style="width: 100%" name="rstafferName"></td>
@@ -485,7 +485,7 @@ function changePrice()
                         <td align="center"><input type="text" style="width: 100%"  value="${fristBase.amount}"
                             maxlength="6" onkeyup="cc(this)" name="amount"></td>
                             
-                        <td align="center"><input type="text" style="width: 100%" value="${my:formatNum(fristBase.price)}" cost=""
+                        <td align="center"><input type="text" style="width: 100%" value="${my:formatNum(fristBase.inputPrice)}" cost=""
                             maxlength="13" onkeyup="cc(this)" onblur="blu(this)" name="inputPrice"></td>
 
                         <td align="center"><input type="text" style="width: 100%"  value="${my:formatNum(fristBase.price)}"
@@ -494,8 +494,8 @@ function changePrice()
                         <td align="center"><input type="text" value="${fristBase.value}"
                             value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
-                        <td align="center"><input type="text"  readonly="readonly" value="${my:formatNum(fristBase.inputPrice)}"
-                            style="width: 100%" name="desciprt"><input type="hidden" name="costPrice" value="${my:formatNum(fristBase.costPrice)}"></td>
+                        <td align="center"><input type="text"  readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
+                            style="width: 100%" name="desciprt"></td>
                             
                         <td align="center"><input type="text" readonly="readonly" value="${fristBase.depotpartName}-->${fristBase.ownerName}"
                             style="width: 100%" name="rstafferName"></td>

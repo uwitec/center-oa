@@ -24,6 +24,7 @@ import com.china.center.oa.publics.bean.ShowBean;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.ShowDAO;
+import com.china.center.oa.publics.helper.OATools;
 import com.china.center.oa.sail.bean.SailConfBean;
 import com.china.center.oa.sail.bean.SailConfigBean;
 import com.china.center.oa.sail.constanst.SailConstant;
@@ -87,18 +88,15 @@ public class SailConfigManagerImpl implements SailConfigManager
                 throw new MYException("数据错误,请确认操作");
             }
 
-            String productType = DefinedCommon.getValue("productType", sailConfigBean
-                .getProductType());
+            String productType = DefinedCommon.getValue("productType", sailConfigBean.getProductType());
 
-            String productSailType = DefinedCommon.getValue("productSailType", sailConfigBean
-                .getSailType());
+            String productSailType = DefinedCommon.getValue("productSailType", sailConfigBean.getSailType());
 
             String msg = show.getName() + "+" + productType + "+" + productSailType;
 
             Expression exp = new Expression(sailConfigBean, this);
 
-            exp.check("#showId && #sailType && #productType &unique @sailConfigDAO", "销售组合已经存在:"
-                                                                                     + msg);
+            exp.check("#showId && #sailType && #productType &unique @sailConfigDAO", "销售组合已经存在:" + msg);
 
             // 保证pare里面的配置是一致的
             BeanUtil.copyProperties(sailConfigBean, baseBean);
@@ -157,8 +155,7 @@ public class SailConfigManagerImpl implements SailConfigManager
 
         Expression exp = new Expression(bean, this);
 
-        exp.check("#sailType && #productType && #productId && #industryId &unique @sailConfDAO",
-            "结算价格配置组合已经存在");
+        exp.check("#sailType && #productType && #productId && #industryId &unique @sailConfDAO", "结算价格配置组合已经存在");
 
         return sailConfDAO.saveEntityBean(bean);
     }
@@ -224,8 +221,7 @@ public class SailConfigManagerImpl implements SailConfigManager
 
         Expression exp = new Expression(bean, this);
 
-        exp.check("#sailType && #productType && #productId && #industryId &unique2 @sailConfDAO",
-            "结算价格配置组合已经存在");
+        exp.check("#sailType && #productType && #productId && #industryId &unique2 @sailConfDAO", "结算价格配置组合已经存在");
 
         return sailConfDAO.updateEntityBean(bean);
     }
@@ -280,6 +276,18 @@ public class SailConfigManagerImpl implements SailConfigManager
 
     public SailConfBean findProductConf(StafferBean sb, ProductBean productBean)
     {
+        if ( !OATools.isChangeToV5())
+        {
+            // 返回默认的
+            SailConfBean result = new SailConfBean();
+
+            result.setIratio(0);
+
+            result.setPratio(0);
+
+            return result;
+        }
+
         ConditionParse con = new ConditionParse();
 
         con.addWhereStr();

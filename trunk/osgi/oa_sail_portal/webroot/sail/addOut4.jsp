@@ -133,7 +133,7 @@ function changePrice()
 										<option value="${item.id}">${item.name}</option>
 									</c:forEach>
 								</select>
-								事业部经理信用：
+								${g_stafferBean.industryName}经理信用：
 								<select style="width: 300px">
                                     <c:forEach items='${mList}' var="item">
                                         <option>${item}</option>

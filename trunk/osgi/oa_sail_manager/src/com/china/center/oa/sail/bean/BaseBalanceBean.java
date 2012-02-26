@@ -25,7 +25,7 @@ import com.china.center.oa.publics.constant.PublicConstant;
  * BaseBalanceBean(委托结算单项)
  * 
  * @author ZHUZHU
- * @version 2010-12-4
+ * @version 2010-12-5
  * @see BaseBalanceBean
  * @since 3.0
  */
@@ -211,35 +211,11 @@ public class BaseBalanceBean implements Serializable
 
         StringBuilder retValue = new StringBuilder();
 
-        retValue
-            .append("BaseBalanceBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("parentId = ")
-            .append(this.parentId)
-            .append(TAB)
-            .append("baseId = ")
-            .append(this.baseId)
-            .append(TAB)
-            .append("outId = ")
-            .append(this.outId)
-            .append(TAB)
-            .append("sailPrice = ")
-            .append(this.sailPrice)
-            .append(TAB)
-            .append("amount = ")
-            .append(this.amount)
-            .append(TAB)
-            .append("invoiceMoney = ")
-            .append(this.invoiceMoney)
-            .append(TAB)
-            .append("mtype = ")
-            .append(this.mtype)
-            .append(TAB)
-            .append(" )");
+        retValue.append("BaseBalanceBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("parentId = ").append(this.parentId).append(TAB).append("baseId = ").append(this.baseId).append(
+            TAB).append("outId = ").append(this.outId).append(TAB).append("sailPrice = ").append(this.sailPrice).append(
+            TAB).append("amount = ").append(this.amount).append(TAB).append("invoiceMoney = ").append(this.invoiceMoney).append(
+            TAB).append("mtype = ").append(this.mtype).append(TAB).append(" )");
 
         return retValue.toString();
     }

@@ -23,7 +23,7 @@ import com.china.center.oa.sail.vo.BaseBalanceVO;
  * BaseBalanceDAOImpl
  * 
  * @author ZHUZHU
- * @version 2010-12-4
+ * @version 2010-12-5
  * @see BaseBalanceDAOImpl
  * @since 3.0
  */

@@ -67,7 +67,7 @@ import com.china.center.tools.TimeTools;
  * 运输方式和发货单
  * 
  * @author ZHUZHU
- * @version 2008-1-14
+ * @version 2008-1-15
  * @see
  * @since
  */
@@ -100,8 +100,8 @@ public class ConsignAction extends DispatchAction
     {
     }
 
-    public ActionForward queryTransport(ActionMapping mapping, ActionForm form,
-                                        HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward queryTransport(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                        HttpServletResponse reponse)
         throws ServletException
     {
         List<TransportBean> list = consignDAO.queryTransportByType(SailConstant.TRANSPORT_COMMON);
@@ -123,8 +123,8 @@ public class ConsignAction extends DispatchAction
         return mapping.findForward("transportList");
     }
 
-    public ActionForward preForAddTransport(ActionMapping mapping, ActionForm form,
-                                            HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward preForAddTransport(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                            HttpServletResponse reponse)
         throws ServletException
     {
         List<TransportBean> list = consignDAO.queryTransportByType(SailConstant.TRANSPORT_TYPE);
@@ -134,8 +134,8 @@ public class ConsignAction extends DispatchAction
         return mapping.findForward("addTransport");
     }
 
-    public ActionForward addTransport(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward addTransport(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse reponse)
         throws ServletException
     {
         TransportBean bean = new TransportBean();
@@ -177,8 +177,8 @@ public class ConsignAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateTransport(ActionMapping mapping, ActionForm form,
-                                         HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward updateTransport(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                         HttpServletResponse reponse)
         throws ServletException
     {
         TransportBean bean = new TransportBean();
@@ -213,8 +213,8 @@ public class ConsignAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryConsign(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward queryConsign(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -238,8 +238,8 @@ public class ConsignAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryTodayConsign(ActionMapping mapping, ActionForm form,
-                                           HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward queryTodayConsign(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                           HttpServletResponse reponse)
         throws ServletException
     {
         ConditionParse condition = new ConditionParse();
@@ -378,8 +378,8 @@ public class ConsignAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findConsign(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward findConsign(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse reponse)
         throws ServletException
     {
         String outId = request.getParameter("fullId");
@@ -479,8 +479,7 @@ public class ConsignAction extends DispatchAction
 
             for (TransportBean transportBean : ts)
             {
-                List<TransportBean> inner = consignDAO.queryTransportByParentId(transportBean
-                    .getId());
+                List<TransportBean> inner = consignDAO.queryTransportByParentId(transportBean.getId());
 
                 String temp = "";
                 for (TransportBean transportBean2 : inner)
@@ -548,8 +547,8 @@ public class ConsignAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward passConsign(ActionMapping mapping, ActionForm form,
-                                     HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward passConsign(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse reponse)
         throws ServletException
     {
         ConsignBean bean = new ConsignBean();
@@ -597,8 +596,8 @@ public class ConsignAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findTransport(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward findTransport(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse reponse)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -624,8 +623,8 @@ public class ConsignAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward reportConsign(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward reportConsign(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse reponse)
         throws ServletException
     {
         ConsignBean bean = new ConsignBean();
@@ -661,8 +660,8 @@ public class ConsignAction extends DispatchAction
         return queryConsign(mapping, form, request, reponse);
     }
 
-    public ActionForward readdConsign(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward readdConsign(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse reponse)
         throws ServletException
     {
         String outId = request.getParameter("fullId");
@@ -711,8 +710,8 @@ public class ConsignAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward delTransport(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward delTransport(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                      HttpServletResponse reponse)
         throws ServletException
     {
         String transportId = request.getParameter("id");
@@ -750,12 +749,11 @@ public class ConsignAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward exportConsign(ActionMapping mapping, ActionForm form,
-                                       HttpServletRequest request, HttpServletResponse reponse)
+    public ActionForward exportConsign(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse reponse)
         throws ServletException
     {
-        ConditionParse condition = (ConditionParse)request.getSession().getAttribute(
-            "g_queryConsign_condition");
+        ConditionParse condition = (ConditionParse)request.getSession().getAttribute("g_queryConsign_condition");
 
         List<ConsignBean> beanList = consignDAO.queryConsignByCondition(condition);
 
@@ -854,10 +852,8 @@ public class ConsignAction extends DispatchAction
                 ws.addCell(new Label(j++ , i, element.getArriveTime()));
                 ws.addCell(new Label(j++ , i, element.getVisitTime()));
                 ws.addCell(new Label(j++ , i, element.getTransportFee()));
-                ws.addCell(new Label(j++ , i, ElTools.get("consignPromitType", element
-                    .getPromitType())));
-                ws.addCell(new Label(j++ , i, ElTools.get("consignReprotType", element
-                    .getReprotType())));
+                ws.addCell(new Label(j++ , i, ElTools.get("consignPromitType", element.getPromitType())));
+                ws.addCell(new Label(j++ , i, ElTools.get("consignReprotType", element.getReprotType())));
                 ws.addCell(new Label(j++ , i, element.getApplys()));
             }
         }

@@ -50,7 +50,7 @@ function opens(obj)
     var mtype = duesTypeMap[$$('dutyId')];
     
     if (g_url_query == 0)
-    window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&queryType=1&showAbs=1&load=1&depotId='+ $$('location') + '&code=' + obj.productcode + '&mtype=' + mtype);
+    window.common.modal('../depot/storage.do?method=rptQueryStorageRelationInDepot&costMode=1&queryType=1&showAbs=1&load=1&depotId='+ $$('location') + '&code=' + obj.productcode + '&mtype=' + mtype);
     else
     window.common.modal('../product/product.do?method=rptQueryProduct&load=1&selectMode=1&abstractType=0&status=0' + '&mtype=' + mtype);
 }
@@ -74,6 +74,7 @@ function opens(obj)
 <input type=hidden name="customercreditlevel" value="" />
 <input type=hidden name="inputPriceList" value="" />
 <input type=hidden name="id" value="" />
+<input type=hidden name="showCostList" value="" />
 <p:navigation
 	height="22">
 	<td width="550" class="navigation">库单管理 &gt;&gt; 填写入库单(入库单都是正数增加库存,负数减少库存)</td>
