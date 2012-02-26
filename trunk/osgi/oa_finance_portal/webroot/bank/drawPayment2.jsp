@@ -97,7 +97,7 @@ function openBalance(index)
     
     g_index = index;
     
-    window.common.modal('../sail/out.do?method=rptQueryOutBalance&pay=0&type=0&selectMode=0&load=1&customerId=' + $$('customerId')+ '&dutyId=' + $$('dutyId'));
+    window.common.modal('../sail/out.do?method=rptQueryOutBalance&pay=0&type=0&selectMode=0&load=1&customerId=' + $$('customerId')+ '&dutyId2=' + $$('dutyId'));
 }
 
 function getOutBalance(oos)
