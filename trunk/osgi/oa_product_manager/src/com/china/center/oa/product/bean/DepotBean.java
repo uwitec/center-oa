@@ -45,7 +45,7 @@ public class DepotBean implements Serializable
     /**
      * 所属事业部
      */
-    @Html(title = "事业部", type = Element.SELECT, must = true)
+    @Html(title = "事业部", type = Element.SELECT)
     @Join(tagClass = PrincipalshipBean.class, type = JoinType.LEFT)
     private String industryId = "";
 
