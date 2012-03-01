@@ -44,7 +44,7 @@ public class DepotListenerSailImpl implements DepotListener
         con.addWhereStr();
 
         con.addCondition("OutBean.location", "=", bean.getId());
-
+        
         if (outDAO.countByCondition(con.toString()) > 0)
         {
             throw new MYException("仓库已经被使用不能删除");
