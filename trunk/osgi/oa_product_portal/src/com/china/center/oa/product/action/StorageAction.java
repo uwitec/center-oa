@@ -1458,8 +1458,8 @@ public class StorageAction extends DispatchAction
 
         List<StorageRelationVO> queryList = storageRelationDAO.queryEntityVOsByCondition(condtion, page);
 
-        // 没有过滤直接查询前50个
-        if (StringTools.isNullOrNone(sailLocation))
+        // 没有过滤直接查询前50个(先屏蔽)
+        if (StringTools.isNullOrNone(sailLocation) || true)
         {
             list.addAll(queryList);
         }
