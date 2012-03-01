@@ -100,5 +100,7 @@
 	<osgi:reference id="storageRelationDAO" interface="com.china.center.oa.product.dao.StorageRelationDAO" />
 	
 	<osgi:reference id="sailConfigDAO" interface="com.china.center.oa.sail.dao.SailConfigDAO" />
+	
+	<osgi:reference id="depotManager" interface="com.china.center.oa.product.manager.DepotManager" />
 
 </beans>

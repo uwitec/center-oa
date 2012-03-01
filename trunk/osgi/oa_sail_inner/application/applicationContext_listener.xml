@@ -76,5 +76,18 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="depotListenerSailImpl" class="com.china.center.oa.sail.listener.impl.DepotListenerSailImpl" />
+    
+    <bean id="depotListener" class="com.center.china.osgi.publics.DefaultLoadListener">
+        <property name="listenerManager">
+            <ref bean="depotManager"/>
+        </property>
+        <property name="listenerList">
+            <list>
+                <ref bean="depotListenerSailImpl" />
+            </list>
+        </property>
+    </bean>
 	
 </beans>

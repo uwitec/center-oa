@@ -1450,9 +1450,9 @@ public class StorageAction extends DispatchAction
         // CORE 控制出售区域(某些产品只能在一定的区域下销售) 这个参数只有为空才有意义
         String sailLocation = request.getParameter("sailLocation");
 
-        int total = storageRelationDAO.countVOByCondition(condtion.toString());
+        // int total = storageRelationDAO.countVOByCondition(condtion.toString());
 
-        PageSeparate page = new PageSeparate(total, 50);
+        PageSeparate page = new PageSeparate(50, 50);
 
         PageSeparateTools.initPageSeparate(condtion, page, request, RPTQUERYSTORAGERELATIONINDEPOT);
 
