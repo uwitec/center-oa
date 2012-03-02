@@ -9,7 +9,9 @@
 package com.china.center.oa.finance.manager.impl;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
@@ -159,40 +161,149 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
 
         List<InsVSOutBean> vsList = bean.getVsList();
 
-        // 这里需要判断是否是关注单据
-        if ( !ListTools.isEmptyOrNull(vsList))
+        if (ListTools.isEmptyOrNull(vsList))
         {
-            for (InsVSOutBean insVSOutBean : vsList)
+            return;
+        }
+
+        // 是否相同纳税属性
+        boolean isEqualsMtype = true;
+
+        // 是否都是A1
+        boolean isAllCommon = (bean.getMtype() == PublicConstant.MANAGER_TYPE_COMMON);
+
+        // 这里需要判断是否是关注单据
+        for (InsVSOutBean insVSOutBean : vsList)
+        {
+            if (insVSOutBean.getType() == FinanceConstant.INSVSOUT_TYPE_OUT)
             {
-                if (insVSOutBean.getType() == FinanceConstant.INSVSOUT_TYPE_OUT)
+                OutBean out = outDAO.find(insVSOutBean.getOutId());
+
+                if ( !out.getDutyId().equals(bean.getDutyId()))
                 {
-                    OutBean out = outDAO.find(insVSOutBean.getOutId());
+                    bean.setVtype(PublicConstant.VTYPE_SPECIAL);
 
-                    if ( !out.getDutyId().equals(bean.getDutyId()))
-                    {
-                        bean.setVtype(PublicConstant.VTYPE_SPECIAL);
+                    bean.setStatus(FinanceConstant.INVOICEINS_STATUS_CHECK);
 
-                        bean.setStatus(FinanceConstant.INVOICEINS_STATUS_CHECK);
+                    break;
+                }
+            }
 
-                        break;
-                    }
+            if (insVSOutBean.getType() == FinanceConstant.INSVSOUT_TYPE_BALANCE)
+            {
+                OutBalanceBean ob = outBalanceDAO.find(insVSOutBean.getOutId());
+
+                OutBean out = outDAO.find(ob.getOutId());
+
+                if ( !out.getDutyId().equals(bean.getDutyId()))
+                {
+                    bean.setVtype(PublicConstant.VTYPE_SPECIAL);
+
+                    bean.setStatus(FinanceConstant.INVOICEINS_STATUS_CHECK);
+
+                    break;
+                }
+            }
+        }
+
+        Map<String, InvoiceinsItemBean> tmpMap = new HashMap();
+
+        for (InsVSOutBean insVSOutBean : vsList)
+        {
+            OutBean out = null;
+
+            if (insVSOutBean.getType() == FinanceConstant.INSVSOUT_TYPE_OUT)
+            {
+                out = outDAO.find(insVSOutBean.getOutId());
+
+            }
+            else
+            {
+                OutBalanceBean ob = outBalanceDAO.find(insVSOutBean.getOutId());
+
+                out = outDAO.find(ob.getOutId());
+            }
+
+            List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(insVSOutBean.getOutId());
+
+            for (BaseBean baseBean : baseList)
+            {
+                if ( !tmpMap.containsKey(baseBean.getShowId()))
+                {
+                    InvoiceinsItemBean item = new InvoiceinsItemBean();
+                    item.setShowId(baseBean.getShowId());
+
+                    tmpMap.put(baseBean.getShowId(), item);
                 }
 
-                if (insVSOutBean.getType() == FinanceConstant.INSVSOUT_TYPE_BALANCE)
+                InvoiceinsItemBean subItem = tmpMap.get(baseBean.getShowId());
+
+                subItem.setAmount(subItem.getAmount() + baseBean.getAmount());
+                subItem.setMoneys(subItem.getMoneys() + baseBean.getValue());
+            }
+
+            // 是否同一个纳税实体
+            if (isEqualsMtype && out.getMtype() != bean.getMtype())
+            {
+                isEqualsMtype = false;
+            }
+
+            // 是否都是A1
+            if (isAllCommon && (out.getMtype() != PublicConstant.MANAGER_TYPE_COMMON))
+            {
+                isAllCommon = false;
+            }
+
+            // 是否同一个纳税实体
+            if (isEqualsMtype && out.getMtype() != bean.getMtype())
+            {
+                isEqualsMtype = false;
+            }
+        }
+
+        // 设置特殊类型
+        if (isAllCommon)
+        {
+            // 数量相同,但是价格不同
+            List<InvoiceinsItemBean> itemList = bean.getItemList();
+
+            for (InvoiceinsItemBean invoiceinsItemBean : itemList)
+            {
+                InvoiceinsItemBean compareItem = tmpMap.get(invoiceinsItemBean.getShowId());
+
+                if (compareItem == null)
                 {
-                    OutBalanceBean ob = outBalanceDAO.find(insVSOutBean.getOutId());
+                    bean.setStype(FinanceConstant.INVOICEINS_STYPE_A1A1_APD);
 
-                    OutBean out = outDAO.find(ob.getOutId());
-
-                    if ( !out.getDutyId().equals(bean.getDutyId()))
-                    {
-                        bean.setVtype(PublicConstant.VTYPE_SPECIAL);
-
-                        bean.setStatus(FinanceConstant.INVOICEINS_STATUS_CHECK);
-
-                        break;
-                    }
+                    return;
                 }
+
+                if (compareItem.getAmount() != invoiceinsItemBean.getAmount()
+                    && !MathTools.equal2(compareItem.getMoneys(), invoiceinsItemBean.getMoneys()))
+                {
+                    bean.setStype(FinanceConstant.INVOICEINS_STYPE_A1A1_APD);
+
+                    return;
+                }
+
+                if (compareItem.getAmount() == invoiceinsItemBean.getAmount()
+                    && !MathTools.equal2(compareItem.getMoneys(), invoiceinsItemBean.getMoneys()))
+                {
+                    bean.setStype(FinanceConstant.INVOICEINS_STYPE_A1A1_PD);
+
+                    return;
+                }
+            }
+        }
+        else
+        {
+            if (bean.getMtype() != PublicConstant.MANAGER_TYPE_COMMON)
+            {
+                bean.setStype(FinanceConstant.INVOICEINS_STYPE_A1A2);
+            }
+            else
+            {
+                bean.setStype(FinanceConstant.INVOICEINS_STYPE_A2A1);
             }
         }
     }

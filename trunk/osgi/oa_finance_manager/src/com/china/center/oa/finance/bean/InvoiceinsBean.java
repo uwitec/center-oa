@@ -62,6 +62,11 @@ public class InvoiceinsBean implements Serializable
     private int type = FinanceConstant.INVOICEINS_TYPE_COMMON;
 
     /**
+     * 特殊类型
+     */
+    private int stype = FinanceConstant.INVOICEINS_STYPE_AXAX;
+
+    /**
      * mtype
      */
     private int mtype = PublicConstant.MANAGER_TYPE_COMMON;
@@ -537,6 +542,23 @@ public class InvoiceinsBean implements Serializable
     }
 
     /**
+     * @return the stype
+     */
+    public int getStype()
+    {
+        return stype;
+    }
+
+    /**
+     * @param stype
+     *            the stype to set
+     */
+    public void setStype(int stype)
+    {
+        this.stype = stype;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -545,82 +567,21 @@ public class InvoiceinsBean implements Serializable
     {
         final String TAB = ",";
 
-        StringBuilder retValue = new StringBuilder();
+        StringBuffer retValue = new StringBuffer();
 
-        retValue
-            .append("InvoiceinsBean ( ")
-            .append(super.toString())
-            .append(TAB)
-            .append("id = ")
-            .append(this.id)
-            .append(TAB)
-            .append("invoiceId = ")
-            .append(this.invoiceId)
-            .append(TAB)
-            .append("status = ")
-            .append(this.status)
-            .append(TAB)
-            .append("type = ")
-            .append(this.type)
-            .append(TAB)
-            .append("mtype = ")
-            .append(this.mtype)
-            .append(TAB)
-            .append("vtype = ")
-            .append(this.vtype)
-            .append(TAB)
-            .append("dutyId = ")
-            .append(this.dutyId)
-            .append(TAB)
-            .append("unit = ")
-            .append(this.unit)
-            .append(TAB)
-            .append("reveive = ")
-            .append(this.reveive)
-            .append(TAB)
-            .append("locationId = ")
-            .append(this.locationId)
-            .append(TAB)
-            .append("customerId = ")
-            .append(this.customerId)
-            .append(TAB)
-            .append("moneys = ")
-            .append(this.moneys)
-            .append(TAB)
-            .append("invoiceDate = ")
-            .append(this.invoiceDate)
-            .append(TAB)
-            .append("stafferId = ")
-            .append(this.stafferId)
-            .append(TAB)
-            .append("processer = ")
-            .append(this.processer)
-            .append(TAB)
-            .append("logTime = ")
-            .append(this.logTime)
-            .append(TAB)
-            .append("refIds = ")
-            .append(this.refIds)
-            .append(TAB)
-            .append("description = ")
-            .append(this.description)
-            .append(TAB)
-            .append("checks = ")
-            .append(this.checks)
-            .append(TAB)
-            .append("checkrefId = ")
-            .append(this.checkrefId)
-            .append(TAB)
-            .append("checkStatus = ")
-            .append(this.checkStatus)
-            .append(TAB)
-            .append("itemList = ")
-            .append(this.itemList)
-            .append(TAB)
-            .append("vsList = ")
-            .append(this.vsList)
-            .append(TAB)
-            .append(" )");
+        retValue.append("InvoiceinsBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(
+            TAB).append("invoiceId = ").append(this.invoiceId).append(TAB).append("status = ").append(this.status).append(
+            TAB).append("type = ").append(this.type).append(TAB).append("stype = ").append(this.stype).append(TAB).append(
+            "mtype = ").append(this.mtype).append(TAB).append("vtype = ").append(this.vtype).append(TAB).append(
+            "dutyId = ").append(this.dutyId).append(TAB).append("unit = ").append(this.unit).append(TAB).append(
+            "reveive = ").append(this.reveive).append(TAB).append("locationId = ").append(this.locationId).append(TAB).append(
+            "customerId = ").append(this.customerId).append(TAB).append("moneys = ").append(this.moneys).append(TAB).append(
+            "invoiceDate = ").append(this.invoiceDate).append(TAB).append("stafferId = ").append(this.stafferId).append(
+            TAB).append("processer = ").append(this.processer).append(TAB).append("logTime = ").append(this.logTime).append(
+            TAB).append("refIds = ").append(this.refIds).append(TAB).append("description = ").append(this.description).append(
+            TAB).append("checks = ").append(this.checks).append(TAB).append("checkrefId = ").append(this.checkrefId).append(
+            TAB).append("checkStatus = ").append(this.checkStatus).append(TAB).append("itemList = ").append(
+            this.itemList).append(TAB).append("vsList = ").append(this.vsList).append(TAB).append(" )");
 
         return retValue.toString();
     }

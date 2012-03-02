@@ -136,6 +136,12 @@
             <type>select</type>
             <option>$pubCheckStatus</option>
         </condtion>
+        <condtion name="stype" caption="特殊类型">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$invoiceinssType</option>
+        </condtion>
     </item>
     
     <item name="queryPaymentApply" deaultpfix="PaymentApplyBean">

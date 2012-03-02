@@ -124,8 +124,12 @@ function checkBean()
                ${my:formatNum(bean.moneys)}
             </p:cell>
             
-             <p:cell title="关注类型">
+            <p:cell title="关注类型">
                <font color="red">${my:get('pubVtype', bean.vtype)}</font>
+            </p:cell>
+            
+            <p:cell title="特殊类型">
+               <font color="red">${my:get('invoiceinssType', bean.stype)}</font>
             </p:cell>
             
             <p:cell title="开票时间">

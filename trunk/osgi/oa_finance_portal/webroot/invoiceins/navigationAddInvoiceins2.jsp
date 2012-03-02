@@ -147,8 +147,9 @@ function loadShow()
 				<td width="15%" align="center">品名</td>
 				<td width="30%" align="center">规格</td>
 				<td width="10%" align="center">单位</td>
+				<td width="10%" align="center">数量</td>
 				<td width="20%" align="center">最大开票金额</td>
-				<td width="20%" align="center">开票金额</td>
+				<td width="20%" align="center">此品开票总金额</td>
 			</tr>
 			
 			<c:forEach items="${showList}" var="item">
@@ -158,6 +159,7 @@ function loadShow()
                 </td>
                 <td align="center"><input type="text" name="special" style="width: 100%" oncheck="notNone;"></td>
                 <td align="center"><input type="text" name="sunit" style="width: 100%" oncheck="notNone;"></td>
+                <td align="center"><input type="text" name="amount" style="width: 100%" oncheck="notNone;isInt"></td>
                 <td align="center">
                 <input type="text" name="e_total" id="e_total_${vs}" style="width: 100%" readonly="readonly" oncheck="notNone;isFloat2" value="${item.description}">
                 </td>

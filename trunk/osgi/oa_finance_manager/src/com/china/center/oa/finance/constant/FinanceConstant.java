@@ -375,4 +375,34 @@ public interface FinanceConstant
     @Defined(key = "invoiceinsType", value = "对分公司")
     int INVOICEINS_TYPE_DUTY = 1;
 
+    /**
+     * 默认
+     */
+    @Defined(key = "invoiceinssType", value = "AX-AX")
+    int INVOICEINS_STYPE_AXAX = 0;
+
+    /**
+     * 数量相同、单价不同
+     */
+    @Defined(key = "invoiceinssType", value = "仅单价不同")
+    int INVOICEINS_STYPE_A1A1_PD = 1;
+
+    /**
+     * 数量单价均不同
+     */
+    @Defined(key = "invoiceinssType", value = "数量单价不同")
+    int INVOICEINS_STYPE_A1A1_APD = 2;
+
+    /**
+     * 所有场景
+     */
+    @Defined(key = "invoiceinssType", value = "A1-A2")
+    int INVOICEINS_STYPE_A1A2 = 3;
+
+    /**
+     * 所有场景
+     */
+    @Defined(key = "invoiceinssType", value = "A2-A1")
+    int INVOICEINS_STYPE_A2A1 = 4;
+
 }
