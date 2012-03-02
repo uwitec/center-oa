@@ -35,7 +35,6 @@ public class DepotListenerSailImpl implements DepotListener
      * @see com.china.center.oa.product.listener.DepotListener#onDeleteDepot(com.center.china.osgi.publics.User,
      *      com.china.center.oa.product.bean.DepotBean)
      */
-    @Override
     public void onDeleteDepot(User user, DepotBean bean)
         throws MYException
     {
@@ -44,7 +43,7 @@ public class DepotListenerSailImpl implements DepotListener
         con.addWhereStr();
 
         con.addCondition("OutBean.location", "=", bean.getId());
-        
+
         if (outDAO.countByCondition(con.toString()) > 0)
         {
             throw new MYException("仓库已经被使用不能删除");
@@ -56,7 +55,6 @@ public class DepotListenerSailImpl implements DepotListener
      * 
      * @see com.center.china.osgi.publics.ParentListener#getListenerType()
      */
-    @Override
     public String getListenerType()
     {
         return "DepotListener.SailImpl";
