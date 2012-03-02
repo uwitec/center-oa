@@ -249,11 +249,20 @@ function load()
          <td>
          <input type="text" style="width: 100%;" onkeyup="inChange()" onblur="inChange()"
                     name="inmoney" value="0.0" oncheck="">
+         <br>
+          产品数量:<br>
+         <input type="text" style="width: 100%;"
+                    name="inproduct" value="0" oncheck="notNone;isNumber">
          </td>
                     
          <td align="center">
          <input type="text" style="width: 100%" onkeyup="outChange()" onblur="outChange()"
-                    name="outmoney" value="0.0" oncheck=""></td>
+                    name="outmoney" value="0.0" oncheck="">
+         <br>
+          产品数量:<br>
+         <input type="text" style="width: 100%;"
+         	name="outproduct" value="0" oncheck="notNone;isNumber">
+         </td>
                     
         <td width="5%" align="center">
         <input type=button
