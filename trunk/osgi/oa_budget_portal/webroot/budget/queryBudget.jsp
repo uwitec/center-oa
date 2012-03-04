@@ -49,7 +49,7 @@ function load()
 		     {id: 'add', bclass: 'add', caption: '增加部门年度预算', onpress : addDepartmentBean, auth: '0509'},
 		     {id: 'add', bclass: 'add', caption: '增加部门月度预算', onpress : addMonthDepartmentBean, auth: '0509'},
 		     {id: 'update', bclass: 'update', onpress : updateBean, auth: '0502'},
-		     {id: 'del', bclass: 'delete', onpress : delBean, auth: '0502'},
+		     {id: 'del', bclass: 'delete', onpress : delBean, auth: '0502,0504,0510'},
 		     {id: 'log', bclass: 'search', caption: '子预算',  onpress : subBean},
 		     {id: 'log2', bclass: 'update', caption: '立即生效',  onpress : doCarry, auth: '0504'},
 		     {id: 'search', bclass: 'search', onpress : doSearch}

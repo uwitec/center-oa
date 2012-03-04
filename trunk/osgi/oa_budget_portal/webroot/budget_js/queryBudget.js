@@ -192,7 +192,7 @@ function doPass2()
 
 function delBean()
 {
-    if (getRadio('checkb') && getRadioValue('checkb') && (getRadio('checkb').status1 == 0 || getRadio('checkb').status1 == 1))
+    if (getRadio('checkb') && getRadioValue('checkb'))
     {
         if (window.confirm('确定删除--' + getRadio('checkb').lname))
         {

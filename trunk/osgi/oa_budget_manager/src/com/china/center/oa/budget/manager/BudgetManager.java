@@ -91,7 +91,7 @@ public interface BudgetManager
     boolean delItemBean(User user, String id)
         throws MYException;
 
-    boolean delBean(User user, String id)
+    boolean delBean(User user, String id, boolean forceDelete)
         throws MYException;
 
     boolean passBean(User user, String id)

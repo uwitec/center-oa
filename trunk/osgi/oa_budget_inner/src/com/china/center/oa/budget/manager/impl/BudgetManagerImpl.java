@@ -766,12 +766,12 @@ public class BudgetManagerImpl implements BudgetManager
      * @throws MYException
      */
     @Transactional(rollbackFor = {MYException.class})
-    public boolean delBean(User user, String id)
+    public boolean delBean(User user, String id, boolean forceDelete)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, id);
 
-        checkDelBean(user, id);
+        checkDelBean(user, id, forceDelete);
 
         budgetDAO.deleteEntityBean(id);
 
@@ -1114,7 +1114,7 @@ public class BudgetManagerImpl implements BudgetManager
      * @param bean
      * @throws MYException
      */
-    private void checkDelBean(User user, String id)
+    private BudgetBean checkDelBean(User user, String id, boolean force)
         throws MYException
     {
         BudgetBean oldBean = budgetDAO.find(id);
@@ -1124,15 +1124,49 @@ public class BudgetManagerImpl implements BudgetManager
             throw new MYException("预算不存在");
         }
 
-        if ( ! (oldBean.getStatus() == BudgetConstant.BUDGET_STATUS_INIT || oldBean.getStatus() == BudgetConstant.BUDGET_STATUS_REJECT))
+        if (oldBean.getStatus() == BudgetConstant.BUDGET_STATUS_END)
         {
-            throw new MYException("只有初始和驳回的预算才可以删除");
+            throw new MYException("结束的预算不能删除");
         }
 
-        if ( !user.getStafferId().equals(oldBean.getStafferId()))
+        // 是否强制删除
+        if ( !force)
         {
-            throw new MYException("不能删除他人提交的预算");
+            if ( ! (oldBean.getStatus() == BudgetConstant.BUDGET_STATUS_INIT || oldBean.getStatus() == BudgetConstant.BUDGET_STATUS_REJECT))
+            {
+                throw new MYException("只有初始和驳回的预算才可以删除");
+            }
+
+            if ( !user.getStafferId().equals(oldBean.getStafferId()))
+            {
+                throw new MYException("不能删除他人提交的预算");
+            }
         }
+
+        // 是否存在子预算
+        int countParent = budgetDAO.countByFK(id);
+
+        if (countParent > 0)
+        {
+            throw new MYException("预算下存在子预算,不能删除");
+        }
+
+        String logLevel = BudgetHelper.getLogLevel(oldBean);
+
+        ConditionParse con = new ConditionParse();
+
+        con.addWhereStr();
+
+        con.addCondition("budgetId" + logLevel, "=", id);
+
+        int count = budgetLogDAO.countByCondition(con.toString());
+
+        if (count > 0)
+        {
+            throw new MYException("预算下已经存在使用记录不能删除");
+        }
+
+        return oldBean;
     }
 
     private BudgetBean checkPassBean(String id)

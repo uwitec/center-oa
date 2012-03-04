@@ -118,10 +118,14 @@ public class BudgetFacadeImpl extends AbstarctFacade implements BudgetFacade
 
         checkUser(user);
 
-        if (containAuth(user, AuthConstant.BUDGET_LOCATION_OPR)
-            || containAuth(user, AuthConstant.BUDGET_ROOT_OPR))
+        if (containAuth(user, AuthConstant.BUDGET_FORCE_DELETE))
         {
-            return budgetManager.delBean(user, cid);
+            return budgetManager.delBean(user, cid, true);
+        }
+        else if (containAuth(user, AuthConstant.BUDGET_LOCATION_OPR)
+                 || containAuth(user, AuthConstant.BUDGET_ROOT_OPR))
+        {
+            return budgetManager.delBean(user, cid, false);
         }
         else
         {
