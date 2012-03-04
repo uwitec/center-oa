@@ -120,8 +120,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryFinance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward queryFinance(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -134,8 +134,8 @@ public class FinaAction extends ParentQueryFinaAction
 
         condtion.addCondition("order by FinanceBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCE, request, condtion, this.financeDAO,
-            new HandleResult<FinanceVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCE, request, condtion,
+            this.financeDAO, new HandleResult<FinanceVO>()
             {
                 public void handle(FinanceVO obj)
                 {
@@ -157,8 +157,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryTempFinance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward queryTempFinance(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -171,8 +171,8 @@ public class FinaAction extends ParentQueryFinaAction
 
         condtion.addCondition("order by FinanceTempBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYTEMPFINANCE, request, condtion, this.financeTempDAO,
-            new HandleResult<FinanceTempVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYTEMPFINANCE, request, condtion,
+            this.financeTempDAO, new HandleResult<FinanceTempVO>()
             {
                 public void handle(FinanceTempVO obj)
                 {
@@ -194,8 +194,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryFinanceMonth(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse response)
+    public ActionForward queryFinanceMonth(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -234,8 +234,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryFinanceTurn(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward queryFinanceTurn(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -246,7 +246,8 @@ public class FinaAction extends ParentQueryFinaAction
 
         condtion.addCondition("order by FinanceTurnBean.monthKey desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCETURN, request, condtion, this.financeTurnDAO);
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCETURN, request, condtion,
+            this.financeTurnDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -261,8 +262,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryFinanceItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward queryFinanceItem(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -275,8 +276,8 @@ public class FinaAction extends ParentQueryFinaAction
 
         condtion.addCondition("order by FinanceItemBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCEITEM, request, condtion, this.financeItemDAO,
-            new HandleResult<FinanceItemVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCEITEM, request, condtion,
+            this.financeItemDAO, new HandleResult<FinanceItemVO>()
             {
                 public void handle(FinanceItemVO obj)
                 {
@@ -299,8 +300,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward exportFinanceItem(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse response)
+    public ActionForward exportFinanceItem(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         OutputStream out = null;
@@ -342,7 +343,8 @@ public class FinaAction extends ParentQueryFinaAction
 
             while (page.nextPage())
             {
-                List<FinanceItemVO> voList = financeItemDAO.queryEntityVOsByCondition(condtion, page);
+                List<FinanceItemVO> voList = financeItemDAO.queryEntityVOsByCondition(condtion,
+                    page);
 
                 for (FinanceItemVO financeItemVO : voList)
                 {
@@ -422,8 +424,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward exportFinance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward exportFinance(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         OutputStream out = null;
@@ -467,7 +469,8 @@ public class FinaAction extends ParentQueryFinaAction
 
                 for (FinanceVO financeVO : voFList)
                 {
-                    List<FinanceItemVO> voList = financeItemDAO.queryEntityVOsByFK(financeVO.getId());
+                    List<FinanceItemVO> voList = financeItemDAO.queryEntityVOsByFK(financeVO
+                        .getId());
 
                     for (FinanceItemVO financeItemVO : voList)
                     {
@@ -477,7 +480,8 @@ public class FinaAction extends ParentQueryFinaAction
 
                         line.writeColumn("[" + financeItemVO.getFinanceDate() + "]");
                         line.writeColumn(financeItemVO.getPid());
-                        line.writeColumn(StringTools.getExportString(financeItemVO.getDescription()));
+                        line.writeColumn(StringTools
+                            .getExportString(financeItemVO.getDescription()));
                         line.writeColumn(financeItemVO.getTaxId());
                         line.writeColumn(financeItemVO.getTaxName());
 
@@ -553,8 +557,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward queryCheckView(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward queryCheckView(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         ConditionParse condtion = new ConditionParse();
@@ -567,8 +571,8 @@ public class FinaAction extends ParentQueryFinaAction
 
         condtion.addCondition("order by CheckViewBean.logTime desc");
 
-        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKVIEW, request, condtion, this.checkViewDAO,
-            new HandleResult<CheckViewVO>()
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYCHECKVIEW, request, condtion,
+            this.checkViewDAO, new HandleResult<CheckViewVO>()
             {
                 public void handle(CheckViewVO obj)
                 {
@@ -601,11 +605,11 @@ public class FinaAction extends ParentQueryFinaAction
 
         if (StringTools.isNullOrNone(alogTime) && StringTools.isNullOrNone(blogTime))
         {
-            changeMap.put("afinanceDate", TimeTools.now_short( -30));
+            changeMap.put("afinanceDate", TimeTools.now_short( -10));
 
             changeMap.put("bfinanceDate", TimeTools.now_short(1));
 
-            condtion.addCondition("FinanceBean.financeDate", ">=", TimeTools.now_short( -30));
+            condtion.addCondition("FinanceBean.financeDate", ">=", TimeTools.now_short( -10));
 
             condtion.addCondition("FinanceBean.financeDate", "<=", TimeTools.now_short(1));
         }
@@ -623,11 +627,11 @@ public class FinaAction extends ParentQueryFinaAction
 
         if (StringTools.isNullOrNone(alogTime) && StringTools.isNullOrNone(blogTime))
         {
-            changeMap.put("afinanceDate", TimeTools.now_short( -30));
+            changeMap.put("afinanceDate", TimeTools.now_short( -10));
 
             changeMap.put("bfinanceDate", TimeTools.now_short(1));
 
-            condtion.addCondition("FinanceTempBean.financeDate", ">=", TimeTools.now_short( -30));
+            condtion.addCondition("FinanceTempBean.financeDate", ">=", TimeTools.now_short( -10));
 
             condtion.addCondition("FinanceTempBean.financeDate", "<=", TimeTools.now_short(1));
         }
@@ -645,11 +649,11 @@ public class FinaAction extends ParentQueryFinaAction
 
         if (StringTools.isNullOrNone(alogTime) && StringTools.isNullOrNone(blogTime))
         {
-            changeMap.put("afinanceDate", TimeTools.now_short( -30));
+            changeMap.put("afinanceDate", TimeTools.now_short( -10));
 
             changeMap.put("bfinanceDate", TimeTools.now_short(1));
 
-            condtion.addCondition("FinanceItemBean.financeDate", ">=", TimeTools.now_short( -30));
+            condtion.addCondition("FinanceItemBean.financeDate", ">=", TimeTools.now_short( -10));
 
             condtion.addCondition("FinanceItemBean.financeDate", "<=", TimeTools.now_short(1));
         }
@@ -667,7 +671,8 @@ public class FinaAction extends ParentQueryFinaAction
         {
             changeMap.put("checkStatus", String.valueOf(PublicConstant.CHECK_STATUS_INIT));
 
-            condtion.addIntCondition("CheckViewBean.checkStatus", "=", PublicConstant.CHECK_STATUS_INIT);
+            condtion.addIntCondition("CheckViewBean.checkStatus", "=",
+                PublicConstant.CHECK_STATUS_INIT);
         }
 
         return changeMap;
@@ -683,8 +688,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addFinance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                    HttpServletResponse response)
+    public ActionForward addFinance(ActionMapping mapping, ActionForm form,
+                                    HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         FinanceBean bean = new FinanceBean();
@@ -733,8 +738,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward addFinanceTurn(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                        HttpServletResponse response)
+    public ActionForward addFinanceTurn(ActionMapping mapping, ActionForm form,
+                                        HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         FinanceTurnBean bean = new FinanceTurnBean();
@@ -771,8 +776,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward updateFinance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward updateFinance(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         FinanceBean bean = new FinanceBean();
@@ -827,8 +832,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteFinance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response)
+    public ActionForward deleteFinance(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -863,8 +868,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward deleteTempFinance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                           HttpServletResponse response)
+    public ActionForward deleteTempFinance(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -900,7 +905,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @throws ServletException
      */
     public ActionForward moveTempFinanceBeanToRelease(ActionMapping mapping, ActionForm form,
-                                                      HttpServletRequest request, HttpServletResponse response)
+                                                      HttpServletRequest request,
+                                                      HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -935,8 +941,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward copyFinance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward copyFinance(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = request.getParameter("id");
@@ -996,7 +1002,8 @@ public class FinaAction extends ParentQueryFinaAction
             // 凭证核对
             else if (type == 99)
             {
-                taxFacade.updateFinanceCheck(user.getId(), id, "[" + user.getStafferName() + "]" + reason);
+                taxFacade.updateFinanceCheck(user.getId(), id, "[" + user.getStafferName() + "]"
+                                                               + reason);
             }
             else
             {
@@ -1027,8 +1034,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward checks2(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward checks2(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         int type = MathTools.parseInt(request.getParameter("type"));
@@ -1043,7 +1050,8 @@ public class FinaAction extends ParentQueryFinaAction
 
             if (type != 6)
             {
-                taxFacade.checks2(user.getId(), id, type, "[" + user.getStafferName() + "]" + reason);
+                taxFacade.checks2(user.getId(), id, type, "[" + user.getStafferName() + "]"
+                                                          + reason);
             }
             else
             {
@@ -1105,8 +1113,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward synCheckView(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse response)
+    public ActionForward synCheckView(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         AjaxResult ajax = new AjaxResult();
@@ -1130,8 +1138,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward findFinance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                     HttpServletResponse response)
+    public ActionForward findFinance(ActionMapping mapping, ActionForm form,
+                                     HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         String id = RequestTools.getValueFromRequest(request, "id");
@@ -1433,7 +1441,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @param response
      * @return
      */
-    public ActionForward preForQueryTaxFinance1(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward preForQueryTaxFinance1(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
                                                 HttpServletResponse response)
     {
         List<DepotBean> listEntityBeans = depotDAO.listEntityBeans();
@@ -1452,8 +1461,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @param response
      * @return
      */
-    public ActionForward preForAddFinance(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                          HttpServletResponse response)
+    public ActionForward preForAddFinance(ActionMapping mapping, ActionForm form,
+                                          HttpServletRequest request, HttpServletResponse response)
     {
         preInner(request);
 
@@ -1474,7 +1483,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @param response
      * @return
      */
-    public ActionForward preForAddFinanceTurn(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+    public ActionForward preForAddFinanceTurn(ActionMapping mapping, ActionForm form,
+                                              HttpServletRequest request,
                                               HttpServletResponse response)
     {
         // 这里由于有初始化数据必然存在
@@ -1485,7 +1495,8 @@ public class FinaAction extends ParentQueryFinaAction
             return ActionTools.toError("没有默认的结转,请联系管理员设置", mapping, request);
         }
 
-        String nextKey = TimeTools.getStringByOrgAndDaysAndFormat(findLastVO.getMonthKey(), 32, "yyyyMM");
+        String nextKey = TimeTools.getStringByOrgAndDaysAndFormat(findLastVO.getMonthKey(), 32,
+            "yyyyMM");
 
         request.setAttribute("nextKey", nextKey);
 
@@ -1512,7 +1523,8 @@ public class FinaAction extends ParentQueryFinaAction
 
         if (count > 0)
         {
-            return ActionTools.toError("当前[" + changeFormat + "]下存在:" + count + "个凭证没有核对,不能月结", mapping, request);
+            return ActionTools.toError("当前[" + changeFormat + "]下存在:" + count + "个凭证没有核对,不能月结",
+                mapping, request);
         }
 
         List<TaxBean> taxList = taxDAO.listEntityBeans("order by id");
@@ -1636,11 +1648,13 @@ public class FinaAction extends ParentQueryFinaAction
 
         for (PrincipalshipBean principalshipBean : priList)
         {
-            PrincipalshipBean fullBean = orgManager.findPrincipalshipById(principalshipBean.getId());
+            PrincipalshipBean fullBean = orgManager
+                .findPrincipalshipById(principalshipBean.getId());
 
             BeanUtil.copyProperties(principalshipBean, fullBean);
 
-            principalshipBean.setName("[" + principalshipBean.getLevel() + "]" + principalshipBean.getName() + "("
+            principalshipBean.setName("[" + principalshipBean.getLevel() + "]"
+                                      + principalshipBean.getName() + "("
                                       + principalshipBean.getParentName() + ")");
         }
 
@@ -1659,8 +1673,8 @@ public class FinaAction extends ParentQueryFinaAction
      * @return
      * @throws ServletException
      */
-    public ActionForward rptQueryUnit(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                      HttpServletResponse reponse)
+    public ActionForward rptQueryUnit(ActionMapping mapping, ActionForm form,
+                                      HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         CommonTools.saveParamers(request);
@@ -1687,8 +1701,8 @@ public class FinaAction extends ParentQueryFinaAction
         {
             PageSeparateTools.processSeparate(request, RPTQUERYUNIT);
 
-            list = unitDAO.queryEntityBeansByCondition(PageSeparateTools.getCondition(request, RPTQUERYUNIT),
-                PageSeparateTools.getPageSeparate(request, RPTQUERYUNIT));
+            list = unitDAO.queryEntityBeansByCondition(PageSeparateTools.getCondition(request,
+                RPTQUERYUNIT), PageSeparateTools.getPageSeparate(request, RPTQUERYUNIT));
         }
 
         request.setAttribute("list", list);
