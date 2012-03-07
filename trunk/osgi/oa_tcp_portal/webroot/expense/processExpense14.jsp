@@ -204,7 +204,7 @@ function checkMoney()
 
 function checkMoney2()
 {
-	//付款 
+	//原申请借款金额 (借款报销收支平衡)
 	<c:if test="${bean.payType == 0}">
     var total = ${my:formatNum(bean.refMoney / 100.0)};
     var ss = '${my:formatNum(bean.refMoney / 100.0)}';
@@ -237,12 +237,15 @@ function checkMoney2()
         }
     }
     
+    //收支平衡不校验了
+    <c:if test="${!(bean.payType == 0 && bean.type == 14)}">
     if (compareDouble(addMoney, total) != 0)
     {
         alert('当前科目入账金额金额:' + addMoney + '.但是单据需要入账金额必须是:' + total);
         
         return false;
     }
+    </c:if>
     
     return true;
 }

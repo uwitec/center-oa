@@ -643,9 +643,16 @@ public class ExpenseAction extends DispatchAction
             {
                 long taxAll = 0;
 
-                if (bean.getPayType() == TcpConstanst.PAYTYPE_PAY_OK)
+                if (bean.getPayType() == TcpConstanst.PAYTYPE_PAY_OK
+                    && bean.getType() != TcpConstanst.TCP_EXPENSETYPE_COMMON)
                 {
                     taxAll = bean.getRefMoney();
+                }
+
+                if (bean.getPayType() == TcpConstanst.PAYTYPE_PAY_OK
+                    && bean.getType() == TcpConstanst.TCP_EXPENSETYPE_COMMON)
+                {
+                    taxAll = bean.getTotal();
                 }
 
                 if (bean.getPayType() == TcpConstanst.PAYTYPE_PAY_YES)

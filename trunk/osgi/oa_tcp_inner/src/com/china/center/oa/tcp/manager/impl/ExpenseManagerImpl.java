@@ -567,10 +567,14 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
             // 收支平衡
             if (bean.getPayType() == TcpConstanst.PAYTYPE_PAY_OK)
             {
-                if (bean.getTotal() != bean.getRefMoney() || bean.getTotal() != total)
+                // 不是通用报销
+                if (bean.getType() != TcpConstanst.TCP_EXPENSETYPE_COMMON)
                 {
-                    throw new MYException("收支平衡下财务入账金额必须是[%.2f]，当前入账金额是[%.2f]", MathTools
-                        .longToDouble2(bean.getRefMoney()), MathTools.longToDouble2(total));
+                    if (bean.getTotal() != bean.getRefMoney() || bean.getTotal() != total)
+                    {
+                        throw new MYException("收支平衡下财务入账金额必须是[%.2f]，当前入账金额是[%.2f]", MathTools
+                            .longToDouble2(bean.getRefMoney()), MathTools.longToDouble2(total));
+                    }
                 }
             }
 
