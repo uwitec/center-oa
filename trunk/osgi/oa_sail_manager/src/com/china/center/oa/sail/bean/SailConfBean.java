@@ -18,6 +18,7 @@ import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.Element;
 import com.china.center.jdbc.annotation.enums.JoinType;
+import com.china.center.jdbc.clone.DataClone;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.sail.constanst.SailConstant;
@@ -31,9 +32,9 @@ import com.china.center.oa.sail.constanst.SailConstant;
  * @see SailConfBean
  * @since 3.0
  */
-@Entity
+@Entity(cache = false)
 @Table(name = "T_CENTER_SAILCONF")
-public class SailConfBean implements Serializable
+public class SailConfBean implements DataClone<SailConfBean>, Serializable
 {
     @Id
     private String id = "";
@@ -77,6 +78,27 @@ public class SailConfBean implements Serializable
 
     @Html(title = "描述", maxLength = 100, type = Element.TEXTAREA)
     private String description = "";
+
+    /**
+     * Copy Constructor
+     * 
+     * @param sailConfBean
+     *            a <code>SailConfBean</code> object
+     */
+    public SailConfBean(SailConfBean sailConfBean)
+    {
+        this.id = sailConfBean.id;
+        this.sailType = sailConfBean.sailType;
+        this.productType = sailConfBean.productType;
+        this.type = sailConfBean.type;
+        this.productId = sailConfBean.productId;
+        this.industryId = sailConfBean.industryId;
+        this.pratio = sailConfBean.pratio;
+        this.iratio = sailConfBean.iratio;
+        this.beginDate = sailConfBean.beginDate;
+        this.endDate = sailConfBean.endDate;
+        this.description = sailConfBean.description;
+    }
 
     /**
      * default constructor
@@ -270,6 +292,11 @@ public class SailConfBean implements Serializable
     public void setProductType(int productType)
     {
         this.productType = productType;
+    }
+
+    public SailConfBean clones()
+    {
+        return new SailConfBean(this);
     }
 
     /**
