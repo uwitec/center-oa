@@ -85,7 +85,7 @@ public class ConsignDAOImpl implements ConsignDAO
         condition.removeWhereStr();
 
         return jdbcOperation.queryObjectsBySql(
-            "select * from T_CENTER_OUTPRODUCT t1, t_center_out t2 where t1.fullId = t2.fullId"
+            "select t1.*, t2.outTime from T_CENTER_OUTPRODUCT t1, t_center_out t2 where t1.fullId = t2.fullId"
                 + condition).setMaxResults(500).list(ConsignBean.class);
     }
 
