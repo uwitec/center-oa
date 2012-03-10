@@ -567,7 +567,10 @@ public class CustomerAction extends DispatchAction
             condtion.addCondition("code", "like", code);
         }
 
-        condtion.addCondition("order by creditVal desc");
+        if ( !StringTools.isNullOrNone(name) || !StringTools.isNullOrNone(code))
+        {
+            condtion.addCondition("order by creditVal desc");
+        }
     }
 
     /**

@@ -1303,6 +1303,11 @@ public class BudgetManagerImpl implements BudgetManager
 
                 double last = budgetItemBean.getBudget() - total;
 
+                if (last < 0)
+                {
+                    System.out.println(last);
+                }
+
                 // 未分配的预算
                 budgetItemBean.setSnoAssignMonery(MathTools.formatNum(last));
 

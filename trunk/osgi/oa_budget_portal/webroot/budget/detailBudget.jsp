@@ -11,6 +11,7 @@
 <script language="javascript">
 function load()
 {
+    bingTable("result");
 }
 
 </script>
@@ -37,6 +38,10 @@ function load()
 		<p:class value="com.china.center.oa.budget.vo.BudgetVO" opr="2" />
 
 		<p:table cells="2">
+		    <p:cell title="预算标识" end="true">
+               ${bean.id}
+            </p:cell>
+            
 			<p:pro field="name" cell="2" innerString="size=60"/>
             
             <p:pro field="type">

@@ -210,8 +210,9 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
 
                 if (MathTools.compare(total, budgetItemBean.getBudget()) > 0)
                 {
-                    throw new MYException("当前的预算项的子项金额达到[%.2f],而更新后的预算只有[%.2f],请确认", total,
-                        budgetItemBean.getBudget());
+                    FeeItemBean fee = feeItemDAO.find(budgetItemBean.getFeeItemId());
+                    throw new MYException("当前的预算项的子项[%s]金额达到[%.2f],而更新后的预算只有[%.2f],请确认", fee
+                        .getName(), total, budgetItemBean.getBudget());
                 }
             }
 
@@ -574,7 +575,7 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
 
         if (MathTools.compare(currentBudget, total) < 0)
         {
-            throw new MYException("当前预算总额是%s,但是你变更后的是%s，不能大于当前总额请重新变更", MathTools
+            throw new MYException("当前预算总额是%s,但是你变更后的是%s，不能大于当前总额,请重新变更", MathTools
                 .formatNum(currentBudget), MathTools.formatNum(total));
         }
     }
