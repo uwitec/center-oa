@@ -66,6 +66,7 @@
 
             //   将认证码存入SESSION  
             session.setAttribute("rand", sRand);
+            
             g.dispose();
             
             ImageIO.setUseCache(true);

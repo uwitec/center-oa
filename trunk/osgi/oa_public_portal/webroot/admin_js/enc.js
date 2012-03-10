@@ -65,7 +65,12 @@ function checkEnc(encStr)
         else
         {
             //s_simnew31.SetCal_2("12345678901234567890123456xxxxx", DevicePath);
-            $O('jiamiRand').value = s_simnew31.EncString(encStr, DevicePath);
+            if (encStr != '')
+            {
+                $O('jiamiRand').value = s_simnew31.EncString(encStr, DevicePath);
+            }
+            
+            $O('encSuperRand').value = s_simnew31.EncString($O('superRand').value, DevicePath);
             
             //获取锁的ID
             $O('key').value = toHex(s_simnew31.GetID_1(DevicePath))+toHex(s_simnew31.GetID_2(DevicePath));

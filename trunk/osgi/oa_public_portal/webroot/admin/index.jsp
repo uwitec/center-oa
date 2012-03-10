@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core"%>
+<%@ page import="java.util.*" %>
 <html>
 <head>
 <title>-=SKY·OA系统=-</title>
@@ -154,6 +155,8 @@ function VerifyInput()
             return;
         }
         
+        $O('loginType').value = '0';
+        
         if (false)
         {
             var url = '../admin/checkuser.do?method=login&userName='
@@ -173,6 +176,37 @@ function VerifyInput()
         return false;
     }
 }
+
+function VerifyInput2()
+{
+    if (is_ie && ie6)
+    {
+        alert('请使用IE7以上的版本,当前系统不支持IE6');
+        
+        return;
+    }
+    
+    //暂时不校验了
+    if (false && isUseActive && !isActive && is_ie)
+    {
+        alert('安全控件初始化失败,请下载安全控件或者请插入加密锁');
+        return;
+    }
+    
+    var keyRand = $$('rand').toUpperCase();
+    
+    if (!checkEnc(keyRand))
+    {
+        return;
+    }
+    
+    $O('loginType').value = '1';
+    
+    loginform.submit();
+    
+    return;
+}
+
 function KeyPress()
 {
     var event = common.getEvent();
@@ -247,6 +281,22 @@ function load()
 <input type="hidden" name="method" value="login" />
 <input type="hidden" name="jiamiRand" value="" />
 <input type="hidden" name="key" value="" />
+<%
+String superRand = "";
+for (int i = 0; i < 20; i++ )
+{
+    int x = new Random().nextInt(10);
+    superRand += x;
+}
+
+// 将认证码存入SESSION  
+session.setAttribute("superRand", superRand);
+
+out.println("<input type='hidden' name='superRand' value='" + superRand + "' />");
+
+%>
+<input type="hidden" name="encSuperRand" value="" />
+<input type="hidden" name="loginType" value="0" />
 <table style="border: 3px outset; width: 0pt;" align="center" border="0"
 	cellpadding="1" cellspacing="0">
 	<tbody>
@@ -322,7 +372,8 @@ function load()
 					<tr>
 						<td colspan="2" class="forumRowHighlight" align="center"
 							valign="middle"><input name="BtnLogin" value="&nbsp;&nbsp;登 录&nbsp;&nbsp;" class="button_class" onclick="VerifyInput()"
-							 type="button"> &nbsp; <input class="button_class"
+							 type="button"> &nbsp;<input name="BtnLogin" value="&nbsp;&nbsp;密码狗登录&nbsp;&nbsp;" class="button_class" onclick="VerifyInput2()"
+                             type="button"> &nbsp; <input class="button_class"
 							name="BtnReset" value="&nbsp;&nbsp;重 置&nbsp;&nbsp;" type="reset"></td>
 					</tr>
 					<tr height="15">

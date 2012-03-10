@@ -128,6 +128,8 @@ public class LoginAction extends DispatchAction
         // 是否启用加密锁
         boolean hasEncLock = parameterDAO.getBoolean(SysConfigConstant.NEED_SUPER_ENC_LOCK);
 
+        boolean hasGouLogin = parameterDAO.getBoolean(SysConfigConstant.NEEDSUPERPASSWORD);
+
         String key = request.getParameter("key");
 
         boolean real = login;
@@ -145,7 +147,7 @@ public class LoginAction extends DispatchAction
         StafferVO stafferBean = null;
 
         // 正常登录
-        if ( !"99".equals(loginType) && !"98".equals(loginType))
+        if ("0".equals(loginType))
         {
             String longinName = request.getParameter("userName");
 
@@ -214,6 +216,54 @@ public class LoginAction extends DispatchAction
             enc = handleEncLock(key, randKey, randVal, hasEncLock, stafferBean);
 
             passwordEquals = user.getPassword().equals(Security.getSecurity(password));
+
+            request.getSession().setAttribute("g_loginType", "0");
+        }
+
+        // 加密狗登录
+        if ("1".equals(loginType) && hasGouLogin)
+        {
+            String superRand = request.getParameter("superRand");
+
+            String encSuperRand = request.getParameter("encSuperRand");
+
+            stafferBean = handleEncLock2(key, encSuperRand, superRand, hasEncLock);
+
+            if (stafferBean == null)
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "用户名或密码错误!");
+
+                return mapping.findForward("error");
+            }
+
+            if (stafferBean.getStatus() == StafferConstant.STATUS_DROP)
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "用户名或密码错误!");
+
+                return mapping.findForward("error");
+            }
+
+            user = userDAO.findFirstUserByStafferId(stafferBean.getId());
+
+            if (user == null)
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "用户名或密码错误");
+
+                return mapping.findForward("error");
+            }
+
+            // 锁定处理
+            if (user.getStatus() == PublicConstant.LOGIN_STATUS_LOCK)
+            {
+                _accessLog.info(logLogin(request, user, false) + ',' + spassword);
+
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "用户被锁定,请联系管理员解锁!");
+
+                return mapping.findForward("error");
+            }
+
+            enc = true;
+            passwordEquals = true;
 
             request.getSession().setAttribute("g_loginType", "0");
         }
@@ -521,6 +571,36 @@ public class LoginAction extends DispatchAction
     }
 
     /**
+     * 二次加密
+     * 
+     * @param key
+     *            ID
+     * @param randKey
+     *            加密的
+     * @param randVal
+     *            原始字符串
+     * @param hasEncLock
+     *            是否LOCK
+     * @return
+     */
+    private StafferVO handleEncLock2(String key, String randKey, String randVal, boolean hasEncLock)
+    {
+        List<StafferVO> stafferList = this.stafferDAO.listEntityVOs();
+
+        for (StafferVO stafferBean : stafferList)
+        {
+            if (LoginHelper.encRadomStr(stafferBean.getPwkey(), key, randVal).equals(randKey)
+                || (LoginHelper.encRadomStr(stafferBean.getPwkey(), key, randVal) + "00")
+                    .equals(randKey))
+            {
+                return stafferBean;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * handleLoginSucess
      * 
      * @param request
@@ -594,6 +674,13 @@ public class LoginAction extends DispatchAction
     private void checkDataValidity(ActionMapping mapping, HttpServletRequest request, User user)
         throws MYException
     {
+        if (user == null)
+        {
+            request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "用户名密码错误");
+
+            throw new MYException("error");
+        }
+
         String locationId = user.getLocationId();
 
         if ( !PublicConstant.VIRTUAL_LOCATION.equals(locationId))
