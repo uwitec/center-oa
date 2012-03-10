@@ -86,7 +86,7 @@ public class ConsignDAOImpl implements ConsignDAO
 
         return jdbcOperation.queryObjectsBySql(
             "select t1.*, t2.outTime from T_CENTER_OUTPRODUCT t1, t_center_out t2 where t1.fullId = t2.fullId"
-                + condition).setMaxResults(500).list(ConsignBean.class);
+                + condition).setMaxResults(200).list(ConsignBean.class);
     }
 
     public int countTransport(String transportId)

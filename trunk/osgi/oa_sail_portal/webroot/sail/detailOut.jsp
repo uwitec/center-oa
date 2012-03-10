@@ -444,7 +444,7 @@ function checkBean()
 						<td width="5%" align="center">数量</td>
 						<td width="10%" align="center">销售价</td>
 						<td width="10%" align="center">金额<span id="total"></span></td>
-						<td width="10%" align="center" id="cost_td">成本</td>
+						<td width="10%" align="center" id="cost_td">成本/事业部/总部</td>
 						<td width="20%" align="center">类型</td>
 						<td width="15%" align="center">开发票品名</td>
 					</tr>
@@ -523,7 +523,7 @@ function checkBean()
 						<td align="center"><input type="text" value="${my:formatNum(fristBase.value)}"
 							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
-						<td align="center" id="sub_td_0"><input type="text" id="unDesciprt" readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
+						<td align="center" id="sub_td_0"><input type="text" id="unDesciprt" readonly="readonly" value="${fristBase.description}"
 							style="width: 100%" name="desciprt"></td>
 							
 						<td align="center"><input type="text" id="unRstafferName" readonly="readonly" value="${fristBase.depotpartName}-->${fristBase.ownerName}"
@@ -566,7 +566,7 @@ function checkBean()
                         <td align="center"><input type="text" value="${my:formatNum(fristBase.value)}"
                             value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
-                        <td align="center" id="sub_td_${vs.index + 1 }"><input type="text"  readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
+                        <td align="center" id="sub_td_${vs.index + 1 }"><input type="text"  readonly="readonly" value="${fristBase.description}"
                             style="width: 100%" name="desciprt"></td>
                             
                         <td align="center"><input type="text" readonly="readonly" value="${fristBase.depotpartName}-->${fristBase.ownerName}"

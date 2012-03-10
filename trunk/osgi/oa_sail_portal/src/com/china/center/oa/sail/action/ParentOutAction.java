@@ -272,7 +272,7 @@ public class ParentOutAction extends DispatchAction
         {
             try
             {
-                innerForPrepare(request, true);
+                innerForPrepare(request, true, true);
             }
             catch (MYException e)
             {
@@ -302,7 +302,7 @@ public class ParentOutAction extends DispatchAction
 
         try
         {
-            innerForPrepare(request, true);
+            innerForPrepare(request, true, true);
         }
         catch (MYException e)
         {
@@ -346,7 +346,7 @@ public class ParentOutAction extends DispatchAction
 
         try
         {
-            innerForPrepare(request, true);
+            innerForPrepare(request, true, true);
         }
         catch (MYException e)
         {
@@ -506,9 +506,11 @@ public class ParentOutAction extends DispatchAction
      * @param request
      * @param check
      *            是否检查事业部
+     * @param detailQuery
+     *            TODO
      * @throws MYException
      */
-    protected void innerForPrepare(HttpServletRequest request, boolean check)
+    protected void innerForPrepare(HttpServletRequest request, boolean check, boolean needDeepQuery)
         throws MYException
     {
         String flag = RequestTools.getValueFromRequest(request, "flag");
@@ -620,7 +622,10 @@ public class ParentOutAction extends DispatchAction
 
         condition.addCondition("locationId", "=", oprUser.getLocationId());
 
-        showLastCredit(request, user, flag);
+        if (needDeepQuery)
+        {
+            showLastCredit(request, user, flag);
+        }
 
         List<InvoiceBean> invoiceList = invoiceDAO.queryEntityBeansByCondition("where forward = ?",
             InvoiceConstant.INVOICE_FORWARD_OUT);
@@ -3073,7 +3078,13 @@ public class ParentOutAction extends DispatchAction
 
         handlerFlow(request, list, true);
 
-        showLastCredit(request, user, "0");
+        // 这里是过滤
+        String queryType = RequestTools.getValueFromRequest(request, "queryType");
+
+        if ("1".equals(queryType))
+        {
+            showLastCredit(request, user, "0");
+        }
 
         getDivs(request, list);
 
@@ -3256,6 +3267,7 @@ public class ParentOutAction extends DispatchAction
 
             }
         }
+
         return depotList;
     }
 

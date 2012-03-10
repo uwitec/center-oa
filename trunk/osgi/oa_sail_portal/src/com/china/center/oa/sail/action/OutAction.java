@@ -1838,9 +1838,17 @@ public class OutAction extends ParentOutAction
             request.setAttribute("flag", "1");
         }
 
+        // 优化查询
+        boolean deepQuery = true;
+
+        if ("99".equals(fow))
+        {
+            deepQuery = false;
+        }
+
         try
         {
-            innerForPrepare(request, false);
+            innerForPrepare(request, false, deepQuery);
         }
         catch (MYException e)
         {
@@ -2077,6 +2085,13 @@ public class OutAction extends ParentOutAction
                         baseBean.setCostPrice(baseBean.getInputPrice());
                         baseBean.setDescription(MathTools.formatNum(baseBean.getInputPrice()));
                     }
+                    else
+                    {
+                        baseBean
+                            .setDescription(MathTools.formatNum(baseBean.getCostPrice()) + " / "
+                                            + MathTools.formatNum(baseBean.getIprice()) + " / "
+                                            + MathTools.formatNum(baseBean.getPprice()));
+                    }
 
                     total += (baseBean.getAmount() - hasBack);
                 }
@@ -2185,6 +2200,18 @@ public class OutAction extends ParentOutAction
                     {
                         // 显示成本
                         baseBean.setCostPrice(baseBean.getInputPrice());
+
+                        baseBean.setDescription(MathTools.formatNum(baseBean.getInputPrice()));
+                    }
+                }
+                else
+                {
+                    for (BaseBean baseBean : baseList)
+                    {
+                        baseBean
+                            .setDescription(MathTools.formatNum(baseBean.getCostPrice()) + " / "
+                                            + MathTools.formatNum(baseBean.getIprice()) + " / "
+                                            + MathTools.formatNum(baseBean.getPprice()));
                     }
                 }
             }
