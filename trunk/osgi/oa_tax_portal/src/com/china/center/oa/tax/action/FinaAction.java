@@ -649,11 +649,11 @@ public class FinaAction extends ParentQueryFinaAction
 
         if (StringTools.isNullOrNone(alogTime) && StringTools.isNullOrNone(blogTime))
         {
-            changeMap.put("afinanceDate", TimeTools.now_short( -10));
+            changeMap.put("afinanceDate", TimeTools.now_short( -1));
 
             changeMap.put("bfinanceDate", TimeTools.now_short(1));
 
-            condtion.addCondition("FinanceItemBean.financeDate", ">=", TimeTools.now_short( -10));
+            condtion.addCondition("FinanceItemBean.financeDate", ">=", TimeTools.now_short( -1));
 
             condtion.addCondition("FinanceItemBean.financeDate", "<=", TimeTools.now_short(1));
         }
