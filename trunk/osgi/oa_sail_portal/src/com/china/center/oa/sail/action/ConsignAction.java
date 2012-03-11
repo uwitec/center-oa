@@ -287,11 +287,11 @@ public class ConsignAction extends DispatchAction
 
             String old = TimeTools.getStringByFormat(new Date(cal.getTimeInMillis()), "yyyy-MM-dd");
 
-            condition.addCondition("managerTime", ">=", old);
+            condition.addCondition("t2.managerTime", ">=", old);
 
             request.setAttribute("beginDate", old);
 
-            condition.addCondition("managerTime", "<=", now);
+            condition.addCondition("t2.managerTime", "<=", now);
 
             request.setAttribute("endDate", now);
 
@@ -313,28 +313,28 @@ public class ConsignAction extends DispatchAction
 
             if ( !StringTools.isNullOrNone(beginDate))
             {
-                condition.addCondition("managerTime", ">=", beginDate);
+                condition.addCondition("t2.managerTime", ">=", beginDate);
             }
 
             String endDate = request.getParameter("endDate");
 
             if ( !StringTools.isNullOrNone(endDate))
             {
-                condition.addCondition("managerTime", "<=", endDate);
+                condition.addCondition("t2.managerTime", "<=", endDate);
             }
 
             String abeginDate = request.getParameter("abeginDate");
 
             if ( !StringTools.isNullOrNone(abeginDate))
             {
-                condition.addCondition("arriveDate", ">=", abeginDate);
+                condition.addCondition("t2.arriveDate", ">=", abeginDate);
             }
 
             String aendDate = request.getParameter("aendDate");
 
             if ( !StringTools.isNullOrNone(aendDate))
             {
-                condition.addCondition("arriveDate", "<=", aendDate);
+                condition.addCondition("t2.arriveDate", "<=", aendDate);
             }
 
             Map<String, String> pmap = CommonTools.saveParamersToMap(request);
@@ -346,7 +346,7 @@ public class ConsignAction extends DispatchAction
 
         if ( !StringTools.isNullOrNone(currentStatus))
         {
-            condition.addIntCondition("currentStatus", "=", currentStatus);
+            condition.addIntCondition("t1.currentStatus", "=", currentStatus);
         }
 
         String fullId = request.getParameter("fullId");
@@ -360,7 +360,7 @@ public class ConsignAction extends DispatchAction
 
         if ( !StringTools.isNullOrNone(reprotType))
         {
-            condition.addIntCondition("reprotType", "=", reprotType);
+            condition.addIntCondition("t1.reprotType", "=", reprotType);
         }
 
         condition.addCondition("order by t2.arriveDate desc");

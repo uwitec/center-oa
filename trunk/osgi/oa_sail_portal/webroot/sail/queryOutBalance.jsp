@@ -322,7 +322,7 @@ function centerCheck()
 	</tr>
 	
 	<p:title>
-        <td class="caption"><strong>浏览结算清单</strong></td>
+        <td class="caption"><strong>浏览结算清单</strong> 结算单在结算中心通过后就结束了,不能驳回</td>
     </p:title>
 
     <p:line flag="0" />

@@ -566,6 +566,11 @@ public class LoginAction extends DispatchAction
     private boolean handleEncLock(String key, String randKey, String randVal, boolean hasEncLock,
                                   StafferBean stafferBean)
     {
+        if (StringTools.isNullOrNone(randKey))
+        {
+            return false;
+        }
+
         return !hasEncLock
                || LoginHelper.encRadomStr(stafferBean.getPwkey(), key, randVal).equals(randKey);
     }
@@ -585,6 +590,11 @@ public class LoginAction extends DispatchAction
      */
     private StafferVO handleEncLock2(String key, String randKey, String randVal, boolean hasEncLock)
     {
+        if (StringTools.isNullOrNone(randKey))
+        {
+            return null;
+        }
+
         List<StafferVO> stafferList = this.stafferDAO.listEntityVOs();
 
         for (StafferVO stafferBean : stafferList)
