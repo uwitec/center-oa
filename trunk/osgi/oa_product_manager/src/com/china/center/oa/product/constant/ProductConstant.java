@@ -175,6 +175,12 @@ public interface ProductConstant
     int SAILTYPE_CUSTOMER = 2;
 
     /**
+     * 其他
+     */
+    @Defined(key = "productSailType", value = "其他")
+    int SAILTYPE_OTHER = 3;
+
+    /**
      * 可以调价
      */
     @Defined(key = "productAjustPrice", value = "可以调价")
