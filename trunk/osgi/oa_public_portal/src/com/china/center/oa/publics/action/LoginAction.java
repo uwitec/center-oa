@@ -252,6 +252,14 @@ public class LoginAction extends DispatchAction
                 return mapping.findForward("error");
             }
 
+            // 超级用户不能直接登录
+            if ("0".equals(user.getRole()))
+            {
+                request.getSession().setAttribute(KeyConstant.ERROR_MESSAGE, "此用户禁止密码狗直接登录");
+
+                return mapping.findForward("error");
+            }
+
             // 锁定处理
             if (user.getStatus() == PublicConstant.LOGIN_STATUS_LOCK)
             {
