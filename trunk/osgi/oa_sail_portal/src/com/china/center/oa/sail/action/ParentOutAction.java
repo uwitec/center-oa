@@ -921,6 +921,9 @@ public class ParentOutAction extends DispatchAction
 
         WritableSheet ws = null;
 
+        // 是否可以看到真实的成本
+        boolean containAuth = userManager.containAuth(user.getId(), AuthConstant.SAIL_QUERY_COST);
+
         try
         {
             out = reponse.getOutputStream();
@@ -978,6 +981,13 @@ public class ParentOutAction extends DispatchAction
             ws.addCell(new Label(j++ , i, "单价", format));
             ws.addCell(new Label(j++ , i, "金额", format));
             ws.addCell(new Label(j++ , i, "成本", format));
+
+            if (containAuth)
+            {
+                ws.addCell(new Label(j++ , i, "事业部结算价", format));
+                ws.addCell(new Label(j++ , i, "总部结算价", format));
+            }
+
             ws.addCell(new Label(j++ , i, "发货单号", format));
             ws.addCell(new Label(j++ , i, "发货方式", format));
             ws.addCell(new Label(j++ , i, "总金额", format));
@@ -1064,6 +1074,12 @@ public class ParentOutAction extends DispatchAction
                     ws.addCell(new Label(j++ , i, String.valueOf(base.getPrice())));
                     ws.addCell(new Label(j++ , i, String.valueOf(base.getValue())));
                     ws.addCell(new Label(j++ , i, MathTools.formatNum(base.getCostPrice())));
+
+                    if (containAuth)
+                    {
+                        ws.addCell(new Label(j++ , i, MathTools.formatNum(base.getIprice())));
+                        ws.addCell(new Label(j++ , i, MathTools.formatNum(base.getPprice())));
+                    }
 
                     if ( !iterator.hasNext())
                     {
