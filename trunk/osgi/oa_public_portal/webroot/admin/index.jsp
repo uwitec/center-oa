@@ -372,8 +372,10 @@ out.println("<input type='hidden' name='superRand' value='" + superRand + "' />"
 					<tr>
 						<td colspan="2" class="forumRowHighlight" align="center"
 							valign="middle"><input name="BtnLogin" value="&nbsp;&nbsp;登 录&nbsp;&nbsp;" class="button_class" onclick="VerifyInput()"
-							 type="button"> &nbsp;<input name="BtnLogin" value="&nbsp;&nbsp;密码狗登录&nbsp;&nbsp;" class="button_class" onclick="VerifyInput2()"
-                             type="button"> &nbsp; <input class="button_class"
+							 type="button"> 
+							 &nbsp;<input name="BtnLogin" value="&nbsp;&nbsp;密码狗一键登录&nbsp;&nbsp;" class="button_class" onclick="VerifyInput2()"
+                             type="button"> &nbsp; 
+                             <input class="button_class"
 							name="BtnReset" value="&nbsp;&nbsp;重 置&nbsp;&nbsp;" type="reset"></td>
 					</tr>
 					<tr height="15">
