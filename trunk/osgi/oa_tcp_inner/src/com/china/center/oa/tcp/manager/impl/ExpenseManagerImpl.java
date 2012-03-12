@@ -462,9 +462,12 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
 
                 long newBrrow = 0L;
 
-                for (TravelApplyPayBean travelApplyPayBean : newPayList)
+                if (newPayList != null)
                 {
-                    newBrrow += travelApplyPayBean.getCmoneys();
+                    for (TravelApplyPayBean travelApplyPayBean : newPayList)
+                    {
+                        newBrrow += travelApplyPayBean.getCmoneys();
+                    }
                 }
 
                 // 重新计算付款金额(这里可能存在金额不一致的情况)
