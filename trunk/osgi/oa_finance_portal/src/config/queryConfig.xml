@@ -116,6 +116,10 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
+        <condtion name="id" caption="标识(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
         <condtion name="stafferName" filed="name" caption="开票人" pfix="StafferBean">
             <opr>like</opr>
             <type>text</type>
