@@ -52,7 +52,7 @@ public abstract class AbstractTcpBean implements Serializable
     protected String borrowStafferId = "";
 
     @Html(title = "部门", name = "departmentName", must = true, maxLength = 40, readonly = true)
-    @Join(tagClass = PrincipalshipBean.class)
+    @Join(tagClass = PrincipalshipBean.class, type = JoinType.LEFT)
     protected String departmentId = "";
 
     protected String logTime = "";
