@@ -41,6 +41,7 @@ import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.OldPageSeparateTools;
 import com.china.center.actionhelper.jsonimpl.JSONArray;
 import com.china.center.common.MYException;
+import com.china.center.common.taglib.DefinedCommon;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
 import com.china.center.oa.customer.constant.CustomerConstant;
@@ -969,6 +970,7 @@ public class ParentOutAction extends DispatchAction
             ws.addCell(new Label(j++ , i, "回款日期", format));
             ws.addCell(new Label(j++ , i, "库管通过日期", format));
             ws.addCell(new Label(j++ , i, "状态", format));
+            ws.addCell(new Label(j++ , i, "是否回款", format));
             ws.addCell(new Label(j++ , i, "经办人", format));
             ws.addCell(new Label(j++ , i, "仓库", format));
             ws.addCell(new Label(j++ , i, "目的库", format));
@@ -1055,6 +1057,9 @@ public class ParentOutAction extends DispatchAction
 
                     ws.addCell(new Label(j++ , i, OutHelper.getStatus(element.getStatus(), false)));
 
+                    ws.addCell(new Label(j++ , i, DefinedCommon
+                        .getValue("outPay", element.getPay())));
+
                     ws.addCell(new Label(j++ , i, element.getStafferName()));
 
                     ws.addCell(new Label(j++ , i, element.getDepotName()));
@@ -1103,7 +1108,8 @@ public class ParentOutAction extends DispatchAction
                             ws.addCell(new Label(j++ , i, ""));
                         }
 
-                        ws.addCell(new Label(j++ , i, String.valueOf(element.getTotal()), format2));
+                        ws.addCell(new Label(j++ , i, MathTools.formatNum(element.getTotal()),
+                            format2));
                     }
                 }
 

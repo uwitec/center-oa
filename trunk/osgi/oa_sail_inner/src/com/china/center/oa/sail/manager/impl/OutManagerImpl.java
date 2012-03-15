@@ -4498,11 +4498,17 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         // CORE 需要把回款日志敲定且变动销售库存(库管通过)
         if (newNextStatus == OutConstant.STATUS_PASS)
         {
-            long add = outBean.getReday() * 24 * 3600 * 1000L;
+            // 只有未付款的时候才有
+            if (outBean.getPay() == OutConstant.PAY_NOT)
+            {
+                long add = outBean.getReday() * 24 * 3600 * 1000L;
 
-            // 这里需要把出库单的回款日期修改
-            outDAO.modifyReDate(fullId, TimeTools.getStringByFormat(new Date(new Date().getTime()
-                                                                             + add), "yyyy-MM-dd"));
+                // 这里需要把出库单的回款日期修改
+                outDAO.modifyReDate(fullId, TimeTools.getStringByFormat(new Date(new Date()
+                    .getTime()
+                                                                                 + add),
+                    "yyyy-MM-dd"));
+            }
 
             List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
 
