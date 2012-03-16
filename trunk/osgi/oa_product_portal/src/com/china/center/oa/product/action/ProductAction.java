@@ -95,6 +95,8 @@ import com.china.center.oa.publics.dao.EnumDAO;
 import com.china.center.oa.publics.dao.LocationDAO;
 import com.china.center.oa.publics.helper.OATools;
 import com.china.center.oa.publics.manager.OrgManager;
+import com.china.center.oa.sail.bean.SailConfBean;
+import com.china.center.oa.sail.manager.SailConfigManager;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.tools.BeanUtil;
@@ -155,6 +157,8 @@ public class ProductAction extends DispatchAction
 
     private FinanceDAO financeDAO = null;
 
+    private SailConfigManager sailConfigManager = null;
+
     private ProductVSLocationDAO productVSLocationDAO = null;
 
     private static String QUERYPRODUCT = "queryProduct";
@@ -191,7 +195,7 @@ public class ProductAction extends DispatchAction
      * @throws ServletException
      */
     public ActionForward queryProduct(ActionMapping mapping, ActionForm form,
-                                      HttpServletRequest request, HttpServletResponse response)
+                                      final HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
         final ConditionParse condtion = new ConditionParse();
@@ -207,7 +211,18 @@ public class ProductAction extends DispatchAction
         condtion.addCondition("order by ProductBean.abstractType desc, ProductBean.logTime desc");
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYPRODUCT, request, condtion,
-            this.productDAO);
+            this.productDAO, new HandleResult<ProductVO>()
+            {
+                public void handle(ProductVO obj)
+                {
+                    SailConfBean sailConf = sailConfigManager.findProductConf(Helper
+                        .getStaffer(request), obj);
+
+                    obj
+                        .setSailPrice(obj.getSailPrice()
+                                      * (1 + sailConf.getPratio() / 1000.0d + sailConf.getIratio() / 1000.0d));
+                }
+            });
 
         return JSONTools.writeResponse(response, jsonstr);
     }
@@ -2560,5 +2575,22 @@ public class ProductAction extends DispatchAction
     public void setFinanceDAO(FinanceDAO financeDAO)
     {
         this.financeDAO = financeDAO;
+    }
+
+    /**
+     * @return the sailConfigManager
+     */
+    public SailConfigManager getSailConfigManager()
+    {
+        return sailConfigManager;
+    }
+
+    /**
+     * @param sailConfigManager
+     *            the sailConfigManager to set
+     */
+    public void setSailConfigManager(SailConfigManager sailConfigManager)
+    {
+        this.sailConfigManager = sailConfigManager;
     }
 }

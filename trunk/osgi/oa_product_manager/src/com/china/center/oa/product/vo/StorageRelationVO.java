@@ -56,6 +56,12 @@ public class StorageRelationVO extends StorageRelationBean
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
 
+    /**
+     * industryId
+     */
+    @Relationship(relationField = "locationId", tagField = "industryId")
+    private String industryId = "";
+
     @Ignore
     private int mayAmount = 0;
 
@@ -432,6 +438,23 @@ public class StorageRelationVO extends StorageRelationBean
     }
 
     /**
+     * @return the industryId
+     */
+    public String getIndustryId()
+    {
+        return industryId;
+    }
+
+    /**
+     * @param industryId
+     *            the industryId to set
+     */
+    public void setIndustryId(String industryId)
+    {
+        this.industryId = industryId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -475,6 +498,9 @@ public class StorageRelationVO extends StorageRelationBean
             .append(TAB)
             .append("stafferName = ")
             .append(this.stafferName)
+            .append(TAB)
+            .append("industryId = ")
+            .append(this.industryId)
             .append(TAB)
             .append("mayAmount = ")
             .append(this.mayAmount)

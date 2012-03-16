@@ -62,6 +62,7 @@ import com.china.center.oa.product.dao.StorageLogDAO;
 import com.china.center.oa.product.dao.StorageRelationDAO;
 import com.china.center.oa.product.facade.ProductFacade;
 import com.china.center.oa.product.manager.StorageRelationManager;
+import com.china.center.oa.product.vo.DepotVO;
 import com.china.center.oa.product.vo.DepotpartVO;
 import com.china.center.oa.product.vo.StorageLogVO;
 import com.china.center.oa.product.vo.StorageRelationVO;
@@ -1537,13 +1538,21 @@ public class StorageAction extends DispatchAction
             }
             else
             {
-                SailConfBean sailConf = sailConfigManager.findProductConf(Helper
-                    .getStaffer(request), product);
+                if (StringTools.isNullOrNone(vo.getStafferId()) || "0".equals(vo.getStafferId()))
+                {
+                    SailConfBean sailConf = sailConfigManager.findProductConf(Helper
+                        .getStaffer(request), product);
 
-                // 最新的成本(一致的)
-                vo
-                    .setAddPrice(product.getSailPrice()
-                                 * (1 + sailConf.getPratio() / 1000.0d + sailConf.getIratio() / 1000.0d));
+                    // 最新的成本(一致的)
+                    vo
+                        .setAddPrice(product.getSailPrice()
+                                     * (1 + sailConf.getPratio() / 1000.0d + sailConf.getIratio() / 1000.0d));
+                }
+                else
+                {
+                    // 私有库存直接是成本
+                    vo.setAddPrice(vo.getPrice());
+                }
             }
         }
 
@@ -1595,17 +1604,17 @@ public class StorageAction extends DispatchAction
 
             ConditionParse condtion = new ConditionParse();
 
-            List<DepotBean> lList = depotDAO.listEntityBeans();
+            List<DepotVO> lList = depotDAO.listEntityVOs();
 
             write = WriteFileFactory.getMyTXTWriter();
 
             write.openFile(out);
 
-            write.writeLine("日期,仓库,仓区,仓区属性,储位,产品名称,产品编码,产品数量,产品价格,归属");
+            write.writeLine("日期,事业部,仓库,仓区,仓区属性,储位,产品名称,产品编码,产品数量,产品价格,归属");
 
             String now = TimeTools.now("yyyy-MM-dd");
 
-            for (DepotBean locationBean : lList)
+            for (DepotVO locationBean : lList)
             {
                 condtion.clear();
 
@@ -1638,6 +1647,8 @@ public class StorageAction extends DispatchAction
                         }
 
                         write.writeLine(now
+                                        + ','
+                                        + StringTools.getLineString(locationBean.getIndustryName())
                                         + ','
                                         + locationBean.getName()
                                         + ','
@@ -1725,17 +1736,17 @@ public class StorageAction extends DispatchAction
         {
             out = reponse.getOutputStream();
 
-            List<DepotBean> lList = depotDAO.listEntityBeans();
+            List<DepotVO> lList = depotDAO.listEntityVOs();
 
             write = WriteFileFactory.getMyTXTWriter();
 
             write.openFile(out);
 
-            write.writeLine("日期,仓库,仓区,仓区属性,产品名称,产品编码,产品数量,归属");
+            write.writeLine("日期,事业部,仓库,仓区,仓区属性,产品名称,产品编码,产品数量,归属");
 
             String now = TimeTools.now("yyyy-MM-dd");
 
-            for (DepotBean locationBean : lList)
+            for (DepotVO locationBean : lList)
             {
                 List<StorageRelationVO> list = storageRelationDAO
                     .queryStorageRelationWithoutPrice(locationBean.getId());
@@ -1769,6 +1780,8 @@ public class StorageAction extends DispatchAction
                         }
 
                         write.writeLine(now
+                                        + ','
+                                        + StringTools.getLineString(locationBean.getIndustryName())
                                         + ','
                                         + locationBean.getName()
                                         + ','

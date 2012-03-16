@@ -50,6 +50,7 @@ import com.china.center.oa.product.dao.StorageRelationDAO;
 import com.china.center.oa.product.helper.StorageRelationHelper;
 import com.china.center.oa.product.listener.StorageRelationListener;
 import com.china.center.oa.product.manager.StorageRelationManager;
+import com.china.center.oa.product.vo.DepotVO;
 import com.china.center.oa.product.vo.StorageLogVO;
 import com.china.center.oa.product.vo.StorageRelationVO;
 import com.china.center.oa.product.vs.StorageRelationBean;
@@ -1024,17 +1025,17 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
 
             ConditionParse condtion = new ConditionParse();
 
-            List<DepotBean> lList = depotDAO.listEntityBeans();
+            List<DepotVO> lList = depotDAO.listEntityVOs();
 
             write = WriteFileFactory.getMyTXTWriter();
 
             write.openFile(out);
 
-            write.writeLine("日期,仓库,仓区,仓区属性,储位,产品名称,产品编码,产品数量,产品价格");
+            write.writeLine("日期,事业部,仓库,仓区,仓区属性,储位,产品名称,产品编码,产品数量,产品价格");
 
             String now = TimeTools.now("yyyy-MM-dd");
 
-            for (DepotBean locationBean : lList)
+            for (DepotVO locationBean : lList)
             {
                 condtion.clear();
 
@@ -1052,18 +1053,13 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
                         String typeName = DefinedCommon.getValue("depotpartType", each
                             .getDepotpartType());
 
-                        write.writeLine(now
-                                        + ','
-                                        + locationBean.getName()
-                                        + ','
-                                        + each.getDepotpartName()
-                                        + ','
-                                        + typeName
-                                        + ','
-                                        + each.getStorageName()
-                                        + ','
-                                        + each.getProductName().replaceAll(",", " ").replaceAll(
-                                            "\r\n", "") + ',' + each.getProductCode() + ','
+                        write.writeLine(now + ','
+                                        + StringTools.getLineString(locationBean.getIndustryName())
+                                        + ',' + locationBean.getName() + ','
+                                        + each.getDepotpartName() + ',' + typeName + ','
+                                        + each.getStorageName() + ','
+                                        + StringTools.getLineString(each.getProductName()) + ','
+                                        + each.getProductCode() + ','
                                         + String.valueOf(each.getAmount()) + ','
                                         + MathTools.formatNum(each.getPrice()));
                     }

@@ -155,7 +155,7 @@ function load()
 				<p:pro field="cost"/>
 				<p:pro field="planCost"/>
 				<p:pro field="batchPrice"/>
-				<p:pro field="sailPrice"/>
+				<p:pro field="sailPrice" value="0.0"/>
 				<p:pro field="checkFlag"/>
 				
 				<p:pro field="checkType">
