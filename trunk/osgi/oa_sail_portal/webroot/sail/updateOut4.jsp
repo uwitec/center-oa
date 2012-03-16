@@ -240,13 +240,8 @@ function changePrice()
 						<td><input type="text" name="customerName" maxlength="14" value="${bean.customerName}" onclick="selectCustomer()"
 							 style="cursor: pointer;"
 							readonly="readonly"><font color="#FF0000">*</font></td>
-						<td align="right">销售部门：</td>
-						<td><select name="department" class="select_class" values="${bean.department}">
-							<option value=''>--</option>
-							<c:forEach items='${departementList}' var="item">
-								<option value="${item.name}">${item.name}</option>
-							</c:forEach>
-						</select><font color="#FF0000">*</font></td>
+						<td align="right"></td>
+						<td></td>
 					</tr>
 					
 					<tr class="content2">
