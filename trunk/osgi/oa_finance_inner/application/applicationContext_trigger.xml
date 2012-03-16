@@ -25,6 +25,19 @@
         <property name="cronExpression" value="0 30 2 * * ?" />
     </bean>
     
+    <bean id="clearRejectInvoiceinsBeanJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="invoiceinsManager" />
+        <property name="targetMethod" value="clearRejectInvoiceinsBean" />
+        <property name="concurrent" value="false" />
+    </bean>
+    
+    <bean id="clearRejectInvoiceinsBeanTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="clearRejectInvoiceinsBeanJob" />
+        <property name="cronExpression" value="0 0 3 * * ?" />
+    </bean>
+    
     <bean id="exportAllCurrentBankStatJob"
         class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <property name="targetObject" ref="bankManager" />
@@ -44,6 +57,7 @@
 			<list>
 				<ref bean="statBankTrigger" />
 				<ref bean="exportAllCurrentBankStatTrigger" />
+				<ref bean="clearRejectInvoiceinsBeanTrigger" />
 			</list>
 		</property>
 	</bean>

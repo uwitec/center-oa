@@ -304,7 +304,7 @@ public interface FinanceFacade
     boolean checkInvoiceinsBean(String userId, String id)
         throws MYException;
 
-    boolean rejectInvoiceinsBean(String userId, String id)
+    boolean rejectInvoiceinsBean(String userId, String id, String reason)
         throws MYException;
 
     boolean updateInBillBeanChecks(String userId, String id, String checks)

@@ -141,6 +141,12 @@ function checkBean()
             </p:cell>
 
 			<p:pro field="description" cell="0" innerString="rows=3 cols=55" />
+			
+			 <c:if test="${(bean.status == 1 || bean.status == 2) && (mode == 1 || mode == 3)}">
+                <p:cell title="审批意见" end="true">
+                    <textarea rows="3" cols="55" oncheck="maxLength(200);" name="reason"></textarea>
+                </p:cell>
+            </c:if>
 
 		</p:table>
 
@@ -209,6 +215,38 @@ function checkBean()
 		</p:table>
 
 	</p:subBody>
+	
+	<p:line flag="0" />
+
+    <p:subBody width="100%">
+        <table width="100%" border="0" cellspacing='1' id="tables">
+            <tr align="center" class="content0">
+                <td width="10%" align="center">审批人</td>
+                <td width="10%" align="center">审批动作</td>
+                <td width="10%" align="center">前状态</td>
+                <td width="10%" align="center">后状态</td>
+                <td width="45%" align="center">意见</td>
+                <td width="15%" align="center">时间</td>
+            </tr>
+
+            <c:forEach items="${logList}" var="item" varStatus="vs">
+                <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
+                    <td align="center">${item.actor}</td>
+
+                    <td align="center">${my:get('oprMode', item.oprMode)}</td>
+
+                    <td align="center">${my:get('invoiceinsStatus', item.preStatus)}</td>
+
+                    <td align="center">${my:get('invoiceinsStatus', item.afterStatus)}</td>
+
+                    <td align="center">${item.description}</td>
+
+                    <td align="center">${item.logTime}</td>
+
+                </tr>
+            </c:forEach>
+        </table>
+    </p:subBody>
 	
 	<p:line flag="1" />
 

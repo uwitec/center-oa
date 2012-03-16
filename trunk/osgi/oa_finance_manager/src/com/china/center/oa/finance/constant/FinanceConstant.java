@@ -358,6 +358,12 @@ public interface FinanceConstant
     int INVOICEINS_STATUS_CHECK = 2;
 
     /**
+     * 驳回
+     */
+    @Defined(key = "invoiceinsStatus", value = "驳回")
+    int INVOICEINS_STATUS_REJECT = 98;
+
+    /**
      * 结束
      */
     @Defined(key = "invoiceinsStatus", value = "结束")

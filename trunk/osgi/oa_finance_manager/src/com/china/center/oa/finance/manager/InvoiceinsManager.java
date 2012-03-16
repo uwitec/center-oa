@@ -34,7 +34,7 @@ public interface InvoiceinsManager
     boolean checkInvoiceinsBean(User user, String id)
         throws MYException;
 
-    boolean rejectInvoiceinsBean(User user, String id)
+    boolean rejectInvoiceinsBean(User user, String id, String reason)
         throws MYException;
 
     /**
@@ -52,4 +52,7 @@ public interface InvoiceinsManager
         throws MYException;
 
     InvoiceinsVO findVO(String id);
+
+    void clearRejectInvoiceinsBean()
+        throws MYException;
 }

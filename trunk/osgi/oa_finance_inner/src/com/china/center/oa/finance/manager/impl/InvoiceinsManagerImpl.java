@@ -13,12 +13,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.annosql.constant.AnoConstant;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.finance.bean.InvoiceinsBean;
 import com.china.center.oa.finance.bean.InvoiceinsItemBean;
 import com.china.center.oa.finance.constant.FinanceConstant;
@@ -29,10 +32,12 @@ import com.china.center.oa.finance.manager.InvoiceinsManager;
 import com.china.center.oa.finance.vo.InvoiceinsVO;
 import com.china.center.oa.finance.vs.InsVSOutBean;
 import com.china.center.oa.publics.bean.DutyBean;
+import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.constant.InvoiceConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
+import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.sail.bean.BaseBalanceBean;
 import com.china.center.oa.sail.bean.BaseBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
@@ -60,6 +65,8 @@ import com.china.center.tools.TimeTools;
 @Exceptional
 public class InvoiceinsManagerImpl implements InvoiceinsManager
 {
+    private final Log operationLog = LogFactory.getLog("opr");
+
     private CommonDAO commonDAO = null;
 
     private InvoiceinsDAO invoiceinsDAO = null;
@@ -71,6 +78,8 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
     private InsVSOutDAO insVSOutDAO = null;
 
     private OutDAO outDAO = null;
+
+    private FlowLogDAO flowLogDAO = null;
 
     private BaseDAO baseDAO = null;
 
@@ -337,14 +346,15 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
             if (insVSOutBean.getMoneys() + out.getInvoiceMoney() == out.getTotal())
             {
                 // 更新开票状态-结束
-                outDAO.updateInvoiceStatus(out.getFullId(), out.getTotal(), OutConstant.INVOICESTATUS_END);
+                outDAO.updateInvoiceStatus(out.getFullId(), out.getTotal(),
+                    OutConstant.INVOICESTATUS_END);
             }
 
             if (insVSOutBean.getMoneys() + out.getInvoiceMoney() < out.getTotal())
             {
                 // 更新开票状态-过程
-                outDAO.updateInvoiceStatus(out.getFullId(), (insVSOutBean.getMoneys() + out.getInvoiceMoney()),
-                    OutConstant.INVOICESTATUS_INIT);
+                outDAO.updateInvoiceStatus(out.getFullId(), (insVSOutBean.getMoneys() + out
+                    .getInvoiceMoney()), OutConstant.INVOICESTATUS_INIT);
             }
         }
         else
@@ -367,14 +377,16 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
             if (insVSOutBean.getMoneys() + balance.getInvoiceMoney() == balance.getTotal())
             {
                 // 更新开票状态-结束
-                outBalanceDAO.updateInvoiceStatus(balance.getId(), balance.getTotal(), OutConstant.INVOICESTATUS_END);
+                outBalanceDAO.updateInvoiceStatus(balance.getId(), balance.getTotal(),
+                    OutConstant.INVOICESTATUS_END);
             }
 
             if (insVSOutBean.getMoneys() + balance.getInvoiceMoney() < balance.getTotal())
             {
                 // 更新开票状态-过程
                 outBalanceDAO.updateInvoiceStatus(balance.getId(),
-                    (insVSOutBean.getMoneys() + balance.getInvoiceMoney()), OutConstant.INVOICESTATUS_INIT);
+                    (insVSOutBean.getMoneys() + balance.getInvoiceMoney()),
+                    OutConstant.INVOICESTATUS_INIT);
             }
         }
     }
@@ -395,15 +407,18 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
             BaseBean base = baseDAO.find(insVSOutBean.getBaseId());
 
             // 溢出的
-            if (MathTools.compare(insVSOutBean.getMoneys() + base.getInvoiceMoney(), base.getValue()) > 0)
+            if (MathTools.compare(insVSOutBean.getMoneys() + base.getInvoiceMoney(), base
+                .getValue()) > 0)
             {
                 throw new MYException("单据[%s]开票溢出,开票金额[%.2f],销售项金额[%.2f]", out.getFullId(),
                     (insVSOutBean.getMoneys() + base.getInvoiceMoney()), base.getValue());
             }
 
-            if (MathTools.compare(insVSOutBean.getMoneys() + base.getInvoiceMoney(), base.getValue()) <= 0)
+            if (MathTools.compare(insVSOutBean.getMoneys() + base.getInvoiceMoney(), base
+                .getValue()) <= 0)
             {
-                baseDAO.updateInvoice(base.getId(), (insVSOutBean.getMoneys() + base.getInvoiceMoney()));
+                baseDAO.updateInvoice(base.getId(), (insVSOutBean.getMoneys() + base
+                    .getInvoiceMoney()));
             }
 
             // 更新主单据
@@ -431,7 +446,8 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
 
             if (MathTools.compare(insVSOutBean.getMoneys() + bbb.getInvoiceMoney(), baseTotal) <= 0)
             {
-                baseBalanceDAO.updateInvoice(bbb.getId(), (insVSOutBean.getMoneys() + bbb.getInvoiceMoney()));
+                baseBalanceDAO.updateInvoice(bbb.getId(), (insVSOutBean.getMoneys() + bbb
+                    .getInvoiceMoney()));
             }
 
             updateOutBalance(balance);
@@ -458,7 +474,8 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
         if (MathTools.compare(total, out.getTotal()) >= 0)
         {
             // 更新开票状态-结束
-            outDAO.updateInvoiceStatus(out.getFullId(), out.getTotal(), OutConstant.INVOICESTATUS_END);
+            outDAO.updateInvoiceStatus(out.getFullId(), out.getTotal(),
+                OutConstant.INVOICESTATUS_END);
         }
         else
         {
@@ -487,12 +504,38 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
         if (MathTools.compare(total, balance.getTotal()) >= 0)
         {
             // 更新开票状态-结束
-            outBalanceDAO.updateInvoiceStatus(balance.getId(), balance.getTotal(), OutConstant.INVOICESTATUS_END);
+            outBalanceDAO.updateInvoiceStatus(balance.getId(), balance.getTotal(),
+                OutConstant.INVOICESTATUS_END);
         }
         else
         {
             // 更新开票状态-过程
-            outBalanceDAO.updateInvoiceStatus(balance.getId(), total, OutConstant.INVOICESTATUS_INIT);
+            outBalanceDAO.updateInvoiceStatus(balance.getId(), total,
+                OutConstant.INVOICESTATUS_INIT);
+        }
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public void clearRejectInvoiceinsBean()
+        throws MYException
+    {
+        ConditionParse conditionParse = new ConditionParse();
+
+        conditionParse.addWhereStr();
+
+        // 驳回
+        conditionParse.addIntCondition("status", "=", FinanceConstant.INVOICEINS_STATUS_REJECT);
+
+        conditionParse.addCondition("logTime", "<=", TimeTools.now( -60));
+
+        List<InvoiceinsBean> beanList = invoiceinsDAO.queryEntityBeansByCondition(conditionParse
+            .toString());
+
+        for (InvoiceinsBean invoiceinsBean : beanList)
+        {
+            realDelete(invoiceinsBean.getId());
+
+            operationLog.info("clearRejectInvoiceinsBean:" + invoiceinsBean);
         }
     }
 
@@ -515,7 +558,8 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        if ( !bean.getStafferId().equals(user.getStafferId()) && !bean.getProcesser().equals(user.getStafferId()))
+        if ( !bean.getStafferId().equals(user.getStafferId())
+            && !bean.getProcesser().equals(user.getStafferId()))
         {
             throw new MYException("只能删除自己的发票或者是自己审批的,请确认操作");
         }
@@ -565,7 +609,8 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
                 double im = Math.max(0.0, balance.getInvoiceMoney() - insVSOutBean.getMoneys());
 
                 // 更新开票状态-过程
-                outBalanceDAO.updateInvoiceStatus(balance.getId(), im, OutConstant.INVOICESTATUS_INIT);
+                outBalanceDAO.updateInvoiceStatus(balance.getId(), im,
+                    OutConstant.INVOICESTATUS_INIT);
             }
         }
 
@@ -604,6 +649,8 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
             throw new MYException("数据错误,请确认操作");
         }
 
+        int status = bean.getStatus();
+
         // 开票成功
         bean.setStatus(FinanceConstant.INVOICEINS_STATUS_END);
 
@@ -628,6 +675,19 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
             }
         }
 
+        FlowLogBean log = new FlowLogBean();
+
+        log.setActor(user.getStafferName());
+        log.setActorId(user.getStafferId());
+        log.setFullId(id);
+        log.setDescription("OK");
+        log.setLogTime(TimeTools.now());
+        log.setPreStatus(status);
+        log.setAfterStatus(FinanceConstant.INVOICEINS_STATUS_END);
+        log.setOprMode(PublicConstant.OPRMODE_PASS);
+
+        flowLogDAO.saveEntityBean(log);
+
         return true;
     }
 
@@ -649,16 +709,31 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
             throw new MYException("数据错误,请确认操作");
         }
 
+        int status = bean.getStatus();
+
         // 财务审核
         bean.setStatus(FinanceConstant.INVOICEINS_STATUS_SUBMIT);
 
         invoiceinsDAO.updateEntityBean(bean);
 
+        FlowLogBean log = new FlowLogBean();
+
+        log.setActor(user.getStafferName());
+        log.setActorId(user.getStafferId());
+        log.setFullId(id);
+        log.setDescription("OK");
+        log.setLogTime(TimeTools.now());
+        log.setPreStatus(status);
+        log.setAfterStatus(bean.getStatus());
+        log.setOprMode(PublicConstant.OPRMODE_PASS);
+
+        flowLogDAO.saveEntityBean(log);
+
         return true;
     }
 
     @Transactional(rollbackFor = MYException.class)
-    public boolean rejectInvoiceinsBean(User user, String id)
+    public boolean rejectInvoiceinsBean(User user, String id, String reason)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, id);
@@ -675,7 +750,28 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
             throw new MYException("数据错误,请确认操作");
         }
 
-        realDelete(id);
+        int status = bean.getStatus();
+
+        // 驳回
+        bean.setStatus(FinanceConstant.INVOICEINS_STATUS_REJECT);
+
+        invoiceinsDAO.updateEntityBean(bean);
+
+        // 删除对应关系
+        insVSOutDAO.deleteEntityBeansByFK(id, AnoConstant.FK_FIRST);
+
+        FlowLogBean log = new FlowLogBean();
+
+        log.setActor(user.getStafferName());
+        log.setActorId(user.getStafferId());
+        log.setFullId(id);
+        log.setDescription(reason);
+        log.setLogTime(TimeTools.now());
+        log.setPreStatus(status);
+        log.setAfterStatus(FinanceConstant.INVOICEINS_STATUS_REJECT);
+        log.setOprMode(PublicConstant.OPRMODE_REJECT);
+
+        flowLogDAO.saveEntityBean(log);
 
         return true;
     }
@@ -869,5 +965,22 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
     public void setDutyDAO(DutyDAO dutyDAO)
     {
         this.dutyDAO = dutyDAO;
+    }
+
+    /**
+     * @return the flowLogDAO
+     */
+    public FlowLogDAO getFlowLogDAO()
+    {
+        return flowLogDAO;
+    }
+
+    /**
+     * @param flowLogDAO
+     *            the flowLogDAO to set
+     */
+    public void setFlowLogDAO(FlowLogDAO flowLogDAO)
+    {
+        this.flowLogDAO = flowLogDAO;
     }
 }
