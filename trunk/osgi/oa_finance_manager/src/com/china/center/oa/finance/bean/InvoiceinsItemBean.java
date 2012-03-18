@@ -49,10 +49,19 @@ public class InvoiceinsItemBean implements Serializable
      */
     private String unit = "";
 
+    /**
+     * 产品数量
+     */
     private int amount = 0;
 
+    /**
+     * 单价
+     */
     private double price = 0.0d;
 
+    /**
+     * 总价
+     */
     private double moneys = 0.0d;
 
     /**
