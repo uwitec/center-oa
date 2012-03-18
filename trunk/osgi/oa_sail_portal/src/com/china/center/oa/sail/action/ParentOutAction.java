@@ -37,6 +37,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
 import com.center.china.osgi.publics.User;
+import com.center.china.osgi.publics.file.writer.WriteFile;
+import com.center.china.osgi.publics.file.writer.WriteFileFactory;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.OldPageSeparateTools;
 import com.china.center.actionhelper.jsonimpl.JSONArray;
@@ -130,6 +132,7 @@ import com.china.center.tools.ParamterMap;
 import com.china.center.tools.RequestTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
+import com.china.center.tools.WriteFileBuffer;
 
 
 /**
@@ -861,8 +864,8 @@ public class ParentOutAction extends DispatchAction
      * @return
      * @throws ServletException
      */
-    public ActionForward export(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                HttpServletResponse reponse)
+    public ActionForward export2(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse reponse)
         throws ServletException
     {
         OutputStream out = null;
@@ -1128,6 +1131,293 @@ public class ParentOutAction extends DispatchAction
                 {
                     wwb.write();
                     wwb.close();
+                }
+                catch (Exception e1)
+                {
+                }
+            }
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * export销售单(CSV导出)
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward export(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                HttpServletResponse reponse)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        String exportKey = (String)request.getSession().getAttribute("exportKey");
+
+        List<OutVO> outList = null;
+
+        String filenName = null;
+
+        User user = (User)request.getSession().getAttribute("user");
+
+        if (OldPageSeparateTools.getPageSeparate(request, exportKey).getRowCount() > 15000)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "导出的记录数不能超过15000");
+
+            return mapping.findForward("error");
+        }
+
+        outList = outDAO.queryEntityVOsByCondition(OldPageSeparateTools.getCondition(request,
+            exportKey));
+
+        filenName = "Export_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        if (outList.size() == 0)
+        {
+            return null;
+        }
+
+        OutVO outVO = outList.get(0);
+
+        if (outVO.getType() == 0)
+        {
+            if ( !containAuth(user, AuthConstant.SAIL_QUERY_EXPORT))
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "没有权限");
+
+                return mapping.findForward("error");
+            }
+
+        }
+        else
+        {
+            if ( !containAuth(user, AuthConstant.BUY_EXPORT))
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "没有权限");
+
+                return mapping.findForward("error");
+            }
+        }
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        // 是否可以看到真实的成本
+        boolean containAuth = userManager.containAuth(user.getId(), AuthConstant.SAIL_QUERY_COST);
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            OutVO element = null;
+
+            element = (OutVO)outList.get(0);
+
+            String ffs = null;
+
+            if (element.getType() == 0)
+            {
+                ffs = "出";
+            }
+            else
+            {
+                ffs = "入";
+            }
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            WriteFileBuffer line = new WriteFileBuffer(write);
+
+            line.writeColumn(ffs + "库日期");
+            line.writeColumn("调" + ffs + "部门");
+            line.writeColumn(element.getType() == 0 ? "客户" : "供应商(调出部门)");
+            line.writeColumn("事业部");
+            line.writeColumn("联系人");
+            line.writeColumn("联系电话");
+            line.writeColumn("单据号码");
+            line.writeColumn("类型");
+            line.writeColumn("回款日期");
+            line.writeColumn("库管通过日期");
+            line.writeColumn("状态");
+            line.writeColumn("是否回款");
+            line.writeColumn("经办人");
+            line.writeColumn("仓库");
+            line.writeColumn("目的库");
+            line.writeColumn("关联单据");
+            line.writeColumn("描述");
+
+            line.writeColumn("品名");
+            line.writeColumn("单位");
+            line.writeColumn("数量");
+            line.writeColumn("单价");
+            line.writeColumn("金额");
+            line.writeColumn("成本");
+
+            if (containAuth)
+            {
+                line.writeColumn("事业部结算价");
+                line.writeColumn("总部结算价");
+            }
+
+            line.writeColumn("发货单号");
+            line.writeColumn("发货方式");
+            line.writeColumn("总金额");
+
+            line.writeLine();
+
+            // 写outbean
+            for (Iterator iter = outList.iterator(); iter.hasNext();)
+            {
+                element = (OutVO)iter.next();
+
+                // 写baseBean
+                List<BaseBean> baseList = null;
+
+                BaseBean base = null;
+
+                ConsignBean consignBean = null;
+
+                TransportBean transportBean = null;
+
+                try
+                {
+                    baseList = baseDAO.queryEntityBeansByFK(element.getFullId());
+
+                    consignBean = consignDAO.findDefaultConsignByFullId(element.getFullId());
+
+                    if (consignBean != null)
+                    {
+                        transportBean = consignDAO.findTransportById(consignBean.getTransport());
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.error(e, e);
+                }
+
+                for (Iterator iterator = baseList.iterator(); iterator.hasNext();)
+                {
+                    line.reset();
+
+                    line.writeColumn(element.getOutTime());
+
+                    line.writeColumn(element.getDepartment());
+
+                    line.writeColumn(element.getCustomerName());
+
+                    line.writeColumn(element.getIndustryName());
+
+                    line.writeColumn(element.getConnector());
+
+                    line.writeColumn(element.getPhone());
+
+                    line.writeColumn(element.getFullId());
+
+                    line.writeColumn(OutHelper.getOutType(element));
+
+                    line.writeColumn(element.getRedate());
+
+                    String changeTime = element.getChangeTime();
+
+                    if (changeTime.length() > 10)
+                    {
+                        changeTime = changeTime.substring(0, 10);
+                    }
+
+                    line.writeColumn(changeTime);
+
+                    line.writeColumn(OutHelper.getStatus(element.getStatus(), false));
+
+                    line.writeColumn(DefinedCommon.getValue("outPay", element.getPay()));
+
+                    line.writeColumn(element.getStafferName());
+
+                    line.writeColumn(element.getDepotName());
+
+                    line.writeColumn(element.getDestinationName());
+
+                    line.writeColumn(element.getRefOutFullId());
+
+                    line.writeColumn(StringTools.getExportString(element.getDescription()));
+
+                    // 下面是base里面的数据
+                    base = (BaseBean)iterator.next();
+
+                    line.writeColumn(base.getProductName());
+                    line.writeColumn(base.getUnit());
+                    line.writeColumn(String.valueOf(base.getAmount()));
+                    line.writeColumn(String.valueOf(base.getPrice()));
+                    line.writeColumn(String.valueOf(base.getValue()));
+                    line.writeColumn(MathTools.formatNum(base.getCostPrice()));
+
+                    if (containAuth)
+                    {
+                        line.writeColumn(MathTools.formatNum(base.getIprice()));
+                        line.writeColumn(MathTools.formatNum(base.getPprice()));
+                    }
+
+                    if ( !iterator.hasNext())
+                    {
+                        // 到出发货单和发货方式
+                        if (consignBean != null)
+                        {
+                            line.writeColumn(consignBean.getTransportNo());
+
+                            if (transportBean != null)
+                            {
+                                line.writeColumn(transportBean.getName());
+                            }
+                            else
+                            {
+                                line.writeColumn("");
+                            }
+                        }
+                        else
+                        {
+                            line.writeColumn("");
+                            line.writeColumn("");
+                        }
+
+                        line.writeColumn(MathTools.formatNum(element.getTotal()));
+                    }
+
+                    line.writeLine();
+                }
+
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.error(e, e);
+            return null;
+        }
+        finally
+        {
+            if (write != null)
+            {
+                try
+                {
+                    write.close();
                 }
                 catch (Exception e1)
                 {
