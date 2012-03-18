@@ -583,7 +583,8 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
             if (apply.getType() == BackPayApplyConstant.TYPE_OUT)
             {
                 // 自动生成付款单
-                outBill.setDescription("销售退货付款:" + apply.getOutId());
+                outBill.setDescription("销售退货付款:" + apply.getOutId() + ".备注:"
+                                       + apply.getDescription());
 
                 outBill.setStockId(apply.getOutId());
             }
@@ -596,7 +597,8 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
                     throw new MYException("数据错误,请确认操作");
                 }
 
-                outBill.setDescription("预收退款:" + apply.getBillId());
+                outBill.setDescription("预收退款:" + apply.getBillId() + ".备注:"
+                                       + apply.getDescription());
 
                 outBill.setStockId(inBill.getPaymentId());
 

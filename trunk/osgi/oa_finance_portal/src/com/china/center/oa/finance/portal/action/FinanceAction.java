@@ -63,6 +63,7 @@ import com.china.center.oa.finance.dao.PaymentVSOutDAO;
 import com.china.center.oa.finance.dao.StatBankDAO;
 import com.china.center.oa.finance.facade.FinanceFacade;
 import com.china.center.oa.finance.manager.BankManager;
+import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.StatBankManager;
 import com.china.center.oa.finance.vo.BankVO;
 import com.china.center.oa.finance.vo.InBillVO;
@@ -127,6 +128,8 @@ public class FinanceAction extends DispatchAction
     private UserManager userManager = null;
 
     private PaymentDAO paymentDAO = null;
+
+    private BillManager billManager = null;
 
     private FlowLogDAO flowLogDAO = null;
 
@@ -1194,6 +1197,9 @@ public class FinanceAction extends DispatchAction
     {
         String reason = request.getParameter("reason");
 
+        // 转移的金额
+        String refMoney = request.getParameter("refMoney");
+
         InBillBean bill = inBillDAO.find(billId);
 
         if (bill == null)
@@ -1206,8 +1212,16 @@ public class FinanceAction extends DispatchAction
             throw new MYException("不是预收的收款单,请确认操作");
         }
 
-        // 看看是否存在退款申请
+        // 不是全部转费用的时候就先拆分
+        if (MathTools.compare(bill.getMoneys(), MathTools.parseDouble(refMoney)) != 0)
+        {
+            // 拆分哦
+            billId = billManager.splitInBillBean(user, billId, MathTools.parseDouble(refMoney));
 
+            bill = inBillDAO.find(billId);
+        }
+
+        // 看看是否存在退款申请
         PaymentApplyBean apply = new PaymentApplyBean();
 
         apply.setType(FinanceConstant.PAYAPPLY_TYPE_CHANGEFEE);
@@ -2463,6 +2477,23 @@ public class FinanceAction extends DispatchAction
     public void setFinanceDAO(FinanceDAO financeDAO)
     {
         this.financeDAO = financeDAO;
+    }
+
+    /**
+     * @return the billManager
+     */
+    public BillManager getBillManager()
+    {
+        return billManager;
+    }
+
+    /**
+     * @param billManager
+     *            the billManager to set
+     */
+    public void setBillManager(BillManager billManager)
+    {
+        this.billManager = billManager;
     }
 
 }

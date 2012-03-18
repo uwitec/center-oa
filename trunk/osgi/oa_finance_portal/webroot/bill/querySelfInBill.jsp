@@ -8,6 +8,7 @@
 <script src="../js/public.js"></script>
 <script src="../js/pop.js"></script>
 <script src="../js/plugin/highlight/jquery.highlight.js"></script>
+<script src="../bill_js/billdlg.js"></script>
 <script type="text/javascript">
 
 var gurl = '../finance/bill.do?method=';
@@ -78,6 +79,9 @@ function splitInBill2(opr, grid)
 {
     if (getRadio('checkb') && getRadioValue('checkb'))
     {   
+        openCheckDiv();
+        
+        if (1 == 2)
         $.messager.prompt('预收转费用', '请输入备注', '',
             function(value, isOk)
             {
@@ -87,6 +91,26 @@ function splitInBill2(opr, grid)
     }
     else
     $error('不能操作');
+}
+
+function checkSubmit(descrition, refMoney)
+{
+    if (descrition == '' || refMoney == '')
+    {
+        alert('备注和金额不能为空');
+        
+        return false;
+    }
+    
+    if (!isFloat(refMoney))
+    {
+        $error('只能输入数字');
+        return false;
+    }
+    
+    closeCheckDiv();
+    
+    $ajax2('../finance/bank.do?method=drawPayment4&billId=' + $$('checkb'), {'reason' : descrition, "refMoney" : refMoney},  callBackFun);
 }
 
 function changeBill(opr, grid)
