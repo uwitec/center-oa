@@ -419,10 +419,10 @@ function checkMoney2()
                         <c:if test="${bean.status == 20 && bean.payType == 1}">
                         <td align="center">
                          <input type="text" style="width: 100%"
-                    		name="p_cmoneys" value="" oncheck="notNone;isFloat3">
+                    		name="p_cmoneys" value="${my:formatNum(item.moneys / 100.0)}" oncheck="notNone;isFloat3">
                     	<input type="hidden" name="p_cid" value="${item.id}">
                     	</td>
-                        <td align="center"><textarea name="p_cdescription" rows="3" style="width: 100%" oncheck="notNone;maxLength(600)"></textarea></td>
+                        <td align="center"><textarea name="p_cdescription" rows="3" style="width: 100%" oncheck="notNone;maxLength(600)">ok</textarea></td>
                         </c:if>
                         <c:if test="${bean.status != 20}">
                         <td align="center"><font color="red">${my:formatNum(item.cmoneys / 100.0)}</font></td>
