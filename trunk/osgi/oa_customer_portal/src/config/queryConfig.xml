@@ -286,5 +286,18 @@
             <type>text</type>
         </condtion>
     </item>
+    
+    <item name="queryAssignApply" deaultpfix="AssignApplyBean">
+        <condtion name="stafferName" caption="申请职员" filed="name" pfix="StafferBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="industryId" caption="事业部" pfix="StafferBean">
+            <opr>=</opr>
+            <datatype>0</datatype>
+            <type>select</type>
+            <option>$industryList</option>
+        </condtion>
+    </item>
 	
 </query>

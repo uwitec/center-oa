@@ -100,6 +100,14 @@ import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
 
+/**
+ * CustomerAction
+ * 
+ * @author ZHUZHU
+ * @version 2012-3-18
+ * @see CustomerAction
+ * @since 3.0
+ */
 public class CustomerAction extends DispatchAction
 {
     private final Log _logger = LogFactory.getLog(getClass());
@@ -1195,7 +1203,7 @@ public class CustomerAction extends DispatchAction
 
         condtion.addWhereStr();
 
-        User user = Helper.getUser(request);
+        // User user = Helper.getUser(request);
 
         String selltype = request.getParameter("selltype");
 
@@ -1213,7 +1221,7 @@ public class CustomerAction extends DispatchAction
         }
         else
         {
-            condtion.addCondition("CustomerBean.locationId", "=", user.getLocationId());
+            // condtion.addCondition("CustomerBean.locationId", "=", user.getLocationId());
 
             condtion.addIntCondition("CustomerBean.status", "=", CustomerConstant.REAL_STATUS_IDLE);
         }
@@ -2228,9 +2236,9 @@ public class CustomerAction extends DispatchAction
 
         condtion.addWhereStr();
 
-        User user = Helper.getUser(request);
+        // User user = Helper.getUser(request);
 
-        condtion.addCondition("AssignApplyBean.locationId", "=", user.getLocationId());
+        // condtion.addCondition("AssignApplyBean.locationId", "=", user.getLocationId());
 
         ActionTools.processJSONQueryCondition(QUERYASSIGNAPPLY, request, condtion);
 

@@ -28,6 +28,9 @@ public class AssignApplyVO extends AssignApplyBean
     @Relationship(relationField = "stafferId")
     private String stafferName = "";
 
+    @Relationship(relationField = "stafferId", tagField = "industryId")
+    private String industryId = "";
+
     @Relationship(relationField = "customerId")
     private String customerName = "";
 
@@ -110,5 +113,57 @@ public class AssignApplyVO extends AssignApplyBean
     public void setCustomerCode(String customerCode)
     {
         this.customerCode = customerCode;
+    }
+
+    /**
+     * @return the industryId
+     */
+    public String getIndustryId()
+    {
+        return industryId;
+    }
+
+    /**
+     * @param industryId
+     *            the industryId to set
+     */
+    public void setIndustryId(String industryId)
+    {
+        this.industryId = industryId;
+    }
+
+    /**
+     * Constructs a <code>String</code> with all attributes in name = value format.
+     * 
+     * @return a <code>String</code> representation of this object.
+     */
+    public String toString()
+    {
+        final String TAB = ",";
+
+        StringBuilder retValue = new StringBuilder();
+
+        retValue
+            .append("AssignApplyVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("stafferName = ")
+            .append(this.stafferName)
+            .append(TAB)
+            .append("industryId = ")
+            .append(this.industryId)
+            .append(TAB)
+            .append("customerName = ")
+            .append(this.customerName)
+            .append(TAB)
+            .append("customerCode = ")
+            .append(this.customerCode)
+            .append(TAB)
+            .append("customerSellType = ")
+            .append(this.customerSellType)
+            .append(TAB)
+            .append(" )");
+
+        return retValue.toString();
     }
 }
