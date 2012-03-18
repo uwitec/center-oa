@@ -106,12 +106,6 @@ function checkBean()
                ${bean.customerName}
             </p:cell>
 			
-			<p:cell title="关联单据">
-			    <c:forEach items="${bean.vsList}" var="item">
-			    ${item.outId};
-			    </c:forEach>
-            </p:cell>
-            
             <p:cell title="开票人">
                ${bean.stafferName}
             </p:cell>
@@ -175,7 +169,7 @@ function checkBean()
                 <td align="center">${item.unit}</td>
                 <td align="center">${item.amount}</td>
                 <td align="center">${my:formatNum(item.price)}</td>
-                <td align="center">${my:formatNum(item.price * item.amount)}</td>
+                <td align="center">${my:formatNum(item.moneys)}</td>
             </tr>
             </c:forEach>
 

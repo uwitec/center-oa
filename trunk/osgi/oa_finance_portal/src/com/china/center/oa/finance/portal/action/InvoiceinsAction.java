@@ -998,7 +998,7 @@ public class InvoiceinsAction extends DispatchAction
                 item.setShowId(showIds[i]);
                 item.setShowName(showDAO.find(showIds[i]).getName());
                 item.setAmount(MathTools.parseInt(amounts[i]));
-                item.setPrice(MathTools.parseDouble(totals[i]) / item.getAmount());
+                item.setPrice(MathTools.parseDouble(totals[i]));
                 item.setMoneys(MathTools.parseDouble(totals[i]));
                 item.setSpecial(specials[i].trim());
                 item.setUnit(units[i].trim());
@@ -1175,7 +1175,8 @@ public class InvoiceinsAction extends DispatchAction
         // 恢复price
         for (InvoiceinsItemBean invoiceinsItemBean2 : itemList)
         {
-            invoiceinsItemBean2.setPrice(invoiceinsItemBean2.getMoneys());
+            invoiceinsItemBean2.setPrice(invoiceinsItemBean2.getMoneys()
+                                         / invoiceinsItemBean2.getAmount());
         }
 
         bean.setItemList(itemList);
