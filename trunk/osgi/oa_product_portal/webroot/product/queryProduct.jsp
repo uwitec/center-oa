@@ -24,7 +24,7 @@ function load()
      
      guidMap = {
          title: '产品列表',
-         url: gurl + 'query' + ukey,
+         url: gurl + 'query' + ukey + '&src=0',
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lbatchPrice={batchPrice} lsailPrice={sailPrice} lcost={cost}>', width : 40, align: 'center'},
              {display: '名称', name : 'name', width : '25%'},

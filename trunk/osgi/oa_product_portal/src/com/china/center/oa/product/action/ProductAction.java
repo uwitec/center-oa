@@ -202,6 +202,9 @@ public class ProductAction extends DispatchAction
 
         condtion.addWhereStr();
 
+        // 产品管理进来的
+        final String src = request.getParameter("src");
+
         // 过滤非稳态的产品
         condtion.addIntCondition("ProductBean.status", "<>", ProductConstant.STATUS_APPLY);
 
@@ -215,12 +218,15 @@ public class ProductAction extends DispatchAction
             {
                 public void handle(ProductVO obj)
                 {
-                    SailConfBean sailConf = sailConfigManager.findProductConf(Helper
-                        .getStaffer(request), obj);
+                    if ( !"0".equals(src))
+                    {
+                        SailConfBean sailConf = sailConfigManager.findProductConf(Helper
+                            .getStaffer(request), obj);
 
-                    obj
-                        .setSailPrice(obj.getSailPrice()
-                                      * (1 + sailConf.getPratio() / 1000.0d + sailConf.getIratio() / 1000.0d));
+                        obj.setSailPrice(obj.getSailPrice()
+                                         * (1 + sailConf.getPratio() / 1000.0d + sailConf
+                                             .getIratio() / 1000.0d));
+                    }
                 }
             });
 

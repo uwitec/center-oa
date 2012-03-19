@@ -1085,7 +1085,7 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
 
             for (StorageRelationVO each : extList)
             {
-                DepotBean depot = depotDAO.find(each.getLocationId());
+                DepotVO depot = depotDAO.findVO(each.getLocationId());
 
                 String locationName = "";
 
@@ -1105,10 +1105,11 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
 
                 String typeName = "在途库存";
 
-                write.writeLine(now + ',' + locationName + ',' + each.getDepotpartName() + ','
+                write.writeLine(now + ',' + StringTools.getLineString(depot.getIndustryName())
+                                + ',' + locationName + ',' + each.getDepotpartName() + ','
                                 + typeName + ',' + each.getStorageName() + ','
-                                + each.getProductName().replaceAll(",", " ").replaceAll("\r\n", "")
-                                + ',' + productCode + ',' + String.valueOf(each.getAmount()) + ','
+                                + StringTools.getLineString(each.getProductName()) + ','
+                                + productCode + ',' + String.valueOf(each.getAmount()) + ','
                                 + MathTools.formatNum(each.getPrice()));
             }
 
