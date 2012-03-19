@@ -623,8 +623,7 @@ public class BudgetApplyManagerImpl extends AbstractListenerManager<BudgetListen
 
                     if (parentItem == null)
                     {
-                        throw new MYException("预算项[%s]是新增的,但是父预算没有此预算项", currentItem
-                            .getFeeItemName());
+                        throw new MYException("预算项是新增的,但是父预算没有此预算项");
                     }
                 }
             }
