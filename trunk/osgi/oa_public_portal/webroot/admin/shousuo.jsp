@@ -104,7 +104,7 @@ function load()
 	<tr height="10">
 		<td width="15"></td>
 		<td><font color="blue"
-			style="font-family: arial, 宋体, serif; size: 12px"><B>[${GLocationName}]
+			style="font-family: arial, 宋体, serif; size: 12px"><B>[${g_stafferBean.industryName}]
 		 ${g_stafferBean.name}</B></font></td>
 	</tr>
 
