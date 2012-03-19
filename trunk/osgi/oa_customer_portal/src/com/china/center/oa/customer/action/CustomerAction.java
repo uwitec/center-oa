@@ -1101,11 +1101,11 @@ public class CustomerAction extends DispatchAction
 
         condtion.addWhereStr();
 
-        User user = Helper.getUser(request);
+        // User user = Helper.getUser(request);
 
         condtion.addIntCondition("CustomerApplyBean.opr", "=", CustomerConstant.OPR_UPATE_CREDIT);
 
-        condtion.addCondition("CustomerApplyBean.locationId", "=", user.getLocationId());
+        // condtion.addCondition("CustomerApplyBean.locationId", "=", user.getLocationId());
 
         condtion.addIntCondition("CustomerApplyBean.status", "=", CustomerConstant.STATUS_APPLY);
 
