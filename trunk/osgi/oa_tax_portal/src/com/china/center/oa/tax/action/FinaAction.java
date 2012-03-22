@@ -355,7 +355,7 @@ public class FinaAction extends ParentQueryFinaAction
                     line.writeColumn("[" + financeItemVO.getFinanceDate() + "]");
                     line.writeColumn(financeItemVO.getPid());
                     line.writeColumn(StringTools.getExportString(financeItemVO.getDescription()));
-                    line.writeColumn(financeItemVO.getTaxId());
+                    line.writeColumn("[" + financeItemVO.getTaxId() + "]");
                     line.writeColumn(financeItemVO.getTaxName());
 
                     line.writeColumn(changeString(financeItemVO.getShowInmoney()));

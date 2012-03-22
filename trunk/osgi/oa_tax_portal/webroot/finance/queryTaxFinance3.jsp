@@ -254,7 +254,13 @@ function clearTax()
 
 	<p:line flag="1" />
 	
-	<p:message2 />
+	<p:button leftWidth="98%" rightWidth="2%">
+        <div align="right"><input type="button" class="button_class"
+            value="&nbsp;&nbsp;导出明细&nbsp;&nbsp;" onclick="exports()">&nbsp;&nbsp;
+        </div>
+    </p:button>
+
+    <p:message2 />
 	
 </p:body>
 </form>
