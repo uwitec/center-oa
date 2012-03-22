@@ -342,7 +342,7 @@ function checkBean()
 						<td width="5%" align="center">数量</td>
 						<td width="10%" align="center">价格</td>
 						<td width="10%" align="center">金额<span id="total"></span></td>
-						<td width="10%" align="center">入库成本</td>
+						<td width="15%" align="center">入库成本/事业部/总部</td>
 						<td width="25%" align="center">类型</td>
 						<td width="15%" align="center">开发票品名</td>
 					</tr>
@@ -421,7 +421,7 @@ function checkBean()
 						<td align="center"><input type="text" value="${my:formatNum(fristBase.value)}"
 							value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
-						<td align="center"><input type="text" id="unDesciprt" readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
+						<td align="center"><input type="text" id="unDesciprt" readonly="readonly" value="${fristBase.description}"
 							style="width: 100%" name="desciprt"></td>
 							
 						<td align="center"><input type="text" id="unRstafferName" readonly="readonly" value="${fristBase.depotpartName}-->${fristBase.ownerName}"
@@ -464,7 +464,7 @@ function checkBean()
                         <td align="center"><input type="text" value="${my:formatNum(fristBase.value)}"
                             value="0.00" readonly="readonly" style="width: 100%" name="value"></td>
 
-                        <td align="center"><input type="text"  readonly="readonly" value="${my:formatNum(fristBase.costPrice)}"
+                        <td align="center"><input type="text"  readonly="readonly" value="${fristBase.description}"
                             style="width: 100%" name="desciprt"></td>
                             
                         <td align="center"><input type="text" readonly="readonly" value="${fristBase.depotpartName}-->${fristBase.ownerName}"

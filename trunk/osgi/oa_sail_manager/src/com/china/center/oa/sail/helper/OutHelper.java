@@ -281,6 +281,16 @@ public abstract class OutHelper
         return DefinedCommon.getValue("outType_in", outBean.getOutType());
     }
 
+    public static String getOutStatus(OutBean outBean)
+    {
+        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+        {
+            return DefinedCommon.getValue("outStatus", outBean.getStatus());
+        }
+
+        return DefinedCommon.getValue("buyStatus", outBean.getStatus());
+    }
+
     /**
      * 是否调出
      * 

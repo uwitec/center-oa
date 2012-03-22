@@ -4849,6 +4849,50 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         }
     }
 
+    @Transactional(rollbackFor = {MYException.class})
+    public void initOutBackBasePrice()
+    {
+        ConditionParse con = new ConditionParse();
+
+        con.addWhereStr();
+
+        con.addCondition("outTime", ">=", "2012-02-01");
+
+        con.addIntCondition("type", "=", OutConstant.OUT_TYPE_INBILL);
+
+        con.addIntCondition("outType", "=", OutConstant.OUTTYPE_IN_OUTBACK);
+
+        List<OutBean> outList = outDAO.queryEntityBeansByCondition(con);
+
+        for (OutBean outBean : outList)
+        {
+            List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
+
+            OutBean refOut = outDAO.find(outBean.getRefOutFullId());
+
+            if (refOut != null)
+            {
+                List<BaseBean> refBaseList = baseDAO.queryEntityBeansByFK(refOut.getFullId());
+
+                // 修改结算价
+                for (BaseBean each1 : baseList)
+                {
+                    for (BaseBean each2 : refBaseList)
+                    {
+                        if (each1.equals(each2))
+                        {
+                            each1.setIprice(each2.getIprice());
+                            each1.setPprice(each2.getPprice());
+
+                            // 更新
+                            baseDAO.updateEntityBean(each1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public int[] initPriceKey()
     {
         int[] result = new int[2];

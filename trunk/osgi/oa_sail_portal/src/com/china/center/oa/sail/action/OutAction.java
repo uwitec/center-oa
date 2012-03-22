@@ -2135,6 +2135,36 @@ public class OutAction extends ParentOutAction
             return mapping.findForward("applyBackPay");
         }
 
+        if (OATools.isChangeToV5())
+        {
+            List<BaseBean> baseList = bean.getBaseList();
+
+            // 是否可以看到真实的成本
+            boolean containAuth = userManager.containAuth(user.getId(),
+                AuthConstant.SAIL_QUERY_COST);
+
+            if ( !containAuth)
+            {
+                for (BaseBean baseBean : baseList)
+                {
+                    // 显示成本
+                    baseBean.setCostPrice(baseBean.getInputPrice());
+
+                    baseBean.setDescription(MathTools.formatNum(baseBean.getInputPrice()));
+                }
+            }
+            else
+            {
+                for (BaseBean baseBean : baseList)
+                {
+                    baseBean.setDescription(MathTools.formatNum(baseBean.getCostPrice()) + " / "
+                                            + MathTools.formatNum(baseBean.getIprice()) + " / "
+                                            + MathTools.formatNum(baseBean.getPprice()));
+                }
+            }
+        }
+
+        // 销售单明细
         if (bean.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
             List<InBillVO> billList = inBillDAO.queryEntityVOsByFK(outId);
@@ -2185,36 +2215,6 @@ public class OutAction extends ParentOutAction
             ResultBean checkOutPayStatus = outManager.checkOutPayStatus(user, bean);
 
             request.setAttribute("checkOutPayStatus", checkOutPayStatus);
-
-            List<BaseBean> baseList = bean.getBaseList();
-
-            if (OATools.isChangeToV5())
-            {
-                // 是否可以看到真实的成本
-                boolean containAuth = userManager.containAuth(user.getId(),
-                    AuthConstant.SAIL_QUERY_COST);
-
-                if ( !containAuth)
-                {
-                    for (BaseBean baseBean : baseList)
-                    {
-                        // 显示成本
-                        baseBean.setCostPrice(baseBean.getInputPrice());
-
-                        baseBean.setDescription(MathTools.formatNum(baseBean.getInputPrice()));
-                    }
-                }
-                else
-                {
-                    for (BaseBean baseBean : baseList)
-                    {
-                        baseBean
-                            .setDescription(MathTools.formatNum(baseBean.getCostPrice()) + " / "
-                                            + MathTools.formatNum(baseBean.getIprice()) + " / "
-                                            + MathTools.formatNum(baseBean.getPprice()));
-                    }
-                }
-            }
 
             // 详细
             return mapping.findForward("detailOut");

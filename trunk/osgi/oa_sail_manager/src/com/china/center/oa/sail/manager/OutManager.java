@@ -336,6 +336,11 @@ public interface OutManager extends ListenerManager<OutListener>
     void initPmtype();
 
     /**
+     * 初始化退单的结算价
+     */
+    void initOutBackBasePrice();
+
+    /**
      * 导出信用
      */
     void exportAllStafferCredit();

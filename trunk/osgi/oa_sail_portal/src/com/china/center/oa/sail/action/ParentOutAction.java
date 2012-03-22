@@ -1257,6 +1257,12 @@ public class ParentOutAction extends DispatchAction
             line.writeColumn("单据号码");
             line.writeColumn("类型");
             line.writeColumn("回款日期");
+
+            if (element.getType() == 1)
+            {
+                line.writeColumn("退库原销售日期");
+            }
+
             line.writeColumn("库管通过日期");
             line.writeColumn("状态");
             line.writeColumn("是否回款");
@@ -1299,11 +1305,19 @@ public class ParentOutAction extends DispatchAction
 
                 TransportBean transportBean = null;
 
+                OutBean refOut = null;
+
                 try
                 {
                     baseList = baseDAO.queryEntityBeansByFK(element.getFullId());
 
                     consignBean = consignDAO.findDefaultConsignByFullId(element.getFullId());
+
+                    if (element.getType() == 1
+                        && element.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK)
+                    {
+                        refOut = outDAO.find(element.getRefOutFullId());
+                    }
 
                     if (consignBean != null)
                     {
@@ -1337,6 +1351,19 @@ public class ParentOutAction extends DispatchAction
 
                     line.writeColumn(element.getRedate());
 
+                    // 退库原销售日期
+                    if (element.getType() == 1)
+                    {
+                        if (refOut == null)
+                        {
+                            line.writeColumn(element.getOutTime());
+                        }
+                        else
+                        {
+                            line.writeColumn(refOut.getOutTime());
+                        }
+                    }
+
                     String changeTime = element.getChangeTime();
 
                     if (changeTime.length() > 10)
@@ -1346,7 +1373,7 @@ public class ParentOutAction extends DispatchAction
 
                     line.writeColumn(changeTime);
 
-                    line.writeColumn(OutHelper.getStatus(element.getStatus(), false));
+                    line.writeColumn(OutHelper.getOutStatus(element));
 
                     line.writeColumn(DefinedCommon.getValue("outPay", element.getPay()));
 
@@ -1925,9 +1952,11 @@ public class ParentOutAction extends DispatchAction
                         // 领样退库的金额是销售的金额,否则无法回款
                         baseBean.setPrice(each.getPrice());
                         baseBean.setCostPrice(each.getCostPrice());
-
+                        baseBean.setIprice(each.getIprice());
+                        baseBean.setPprice(each.getPprice());
                         baseBean.setCostPriceKey(StorageRelationHelper.getPriceKey(each
                             .getCostPrice()));
+
                         baseBean.setOwner(each.getOwner());
                         baseBean.setOwnerName(each.getOwnerName());
 
@@ -2227,6 +2256,8 @@ public class ParentOutAction extends DispatchAction
 
                         baseBean.setPrice(each.getPrice());
                         baseBean.setCostPrice(each.getCostPrice());
+                        baseBean.setPprice(each.getPprice());
+                        baseBean.setIprice(each.getIprice());
                         baseBean.setCostPriceKey(StorageRelationHelper.getPriceKey(each
                             .getCostPrice()));
 
