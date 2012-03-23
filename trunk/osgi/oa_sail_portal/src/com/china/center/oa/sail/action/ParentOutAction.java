@@ -4143,6 +4143,20 @@ public class ParentOutAction extends DispatchAction
             condtion.addCondition("OutBean.changeTime", "<=", changeTime1 + " 23:59:59");
         }
 
+        String redateB = request.getParameter("redateB");
+
+        String redateE = request.getParameter("redateE");
+
+        if ( !StringTools.isNullOrNone(redateB))
+        {
+            condtion.addCondition("OutBean.redate", ">=", redateB);
+        }
+
+        if ( !StringTools.isNullOrNone(redateE))
+        {
+            condtion.addCondition("OutBean.redate", "<=", redateE);
+        }
+
         String id = request.getParameter("id");
 
         if ( !StringTools.isNullOrNone(id))
@@ -5322,10 +5336,13 @@ public class ParentOutAction extends DispatchAction
                     {
                         if ( !containAuth)
                         {
-                            for (BaseBean baseBean : baseList)
+                            if (bean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                             {
-                                // 显示成本
-                                baseBean.setCostPrice(baseBean.getInputPrice());
+                                for (BaseBean baseBean : baseList)
+                                {
+                                    // 显示成本
+                                    baseBean.setCostPrice(baseBean.getInputPrice());
+                                }
                             }
                         }
                     }

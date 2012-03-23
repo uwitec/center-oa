@@ -626,11 +626,19 @@ function hrefAndSelect(obj)
 						</td>
 					</tr>
 					
-					<tr class="content1">
+					<tr class="content2">
                         <td width="15%" align="center">发货时间从</td>
                         <td align="center" width="35%"><p:plugin name="changeTime" type="0" size="20" value="${ppmap.changeTime}"/></td>
                         <td width="15%" align="center">到</td>
                         <td align="center"><p:plugin name="changeTime1" type="0" size="20" value="${ppmap.changeTime1}"/>
+                        </td>
+                    </tr>
+                    
+                    <tr class="content1">
+                        <td width="15%" align="center">回款时间从</td>
+                        <td align="center" width="35%"><p:plugin name="redateB" type="0" size="20" value="${ppmap.redateB}"/></td>
+                        <td width="15%" align="center">到</td>
+                        <td align="center"><p:plugin name="redateE" type="0" size="20" value="${ppmap.redateE}"/>
                         </td>
                     </tr>
 

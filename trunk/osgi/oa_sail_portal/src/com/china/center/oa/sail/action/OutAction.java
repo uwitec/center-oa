@@ -2145,12 +2145,22 @@ public class OutAction extends ParentOutAction
 
             if ( !containAuth)
             {
-                for (BaseBean baseBean : baseList)
+                if (bean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                 {
-                    // 显示成本
-                    baseBean.setCostPrice(baseBean.getInputPrice());
+                    for (BaseBean baseBean : baseList)
+                    {
+                        // 显示成本(输入成本)
+                        baseBean.setCostPrice(baseBean.getInputPrice());
 
-                    baseBean.setDescription(MathTools.formatNum(baseBean.getInputPrice()));
+                        baseBean.setDescription(MathTools.formatNum(baseBean.getInputPrice()));
+                    }
+                }
+                else
+                {
+                    for (BaseBean baseBean : baseList)
+                    {
+                        baseBean.setDescription(MathTools.formatNum(baseBean.getCostPrice()));
+                    }
                 }
             }
             else
