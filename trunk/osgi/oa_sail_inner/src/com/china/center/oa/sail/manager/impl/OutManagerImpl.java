@@ -4860,7 +4860,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         con.addIntCondition("type", "=", OutConstant.OUT_TYPE_INBILL);
 
-        con.addIntCondition("outType", "=", OutConstant.OUTTYPE_IN_OUTBACK);
+        con.addCondition("and outType in (4, 5)");
 
         List<OutBean> outList = outDAO.queryEntityBeansByCondition(con);
 
