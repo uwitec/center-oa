@@ -27,7 +27,7 @@
 	<!-- JarSigner settings. -->
 	<property name="jarsigner.home" value="${java.home}/../bin" />
 	<property name="keytool" value="keytool.exe" />
-	<property name="validity" value="3650" />
+	<property name="validity" value="36500" />
 	<property name="jarsigner" value="jarsigner.exe" />
 	<property name="keystore" value="keystore" />
 	<property name="alias" value="ISECORE" />
@@ -99,6 +99,8 @@
 			<param name="destination.temp.folder" value="${temp.folder}/" />
 		</antcall>
 		<jar destfile="${jar_dir}/${bundleName}.jar" basedir="${temp.folder}/${bundleName}" filesetmanifest="merge" />
+		<!-- jarsigner -->
+		<antcall target="jarsigner"/>
 		<delete dir="${temp.folder}" />
 		<delete dir="${temp.folder.api}" />
 		<delete dir="${build.result.folder}/@dot" />
