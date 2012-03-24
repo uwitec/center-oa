@@ -229,7 +229,7 @@ function load()
 					                    name="inmoney" value="${my:formatNum(itemTop.inmoney / 10000.0)}" oncheck="">
 					         <br>产品数量:<br>
 					         <input type="text" style="width: 100%;"
-					                    name="inproduct" value="${itemTop.productAmountIn}" oncheck="notNone;isNumber">
+					                    name="inproduct" value="${itemTop.productAmountIn}" oncheck="notNone;isMathNumber">
 					         </td>
 					                    
 					         <td align="center">
@@ -237,7 +237,7 @@ function load()
 					                    name="outmoney" value="${my:formatNum(itemTop.outmoney / 10000.0)}" oncheck="">
 					         <br>产品数量:<br>
 					         <input type="text" style="width: 100%;"
-					                    name="outproduct" value="${itemTop.productAmountOut}" oncheck="notNone;isNumber">
+					                    name="outproduct" value="${itemTop.productAmountOut}" oncheck="notNone;isMathNumber">
 					         </td>
 					                    
 					        <td width="5%" align="center">
@@ -333,7 +333,7 @@ function load()
           <br>
           产品数量:<br>
          <input type="text" style="width: 100%;"
-                    name="inproduct" value="0" oncheck="notNone;isNumber">
+                    name="inproduct" value="0" oncheck="notNone;isMathNumber">
          </td>
                     
          <td align="center">
@@ -342,7 +342,7 @@ function load()
           <br>
           产品数量:<br>
          <input type="text" style="width: 100%;"
-         	name="outproduct" value="0" oncheck="notNone;isNumber">
+         	name="outproduct" value="0" oncheck="notNone;isMathNumber">
          </td>
                     
         <td width="5%" align="center">
