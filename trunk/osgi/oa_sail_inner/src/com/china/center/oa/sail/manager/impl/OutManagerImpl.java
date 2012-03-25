@@ -806,6 +806,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         outBean.setIndustryId(sb.getIndustryId());
 
         outBean.setIndustryId2(sb.getIndustryId2());
+
+        outBean.setIndustryId3(sb.getIndustryId3());
     }
 
     /**

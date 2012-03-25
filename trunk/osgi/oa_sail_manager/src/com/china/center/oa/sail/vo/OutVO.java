@@ -58,6 +58,12 @@ public class OutVO extends OutBean
     @Relationship(relationField = "industryId")
     private String industryName = "";
 
+    @Relationship(relationField = "industryId2")
+    private String industryName2 = "";
+
+    @Relationship(relationField = "industryId3")
+    private String industryName3 = "";
+
     public OutVO()
     {
     }
@@ -198,6 +204,40 @@ public class OutVO extends OutBean
     }
 
     /**
+     * @return the industryName2
+     */
+    public String getIndustryName2()
+    {
+        return industryName2;
+    }
+
+    /**
+     * @param industryName2
+     *            the industryName2 to set
+     */
+    public void setIndustryName2(String industryName2)
+    {
+        this.industryName2 = industryName2;
+    }
+
+    /**
+     * @return the industryName3
+     */
+    public String getIndustryName3()
+    {
+        return industryName3;
+    }
+
+    /**
+     * @param industryName3
+     *            the industryName3 to set
+     */
+    public void setIndustryName3(String industryName3)
+    {
+        this.industryName3 = industryName3;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -206,14 +246,43 @@ public class OutVO extends OutBean
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("OutVO ( ").append(super.toString()).append(TAB).append("locationName = ").append(
-            this.locationName).append(TAB).append("depotName = ").append(this.depotName).append(TAB).append(
-            "destinationName = ").append(this.destinationName).append(TAB).append("depotpartName = ").append(
-            this.depotpartName).append(TAB).append("customerAddress = ").append(this.customerAddress).append(TAB).append(
-            "invoiceName = ").append(this.invoiceName).append(TAB).append("dutyName = ").append(this.dutyName).append(
-            TAB).append("industryName = ").append(this.industryName).append(TAB).append(" )");
+        retValue
+            .append("OutVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("locationName = ")
+            .append(this.locationName)
+            .append(TAB)
+            .append("depotName = ")
+            .append(this.depotName)
+            .append(TAB)
+            .append("destinationName = ")
+            .append(this.destinationName)
+            .append(TAB)
+            .append("depotpartName = ")
+            .append(this.depotpartName)
+            .append(TAB)
+            .append("customerAddress = ")
+            .append(this.customerAddress)
+            .append(TAB)
+            .append("invoiceName = ")
+            .append(this.invoiceName)
+            .append(TAB)
+            .append("dutyName = ")
+            .append(this.dutyName)
+            .append(TAB)
+            .append("industryName = ")
+            .append(this.industryName)
+            .append(TAB)
+            .append("industryName2 = ")
+            .append(this.industryName2)
+            .append(TAB)
+            .append("industryName3 = ")
+            .append(this.industryName3)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

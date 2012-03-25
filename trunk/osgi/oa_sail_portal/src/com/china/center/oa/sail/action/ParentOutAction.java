@@ -1175,9 +1175,9 @@ public class ParentOutAction extends DispatchAction
 
         User user = (User)request.getSession().getAttribute("user");
 
-        if (OldPageSeparateTools.getPageSeparate(request, exportKey).getRowCount() > 15000)
+        if (OldPageSeparateTools.getPageSeparate(request, exportKey).getRowCount() > 25000)
         {
-            request.setAttribute(KeyConstant.ERROR_MESSAGE, "导出的记录数不能超过15000");
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "导出的记录数不能超过25000");
 
             return mapping.findForward("error");
         }
@@ -1235,11 +1235,11 @@ public class ParentOutAction extends DispatchAction
 
             if (element.getType() == 0)
             {
-                ffs = "出";
+                ffs = "销售";
             }
             else
             {
-                ffs = "入";
+                ffs = "入库";
             }
 
             write = WriteFileFactory.getMyTXTWriter();
@@ -1248,10 +1248,14 @@ public class ParentOutAction extends DispatchAction
 
             WriteFileBuffer line = new WriteFileBuffer(write);
 
-            line.writeColumn(ffs + "库日期");
-            line.writeColumn("调" + ffs + "部门");
+            line.writeColumn(ffs + "日期");
+
             line.writeColumn(element.getType() == 0 ? "客户" : "供应商(调出部门)");
+
             line.writeColumn("事业部");
+            line.writeColumn("大区");
+            line.writeColumn("部门");
+
             line.writeColumn("联系人");
             line.writeColumn("联系电话");
             line.writeColumn("单据号码");
@@ -1335,11 +1339,13 @@ public class ParentOutAction extends DispatchAction
 
                     line.writeColumn(element.getOutTime());
 
-                    line.writeColumn(element.getDepartment());
+                    // line.writeColumn(element.getDepartment());
 
                     line.writeColumn(element.getCustomerName());
 
                     line.writeColumn(element.getIndustryName());
+                    line.writeColumn(element.getIndustryName2());
+                    line.writeColumn(element.getIndustryName3());
 
                     line.writeColumn(element.getConnector());
 

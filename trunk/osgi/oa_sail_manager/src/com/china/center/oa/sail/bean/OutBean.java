@@ -143,7 +143,14 @@ public class OutBean implements Serializable
     /**
      * 5级组织
      */
+    @Join(tagClass = PrincipalshipBean.class, type = JoinType.LEFT, alias = "PRI2")
     private String industryId2 = "";
+
+    /**
+     * 六级组织
+     */
+    @Join(tagClass = PrincipalshipBean.class, type = JoinType.LEFT, alias = "PRI3")
+    private String industryId3 = "";
 
     private String connector = "";
 
@@ -1527,6 +1534,23 @@ public class OutBean implements Serializable
     }
 
     /**
+     * @return the industryId3
+     */
+    public String getIndustryId3()
+    {
+        return industryId3;
+    }
+
+    /**
+     * @param industryId3
+     *            the industryId3 to set
+     */
+    public void setIndustryId3(String industryId3)
+    {
+        this.industryId3 = industryId3;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -1612,6 +1636,9 @@ public class OutBean implements Serializable
             .append(TAB)
             .append("industryId2 = ")
             .append(this.industryId2)
+            .append(TAB)
+            .append("industryId3 = ")
+            .append(this.industryId3)
             .append(TAB)
             .append("connector = ")
             .append(this.connector)
