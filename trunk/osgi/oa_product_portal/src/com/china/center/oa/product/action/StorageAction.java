@@ -75,7 +75,6 @@ import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.DutyDAO;
 import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
-import com.china.center.oa.publics.dao.StafferVSIndustryDAO;
 import com.china.center.oa.publics.helper.OATools;
 import com.china.center.oa.sail.bean.SailConfBean;
 import com.china.center.oa.sail.bean.SailConfigBean;
@@ -136,8 +135,6 @@ public class StorageAction extends DispatchAction
     private StorageRelationDAO storageRelationDAO = null;
 
     private StorageApplyDAO storageApplyDAO = null;
-
-    private StafferVSIndustryDAO stafferVSIndustryDAO = null;
 
     private static final int MAXLENGTH = 20;
 
@@ -2467,23 +2464,6 @@ public class StorageAction extends DispatchAction
     public void setProductVSLocationDAO(ProductVSLocationDAO productVSLocationDAO)
     {
         this.productVSLocationDAO = productVSLocationDAO;
-    }
-
-    /**
-     * @return the stafferVSIndustryDAO
-     */
-    public StafferVSIndustryDAO getStafferVSIndustryDAO()
-    {
-        return stafferVSIndustryDAO;
-    }
-
-    /**
-     * @param stafferVSIndustryDAO
-     *            the stafferVSIndustryDAO to set
-     */
-    public void setStafferVSIndustryDAO(StafferVSIndustryDAO stafferVSIndustryDAO)
-    {
-        this.stafferVSIndustryDAO = stafferVSIndustryDAO;
     }
 
     /**

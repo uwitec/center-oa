@@ -151,6 +151,14 @@ function inits()
             <p:cell title="事业部">
                 ${bean.industryName}
             </p:cell>
+            
+            <p:cell title="大区">
+                ${bean.industryName2}
+            </p:cell>
+            
+            <p:cell title="部门">
+                ${bean.industryName3}
+            </p:cell>
 
 			<p:pro field="address" cell="0" innerString="size=80"
 				value="${bean.address}" />
