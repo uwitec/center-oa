@@ -220,8 +220,7 @@ public class BudgetManagerImpl implements BudgetManager
                         "预算[%s]下的预算项[%s]使用超值(包括此单),当前预算项总金额[%.2f],已经使用金额[%.2f],剩余可使用金额[%.2f],包含本次提交金额[%.2f],请确认操作",
                         budgetItem.getBudgetName(), budgetItem.getFeeItemName(), MathTools
                             .longToDouble2(total), MathTools.longToDouble2(lastUse), MathTools
-                            .longToDouble2(total - lastUse), MathTools.longToDouble2(lastUse),
-                        MathTools.longToDouble2(currentUse));
+                            .longToDouble2(total - lastUse), MathTools.longToDouble2(currentUse));
                 }
             }
         }
