@@ -4881,13 +4881,14 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                 {
                     for (BaseBean each2 : refBaseList)
                     {
-                        if (each1.equals(each2))
+                        if (each1.equals2(each2))
                         {
                             each1.setIprice(each2.getIprice());
                             each1.setPprice(each2.getPprice());
 
                             // 更新
                             baseDAO.updateEntityBean(each1);
+                            break;
                         }
                     }
                 }
