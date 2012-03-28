@@ -1464,6 +1464,23 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
                 throw new MYException("分担比例之和必须是100");
             }
         }
+
+        // 检验申请的状态
+        if ( !StringTools.isNullOrNone(bean.getRefId()))
+        {
+            TravelApplyBean travelApply = travelApplyDAO.find(bean.getRefId());
+
+            if (travelApply == null)
+            {
+                throw new MYException("申请单据不存在无法报销,请确认操作");
+            }
+
+            // 小于待财务入账
+            if (travelApply.getStatus() < TcpConstanst.TCP_STATUS_LAST_CHECK)
+            {
+                throw new MYException("申请单据状态不正确(需要是待财务入账之后的),请确认操作");
+            }
+        }
     }
 
     /**

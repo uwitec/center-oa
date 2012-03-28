@@ -846,9 +846,9 @@ public class TravelApplyAction extends DispatchAction
                     condtion.addCondition("TravelApplyBean.borrowStafferId", "=", user
                         .getStafferId());
 
-                    // 查询结束
-                    condtion.addIntCondition("TravelApplyBean.status", "=",
-                        TcpConstanst.TCP_STATUS_END);
+                    // 查询结束(申请或借款,到财务支付,流程就算结束)
+                    condtion.addIntCondition("TravelApplyBean.status", ">=",
+                        TcpConstanst.TCP_STATUS_LAST_CHECK);
 
                     if ( !StringTools.isNullOrNone(type))
                     {
