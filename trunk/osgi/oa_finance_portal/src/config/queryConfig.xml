@@ -410,6 +410,14 @@
             <opr>like</opr>
             <type>text</type>
         </condtion>
+        <condtion name="outId"  caption="销售单">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="billId"  caption="收款单">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
         <condtion name="status" caption="状态">
             <opr>=</opr>
             <datatype>1</datatype>
