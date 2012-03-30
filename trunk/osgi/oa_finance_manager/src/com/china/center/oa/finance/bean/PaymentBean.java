@@ -74,6 +74,9 @@ public class PaymentBean implements Serializable
     @Html(title = "类型", type = Element.SELECT, must = true)
     private int type = FinanceConstant.PAYMENT_PAY_PUBLIC;
 
+    /**
+     * 当回款申请关联的时候状态就是已认领了(设计中缺少中间状态)
+     */
     private int status = FinanceConstant.PAYMENT_STATUS_INIT;
 
     private int useall = FinanceConstant.PAYMENT_USEALL_INIT;

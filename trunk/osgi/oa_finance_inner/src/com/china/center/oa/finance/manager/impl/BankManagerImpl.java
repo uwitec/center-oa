@@ -364,6 +364,7 @@ public class BankManagerImpl extends AbstractListenerManager<BankListener> imple
 
         condtion.addWhereStr();
 
+        // 因为回款一旦申请就可以变成已收,此时实际上没有生回款单,所以这里使用useall
         condtion.addIntCondition("useall", "=", FinanceConstant.PAYMENT_USEALL_INIT);
 
         condtion.addCondition("bankId", "=", bank.getId());

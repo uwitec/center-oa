@@ -279,8 +279,8 @@ public class BillManagerImpl implements BillManager
 
         inBillDAO.deleteEntityBean(id);
 
-        // 更新回款单的状态
-        if ( !StringTools.isNullOrNone(bill.getPaymentId()))
+        // 更新回款单的状态(此逻辑已经删除)
+        if (false && !StringTools.isNullOrNone(bill.getPaymentId()))
         {
             PaymentBean payment = paymentDAO.find(bill.getPaymentId());
 
@@ -288,7 +288,7 @@ public class BillManagerImpl implements BillManager
 
             payment.setUseMoney(hasUsed);
 
-            if (hasUsed >= payment.getMoney())
+            if (MathTools.compare(hasUsed, payment.getMoney()) >= 0)
             {
                 payment.setUseall(FinanceConstant.PAYMENT_USEALL_END);
             }
@@ -415,7 +415,7 @@ public class BillManagerImpl implements BillManager
         if ( !StringTools.isNullOrNone(bill.getStockId())
             || !StringTools.isNullOrNone(bill.getStockItemId()))
         {
-            throw new MYException("单据已经被采购单[%s]关联,请确认操作", bill.getStockId());
+            throw new MYException("单据已经被采购单/销售单/回款单[%s]关联,请确认操作", bill.getStockId());
         }
 
         if (bill.getLock() == FinanceConstant.BILL_LOCK_YES)

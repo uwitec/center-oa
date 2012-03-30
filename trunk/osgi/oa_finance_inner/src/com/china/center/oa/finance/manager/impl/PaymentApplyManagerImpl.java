@@ -198,7 +198,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
             }
 
             // 指定认领的操作检查
-            if ( !"0".equals(payment.getDestStafferId()) && !StringTools.isNullOrNone(payment.getDestStafferId()))
+            if ( !"0".equals(payment.getDestStafferId())
+                && !StringTools.isNullOrNone(payment.getDestStafferId()))
             {
                 if ( !user.getStafferId().equals(payment.getDestStafferId()))
                 {
@@ -221,7 +222,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
                     OutBean out = outDAO.find(vsItem.getOutId());
 
                     // 2012后(废除)
-                    if (OATools.getManagerFlag() && out.getOutTime().compareTo("2012-01-01") >= 0 && false)
+                    if (OATools.getManagerFlag() && out.getOutTime().compareTo("2012-01-01") >= 0
+                        && false)
                     {
                         if ( !out.getDutyId().equals(payment.getDutyId()))
                         {
@@ -299,7 +301,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
                 if (total > lastMoney)
                 {
                     // 拆分此单
-                    billManager.splitInBillBeanWithoutTransactional(user, vsItem.getBillId(), (total - lastMoney));
+                    billManager.splitInBillBeanWithoutTransactional(user, vsItem.getBillId(),
+                        (total - lastMoney));
 
                     remove = true;
                 }
@@ -313,7 +316,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
                 }
 
                 // 2012后
-                if (OATools.getManagerFlag() && out.getOutTime().compareTo("2012-01-01") >= 0 && false)
+                if (OATools.getManagerFlag() && out.getOutTime().compareTo("2012-01-01") >= 0
+                    && false)
                 {
                     if ( !out.getDutyId().equals(bill.getDutyId()))
                     {
@@ -460,7 +464,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
         condition.addCondition("BackPayApplyBean.billId", "=", billId);
 
-        condition.addIntCondition("BackPayApplyBean.status", "<", BackPayApplyConstant.STATUS_REJECT);
+        condition.addIntCondition("BackPayApplyBean.status", "<",
+            BackPayApplyConstant.STATUS_REJECT);
 
         int countByCondition = backPayApplyDAO.countByCondition(condition.toString());
 
@@ -541,8 +546,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
         if (hasUsed + bean.getMoneys() > payment.getMoney())
         {
-            throw new MYException("回款使用金额溢出,总金额[%.2f],已使用金额[%.2f],本次申请金额[%.2f],请确认操作", payment.getMoney(), hasUsed,
-                bean.getMoneys());
+            throw new MYException("回款使用金额溢出,总金额[%.2f],已使用金额[%.2f],本次申请金额[%.2f],请确认操作", payment
+                .getMoney(), hasUsed, bean.getMoneys());
         }
     }
 
@@ -575,8 +580,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
         if (hasUsed + bean.getMoneys() > payment.getMoney())
         {
-            throw new MYException("回款使用金额溢出,总金额[%.2f],已使用金额[%.2f],本次申请金额[%.2f],请确认操作", payment.getMoney(), hasUsed,
-                bean.getMoneys());
+            throw new MYException("回款使用金额溢出,总金额[%.2f],已使用金额[%.2f],本次申请金额[%.2f],请确认操作", payment
+                .getMoney(), hasUsed, bean.getMoneys());
         }
     }
 
@@ -753,14 +758,14 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
                     if ( !StringTools.isNullOrNone(outBean.getChecks()))
                     {
-                        bill.setDescription(bill.getDescription() + "<br>销售单核对信息:" + outBean.getChecks() + "<br>审批意见:"
-                                            + reason);
+                        bill.setDescription(bill.getDescription() + "<br>销售单核对信息:"
+                                            + outBean.getChecks() + "<br>审批意见:" + reason);
                     }
 
                     if (bill.getCheckStatus() == PublicConstant.CHECK_STATUS_END)
                     {
-                        bill.setDescription(bill.getDescription() + "<br>与销售单关联付款所以重置核对状态,原核对信息:" + bill.getChecks()
-                                            + "<br>审批意见:" + reason);
+                        bill.setDescription(bill.getDescription() + "<br>与销售单关联付款所以重置核对状态,原核对信息:"
+                                            + bill.getChecks() + "<br>审批意见:" + reason);
                     }
                     else
                     {
@@ -805,7 +810,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
         if (apply.getType() == FinanceConstant.PAYAPPLY_TYPE_PAYMENT)
         {
             // 指定认领的操作检查
-            if ( !"0".equals(payment.getDestStafferId()) && !StringTools.isNullOrNone(payment.getDestStafferId()))
+            if ( !"0".equals(payment.getDestStafferId())
+                && !StringTools.isNullOrNone(payment.getDestStafferId()))
             {
                 if ( !apply.getStafferId().equals(payment.getDestStafferId()))
                 {
@@ -863,8 +869,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
         }
     }
 
-    private void saveBillInner(User user, PaymentApplyBean apply, PaymentBean payment, PaymentVSOutBean item,
-                               String reason)
+    private void saveBillInner(User user, PaymentApplyBean apply, PaymentBean payment,
+                               PaymentVSOutBean item, String reason)
         throws MYException
     {
         InBillBean inBean = new InBillBean();
@@ -891,7 +897,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
         {
             inBean.setStatus(FinanceConstant.INBILL_STATUS_PAYMENTS);
 
-            inBean.setDescription("自动生成收款单,从回款单:" + payment.getId() + ",关联的销售单:" + item.getOutId() + ".审批意见:" + reason);
+            inBean.setDescription("自动生成收款单,从回款单:" + payment.getId() + ",关联的销售单:" + item.getOutId()
+                                  + ".审批意见:" + reason);
         }
 
         inBean.setOutId(item.getOutId());
@@ -955,8 +962,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
                 // 发现支付的金额过多
                 if (hasOutBalancePay > outBal.getTotal())
                 {
-                    throw new MYException("委托清单[%s]的总金额[%.2f],当前已付金额[%.2f]付款金额超出销售金额", outBal.getId(),
-                        outBal.getTotal(), hasOutBalancePay);
+                    throw new MYException("委托清单[%s]的总金额[%.2f],当前已付金额[%.2f]付款金额超出销售金额", outBal
+                        .getId(), outBal.getTotal(), hasOutBalancePay);
                 }
 
                 outBalanceDAO.updateHadPay(outBal.getId(), hasOutBalancePay);
@@ -1030,7 +1037,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
         payment.setUseMoney(hasUsed);
 
-        if (hasUsed >= payment.getMoney())
+        if (MathTools.compare(hasUsed, payment.getMoney()) >= 0)
         {
             payment.setUseall(FinanceConstant.PAYMENT_USEALL_END);
         }
@@ -1092,8 +1099,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
         if (hasUsed + apply.getMoneys() > payment.getMoney())
         {
-            throw new MYException("回款使用金额溢出,总金额[%.2f],已使用金额[%.2f],本次申请金额[%.2f],请确认操作", payment.getMoney(), hasUsed,
-                apply.getMoneys());
+            throw new MYException("回款使用金额溢出,总金额[%.2f],已使用金额[%.2f],本次申请金额[%.2f],请确认操作", payment
+                .getMoney(), hasUsed, apply.getMoneys());
         }
 
         return apply;

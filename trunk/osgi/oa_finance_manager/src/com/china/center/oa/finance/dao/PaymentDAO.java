@@ -24,5 +24,11 @@ import com.china.center.oa.finance.vo.PaymentVO;
  */
 public interface PaymentDAO extends DAO<PaymentBean, PaymentVO>
 {
+    /**
+     * 没有认领的回款(useall为0的)
+     * 
+     * @param bankId
+     * @return
+     */
     double sumNotUserByBankId(String bankId);
 }
