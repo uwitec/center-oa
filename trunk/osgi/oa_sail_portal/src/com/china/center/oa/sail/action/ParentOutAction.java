@@ -1285,8 +1285,9 @@ public class ParentOutAction extends DispatchAction
 
             if (containAuth)
             {
-                line.writeColumn("事业部结算价");
+                line.writeColumn("业务员结算价");
                 line.writeColumn("总部结算价");
+                line.writeColumn("事业部结算价");
             }
 
             line.writeColumn("发货单号");
@@ -1405,8 +1406,9 @@ public class ParentOutAction extends DispatchAction
 
                     if (containAuth)
                     {
-                        line.writeColumn(MathTools.formatNum(base.getIprice()));
+                        line.writeColumn(MathTools.formatNum(base.getInputPrice()));
                         line.writeColumn(MathTools.formatNum(base.getPprice()));
+                        line.writeColumn(MathTools.formatNum(base.getIprice()));
                     }
 
                     if ( !iterator.hasNext())

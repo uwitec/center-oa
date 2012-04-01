@@ -11,6 +11,8 @@ package com.china.center.oa.sail.manager.impl;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.china.center.spring.iaop.annotation.IntegrationAOP;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +51,8 @@ import com.china.center.tools.StringTools;
 @IntegrationAOP
 public class SailConfigManagerImpl implements SailConfigManager
 {
+    private final Log operationLog = LogFactory.getLog("opr");
+
     private SailConfigDAO sailConfigDAO = null;
 
     private SailConfDAO sailConfDAO = null;
@@ -88,15 +92,18 @@ public class SailConfigManagerImpl implements SailConfigManager
                 throw new MYException("数据错误,请确认操作");
             }
 
-            String productType = DefinedCommon.getValue("productType", sailConfigBean.getProductType());
+            String productType = DefinedCommon.getValue("productType", sailConfigBean
+                .getProductType());
 
-            String productSailType = DefinedCommon.getValue("productSailType", sailConfigBean.getSailType());
+            String productSailType = DefinedCommon.getValue("productSailType", sailConfigBean
+                .getSailType());
 
             String msg = show.getName() + "+" + productType + "+" + productSailType;
 
             Expression exp = new Expression(sailConfigBean, this);
 
-            exp.check("#showId && #sailType && #productType &unique @sailConfigDAO", "销售组合已经存在:" + msg);
+            exp.check("#showId && #sailType && #productType &unique @sailConfigDAO", "销售组合已经存在:"
+                                                                                     + msg);
 
             // 保证pare里面的配置是一致的
             BeanUtil.copyProperties(sailConfigBean, baseBean);
@@ -155,7 +162,8 @@ public class SailConfigManagerImpl implements SailConfigManager
 
         Expression exp = new Expression(bean, this);
 
-        exp.check("#sailType && #productType && #productId && #industryId &unique @sailConfDAO", "结算价格配置组合已经存在");
+        exp.check("#sailType && #productType && #productId && #industryId &unique @sailConfDAO",
+            "结算价格配置组合已经存在");
 
         return sailConfDAO.saveEntityBean(bean);
     }
@@ -165,6 +173,15 @@ public class SailConfigManagerImpl implements SailConfigManager
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, id);
+
+        SailConfBean conf = sailConfDAO.find(id);
+
+        if (conf == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        operationLog.info("delete sail conf:" + conf);
 
         return sailConfDAO.deleteEntityBean(id);
     }
@@ -181,6 +198,8 @@ public class SailConfigManagerImpl implements SailConfigManager
         {
             throw new MYException("数据错误,请确认操作");
         }
+
+        operationLog.info("update sail conf,old:" + old);
 
         bean.setProductType(old.getProductType());
         bean.setSailType(old.getSailType());
@@ -221,9 +240,14 @@ public class SailConfigManagerImpl implements SailConfigManager
 
         Expression exp = new Expression(bean, this);
 
-        exp.check("#sailType && #productType && #productId && #industryId &unique2 @sailConfDAO", "结算价格配置组合已经存在");
+        exp.check("#sailType && #productType && #productId && #industryId &unique2 @sailConfDAO",
+            "结算价格配置组合已经存在");
 
-        return sailConfDAO.updateEntityBean(bean);
+        sailConfDAO.updateEntityBean(bean);
+
+        operationLog.info("update sail conf,new:" + bean);
+
+        return true;
     }
 
     @Transactional(rollbackFor = MYException.class)

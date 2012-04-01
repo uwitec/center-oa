@@ -117,7 +117,7 @@ public class BaseBean implements Serializable
     private double invoiceMoney = 0.0d;
 
     /**
-     * 成本
+     * 成本(和costPrice一样)
      */
     private String description = "";
 

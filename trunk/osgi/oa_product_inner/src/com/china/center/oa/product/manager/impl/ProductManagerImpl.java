@@ -12,6 +12,8 @@ package com.china.center.oa.product.manager.impl;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +51,8 @@ import com.china.center.tools.StringTools;
 @Exceptional
 public class ProductManagerImpl extends AbstractListenerManager<ProductListener> implements ProductManager
 {
+    private final Log operationLog = LogFactory.getLog("opr");
+
     private ProductCombinationDAO productCombinationDAO = null;
 
     private ProductDAO productDAO = null;
@@ -187,6 +191,8 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
         notifyManager.notifyMessage(old.getCreaterId(), user.getStafferName() + "驳回或者删除了产品申请:"
                                                         + old.getName());
 
+        operationLog.info("delete ProductBean:" + old);
+
         return true;
     }
 
@@ -203,6 +209,8 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
             throw new MYException("数据错误,请确认操作");
         }
 
+        operationLog.info("updateProductBean old ProductBean:" + old);
+
         bean.setName(old.getName());
 
         bean.setCode(old.getCode());
@@ -212,6 +220,8 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
         executeOnUpdateProduct(user, bean);
 
         productDAO.updateEntityBean(bean);
+
+        operationLog.info("updateProductBean new ProductBean:" + bean);
 
         // 这里插入产品对于关系
         List<ProductCombinationBean> vsList = bean.getVsList();
@@ -228,7 +238,7 @@ public class ProductManagerImpl extends AbstractListenerManager<ProductListener>
             productCombinationDAO.saveAllEntityBeans(vsList);
         }
 
-        return false;
+        return true;
     }
 
     /**

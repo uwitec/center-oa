@@ -341,6 +341,11 @@ public interface OutManager extends ListenerManager<OutListener>
     void initOutBackBasePrice();
 
     /**
+     * 初始化总部事业部结算价
+     */
+    void initOutPrice();
+
+    /**
      * 导出信用
      */
     void exportAllStafferCredit();

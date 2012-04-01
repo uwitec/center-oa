@@ -138,6 +138,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
+    private final Log operationLog = LogFactory.getLog("opr");
+
     private final Log importLog = LogFactory.getLog("sec");
 
     private final Log triggerLog = LogFactory.getLog("trigger");
@@ -633,16 +635,6 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         // 其实也是成本
                         base.setDescription(desList[i].trim());
 
-                        // 获取销售配置
-                        SailConfBean sailConf = sailConfigManager.findProductConf(stafferBean,
-                            product);
-
-                        // 总部结算价
-                        base.setPprice(base.getCostPrice() * (1 + sailConf.getPratio() / 1000.0));
-
-                        // 事业部结算价
-                        base.setIprice(base.getCostPrice() * (1 + sailConf.getIratio() / 1000.0));
-
                         // 只有V5的销售单有此功能
                         if (OATools.isChangeToV5()
                             && outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
@@ -662,6 +654,19 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                                 base.setInputPrice(base.getCostPrice());
                             }
                         }
+
+                        // 获取销售配置
+                        SailConfBean sailConf = sailConfigManager.findProductConf(stafferBean,
+                            product);
+
+                        // 总部结算价(产品结算价 * (1 + 总部结算率))
+                        base.setPprice(product.getSailPrice()
+                                       * (1 + sailConf.getPratio() / 1000.0d));
+
+                        // 事业部结算价(产品结算价 * (1 + 总部结算率 + 事业部结算率))
+                        base
+                            .setIprice(product.getSailPrice()
+                                       * (1 + sailConf.getIratio() / 1000.0d + sailConf.getPratio() / 1000.0d));
 
                         baseList.add(base);
 
@@ -2967,6 +2972,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         _logger.info(user.getStafferName() + "/" + user.getName() + "/DELETE:" + outBean);
 
+        operationLog.info(user.getStafferName() + "/" + user.getName() + "/DELETE OUT:" + outBean);
+
         return true;
     }
 
@@ -4891,6 +4898,53 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             break;
                         }
                     }
+                }
+            }
+        }
+    }
+
+    @Transactional(rollbackFor = {MYException.class})
+    public void initOutPrice()
+    {
+        ConditionParse con = new ConditionParse();
+
+        con.addWhereStr();
+
+        con.addCondition("outTime", ">=", "2012-03-01");
+
+        con.addIntCondition("type", "=", OutConstant.OUT_TYPE_OUTBILL);
+
+        List<OutBean> outList = outDAO.queryEntityBeansByCondition(con);
+
+        for (OutBean outBean : outList)
+        {
+            List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
+
+            StafferBean sb = stafferDAO.find(outBean.getStafferId());
+
+            if (sb == null)
+            {
+                continue;
+            }
+
+            for (BaseBean baseBean : baseList)
+            {
+                ProductBean product = productDAO.find(baseBean.getProductId());
+
+                if (product != null)
+                {
+                    SailConfBean sailConf = sailConfigManager.findProductConf(sb, product);
+
+                    // 产品结算价
+                    double sailPrice = baseBean.getInputPrice()
+                                       / (1 + sailConf.getPratio() / 1000.0d + sailConf.getIratio() / 1000.0d);
+
+                    baseBean.setPprice(sailPrice * (1 + sailConf.getPratio() / 1000.0d));
+
+                    // 就是看到的结算价
+                    baseBean.setIprice(baseBean.getInputPrice());
+
+                    baseDAO.updateEntityBean(baseBean);
                 }
             }
         }
