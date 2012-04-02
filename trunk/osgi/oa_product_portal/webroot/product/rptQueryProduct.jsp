@@ -62,7 +62,7 @@ function closesd()
 
 function pop(obj)
 {
-	window.open(obj.href);
+	document.location.href = obj.href;
 }
 
 </script>
