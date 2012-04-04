@@ -101,6 +101,12 @@
             <type>select</type>
             <option>$budgetLogFromType</option>
         </condtion>
+        <condtion name="status" caption="形态">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$budgetLogStatus</option>
+        </condtion>
         <condtion name="userType" caption="使用类型">
             <opr>=</opr>
             <datatype>1</datatype>

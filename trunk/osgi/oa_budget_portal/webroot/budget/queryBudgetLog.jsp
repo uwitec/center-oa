@@ -31,6 +31,7 @@ function load()
 		     {display: '使用来源', name : 'fromType', cc: 'budgetLogFromType', width : '5%'},
 		     {display: '单据', name : 'refId', width : '15%'},
 		     {display: '类型', name : 'userType', cc: 'budgetLogUserType', width : '5%'},
+		     {display: '形态', name : 'status', cc: 'budgetLogStatus', width : '5%'},
 		     {display: '金额', name : 'smonery', width : '5%'},
 		     {display: '时间', name : 'logTime', width : '15%', sortable : true},
 		     {display: '日志', name : 'log', width : 'auto'}
@@ -53,6 +54,7 @@ function $callBack()
     loadForm();
     
     highlights($("#mainTable").get(0), ['使用'], 'blue');
+    highlights($("#mainTable").get(0), ['临时'], 'red');
 }
 
 
