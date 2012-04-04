@@ -80,5 +80,7 @@
 	
 	<osgi:reference id="billManager" interface="com.china.center.oa.finance.manager.BillManager" />
 	
+	<osgi:reference id="budgetLogDAO" interface="com.china.center.oa.budget.dao.BudgetLogDAO" />
+	
 
 </beans>

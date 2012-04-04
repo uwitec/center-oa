@@ -940,7 +940,7 @@ public class ExpenseAction extends DispatchAction
                     if (sb == null)
                     {
                         builder
-                            .append("第[" + currentNumber + "]错误:")
+                            .append("第[" + currentNumber + "]行错误:")
                             .append("人员(费用承担人)没有找到")
                             .append("<br>");
 
@@ -1526,6 +1526,20 @@ public class ExpenseAction extends DispatchAction
             List<String> approverIdList = rds.getParameters("s_approverId");
             List<String> ratioList = rds.getParameters("s_ratio");
 
+            int rtotal = 0;
+
+            for (String each : ratioList)
+            {
+                rtotal += MathTools.parseInt(each);
+            }
+
+            int shareType = 0;
+
+            if (rtotal != 100)
+            {
+                shareType = 1;
+            }
+
             for (int i = 0; i < budgetIdeList.size(); i++ )
             {
                 String each = budgetIdeList.get(i);
@@ -1540,7 +1554,16 @@ public class ExpenseAction extends DispatchAction
                 share.setBudgetId(budgetIdeList.get(i));
                 share.setDepartmentId(departmentIdList.get(i));
                 share.setApproverId(approverIdList.get(i));
-                share.setRatio(MathTools.parseInt(ratioList.get(i)));
+
+                // 自动识别是分担还是金额
+                if (shareType == 0)
+                {
+                    share.setRatio(MathTools.parseInt(ratioList.get(i)));
+                }
+                else
+                {
+                    share.setRealMonery(TCPHelper.doubleToLong2(ratioList.get(i)));
+                }
 
                 shareList.add(share);
             }

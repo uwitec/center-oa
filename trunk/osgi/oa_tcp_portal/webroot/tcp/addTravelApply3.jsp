@@ -209,7 +209,7 @@ function load()
                         <td width="35%" align="center">月度预算</td>
                         <td width="35%" align="center">部门</td>
                         <td width="15%" align="center">权签人</td>
-                        <td width="10%" align="center">分担比例(%)</td>
+                        <td width="10%" align="center">分担比例(%)/金额</td>
                         <td width="5%" align="left"><input type="button" accesskey="B"
                             value="增加" class="button_class" onclick="addShareTr()"></td>
                     </tr>
@@ -358,7 +358,7 @@ function load()
          
          <td align="left">
          <input type="text" style="width: 100%"
-                    name="s_ratio" value="" oncheck="notNone;isInt">
+                    name="s_ratio" value="" oncheck="notNone;isFloat2">
          </td>
          
         <td width="5%" align="center"><input type=button

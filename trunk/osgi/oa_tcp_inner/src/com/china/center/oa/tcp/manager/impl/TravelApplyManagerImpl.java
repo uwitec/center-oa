@@ -100,6 +100,8 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 {
     private final Log operationLog = LogFactory.getLog("opr");
 
+    private final Log badLog = LogFactory.getLog("bad");
+
     private TcpApplyDAO tcpApplyDAO = null;
 
     private TcpFlowDAO tcpFlowDAO = null;
@@ -545,8 +547,11 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
             travelApplyDAO.updateTotal(param.getId(), total);
 
-            // 更新预算(重新加入预占)
-            checkBudget(user, bean, 1);
+            if (bean.getBorrow() == TcpConstanst.TRAVELAPPLY_BORROW_YES)
+            {
+                // 更新预算(重新加入预占)
+                checkBudget(user, bean, 1);
+            }
         }
     }
 
@@ -855,12 +860,19 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
     private void checkBudget(User user, TravelApplyVO bean, int type)
         throws MYException
     {
+        // 不借款的不占用预算
+        if (bean.getBorrow() != TcpConstanst.TRAVELAPPLY_BORROW_YES)
+        {
+            return;
+        }
+
         if (type == 1)
         {
             // 先删除之前的
             budgetManager.deleteBudgetLogListWithoutTransactional(user, bean.getId());
         }
 
+        // 借款比
         double borrowRadio = 1.0d;
 
         if (bean.getTotal() != 0)
@@ -876,10 +888,13 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
         long hasUse = 0L;
 
+        int shareType = 0;
+
         for (Iterator iterator = shareVOList.iterator(); iterator.hasNext();)
         {
             TcpShareVO tcpShareVO = (TcpShareVO)iterator.next();
 
+            // 每个申请项扣除的费用
             for (Iterator ite = itemVOList.iterator(); ite.hasNext();)
             {
                 TravelApplyItemVO travelApplyItemVO = (TravelApplyItemVO)ite.next();
@@ -926,9 +941,22 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
                 // 预占
                 log.setUserType(BudgetConstant.BUDGETLOG_USERTYPE_PRE);
 
-                // 这里肯定有误差的
-                long useMoney = Math.round( (tcpShareVO.getRatio() / 100.0) * borrowRadio
-                                           * travelApplyItemVO.getMoneys());
+                long useMoney = 0;
+
+                if (tcpShareVO.getRatio() != 0)
+                {
+                    // 这里肯定有误差的
+                    useMoney = Math.round( (tcpShareVO.getRatio() / 100.0) * borrowRadio
+                                          * travelApplyItemVO.getMoneys());
+                }
+                else
+                {
+                    // 使用实际的金额
+                    useMoney = Math.round( (getShareratio(shareVOList, tcpShareVO) / 100.0d)
+                                          * borrowRadio * travelApplyItemVO.getMoneys());
+
+                    shareType = 1;
+                }
 
                 log.setMonery(useMoney);
 
@@ -936,10 +964,73 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
             }
         }
 
-        // 处理不能的情况
-        long chae = hasUse - bean.getBorrowTotal();
+        // 实际的二次调整
+        if (shareType == 1)
+        {
+            resetShareratio(shareVOList, bean.getBorrowTotal());
 
-        // 消除误差
+            // 这里的实际使用的误差比较复杂(每个分担必须等于)/存在稽核后预算变小,但是实际的分担较大
+            for (TcpShareVO tcpShareVO : shareVOList)
+            {
+                long btotal = 0;
+
+                for (BudgetLogBean budgetLogBean : logList)
+                {
+                    if (budgetLogBean.getBudgetId().equals(tcpShareVO.getBudgetId()))
+                    {
+                        btotal += budgetLogBean.getMonery();
+                    }
+                }
+
+                // 金额有差异
+                if (btotal != tcpShareVO.getRealMonery())
+                {
+                    // 多余的金额(可能是负数哦)
+                    long cache = tcpShareVO.getRealMonery() - btotal;
+
+                    for (BudgetLogBean budgetLogBean : logList)
+                    {
+                        if (budgetLogBean.getBudgetId().equals(tcpShareVO.getBudgetId()))
+                        {
+                            if (budgetLogBean.getMonery() + cache >= 0)
+                            {
+                                budgetLogBean.setMonery(budgetLogBean.getMonery() + cache);
+
+                                cache = 0;
+
+                                break;
+                            }
+                            else
+                            {
+                                // 强制为0
+                                budgetLogBean.setMonery(0);
+
+                                // 顺差减少
+                                cache = budgetLogBean.getMonery() + cache;
+                            }
+                        }
+                    }
+
+                    if (cache > 0)
+                    {
+                        // 这里说明有问题啊
+                        badLog.equals("申请借款[" + bean.getId() + "]在分担上存在越界:" + cache + ".预算为:"
+                                      + tcpShareVO.getBudgetName());
+                    }
+                }
+            }
+        }
+
+        // 消除最终的误差
+        long lasttotla = 0;
+
+        for (BudgetLogBean budgetLogBean : logList)
+        {
+            lasttotla += budgetLogBean.getMonery();
+        }
+
+        long chae = lasttotla - bean.getBorrowTotal();
+
         if (chae != 0)
         {
             for (BudgetLogBean budgetLogBean : logList)
@@ -955,6 +1046,76 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
         // 进入使用日志,如果超出预算会抛出异常的
         budgetManager.addBudgetLogListWithoutTransactional(user, bean.getId(), logList);
+    }
+
+    private int getShareratio(List<TcpShareVO> shareVOList, TcpShareVO vo)
+    {
+        double total = 0;
+
+        for (TcpShareVO tcpShareVO : shareVOList)
+        {
+            total += tcpShareVO.getRealMonery();
+        }
+
+        int ratio = (int) (vo.getRealMonery() / total * 100);
+
+        if (ratio == 0)
+        {
+            ratio = 1;
+        }
+
+        return ratio;
+    }
+
+    /**
+     * 修改后金额自动重新设置分担
+     * 
+     * @param shareVOList
+     * @param newBorrowal
+     */
+    private void resetShareratio(List<TcpShareVO> shareVOList, long newBorrowal)
+    {
+        double total = 0;
+
+        for (TcpShareVO tcpShareVO : shareVOList)
+        {
+            total += tcpShareVO.getRealMonery();
+        }
+
+        if (total == newBorrowal)
+        {
+            return;
+        }
+
+        // 比例啊
+        double ratio = newBorrowal / (total + 0.0d);
+
+        long newtotal = 0;
+
+        for (TcpShareVO tcpShareVO : shareVOList)
+        {
+            tcpShareVO.setRealMonery(Math.round(tcpShareVO.getRealMonery() * ratio));
+
+            newtotal += tcpShareVO.getRealMonery();
+        }
+
+        // 修复分担
+        if (newtotal != newBorrowal)
+        {
+            // 多余的需要加入
+            long cache = newBorrowal - newtotal;
+
+            for (TcpShareVO tcpShareVO : shareVOList)
+            {
+                if (tcpShareVO.getRealMonery() + cache >= 0)
+                {
+                    tcpShareVO.setRealMonery(tcpShareVO.getRealMonery() + cache);
+
+                    break;
+                }
+            }
+        }
+
     }
 
     /**
@@ -975,17 +1136,49 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
 
         int ratioTotal = 0;
 
+        int shareTotal = 0;
+
         for (TcpShareBean tcpShareBean : bean.getShareList())
         {
             tcpShareBean.setId(commonDAO.getSquenceString20());
             tcpShareBean.setRefId(bean.getId());
 
             ratioTotal += tcpShareBean.getRatio();
+            shareTotal += tcpShareBean.getRealMonery();
         }
 
-        if (ratioTotal != 100)
+        // 要么全是0,就是根据金额去分担(支持非比例分担)
+        if (ratioTotal != 100 && ratioTotal != 0)
         {
             throw new MYException("分担比例之和必须是100");
+        }
+
+        if (ratioTotal > 0)
+        {
+            for (TcpShareBean tcpShareBean : bean.getShareList())
+            {
+                if (tcpShareBean.getRatio() <= 0)
+                {
+                    throw new MYException("分担比例不能小于0,且必须是整数");
+                }
+            }
+        }
+        else
+        {
+            for (TcpShareBean tcpShareBean : bean.getShareList())
+            {
+                if (tcpShareBean.getRealMonery() <= 0)
+                {
+                    throw new MYException("分担金额比例不能小于0");
+                }
+            }
+        }
+
+        // 下面的申请暂时不实现分担,无法实现
+        if (ratioTotal == 0 && bean.getBorrowTotal() != shareTotal)
+        {
+            throw new MYException("费用申请借款的总金额[%.2f]必须和分担的金额[%.2f]一致", MathTools.longToDouble2(bean
+                .getTotal()), MathTools.longToDouble2(shareTotal));
         }
     }
 
@@ -1262,6 +1455,16 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
             if (dep != null)
             {
                 tcpShareVO.setDepartmentName(dep.getFullName());
+            }
+
+            if (tcpShareVO.getRatio() == 0)
+            {
+                tcpShareVO
+                    .setShowRealMonery(MathTools.longToDoubleStr2(tcpShareVO.getRealMonery()));
+            }
+            else
+            {
+                tcpShareVO.setShowRealMonery(String.valueOf(tcpShareVO.getRatio()));
             }
         }
 

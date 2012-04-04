@@ -46,7 +46,7 @@ public class TcpShareBean implements Serializable
     private int ratio = 0;
 
     /**
-     * 实际分担金额(到分)
+     * 实际分担金额(到分)(*100)
      */
     private long realMonery = 0;
 

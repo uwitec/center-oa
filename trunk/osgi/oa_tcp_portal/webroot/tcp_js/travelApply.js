@@ -87,9 +87,11 @@ function checks()
 {
     sumTotal();
     
+    var borrow = 0.0;
+    
     if ($$('borrow') == 1)
     {
-        var borrow = sumborrowTotal();
+        borrow = sumborrowTotal();
         
         if (borrow == 0)
         {
@@ -111,12 +113,22 @@ function checks()
     //s_ratio
     var total = sumRatio();
     
-    if (total != 100)
+    if ($$('borrow') == 1)
     {
-        alert('分担比例之和必须等于100');
-            
-        return false;
-    } 
+    	if (total == 0)
+    	{
+    		alert('分担之和不能为0');
+                
+            return false;
+    	}
+    	
+	    if (total != 100 && compareNumber(borrow, total) != 0)
+	    {
+	        alert('分担比例之和必须等于100,或者分担金额之和等于(借款):' + borrow);
+	            
+	        return false;
+	    }
+    }
     
     //检查预算分担不能重复
     var blist = $("input[name='s_budgetId']");
@@ -147,7 +159,7 @@ function sumRatio()
         {
             if (this.value != '')
             {
-                total += parseInt(this.value);
+                total += parseFloat(this.value);
             }
         }
     );   

@@ -85,6 +85,8 @@ function calDateInner(obj, name)
 
 function checks()
 {
+	var shareTotal = sumRatio();
+	
 	if ($$('payType') == 0)
     {
         var borrow = parseFloat($$('refMoney'));
@@ -141,7 +143,7 @@ function sumRatio()
         {
             if (this.value != '')
             {
-                total += parseInt(this.value);
+                total += parseFloat(this.value);
             }
         }
     );   
