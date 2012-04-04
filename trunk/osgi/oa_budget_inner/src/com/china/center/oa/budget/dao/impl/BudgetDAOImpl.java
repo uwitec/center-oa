@@ -56,6 +56,7 @@ public class BudgetDAOImpl extends BaseDAO<BudgetBean, BudgetVO> implements Budg
      */
     public List<BudgetBean> querySubmitBudgetByParentId(String parentId)
     {
+        // 3和99的预算都在里面
         return this.queryEntityBeansByCondition("where parentId = ? and status >= ?", parentId,
             BudgetConstant.BUDGET_STATUS_SUBMIT);
     }

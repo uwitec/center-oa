@@ -68,6 +68,8 @@ public class BudgetManagerImpl implements BudgetManager
 {
     private final Log triggerLog = LogFactory.getLog("trigger");
 
+    private final Log fatalLog = LogFactory.getLog("fatal");
+
     private BudgetDAO budgetDAO = null;
 
     private BudgetItemDAO budgetItemDAO = null;
@@ -784,7 +786,7 @@ public class BudgetManagerImpl implements BudgetManager
     }
 
     /**
-     * 通过
+     * 通过(正式生效)
      * 
      * @param user
      * @param id
@@ -808,6 +810,7 @@ public class BudgetManagerImpl implements BudgetManager
             }
         }
 
+        // 检验预算是否超支
         checkTotal(bean);
 
         // 如果是月度预算需要校验时间(不能重合)
@@ -1061,7 +1064,7 @@ public class BudgetManagerImpl implements BudgetManager
     }
 
     /**
-     * 检查预算总额
+     * CORE 检查预算总额(这里是增加预算的核心)
      * 
      * @param bean
      * @throws MYException
@@ -1081,9 +1084,43 @@ public class BudgetManagerImpl implements BudgetManager
 
             double hasUsed = budgetDAO.countParentBudgetTotal(bean.getParentId());
 
-            if ( (bean.getTotal() + hasUsed) > parentBean.getTotal())
+            if (MathTools.compare(bean.getTotal() + hasUsed, parentBean.getTotal()) > 0)
             {
-                throw new MYException("总体预算超过父级预算,请核实");
+                throw new MYException("总体预算[%.2f]超过父级预算[%.2f],请核实", bean.getTotal() + hasUsed,
+                    parentBean.getTotal());
+            }
+
+            // 需要验证每个预算项是否超支
+            List<BudgetItemBean> parentItemList = budgetItemDAO.queryEntityBeansByFK(bean
+                .getParentId());
+
+            // 还需要检查子预算子和,防止预算超标
+            List<BudgetBean> subBudget = budgetDAO.querySubmitBudgetByParentId(bean.getParentId());
+
+            // CORE 预算变更的核心检查
+            for (BudgetItemBean budgetItemBean : parentItemList)
+            {
+                double total = 0.0d;
+
+                // 计算子项之和
+                for (BudgetBean budgetBean : subBudget)
+                {
+                    BudgetItemBean subBudgetItemBean = budgetItemDAO.findByBudgetIdAndFeeItemId(
+                        budgetBean.getId(), budgetItemBean.getFeeItemId());
+
+                    if (subBudgetItemBean != null)
+                    {
+                        total += BudgetHelper
+                            .getBudgetItemRealBudget(budgetBean, subBudgetItemBean);
+                    }
+                }
+
+                if (MathTools.compare(total, budgetItemBean.getBudget()) > 0)
+                {
+                    FeeItemBean fee = feeItemDAO.find(budgetItemBean.getFeeItemId());
+                    throw new MYException("当前的预算项的子项[%s]金额达到[%.2f],而父预算只有[%.2f],预算超支请确认", fee
+                        .getName(), total, budgetItemBean.getBudget());
+                }
             }
         }
     }
@@ -1306,7 +1343,8 @@ public class BudgetManagerImpl implements BudgetManager
 
                 if (last < 0)
                 {
-                    System.out.println(last);
+                    fatalLog.fatal(vo.getName() + "的" + budgetItemBean.getFeeItemName() + "超支:"
+                                   + last);
                 }
 
                 // 未分配的预算
