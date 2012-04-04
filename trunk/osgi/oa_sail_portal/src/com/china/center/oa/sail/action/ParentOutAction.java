@@ -1266,6 +1266,12 @@ public class ParentOutAction extends DispatchAction
             {
                 line.writeColumn("退库原销售日期");
             }
+            else
+            {
+                line.writeColumn("是否退库");
+                line.writeColumn("相关退库");
+
+            }
 
             line.writeColumn("库管通过日期");
             line.writeColumn("状态");
@@ -1368,6 +1374,44 @@ public class ParentOutAction extends DispatchAction
                         else
                         {
                             line.writeColumn(refOut.getOutTime());
+                        }
+                    }
+                    else
+                    {
+                        // 查询当前已经有多退货
+                        ConditionParse con = new ConditionParse();
+
+                        con.addWhereStr();
+
+                        con.addCondition("OutBean.refOutFullId", "=", element.getFullId());
+
+                        con.addCondition(" and OutBean.status in (3, 4)");
+
+                        con.addIntCondition("OutBean.type", "=", OutConstant.OUT_TYPE_INBILL);
+
+                        // 排除其他入库(对冲单据)
+                        con.addIntCondition("OutBean.outType", "<>", OutConstant.OUTTYPE_IN_OTHER);
+
+                        List<OutBean> refBuyList = outDAO.queryEntityBeansByCondition(con);
+
+                        if (refBuyList.size() > 0)
+                        {
+                            line.writeColumn("存在退货");
+
+                            StringBuffer sb = new StringBuffer();
+
+                            for (OutBean outBean : refBuyList)
+                            {
+                                sb.append(outBean.getFullId()).append(';');
+                            }
+
+                            line.writeColumn(sb.toString());
+                        }
+                        else
+                        {
+                            line.writeColumn("未退货");
+                            line.writeColumn("");
+
                         }
                     }
 

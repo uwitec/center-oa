@@ -78,6 +78,7 @@ import com.china.center.oa.tax.vo.FinanceItemVO;
 import com.china.center.oa.tax.vo.FinanceRepVO;
 import com.china.center.oa.tax.vo.FinanceShowVO;
 import com.china.center.oa.tax.vo.TaxVO;
+import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.MathTools;
@@ -1095,13 +1096,25 @@ public class ParentQueryFinaAction extends DispatchAction
 
                 if ("0".equals(queryType))
                 {
-                    write.writeLine("编码,名称,期初余额,本期借方,本期贷方,借方累计,贷方累计,方向,期末余额");
+                    write.writeLine("科目,级别,名称,期初余额,本期借方,本期贷方,借方累计,贷方累计,方向,期末余额");
 
                     for (FinanceShowVO each : showList)
                     {
                         WriteFileBuffer line = new WriteFileBuffer(write);
 
                         line.writeColumn("[" + each.getTaxId() + "]");
+
+                        TaxBean tax = taxDAO.find(each.getTaxId());
+
+                        if (tax != null)
+                        {
+                            line.writeColumn(ElTools.get("taxBottomFlag", tax.getBottomFlag()));
+                        }
+                        else
+                        {
+                            line.writeColumn("");
+                        }
+
                         line.writeColumn(each.getTaxName());
                         line.writeColumn(changeString(each.getShowBeginAllmoney()));
                         line.writeColumn(changeString(each.getShowCurrInmoney()));
@@ -1117,13 +1130,25 @@ public class ParentQueryFinaAction extends DispatchAction
 
                 if ("1".equals(queryType))
                 {
-                    write.writeLine("编码,名称,职员,期初余额,本期借方,本期贷方,借方累计,贷方累计,方向,期末余额");
+                    write.writeLine("科目,级别,名称,职员,期初余额,本期借方,本期贷方,借方累计,贷方累计,方向,期末余额");
 
                     for (FinanceShowVO each : showList)
                     {
                         WriteFileBuffer line = new WriteFileBuffer(write);
 
                         line.writeColumn("[" + each.getTaxId() + "]");
+
+                        TaxBean tax = taxDAO.find(each.getTaxId());
+
+                        if (tax != null)
+                        {
+                            line.writeColumn(ElTools.get("taxBottomFlag", tax.getBottomFlag()));
+                        }
+                        else
+                        {
+                            line.writeColumn("");
+                        }
+
                         line.writeColumn(each.getTaxName());
                         line.writeColumn(each.getStafferName());
                         line.writeColumn(changeString(each.getShowBeginAllmoney()));
@@ -1140,13 +1165,25 @@ public class ParentQueryFinaAction extends DispatchAction
 
                 if ("2".equals(queryType))
                 {
-                    write.writeLine("编码,名称,单位,期初余额,本期借方,本期贷方,借方累计,贷方累计,方向,期末余额");
+                    write.writeLine("科目,级别,名称,单位,期初余额,本期借方,本期贷方,借方累计,贷方累计,方向,期末余额");
 
                     for (FinanceShowVO each : showList)
                     {
                         WriteFileBuffer line = new WriteFileBuffer(write);
 
                         line.writeColumn("[" + each.getTaxId() + "]");
+
+                        TaxBean tax = taxDAO.find(each.getTaxId());
+
+                        if (tax != null)
+                        {
+                            line.writeColumn(ElTools.get("taxBottomFlag", tax.getBottomFlag()));
+                        }
+                        else
+                        {
+                            line.writeColumn("");
+                        }
+
                         line.writeColumn(each.getTaxName());
                         line.writeColumn(each.getUnitName());
                         line.writeColumn(changeString(each.getShowBeginAllmoney()));
