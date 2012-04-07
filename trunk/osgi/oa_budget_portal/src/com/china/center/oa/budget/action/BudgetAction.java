@@ -371,6 +371,8 @@ public class BudgetAction extends DispatchAction
             condtion.addFlaseCondition();
         }
 
+        condtion.addCondition("BudgetBean.signer", "=", user.getStafferId());
+
         ActionTools.processJSONQueryCondition(QUERYBUDGETFORAPPROVE, request, condtion);
 
         condtion.addCondition("order by BudgetBean.logTime desc");
@@ -446,6 +448,8 @@ public class BudgetAction extends DispatchAction
 
         condtion.addIntCondition("BudgetApplyBean.status", "=",
             BudgetConstant.BUDGET_APPLY_STATUS_WAIT_APPROVE);
+
+        condtion.addCondition("BudgetBean.signer", "=", user.getStafferId());
 
         condtion.addCondition("order by BudgetApplyBean.logTime desc");
 
