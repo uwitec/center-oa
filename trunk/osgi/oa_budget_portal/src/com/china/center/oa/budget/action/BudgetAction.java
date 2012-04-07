@@ -170,6 +170,44 @@ public class BudgetAction extends DispatchAction
     }
 
     /**
+     * querySelfBudget
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward querySelfBudget(ActionMapping mapping, ActionForm form,
+                                         HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        ConditionParse condtion = new ConditionParse();
+
+        condtion.addWhereStr();
+
+        User user = Helper.getUser(request);
+
+        ActionTools.processJSONQueryCondition(QUERYBUDGET, request, condtion);
+
+        condtion.addCondition("BudgetBean.signer", "=", user.getStafferId());
+
+        condtion.addCondition("order by BudgetBean.logTime desc");
+
+        String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYBUDGET, request, condtion,
+            this.budgetDAO, new HandleResult<BudgetVO>()
+            {
+                public void handle(BudgetVO obj)
+                {
+                    warpBudgetVO(obj);
+                }
+            });
+
+        return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
      * rptQueryRunDepartmentBudget
      * 
      * @param mapping

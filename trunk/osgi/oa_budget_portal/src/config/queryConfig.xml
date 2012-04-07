@@ -37,6 +37,8 @@
         </condtion>
     </item>
     
+    <item name="querySelfBudget" alias="queryBudget"/>
+    
     <item name="queryBudgetForApprove" deaultpfix="BudgetBean">
         <condtion name="name" caption="预算名称">
             <opr>like</opr>
