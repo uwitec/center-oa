@@ -11,7 +11,6 @@ import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
 import com.china.center.jdbc.annotation.enums.JoinType;
-import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.product.bean.DepotBean;
 import com.china.center.oa.product.bean.DepotpartBean;
 import com.china.center.oa.publics.bean.DutyBean;
@@ -117,7 +116,7 @@ public class OutBean implements Serializable
 
     private String department = "";
 
-    @Join(tagClass = CustomerBean.class, type = JoinType.LEFT)
+    @Join(tagClass = UnitViewBean.class, type = JoinType.LEFT)
     private String customerId = "";
 
     private String customerName = "";

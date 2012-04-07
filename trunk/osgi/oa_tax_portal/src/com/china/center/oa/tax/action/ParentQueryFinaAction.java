@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -1585,6 +1586,8 @@ public class ParentQueryFinaAction extends DispatchAction
 
         String unitId = request.getParameter("unitId");
 
+        String taxLevel = request.getParameter("taxLevel");
+
         if ( !StringTools.isNullOrNone(stafferId) && !StringTools.isNullOrNone(unitId))
         {
             throw new MYException("科目余额查询不能同时有职员和单位");
@@ -1638,6 +1641,19 @@ public class ParentQueryFinaAction extends DispatchAction
                 taxList = new ArrayList();
 
                 taxList.add(tax);
+            }
+        }
+
+        if ( !StringTools.isNullOrNone(taxLevel))
+        {
+            for (Iterator iterator = taxList.iterator(); iterator.hasNext();)
+            {
+                TaxBean each = (TaxBean)iterator.next();
+
+                if ( !String.valueOf(each.getLevel()).equals(taxLevel))
+                {
+                    iterator.remove();
+                }
             }
         }
 

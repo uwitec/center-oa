@@ -171,8 +171,18 @@ function clearTax()
                    <p:option type="$dutyList" empty="true"/>
                 </select></td>
                 
-                <td width="15%" align="center"></td>
+                <td width="15%" align="center">科目级别</td>
                 <td align="left" colspan="1">
+                <select name="taxLevel"
+                    class="select_class" values="${taxLevel}" style="width: 80%">
+                   <option value="">--</option>
+                   <option value="0">一级</option>
+                   <option value="1">二级</option>
+                   <option value="2">三级</option>
+                   <option value="3">四级</option>
+                   <option value="4">五级</option>
+                   <option value="5">六级</option>
+                </select>
                 </td>
             </tr>
 			

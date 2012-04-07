@@ -27,7 +27,9 @@ import com.china.center.actionhelper.jsonimpl.JSONArray;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.jdbc.util.PageSeparate;
+import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.customer.dao.CustomerDAO;
+import com.china.center.oa.customer.helper.CustomerHelper;
 import com.china.center.oa.customervssail.dao.OutQueryDAO;
 import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.InsVSOutDAO;
@@ -2177,6 +2179,14 @@ public class OutAction extends ParentOutAction
         // 销售单明细
         if (bean.getType() == OutConstant.OUT_TYPE_OUTBILL)
         {
+            CustomerBean cus = customerDAO.find(bean.getCustomerId());
+
+            if (cus != null)
+            {
+                CustomerHelper.decryptCustomer(cus);
+                bean.setCustomerAddress(cus.getAddress());
+            }
+
             List<InBillVO> billList = inBillDAO.queryEntityVOsByFK(outId);
 
             request.setAttribute("billList", billList);

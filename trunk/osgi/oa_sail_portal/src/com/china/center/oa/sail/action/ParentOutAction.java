@@ -1231,74 +1231,56 @@ public class ParentOutAction extends DispatchAction
 
             element = (OutVO)outList.get(0);
 
-            String ffs = null;
-
-            if (element.getType() == 0)
-            {
-                ffs = "销售";
-            }
-            else
-            {
-                ffs = "入库";
-            }
-
             write = WriteFileFactory.getMyTXTWriter();
 
             write.openFile(out);
 
             WriteFileBuffer line = new WriteFileBuffer(write);
 
-            line.writeColumn(ffs + "日期");
+            line.writeColumn("单据日期");
 
-            line.writeColumn(element.getType() == 0 ? "客户" : "供应商(调出部门)");
+            line.writeColumn("客户编码");
 
             line.writeColumn("事业部");
             line.writeColumn("大区");
             line.writeColumn("部门");
 
-            line.writeColumn("联系人");
-            line.writeColumn("联系电话");
-            line.writeColumn("单据号码");
+            line.writeColumn("单据标识");
             line.writeColumn("类型");
             line.writeColumn("回款日期");
 
-            if (element.getType() == 1)
-            {
-                line.writeColumn("退库原销售日期");
-            }
-            else
-            {
-                line.writeColumn("是否退库");
-                line.writeColumn("相关退库");
-
-            }
+            line.writeColumn("退库原销售日期");
+            line.writeColumn("退库原销售金额");
+            line.writeColumn("退库原销售回款");
+            line.writeColumn("原销售是否回款");
+            line.writeColumn("是否退库");
+            line.writeColumn("相关退库");
 
             line.writeColumn("库管通过日期");
             line.writeColumn("状态");
             line.writeColumn("是否回款");
+            line.writeColumn("回款金额");
+            line.writeColumn("总金额");
+
             line.writeColumn("经办人");
             line.writeColumn("仓库");
             line.writeColumn("目的库");
             line.writeColumn("关联单据");
-            line.writeColumn("描述");
 
             line.writeColumn("品名");
             line.writeColumn("单位");
             line.writeColumn("数量");
             line.writeColumn("单价");
             line.writeColumn("金额");
-            line.writeColumn("成本");
 
-            if (containAuth)
-            {
-                line.writeColumn("业务员结算价");
-                line.writeColumn("总部结算价");
-                line.writeColumn("事业部结算价");
-            }
+            line.writeColumn("成本");
+            line.writeColumn("业务员结算价");
+            line.writeColumn("总部结算价");
+            line.writeColumn("事业部结算价");
 
             line.writeColumn("发货单号");
             line.writeColumn("发货方式");
-            line.writeColumn("总金额");
+            line.writeColumn("描述");
 
             line.writeLine();
 
@@ -1346,17 +1328,11 @@ public class ParentOutAction extends DispatchAction
 
                     line.writeColumn(element.getOutTime());
 
-                    // line.writeColumn(element.getDepartment());
-
-                    line.writeColumn(element.getCustomerName());
+                    line.writeColumn(element.getCustomerCode());
 
                     line.writeColumn(element.getIndustryName());
                     line.writeColumn(element.getIndustryName2());
                     line.writeColumn(element.getIndustryName3());
-
-                    line.writeColumn(element.getConnector());
-
-                    line.writeColumn(element.getPhone());
 
                     line.writeColumn(element.getFullId());
 
@@ -1370,14 +1346,27 @@ public class ParentOutAction extends DispatchAction
                         if (refOut == null)
                         {
                             line.writeColumn(element.getOutTime());
+                            line.writeColumn("");
+                            line.writeColumn("");
+                            line.writeColumn("");
                         }
                         else
                         {
                             line.writeColumn(refOut.getOutTime());
+                            line.writeColumn(MathTools.formatNum(refOut.getTotal()));
+                            line.writeColumn(MathTools.formatNum(refOut.getHadPay()));
+                            line.writeColumn(DefinedCommon.getValue("outPay", refOut.getPay()));
                         }
+
+                        line.writeColumn("");
+                        line.writeColumn("");
                     }
                     else
                     {
+                        line.writeColumn("");
+                        line.writeColumn("");
+                        line.writeColumn("");
+
                         // 查询当前已经有多退货
                         ConditionParse con = new ConditionParse();
 
@@ -1396,8 +1385,6 @@ public class ParentOutAction extends DispatchAction
 
                         if (refBuyList.size() > 0)
                         {
-                            line.writeColumn("存在退货");
-
                             StringBuffer sb = new StringBuffer();
 
                             for (OutBean outBean : refBuyList)
@@ -1405,13 +1392,13 @@ public class ParentOutAction extends DispatchAction
                                 sb.append(outBean.getFullId()).append(';');
                             }
 
+                            line.writeColumn("存在退货");
                             line.writeColumn(sb.toString());
                         }
                         else
                         {
                             line.writeColumn("未退货");
                             line.writeColumn("");
-
                         }
                     }
 
@@ -1423,20 +1410,15 @@ public class ParentOutAction extends DispatchAction
                     }
 
                     line.writeColumn(changeTime);
-
                     line.writeColumn(OutHelper.getOutStatus(element));
-
                     line.writeColumn(DefinedCommon.getValue("outPay", element.getPay()));
+                    line.writeColumn(MathTools.formatNum(element.getHadPay()));
+                    line.writeColumn(MathTools.formatNum(element.getTotal()));
 
                     line.writeColumn(element.getStafferName());
-
                     line.writeColumn(element.getDepotName());
-
                     line.writeColumn(element.getDestinationName());
-
                     line.writeColumn(element.getRefOutFullId());
-
-                    line.writeColumn(StringTools.getExportString(element.getDescription()));
 
                     // 下面是base里面的数据
                     base = (BaseBean)iterator.next();
@@ -1446,13 +1428,20 @@ public class ParentOutAction extends DispatchAction
                     line.writeColumn(String.valueOf(base.getAmount()));
                     line.writeColumn(String.valueOf(base.getPrice()));
                     line.writeColumn(String.valueOf(base.getValue()));
-                    line.writeColumn(MathTools.formatNum(base.getCostPrice()));
 
                     if (containAuth)
                     {
+                        line.writeColumn(MathTools.formatNum(base.getCostPrice()));
                         line.writeColumn(MathTools.formatNum(base.getInputPrice()));
                         line.writeColumn(MathTools.formatNum(base.getPprice()));
                         line.writeColumn(MathTools.formatNum(base.getIprice()));
+                    }
+                    else
+                    {
+                        line.writeColumn("");
+                        line.writeColumn(MathTools.formatNum(base.getInputPrice()));
+                        line.writeColumn("");
+                        line.writeColumn("");
                     }
 
                     if ( !iterator.hasNext())
@@ -1477,7 +1466,7 @@ public class ParentOutAction extends DispatchAction
                             line.writeColumn("");
                         }
 
-                        line.writeColumn(MathTools.formatNum(element.getTotal()));
+                        line.writeColumn(StringTools.getExportString(element.getDescription()));
                     }
 
                     line.writeLine();
@@ -4455,13 +4444,24 @@ public class ParentOutAction extends DispatchAction
         // 查询下属的销售单
         else if ("10".equals(queryType))
         {
-            if (StringTools.isNullOrNone(staffer.getIndustryId2()))
+            // 查询自己下面的
+            String srcId = staffer.getPrincipalshipId();
+
+            if (srcId.equals(staffer.getIndustryId()))
             {
-                condtion.addCondition("OutBean.stafferId", "=", user.getStafferId());
+                condtion.addCondition("OutBean.industryId", "=", staffer.getIndustryId());
+            }
+            else if (srcId.equals(staffer.getIndustryId2()))
+            {
+                condtion.addCondition("OutBean.industryId2", "=", staffer.getIndustryId2());
+            }
+            else if (srcId.equals(staffer.getIndustryId3()))
+            {
+                condtion.addCondition("OutBean.industryId3", "=", staffer.getIndustryId3());
             }
             else
             {
-                condtion.addCondition("OutBean.industryId2", "=", staffer.getIndustryId2());
+                condtion.addFlaseCondition();
             }
         }
         // 查询事业部的销售单
@@ -4690,6 +4690,20 @@ public class ParentOutAction extends DispatchAction
         if ( !StringTools.isNullOrNone(inway))
         {
             condtion.addIntCondition("OutBean.inway", "=", inway);
+        }
+
+        String autoOther = request.getParameter("autoOther");
+
+        if ( !StringTools.isNullOrNone(autoOther))
+        {
+            if ("0".equals(autoOther))
+            {
+                condtion.addCondition("OutBean.description", "like", "自动生成");
+            }
+            else
+            {
+                condtion.addCondition("and OutBean.description not like '%" + "自动生成" + "%'");
+            }
         }
 
         StafferBean staffer = Helper.getStaffer(request);

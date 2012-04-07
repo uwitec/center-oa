@@ -489,8 +489,15 @@ function hrefAndSelect(obj)
                         </select>
                         </td>
 
-                        <td width="15%" align="center"></td>
-                        <td align="center"></td>
+                        <td width="15%" align="center">是否自动入库</td>
+                        <td align="center">
+                            <select name="autoOther"
+                                class="select_class" values=${ppmap.autoOther}>
+                                <option value="">--</option>
+                                <option value="0">系统自动其他入库</option>
+                                <option value="1">人工其他入库</option>
+                            </select>
+                        </td>
                     </tr>
 
 					<tr class="content1">
@@ -527,7 +534,7 @@ function hrefAndSelect(obj)
 									height="6"></td>
 								<td class="caption"><strong>浏览${fg}单:</strong>
 								<c:if test="${queryType == '1'}">
-								<font color=blue>[当前您剩余的信用:${credit}]</font>
+								<font color="blue">[当前您剩余的信用:${credit}]</font>
 								</c:if>
 								</td>
 							</tr>

@@ -13,6 +13,7 @@ package com.china.center.oa.sail.vo;
 
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.Ignore;
 import com.china.center.jdbc.annotation.Relationship;
 import com.china.center.oa.sail.bean.OutBean;
 
@@ -31,6 +32,9 @@ public class OutVO extends OutBean
     @Relationship(relationField = "locationId")
     private String locationName = "";
 
+    @Relationship(relationField = "customerId", tagField = "code")
+    private String customerCode = "";
+
     /**
      * 源仓库
      */
@@ -46,7 +50,10 @@ public class OutVO extends OutBean
     @Relationship(relationField = "depotpartId")
     private String depotpartName = "";
 
-    @Relationship(relationField = "customerId", tagField = "address")
+    /**
+     * 送货地址
+     */
+    @Ignore
     private String customerAddress = "";
 
     @Relationship(relationField = "invoiceId")
@@ -238,6 +245,23 @@ public class OutVO extends OutBean
     }
 
     /**
+     * @return the customerCode
+     */
+    public String getCustomerCode()
+    {
+        return customerCode;
+    }
+
+    /**
+     * @param customerCode
+     *            the customerCode to set
+     */
+    public void setCustomerCode(String customerCode)
+    {
+        this.customerCode = customerCode;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -254,6 +278,9 @@ public class OutVO extends OutBean
             .append(TAB)
             .append("locationName = ")
             .append(this.locationName)
+            .append(TAB)
+            .append("customerCode = ")
+            .append(this.customerCode)
             .append(TAB)
             .append("depotName = ")
             .append(this.depotName)

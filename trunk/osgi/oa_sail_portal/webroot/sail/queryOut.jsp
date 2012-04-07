@@ -915,11 +915,6 @@ function hrefAndSelect(obj)
 	                onclick="reject()" />&nbsp;&nbsp;
 		</c:if>	
 		
-		
-		<c:if test="${queryType == '10'}">
-             <input type="button" class="button_class" value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;
-        </c:if>
-		
 		<c:if test="${queryType == '5'}">
 		<input type="button" class="button_class"
                 value="&nbsp;&nbsp;确认回款&nbsp;&nbsp;" onClick="payOut2()"/>&nbsp;&nbsp;
@@ -957,7 +952,7 @@ function hrefAndSelect(obj)
         <input type="button" class="button_class"
                 value="&nbsp;&nbsp;申请退款&nbsp;&nbsp;" onClick="applyBackPay()"/>&nbsp;&nbsp;
         </c:if>
-        <c:if test="${my:auth(user, '1417')}">
+        <c:if test="${my:auth(user, '1417') || queryType == '10'}">
         <input
                 type="button" class="button_class"
                 value="&nbsp;导出查询结果&nbsp;" onclick="exports()" />&nbsp;&nbsp;
