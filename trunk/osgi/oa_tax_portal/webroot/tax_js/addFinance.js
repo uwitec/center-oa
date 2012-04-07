@@ -549,7 +549,7 @@ function inChange()
 	
 	inTd = document.getElementById('inHTML');
 	
-	inTd.innerHTML = total;
+	inTd.innerHTML = formatNum(total, 2);
 }
 
 function outChange()
@@ -569,6 +569,6 @@ function outChange()
     
     outTd = document.getElementById('outHTML');
     
-    outTd.innerHTML = total;
+    outTd.innerHTML = formatNum(total, 2);
 }
 

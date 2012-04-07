@@ -53,6 +53,7 @@ import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.dao.PrincipalshipDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.manager.OrgManager;
+import com.china.center.oa.publics.wrap.ForwardBean;
 import com.china.center.oa.sail.dao.UnitViewDAO;
 import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.tax.bean.FinanceBean;
@@ -812,13 +813,32 @@ public class FinaAction extends ParentQueryFinaAction
 
         CommonTools.removeParamers(request);
 
-        if ( !"1".equals(tempFlag))
+        ForwardBean forward = (ForwardBean)request.getSession().getAttribute("g_Forward_tax");
+
+        if (forward == null)
         {
-            return mapping.findForward(QUERYFINANCE);
+            if ( !"1".equals(tempFlag))
+            {
+                return mapping.findForward(QUERYFINANCE);
+            }
+            else
+            {
+                return mapping.findForward(QUERYTEMPFINANCE);
+            }
         }
         else
         {
-            return mapping.findForward(QUERYTEMPFINANCE);
+            try
+            {
+                // 重定向
+                response.sendRedirect(forward.getUrl());
+            }
+            catch (IOException e)
+            {
+                _logger.error(e, e);
+            }
+
+            return null;
         }
     }
 
@@ -1150,6 +1170,8 @@ public class FinaAction extends ParentQueryFinaAction
 
         request.setAttribute("tempFlag", tempFlag);
 
+        CommonTools.saveParamers(request);
+
         if ( !"1".equals(tempFlag))
         {
             FinanceVO bean = financeDAO.findVO(id);
@@ -1178,6 +1200,8 @@ public class FinaAction extends ParentQueryFinaAction
                 }
 
                 preInner(request);
+
+                cacheBack(request);
 
                 return mapping.findForward("updateFinance");
             }
@@ -1217,11 +1241,44 @@ public class FinaAction extends ParentQueryFinaAction
             {
                 preInner(request);
 
+                cacheBack(request);
+
                 return mapping.findForward("updateFinance");
             }
         }
 
         return mapping.findForward("detailFinance");
+    }
+
+    /**
+     * cacheBack
+     * 
+     * @param request
+     */
+    private void cacheBack(HttpServletRequest request)
+    {
+        // 进入修改
+        String backType = request.getParameter("backType");
+        String backId = request.getParameter("backId");
+
+        request.getSession().removeAttribute("g_Forward_tax");
+
+        if ( !StringTools.isNullOrNone(backType) && !StringTools.isNullOrNone(backId))
+        {
+            ForwardBean forward = new ForwardBean();
+
+            if ("0".equals(backType))
+            {
+                forward.setUrl("../sail/out.do?method=findOut&radioIndex=0&goback=4&fow=99&outId="
+                               + backId);
+
+                forward.setType(backType);
+
+                forward.setId(backId);
+            }
+
+            request.getSession().setAttribute("g_Forward_tax", forward);
+        }
     }
 
     /**

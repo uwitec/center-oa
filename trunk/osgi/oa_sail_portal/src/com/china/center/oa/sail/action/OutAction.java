@@ -1775,6 +1775,15 @@ public class OutAction extends ParentOutAction
 
         CommonTools.saveParamers(request);
 
+        String goback = request.getParameter("goback");
+
+        if (StringTools.isNullOrNone(goback))
+        {
+            goback = "1";
+        }
+
+        request.setAttribute("goback", goback);
+
         User user = Helper.getUser(request);
 
         OutVO bean = null;

@@ -11,7 +11,7 @@
 
 function updateBean()
 {
-    document.location.href = '../finance/finance.do?method=findFinance&tempFlag=${tempFlag}&update=1&id=${bean.id}';
+    document.location.href = '../finance/finance.do?method=findFinance&tempFlag=${tempFlag}&update=1&id=${bean.id}&backType=${backType}&backId=${backId}';
 }
 
 

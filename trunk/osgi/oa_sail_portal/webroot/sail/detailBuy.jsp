@@ -302,7 +302,7 @@ function checkBean()
                         <td align="right">关联凭证：</td>
                         <td colspan="3">
                        <c:forEach items="${financeBeanList}" var="item">
-                       <a href="../finance/finance.do?method=findFinance&id=${item.id}">${item.id}</a>
+                       <a href="../finance/finance.do?method=findFinance&id=${item.id}&backType=0&backId=${bean.fullId}">${item.id}</a>
                        &nbsp;
                        </c:forEach>
                        </td>
@@ -565,7 +565,7 @@ function checkBean()
             class="button_class" onclick="pagePrint()"
             value="&nbsp;&nbsp;打 印&nbsp;&nbsp;">&nbsp;&nbsp;<input
             type="button" name="ba" class="button_class"
-            onclick="javascript:history.go(-1)"
+            onclick="javascript:history.go(-${goback})"
             value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>
         </td>
         <td width="0%"></td>
