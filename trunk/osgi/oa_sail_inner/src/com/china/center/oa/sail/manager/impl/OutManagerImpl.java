@@ -4931,18 +4931,28 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             {
                 ProductBean product = productDAO.find(baseBean.getProductId());
 
-                if (product != null)
+                if (product != null && baseBean.getPprice() == 0.0)
                 {
                     SailConfBean sailConf = sailConfigManager.findProductConf(sb, product);
 
-                    // 产品结算价
-                    double sailPrice = baseBean.getInputPrice()
-                                       / (1 + sailConf.getPratio() / 1000.0d + sailConf.getIratio() / 1000.0d);
+                    double sailPrice = 0.0;
+
+                    if (baseBean.getInputPrice() == 0.0)
+                    {
+                        sailPrice = product.getSailPrice();
+                    }
+                    else
+                    {
+                        sailPrice = baseBean.getInputPrice()
+                                    / (1 + sailConf.getPratio() / 1000.0d + sailConf.getIratio() / 1000.0d);
+                    }
 
                     baseBean.setPprice(sailPrice * (1 + sailConf.getPratio() / 1000.0d));
 
                     // 就是看到的结算价
-                    baseBean.setIprice(baseBean.getInputPrice());
+                    baseBean
+                        .setIprice(sailPrice
+                                   * (1 + sailConf.getPratio() / 1000.0d + sailConf.getIratio() / 1000.0d));
 
                     baseDAO.updateEntityBean(baseBean);
                 }
