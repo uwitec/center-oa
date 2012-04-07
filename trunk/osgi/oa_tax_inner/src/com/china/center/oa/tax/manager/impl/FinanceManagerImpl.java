@@ -101,6 +101,8 @@ public class FinanceManagerImpl implements FinanceManager
      */
     private static boolean LOCK_FINANCE = false;
 
+    private static Object FINANCE_ADD_LOCK = new Object();
+
     /**
      * default constructor
      */
@@ -111,7 +113,11 @@ public class FinanceManagerImpl implements FinanceManager
     public boolean addFinanceBeanWithoutTransactional(User user, FinanceBean bean)
         throws MYException
     {
-        return addInner(user, bean, true);
+        // 全局控制
+        synchronized (FINANCE_ADD_LOCK)
+        {
+            return addInner(user, bean, true);
+        }
     }
 
     /**
@@ -262,6 +268,14 @@ public class FinanceManagerImpl implements FinanceManager
 
         if (mainTable)
         {
+            String financeDate = bean.getFinanceDate();
+
+            int findMaxMonthIndex = financeDAO.findMaxMonthIndex(
+                financeDate.substring(0, 8) + "01", financeDate.substring(0, 8) + "31");
+
+            // 设置MonthIndex
+            bean.setMonthIndex(findMaxMonthIndex + 1);
+
             financeItemDAO.saveAllEntityBeans(itemList);
 
             financeDAO.saveEntityBean(bean);
@@ -1075,6 +1089,7 @@ public class FinanceManagerImpl implements FinanceManager
         bean.setLogTime(old.getLogTime());
         bean.setCreaterId(old.getCreaterId());
         bean.setName(old.getName());
+        bean.setMonthIndex(old.getMonthIndex());
 
         // 保存关联
         bean.setRefId(old.getRefId());

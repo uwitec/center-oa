@@ -67,6 +67,8 @@ public class FinanceBean implements Serializable
      */
     private int createType = TaxConstanst.FINANCE_CREATETYPE_HAND;
 
+    private int monthIndex = 0;
+
     /**
      * 主关联单据
      */
@@ -465,6 +467,57 @@ public class FinanceBean implements Serializable
         this.locks = locks;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( (id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if ( ! (obj instanceof FinanceBean)) return false;
+        final FinanceBean other = (FinanceBean)obj;
+        if (id == null)
+        {
+            if (other.id != null) return false;
+        }
+        else if ( !id.equals(other.id)) return false;
+        return true;
+    }
+
+    /**
+     * @return the monthIndex
+     */
+    public int getMonthIndex()
+    {
+        return monthIndex;
+    }
+
+    /**
+     * @param monthIndex
+     *            the monthIndex to set
+     */
+    public void setMonthIndex(int monthIndex)
+    {
+        this.monthIndex = monthIndex;
+    }
+
     /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
@@ -500,6 +553,9 @@ public class FinanceBean implements Serializable
             .append(TAB)
             .append("createType = ")
             .append(this.createType)
+            .append(TAB)
+            .append("monthIndex = ")
+            .append(this.monthIndex)
             .append(TAB)
             .append("refId = ")
             .append(this.refId)
@@ -543,40 +599,6 @@ public class FinanceBean implements Serializable
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ( (id == null) ? 0 : id.hashCode());
-        return result;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj)
-    {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if ( ! (obj instanceof FinanceBean)) return false;
-        final FinanceBean other = (FinanceBean)obj;
-        if (id == null)
-        {
-            if (other.id != null) return false;
-        }
-        else if ( !id.equals(other.id)) return false;
-        return true;
     }
 
 }

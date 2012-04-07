@@ -26,13 +26,14 @@ function load()
          url: gurl + 'query' + ukey,
          colModel : [
              {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status}>', width : 40, align: 'center'},
-             {display: '标识', name : 'id', width : '15%'},
+             {display: '月标识', name : 'id', width : '15%'},
+             {display: '索引', name : 'monthIndex', sortable : true, width : '7%'},
              {display: '类型', name : 'type', cc: 'financeType', width : '10%'},
              {display: '分类', name : 'createType', cc: 'financeCreateType', width : '10%'},
              {display: '状态', name : 'status', cc: 'financeStatus', width : '8%'},
              {display: '纳税实体', name : 'dutyName',  width : '10%'},
-             {display: '金额', name : 'showInmoney', width : '10%'},
-             {display: '创建人', name : 'createrName', width : '10%'},
+             {display: '金额', name : 'showInmoney', width : '8%'},
+             {display: '创建人', name : 'createrName', width : '8%'},
              {display: '凭证日期', name : 'financeDate', sortable : true, width : '10%'},
              {display: '创建时间', name : 'logTime', sortable : true, width : 'auto'}
              ],

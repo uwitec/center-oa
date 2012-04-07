@@ -50,9 +50,12 @@ function updateBean()
 			<p:cell title="总金额">${bean.showInmoney}</p:cell>
 			<p:cell title="录入人">${bean.createrName}</p:cell>
 			<p:cell title="录入时间">${bean.logTime}</p:cell>
-			<p:cell title="更改状态" end="true">
+			<p:cell title="更改状态">
 			    ${my:get('financeUpdateFlag', bean.updateFlag)}
 			</p:cell>
+			<p:cell title="月索引">
+                ${bean.monthIndex}
+            </p:cell>
 			<p:cell title="关联" end="true">
 			<c:choose>
 			    <c:when test="${bean.createType == 1}">

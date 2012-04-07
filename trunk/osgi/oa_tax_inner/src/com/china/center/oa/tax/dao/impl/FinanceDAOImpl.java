@@ -124,4 +124,12 @@ public class FinanceDAOImpl extends BaseDAO<FinanceBean, FinanceVO> implements F
 
         return result;
     }
+
+    public int findMaxMonthIndex(String beginDate, String endDate)
+    {
+        String sql = "select max(monthIndex) from " + BeanTools.getTableName(claz)
+                     + " where financeDate >= ? and financeDate <= ?";
+
+        return this.jdbcOperation.queryForInt(sql, beginDate, endDate);
+    }
 }
