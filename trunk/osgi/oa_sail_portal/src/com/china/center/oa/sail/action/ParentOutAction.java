@@ -1366,6 +1366,7 @@ public class ParentOutAction extends DispatchAction
                         line.writeColumn("");
                         line.writeColumn("");
                         line.writeColumn("");
+                        line.writeColumn("");
 
                         // 查询当前已经有多退货
                         ConditionParse con = new ConditionParse();
@@ -1995,6 +1996,7 @@ public class ParentOutAction extends DispatchAction
                         baseBean.setCostPrice(each.getCostPrice());
                         baseBean.setIprice(each.getIprice());
                         baseBean.setPprice(each.getPprice());
+                        baseBean.setInputPrice(each.getInputPrice());
                         baseBean.setCostPriceKey(StorageRelationHelper.getPriceKey(each
                             .getCostPrice()));
 
@@ -2299,6 +2301,7 @@ public class ParentOutAction extends DispatchAction
                         baseBean.setCostPrice(each.getCostPrice());
                         baseBean.setPprice(each.getPprice());
                         baseBean.setIprice(each.getIprice());
+                        baseBean.setInputPrice(each.getInputPrice());
                         baseBean.setCostPriceKey(StorageRelationHelper.getPriceKey(each
                             .getCostPrice()));
 

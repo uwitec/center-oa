@@ -4892,6 +4892,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         {
                             each1.setIprice(each2.getIprice());
                             each1.setPprice(each2.getPprice());
+                            each1.setInputPrice(each2.getInputPrice());
 
                             // 更新
                             baseDAO.updateEntityBean(each1);
