@@ -623,9 +623,9 @@ public class CustomerAction extends DispatchAction
 
         condtion.addWhereStr();
 
-        User user = Helper.getUser(request);
+        // User user = Helper.getUser(request);
 
-        condtion.addCondition("t3.locationId", "=", user.getLocationId());
+        // condtion.addCondition("t3.locationId", "=", user.getLocationId());
 
         ActionTools.processJSONQueryCondition(QUERYCUSTOMERASSIGN, request, condtion);
 

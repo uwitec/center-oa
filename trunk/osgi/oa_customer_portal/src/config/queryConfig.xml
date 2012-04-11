@@ -111,7 +111,7 @@
 			<opr>=</opr>
 			<datatype>0</datatype>
 			<type>select</type>
-			<option>$staffer_location</option>
+			<option>$staffer</option>
 		</condtion>
 	</item>
 	
