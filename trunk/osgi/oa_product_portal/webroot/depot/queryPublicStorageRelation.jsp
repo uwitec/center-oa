@@ -30,7 +30,7 @@ function load()
              {display: '产品', name : 'productName', width : '20%', cname: 'StorageRelationBean.productId', sortable : true},
              {display: '编码', name : 'productCode', width : '10%'},
              {display: '实际/预占/在途', name : 'amount', content: '{amount}/{preassignAmount}/{inwayAmount}', width : '15%', sortable : true},
-             {display: '价格', name : 'price', toFixed: 2, sortable : true, width : '10%'},
+             //{display: '价格', name : 'price', toFixed: 2, sortable : true, width : '10%'},
              {display: '储位', name : 'storageName', width : '10%'},
              {display: '仓区', name : 'depotpartName', width : '10%'},
              {display: '仓库', name : 'locationName', width : '10%'},
