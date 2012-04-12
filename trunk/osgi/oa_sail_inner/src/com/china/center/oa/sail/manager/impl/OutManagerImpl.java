@@ -144,6 +144,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
     private final Log triggerLog = LogFactory.getLog("trigger");
 
+    private final Log fatalLog = LogFactory.getLog("fatal");
+
     private LocationDAO locationDAO = null;
 
     private CommonDAO commonDAO = null;
@@ -297,6 +299,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         _logger.info(fullId + "/inputPriceList/" + request.getParameter("inputPriceList"));
 
+        _logger.info(fullId + "/showCostList/" + request.getParameter("showCostList"));
+
         _logger.info(fullId + "/desList/" + request.getParameter("desList"));
 
         _logger.info(fullId + "/otherList/" + request.getParameter("otherList"));
@@ -431,49 +435,6 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         else
                         {
                             base.setPrice(MathTools.parseDouble(priceList[i]));
-                        }
-
-                        // 验证税点
-                        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL
-                            && outBean.getOutType() != OutConstant.OUTTYPE_OUT_SWATCH)
-                        {
-                            // 丢弃
-                            if (false)
-                            {
-                                // 输入价格
-                                base.setInputPrice(MathTools.parseDouble(inputPriceList[i]));
-
-                                DutyBean duty = dutyDAO.find(outBean.getDutyId());
-
-                                if (duty == null)
-                                {
-                                    throw new RuntimeException("纳税实体不存在,请确认操作");
-                                }
-
-                                double inputPrice = base.getInputPrice();
-
-                                double outPrice = base.getPrice();
-
-                                double a = MathTools.round2(inputPrice * (1000 + duty.getDues())
-                                                            / 1000.0d);
-
-                                double b = outPrice;
-
-                                if ( !MathTools.equal2(a, b))
-                                {
-                                    _logger.error("error price1:" + a);
-                                    _logger.error("error price2:" + b);
-
-                                    _logger.error("error price3:" + ((long)Math.round(a * 1000)));
-                                    _logger.error("error price4:" + ((long)Math.round(b * 1000)));
-
-                                    throw new RuntimeException("卖出价格非含税价格,请重新操作");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            base.setInputPrice(base.getPrice());
                         }
 
                         if (base.getPrice() == 0)
@@ -635,15 +596,14 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         // 其实也是成本
                         base.setDescription(desList[i].trim());
 
-                        // 只有V5的销售单有此功能
-                        if (OATools.isChangeToV5()
-                            && outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+                        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                         {
                             // 显示成本(V5新功能)
                             base.setInputPrice(MathTools.parseDouble(showCostList[i]));
                         }
                         else
                         {
+                            // 入库单
                             if (inputPriceList != null && inputPriceList.length > i)
                             {
                                 // 兼容
@@ -667,6 +627,17 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                         base
                             .setIprice(product.getSailPrice()
                                        * (1 + sailConf.getIratio() / 1000.0d + sailConf.getPratio() / 1000.0d));
+
+                        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+                        {
+                            // 发现一些异常,这里保护一下
+                            if (base.getInputPrice() == 0 && base.getIprice() > 0)
+                            {
+                                fatalLog.fatal("error price in sail:" + base);
+
+                                throw new RuntimeException("业务员结算价不能为0");
+                            }
+                        }
 
                         baseList.add(base);
 

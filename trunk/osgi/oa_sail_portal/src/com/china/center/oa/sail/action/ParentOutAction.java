@@ -1445,30 +1445,27 @@ public class ParentOutAction extends DispatchAction
                         line.writeColumn("");
                     }
 
-                    if ( !iterator.hasNext())
+                    // 到出发货单和发货方式
+                    if (consignBean != null)
                     {
-                        // 到出发货单和发货方式
-                        if (consignBean != null)
-                        {
-                            line.writeColumn(consignBean.getTransportNo());
+                        line.writeColumn(consignBean.getTransportNo());
 
-                            if (transportBean != null)
-                            {
-                                line.writeColumn(transportBean.getName());
-                            }
-                            else
-                            {
-                                line.writeColumn("");
-                            }
+                        if (transportBean != null)
+                        {
+                            line.writeColumn(transportBean.getName());
                         }
                         else
                         {
                             line.writeColumn("");
-                            line.writeColumn("");
                         }
-
-                        line.writeColumn(StringTools.getExportString(element.getDescription()));
                     }
+                    else
+                    {
+                        line.writeColumn("");
+                        line.writeColumn("");
+                    }
+
+                    line.writeColumn(StringTools.getExportString(element.getDescription()));
 
                     line.writeLine();
                 }
