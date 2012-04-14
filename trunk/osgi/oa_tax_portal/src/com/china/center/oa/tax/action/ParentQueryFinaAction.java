@@ -2413,19 +2413,12 @@ public class ParentQueryFinaAction extends DispatchAction
             {
                 String postName = obj[index];
 
-                PrincipalshipBean pri = principalshipDAO.findByUnique(postName);
+                PrincipalshipBean pri = principalshipDAO.findUniqueByName(postName);
 
-                if (pri == null)
+                if (pri != null)
                 {
-                    builder
-                        .append("<font color=red>第[" + currentNumber + "]行错误:")
-                        .append("部门不存在")
-                        .append("</font><br>");
-
-                    return false;
+                    item.setDepartmentId(pri.getId());
                 }
-
-                item.setDepartmentId(pri.getId());
             }
 
             index++ ;
@@ -2446,6 +2439,11 @@ public class ParentQueryFinaAction extends DispatchAction
                 }
 
                 item.setStafferId(bean.getId());
+
+                if (StringTools.isNullOrNone(item.getDepartmentId()))
+                {
+                    item.setDepartmentId(bean.getPrincipalshipId());
+                }
             }
 
             index++ ;
