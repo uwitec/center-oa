@@ -9,7 +9,10 @@
 package com.china.center.oa.product.dao.impl;
 
 
+import java.util.List;
+
 import com.china.center.jdbc.inter.impl.BaseDAO;
+import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.product.bean.ProductBean;
 import com.china.center.oa.product.dao.ProductDAO;
 import com.china.center.oa.product.vo.ProductVO;
@@ -28,5 +31,22 @@ public class ProductDAOImpl extends BaseDAO<ProductBean, ProductVO> implements P
     public boolean updateStatus(String id, int status)
     {
         return this.jdbcOperation.updateField("status", status, id, claz) > 0;
+    }
+
+    public ProductBean findByName(String name)
+    {
+        ConditionParse con = new ConditionParse();
+        con.addWhereStr();
+
+        con.addCondition("name", "=", name);
+
+        List<ProductBean> productList = queryEntityBeansByCondition(con.toString());
+
+        if (productList.size() > 0)
+        {
+            return productList.get(0);
+        }
+
+        return null;
     }
 }

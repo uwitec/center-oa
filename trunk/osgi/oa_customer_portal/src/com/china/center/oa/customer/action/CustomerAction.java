@@ -2462,9 +2462,9 @@ public class CustomerAction extends DispatchAction
 
         if (rds.haveStream())
         {
+            ReaderFile reader = ReadeFileFactory.getXLSReader();
             try
             {
-                ReaderFile reader = ReadeFileFactory.getXLSReader();
 
                 reader.readFile(rds.getUniqueInputStream());
 
@@ -2511,6 +2511,17 @@ public class CustomerAction extends DispatchAction
                 request.setAttribute(KeyConstant.ERROR_MESSAGE, "导入失败");
 
                 return mapping.findForward("uploadCustomer");
+            }
+            finally
+            {
+                try
+                {
+                    reader.close();
+                }
+                catch (IOException e)
+                {
+                    _logger.error(e, e);
+                }
             }
         }
 

@@ -25,4 +25,6 @@ import com.china.center.oa.product.vo.ProductVO;
 public interface ProductDAO extends DAO<ProductBean, ProductVO>
 {
     boolean updateStatus(String id, int status);
+
+    ProductBean findByName(String name);
 }
