@@ -768,6 +768,42 @@ public class FinaAction extends ParentQueryFinaAction
     }
 
     /**
+     * deleteFinanceTurn
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward deleteFinanceTurn(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            User user = Helper.getUser(request);
+
+            financeManager.deleteFinanceTurnBean(user, id);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
      * updateFinance
      * 
      * @param mapping
@@ -990,7 +1026,7 @@ public class FinaAction extends ParentQueryFinaAction
     }
 
     /**
-     * checks
+     * 总部核对
      * 
      * @param mapping
      * @param form
@@ -1007,29 +1043,36 @@ public class FinaAction extends ParentQueryFinaAction
 
         try
         {
-            String id = request.getParameter("id");
+            String idStr = request.getParameter("id");
 
-            int type = MathTools.parseInt(request.getParameter("type"));
+            String[] ids = idStr.split("~");
 
-            String reason = request.getParameter("reason");
-
-            User user = Helper.getUser(request);
-
-            if (type != 6 && type != 99)
+            for (int i = 0; i < ids.length; i++ )
             {
-                taxFacade.checks(user.getId(), id, "[" + user.getStafferName() + "]" + reason);
-            }
-            // 凭证核对
-            else if (type == 99)
-            {
-                taxFacade.updateFinanceCheck(user.getId(), id, "[" + user.getStafferName() + "]"
-                                                               + reason);
-            }
-            else
-            {
-                outManager.check(id, user, reason);
+                String id = ids[i];
 
-                financeManager.deleteChecks(user, id);
+                int type = MathTools.parseInt(request.getParameter("type"));
+
+                String reason = request.getParameter("reason");
+
+                User user = Helper.getUser(request);
+
+                if (type != 6 && type != 99)
+                {
+                    taxFacade.checks(user.getId(), id, "[" + user.getStafferName() + "]" + reason);
+                }
+                // 凭证核对
+                else if (type == 99)
+                {
+                    taxFacade.updateFinanceCheck(user.getId(), id, "[" + user.getStafferName()
+                                                                   + "]" + reason);
+                }
+                else
+                {
+                    outManager.check(id, user, reason);
+
+                    financeManager.deleteChecks(user, id);
+                }
             }
 
             ajax.setSuccess("成功操作");

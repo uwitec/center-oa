@@ -12,6 +12,7 @@ package com.china.center.oa.tax.bean;
 import java.io.Serializable;
 
 import com.china.center.jdbc.annotation.Entity;
+import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
@@ -37,6 +38,9 @@ public class FinanceMonthBean implements Serializable
 
     @Join(tagClass = StafferBean.class, type = JoinType.LEFT)
     private String stafferId = "";
+
+    @FK
+    private String monthKey = "";
 
     /**
      * 当月发生
@@ -88,8 +92,6 @@ public class FinanceMonthBean implements Serializable
     private String taxId7 = "";
 
     private String taxId8 = "";
-
-    private String monthKey = "";
 
     private String logTime = "";
 

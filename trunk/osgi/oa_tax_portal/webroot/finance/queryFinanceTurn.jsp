@@ -38,7 +38,8 @@ function load()
              //pid : {begin : '<a title=点击查看明细 href=' + gurl + 'findFinance&id={pid}>', end : '</a>'}
          },
          buttons : [
-             {id: 'add', bclass: 'add', onpress : addBean, auth: '1805'},
+             {id: 'add', bclass: 'add', caption: '增加月结', onpress : addBean, auth: '1805'},
+             {id: 'del', bclass: 'del', caption: '撤销月结', onpress : delBean, auth: '1805'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -60,6 +61,17 @@ function addBean(opr, grid)
         
         $l(gurl + 'preForAdd' + ukey);
     }
+}
+
+function delBean(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb'))
+    {    
+        if(window.confirm('确定撤销月结?'))    
+        $ajax(gurl + 'delete' + ukey + '&id=' + getRadioValue('checkb'), callBackFun);
+    }
+    else
+    $error('不能操作');
 }
 
 function doSearch()

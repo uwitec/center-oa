@@ -58,6 +58,17 @@ public interface FinanceManager
     boolean addFinanceTurnBean(User user, FinanceTurnBean bean)
         throws MYException;
 
+    /**
+     * 删除月结
+     * 
+     * @param user
+     * @param id
+     * @return
+     * @throws MYException
+     */
+    boolean deleteFinanceTurnBean(User user, String id)
+        throws MYException;
+
     boolean updateFinanceBean(User user, FinanceBean bean)
         throws MYException;
 

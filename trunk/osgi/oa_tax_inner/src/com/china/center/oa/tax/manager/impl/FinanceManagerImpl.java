@@ -314,6 +314,94 @@ public class FinanceManagerImpl implements FinanceManager
         return true;
     }
 
+    @IntegrationAOP(auth = AuthConstant.FINANCE_TURN, lock = TaxConstanst.FINANCETURN_OPR_LOCK)
+    @Transactional(rollbackFor = MYException.class)
+    public boolean deleteFinanceTurnBean(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        try
+        {
+            // 锁定
+            setLOCK_FINANCE(true);
+
+            FinanceTurnBean turn = financeTurnDAO.find(id);
+
+            if (turn == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            FinanceTurnVO last = financeTurnDAO.findLastVO();
+
+            if (last != null)
+            {
+                if ( !turn.getId().equals(last.getId()))
+                {
+                    throw new MYException("只能撤销最近的月结:" + last.getMonthKey());
+                }
+            }
+
+            // 删除月结产生的凭证
+            ConditionParse con = new ConditionParse();
+            con.addWhereStr();
+            con.addCondition("financeDate", ">=", turn.getStartTime());
+            con.addCondition("financeDate", "<=", turn.getEndTime());
+            con.addIntCondition("createType", "=", TaxConstanst.FINANCE_CREATETYPE_TURN);
+
+            List<String> idList = financeDAO.queryEntityIdsByCondition(con);
+
+            for (String each : idList)
+            {
+                // 删除凭证
+                financeDAO.deleteEntityBean(each);
+
+                // 删除凭证项
+                financeItemDAO.deleteEntityBeansByFK(each);
+
+                // 删除需要记录操作日志
+                operationLog.info(user.getStafferName() + "删除了损益结转凭证:" + each);
+            }
+
+            con.clear();
+            con.addWhereStr();
+            con.addCondition("financeDate", ">=", turn.getStartTime());
+            con.addCondition("financeDate", "<=", turn.getEndTime());
+            con.addIntCondition("createType", "=", TaxConstanst.FINANCE_CREATETYPE_PROFIT);
+
+            idList = financeDAO.queryEntityIdsByCondition(con);
+
+            for (String each : idList)
+            {
+                // 删除凭证
+                financeDAO.deleteEntityBean(each);
+
+                // 删除凭证项
+                financeItemDAO.deleteEntityBeansByFK(each);
+
+                // 删除需要记录操作日志
+                operationLog.info(user.getStafferName() + "删除了利润结转凭证:" + each);
+            }
+
+            // 删除明细
+            financeMonthDAO.deleteEntityBeansByFK(turn.getMonthKey());
+
+            // 删除结转
+            financeTurnDAO.deleteEntityBean(id);
+
+            operationLog.info(user.getStafferName() + "进行了" + turn.getMonthKey() + "的结转撤销(操作成功)");
+
+        }
+        finally
+        {
+            // 解锁
+            setLOCK_FINANCE(false);
+        }
+
+        return true;
+    }
+
     /**
      * 结转
      */
@@ -1751,4 +1839,5 @@ public class FinanceManagerImpl implements FinanceManager
     {
         this.financeItemTempDAO = financeItemTempDAO;
     }
+
 }

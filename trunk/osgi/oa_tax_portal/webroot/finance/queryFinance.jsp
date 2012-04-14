@@ -25,7 +25,7 @@ function load()
          title: '凭证列表',
          url: gurl + 'query' + ukey,
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status}>', width : 40, align: 'center'},
+             {display: '<input type=checkbox id=flexi_Check onclick=checkAll(this)>选择', name : 'check', content : '<input type=checkbox name=checkb value={id} lstatus={status}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},
              {display: '月索引', name : 'monthIndex', sortable : true, width : '7%'},
              {display: '类型', name : 'type', cc: 'financeType', width : '10%'},
@@ -75,6 +75,14 @@ function addBean(opr, grid)
 
 function delBean(opr, grid)
 {
+    var clis = getCheckBox('checkb');
+    
+    if (clis.length != 1)
+    {
+        $error('只能选择一个凭证');
+        return false;
+    }
+    
     if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 0)
     {    
         if(window.confirm('确定删除?'))    
@@ -86,6 +94,14 @@ function delBean(opr, grid)
 
 function copyBean(opr, grid)
 {
+    var clis = getCheckBox('checkb');
+    
+    if (clis.length != 1)
+    {
+        $error('只能选择一个凭证');
+        return false;
+    }
+    
     if (getRadio('checkb') && getRadioValue('checkb'))
     {    
         if(window.confirm('确定复制此凭证?'))    
@@ -97,23 +113,40 @@ function copyBean(opr, grid)
 
 function checkBean()
 {
-    if (getRadio('checkb') && getRadioValue('checkb'))
-    {   
-        $.messager.prompt('总部核对', '请核对说明', '', function(msg){
+    var clis = getCheckBox('checkb');
+    
+    if (clis.length == 0)
+    {
+        $error('请选择凭证');
+        return false;
+    }
+    
+    var str = '';
+    for (var i = 0; i < clis.length; i++)
+    {
+        str += clis[i].value + '~';
+    }
+    
+    $.messager.prompt('总部核对', '请核对说明', '', function(msg){
                 if (msg)
                 {
-                    $ajax2(gurl + 'checks&id=' + getRadioValue('checkb') + '&type=99', {'reason' : msg},  
+                    $ajax2(gurl + 'checks&id=' + str + '&type=99', {'reason' : msg},  
                         callBackFun);
                 }
                
             }, 2);
-    }
-    else
-    $error('不能操作');
 }
 
 function updateBean()
 {
+    var clis = getCheckBox('checkb');
+    
+    if (clis.length != 1)
+    {
+        $error('只能选择一个凭证');
+        return false;
+    }
+    
 	if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 0)
 	{	
 		$l(gurl + 'find' + ukey + '&update=1&id=' + getRadioValue('checkb'));
