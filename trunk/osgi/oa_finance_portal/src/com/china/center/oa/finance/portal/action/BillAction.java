@@ -772,6 +772,15 @@ public class BillAction extends DispatchAction
 
         request.setAttribute("bean", bean);
 
+        String goback = request.getParameter("goback");
+
+        if (StringTools.isNullOrNone(goback))
+        {
+            goback = "1";
+        }
+
+        request.setAttribute("goback", goback);
+
         // 关联的
         List<FinanceBean> financeBeanList = financeDAO.queryRefFinanceItemByBillId(id);
 
@@ -850,6 +859,15 @@ public class BillAction extends DispatchAction
         }
 
         request.setAttribute("bean", bean);
+
+        String goback = request.getParameter("goback");
+
+        if (StringTools.isNullOrNone(goback))
+        {
+            goback = "1";
+        }
+
+        request.setAttribute("goback", goback);
 
         // 关联的
         List<FinanceBean> financeBeanList = financeDAO.queryRefFinanceItemByBillId(id);

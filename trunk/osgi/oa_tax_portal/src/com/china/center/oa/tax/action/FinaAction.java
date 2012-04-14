@@ -1201,6 +1201,7 @@ public class FinaAction extends ParentQueryFinaAction
 
                 preInner(request);
 
+                // 定制
                 cacheBack(request);
 
                 return mapping.findForward("updateFinance");
@@ -1271,6 +1272,26 @@ public class FinaAction extends ParentQueryFinaAction
             {
                 forward.setUrl("../sail/out.do?method=findOut&radioIndex=0&goback=4&fow=99&outId="
                                + backId);
+
+                forward.setType(backType);
+
+                forward.setId(backId);
+            }
+
+            // 付款单
+            if ("1".equals(backType))
+            {
+                forward.setUrl("../finance/bill.do?method=findOutBill&goback=4&id=" + backId);
+
+                forward.setType(backType);
+
+                forward.setId(backId);
+            }
+
+            // 收款单
+            if ("2".equals(backType))
+            {
+                forward.setUrl("../finance/bill.do?method=findInBill&id=" + backId + "&goback=4");
 
                 forward.setType(backType);
 

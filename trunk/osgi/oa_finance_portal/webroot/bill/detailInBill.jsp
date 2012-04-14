@@ -139,7 +139,7 @@ function pagePrint()
             
             <p:cells celspan="2" title="关联凭证">
             <c:forEach items="${financeBeanList}" var="item">
-                <a href="../finance/finance.do?method=findFinance&id=${item.id}">${item.id}</a>
+                <a href="../finance/finance.do?method=findFinance&id=${item.id}&backType=2&backId=${bean.id}">${item.id}</a>
                 &nbsp;
             </c:forEach>
             </p:cells>
@@ -164,7 +164,7 @@ function pagePrint()
             value="&nbsp;&nbsp;打 印&nbsp;&nbsp;">&nbsp;&nbsp;
 		<input
             type="button" name="ba" class="button_class"
-            onclick="javascript:history.go(-1)"
+            onclick="javascript:history.go(-${goback})"
             value="&nbsp;&nbsp;返 回&nbsp;&nbsp;"></div>
 	</p:button>
 
