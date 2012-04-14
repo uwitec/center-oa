@@ -334,7 +334,7 @@ public class FinaAction extends ParentQueryFinaAction
 
             write.openFile(out);
 
-            write.writeLine("日期,凭证,摘要,科目编码,科目名称,借方金额,贷方金额,借/贷,余额,产品借,产品贷,部门,职员,单位,产品,仓区,纳税实体");
+            write.writeLine("日期,凭证,借/贷,余额,摘要,科目,借方金额,贷方金额,产品借,产品贷,部门,职员,单位,产品,仓区,纳税实体");
 
             PageSeparate page = new PageSeparate();
 
@@ -355,15 +355,14 @@ public class FinaAction extends ParentQueryFinaAction
 
                     line.writeColumn("[" + financeItemVO.getFinanceDate() + "]");
                     line.writeColumn(financeItemVO.getPid());
-                    line.writeColumn(StringTools.getExportString(financeItemVO.getDescription()));
-                    line.writeColumn("[" + financeItemVO.getTaxId() + "]");
-                    line.writeColumn(financeItemVO.getTaxName());
-
-                    line.writeColumn(changeString(financeItemVO.getShowInmoney()));
-                    line.writeColumn(changeString(financeItemVO.getShowOutmoney()));
                     line.writeColumn(financeItemVO.getForwardName());
                     line.writeColumn(changeString(financeItemVO.getShowLastmoney()));
 
+                    line.writeColumn(StringTools.getExportString(financeItemVO.getDescription()));
+                    line.writeColumn(financeItemVO.getTaxId() + " " + financeItemVO.getTaxName());
+
+                    line.writeColumn(changeString(financeItemVO.getShowInmoney()));
+                    line.writeColumn(changeString(financeItemVO.getShowOutmoney()));
                     line.writeColumn(financeItemVO.getProductAmountIn());
                     line.writeColumn(financeItemVO.getProductAmountOut());
 
@@ -456,7 +455,7 @@ public class FinaAction extends ParentQueryFinaAction
 
             write.openFile(out);
 
-            write.writeLine("日期,凭证,摘要,科目编码,科目名称,借方金额,贷方金额,借/贷,余额,产品借,产品贷,部门,职员,单位,产品,仓区,纳税实体");
+            write.writeLine("日期,凭证,借/贷,余额,凭证意见,摘要,科目,借方金额,贷方金额,产品借,产品贷,部门,职员,单位,产品,仓区,纳税实体");
 
             PageSeparate page = new PageSeparate();
 
@@ -481,16 +480,17 @@ public class FinaAction extends ParentQueryFinaAction
 
                         line.writeColumn("[" + financeItemVO.getFinanceDate() + "]");
                         line.writeColumn(financeItemVO.getPid());
-                        line.writeColumn(StringTools
-                            .getExportString(financeItemVO.getDescription()));
-                        line.writeColumn("[" + financeItemVO.getTaxId() + "]");
-                        line.writeColumn(financeItemVO.getTaxName());
-
-                        line.writeColumn(changeString(financeItemVO.getShowInmoney()));
-                        line.writeColumn(changeString(financeItemVO.getShowOutmoney()));
                         line.writeColumn(financeItemVO.getForwardName());
                         line.writeColumn(changeString(financeItemVO.getShowLastmoney()));
 
+                        line.writeColumn(StringTools.getExportString(financeVO.getRefChecks()));
+                        line.writeColumn(StringTools
+                            .getExportString(financeItemVO.getDescription()));
+                        line.writeColumn(financeItemVO.getTaxId() + " "
+                                         + financeItemVO.getTaxName());
+
+                        line.writeColumn(changeString(financeItemVO.getShowInmoney()));
+                        line.writeColumn(changeString(financeItemVO.getShowOutmoney()));
                         line.writeColumn(financeItemVO.getProductAmountIn());
                         line.writeColumn(financeItemVO.getProductAmountOut());
 

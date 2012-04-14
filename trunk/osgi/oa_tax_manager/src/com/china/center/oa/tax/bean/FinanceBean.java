@@ -117,6 +117,11 @@ public class FinanceBean implements Serializable
      */
     private String checks = "";
 
+    /**
+     * 关联核对
+     */
+    private String refChecks = "";
+
     @Ignore
     private List<FinanceItemBean> itemList = null;
 
@@ -599,6 +604,23 @@ public class FinanceBean implements Serializable
             .append(" )");
 
         return retValue.toString();
+    }
+
+    /**
+     * @return the refChecks
+     */
+    public String getRefChecks()
+    {
+        return refChecks;
+    }
+
+    /**
+     * @param refChecks
+     *            the refChecks to set
+     */
+    public void setRefChecks(String refChecks)
+    {
+        this.refChecks = refChecks;
     }
 
 }

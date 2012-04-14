@@ -31,6 +31,8 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 
 import com.center.china.osgi.publics.User;
+import com.center.china.osgi.publics.file.read.ReadeFileFactory;
+import com.center.china.osgi.publics.file.read.ReaderFile;
 import com.center.china.osgi.publics.file.writer.WriteFile;
 import com.center.china.osgi.publics.file.writer.WriteFileFactory;
 import com.china.center.actionhelper.common.ActionTools;
@@ -56,6 +58,8 @@ import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.manager.OrgManager;
 import com.china.center.oa.sail.dao.UnitViewDAO;
 import com.china.center.oa.sail.manager.OutManager;
+import com.china.center.oa.tax.bean.FinanceBean;
+import com.china.center.oa.tax.bean.FinanceItemBean;
 import com.china.center.oa.tax.bean.FinanceMonthBean;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.bean.UnitBean;
@@ -83,6 +87,8 @@ import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.MathTools;
+import com.china.center.tools.RequestDataStream;
+import com.china.center.tools.SequenceTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 import com.china.center.tools.WriteFileBuffer;
@@ -2164,5 +2170,415 @@ public class ParentQueryFinaAction extends DispatchAction
         item.getShowChineseInmoney();
         item.getShowChineseOutmoney();
         item.getShowChineseLastmoney();
+    }
+
+    /**
+     * 导入凭证
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward importFinance(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        User user = Helper.getUser(request);
+
+        RequestDataStream rds = new RequestDataStream(request);
+
+        try
+        {
+            rds.parser();
+        }
+        catch (Exception e1)
+        {
+            _logger.error(e1, e1);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "解析失败");
+
+            return mapping.findForward("importFinance");
+        }
+
+        if ( !rds.haveStream())
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "解析失败");
+
+            return mapping.findForward("importFinance");
+        }
+
+        StringBuilder builder = new StringBuilder();
+
+        FinanceBean finance = new FinanceBean();
+
+        finance.setFinanceDate(rds.getParameter("financeDate"));
+        finance.setDutyId(rds.getParameter("dutyId"));
+        finance.setCreateType(TaxConstanst.FINANCE_CREATETYPE_HAND);
+
+        request.setAttribute("financeDate", rds.getParameter("financeDate"));
+        request.setAttribute("dutyId", rds.getParameter("dutyId"));
+
+        String pareId = SequenceTools.getSequence();
+
+        ReaderFile reader = ReadeFileFactory.getXLSReader();
+
+        try
+        {
+            reader.readFile(rds.getUniqueInputStream());
+
+            List<FinanceItemBean> itemList = new ArrayList();
+
+            finance.setItemList(itemList);
+
+            String stafferId = "";
+
+            while (reader.hasNext())
+            {
+                String[] obj = fillObj((String[])reader.next());
+
+                // 第一行忽略
+                if (reader.getCurrentLineNumber() == 1)
+                {
+                    continue;
+                }
+
+                if (StringTools.isNullOrNone(obj[0]))
+                {
+                    continue;
+                }
+
+                if (StringTools.isNullOrNone(stafferId))
+                {
+                    stafferId = getStafferId(obj);
+
+                    finance.setCreaterId(stafferId);
+                }
+
+                int currentNumber = reader.getCurrentLineNumber();
+
+                if (obj.length >= 6 && !StringTools.isNullOrNone(stafferId))
+                {
+                    innerAdd(user, builder, obj, stafferId, currentNumber, itemList, finance,
+                        pareId);
+                }
+                else
+                {
+                    builder
+                        .append("第[" + currentNumber + "]错误:")
+                        .append("数据长度不足6格,或者制单人错误")
+                        .append("<br>");
+                }
+            }
+
+            if (builder.length() > 0)
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, builder.toString());
+
+                return mapping.findForward("importFinance");
+            }
+
+            financeManager.addFinanceBean(user, finance);
+        }
+        catch (Exception e)
+        {
+            _logger.error(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.toString());
+
+            return mapping.findForward("importFinance");
+        }
+        finally
+        {
+            try
+            {
+                reader.close();
+            }
+            catch (IOException e)
+            {
+                _logger.error(e, e);
+            }
+        }
+
+        rds.close();
+
+        StringBuilder result = new StringBuilder();
+
+        result.append("导入成功:" + finance.getId());
+
+        result.append(builder.toString());
+
+        request.setAttribute(KeyConstant.MESSAGE, result.toString());
+
+        return mapping.findForward("importFinance");
+    }
+
+    /**
+     * handleStafferId
+     * 
+     * @param obj
+     * @param stafferId
+     * @return
+     */
+    private String getStafferId(String[] obj)
+    {
+        String stafferId = "";
+
+        if ( !StringTools.isNullOrNone(obj[1]))
+        {
+            StafferBean sb = stafferDAO.findyStafferByName(obj[1]);
+
+            if (sb != null)
+            {
+                stafferId = sb.getId();
+            }
+        }
+
+        return stafferId;
+    }
+
+    /**
+     * @param user
+     * @param builder
+     * @param obj
+     * @param stafferId
+     * @param currentNumber
+     * @return
+     */
+    private boolean innerAdd(User user, StringBuilder builder, String[] obj, String stafferId,
+                             int currentNumber, List<FinanceItemBean> itemList,
+                             FinanceBean finance, String pareId)
+    {
+        boolean addSucess = false;
+
+        try
+        {
+            FinanceItemBean item = new FinanceItemBean();
+
+            item.setFinanceDate(finance.getFinanceDate());
+            item.setCreateType(TaxConstanst.FINANCE_CREATETYPE_HAND);
+            item.setDutyId(finance.getDutyId());
+            item.setPareId(pareId);
+
+            // 凭证字号
+            finance.setRefChecks(obj[2]);
+
+            // description
+            item.setDescription(obj[3]);
+
+            String taxId = parserTax(obj[4]);
+
+            TaxBean tax = taxDAO.find(taxId);
+
+            if (tax == null)
+            {
+                builder
+                    .append("<font color=red>第[" + currentNumber + "]行错误:")
+                    .append("科目不存在")
+                    .append("</font><br>");
+
+                return false;
+            }
+
+            item.setTaxId(tax.getId());
+
+            if ( !StringTools.isNullOrNone(obj[5]))
+            {
+                item.setInmoney(FinanceHelper.doubleToLong(obj[5].replace(",", "")));
+            }
+
+            if ( !StringTools.isNullOrNone(obj[6]))
+            {
+                item.setOutmoney(FinanceHelper.doubleToLong(obj[6].replace(",", "")));
+            }
+
+            int index = 7;
+            // 产品借
+            if ( !StringTools.isNullOrNone(obj[index]))
+            {
+                item.setProductAmountIn(MathTools.parseInt(obj[index]));
+            }
+
+            // 产品贷
+            index++ ;
+            if ( !StringTools.isNullOrNone(obj[index]))
+            {
+                item.setProductAmountOut(MathTools.parseInt(obj[index]));
+            }
+
+            index++ ;
+            if ( !StringTools.isNullOrNone(obj[index]))
+            {
+                String postName = obj[index];
+
+                PrincipalshipBean pri = principalshipDAO.findByUnique(postName);
+
+                if (pri == null)
+                {
+                    builder
+                        .append("<font color=red>第[" + currentNumber + "]行错误:")
+                        .append("部门不存在")
+                        .append("</font><br>");
+
+                    return false;
+                }
+
+                item.setDepartmentId(pri.getId());
+            }
+
+            index++ ;
+            if ( !StringTools.isNullOrNone(obj[index]))
+            {
+                String name = obj[index];
+
+                StafferBean bean = stafferDAO.findByUnique(name);
+
+                if (bean == null)
+                {
+                    builder
+                        .append("<font color=red>第[" + currentNumber + "]行错误:")
+                        .append("职员不存在")
+                        .append("</font><br>");
+
+                    return false;
+                }
+
+                item.setStafferId(bean.getId());
+            }
+
+            index++ ;
+            if ( !StringTools.isNullOrNone(obj[index]))
+            {
+                String name = obj[index];
+
+                UnitBean bean = unitDAO.findByUnique(name);
+
+                if (bean == null)
+                {
+                    builder
+                        .append("<font color=red>第[" + currentNumber + "]行错误:")
+                        .append("单位不存在")
+                        .append("</font><br>");
+
+                    return false;
+                }
+
+                item.setUnitId(bean.getId());
+            }
+
+            index++ ;
+            if ( !StringTools.isNullOrNone(obj[index]))
+            {
+                String name = obj[index];
+
+                ProductBean bean = productDAO.findByName(name);
+
+                if (bean == null)
+                {
+                    builder
+                        .append("<font color=red>第[" + currentNumber + "]行错误:")
+                        .append("产品不存在")
+                        .append("</font><br>");
+
+                    return false;
+                }
+
+                item.setProductId(bean.getId());
+            }
+
+            index++ ;
+            if ( !StringTools.isNullOrNone(obj[index]))
+            {
+                String name = obj[index];
+
+                DepotBean bean = depotDAO.findByUnique(name);
+
+                if (bean == null)
+                {
+                    builder
+                        .append("<font color=red>第[" + currentNumber + "]行错误:")
+                        .append("仓区不存在")
+                        .append("</font><br>");
+
+                    return false;
+                }
+
+                item.setDepotId(bean.getId());
+            }
+
+            index++ ;
+            if ( !StringTools.isNullOrNone(obj[index]))
+            {
+                String name = obj[index];
+
+                DutyBean bean = dutyDAO.findByUnique(name);
+
+                if (bean == null)
+                {
+                    builder
+                        .append("<font color=red>第[" + currentNumber + "]行错误:")
+                        .append("纳税实体不存在")
+                        .append("</font><br>");
+
+                    return false;
+                }
+
+                item.setDuty2Id(bean.getId());
+            }
+
+            itemList.add(item);
+
+            addSucess = true;
+        }
+        catch (Exception e)
+        {
+            _logger.error(e, e);
+
+            addSucess = false;
+
+            builder
+                .append("<font color=red>第[" + currentNumber + "]行错误:")
+                .append(e.getMessage())
+                .append("</font><br>");
+        }
+
+        return addSucess;
+    }
+
+    private String parserTax(String str)
+    {
+        int length = 0;
+
+        for (int i = 0; i < str.length(); i++ )
+        {
+            if (str.charAt(i) > 128)
+            {
+                length = i;
+                break;
+            }
+        }
+
+        return str.substring(0, length).trim();
+    }
+
+    private String[] fillObj(String[] obj)
+    {
+        String[] result = new String[15];
+
+        for (int i = 0; i < result.length; i++ )
+        {
+            if (i < obj.length)
+            {
+                result[i] = obj[i];
+            }
+            else
+            {
+                result[i] = "";
+            }
+        }
+
+        return result;
     }
 }

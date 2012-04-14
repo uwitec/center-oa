@@ -72,4 +72,15 @@ public interface TcpPayListener extends ParentListener
     void onEndExpenseApply(User user, ExpenseApplyBean bean, List<String> taxIdList,
                            List<Long> moneyList, List<String> stafferIdList)
         throws MYException;
+
+    /**
+     * 报销结束
+     * 
+     * @param user
+     * @param bean
+     * @param check
+     * @throws MYException
+     */
+    void onLastEndExpenseApply(User user, ExpenseApplyBean bean, String check)
+        throws MYException;
 }

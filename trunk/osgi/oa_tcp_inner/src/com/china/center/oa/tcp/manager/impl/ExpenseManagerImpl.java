@@ -438,6 +438,14 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
 
             expenseApplyDAO.updateStatus(bean.getId(), bean.getStatus());
 
+            Collection<TcpPayListener> listenerMapValues = this.listenerMapValues();
+
+            for (TcpPayListener tcpPayListener : listenerMapValues)
+            {
+                // TODO_OSGI 这里是报销最终结束生成的凭证
+                tcpPayListener.onLastEndExpenseApply(user, bean, reason);
+            }
+
             // 记录操作日志
             saveFlowLog(user, oldStatus, bean, reason, PublicConstant.OPRMODE_PASS);
         }
@@ -614,7 +622,7 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
 
                 for (TcpPayListener tcpPayListener : listenerMapValues)
                 {
-                    // TODO_OSGI 这里是报销结束生成的凭证
+                    // TODO_OSGI 这里是报销待财务入账生成的凭证
                     tcpPayListener.onEndExpenseApply(user, bean, (List<String>)param.getOther(),
                         (List<Long>)param.getOther2(), (List<String>)param.getOther3());
                 }

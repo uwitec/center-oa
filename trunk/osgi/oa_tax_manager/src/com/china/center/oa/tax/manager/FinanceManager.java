@@ -125,4 +125,13 @@ public interface FinanceManager
      */
     boolean moveTempFinanceBeanToRelease(User user, String id)
         throws MYException;
+
+    /**
+     * updateRefCheckByRefIdWithoutTransactional
+     * 
+     * @param refId
+     * @param check
+     * @return
+     */
+    boolean updateRefCheckByRefIdWithoutTransactional(String refId, String check);
 }

@@ -14,6 +14,7 @@ import java.io.Serializable;
 import com.china.center.jdbc.annotation.Entity;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.annotation.Unique;
 import com.china.center.oa.tax.constanst.TaxConstanst;
 
 
@@ -32,6 +33,7 @@ public class UnitBean implements Serializable
     @Id
     private String id = "";
 
+    @Unique
     private String name = "";
 
     private String code = "";

@@ -139,7 +139,10 @@ public class FinanceManagerImpl implements FinanceManager
 
         bean.setName(bean.getId());
 
-        bean.setCreaterId(user.getStafferId());
+        if (StringTools.isNullOrNone(bean.getCreaterId()))
+        {
+            bean.setCreaterId(user.getStafferId());
+        }
 
         // 允许自己制定凭证日期
         if (StringTools.isNullOrNone(bean.getFinanceDate()))
@@ -172,6 +175,7 @@ public class FinanceManagerImpl implements FinanceManager
 
         DutyBean duty = dutyDAO.find(bean.getDutyId());
 
+        // 管理属性
         bean.setType(duty.getMtype());
 
         List<FinanceItemBean> itemList = bean.getItemList();
@@ -1036,6 +1040,20 @@ public class FinanceManagerImpl implements FinanceManager
         return updateInner(user, bean, false);
     }
 
+    public boolean updateRefCheckByRefIdWithoutTransactional(String refId, String check)
+    {
+        List<FinanceBean> financeList = financeDAO.queryEntityBeansByFK(refId);
+
+        for (FinanceBean financeBean : financeList)
+        {
+            financeBean.setRefChecks(check);
+
+            financeDAO.updateEntityBean(financeBean);
+        }
+
+        return true;
+    }
+
     /**
      * updateInner
      * 
@@ -1096,6 +1114,7 @@ public class FinanceManagerImpl implements FinanceManager
         bean.setRefOut(old.getRefOut());
         bean.setRefBill(old.getRefBill());
         bean.setRefStock(old.getRefStock());
+        bean.setRefChecks(old.getRefChecks());
 
         // 标识成更改
         bean.setUpdateFlag(TaxConstanst.FINANCE_UPDATEFLAG_YES);
@@ -1103,7 +1122,17 @@ public class FinanceManagerImpl implements FinanceManager
         // 允许自己制定凭证日期
         if (StringTools.isNullOrNone(bean.getFinanceDate()))
         {
-            bean.setFinanceDate(TimeTools.now_short());
+            bean.setFinanceDate(old.getFinanceDate());
+        }
+        else
+        {
+            String a = bean.getFinanceDate().substring(0, 8);
+            String b = old.getFinanceDate().substring(0, 8);
+
+            if ( !a.equals(b))
+            {
+                throw new MYException("凭证日期修改不能跨月");
+            }
         }
 
         checkTime(bean);
@@ -1722,5 +1751,4 @@ public class FinanceManagerImpl implements FinanceManager
     {
         this.financeItemTempDAO = financeItemTempDAO;
     }
-
 }

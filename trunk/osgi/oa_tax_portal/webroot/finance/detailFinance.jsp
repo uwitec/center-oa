@@ -132,6 +132,7 @@ function updateBean()
 			</p:cell>
 			<p:cell title="描述" end="true">${bean.description}</p:cell>
 			<p:cell title="总部核对" end="true">${bean.checks}</p:cell>
+			<p:cell title="凭证意见" end="true">${bean.refChecks}</p:cell>
 		</p:table>
 	</p:subBody>
 	

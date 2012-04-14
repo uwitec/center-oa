@@ -772,6 +772,12 @@ public class TcpPayListenerTaxGlueImpl implements TcpPayListener
         itemList.add(itemOut);
     }
 
+    public void onLastEndExpenseApply(User user, ExpenseApplyBean bean, String check)
+        throws MYException
+    {
+        financeManager.updateRefCheckByRefIdWithoutTransactional(bean.getId(), check);
+    }
+
     /*
      * (non-Javadoc)
      * 
