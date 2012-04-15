@@ -25,7 +25,7 @@ function load()
          title: '凭证列表',
          url: gurl + 'query' + ukey,
          colModel : [
-             {display: '<input type=checkbox id=flexi_Check onclick=checkAll(this)>选择', name : 'check', content : '<input type=checkbox name=checkb value={id} lstatus={status}>', width : 40, align: 'center'},
+             {display: '<input type=checkbox id=flexi_Check onclick=checkAll(this)>选择', name : 'check', content : '<input type=checkbox name=checkb value={id} lstatus={status} llocks={locks}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},
              {display: '月索引', name : 'monthIndex', sortable : true, width : '7%'},
              {display: '类型', name : 'type', cc: 'financeType', width : '10%'},
@@ -83,13 +83,13 @@ function delBean(opr, grid)
         return false;
     }
     
-    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 0)
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').llocks == 0)
     {    
         if(window.confirm('确定删除?'))    
         $ajax(gurl + 'delete' + ukey + '&id=' + getRadioValue('checkb'), callBackFun);
     }
     else
-    $error('不能操作');
+    $error('不能操作,可能被锁定');
 }
 
 function copyBean(opr, grid)

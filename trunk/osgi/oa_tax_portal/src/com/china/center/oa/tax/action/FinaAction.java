@@ -170,6 +170,9 @@ public class FinaAction extends ParentQueryFinaAction
 
         ActionTools.processJSONQueryCondition(QUERYTEMPFINANCE, request, condtion, initMap);
 
+        condtion
+            .addIntCondition("FinanceTempBean.status", "<>", TaxConstanst.FINANCE_STATUS_HIDDEN);
+
         condtion.addCondition("order by FinanceTempBean.logTime desc");
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYTEMPFINANCE, request, condtion,

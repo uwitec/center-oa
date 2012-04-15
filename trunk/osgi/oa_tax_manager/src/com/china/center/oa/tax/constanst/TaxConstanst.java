@@ -429,6 +429,12 @@ public interface TaxConstanst
     int FINANCE_STATUS_CHECK = 1;
 
     /**
+     * 删除隐藏
+     */
+    @Defined(key = "financeStatus", value = "删除隐藏")
+    int FINANCE_STATUS_HIDDEN = 2;
+
+    /**
      * 未锁定
      */
     @Defined(key = "financeLock", value = "未锁定")

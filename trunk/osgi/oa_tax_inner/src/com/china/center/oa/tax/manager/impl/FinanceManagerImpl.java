@@ -346,8 +346,10 @@ public class FinanceManagerImpl implements FinanceManager
             // 删除月结产生的凭证
             ConditionParse con = new ConditionParse();
             con.addWhereStr();
-            con.addCondition("financeDate", ">=", turn.getStartTime());
-            con.addCondition("financeDate", "<=", turn.getEndTime());
+            con.addCondition("financeDate", ">=", TimeTools.getShortStringByLongString(turn
+                .getStartTime()));
+            con.addCondition("financeDate", "<=", TimeTools.getShortStringByLongString(turn
+                .getEndTime()));
             con.addIntCondition("createType", "=", TaxConstanst.FINANCE_CREATETYPE_TURN);
 
             List<String> idList = financeDAO.queryEntityIdsByCondition(con);
@@ -366,8 +368,10 @@ public class FinanceManagerImpl implements FinanceManager
 
             con.clear();
             con.addWhereStr();
-            con.addCondition("financeDate", ">=", turn.getStartTime());
-            con.addCondition("financeDate", "<=", turn.getEndTime());
+            con.addCondition("financeDate", ">=", TimeTools.getShortStringByLongString(turn
+                .getStartTime()));
+            con.addCondition("financeDate", "<=", TimeTools.getShortStringByLongString(turn
+                .getEndTime()));
             con.addIntCondition("createType", "=", TaxConstanst.FINANCE_CREATETYPE_PROFIT);
 
             idList = financeDAO.queryEntityIdsByCondition(con);
@@ -389,6 +393,10 @@ public class FinanceManagerImpl implements FinanceManager
 
             // 删除结转
             financeTurnDAO.deleteEntityBean(id);
+
+            // 解锁凭证,恢复修改和删除
+            financeDAO.updateLockToBegin(TimeTools.getShortStringByLongString(turn.getStartTime()),
+                TimeTools.getShortStringByLongString(turn.getEndTime()));
 
             operationLog.info(user.getStafferName() + "进行了" + turn.getMonthKey() + "的结转撤销(操作成功)");
 
@@ -1100,6 +1108,8 @@ public class FinanceManagerImpl implements FinanceManager
 
         bean.setItemList(itemList);
 
+        bean.setStatus(TaxConstanst.FINANCE_STATUS_NOCHECK);
+
         addFinanceBeanWithoutTransactional(user, bean);
 
         return true;
@@ -1517,11 +1527,6 @@ public class FinanceManagerImpl implements FinanceManager
             throw new MYException("数据错误,请重新操作");
         }
 
-        if (old.getStatus() == TaxConstanst.FINANCE_STATUS_CHECK)
-        {
-            throw new MYException("已经被核对,不能删除,请重新操作");
-        }
-
         if (old.getLocks() == TaxConstanst.FINANCE_LOCK_YES)
         {
             throw new MYException("已经被锁定,不能删除,请重新操作");
@@ -1545,6 +1550,30 @@ public class FinanceManagerImpl implements FinanceManager
 
         // 删除需要记录操作日志
         operationLog.info(user.getStafferName() + "删除了凭证:" + old);
+
+        // 备份到临时表里面
+        old.setStatus(TaxConstanst.FINANCE_STATUS_HIDDEN);
+
+        FinanceTempBean tmp = new FinanceTempBean();
+
+        BeanUtil.copyProperties(tmp, old);
+
+        List<FinanceItemBean> itemList = old.getItemList();
+
+        List<FinanceItemTempBean> itemTempList = new ArrayList();
+
+        for (FinanceItemBean financeItemBean : itemList)
+        {
+            FinanceItemTempBean titem = new FinanceItemTempBean();
+
+            BeanUtil.copyProperties(titem, financeItemBean);
+
+            itemTempList.add(titem);
+        }
+
+        financeTempDAO.saveEntityBean(tmp);
+
+        financeItemTempDAO.saveAllEntityBeans(itemTempList);
 
         return true;
     }

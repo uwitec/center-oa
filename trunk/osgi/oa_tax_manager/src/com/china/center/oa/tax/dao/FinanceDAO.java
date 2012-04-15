@@ -37,6 +37,8 @@ public interface FinanceDAO extends DAO<FinanceBean, FinanceVO>
      */
     int updateLockToEnd(String beginTime, String endTime);
 
+    int updateLockToBegin(String beginTime, String endTime);
+
     List<FinanceBean> queryRefFinanceItemByOutId(String outId);
 
     List<FinanceBean> queryRefFinanceItemByBillId(String billId);

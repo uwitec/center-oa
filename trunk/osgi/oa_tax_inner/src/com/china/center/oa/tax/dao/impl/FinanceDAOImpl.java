@@ -48,6 +48,14 @@ public class FinanceDAOImpl extends BaseDAO<FinanceBean, FinanceVO> implements F
         return this.jdbcOperation.update(sql, TaxConstanst.FINANCE_LOCK_YES, beginTime, endTime);
     }
 
+    public int updateLockToBegin(String beginTime, String endTime)
+    {
+        String sql = BeanTools.getUpdateHead(claz)
+                     + "set locks = ? where financeDate >= ? and financeDate <= ?";
+
+        return this.jdbcOperation.update(sql, TaxConstanst.FINANCE_LOCK_NO, beginTime, endTime);
+    }
+
     public List<FinanceBean> queryRefFinanceItemByBillId(String billId)
     {
         ConditionParse condtion = new ConditionParse();

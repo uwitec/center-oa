@@ -48,7 +48,7 @@ public class FinanceBean implements Serializable
     private int type = TaxConstanst.FINANCE_TYPE_MANAGER;
 
     /**
-     * 0:未人工核对 1:已核对
+     * 0:未人工核对 1:已核对 2:删除隐藏
      */
     private int status = TaxConstanst.FINANCE_STATUS_NOCHECK;
 
