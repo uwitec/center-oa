@@ -337,7 +337,7 @@ public class FinaAction extends ParentQueryFinaAction
 
             write.openFile(out);
 
-            write.writeLine("日期,凭证,借/贷,余额,摘要,科目,借方金额,贷方金额,产品借,产品贷,部门,职员,单位,产品,仓区,纳税实体");
+            write.writeLine("日期,凭证,借/贷,余额,凭证意见,摘要,科目,借方金额,贷方金额,产品借,产品贷,部门,职员,单位,产品,仓区,纳税实体");
 
             PageSeparate page = new PageSeparate();
 
@@ -360,6 +360,17 @@ public class FinaAction extends ParentQueryFinaAction
                     line.writeColumn(financeItemVO.getPid());
                     line.writeColumn(financeItemVO.getForwardName());
                     line.writeColumn(changeString(financeItemVO.getShowLastmoney()));
+
+                    FinanceBean finance = financeDAO.find(financeItemVO.getPid());
+
+                    if (finance != null)
+                    {
+                        line.writeColumn(StringTools.getExportString(finance.getRefChecks()));
+                    }
+                    else
+                    {
+                        line.writeColumn("");
+                    }
 
                     line.writeColumn(StringTools.getExportString(financeItemVO.getDescription()));
                     line.writeColumn(financeItemVO.getTaxId() + " " + financeItemVO.getTaxName());
