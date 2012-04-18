@@ -52,7 +52,7 @@ public class DepotBean implements Serializable
     /**
      * 仓库类型
      */
-    @Html(title = "名称", type = Element.SELECT, must = true)
+    @Html(title = "仓库类型", type = Element.SELECT, must = true)
     private int type = DepotConstant.DEPOT_TYPE_LOCATION;
 
     @Html(title = "描述", type = Element.TEXTAREA, maxLength = 200)
@@ -161,10 +161,26 @@ public class DepotBean implements Serializable
 
         StringBuffer retValue = new StringBuffer();
 
-        retValue.append("DepotBean ( ").append(super.toString()).append(TAB).append("id = ").append(this.id).append(TAB).append(
-            "name = ").append(this.name).append(TAB).append("industryId = ").append(this.industryId).append(TAB).append(
-            "type = ").append(this.type).append(TAB).append("description = ").append(this.description).append(TAB).append(
-            " )");
+        retValue
+            .append("DepotBean ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("id = ")
+            .append(this.id)
+            .append(TAB)
+            .append("name = ")
+            .append(this.name)
+            .append(TAB)
+            .append("industryId = ")
+            .append(this.industryId)
+            .append(TAB)
+            .append("type = ")
+            .append(this.type)
+            .append(TAB)
+            .append("description = ")
+            .append(this.description)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }
