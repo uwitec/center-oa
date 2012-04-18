@@ -153,14 +153,14 @@ public abstract class AbstractBean implements Serializable
     /**
      * 客户信用的杠杆倍数(职员的信用*lever)(废弃此属性)
      */
-    @Html(title = "信用杠杆倍数", type = Element.NUMBER)
     @Deprecated
+    @Html(title = "信用杠杆倍数", type = Element.NUMBER)
     private int lever = CustomerConstant.DEFAULT_LEVER;
 
     /**
-     * 0:ok 1:申请
+     * 0:ok 1:申请 2:删除
      */
-    private int status = 0;
+    private int status = CustomerConstant.STATUS_OK;
 
     private String createrId = "";
 

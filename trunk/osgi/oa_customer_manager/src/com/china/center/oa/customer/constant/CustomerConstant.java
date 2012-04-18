@@ -35,6 +35,12 @@ public interface CustomerConstant
     int STATUS_APPLY = 1;
 
     /**
+     * 删除
+     */
+    @Defined(key = "customerStatus", value = "删除")
+    int STATUS_DELETE = 2;
+
+    /**
      * 审批后等待分配code
      */
     @Defined(key = "customerStatus", value = "等待分配编码")
