@@ -42,13 +42,13 @@ public class OrgListenerTaxImpl implements OrgListener
 
         con.addWhereStr();
 
-        con.addIntCondition("departmentId", "=", org.getId());
+        con.addCondition("departmentId", "=", org.getId());
 
         int count = financeItemDAO.countByCondition(con.toString());
 
         if (count > 0)
         {
-            throw new MYException("组织[%s]实体被使用,不能删除", org.getName());
+            throw new MYException("组织[%s]被凭证使用,不能删除", org.getName());
         }
     }
 
@@ -62,4 +62,20 @@ public class OrgListenerTaxImpl implements OrgListener
         return "OrgListener.TaxImpl";
     }
 
+    /**
+     * @return the financeItemDAO
+     */
+    public FinanceItemDAO getFinanceItemDAO()
+    {
+        return financeItemDAO;
+    }
+
+    /**
+     * @param financeItemDAO
+     *            the financeItemDAO to set
+     */
+    public void setFinanceItemDAO(FinanceItemDAO financeItemDAO)
+    {
+        this.financeItemDAO = financeItemDAO;
+    }
 }
