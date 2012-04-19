@@ -9,8 +9,14 @@
 package com.china.center.oa.tax.dao.impl;
 
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.impl.BaseDAO;
@@ -31,6 +37,8 @@ import com.china.center.oa.tax.vo.FinanceVO;
  */
 public class FinanceDAOImpl extends BaseDAO<FinanceBean, FinanceVO> implements FinanceDAO
 {
+    private final Log _logger = LogFactory.getLog(getClass());
+
     public boolean updateCheck(String id, String reason)
     {
         String sql = BeanTools.getUpdateHead(claz) + "set status = ?, checks = ? where id = ?";
@@ -138,6 +146,67 @@ public class FinanceDAOImpl extends BaseDAO<FinanceBean, FinanceVO> implements F
         String sql = "select max(monthIndex) from " + BeanTools.getTableName(claz)
                      + " where financeDate >= ? and financeDate <= ?";
 
-        return this.jdbcOperation.queryForInt(sql, beginDate, endDate);
+        Connection con = null;
+
+        PreparedStatement ps = null;
+
+        ResultSet rs = null;
+
+        try
+        {
+            con = this.jdbcOperation.getDataSource().getConnection();
+            ps = con.prepareStatement(sql);
+
+            ps.setString(1, beginDate);
+            ps.setString(2, endDate);
+
+            rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        }
+        catch (Exception e)
+        {
+            _logger.error(e, e);
+
+            throw new RuntimeException(e);
+        }
+        finally
+        {
+            if (rs != null)
+            {
+                try
+                {
+                    rs.close();
+                }
+                catch (Throwable e)
+                {
+                    _logger.error(e, e);
+                }
+            }
+
+            if (ps != null)
+            {
+                try
+                {
+                    ps.close();
+                }
+                catch (Throwable e)
+                {
+                    _logger.error(e, e);
+                }
+            }
+
+            if (con != null)
+            {
+                try
+                {
+                    con.close();
+                }
+                catch (Throwable e)
+                {
+                    _logger.error(e, e);
+                }
+            }
+        }
     }
 }

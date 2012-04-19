@@ -274,6 +274,7 @@ public class FinanceManagerImpl implements FinanceManager
         {
             String financeDate = bean.getFinanceDate();
 
+            // 只要外层有事务这里比较头疼
             int findMaxMonthIndex = financeDAO.findMaxMonthIndex(
                 financeDate.substring(0, 8) + "01", financeDate.substring(0, 8) + "31");
 
