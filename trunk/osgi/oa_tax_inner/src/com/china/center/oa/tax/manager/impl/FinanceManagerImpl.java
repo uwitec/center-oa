@@ -272,6 +272,9 @@ public class FinanceManagerImpl implements FinanceManager
 
         if (mainTable)
         {
+            // 利用update的数据库锁(事务锁)
+            commonDAO.updatePublicLock();
+
             String financeDate = bean.getFinanceDate();
 
             // 只要外层有事务这里比较头疼
@@ -281,9 +284,10 @@ public class FinanceManagerImpl implements FinanceManager
             // 设置MonthIndex
             bean.setMonthIndex(findMaxMonthIndex + 1);
 
-            financeItemDAO.saveAllEntityBeans(itemList);
-
             financeDAO.saveEntityBean(bean);
+
+            // 先放在这里利用数据库的同步阻塞一下
+            financeItemDAO.saveAllEntityBeans(itemList);
         }
         else
         {
