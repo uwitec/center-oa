@@ -3499,9 +3499,9 @@ public class OutListenerTaxGlueImpl implements OutListener
             itemOutEach.setDescription(itemOutEach.getName());
 
             // 辅助核算 产品/仓库(其实可以没有核算型)
-            itemOutEach.setProductId(baseBean.getProductId());
-            itemOutEach.setProductAmountOut(baseBean.getAmount());
-            itemOutEach.setDepotId(outBean.getLocation());
+            // itemOutEach.setProductId(baseBean.getProductId());
+            // itemOutEach.setProductAmountOut(baseBean.getAmount());
+            // itemOutEach.setDepotId(outBean.getLocation());
 
             itemList.add(itemOutEach);
         }

@@ -2086,7 +2086,8 @@ public class ParentQueryFinaAction extends DispatchAction
 
         item.setForward(tax.getForward());
 
-        if (tax.getDepartment() == TaxConstanst.TAX_CHECK_YES)
+        if (tax.getDepartment() == TaxConstanst.TAX_CHECK_YES
+            || !StringTools.isNullOrNone(item.getDepartmentId()))
         {
             PrincipalshipBean depart = principalshipDAO.find(item.getDepartmentId());
 
@@ -2096,7 +2097,8 @@ public class ParentQueryFinaAction extends DispatchAction
             }
         }
 
-        if (tax.getStaffer() == TaxConstanst.TAX_CHECK_YES)
+        if (tax.getStaffer() == TaxConstanst.TAX_CHECK_YES
+            || !StringTools.isNullOrNone(item.getStafferId()))
         {
             StafferBean sb = stafferDAO.find(item.getStafferId());
 
@@ -2106,7 +2108,8 @@ public class ParentQueryFinaAction extends DispatchAction
             }
         }
 
-        if (tax.getUnit() == TaxConstanst.TAX_CHECK_YES)
+        if (tax.getUnit() == TaxConstanst.TAX_CHECK_YES
+            || !StringTools.isNullOrNone(item.getUnitId()))
         {
             UnitBean unit = unitDAO.find(item.getUnitId());
 
@@ -2116,7 +2119,8 @@ public class ParentQueryFinaAction extends DispatchAction
             }
         }
 
-        if (tax.getProduct() == TaxConstanst.TAX_CHECK_YES)
+        if (tax.getProduct() == TaxConstanst.TAX_CHECK_YES
+            || !StringTools.isNullOrNone(item.getProductId()))
         {
             ProductBean product = productDAO.find(item.getProductId());
 
@@ -2127,7 +2131,8 @@ public class ParentQueryFinaAction extends DispatchAction
             }
         }
 
-        if (tax.getDepot() == TaxConstanst.TAX_CHECK_YES)
+        if (tax.getDepot() == TaxConstanst.TAX_CHECK_YES
+            || !StringTools.isNullOrNone(item.getDepotId()))
         {
             DepotBean depot = depotDAO.find(item.getDepotId());
 
@@ -2137,7 +2142,8 @@ public class ParentQueryFinaAction extends DispatchAction
             }
         }
 
-        if (tax.getDuty() == TaxConstanst.TAX_CHECK_YES)
+        if (tax.getDuty() == TaxConstanst.TAX_CHECK_YES
+            || !StringTools.isNullOrNone(item.getDuty2Id()))
         {
             DutyBean duty2 = dutyDAO.find(item.getDuty2Id());
 
