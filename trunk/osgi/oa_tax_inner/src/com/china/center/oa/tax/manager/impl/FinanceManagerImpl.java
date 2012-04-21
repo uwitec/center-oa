@@ -277,12 +277,21 @@ public class FinanceManagerImpl implements FinanceManager
 
             String financeDate = bean.getFinanceDate();
 
-            // 只要外层有事务这里比较头疼
-            int findMaxMonthIndex = financeDAO.findMaxMonthIndex(
-                financeDate.substring(0, 8) + "01", financeDate.substring(0, 8) + "31");
+            // 外层conn获取最大索引
+            int findMaxMonthIndex1 = financeDAO.findMaxMonthIndexByOut(financeDate.substring(0, 8)
+                                                                       + "01", financeDate
+                .substring(0, 8)
+                                                                               + "31");
+
+            // 当前事务内获取最大索引
+            int findMaxMonthIndex2 = financeDAO.findMaxMonthIndexByInner(financeDate
+                .substring(0, 8)
+                                                                         + "01", financeDate
+                .substring(0, 8)
+                                                                                 + "31");
 
             // 设置MonthIndex
-            bean.setMonthIndex(findMaxMonthIndex + 1);
+            bean.setMonthIndex(Math.max(findMaxMonthIndex1, findMaxMonthIndex2) + 1);
 
             financeDAO.saveEntityBean(bean);
 

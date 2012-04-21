@@ -47,5 +47,7 @@ public interface FinanceDAO extends DAO<FinanceBean, FinanceVO>
 
     List<FinanceBean> queryRefFinanceItemByRefId(String refId);
 
-    int findMaxMonthIndex(String beginDate, String endDate);
+    int findMaxMonthIndexByOut(String beginDate, String endDate);
+
+    int findMaxMonthIndexByInner(String beginDate, String endDate);
 }
