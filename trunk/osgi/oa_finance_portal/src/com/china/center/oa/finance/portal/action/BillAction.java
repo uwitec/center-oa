@@ -167,11 +167,11 @@ public class BillAction extends DispatchAction
         {
             changeMap.put("alogTime", TimeTools.now_short( -15));
 
-            changeMap.put("blogTime", TimeTools.now_short(1));
+            changeMap.put("blogTime", TimeTools.now_short(0));
 
-            condtion.addCondition(pfix + ".logTime", ">=", TimeTools.now_short( -15));
+            condtion.addCondition(pfix + ".logTime", ">=", TimeTools.now_short( -15) + " 00:00:00");
 
-            condtion.addCondition(pfix + ".logTime", "<=", TimeTools.now_short(1));
+            condtion.addCondition(pfix + ".logTime", "<=", TimeTools.now_short() + " 23:59:59");
         }
 
         return changeMap;

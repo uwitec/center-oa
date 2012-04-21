@@ -808,8 +808,8 @@ public class CustomerManagerImpl extends AbstractListenerManager<CustomerListene
         StafferBean creater = stafferDAO.find(createrId);
 
         // 如果客户所在的分公司和用户所在分公司相同,则默认给这个申请人
-        if (creater != null && stafferVSCustomerDAO.countByUnique(bean.getId()) == 0
-            && creater.getLocationId().equals(bean.getLocationId()))
+        // && creater.getLocationId().equals(bean.getLocationId())
+        if (creater != null && stafferVSCustomerDAO.countByUnique(bean.getId()) == 0)
         {
             StafferVSCustomerBean vs = new StafferVSCustomerBean();
 

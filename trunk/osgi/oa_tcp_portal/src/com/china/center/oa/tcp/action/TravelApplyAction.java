@@ -1225,6 +1225,116 @@ public class TravelApplyAction extends DispatchAction
         return null;
     }
 
+    /**
+     * exportTravelApply
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportTravelApply(ActionMapping mapping, ActionForm form,
+                                           HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        String filenName = "TCP_APPLY_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        response.setContentType("application/x-dbf");
+
+        response.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        ConditionParse condtion = JSONPageSeparateTools.getCondition(request, QUERYALLTRAVELAPPLY);
+
+        int count = this.travelApplyDAO.countVOByCondition(condtion.toString());
+
+        try
+        {
+            out = response.getOutputStream();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            write.writeLine("日期,标识,目的,申请人,系列,类型,状态,借款,关联报销,借款金额,申请费用");
+
+            PageSeparate page = new PageSeparate();
+
+            page.reset2(count, 2000);
+
+            WriteFileBuffer line = new WriteFileBuffer(write);
+
+            while (page.nextPage())
+            {
+                List<TravelApplyVO> voFList = travelApplyDAO.queryEntityVOsByCondition(condtion,
+                    page);
+
+                for (TravelApplyVO vo : voFList)
+                {
+                    line.reset();
+
+                    TCPHelper.chageVO(vo);
+
+                    line.writeColumn("[" + vo.getLogTime() + "]");
+                    line.writeColumn(vo.getId());
+                    line.writeColumn(StringTools.getExportString(vo.getName()));
+                    line.writeColumn(vo.getStafferName());
+
+                    line.writeColumn(ElTools.get("tcpStype", vo.getStype()));
+                    line.writeColumn(ElTools.get("tcpType", vo.getType()));
+                    line.writeColumn(ElTools.get("tcpStatus", vo.getStatus()));
+                    line.writeColumn(ElTools.get("travelApplyBorrow", vo.getBorrow()));
+                    line.writeColumn(ElTools.get("tcpApplyFeedback", vo.getFeedback()));
+
+                    line.writeColumn(changeString(vo.getShowBorrowTotal()));
+                    line.writeColumn(changeString(vo.getShowTotal()));
+
+                    line.writeLine();
+                }
+            }
+
+            write.close();
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
+    }
+
     private String changeString(String str)
     {
         return str.replaceAll(",", "");

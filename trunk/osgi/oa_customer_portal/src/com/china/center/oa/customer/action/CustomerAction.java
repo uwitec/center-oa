@@ -1026,7 +1026,7 @@ public class CustomerAction extends DispatchAction
                                                  HttpServletResponse response)
         throws ServletException
     {
-        User user = Helper.getUser(request);
+        // User user = Helper.getUser(request);
 
         ConditionParse condtion = new ConditionParse();
 
@@ -1039,7 +1039,7 @@ public class CustomerAction extends DispatchAction
         condtion.addIntCondition("CustomerApplyBean.opr", "<>",
             CustomerConstant.OPR_UPATE_ASSIGNPER);
 
-        condtion.addCondition("CustomerApplyBean.locationId", "=", user.getLocationId());
+        // condtion.addCondition("CustomerApplyBean.locationId", "=", user.getLocationId());
 
         condtion.addIntCondition("CustomerApplyBean.status", "=", CustomerConstant.STATUS_APPLY);
 

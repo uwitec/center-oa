@@ -11,6 +11,7 @@ package com.china.center.oa.product.action;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,7 +38,10 @@ import org.apache.struts.actions.DispatchAction;
 
 import com.center.china.osgi.config.ConfigLoader;
 import com.center.china.osgi.publics.User;
+import com.center.china.osgi.publics.file.writer.WriteFile;
+import com.center.china.osgi.publics.file.writer.WriteFileFactory;
 import com.china.center.actionhelper.common.ActionTools;
+import com.china.center.actionhelper.common.JSONPageSeparateTools;
 import com.china.center.actionhelper.common.JSONTools;
 import com.china.center.actionhelper.common.KeyConstant;
 import com.china.center.actionhelper.common.PageSeparateTools;
@@ -99,6 +103,7 @@ import com.china.center.oa.sail.bean.SailConfBean;
 import com.china.center.oa.sail.manager.SailConfigManager;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.dao.FinanceDAO;
+import com.china.center.osgi.jsp.ElTools;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.CommonTools;
 import com.china.center.tools.FileTools;
@@ -109,6 +114,7 @@ import com.china.center.tools.RequestTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 import com.china.center.tools.UtilStream;
+import com.china.center.tools.WriteFileBuffer;
 
 
 /**
@@ -406,6 +412,111 @@ public class ProductAction extends DispatchAction
             this.composeProductDAO);
 
         return JSONTools.writeResponse(response, jsonstr);
+    }
+
+    /**
+     * exportCompose
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward exportCompose(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        OutputStream out = null;
+
+        String filenName = "Compose_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        response.setContentType("application/x-dbf");
+
+        response.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        ConditionParse condtion = JSONPageSeparateTools.getCondition(request, QUERYCOMPOSE);
+
+        int count = this.composeProductDAO.countVOByCondition(condtion.toString());
+
+        try
+        {
+            out = response.getOutputStream();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            write.writeLine("日期,标识,产品名称,产品编码,数量,单价,合成人,类型,核对,管理类型");
+
+            PageSeparate page = new PageSeparate();
+
+            page.reset2(count, 2000);
+
+            WriteFileBuffer line = new WriteFileBuffer(write);
+
+            while (page.nextPage())
+            {
+                List<ComposeProductVO> voFList = composeProductDAO.queryEntityVOsByCondition(
+                    condtion, page);
+
+                for (ComposeProductVO vo : voFList)
+                {
+                    line.reset();
+
+                    line.writeColumn("[" + vo.getLogTime() + "]");
+                    line.writeColumn(vo.getId());
+                    line.writeColumn(vo.getProductName());
+                    line.writeColumn(vo.getProductCode());
+                    line.writeColumn(vo.getAmount());
+                    line.writeColumn(vo.getPrice());
+                    line.writeColumn(vo.getStafferName());
+                    line.writeColumn(ElTools.get("composeType", vo.getType()));
+                    line.writeColumn(ElTools.get("pubCheckStatus", vo.getCheckStatus()));
+                    line.writeColumn(ElTools.get("pubManagerType", vo.getMtype()));
+
+                    line.writeLine();
+                }
+            }
+
+            write.close();
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+        }
+
+        return null;
     }
 
     /**

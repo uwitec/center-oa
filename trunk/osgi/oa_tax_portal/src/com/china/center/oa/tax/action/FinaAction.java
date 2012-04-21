@@ -338,7 +338,7 @@ public class FinaAction extends ParentQueryFinaAction
             write.openFile(out);
 
             write
-                .writeLine("日期,凭证,借/贷,余额,关联单据,关联库单,关联收付款,关联采购,凭证意见,摘要,科目,借方金额,贷方金额,产品借,产品贷,部门,职员,单位,产品,仓区,纳税实体");
+                .writeLine("日期,凭证,类型,分类,借/贷,余额,关联单据,关联库单,关联收付款,关联采购,凭证意见,摘要,科目,借方金额,贷方金额,产品借,产品贷,部门,职员,单位,产品,仓区,纳税实体");
 
             PageSeparate page = new PageSeparate();
 
@@ -355,19 +355,21 @@ public class FinaAction extends ParentQueryFinaAction
                 {
                     fillItemVO(financeItemVO);
 
-                    line.reset();
-
-                    line.writeColumn("[" + financeItemVO.getFinanceDate() + "]");
-                    line.writeColumn(financeItemVO.getPid());
-                    line.writeColumn(financeItemVO.getForwardName());
-                    line.writeColumn(changeString(financeItemVO.getShowLastmoney()));
-
                     FinanceBean finance = financeDAO.find(financeItemVO.getPid());
 
                     if (finance == null)
                     {
                         continue;
                     }
+
+                    line.reset();
+
+                    line.writeColumn("[" + financeItemVO.getFinanceDate() + "]");
+                    line.writeColumn(financeItemVO.getPid());
+                    line.writeColumn(ElTools.get("financeType", finance.getType()));
+                    line.writeColumn(ElTools.get("financeCreateType", finance.getCreateType()));
+                    line.writeColumn(financeItemVO.getForwardName());
+                    line.writeColumn(changeString(financeItemVO.getShowLastmoney()));
 
                     line.writeColumn(finance.getRefId());
                     line.writeColumn(finance.getRefOut());
@@ -473,7 +475,7 @@ public class FinaAction extends ParentQueryFinaAction
             write.openFile(out);
 
             write
-                .writeLine("日期,凭证,借/贷,余额,关联单据,关联库单,关联收付款,关联采购,凭证意见,摘要,科目,借方金额,贷方金额,产品借,产品贷,部门,职员,单位,产品,仓区,纳税实体");
+                .writeLine("日期,凭证,类型,分类,借/贷,余额,关联单据,关联库单,关联收付款,关联采购,凭证意见,摘要,科目,借方金额,贷方金额,产品借,产品贷,部门,职员,单位,产品,仓区,纳税实体");
 
             PageSeparate page = new PageSeparate();
 
@@ -498,6 +500,9 @@ public class FinaAction extends ParentQueryFinaAction
 
                         line.writeColumn("[" + financeItemVO.getFinanceDate() + "]");
                         line.writeColumn(financeItemVO.getPid());
+                        line.writeColumn(ElTools.get("financeType", financeVO.getType()));
+                        line.writeColumn(ElTools
+                            .get("financeCreateType", financeVO.getCreateType()));
                         line.writeColumn(financeItemVO.getForwardName());
                         line.writeColumn(changeString(financeItemVO.getShowLastmoney()));
 

@@ -75,7 +75,8 @@ function load()
              <c:if test="${param.foward == 3}">
              {id: 'passCheck', bclass: 'pass', caption: '总部核对', onpress : checkBean, auth: '1803'},
              </c:if>
-             {id: 'search', bclass: 'search', onpress : doSearch}
+             {id: 'search', bclass: 'search', onpress : doSearch},
+             {id: 'export', bclass: 'replied',  caption: '导出结果', onpress : exports}
              ],
          <p:conf/>
      };
@@ -145,6 +146,12 @@ function deleteBean(opr, grid)
     else
     $error('不能操作');
 }
+
+function exports()
+{
+    document.location.href = gurl + 'exportCompose';
+}
+
 
 function doSearch()
 {

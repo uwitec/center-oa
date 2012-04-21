@@ -41,7 +41,8 @@ function load()
              id : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
-             {id: 'search', bclass: 'search', onpress : doSearch}
+             {id: 'search', bclass: 'search', onpress : doSearch},
+             {id: 'export', bclass: 'replied',  caption: '导出结果', onpress : exports}
              ],
         <p:conf/>
      };
@@ -81,6 +82,11 @@ function updateBean()
 	}
 	else
 	$error('不能操作');
+}
+
+function exports()
+{
+    document.location.href = gurl + 'exportTravelApply';
 }
 
 function doSearch()
