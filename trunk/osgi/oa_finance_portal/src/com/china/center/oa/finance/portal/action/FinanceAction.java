@@ -432,7 +432,7 @@ public class FinanceAction extends DispatchAction
         {
             changeMap.put("alogTime", TimeTools.now_short( -30));
 
-            changeMap.put("blogTime", TimeTools.now_short(1));
+            changeMap.put("blogTime", TimeTools.now_short());
 
             if (initStatus)
             {
@@ -442,9 +442,10 @@ public class FinanceAction extends DispatchAction
                     FinanceConstant.PAYMENT_STATUS_INIT);
             }
 
-            condtion.addCondition("PaymentBean.logTime", ">=", TimeTools.now_short( -30));
+            condtion.addCondition("PaymentBean.logTime", ">=", TimeTools.now_short( -30)
+                                                               + " 00:00:00");
 
-            condtion.addCondition("PaymentBean.logTime", "<=", TimeTools.now_short(1));
+            condtion.addCondition("PaymentBean.logTime", "<=", TimeTools.now_short() + " 23:59:59");
         }
 
         return changeMap;

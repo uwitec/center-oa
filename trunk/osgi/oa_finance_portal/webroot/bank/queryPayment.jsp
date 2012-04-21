@@ -117,5 +117,5 @@ function doSearch()
 </form>
 <p:message></p:message>
 <table id="mainTable" style="display: none"></table>
-<p:query/>
+<p:query height="300"/>
 </body>

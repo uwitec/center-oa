@@ -85,8 +85,12 @@ function clearValues()
                 ${bean.receiveTime}
             </p:cell>
 
-			<p:cell title="帐户" end="true">
+			<p:cell title="帐户">
                 ${bean.bankName}
+            </p:cell>
+            
+            <p:cell title="导入时间">
+                ${bean.logTime}
             </p:cell>
 
 			<p:pro field="fromer" innerString="size=60" />
