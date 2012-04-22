@@ -450,7 +450,7 @@ public class ProductAction extends DispatchAction
 
             write.openFile(out);
 
-            write.writeLine("日期,标识,产品名称,产品编码,数量,单价,合成人,类型,核对,管理类型");
+            write.writeLine("日期,标识,关联凭证,产品名称,产品编码,数量,单价,合成人,类型,核对,管理类型");
 
             PageSeparate page = new PageSeparate();
 
@@ -469,6 +469,19 @@ public class ProductAction extends DispatchAction
 
                     line.writeColumn("[" + vo.getLogTime() + "]");
                     line.writeColumn(vo.getId());
+
+                    List<FinanceBean> financeBeanList = financeDAO.queryRefFinanceItemByRefId(vo
+                        .getId());
+
+                    if (financeBeanList.size() > 0)
+                    {
+                        line.writeColumn(financeBeanList.get(0).getId());
+                    }
+                    else
+                    {
+                        line.writeColumn("");
+                    }
+
                     line.writeColumn(vo.getProductName());
                     line.writeColumn(vo.getProductCode());
                     line.writeColumn(vo.getAmount());
