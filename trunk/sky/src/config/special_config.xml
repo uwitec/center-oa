@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<properties>
-	<comment>定制配置</comment>
-	<entry key="businessManagerId">14</entry>
-	<entry key="internal">300000</entry>
-	<entry key="exNumber">6000324</entry>
-	<entry key="sendSMSURL">http://218.2.227.105:88/ISendSMS.jsp?MobilePhones=%s&amp;Content=%s&amp;MessageFlag=%s&amp;ModuleName=WebSms&amp;pwdpwd=yyoaCC&amp;ExNumber=%s</entry>
-</properties>
