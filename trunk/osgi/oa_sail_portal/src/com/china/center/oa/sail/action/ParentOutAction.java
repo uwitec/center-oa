@@ -1465,7 +1465,7 @@ public class ParentOutAction extends DispatchAction
                         line.writeColumn("");
                     }
 
-                    line.writeColumn(StringTools.getExportString(element.getDescription()));
+                    line.writeColumn(element.getDescription());
 
                     line.writeLine();
                 }

@@ -172,6 +172,7 @@ function queryAbs()
 				<td align="center" onclick="tableSort(this)" class="td_class"><strong>储位</strong></td>
 				<td align="center" onclick="tableSort(this)" class="td_class"><strong>产品</strong></td>
 				<td align="center" onclick="tableSort(this)" class="td_class"><strong>类型</strong></td>
+				<td align="center" onclick="tableSort(this)" class="td_class"><strong>分类</strong></td>
 				<td align="center" onclick="tableSort(this, true)" class="td_class"><strong>可发数量</strong></td>
 				<td align="center" onclick="tableSort(this, true)" class="td_class"><strong>价格</strong></td>
 				<td align="center" onclick="tableSort(this)" class="td_class"><strong>职员</strong></td>
@@ -199,6 +200,7 @@ function queryAbs()
 					<td align="center" onclick="hrefAndSelect(this)">${item.storageName}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.productName}(${item.productCode})</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:get('pubManagerType', item.productMtype)}</td>
+					<td align="center" onclick="hrefAndSelect(this)">${my:get('productType', item.productType)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.mayAmount}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.addPrice)}</td>
 					<td align="center" onclick="hrefAndSelect(this)">${item.stafferName}</td>

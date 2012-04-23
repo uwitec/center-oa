@@ -120,6 +120,7 @@ function pop(obj)
 				<td align="center" class="td_class"><strong>编码</strong></td>
 				<td align="center" class="td_class"><strong>结算价</strong></td>
 				<td align="center" class="td_class"><strong>管理</strong></td>
+				<td align="center" class="td_class"><strong>分类</strong></td>
 				<td align="center" class="td_class"><strong>图片</strong></td>
 			</tr>
 
@@ -131,6 +132,7 @@ function pop(obj)
 					<td align="center" onclick="hrefAndSelect(this)" ondblclick="sures()">${item.code}</td>
 					<td align="center" onclick="hrefAndSelect(this)" ondblclick="sures()">${my:formatNum(item.sailPrice)}</td>
 					<td align="center" onclick="hrefAndSelect(this)" ondblclick="sures()">${my:get2('pubManagerType', item.reserve4)}</td>
+					<td align="center" onclick="hrefAndSelect(this)" ondblclick="sures()">${my:get2('productType', item.type)}</td>
 					<td align="center">
 					<span style="cursor: pointer;"
 							 href="${rootUrl}pic${item.picPath}?${random}" onclick="pop(this)" title="点击查看原图">
