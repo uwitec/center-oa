@@ -2222,10 +2222,12 @@ public class ParentQueryFinaAction extends DispatchAction
 
         finance.setFinanceDate(rds.getParameter("financeDate"));
         finance.setDutyId(rds.getParameter("dutyId"));
-        finance.setCreateType(TaxConstanst.FINANCE_CREATETYPE_HAND);
+        finance.setCreateType(MathTools.parseInt(rds.getParameter("createType")));
+        finance.setRefId(rds.getParameter("refId"));
 
         request.setAttribute("financeDate", rds.getParameter("financeDate"));
         request.setAttribute("dutyId", rds.getParameter("dutyId"));
+        request.setAttribute("createType", rds.getParameter("createType"));
 
         String pareId = SequenceTools.getSequence();
 

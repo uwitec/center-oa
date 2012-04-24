@@ -109,6 +109,12 @@
             <type>select</type>
             <option>$financeStatus</option>
         </condtion>
+        <condtion name="updateFlag" caption="更新标识">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$financeUpdateFlag</option>
+        </condtion>
 		<condtion name="createType" caption="分类">
 			<opr>=</opr>
 			<datatype>1</datatype>

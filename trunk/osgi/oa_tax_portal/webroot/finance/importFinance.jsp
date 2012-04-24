@@ -61,13 +61,22 @@ function checkValue()
 
 		<p:table cells="1">
 		    <p:cell title="凭证日期">
-                <p:plugin name="financeDate" size="20" type="0" value="${financeDate}" oncheck="notNone"/>
+                <p:plugin name="financeDate" size="20" type="0" value="${financeDate}" oncheck="notNone"/>&nbsp;<font color="red">*</font>
             </p:cell>
 		    <p:cell title="凭证归属">
                 <select name="dutyId" class="select_class" style="width: 50%;" oncheck="notNone" values="${dutyId}">
                  <option value="">--</option>
                  <p:option type="$dutyList"></p:option>
-             </select>
+             </select>&nbsp;<font color="red">*</font>
+            </p:cell>
+            <p:cell title="凭证类型">
+                <select name="createType" class="select_class" style="width: 50%;" oncheck="notNone" values="${createType}">
+                 <option value="">--</option>
+                 <p:option type="financeCreateType"></p:option>
+             </select>&nbsp;<font color="red">*</font>
+            </p:cell>
+            <p:cell title="关联单据">
+                <input name="refId" value="" size="60">
             </p:cell>
 			<p:cell title="导入文件">
 				<input type="file" name="myFile" style="width: 70%;" class="button_class" />

@@ -975,7 +975,7 @@ public class BillAction extends DispatchAction
 
             write.openFile(out);
 
-            write.writeLine("日期,标识,帐户,类型,状态,核对,金额,原始金额,客户,职员,经手人,备注,核对");
+            write.writeLine("日期,标识,帐户,类型,状态,关联单据,核对,金额,原始金额,客户,职员,经手人,备注,核对");
 
             ConditionParse condtion = JSONPageSeparateTools.getCondition(request, QUERYINBILL);
 
@@ -998,8 +998,9 @@ public class BillAction extends DispatchAction
 
                     write.writeLine("[" + each.getLogTime() + "]" + ',' + each.getId() + ','
                                     + each.getBankName() + ',' + typeName + ',' + statusName + ','
-                                    + pubCheckName + ',' + MathTools.formatNum(each.getMoneys())
-                                    + ',' + MathTools.formatNum(each.getSrcMoneys()) + ','
+                                    + each.getOutId() + ',' + pubCheckName + ','
+                                    + MathTools.formatNum(each.getMoneys()) + ','
+                                    + MathTools.formatNum(each.getSrcMoneys()) + ','
                                     + each.getCustomerName() + ',' + each.getOwnerName() + ","
                                     + each.getStafferName() + ','
                                     + StringTools.getExportString(each.getDescription()) + ','
@@ -1077,7 +1078,7 @@ public class BillAction extends DispatchAction
 
             write.openFile(out);
 
-            write.writeLine("日期,标识,帐户,类型,状态,核对,金额,原始金额,客户,职员,经手人,备注,核对");
+            write.writeLine("日期,标识,帐户,类型,状态,关联单据,核对,金额,原始金额,客户,职员,经手人,备注,核对");
 
             ConditionParse condtion = JSONPageSeparateTools.getCondition(request, QUERYOUTBILL);
 
@@ -1099,8 +1100,9 @@ public class BillAction extends DispatchAction
 
                     write.writeLine("[" + each.getLogTime() + "]" + ',' + each.getId() + ','
                                     + each.getBankName() + ',' + typeName + ',' + statusName + ','
-                                    + pubCheckName + ',' + MathTools.formatNum(each.getMoneys())
-                                    + ',' + MathTools.formatNum(each.getSrcMoneys()) + ','
+                                    + each.getStockId() + ',' + pubCheckName + ','
+                                    + MathTools.formatNum(each.getMoneys()) + ','
+                                    + MathTools.formatNum(each.getSrcMoneys()) + ','
                                     + each.getProvideName() + ',' + each.getOwnerName() + ","
                                     + each.getStafferName() + ','
                                     + StringTools.getExportString(each.getDescription()) + ','
