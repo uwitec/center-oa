@@ -9,6 +9,8 @@
 package com.china.center.oa.tax.dao;
 
 
+import java.util.List;
+
 import com.china.center.jdbc.inter.DAO;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.vo.TaxVO;
@@ -39,4 +41,18 @@ public interface TaxDAO extends DAO<TaxBean, TaxVO>
      * @return
      */
     TaxBean findTempByBankId(String bankId);
+
+    /**
+     * listLastStafferTax
+     * 
+     * @return
+     */
+    List<TaxVO> listLastStafferTax();
+
+    /**
+     * listLastUnitTax
+     * 
+     * @return
+     */
+    List<TaxVO> listLastUnitTax();
 }

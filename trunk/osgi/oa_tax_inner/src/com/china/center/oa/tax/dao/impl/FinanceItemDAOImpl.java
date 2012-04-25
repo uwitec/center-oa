@@ -10,9 +10,14 @@ package com.china.center.oa.tax.dao.impl;
 
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.jdbc.core.RowCallbackHandler;
 
 import com.china.center.jdbc.annosql.tools.BeanTools;
 import com.china.center.jdbc.inter.IbatisDaoSupport;
@@ -144,28 +149,48 @@ public class FinanceItemDAOImpl extends BaseDAO<FinanceItemBean, FinanceItemVO> 
         return result;
     }
 
-    public List<String> queryDistinctUnit(String beginDate, String endDate)
+    public List<String> queryDistinctUnit(String beginDate, String endDate, String taxColumn,
+                                          String taxId)
     {
-        Map<String, String> paramterMap = new HashMap();
+        String sql = "select distinct(t1.unitId) as unitId from T_CENTER_FINANCEITEM t1 "
+                     + "where t1.financeDate >= ? and t1.financeDate <= ? and " + taxColumn
+                     + " = ?";
 
-        paramterMap.put("beginDate", beginDate);
-        paramterMap.put("endDate", endDate);
+        final List<String> result = new ArrayList();
 
-        List<String> result = getIbatisDaoSupport().queryForList(
-            "FinanceItemDAOImpl.queryDistinctUnit", paramterMap);
+        this.jdbcOperation.query(sql, new Object[] {beginDate, endDate, taxId},
+            new RowCallbackHandler()
+            {
+
+                public void processRow(ResultSet rst)
+                    throws SQLException
+                {
+                    result.add(rst.getString("unitId"));
+                }
+            });
 
         return result;
     }
 
-    public List<String> queryDistinctStafferId(String beginDate, String endDate)
+    public List<String> queryDistinctStafferId(String beginDate, String endDate, String taxColumn,
+                                               String taxId)
     {
-        Map<String, String> paramterMap = new HashMap();
+        String sql = "select distinct(t1.stafferId) as stafferId from T_CENTER_FINANCEITEM t1 "
+                     + "where t1.financeDate >= ? and t1.financeDate <= ? and " + taxColumn
+                     + " = ?";
 
-        paramterMap.put("beginDate", beginDate);
-        paramterMap.put("endDate", endDate);
+        final List<String> result = new ArrayList();
 
-        List<String> result = getIbatisDaoSupport().queryForList(
-            "FinanceItemDAOImpl.queryDistinctStafferId", paramterMap);
+        this.jdbcOperation.query(sql, new Object[] {beginDate, endDate, taxId},
+            new RowCallbackHandler()
+            {
+
+                public void processRow(ResultSet rst)
+                    throws SQLException
+                {
+                    result.add(rst.getString("stafferId"));
+                }
+            });
 
         return result;
     }

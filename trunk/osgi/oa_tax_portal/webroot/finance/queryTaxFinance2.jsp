@@ -14,12 +14,45 @@ function exportTaxQuery()
 	document.location.href = '../finance/finance.do?method=exportTaxQuery';
 }
 
+function exportTaxQuery2()
+{
+    $O('method').value = 'queryExportTaxFinance2';
+    
+    submit('导出查询需要等待一段时间,请没有看到下载提示前等待服务器处理,确定导出?', null, cc1);
+}
+
 function load()
 {
 	loadForm();
 	
 	if ($O('senfe') != null)
 	bingTable("senfe");
+}
+
+function cc1()
+{
+    if ($$('beginDate') < '2012-04-01')
+    {
+        alert('开始日期必须大于等于:2012-04-01');
+        return false;
+    }
+    
+    if (compareDays($$('beginDate'), $$('endDate')) > 90)
+    {
+        alert('跨度不能大于90天');
+        return false;
+    }
+    
+    if ($$('queryType') == 0)
+    {
+       if ($$('stafferId') != '' && $$('unitId') != '')
+       {
+           alert('科目余额查询不能同时有职员和单位');
+           return false;
+       }
+    }
+    
+    return true;
 }
 
 function cc()
@@ -69,6 +102,8 @@ function cc()
 
 function query()
 {
+    $O('method').value = 'queryTaxFinance2';
+    
 	submit(null, null, cc);
 }
 
@@ -231,7 +266,10 @@ function clearTax()
             </tr>
 
 			<tr class="content1">
-				<td colspan="4" align="right"><input type="button" onclick="query()"
+				<td colspan="4" align="right">
+				<input type="button" onclick="exportTaxQuery2()"
+                    class="button_class" value="&nbsp;&nbsp;查询导出&nbsp;&nbsp;">&nbsp;&nbsp;
+				<input type="button" onclick="query()"
 					class="button_class" value="&nbsp;&nbsp;查 询&nbsp;&nbsp;">&nbsp;&nbsp;<input
 					type="button" class="button_class" onclick="resetAll()"
 					value="&nbsp;&nbsp;重 置&nbsp;&nbsp;"></td>

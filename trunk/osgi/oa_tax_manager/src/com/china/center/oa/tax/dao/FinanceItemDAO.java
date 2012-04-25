@@ -73,7 +73,7 @@ public interface FinanceItemDAO extends DAO<FinanceItemBean, FinanceItemVO>
      * @param endDate
      * @return
      */
-    List<String> queryDistinctUnit(String beginDate, String endDate);
+    List<String> queryDistinctUnit(String beginDate, String endDate, String taxColumn, String taxId);
 
     /**
      * 查询指定时间内发生凭证的职员
@@ -83,5 +83,6 @@ public interface FinanceItemDAO extends DAO<FinanceItemBean, FinanceItemVO>
      * @param endDate
      * @return
      */
-    List<String> queryDistinctStafferId(String beginDate, String endDate);
+    List<String> queryDistinctStafferId(String beginDate, String endDate, String taxColumn,
+                                        String taxId);
 }

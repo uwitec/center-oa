@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -1580,7 +1581,7 @@ public class ParentQueryFinaAction extends DispatchAction
                     throw new MYException("缺少科目");
                 }
 
-                processStafferLastQuery(request, user, tax);
+                processStafferLastQuery(request, user, tax, true);
             }
 
             // 单位查询
@@ -1591,7 +1592,7 @@ public class ParentQueryFinaAction extends DispatchAction
                     throw new MYException("缺少科目");
                 }
 
-                processUnitLastQuery(request, user, tax);
+                processUnitLastQuery(request, user, tax, true);
             }
         }
         catch (MYException e)
@@ -1607,6 +1608,254 @@ public class ParentQueryFinaAction extends DispatchAction
     }
 
     /**
+     * 查询导出科目余额(职员和单位)
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward queryExportTaxFinance2(ActionMapping mapping, ActionForm form,
+                                                HttpServletRequest request,
+                                                HttpServletResponse reponse)
+        throws ServletException
+    {
+        User user = Helper.getUser(request);
+
+        String queryType = request.getParameter("queryType");
+
+        CommonTools.saveParamers(request);
+
+        List<FinanceShowVO> showList = new LinkedList<FinanceShowVO>();
+
+        try
+        {
+            String taxId = request.getParameter("taxId");
+
+            TaxVO tax = null;
+
+            if ( !StringTools.isNullOrNone(taxId))
+            {
+                tax = taxDAO.findVO(taxId);
+            }
+
+            // 科目查询
+            if ("0".equals(queryType))
+            {
+                showList.addAll(processTaxLastQuery(request, user, tax));
+            }
+
+            // 职员查询
+            if ("1".equals(queryType))
+            {
+                if (tax != null)
+                {
+                    showList.addAll(processStafferLastQuery(request, user, tax, false));
+                }
+                else
+                {
+                    // 职员相关的末级科目
+                    List<TaxVO> listLastStafferTax = taxDAO.listLastStafferTax();
+
+                    for (TaxVO taxVO : listLastStafferTax)
+                    {
+                        showList.addAll(processStafferLastQuery(request, user, taxVO, false));
+                    }
+                }
+            }
+
+            // 单位查询
+            if ("2".equals(queryType))
+            {
+                if (tax != null)
+                {
+                    showList.addAll(processUnitLastQuery(request, user, tax, false));
+                }
+                else
+                {
+                    // 职员相关的末级科目
+                    List<TaxVO> listLastStafferTax = taxDAO.listLastUnitTax();
+
+                    for (TaxVO taxVO : listLastStafferTax)
+                    {
+                        showList.addAll(processUnitLastQuery(request, user, taxVO, false));
+                    }
+                }
+            }
+        }
+        catch (MYException e)
+        {
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+            _logger.error(e, e);
+
+            return mapping.findForward("error");
+        }
+
+        OutputStream out = null;
+
+        String filenName = "Tax_" + TimeTools.now("MMddHHmmss") + ".csv";
+
+        reponse.setContentType("application/x-dbf");
+
+        reponse.setHeader("Content-Disposition", "attachment; filename=" + filenName);
+
+        WriteFile write = null;
+
+        try
+        {
+            out = reponse.getOutputStream();
+
+            write = WriteFileFactory.getMyTXTWriter();
+
+            write.openFile(out);
+
+            if ("0".equals(queryType))
+            {
+                write.writeLine("科目,级别,名称,期初余额,本期借方,本期贷方,借方累计,贷方累计,方向,期末余额");
+
+                for (FinanceShowVO each : showList)
+                {
+                    WriteFileBuffer line = new WriteFileBuffer(write);
+
+                    line.writeColumn("[" + each.getTaxId() + "]");
+
+                    TaxBean tax = taxDAO.find(each.getTaxId());
+
+                    if (tax != null)
+                    {
+                        line.writeColumn(ElTools.get("taxBottomFlag", tax.getBottomFlag()));
+                    }
+                    else
+                    {
+                        line.writeColumn("");
+                    }
+
+                    line.writeColumn(each.getTaxName());
+                    line.writeColumn(changeString(each.getShowBeginAllmoney()));
+                    line.writeColumn(changeString(each.getShowCurrInmoney()));
+                    line.writeColumn(changeString(each.getShowCurrOutmoney()));
+                    line.writeColumn(changeString(each.getShowAllInmoney()));
+                    line.writeColumn(changeString(each.getShowAllOutmoney()));
+                    line.writeColumn(changeString(each.getForwardName()));
+                    line.writeColumn(changeString(each.getShowLastmoney()));
+
+                    line.writeLine();
+                }
+            }
+
+            if ("1".equals(queryType))
+            {
+                write.writeLine("科目,级别,名称,职员,期初余额,本期借方,本期贷方,借方累计,贷方累计,方向,期末余额");
+
+                for (FinanceShowVO each : showList)
+                {
+                    WriteFileBuffer line = new WriteFileBuffer(write);
+
+                    line.writeColumn("[" + each.getTaxId() + "]");
+
+                    TaxBean tax = taxDAO.find(each.getTaxId());
+
+                    if (tax != null)
+                    {
+                        line.writeColumn(ElTools.get("taxBottomFlag", tax.getBottomFlag()));
+                    }
+                    else
+                    {
+                        line.writeColumn("");
+                    }
+
+                    line.writeColumn(each.getTaxName());
+                    line.writeColumn(each.getStafferName());
+                    line.writeColumn(changeString(each.getShowBeginAllmoney()));
+                    line.writeColumn(changeString(each.getShowCurrInmoney()));
+                    line.writeColumn(changeString(each.getShowCurrOutmoney()));
+                    line.writeColumn(changeString(each.getShowAllInmoney()));
+                    line.writeColumn(changeString(each.getShowAllOutmoney()));
+                    line.writeColumn(changeString(each.getForwardName()));
+                    line.writeColumn(changeString(each.getShowLastmoney()));
+
+                    line.writeLine();
+                }
+            }
+
+            if ("2".equals(queryType))
+            {
+                write.writeLine("科目,级别,名称,单位,期初余额,本期借方,本期贷方,借方累计,贷方累计,方向,期末余额");
+
+                for (FinanceShowVO each : showList)
+                {
+                    WriteFileBuffer line = new WriteFileBuffer(write);
+
+                    line.writeColumn("[" + each.getTaxId() + "]");
+
+                    TaxBean tax = taxDAO.find(each.getTaxId());
+
+                    if (tax != null)
+                    {
+                        line.writeColumn(ElTools.get("taxBottomFlag", tax.getBottomFlag()));
+                    }
+                    else
+                    {
+                        line.writeColumn("");
+                    }
+
+                    line.writeColumn(each.getTaxName());
+                    line.writeColumn(each.getUnitName());
+                    line.writeColumn(changeString(each.getShowBeginAllmoney()));
+                    line.writeColumn(changeString(each.getShowCurrInmoney()));
+                    line.writeColumn(changeString(each.getShowCurrOutmoney()));
+                    line.writeColumn(changeString(each.getShowAllInmoney()));
+                    line.writeColumn(changeString(each.getShowAllOutmoney()));
+                    line.writeColumn(changeString(each.getForwardName()));
+                    line.writeColumn(changeString(each.getShowLastmoney()));
+
+                    line.writeLine();
+                }
+            }
+
+            write.close();
+
+        }
+        catch (Throwable e)
+        {
+            _logger.error(e, e);
+
+            return null;
+        }
+        finally
+        {
+            if (out != null)
+            {
+                try
+                {
+                    out.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+            if (write != null)
+            {
+
+                try
+                {
+                    write.close();
+                }
+                catch (IOException e1)
+                {
+                }
+            }
+
+        }
+
+        return null;
+    }
+
+    /**
      * 科目余额-科目：只有科目
      * 
      * @param request
@@ -1614,7 +1863,7 @@ public class ParentQueryFinaAction extends DispatchAction
      * @param tax
      * @throws MYException
      */
-    private void processTaxLastQuery(HttpServletRequest request, User user, TaxVO tax)
+    private List<FinanceShowVO> processTaxLastQuery(HttpServletRequest request, User user, TaxVO tax)
         throws MYException
     {
         String stafferId = request.getParameter("stafferId");
@@ -1692,7 +1941,7 @@ public class ParentQueryFinaAction extends DispatchAction
             }
         }
 
-        List<FinanceShowVO> showList = new ArrayList();
+        List<FinanceShowVO> showList = new LinkedList<FinanceShowVO>();
 
         request.getSession().setAttribute("resultList_2", showList);
 
@@ -1753,6 +2002,8 @@ public class ParentQueryFinaAction extends DispatchAction
 
             showList.add(show);
         }
+
+        return showList;
     }
 
     /**
@@ -1786,13 +2037,16 @@ public class ParentQueryFinaAction extends DispatchAction
      * 
      * @param request
      * @param user
+     * @param isTotal
+     *            isTotal
      * @param tax
      * @throws MYException
      */
-    private void processUnitLastQuery(HttpServletRequest request, User user, TaxVO taxBean)
+    private List<FinanceShowVO> processUnitLastQuery(HttpServletRequest request, User user,
+                                                     TaxVO taxBean, boolean isTotal)
         throws MYException
     {
-        List<FinanceShowVO> showList = new ArrayList();
+        List<FinanceShowVO> showList = new LinkedList<FinanceShowVO>();
 
         request.getSession().setAttribute("resultList_2", showList);
 
@@ -1818,7 +2072,10 @@ public class ParentQueryFinaAction extends DispatchAction
         else if (StringTools.isNullOrNone(stafferId) && StringTools.isNullOrNone(unitId))
         {
             // 先查询出本期发生的单位
-            unitList.addAll(financeItemDAO.queryDistinctUnit(beginDate, endDate));
+            unitList.addAll(financeItemDAO.queryDistinctUnit(beginDate, endDate, "taxId"
+                                                                                 + taxBean
+                                                                                     .getLevel(),
+                taxBean.getId()));
         }
         else
         {
@@ -1900,50 +2157,58 @@ public class ParentQueryFinaAction extends DispatchAction
             showList.add(show);
         }
 
-        // 合计
-        FinanceShowVO total = new FinanceShowVO();
-
-        total.setTaxId("合计");
-
-        total.setForwardName(FinanceHelper.getForwardName(taxBean));
-
-        for (FinanceShowVO financeShowVO : showList)
+        if (isTotal)
         {
-            total.setBeginAllmoney(financeShowVO.getBeginAllmoney() + total.getBeginAllmoney());
+            // 合计
+            FinanceShowVO total = new FinanceShowVO();
 
-            total.setCurrInmoney(financeShowVO.getCurrInmoney() + total.getCurrInmoney());
-            total.setCurrOutmoney(financeShowVO.getCurrOutmoney() + total.getCurrOutmoney());
+            total.setTaxId("合计");
 
-            total.setAllInmoney(financeShowVO.getAllInmoney() + total.getAllInmoney());
-            total.setAllOutmoney(financeShowVO.getAllOutmoney() + total.getAllOutmoney());
+            total.setForwardName(FinanceHelper.getForwardName(taxBean));
 
-            total.setLastmoney(financeShowVO.getLastmoney() + total.getLastmoney());
+            for (FinanceShowVO financeShowVO : showList)
+            {
+                total.setBeginAllmoney(financeShowVO.getBeginAllmoney() + total.getBeginAllmoney());
+
+                total.setCurrInmoney(financeShowVO.getCurrInmoney() + total.getCurrInmoney());
+                total.setCurrOutmoney(financeShowVO.getCurrOutmoney() + total.getCurrOutmoney());
+
+                total.setAllInmoney(financeShowVO.getAllInmoney() + total.getAllInmoney());
+                total.setAllOutmoney(financeShowVO.getAllOutmoney() + total.getAllOutmoney());
+
+                total.setLastmoney(financeShowVO.getLastmoney() + total.getLastmoney());
+            }
+
+            total.setShowBeginAllmoney(FinanceHelper.longToString(total.getBeginAllmoney()));
+            total.setShowCurrInmoney(FinanceHelper.longToString(total.getCurrInmoney()));
+            total.setShowCurrOutmoney(FinanceHelper.longToString(total.getCurrOutmoney()));
+
+            total.setShowAllInmoney(FinanceHelper.longToString(total.getAllInmoney()));
+            total.setShowAllOutmoney(FinanceHelper.longToString(total.getAllOutmoney()));
+
+            total.setShowLastmoney(FinanceHelper.longToString(total.getLastmoney()));
+
+            showList.add(total);
         }
 
-        total.setShowBeginAllmoney(FinanceHelper.longToString(total.getBeginAllmoney()));
-        total.setShowCurrInmoney(FinanceHelper.longToString(total.getCurrInmoney()));
-        total.setShowCurrOutmoney(FinanceHelper.longToString(total.getCurrOutmoney()));
-
-        total.setShowAllInmoney(FinanceHelper.longToString(total.getAllInmoney()));
-        total.setShowAllOutmoney(FinanceHelper.longToString(total.getAllOutmoney()));
-
-        total.setShowLastmoney(FinanceHelper.longToString(total.getLastmoney()));
-
-        showList.add(total);
+        return showList;
     }
 
     /**
-     * processStafferLastQuery
+     * processStafferLastQuery(职员查询)
      * 
      * @param request
      * @param user
      * @param taxBean
+     * @param isTotal
+     *            isTotal
      * @throws MYException
      */
-    private void processStafferLastQuery(HttpServletRequest request, User user, TaxVO taxBean)
+    private List<FinanceShowVO> processStafferLastQuery(HttpServletRequest request, User user,
+                                                        TaxVO taxBean, boolean isTotal)
         throws MYException
     {
-        List<FinanceShowVO> showList = new ArrayList();
+        List<FinanceShowVO> showList = new LinkedList<FinanceShowVO>();
 
         request.getSession().setAttribute("resultList_2", showList);
 
@@ -1960,12 +2225,13 @@ public class ParentQueryFinaAction extends DispatchAction
 
             String endDate = request.getParameter("endDate");
 
-            // 先查询出本期发生的单位
-            stafferList.addAll(financeItemDAO.queryDistinctStafferId(beginDate, endDate));
+            // 先查询出本期发生的职员
+            stafferList.addAll(financeItemDAO.queryDistinctStafferId(beginDate, endDate,
+                "taxId" + taxBean.getLevel(), taxBean.getId()));
         }
         else
         {
-            // 只有一个单位
+            // 只有一个职员
             stafferList.add(stafferId);
         }
 
@@ -2044,36 +2310,41 @@ public class ParentQueryFinaAction extends DispatchAction
             showList.add(show);
         }
 
-        // 合计
-        FinanceShowVO total = new FinanceShowVO();
-
-        total.setTaxId("合计");
-
-        total.setForwardName(FinanceHelper.getForwardName(taxBean));
-
-        for (FinanceShowVO financeShowVO : showList)
+        if (isTotal)
         {
-            total.setBeginAllmoney(financeShowVO.getBeginAllmoney() + total.getBeginAllmoney());
+            // 合计
+            FinanceShowVO total = new FinanceShowVO();
 
-            total.setCurrInmoney(financeShowVO.getCurrInmoney() + total.getCurrInmoney());
-            total.setCurrOutmoney(financeShowVO.getCurrOutmoney() + total.getCurrOutmoney());
+            total.setTaxId("合计");
 
-            total.setAllInmoney(financeShowVO.getAllInmoney() + total.getAllInmoney());
-            total.setAllOutmoney(financeShowVO.getAllOutmoney() + total.getAllOutmoney());
+            total.setForwardName(FinanceHelper.getForwardName(taxBean));
 
-            total.setLastmoney(financeShowVO.getLastmoney() + total.getLastmoney());
+            for (FinanceShowVO financeShowVO : showList)
+            {
+                total.setBeginAllmoney(financeShowVO.getBeginAllmoney() + total.getBeginAllmoney());
+
+                total.setCurrInmoney(financeShowVO.getCurrInmoney() + total.getCurrInmoney());
+                total.setCurrOutmoney(financeShowVO.getCurrOutmoney() + total.getCurrOutmoney());
+
+                total.setAllInmoney(financeShowVO.getAllInmoney() + total.getAllInmoney());
+                total.setAllOutmoney(financeShowVO.getAllOutmoney() + total.getAllOutmoney());
+
+                total.setLastmoney(financeShowVO.getLastmoney() + total.getLastmoney());
+            }
+
+            total.setShowBeginAllmoney(FinanceHelper.longToString(total.getBeginAllmoney()));
+            total.setShowCurrInmoney(FinanceHelper.longToString(total.getCurrInmoney()));
+            total.setShowCurrOutmoney(FinanceHelper.longToString(total.getCurrOutmoney()));
+
+            total.setShowAllInmoney(FinanceHelper.longToString(total.getAllInmoney()));
+            total.setShowAllOutmoney(FinanceHelper.longToString(total.getAllOutmoney()));
+
+            total.setShowLastmoney(FinanceHelper.longToString(total.getLastmoney()));
+
+            showList.add(total);
         }
 
-        total.setShowBeginAllmoney(FinanceHelper.longToString(total.getBeginAllmoney()));
-        total.setShowCurrInmoney(FinanceHelper.longToString(total.getCurrInmoney()));
-        total.setShowCurrOutmoney(FinanceHelper.longToString(total.getCurrOutmoney()));
-
-        total.setShowAllInmoney(FinanceHelper.longToString(total.getAllInmoney()));
-        total.setShowAllOutmoney(FinanceHelper.longToString(total.getAllOutmoney()));
-
-        total.setShowLastmoney(FinanceHelper.longToString(total.getLastmoney()));
-
-        showList.add(total);
+        return showList;
     }
 
     /**

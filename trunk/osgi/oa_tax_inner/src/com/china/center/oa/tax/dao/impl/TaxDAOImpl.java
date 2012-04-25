@@ -69,4 +69,34 @@ public class TaxDAOImpl extends BaseDAO<TaxBean, TaxVO> implements TaxDAO
 
         return list.get(0);
     }
+
+    public List<TaxVO> listLastStafferTax()
+    {
+        ConditionParse conditionParse = new ConditionParse();
+
+        conditionParse.addWhereStr();
+
+        conditionParse.addIntCondition("TaxBean.bottomFlag", "=", TaxConstanst.TAX_BOTTOMFLAG_ITEM);
+
+        conditionParse.addIntCondition("TaxBean.staffer", "=", TaxConstanst.TAX_CHECK_YES);
+
+        conditionParse.addCondition("order by TaxBean.id");
+
+        return queryEntityVOsByCondition(conditionParse);
+    }
+
+    public List<TaxVO> listLastUnitTax()
+    {
+        ConditionParse conditionParse = new ConditionParse();
+
+        conditionParse.addWhereStr();
+
+        conditionParse.addIntCondition("TaxBean.bottomFlag", "=", TaxConstanst.TAX_BOTTOMFLAG_ITEM);
+
+        conditionParse.addIntCondition("TaxBean.unit", "=", TaxConstanst.TAX_CHECK_YES);
+
+        conditionParse.addCondition("order by TaxBean.id");
+
+        return queryEntityVOsByCondition(conditionParse);
+    }
 }
