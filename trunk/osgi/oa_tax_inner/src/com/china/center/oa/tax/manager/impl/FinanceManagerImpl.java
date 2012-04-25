@@ -357,6 +357,11 @@ public class FinanceManagerImpl implements FinanceManager
                 }
             }
 
+            if (last.getId().equals("A9990000000000000001"))
+            {
+                throw new MYException("初始化月结不能撤销,请确认操作");
+            }
+
             // 删除月结产生的凭证
             ConditionParse con = new ConditionParse();
             con.addWhereStr();

@@ -24,6 +24,12 @@ function load()
 
 function cc()
 {
+    if ($$('beginDate') < '2012-04-01')
+    {
+        alert('开始日期必须大于等于:2012-04-01');
+        return false;
+    }
+    
 	if (compareDays($$('beginDate'), $$('endDate')) > 90)
 	{
 		alert('跨度不能大于90天');

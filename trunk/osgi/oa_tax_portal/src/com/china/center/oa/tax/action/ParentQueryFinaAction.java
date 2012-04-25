@@ -892,11 +892,13 @@ public class ParentQueryFinaAction extends DispatchAction
         // 结转 开始日期前的结余(整个表查询哦)
         if (type == 1)
         {
+            String begin = parameterDAO.getString(SysConfigConstant.TAX_EXPORT_POINT);
+
             // 开始日期前的结余
             String beginDate = request.getParameter("beginDate");
 
             // 这里的时间是默认的
-            condtion.addCondition("FinanceItemBean.financeDate", ">", "2011-05-01");
+            condtion.addCondition("FinanceItemBean.financeDate", ">", begin);
 
             condtion.addCondition("FinanceItemBean.financeDate", "<", beginDate);
         }
@@ -907,8 +909,9 @@ public class ParentQueryFinaAction extends DispatchAction
             String endDate = request.getParameter("endDate");
 
             // 从当年1月
-            condtion.addCondition("FinanceItemBean.financeDate", ">=", endDate.substring(0, 4)
-                                                                       + "-01-01");
+            condtion.addCondition("FinanceItemBean.financeDate", ">=", getYearBegin(endDate
+                .substring(0, 4)
+                                                                                    + "-01-01"));
 
             condtion.addCondition("FinanceItemBean.financeDate", "<=", endDate);
         }
@@ -973,6 +976,29 @@ public class ParentQueryFinaAction extends DispatchAction
         }
 
         return condtion;
+    }
+
+    /**
+     * getYearBegin
+     * 
+     * @param begin
+     * @return
+     */
+    private String getYearBegin(String begin)
+    {
+        String beginConfig = parameterDAO.getString(SysConfigConstant.TAX_EXPORT_POINT);
+
+        if (StringTools.isNullOrNone(beginConfig))
+        {
+            return begin;
+        }
+
+        if (beginConfig.compareTo(begin) > 0)
+        {
+            return beginConfig;
+        }
+
+        return begin;
     }
 
     /**
@@ -1470,11 +1496,13 @@ public class ParentQueryFinaAction extends DispatchAction
         // 结转 开始日期前的结余(整个表查询哦)
         if (type == 1)
         {
+            String begin = parameterDAO.getString(SysConfigConstant.TAX_EXPORT_POINT);
+
             // 开始日期前的结余
             String beginDate = request.getParameter("beginDate");
 
             // 这里的时间是默认的
-            condtion.addCondition("FinanceItemBean.financeDate", ">", "2011-05-01");
+            condtion.addCondition("FinanceItemBean.financeDate", ">", begin);
 
             condtion.addCondition("FinanceItemBean.financeDate", "<", beginDate);
         }
@@ -1485,8 +1513,9 @@ public class ParentQueryFinaAction extends DispatchAction
             String endDate = request.getParameter("endDate");
 
             // 从当年1月
-            condtion.addCondition("FinanceItemBean.financeDate", ">=", endDate.substring(0, 4)
-                                                                       + "-01-01");
+            condtion.addCondition("FinanceItemBean.financeDate", ">=", getYearBegin(endDate
+                .substring(0, 4)
+                                                                                    + "-01-01"));
 
             condtion.addCondition("FinanceItemBean.financeDate", "<=", endDate);
         }

@@ -140,7 +140,7 @@ function clearTax()
 				<td width="15%" align="center">选择年</td>
 				<td align="left">
 				<select name="year" values="${year}" class="select_class" oncheck="notNone">
-				    <p:option type="[2011,2100]"></p:option>
+				    <p:option type="[2012,2100]"></p:option>
 				</select>
 				<font color="#FF0000">*</font>
 				</td>
