@@ -805,6 +805,15 @@ public class BillAction extends DispatchAction
     {
         CommonTools.saveParamers(request);
 
+        String goback = request.getParameter("goback");
+
+        if (StringTools.isNullOrNone(goback))
+        {
+            goback = "1";
+        }
+
+        request.setAttribute("goback", goback);
+
         String id = request.getParameter("id");
 
         InBillVO bean = inBillDAO.findVO(id);

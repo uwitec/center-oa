@@ -117,8 +117,12 @@ function pagePrint()
                ${my:formatNum(bean.srcMoneys)}
             </p:cell>
             
-            <p:cell title="时间" end="true">
+            <p:cell title="时间">
                ${bean.logTime}
+            </p:cell>
+            
+            <p:cell title="关联收付">
+               <a href="../finance/bill.do?method=findBill&id=${bean.refBillId}">${bean.refBillId}</a>
             </p:cell>
             
             <p:cell title="回款备注" end="true">
