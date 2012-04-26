@@ -275,7 +275,7 @@ public class CustomerAction extends DispatchAction
         if (userManager.containAuth(user, AuthConstant.CUSTOMER_QUERY_LOCATION))
         {
             // 看到区域下所有的客户
-            condtion.addCondition("CustomerBean.locationId", "=", user.getLocationId());
+            // condtion.addCondition("CustomerBean.locationId", "=", user.getLocationId());
         }
         else
         {

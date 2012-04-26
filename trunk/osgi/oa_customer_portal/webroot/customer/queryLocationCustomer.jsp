@@ -43,7 +43,7 @@ function load()
 		     {id: 'syn', caption: '客户分公司同步', bclass: 'table', onpress : synAll, auth: '0210'},
 		     {id: 'queryCreditLog', caption: '信用变更日志', bclass: 'search', onpress : queryCreditLog, auth: '0219'},
 		     {id: 'queryCredit', caption: '信用明细', bclass: 'search', onpress : queryCredit, auth: '0219'},
-		     {id: 'queryVistor', caption: '拜访记录', bclass: 'search', onpress : queryVistor},
+		     //{id: 'queryVistor', caption: '拜访记录', bclass: 'search', onpress : queryVistor},
 		     {id: 'search', bclass: 'search', onpress : doSearch}
 		     ],
 		 <p:conf callBack="loadForm" queryMode="0"/>
