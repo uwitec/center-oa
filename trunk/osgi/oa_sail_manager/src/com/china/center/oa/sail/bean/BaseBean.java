@@ -92,7 +92,7 @@ public class BaseBean implements Serializable
     private double iprice = 0.0d;
 
     /**
-     * 输入价格(显示成本)
+     * 输入价格(销售里面:业务员结算价)
      */
     private double inputPrice = 0.0d;
 
