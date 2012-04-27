@@ -39,4 +39,6 @@
 
 	<osgi:service ref="financeItemTempDAO" interface="com.china.center.oa.tax.dao.FinanceItemTempDAO" />
 
+	<osgi:service ref="financeReferDAO" interface="com.china.center.oa.tax.dao.FinanceReferDAO" />
+
 </beans>

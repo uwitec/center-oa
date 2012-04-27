@@ -32,4 +32,19 @@ public interface FinaConstant
      * 合计
      */
     int FINANCEREP_RMETHOD_ALL = 99;
+
+    /**
+     * 单位
+     */
+    int FINANCEREFER_UNIT = 0;
+
+    /**
+     * 职员
+     */
+    int FINANCEREFER_STAFFER = 1;
+
+    /**
+     * 组织
+     */
+    int FINANCEREFER_ORG = 2;
 }

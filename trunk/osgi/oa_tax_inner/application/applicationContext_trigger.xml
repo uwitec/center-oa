@@ -25,11 +25,25 @@
         <property name="cronExpression" value="0 0 0/1 * * ?" />
     </bean>
     
+    <bean id="synReferJob"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="financeReferDAO" />
+        <property name="targetMethod" value="syn" />
+        <property name="concurrent" value="false" />
+    </bean>
+    
+    <bean id="synReferTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="synReferJob" />
+        <property name="cronExpression" value="0 45 2 * * ?" />
+    </bean>
+    
     <bean
         class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
                 <ref bean="synTrigger" />
+                <ref bean="synReferTrigger" />
             </list>
         </property>
     </bean>

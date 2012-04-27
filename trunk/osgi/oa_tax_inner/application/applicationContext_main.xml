@@ -40,4 +40,6 @@
 
 	<bean id="financeItemTempDAO" class="com.china.center.oa.tax.dao.impl.FinanceItemTempDAOImpl" />
 
+	<bean id="financeReferDAO" class="com.china.center.oa.tax.dao.impl.FinanceReferDAOImpl" />
+
 </beans>

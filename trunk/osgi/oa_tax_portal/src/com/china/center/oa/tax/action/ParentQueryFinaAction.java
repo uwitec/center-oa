@@ -62,6 +62,7 @@ import com.china.center.oa.sail.manager.OutManager;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.FinanceItemBean;
 import com.china.center.oa.tax.bean.FinanceMonthBean;
+import com.china.center.oa.tax.bean.FinanceRefer;
 import com.china.center.oa.tax.bean.TaxBean;
 import com.china.center.oa.tax.bean.UnitBean;
 import com.china.center.oa.tax.constanst.FinaConstant;
@@ -71,6 +72,7 @@ import com.china.center.oa.tax.dao.FinanceDAO;
 import com.china.center.oa.tax.dao.FinanceItemDAO;
 import com.china.center.oa.tax.dao.FinanceItemTempDAO;
 import com.china.center.oa.tax.dao.FinanceMonthDAO;
+import com.china.center.oa.tax.dao.FinanceReferDAO;
 import com.china.center.oa.tax.dao.FinanceRepDAO;
 import com.china.center.oa.tax.dao.FinanceTempDAO;
 import com.china.center.oa.tax.dao.FinanceTurnDAO;
@@ -148,6 +150,8 @@ public class ParentQueryFinaAction extends DispatchAction
     protected FinanceTempDAO financeTempDAO = null;
 
     protected FinanceItemTempDAO financeItemTempDAO = null;
+
+    protected FinanceReferDAO financeReferDAO = null;
 
     protected static final String QUERYFINANCE = "queryFinance";
 
@@ -2056,11 +2060,13 @@ public class ParentQueryFinaAction extends DispatchAction
 
         String unitId = request.getParameter("unitId");
 
-        List<String> unitList = new ArrayList();
+        List<String> unitList = new LinkedList<String>();
 
         String beginDate = request.getParameter("beginDate");
 
         String endDate = request.getParameter("endDate");
+
+        boolean weiyi = false;
 
         // 查询名下所有的单位(过滤掉查询范围内没有出现的单位)
         if ( !StringTools.isNullOrNone(stafferId) && StringTools.isNullOrNone(unitId))
@@ -2071,14 +2077,33 @@ public class ParentQueryFinaAction extends DispatchAction
         }
         else if (StringTools.isNullOrNone(stafferId) && StringTools.isNullOrNone(unitId))
         {
-            // 先查询出本期发生的单位
-            unitList.addAll(financeItemDAO.queryDistinctUnit(beginDate, endDate, "taxId"
-                                                                                 + taxBean
-                                                                                     .getLevel(),
-                taxBean.getId()));
+            ConditionParse con = new ConditionParse();
+
+            con.addWhereStr();
+
+            List<FinanceRefer> referList = financeReferDAO
+                .queryEntityBeansByFK(FinaConstant.FINANCEREFER_UNIT);
+
+            for (FinanceRefer financeRefer : referList)
+            {
+                unitList.add(financeRefer.getRefId());
+            }
+
+            List<String> queryDistinctUnit = financeItemDAO.queryDistinctUnit(beginDate, endDate,
+                "taxId" + taxBean.getLevel(), taxBean.getId());
+
+            for (String each : queryDistinctUnit)
+            {
+                if ( !unitList.contains(each))
+                {
+                    unitList.add(each);
+                }
+            }
         }
         else
         {
+            weiyi = true;
+
             // 只有一个单位
             unitList.add(unitId);
         }
@@ -2154,7 +2179,13 @@ public class ParentQueryFinaAction extends DispatchAction
             show.setLastmoney(head.getLastmoney() + currentLast);
             show.setShowLastmoney(FinanceHelper.longToString(head.getLastmoney() + currentLast));
 
-            showList.add(show);
+            // 三个为0的数据没有意义
+            if (weiyi
+                || ! (show.getBeginAllmoney() == 0 && show.getCurrInmoney() == 0 && show
+                    .getCurrOutmoney() == 0))
+            {
+                showList.add(show);
+            }
         }
 
         if (isTotal)
@@ -2218,19 +2249,39 @@ public class ParentQueryFinaAction extends DispatchAction
 
         List<String> stafferList = new ArrayList();
 
-        // 查询名下所有的单位(过滤掉查询范围内没有出现的单位)
+        boolean weiyi = false;
+
+        // 查询人员
         if (StringTools.isNullOrNone(stafferId))
         {
             String beginDate = request.getParameter("beginDate");
 
             String endDate = request.getParameter("endDate");
 
-            // 先查询出本期发生的职员
-            stafferList.addAll(financeItemDAO.queryDistinctStafferId(beginDate, endDate,
-                "taxId" + taxBean.getLevel(), taxBean.getId()));
+            List<FinanceRefer> referList = financeReferDAO
+                .queryEntityBeansByFK(FinaConstant.FINANCEREFER_STAFFER);
+
+            for (FinanceRefer financeRefer : referList)
+            {
+                stafferList.add(financeRefer.getRefId());
+            }
+
+            List<String> queryDistinctStafferId = financeItemDAO.queryDistinctStafferId(beginDate,
+                endDate, "taxId" + taxBean.getLevel(), taxBean.getId());
+
+            for (String each : queryDistinctStafferId)
+            {
+                if ( !stafferList.contains(each))
+                {
+                    stafferList.add(each);
+                }
+            }
+
         }
         else
         {
+            weiyi = true;
+
             // 只有一个职员
             stafferList.add(stafferId);
         }
@@ -2307,7 +2358,13 @@ public class ParentQueryFinaAction extends DispatchAction
             show.setLastmoney(head.getLastmoney() + currentLast);
             show.setShowLastmoney(FinanceHelper.longToString(head.getLastmoney() + currentLast));
 
-            showList.add(show);
+            // 三个为0的数据没有意义
+            if (weiyi
+                || ! (show.getBeginAllmoney() == 0 && show.getCurrInmoney() == 0 && show
+                    .getCurrOutmoney() == 0))
+            {
+                showList.add(show);
+            }
         }
 
         if (isTotal)
@@ -2886,5 +2943,22 @@ public class ParentQueryFinaAction extends DispatchAction
         }
 
         return result;
+    }
+
+    /**
+     * @return the financeReferDAO
+     */
+    public FinanceReferDAO getFinanceReferDAO()
+    {
+        return financeReferDAO;
+    }
+
+    /**
+     * @param financeReferDAO
+     *            the financeReferDAO to set
+     */
+    public void setFinanceReferDAO(FinanceReferDAO financeReferDAO)
+    {
+        this.financeReferDAO = financeReferDAO;
     }
 }

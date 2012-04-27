@@ -12,8 +12,8 @@ package com.china.center.oa.tax.dao.impl;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -156,7 +156,7 @@ public class FinanceItemDAOImpl extends BaseDAO<FinanceItemBean, FinanceItemVO> 
                      + "where t1.financeDate >= ? and t1.financeDate <= ? and " + taxColumn
                      + " = ?";
 
-        final List<String> result = new ArrayList();
+        final List<String> result = new LinkedList<String>();
 
         this.jdbcOperation.query(sql, new Object[] {beginDate, endDate, taxId},
             new RowCallbackHandler()
@@ -179,7 +179,7 @@ public class FinanceItemDAOImpl extends BaseDAO<FinanceItemBean, FinanceItemVO> 
                      + "where t1.financeDate >= ? and t1.financeDate <= ? and " + taxColumn
                      + " = ?";
 
-        final List<String> result = new ArrayList();
+        final List<String> result = new LinkedList<String>();
 
         this.jdbcOperation.query(sql, new Object[] {beginDate, endDate, taxId},
             new RowCallbackHandler()
