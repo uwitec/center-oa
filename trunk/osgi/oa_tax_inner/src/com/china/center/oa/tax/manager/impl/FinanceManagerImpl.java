@@ -1235,6 +1235,8 @@ public class FinanceManagerImpl implements FinanceManager
 
         // 标识成更改
         bean.setUpdateFlag(TaxConstanst.FINANCE_UPDATEFLAG_YES);
+        // 保存最后一个修改人
+        bean.setCreaterId(user.getStafferId());
 
         // 允许自己制定凭证日期
         if (StringTools.isNullOrNone(bean.getFinanceDate()))
