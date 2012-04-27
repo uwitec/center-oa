@@ -298,7 +298,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
                 total += vsItem.getMoneys();
 
                 // 保证金额不超出
-                if (total > lastMoney)
+                if (MathTools.compare(total, lastMoney) > 0)
                 {
                     // 拆分此单
                     billManager.splitInBillBeanWithoutTransactional(user, vsItem.getBillId(),
@@ -578,7 +578,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
         double hasUsed = inBillDAO.sumByPaymentId(bean.getPaymentId());
 
-        if (hasUsed + bean.getMoneys() > payment.getMoney())
+        if (MathTools.compare(hasUsed + bean.getMoneys(), payment.getMoney()) > 0)
         {
             throw new MYException("回款使用金额溢出,总金额[%.2f],已使用金额[%.2f],本次申请金额[%.2f],请确认操作", payment
                 .getMoney(), hasUsed, bean.getMoneys());
@@ -960,7 +960,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
                 double hasOutBalancePay = inBillDAO.sumByOutBalanceId(outBal.getId());
 
                 // 发现支付的金额过多
-                if (hasOutBalancePay > outBal.getTotal())
+                if (MathTools.compare(hasOutBalancePay, outBal.getTotal()) > 0)
                 {
                     throw new MYException("委托清单[%s]的总金额[%.2f],当前已付金额[%.2f]付款金额超出销售金额", outBal
                         .getId(), outBal.getTotal(), hasOutBalancePay);
@@ -1097,7 +1097,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
         double hasUsed = inBillDAO.sumByPaymentId(apply.getPaymentId());
 
-        if (hasUsed + apply.getMoneys() > payment.getMoney())
+        if (MathTools.compare(hasUsed + apply.getMoneys(), payment.getMoney()) > 0)
         {
             throw new MYException("回款使用金额溢出,总金额[%.2f],已使用金额[%.2f],本次申请金额[%.2f],请确认操作", payment
                 .getMoney(), hasUsed, apply.getMoneys());
