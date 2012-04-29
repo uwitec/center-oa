@@ -64,7 +64,6 @@ import com.china.center.oa.product.vs.StorageRelationBean;
 import com.china.center.oa.product.wrap.ProductChangeWrap;
 import com.china.center.oa.publics.bean.DutyBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
-import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.bean.InvoiceCreditBean;
 import com.china.center.oa.publics.bean.LocationBean;
 import com.china.center.oa.publics.bean.NotifyBean;
@@ -544,52 +543,6 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             throw new RuntimeException("销售必须在一个仓库下面");
                         }
 
-                        // MANAGER 销售单校验销售规则(废弃)
-                        if (OATools.getManagerFlag()
-                            && outBean.getType() == OutConstant.OUT_TYPE_OUTBILL && false)
-                        {
-                            if (CommonTools.parseInt(outBean.getSailType()) != product
-                                .getSailType()
-                                || CommonTools.parseInt(outBean.getProductType()) != product
-                                    .getType())
-                            {
-                                throw new RuntimeException("销售的时候产品的销售类型和产品类型必须一致:"
-                                                           + product.getName());
-                            }
-
-                            // 检验开单的合法性
-                            InvoiceBean invoiceBean = invoiceDAO.find(outBean.getInvoiceId());
-
-                            DutyBean duty = dutyDAO.find(outBean.getDutyId());
-
-                            int ratio = (int) (invoiceBean.getVal() * 10);
-
-                            ConditionParse sailCondtion = new ConditionParse();
-
-                            sailCondtion.addWhereStr();
-
-                            sailCondtion.addIntCondition("finType" + duty.getType(), "=",
-                                SailConstant.SAILCONFIG_FIN_YES);
-
-                            sailCondtion.addIntCondition("ratio" + duty.getType(), "=", ratio);
-
-                            sailCondtion.addIntCondition("productType", "=", outBean
-                                .getProductType());
-
-                            sailCondtion.addIntCondition("sailType", "=", outBean.getSailType());
-
-                            sailCondtion.addCondition("showId", "=", base.getShowId());
-
-                            int countByCondition = sailConfigDAO.countByCondition(sailCondtion
-                                .toString());
-
-                            if (countByCondition <= 0)
-                            {
-                                throw new RuntimeException("销售的产品包括类型和开单的品名不符合销售规则:"
-                                                           + product.getName());
-                            }
-                        }
-
                         // 调拨的时候有bug啊
                         base.setLocationId(outBean.getLocation());
 
@@ -611,32 +564,45 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             }
                             else
                             {
-                                base.setInputPrice(base.getCostPrice());
+                                throw new RuntimeException("真正成本和销售成本不对其,请重新操作");
                             }
                         }
 
-                        // 获取销售配置
-                        SailConfBean sailConf = sailConfigManager.findProductConf(stafferBean,
-                            product);
-
-                        // 总部结算价(产品结算价 * (1 + 总部结算率))
-                        base.setPprice(product.getSailPrice()
-                                       * (1 + sailConf.getPratio() / 1000.0d));
-
-                        // 事业部结算价(产品结算价 * (1 + 总部结算率 + 事业部结算率))
-                        base
-                            .setIprice(product.getSailPrice()
-                                       * (1 + sailConf.getIratio() / 1000.0d + sailConf.getPratio() / 1000.0d));
-
-                        if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+                        // 公卖
+                        if ("0".equals(base.getOwner()))
                         {
-                            // 发现一些异常,这里保护一下
-                            if (base.getInputPrice() == 0 && base.getIprice() > 0)
-                            {
-                                fatalLog.fatal("error price in sail:" + base);
+                            // 获取销售配置
+                            SailConfBean sailConf = sailConfigManager.findProductConf(stafferBean,
+                                product);
 
-                                throw new RuntimeException("业务员结算价不能为0");
+                            // 总部结算价(产品结算价 * (1 + 总部结算率))
+                            base.setPprice(product.getSailPrice()
+                                           * (1 + sailConf.getPratio() / 1000.0d));
+
+                            // 事业部结算价(产品结算价 * (1 + 总部结算率 + 事业部结算率))
+                            base.setIprice(product.getSailPrice()
+                                           * (1 + sailConf.getIratio() / 1000.0d + sailConf
+                                               .getPratio() / 1000.0d));
+
+                            // 业务员结算价就是事业部结算价
+                            base.setInputPrice(base.getIprice());
+
+                            if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+                            {
+                                // 发现一些异常,这里保护一下
+                                if (base.getInputPrice() == 0 && base.getIprice() > 0)
+                                {
+                                    fatalLog.fatal("error price in sail:" + base);
+
+                                    throw new RuntimeException("业务员结算价不能为0");
+                                }
                             }
+                        }
+                        else
+                        {
+                            // 私卖
+                            base.setPprice(base.getInputPrice());
+                            base.setIprice(base.getInputPrice());
                         }
 
                         baseList.add(base);
