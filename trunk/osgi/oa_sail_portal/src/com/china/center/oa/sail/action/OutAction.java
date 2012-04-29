@@ -1347,6 +1347,31 @@ public class OutAction extends ParentOutAction
                         return mapping.findForward("error");
                     }
 
+                    // 财务审核--事业部经理(其它入库)
+                    if (statuss == OutConstant.BUY_STATUS_LOCATION_MANAGER_CHECK)
+                    {
+                        if (out.getOutType() != OutConstant.OUTTYPE_IN_OTHER)
+                        {
+                            request.setAttribute(KeyConstant.ERROR_MESSAGE, "只有其它入库才有财务审核的环节");
+
+                            return mapping.findForward("error");
+                        }
+
+                        try
+                        {
+                            resultStatus = outManager.pass(fullId, user,
+                                OutConstant.STATUS_LOCATION_MANAGER_CHECK, reason, depotpartId);
+                        }
+                        catch (MYException e)
+                        {
+                            _logger.warn(e, e);
+
+                            request.setAttribute(KeyConstant.ERROR_MESSAGE, e.getErrorContent());
+
+                            return mapping.findForward("error");
+                        }
+                    }
+
                     // 进入待总裁审批
                     if (statuss == OutConstant.BUY_STATUS_CEO_CHECK)
                     {
@@ -1383,7 +1408,7 @@ public class OutAction extends ParentOutAction
                         }
                     }
 
-                    // 进入库管发货(结束了)
+                    // 进入待回款(结束了)
                     if (statuss == OutConstant.BUY_STATUS_PASS)
                     {
                         try

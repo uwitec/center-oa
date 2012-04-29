@@ -180,6 +180,11 @@ public abstract class OutHelper
 
         if (outBean.getType() == OutConstant.OUT_TYPE_INBILL)
         {
+            if (outBean.getStatus() == OutConstant.OUT_STATUS_SECOND_PASS)
+            {
+                return true;
+            }
+
             if (outBean.getStatus() == OutConstant.STATUS_LOCATION_MANAGER_CHECK)
             {
                 return true;

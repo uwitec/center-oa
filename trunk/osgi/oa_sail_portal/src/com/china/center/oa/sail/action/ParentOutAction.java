@@ -3300,6 +3300,11 @@ public class ParentOutAction extends DispatchAction
         {
             throw new MYException("用户没有此操作的权限");
         }
+
+        if ("10".equals(queryType) && !userManager.containAuth(user.getId(), AuthConstant.BUY_SEC))
+        {
+            throw new MYException("用户没有此操作的权限");
+        }
     }
 
     /**
@@ -4820,6 +4825,15 @@ public class ParentOutAction extends DispatchAction
             condtion.addCondition("and OutBean.outType in (4, 5)");
 
             condtion.addCondition("and OutBean.industryId in " + getAllIndustryId(staffer));
+        }
+        // 财务审核
+        else if ("10".equals(queryType))
+        {
+            condtion.addIntCondition("OutBean.status", "=", OutConstant.BUY_STATUS_SECOND_PASS);
+
+            request.setAttribute("status", OutConstant.BUY_STATUS_SECOND_PASS);
+
+            queryOutCondtionMap.put("status", String.valueOf(OutConstant.BUY_STATUS_SECOND_PASS));
         }
         // 未知的则什么都没有
         else

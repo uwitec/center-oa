@@ -211,9 +211,9 @@ function centerCheck()
     }
 }
 
-var nextStatusMap = {"1" : 9, "2" : 10, "3" : 3, "4" : 3};
+var nextStatusMap = {"1" : 9, "2" : 10, "3" : 3, "4" : 3, "10" : 8};
 
-var oldStatusMap = {"1" : 8, "2" : 9, "3" : 10, "4" : 1};
+var oldStatusMap = {"1" : 8, "2" : 9, "3" : 10, "4" : 1, "10" : 5};
 
 var queryType = "${queryType}";
 

@@ -1065,7 +1065,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         final List<BaseBean> baseList = checkSubmit(fullId, outBean);
 
-        // 这里是入库单的直接库存变动
+        // 这里是入库单的直接库存变动(部分)
         processBuyBaseList(user, outBean, baseList, type);
 
         // CORE 修改库单(销售/入库)的状态(信用额度处理)
@@ -1294,27 +1294,32 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         }
         else
         {
-            nextStatus = OutConstant.STATUS_PASS;
+            nextStatus = OutConstant.BUY_STATUS_PASS;
 
             // 采购入库直接就是库管通过结束
             if (outBean.getOutType() == OutConstant.OUTTYPE_IN_COMMON)
             {
-                nextStatus = OutConstant.STATUS_PASS;
+                nextStatus = OutConstant.BUY_STATUS_PASS;
             }
             // 调拨直接通过
             else if (outBean.getOutType() == OutConstant.OUTTYPE_IN_MOVEOUT)
             {
-                nextStatus = OutConstant.STATUS_PASS;
+                nextStatus = OutConstant.BUY_STATUS_PASS;
             }
             // 领样直接通过
             else if (outBean.getOutType() == OutConstant.OUTTYPE_IN_SWATCH)
             {
-                nextStatus = OutConstant.STATUS_PASS;
+                nextStatus = OutConstant.BUY_STATUS_PASS;
             }
             // 销售退单直接通过
             else if (outBean.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK)
             {
-                nextStatus = OutConstant.STATUS_PASS;
+                nextStatus = OutConstant.BUY_STATUS_PASS;
+            }
+            // 其他入库
+            else if (outBean.getOutType() == OutConstant.OUTTYPE_IN_OTHER)
+            {
+                nextStatus = OutConstant.BUY_STATUS_SECOND_PASS;
             }
             // 其他直接是待分公司经理审核
             else

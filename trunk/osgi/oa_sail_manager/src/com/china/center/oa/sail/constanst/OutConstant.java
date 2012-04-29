@@ -98,6 +98,12 @@ public interface OutConstant
     int STATUS_SEC_PASS = 4;
 
     /**
+     * 待财务审批(仅仅是其他入库的时候)
+     */
+    @Defined(key = "outStatus", value = "待财务审批")
+    int OUT_STATUS_SECOND_PASS = 5;
+
+    /**
      * 结算中心通过
      */
     @Defined(key = "outStatus", value = "待物流审批")
@@ -110,7 +116,7 @@ public interface OutConstant
     int STATUS_FLOW_PASS = 7;
 
     /**
-     * 分公司总经理审批
+     * 待事业部经理审批审批
      */
     @Defined(key = "outStatus", value = "待事业部经理审批")
     int STATUS_LOCATION_MANAGER_CHECK = 8;
@@ -363,7 +369,13 @@ public interface OutConstant
     int BUY_STATUS_SEC_PASS = 4;
 
     /**
-     * 结算中心通过
+     * 待财务审批(仅仅是其他入库的时候)
+     */
+    @Defined(key = "buyStatus", value = "待财务审批")
+    int BUY_STATUS_SECOND_PASS = 5;
+
+    /**
+     * 待物流审批
      */
     @Defined(key = "buyStatus", value = "待物流审批")
     int BUY_STATUS_MANAGER_PASS = 6;
