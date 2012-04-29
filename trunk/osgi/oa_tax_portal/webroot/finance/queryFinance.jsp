@@ -28,7 +28,7 @@ function load()
              {display: '<input type=checkbox id=flexi_Check onclick=checkAll(this)>选择', name : 'check', content : '<input type=checkbox name=checkb value={id} lstatus={status} llocks={locks}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},
              {display: '月索引', name : 'monthIndex', sortable : true, width : '7%'},
-             {display: '类型', name : 'type', cc: 'financeType', width : '10%'},
+             {display: '类型', name : 'type', cc: 'financeType', width : '5%'},
              {display: '分类', name : 'createType', cc: 'financeCreateType', width : '10%'},
              {display: '状态', name : 'status', cc: 'financeStatus', width : '8%'},
              {display: '纳税实体', name : 'dutyName',  width : '10%'},

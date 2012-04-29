@@ -121,7 +121,7 @@
 			<type>select</type>
 			<option>$financeCreateType</option>
 		</condtion>
-		<condtion name="createrName" filed="name" caption="创建人" pfix="StafferBean">
+		<condtion name="createrName" filed="name" caption="创建/更新人" pfix="StafferBean">
             <opr>like</opr>
             <type>text</type>
         </condtion>
