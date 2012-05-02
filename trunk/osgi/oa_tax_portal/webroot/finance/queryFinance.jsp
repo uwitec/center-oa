@@ -25,7 +25,7 @@ function load()
          title: '凭证列表',
          url: gurl + 'query' + ukey,
          colModel : [
-             {display: '<input type=checkbox id=flexi_Check onclick=checkAll(this)>选择', name : 'check', content : '<input type=checkbox name=checkb value={id} lstatus={status} llocks={locks}>', width : 40, align: 'center'},
+             {display: '<input type=checkbox id=flexi_Check onclick=checkAll(this)>选择', name : 'check', content : '<input type=checkbox name=checkb value={id} lstatus={status} llocks={locks} lfdate={financeDate}>', width : 40, align: 'center'},
              {display: '标识', name : 'id', width : '15%'},
              {display: '月索引', name : 'monthIndex', sortable : true, width : '7%'},
              {display: '类型', name : 'type', cc: 'financeType', width : '5%'},
@@ -103,9 +103,22 @@ function copyBean(opr, grid)
     }
     
     if (getRadio('checkb') && getRadioValue('checkb'))
-    {    
-        if(window.confirm('确定复制此凭证?'))    
-        $l(gurl + 'copy' + ukey + '&id=' + getRadioValue('checkb'));
+    {
+        $.messager.prompt('凭证日期', '请选择凭证日期', getRadio('checkb').lfdate, function(value, opr){
+                    if (opr)
+                    {
+                        var sss = value;
+                        
+                        if (!(sss == null || sss == ''))
+                        {
+                            $l(gurl + 'copy' + ukey + '&id=' + getRadioValue('checkb') + '&financeDate=' + sss);
+                        }
+                        else
+                        {
+                            alert('请选择凭证日期');
+                        }
+                    }
+                }, 1);
     }
     else
     $error('不能操作');

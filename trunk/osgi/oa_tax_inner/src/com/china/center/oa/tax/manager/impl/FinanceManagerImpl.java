@@ -1499,7 +1499,7 @@ public class FinanceManagerImpl implements FinanceManager
     }
 
     @Transactional(rollbackFor = MYException.class)
-    public String copyFinanceBean(User user, String id)
+    public String copyFinanceBean(User user, String id, String financeDate)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, id);
@@ -1515,7 +1515,7 @@ public class FinanceManagerImpl implements FinanceManager
 
         bean.setItemList(itemList);
 
-        bean.setFinanceDate(TimeTools.now_short());
+        bean.setFinanceDate(financeDate);
 
         // 重置状态
         bean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_HAND);

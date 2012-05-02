@@ -133,7 +133,7 @@ public class FinaAction extends ParentQueryFinaAction
 
         ActionTools.processJSONQueryCondition(QUERYFINANCE, request, condtion, initMap);
 
-        condtion.addCondition("order by FinanceBean.logTime desc");
+        condtion.addCondition("order by FinanceBean.financeDate desc, FinanceBean.logTime desc");
 
         String jsonstr = ActionTools.queryVOByJSONAndToString(QUERYFINANCE, request, condtion,
             this.financeDAO, new HandleResult<FinanceVO>()
@@ -1031,6 +1031,8 @@ public class FinaAction extends ParentQueryFinaAction
     {
         String id = request.getParameter("id");
 
+        String financeDate = request.getParameter("financeDate");
+
         CommonTools.removeParamers(request);
 
         String newId = "";
@@ -1039,7 +1041,7 @@ public class FinaAction extends ParentQueryFinaAction
         {
             User user = Helper.getUser(request);
 
-            newId = financeManager.copyFinanceBean(user, id);
+            newId = financeManager.copyFinanceBean(user, id, financeDate);
 
             request.setAttribute("id", newId);
 

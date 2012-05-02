@@ -100,7 +100,7 @@ public interface FinanceManager
      * @return
      * @throws MYException
      */
-    String copyFinanceBean(User user, String id)
+    String copyFinanceBean(User user, String id, String financeDate)
         throws MYException;
 
     /**
