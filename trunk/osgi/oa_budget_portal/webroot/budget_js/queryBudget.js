@@ -224,9 +224,9 @@ function $cancle()
 
 function $ok()
 {
-    if (eCheck([$O('preason')]) && window.confirm('确定驳回?'))
+    if (eCheck([$O('preason')]))
     {
-        $ajax('../budget/budget.do?method=auditingBudget&opr=1&id=' + getRadioValue('checkb') + '&reason=' + $$('preason'), callBackFun);
+        $ajax2('../budget/budget.do?method=auditingBudget&opr=1&id=' + getRadioValue('checkb'), {reason: $$('preason')}, callBackFun);
         
         $.unblockUI();
         

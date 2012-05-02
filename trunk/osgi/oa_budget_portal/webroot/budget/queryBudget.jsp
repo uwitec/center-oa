@@ -40,7 +40,7 @@ function load()
 		     {display: '预算部门', name : 'budgetFullDepartmentName', width : 'auto', sortable : true, align: 'left'}
 		     ],
 		 extAtt: {
-		     name : {begin : '<a href=../budget/budget.do?method=findBudget&update=1&id={id}>', end : '</a>'},
+		     name : {begin : '<a href=../budget/budget.do?method=findBudget&id={id}>', end : '</a>'},
 		     parentName : {begin : '<a href=../budget/budget.do?method=findBudget&update=1&id={parentId}>', end : '</a>'}
 		 },
 		 buttons : [
