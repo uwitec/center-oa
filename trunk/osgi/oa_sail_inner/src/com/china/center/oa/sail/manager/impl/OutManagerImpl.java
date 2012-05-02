@@ -4849,7 +4849,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         con.addWhereStr();
 
-        con.addCondition("outTime", ">=", "2012-03-01");
+        con.addCondition("outTime", ">=", "2012-04-01");
 
         con.addIntCondition("type", "=", OutConstant.OUT_TYPE_OUTBILL);
 
@@ -4870,21 +4870,11 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             {
                 ProductBean product = productDAO.find(baseBean.getProductId());
 
-                if (product != null && baseBean.getPprice() == 0.0)
+                if (product != null && baseBean.getInputPrice() == 0.0)
                 {
                     SailConfBean sailConf = sailConfigManager.findProductConf(sb, product);
 
-                    double sailPrice = 0.0;
-
-                    if (baseBean.getInputPrice() == 0.0)
-                    {
-                        sailPrice = product.getSailPrice();
-                    }
-                    else
-                    {
-                        sailPrice = baseBean.getInputPrice()
-                                    / (1 + sailConf.getPratio() / 1000.0d + sailConf.getIratio() / 1000.0d);
-                    }
+                    double sailPrice = product.getSailPrice();
 
                     baseBean.setPprice(sailPrice * (1 + sailConf.getPratio() / 1000.0d));
 
@@ -4892,6 +4882,11 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                     baseBean
                         .setIprice(sailPrice
                                    * (1 + sailConf.getPratio() / 1000.0d + sailConf.getIratio() / 1000.0d));
+
+                    baseBean.setInputPrice(baseBean.getIprice());
+
+                    System.out.println("更新[" + product.getName() + "]在:" + outBean.getFullId()
+                                       + ".新价格:" + MathTools.formatNum(baseBean.getInputPrice()));
 
                     baseDAO.updateEntityBean(baseBean);
                 }

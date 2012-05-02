@@ -2193,9 +2193,26 @@ public class OutAction extends ParentOutAction
                 }
                 else
                 {
-                    for (BaseBean baseBean : baseList)
+                    String queryType = request.getParameter("queryType");
+
+                    // 查询自己的退库单
+                    if ("7".equals(queryType))
                     {
-                        baseBean.setDescription(MathTools.formatNum(baseBean.getCostPrice()));
+                        for (BaseBean baseBean : baseList)
+                        {
+                            // 显示成本(输入成本)
+                            baseBean.setCostPrice(baseBean.getInputPrice());
+
+                            baseBean.setDescription(MathTools.formatNum(baseBean.getInputPrice()));
+                        }
+                    }
+                    else
+                    {
+                        // 这里是入库单
+                        for (BaseBean baseBean : baseList)
+                        {
+                            baseBean.setDescription(MathTools.formatNum(baseBean.getCostPrice()));
+                        }
                     }
                 }
             }

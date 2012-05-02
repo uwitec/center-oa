@@ -596,7 +596,7 @@ function hrefAndSelect(obj)
 							   statuss='${item.status}' 
 							   value="${item.fullId}"/></td>
 							<td align="center"
-							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&radioIndex=${vs.index}&fow=99&outId=${item.fullId}${pcheck}">
+							onMouseOver="showDiv('${item.fullId}')" onmousemove="tooltip.move()" onmouseout="tooltip.hide()"><a onclick="hrefAndSelect(this)" href="../sail/out.do?method=findOut&queryType=${queryType}&radioIndex=${vs.index}&fow=99&outId=${item.fullId}${pcheck}">
 							${item.fullId}</a></td>
 							<td align="center" onclick="hrefAndSelect(this)">${item.customerName}</td>
 							<td align="center" onclick="hrefAndSelect(this)">${my:get('buyStatus', item.status)}</td>
