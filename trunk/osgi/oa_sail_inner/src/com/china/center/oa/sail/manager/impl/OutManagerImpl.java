@@ -562,10 +562,6 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                                 // 兼容
                                 base.setInputPrice(MathTools.parseDouble(inputPriceList[i]));
                             }
-                            else
-                            {
-                                throw new RuntimeException("真正成本和销售成本不对其,请重新操作");
-                            }
                         }
 
                         // 公卖
@@ -590,7 +586,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                             if (outBean.getType() == OutConstant.OUT_TYPE_OUTBILL)
                             {
                                 // 发现一些异常,这里保护一下
-                                if (base.getInputPrice() == 0 && base.getIprice() > 0)
+                                if (base.getInputPrice() == 0)
                                 {
                                     fatalLog.fatal("error price in sail:" + base);
 
