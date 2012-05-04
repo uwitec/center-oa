@@ -166,7 +166,8 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
      */
     private void fillStatus(InvoiceinsBean bean)
     {
-        bean.setStatus(FinanceConstant.INVOICEINS_STATUS_SUBMIT);
+        // 全部到稽核
+        bean.setStatus(FinanceConstant.INVOICEINS_STATUS_CHECK);
 
         List<InsVSOutBean> vsList = bean.getVsList();
 
