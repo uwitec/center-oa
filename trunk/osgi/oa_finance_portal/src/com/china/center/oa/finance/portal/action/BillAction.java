@@ -984,7 +984,7 @@ public class BillAction extends DispatchAction
 
             write.openFile(out);
 
-            write.writeLine("日期,标识,帐户,类型,状态,关联单据,核对,金额,原始金额,客户,职员,经手人,备注,核对");
+            write.writeLine("日期,标识,帐户,类型,状态,关联单据,关联总部核对,核对状态,金额,原始金额,客户,职员,经手人,备注,核对");
 
             ConditionParse condtion = JSONPageSeparateTools.getCondition(request, QUERYINBILL);
 
@@ -1005,9 +1005,22 @@ public class BillAction extends DispatchAction
                     String pubCheckName = DefinedCommon.getValue("pubCheckStatus", each
                         .getCheckStatus());
 
+                    String refCheck = "";
+
+                    if ( !StringTools.isNullOrNone(each.getOutId()))
+                    {
+                        OutBean outBean = outDAO.find(each.getOutId());
+
+                        if (outBean != null)
+                        {
+                            refCheck = outBean.getChecks();
+                        }
+                    }
+
                     write.writeLine("[" + each.getLogTime() + "]" + ',' + each.getId() + ','
                                     + each.getBankName() + ',' + typeName + ',' + statusName + ','
-                                    + each.getOutId() + ',' + pubCheckName + ','
+                                    + each.getOutId() + ',' + StringTools.getExportString(refCheck)
+                                    + ',' + pubCheckName + ','
                                     + MathTools.formatNum(each.getMoneys()) + ','
                                     + MathTools.formatNum(each.getSrcMoneys()) + ','
                                     + each.getCustomerName() + ',' + each.getOwnerName() + ","
