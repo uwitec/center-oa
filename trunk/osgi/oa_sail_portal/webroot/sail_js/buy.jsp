@@ -82,6 +82,7 @@ function check()
     $O('otherList').value = '';
     $O('showIdList').value = '';
     $O('showNameList').value = '';
+    $O('desList').value = '';
     
     if (trim($O('outTime').value) == '')
     {

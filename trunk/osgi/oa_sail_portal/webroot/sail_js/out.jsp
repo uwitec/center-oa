@@ -153,6 +153,8 @@ function check(isAdd)
     $O('otherList').value = '';
     $O('showIdList').value = '';
     $O('showNameList').value = '';
+    $O('desList').value = '';
+    $O('showCostList').value = '';
     
     if (trim($O('outTime').value) == '')
     {

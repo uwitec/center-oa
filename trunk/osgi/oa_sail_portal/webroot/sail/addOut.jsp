@@ -4,7 +4,7 @@
 
 <html>
 <head>
-<p:link title="填写销售单" />
+<p:link title="填写销售单(废弃)" />
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/math.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
