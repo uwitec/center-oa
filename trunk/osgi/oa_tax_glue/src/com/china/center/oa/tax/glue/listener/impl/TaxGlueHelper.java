@@ -13,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.china.center.common.MYException;
+import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.bean.TaxBean;
@@ -57,6 +58,40 @@ public abstract class TaxGlueHelper
         {
             badLog.error("缺少银行临时科目:" + bankId);
             throw new MYException("缺少银行临时科目:" + bankId);
+        }
+
+        return true;
+    }
+
+    /**
+     * bankGoon
+     * 
+     * @param bank
+     * @param taxDAO
+     * @return
+     * @throws MYException
+     */
+    public static boolean bankGoon(BankBean bank, TaxDAO taxDAO)
+        throws MYException
+    {
+        String bankId = bank.getId();
+
+        TaxBean inTax = taxDAO.findByBankId(bankId);
+
+        if (inTax == null)
+        {
+            badLog.error("缺少银行科目:" + bankId + ".银行:" + bank.getName());
+
+            throw new MYException("缺少银行科目:" + bankId + ".银行:" + bank.getName());
+        }
+
+        TaxBean outTax = taxDAO.findTempByBankId(bankId);
+
+        if (outTax == null)
+        {
+            badLog.error("缺少银行临时科目:" + bankId + ".银行:" + bank.getName());
+
+            throw new MYException("缺少银行临时科目:" + bankId + ".银行:" + bank.getName());
         }
 
         return true;

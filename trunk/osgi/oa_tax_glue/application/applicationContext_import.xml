@@ -67,6 +67,8 @@
 	
 	<osgi:reference id="billOutManager" interface="com.china.center.oa.finance.manager.BillOutManager" />
 	
+	<osgi:reference id="billManager" interface="com.china.center.oa.finance.manager.BillManager" />
+	
 	<osgi:reference id="outManager" interface="com.china.center.oa.sail.manager.OutManager" />
 	
 	<osgi:reference id="paymentApplyManager" interface="com.china.center.oa.finance.manager.PaymentApplyManager" />
