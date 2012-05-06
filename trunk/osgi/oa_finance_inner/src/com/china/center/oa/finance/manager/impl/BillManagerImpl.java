@@ -621,13 +621,15 @@ public class BillManagerImpl implements BillManager
 
         bill.setMoneys(bill.getMoneys() - newMoney);
 
+        String newId = commonDAO.getSquenceString20(IDPrefixConstant.ID_BILL_PREFIX);
+
         bill.setDescription(bill.getDescription() + "<br>" + "销售关联分拆了:"
-                            + MathTools.formatNum(newMoney) + "出去");
+                            + MathTools.formatNum(newMoney) + "出去,新单:" + newId);
 
         inBillDAO.updateEntityBean(bill);
 
         // 分拆后时间不能变(锁定状态不能变)
-        bill.setId(commonDAO.getSquenceString20(IDPrefixConstant.ID_BILL_PREFIX));
+        bill.setId(newId);
 
         bill.setMoneys(newMoney);
 
