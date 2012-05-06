@@ -25,6 +25,7 @@ import com.china.center.oa.finance.helper.BillHelper;
 import com.china.center.oa.finance.listener.BillListener;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.BillOutManager;
+import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.PluginNameConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
@@ -515,6 +516,12 @@ public class OutListenerFinanceImpl extends AbstractListenerManager<BillListener
         // do noting
     }
 
+    public void onTranOutList(User user, List<OutBean> outList, StafferBean targerStaffer)
+        throws MYException
+    {
+        // do noting
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -643,5 +650,4 @@ public class OutListenerFinanceImpl extends AbstractListenerManager<BillListener
     {
         this.billManager = billManager;
     }
-
 }

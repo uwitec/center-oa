@@ -727,7 +727,7 @@ public class BillManagerImpl extends AbstractListenerManager<BillListener> imple
     }
 
     @Transactional(rollbackFor = MYException.class)
-    public boolean chageBillToTran(User user, String billId)
+    public boolean changeBillToTran(User user, String billId)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user);
@@ -769,32 +769,60 @@ public class BillManagerImpl extends AbstractListenerManager<BillListener> imple
 
         con.addWhereStr();
 
-        con.addCondition("ownerId", "=", user.getStafferId());
-
+        // 客户下所有的预收
         con.addCondition("customerId", "=", inBill.getCustomerId());
 
         con.addIntCondition("status", "=", FinanceConstant.INBILL_STATUS_NOREF);
 
         List<InBillBean> inBillList = inBillDAO.queryEntityBeansByCondition(con);
 
-        if (inBillList.size() > 0)
-        {
-            // 预收交接的变更
-            Collection<BillListener> listenerMapValues = this.listenerMapValues();
+        changeBillListToTranWithoutTransactional(user, inBillList, destStaffer);
 
-            for (BillListener billListener : listenerMapValues)
-            {
-                billListener.onChageBillToStaffer(user, inBillList, destStaffer);
-            }
+        return true;
+    }
+
+    /**
+     * changeBillListToTranWithoutTransactional
+     * 
+     * @param user
+     * @param inBillList
+     * @param destStaffer
+     * @return
+     * @throws MYException
+     */
+    public boolean changeBillListToTranWithoutTransactional(User user, List<InBillBean> inBillList,
+                                                            StafferBean destStaffer)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, inBillList, destStaffer);
+
+        if (inBillList.size() == 0)
+        {
+            return true;
+        }
+
+        // 预收交接的变更
+        Collection<BillListener> listenerMapValues = this.listenerMapValues();
+
+        for (BillListener billListener : listenerMapValues)
+        {
+            billListener.onChageBillToStaffer(user, inBillList, destStaffer);
         }
 
         // 更新归属
         for (InBillBean inBillBean : inBillList)
         {
-            inBillBean.setOwnerId(vs.getStafferId());
+            StafferBean srcStaffer = stafferDAO.find(inBillBean.getStafferId());
+
+            if (srcStaffer == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            inBillBean.setOwnerId(destStaffer.getId());
 
             inBillBean.setDescription(inBillBean.getDescription() + "<br>预收移交从:"
-                                      + user.getStafferName() + "到:" + destStaffer.getName());
+                                      + srcStaffer.getName() + "到:" + destStaffer.getName());
         }
 
         inBillDAO.updateAllEntityBeans(inBillList);

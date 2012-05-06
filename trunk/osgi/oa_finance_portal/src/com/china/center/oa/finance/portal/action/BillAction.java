@@ -473,7 +473,7 @@ public class BillAction extends DispatchAction
         {
             User user = Helper.getUser(request);
 
-            billManager.chageBillToTran(user, billId);
+            billManager.changeBillToTran(user, billId);
 
             ajax.setSuccess("成功操作");
         }

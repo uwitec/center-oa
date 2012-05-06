@@ -9,12 +9,15 @@
 package com.china.center.oa.finance.manager;
 
 
+import java.util.List;
+
 import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.OutBillBean;
 import com.china.center.oa.finance.listener.BillListener;
+import com.china.center.oa.publics.bean.StafferBean;
 
 
 /**
@@ -155,6 +158,19 @@ public interface BillManager extends ListenerManager<BillListener>
      * @return
      * @throws MYException
      */
-    boolean chageBillToTran(User user, String billId)
+    boolean changeBillToTran(User user, String billId)
+        throws MYException;
+
+    /**
+     * 预收移交(无事务)
+     * 
+     * @param user
+     * @param inBillList
+     * @param destStaffer
+     * @return
+     * @throws MYException
+     */
+    boolean changeBillListToTranWithoutTransactional(User user, List<InBillBean> inBillList,
+                                                     StafferBean destStaffer)
         throws MYException;
 }
