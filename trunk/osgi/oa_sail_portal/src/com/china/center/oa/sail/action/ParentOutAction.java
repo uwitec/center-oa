@@ -458,6 +458,46 @@ public class ParentOutAction extends DispatchAction
     }
 
     /**
+     * 销售单移交
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reponse
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward tranOut(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse reponse)
+        throws ServletException
+    {
+        CommonTools.saveParamers(request);
+
+        String outId = request.getParameter("outId");
+
+        try
+        {
+            outManager.tranOut(Helper.getUser(request), outId);
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            request.setAttribute(KeyConstant.ERROR_MESSAGE, "处理错误:" + e.getErrorContent());
+
+            return mapping.findForward("error");
+        }
+
+        CommonTools.saveParamers(request);
+
+        RequestTools.menuInitQuery(request);
+
+        request.setAttribute(KeyConstant.MESSAGE, "成功申请移交单据:" + outId);
+
+        return querySelfOut(mapping, form, request, reponse);
+    }
+
+    /**
      * 查询单体
      * 
      * @param mapping
@@ -4427,6 +4467,7 @@ public class ParentOutAction extends DispatchAction
 
             condtion.addIntCondition("OutBean.outType", "<>", OutConstant.OUTTYPE_OUT_CONSIGN);
 
+            // 只能退自己的(移交的通过流程)
             condtion.addCondition("OutBean.stafferId", "=", user.getStafferId());
         }
         // 查询没有结束的个人领样

@@ -39,4 +39,6 @@
 
 	<bean id="sailConfDAO" class="com.china.center.oa.sail.dao.impl.SailConfDAOImpl" />
 
+	<bean id="sailTranApplyDAO" class="com.china.center.oa.sail.dao.impl.SailTranApplyDAOImpl" />
+
 </beans>

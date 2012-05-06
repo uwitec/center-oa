@@ -20,6 +20,20 @@ function detail()
 	document.location.href = '../sail/out.do?method=findOut&outId=' + getRadioValue("fullId");
 }
 
+function getCustomer(oos)
+{
+    var obj = oos;
+    
+    $O("customerName").value = obj.pname;
+    
+    $O("customerId").value = obj.value;
+}
+
+function selectCustomer()
+{
+    window.common.modal("../customer/customer.do?method=rptQuerySelfCustomer&stafferId=${user.stafferId}&load=1");
+}
+
 function pagePrint()
 {
 	window.open('../sail/out.do?method=findOut&fow=4&outId=' + getRadioValue("fullId"));
@@ -588,7 +602,7 @@ function hrefAndSelect(obj)
 <form action="../sail/out.do" name="adminForm"><input type="hidden"
 	value="queryOut" name="method"> <input type="hidden" value="1"
 	name="firstLoad">
-	<input type="hidden" value="${customerId}"
+	<input type="hidden" value="${ppmap.customerId}"
 	name="customerId">
 	<input type="hidden" value="${queryType}"
 	name="queryType">
@@ -650,10 +664,22 @@ function hrefAndSelect(obj)
 							<p:option type="outStatus"/>
 							<option value="99">发货态</option>
 						</select>
-
 						</td>
+						
+						<c:if test="${queryType == '8'}">
 						<td width="15%" align="center">客户：</td>
-						<td align="center"><input type="text" name="customerName" maxlength="14" value="${ppmap.customerName}"></td>
+                        <td align="center">
+                        <input type="text" name="customerName" maxlength="14" value="${ppmap.customerName}"
+                            onclick="selectCustomer()" style="cursor: pointer;"
+                            readonly="readonly">
+                        </td>
+						</c:if>
+						
+						<c:if test="${queryType != '8'}">
+                        <td width="15%" align="center">客户：</td>
+                        <td align="center"><input type="text" name="customerName" maxlength="14" value="${ppmap.customerName}"></td>
+                        </c:if>
+						
 					</tr>
 
 					<tr class="content1">

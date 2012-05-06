@@ -329,4 +329,28 @@ public interface SailConstant
      */
     @Defined(key = "sailConfType", value = "销售类型")
     int SAILCONFIG_SAILTTYPE = 2;
+
+    /**
+     * 初始
+     */
+    @Defined(key = "sailTranApplyStatus", value = "初始")
+    int SAILTRANAPPLY_INIT = 0;
+
+    /**
+     * 提交
+     */
+    @Defined(key = "sailTranApplyStatus", value = "提交")
+    int SAILTRANAPPLY_SUBMIT = 1;
+
+    /**
+     * 驳回
+     */
+    @Defined(key = "sailTranApplyStatus", value = "驳回")
+    int SAILTRANAPPLY_REJECT = 98;
+
+    /**
+     * 通过
+     */
+    @Defined(key = "sailTranApplyStatus", value = "通过")
+    int SAILTRANAPPLY_PASS = 99;
 }

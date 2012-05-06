@@ -37,4 +37,6 @@
 
 	<osgi:service ref="sailConfDAO" interface="com.china.center.oa.sail.dao.SailConfDAO" />
 
+	<osgi:service ref="sailTranApplyDAO" interface="com.china.center.oa.sail.dao.SailTranApplyDAO" />
+
 </beans>

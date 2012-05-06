@@ -44,6 +44,7 @@ import com.china.center.oa.credit.dao.CreditLevelDAO;
 import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.customer.constant.CustomerConstant;
 import com.china.center.oa.customer.dao.CustomerDAO;
+import com.china.center.oa.customer.manager.CustomerManager;
 import com.china.center.oa.note.bean.ShortMessageTaskBean;
 import com.china.center.oa.note.constant.ShortMessageConstant;
 import com.china.center.oa.note.dao.ShortMessageTaskDAO;
@@ -95,6 +96,7 @@ import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.bean.OutUniqueBean;
 import com.china.center.oa.sail.bean.SailConfBean;
+import com.china.center.oa.sail.bean.SailTranApplyBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.constanst.SailConstant;
 import com.china.center.oa.sail.dao.BaseBalanceDAO;
@@ -104,6 +106,7 @@ import com.china.center.oa.sail.dao.OutBalanceDAO;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.sail.dao.OutUniqueDAO;
 import com.china.center.oa.sail.dao.SailConfigDAO;
+import com.china.center.oa.sail.dao.SailTranApplyDAO;
 import com.china.center.oa.sail.helper.OutHelper;
 import com.china.center.oa.sail.helper.YYTools;
 import com.china.center.oa.sail.listener.OutListener;
@@ -169,6 +172,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
     private CustomerDAO customerDAO = null;
 
+    private CustomerManager customerManager = null;
+
     private ParameterDAO parameterDAO = null;
 
     private CreditLevelDAO creditLevelDAO = null;
@@ -176,6 +181,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     private DepotpartDAO depotpartDAO = null;
 
     private CreditCoreDAO creditCoreDAO = null;
+
+    private SailTranApplyDAO sailTranApplyDAO = null;
 
     private FlowLogDAO flowLogDAO = null;
 
@@ -2756,6 +2763,225 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
     }
 
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean tranOut(User user, String fullId)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, fullId);
+
+        OutBean out = checkTran(user, fullId);
+
+        SailTranApplyBean apply = new SailTranApplyBean();
+        apply.setId(commonDAO.getSquenceString20());
+        apply.setCustomerId(out.getCustomerId());
+        apply.setLogTime(TimeTools.now());
+        apply.setOldStafferId(out.getStafferId());
+        apply.setOutId(fullId);
+        apply.setStafferId(user.getStafferId());
+        apply.setStatus(SailConstant.SAILTRANAPPLY_SUBMIT);
+
+        sailTranApplyDAO.saveEntityBean(apply);
+
+        FlowLogBean log = new FlowLogBean();
+
+        log.setActor(user.getStafferName());
+
+        log.setDescription("提交申请");
+        log.setFullId(apply.getId());
+        log.setOprMode(PublicConstant.OPRMODE_SUBMIT);
+        log.setLogTime(TimeTools.now());
+
+        log.setPreStatus(SailConstant.SAILTRANAPPLY_INIT);
+
+        log.setAfterStatus(apply.getStatus());
+
+        flowLogDAO.saveEntityBean(log);
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = {MYException.class})
+    public boolean passTranApply(User user, String id)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        SailTranApplyBean bean = sailTranApplyDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bean.getStatus() != SailConstant.SAILTRANAPPLY_SUBMIT)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        OutBean out = outDAO.find(bean.getOutId());
+
+        if (out == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if ( !OutHelper.isSailEnd(out))
+        {
+            throw new MYException("单据不处于结束,请确认操作");
+        }
+
+        if (out.getPay() != OutConstant.PAY_YES)
+        {
+            throw new MYException("单据没有完全付款,请确认操作");
+        }
+
+        if ( !customerManager.hasCustomerAuth2(bean.getStafferId(), out.getCustomerId()))
+        {
+            throw new MYException("您当前和客户[%s]没有关联关系,无法移交,请确认操作", out.getCustomerName());
+        }
+
+        StafferBean sb = stafferDAO.find(bean.getStafferId());
+
+        if (sb == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        bean.setStatus(SailConstant.SAILTRANAPPLY_PASS);
+
+        sailTranApplyDAO.updateEntityBean(bean);
+
+        FlowLogBean log = new FlowLogBean();
+
+        log.setActor(user.getStafferName());
+
+        log.setDescription("通过");
+        log.setFullId(id);
+        log.setOprMode(PublicConstant.OPRMODE_PASS);
+        log.setLogTime(TimeTools.now());
+
+        log.setPreStatus(SailConstant.SAILTRANAPPLY_SUBMIT);
+
+        log.setAfterStatus(SailConstant.SAILTRANAPPLY_PASS);
+
+        flowLogDAO.saveEntityBean(log);
+
+        String oldName = out.getStafferName();
+
+        out.setStafferId(sb.getId());
+        out.setStafferName(sb.getName());
+
+        // 更新责任人
+        outDAO.updateEntityBean(out);
+
+        log = new FlowLogBean();
+
+        log.setActor(user.getStafferName());
+
+        log.setDescription("变更单据提交人,从:" + oldName + "到:" + sb.getName());
+        log.setFullId(out.getFullId());
+        log.setOprMode(PublicConstant.OPRMODE_PASS);
+        log.setLogTime(TimeTools.now());
+
+        log.setPreStatus(out.getStatus());
+
+        log.setAfterStatus(out.getStatus());
+
+        // 销售单日志
+        flowLogDAO.saveEntityBean(log);
+
+        return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public boolean rejectTranApply(User user, String id, String reason)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, id);
+
+        SailTranApplyBean bean = sailTranApplyDAO.find(id);
+
+        if (bean == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (bean.getStatus() != SailConstant.SAILTRANAPPLY_SUBMIT)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        bean.setStatus(SailConstant.SAILTRANAPPLY_REJECT);
+
+        sailTranApplyDAO.updateEntityBean(bean);
+
+        FlowLogBean log = new FlowLogBean();
+
+        log.setActor(user.getStafferName());
+
+        log.setDescription(reason);
+        log.setFullId(id);
+        log.setOprMode(PublicConstant.OPRMODE_REJECT);
+        log.setLogTime(TimeTools.now());
+
+        log.setPreStatus(SailConstant.SAILTRANAPPLY_SUBMIT);
+
+        log.setAfterStatus(SailConstant.SAILTRANAPPLY_REJECT);
+
+        flowLogDAO.saveEntityBean(log);
+
+        return true;
+    }
+
+    /**
+     * checkTran
+     * 
+     * @param user
+     * @param fullId
+     * @return
+     * @throws MYException
+     */
+    private OutBean checkTran(User user, String fullId)
+        throws MYException
+    {
+        OutBean out = outDAO.find(fullId);
+
+        if (out == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (out.getStafferId().equals(user.getStafferId()))
+        {
+            throw new MYException("自己不能移交给自己,请确认操作");
+        }
+
+        if ( !OutHelper.isSailEnd(out))
+        {
+            throw new MYException("单据不处于结束,请确认操作");
+        }
+
+        if (out.getPay() != OutConstant.PAY_YES)
+        {
+            throw new MYException("单据没有完全付款,请确认操作");
+        }
+
+        if ( !customerManager.hasCustomerAuth2(user.getStafferId(), out.getCustomerId()))
+        {
+            throw new MYException("您当前和客户[%s]没有关联关系,无法移交,请确认操作", out.getCustomerName());
+        }
+
+        SailTranApplyBean tran = sailTranApplyDAO.findByUnique(out.getCustomerId(),
+            SailConstant.SAILTRANAPPLY_SUBMIT);
+
+        if (tran != null)
+        {
+            throw new MYException("申请已经存在,请确认操作");
+        }
+
+        return out;
+    }
+
     @Exceptional
     @Transactional(rollbackFor = {MYException.class})
     public boolean checkOutBalance(String id, User user, String checks)
@@ -5305,4 +5531,39 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     {
         this.sailConfigManager = sailConfigManager;
     }
+
+    /**
+     * @return the sailTranApplyDAO
+     */
+    public SailTranApplyDAO getSailTranApplyDAO()
+    {
+        return sailTranApplyDAO;
+    }
+
+    /**
+     * @param sailTranApplyDAO
+     *            the sailTranApplyDAO to set
+     */
+    public void setSailTranApplyDAO(SailTranApplyDAO sailTranApplyDAO)
+    {
+        this.sailTranApplyDAO = sailTranApplyDAO;
+    }
+
+    /**
+     * @return the customerManager
+     */
+    public CustomerManager getCustomerManager()
+    {
+        return customerManager;
+    }
+
+    /**
+     * @param customerManager
+     *            the customerManager to set
+     */
+    public void setCustomerManager(CustomerManager customerManager)
+    {
+        this.customerManager = customerManager;
+    }
+
 }

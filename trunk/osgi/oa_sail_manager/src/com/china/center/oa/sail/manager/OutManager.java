@@ -359,4 +359,21 @@ public interface OutManager extends ListenerManager<OutListener>
      */
     void writeStafferCredit(WriteFile write, List<StafferBean> stafferList)
         throws IOException;
+
+    /**
+     * 销售单移交申请
+     * 
+     * @param user
+     * @param fullId
+     * @return
+     * @throws MYException
+     */
+    boolean tranOut(User user, String fullId)
+        throws MYException;
+
+    boolean rejectTranApply(User user, String id, String reason)
+        throws MYException;
+
+    boolean passTranApply(User user, String id)
+        throws MYException;
 }

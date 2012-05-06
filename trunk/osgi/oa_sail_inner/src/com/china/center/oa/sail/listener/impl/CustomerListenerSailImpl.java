@@ -9,7 +9,9 @@
 package com.china.center.oa.sail.listener.impl;
 
 
+import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.customer.bean.AssignApplyBean;
 import com.china.center.oa.customer.bean.CustomerBean;
 import com.china.center.oa.customer.listener.CustomerListener;
 import com.china.center.oa.sail.dao.OutDAO;
@@ -46,6 +48,21 @@ public class CustomerListenerSailImpl implements CustomerListener
             .getFinanceEndDate());
     }
 
+    public void onDelete(CustomerBean bean)
+        throws MYException
+    {
+        if (outDAO.countCustomerInOut(bean.getId()) > 0)
+        {
+            throw new MYException("客户[%s]名下存在销售单,不能删除", bean.getName());
+        }
+    }
+
+    public void onChangeCustomerRelation(User user, AssignApplyBean apply, CustomerBean cus)
+        throws MYException
+    {
+
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -71,15 +88,6 @@ public class CustomerListenerSailImpl implements CustomerListener
     public void setOutDAO(OutDAO outDAO)
     {
         this.outDAO = outDAO;
-    }
-
-    public void onDelete(CustomerBean bean)
-        throws MYException
-    {
-        if (outDAO.countCustomerInOut(bean.getId()) > 0)
-        {
-            throw new MYException("客户[%s]名下存在销售单,不能删除", bean.getName());
-        }
     }
 
 }

@@ -36,5 +36,27 @@
             <type>text</type>
         </condtion>
     </item>
+    
+    <item name="querySelfSailTranApply" deaultpfix="SailTranApplyBean">
+        <condtion name="customerName" filed="name" caption="客户" pfix="CustomerBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="outId" caption="销售单(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+    </item>
+    
+    <item name="queryApproveSailTranApply" deaultpfix="SailTranApplyBean">
+        <condtion name="customerName" filed="name" caption="客户" pfix="CustomerBean">
+            <opr>like</opr>
+            <type>text</type>
+        </condtion>
+        <condtion name="outId" caption="销售单(A)">
+            <opr>=</opr>
+            <type>text</type>
+        </condtion>
+    </item>
 	
 </query>

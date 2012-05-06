@@ -235,6 +235,19 @@ function balance()
     }
 }
 
+function tran()
+{
+    if ((getRadio('fullId').statuss == '3' || getRadio('fullId').statuss == '4') && getRadio('fullId').ppay == '1')
+    {
+        if (window.confirm("确定申请移交此销售单到自己名下?"))
+        document.location.href = '../sail/out.do?method=tranOut&outId=' + getRadioValue("fullId");
+    }
+    else
+    {
+        alert('必须选择已经完全付款的单据,不能操作!');
+    }
+}
+
 function refBill()
 {
     if (getRadio('fullId').statuss != '2' && getRadio('fullId').statuss != '0' 
@@ -414,7 +427,7 @@ function load()
 						</td>
 						<td width="15%" align="center">客户：</td>
 						<td align="center"><input type="text" name="customerName" maxlength="14" value="${customerName}"
-							onclick="selectCustomer()" style="cursor: hand"
+							onclick="selectCustomer()" style="cursor: pointer;"
 							readonly="readonly"></td>
 					</tr>
 
@@ -540,6 +553,7 @@ function load()
 								statuss='${item.status}' 
 								pinvoicemoney='${item.invoiceMoney}' 
 								pinvoiceid='${item.invoiceId}' 
+								ppay='${item.pay}' 
 								pdutyid='${item.dutyId}' 
 								value="${item.fullId}" ${vs.index== 0 ? "checked" : ""}/></td>
 							<td align="center"
@@ -615,11 +629,15 @@ function load()
         <input
             type="button" class="button_class"
             value="&nbsp;委托代销退货&nbsp;" onclick="balance2()" />&nbsp;&nbsp;
+        <input
+            type="button" class="button_class"
+            value="&nbsp;销售单移交&nbsp;" onclick="tran()" />&nbsp;&nbsp;
+            
         <c:if test="${my:auth(user, '1417')}">
-		<input
-			type="button" class="button_class"
-			value="&nbsp;导出查询结果&nbsp;" onclick="exports()" /></div>
-		</td>
+			<input
+				type="button" class="button_class"
+				value="&nbsp;导出查询结果&nbsp;" onclick="exports()" /></div>
+			</td>
 		</c:if>
 		<td width="0%"></td>
 	</tr>
