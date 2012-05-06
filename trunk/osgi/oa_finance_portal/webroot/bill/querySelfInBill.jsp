@@ -30,10 +30,10 @@ function load()
              {display: '标识', name : 'id', width : '15%'},
              {display: '帐号', name : 'bankName', width : '20%'},
              {display: '类型', name : 'type', cc: 'inbillType', width : '8%'},
-             {display: '状态', name : 'status', cc: 'inbillStatus', width : '8%'},
+             {display: '状态', name : 'status', cc: 'inbillStatus', width : '5%'},
              {display: '金额', name : 'moneys',  toFixed: 2, width : '8%'},
-             {display: '客户', name : 'customerName', width : '10%'},
-             {display: '职员', name : 'ownerName', width : '8%'},
+             {display: '客户', name : 'customerName', width : '20%'},
+             {display: '职员', name : 'ownerName', width : '5%'},
              {display: '时间', name : 'logTime', sortable : true, width : 'auto'}
              ],
          extAtt: {
@@ -42,7 +42,7 @@ function load()
          buttons : [
              {id: 'update', bclass: 'update', caption: '申请预收退款', onpress : splitInBill},
              {id: 'update1', bclass: 'update', caption: '预收转费用', onpress : splitInBill2},
-             {id: 'update2', bclass: 'update', caption: '预收移交', onpress : changeBill},
+             {id: 'update2', bclass: 'update', caption: '移交客户下所有预收', onpress : changeBill},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],
         <p:conf/>
@@ -115,10 +115,15 @@ function checkSubmit(descrition, refMoney)
 
 function changeBill(opr, grid)
 {
-    if (window.confirm('确定是否移交预算?'))
+    if (getRadio('checkb') && getRadioValue('checkb'))
     {
-        $ajax('../finance/bill.do?method=changeBill', callBackFun);
+	    if (window.confirm('确定是否移交此客户下所有的预收?'))
+	    {
+	        $ajax('../finance/bill.do?method=changeBill&billId=' + $$('checkb'), callBackFun);
+	    }
     }
+    else
+    $error('不能操作');
 }
 
 

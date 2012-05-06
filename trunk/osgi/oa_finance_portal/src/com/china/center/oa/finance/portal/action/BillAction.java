@@ -467,11 +467,13 @@ public class BillAction extends DispatchAction
     {
         AjaxResult ajax = new AjaxResult();
 
+        String billId = request.getParameter("billId");
+
         try
         {
             User user = Helper.getUser(request);
 
-            billManager.chageBillToTran(user);
+            billManager.chageBillToTran(user, billId);
 
             ajax.setSuccess("成功操作");
         }

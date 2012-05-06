@@ -77,10 +77,11 @@ public class InBillDAOImpl extends BaseDAO<InBillBean, InBillVO> implements InBi
         return this.jdbcOperation.updateField("updateId", updateId, id, claz) > 0;
     }
 
-    public boolean chageBillToTran(String srcId, String destId)
+    public boolean chageBillToTran(String srcId, String destId, String customerId)
     {
-        this.jdbcOperation.update("set ownerId = ? where ownerId = ? and status = ?", claz, destId,
-            srcId, FinanceConstant.INBILL_STATUS_NOREF);
+        this.jdbcOperation.update(
+            "set ownerId = ? where ownerId = ? and status = ? and customerId = ?", claz, destId,
+            srcId, FinanceConstant.INBILL_STATUS_NOREF, customerId);
 
         return true;
     }

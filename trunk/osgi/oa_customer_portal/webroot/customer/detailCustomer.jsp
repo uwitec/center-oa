@@ -229,6 +229,10 @@ function checkBean()
 	            </p:cell>
             </c:if>
             
+            <p:cell title="所属职员" end="true">
+                   <c:out value="${vs.stafferName}"/>
+            </p:cell>
+            
 		</p:table>
 	</p:subBody>
 

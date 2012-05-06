@@ -504,6 +504,13 @@ public class CustomerManagerImpl extends AbstractListenerManager<CustomerListene
 
         customerDAO.updateEntityBean(cus);
 
+        Collection<CustomerListener> listenerMapValues = this.listenerMapValues();
+
+        for (CustomerListener customerListener : listenerMapValues)
+        {
+            customerListener.onChangeCustomerRelation(user, apply, cus);
+        }
+
         return true;
     }
 
@@ -511,9 +518,11 @@ public class CustomerManagerImpl extends AbstractListenerManager<CustomerListene
      * 保存关系,顺便记录日志
      * 
      * @param vs
+     * @throws MYException
      */
     private void addStafferVSCustomer(StafferVSCustomerBean vs)
     {
+        // 这里不检查主键重复了
         stafferVSCustomerDAO.saveEntityBean(vs);
 
         CustomerBean cb = customerDAO.find(vs.getCustomerId());
@@ -1029,6 +1038,11 @@ public class CustomerManagerImpl extends AbstractListenerManager<CustomerListene
     {
         JudgeTools.judgeParameterIsNull(stafferId, customerId);
 
+        return stafferVSCustomerDAO.countByStafferIdAndCustomerId(stafferId, customerId) > 0;
+    }
+
+    public boolean hasCustomerAuth2(String stafferId, String customerId)
+    {
         return stafferVSCustomerDAO.countByStafferIdAndCustomerId(stafferId, customerId) > 0;
     }
 

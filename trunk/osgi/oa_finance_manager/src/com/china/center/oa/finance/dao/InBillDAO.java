@@ -53,5 +53,5 @@ public interface InBillDAO extends DAO<InBillBean, InBillVO>
 
     boolean updateUpdateId(String id, int updateId);
 
-    boolean chageBillToTran(String srcId, String destId);
+    boolean chageBillToTran(String srcId, String destId, String customerId);
 }

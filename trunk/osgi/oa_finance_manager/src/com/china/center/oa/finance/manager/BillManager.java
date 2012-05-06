@@ -9,10 +9,12 @@
 package com.china.center.oa.finance.manager;
 
 
+import com.center.china.osgi.publics.ListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.OutBillBean;
+import com.china.center.oa.finance.listener.BillListener;
 
 
 /**
@@ -23,7 +25,7 @@ import com.china.center.oa.finance.bean.OutBillBean;
  * @see BillManager
  * @since 3.0
  */
-public interface BillManager
+public interface BillManager extends ListenerManager<BillListener>
 {
     /**
      * addInBillBean
@@ -153,6 +155,6 @@ public interface BillManager
      * @return
      * @throws MYException
      */
-    boolean chageBillToTran(User user)
+    boolean chageBillToTran(User user, String billId)
         throws MYException;
 }

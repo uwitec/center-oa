@@ -9,12 +9,20 @@
 package com.china.center.oa.finance.manager.impl;
 
 
+import java.util.Collection;
+import java.util.List;
+
 import org.china.center.spring.ex.annotation.Exceptional;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.center.china.osgi.publics.AbstractListenerManager;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.jdbc.util.ConditionParse;
+import com.china.center.oa.customer.bean.CustomerBean;
+import com.china.center.oa.customer.dao.CustomerDAO;
+import com.china.center.oa.customer.dao.StafferVSCustomerDAO;
+import com.china.center.oa.customer.vs.StafferVSCustomerBean;
 import com.china.center.oa.finance.bean.BankBean;
 import com.china.center.oa.finance.bean.InBillBean;
 import com.china.center.oa.finance.bean.OutBillBean;
@@ -25,15 +33,17 @@ import com.china.center.oa.finance.dao.InBillDAO;
 import com.china.center.oa.finance.dao.OutBillDAO;
 import com.china.center.oa.finance.dao.PaymentDAO;
 import com.china.center.oa.finance.dao.PaymentVSOutDAO;
+import com.china.center.oa.finance.listener.BillListener;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.StatBankManager;
 import com.china.center.oa.publics.bean.DutyBean;
+import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.IDPrefixConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
+import com.china.center.oa.publics.dao.StafferDAO;
 import com.china.center.oa.publics.dao.StafferTransferDAO;
-import com.china.center.oa.publics.vs.StafferTransferBean;
 import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.dao.OutDAO;
@@ -55,7 +65,7 @@ import com.china.center.tools.TimeTools;
  * @since 3.0
  */
 @Exceptional
-public class BillManagerImpl implements BillManager
+public class BillManagerImpl extends AbstractListenerManager<BillListener> implements BillManager
 {
     private InBillDAO inBillDAO = null;
 
@@ -67,7 +77,11 @@ public class BillManagerImpl implements BillManager
 
     private BankDAO bankDAO = null;
 
+    private CustomerDAO customerDAO = null;
+
     private DutyDAO dutyDAO = null;
+
+    private StafferDAO stafferDAO = null;
 
     private PaymentDAO paymentDAO = null;
 
@@ -78,6 +92,8 @@ public class BillManagerImpl implements BillManager
     private StockItemDAO stockItemDAO = null;
 
     private StatBankManager statBankManager = null;
+
+    private StafferVSCustomerDAO stafferVSCustomerDAO = null;
 
     private StafferTransferDAO stafferTransferDAO = null;
 
@@ -711,19 +727,77 @@ public class BillManagerImpl implements BillManager
     }
 
     @Transactional(rollbackFor = MYException.class)
-    public boolean chageBillToTran(User user)
+    public boolean chageBillToTran(User user, String billId)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user);
 
-        StafferTransferBean tran = stafferTransferDAO.findByUnique(user.getStafferId());
+        InBillBean inBill = inBillDAO.find(billId);
 
-        if (tran == null)
+        if (inBill == null)
         {
-            throw new MYException("当前用户没有移交对象");
+            throw new MYException("数据错误,请确认操作");
         }
 
-        inBillDAO.chageBillToTran(user.getStafferId(), tran.getDestId());
+        CustomerBean customerBean = customerDAO.find(inBill.getCustomerId());
+
+        if (customerBean == null)
+        {
+            throw new MYException("预收的客户不存在,请确认操作");
+        }
+
+        StafferVSCustomerBean vs = stafferVSCustomerDAO.findByUnique(inBill.getCustomerId());
+
+        if (vs == null)
+        {
+            throw new MYException("客户当前和职员无挂靠关系,请确认操作");
+        }
+
+        if (vs.getStafferId().equals(user.getStafferId()))
+        {
+            throw new MYException("客户当前已经和本人挂靠,无法预收移交,请确认操作");
+        }
+
+        StafferBean destStaffer = stafferDAO.find(vs.getStafferId());
+
+        if (destStaffer == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        ConditionParse con = new ConditionParse();
+
+        con.addWhereStr();
+
+        con.addCondition("ownerId", "=", user.getStafferId());
+
+        con.addCondition("customerId", "=", inBill.getCustomerId());
+
+        con.addIntCondition("status", "=", FinanceConstant.INBILL_STATUS_NOREF);
+
+        List<InBillBean> inBillList = inBillDAO.queryEntityBeansByCondition(con);
+
+        if (inBillList.size() > 0)
+        {
+            // 预收交接的变更
+            Collection<BillListener> listenerMapValues = this.listenerMapValues();
+
+            for (BillListener billListener : listenerMapValues)
+            {
+                billListener.onChageBillToStaffer(user, inBillList, destStaffer);
+            }
+        }
+
+        // 更新归属
+        for (InBillBean inBillBean : inBillList)
+        {
+            inBillBean.setOwnerId(vs.getStafferId());
+
+            inBillBean.setDescription(inBillBean.getDescription() + "<br>预收移交从:"
+                                      + user.getStafferName() + "到:" + destStaffer.getName());
+        }
+
+        inBillDAO.updateAllEntityBeans(inBillList);
 
         return true;
     }
@@ -930,6 +1004,57 @@ public class BillManagerImpl implements BillManager
     public void setDutyDAO(DutyDAO dutyDAO)
     {
         this.dutyDAO = dutyDAO;
+    }
+
+    /**
+     * @return the stafferDAO
+     */
+    public StafferDAO getStafferDAO()
+    {
+        return stafferDAO;
+    }
+
+    /**
+     * @param stafferDAO
+     *            the stafferDAO to set
+     */
+    public void setStafferDAO(StafferDAO stafferDAO)
+    {
+        this.stafferDAO = stafferDAO;
+    }
+
+    /**
+     * @return the customerDAO
+     */
+    public CustomerDAO getCustomerDAO()
+    {
+        return customerDAO;
+    }
+
+    /**
+     * @param customerDAO
+     *            the customerDAO to set
+     */
+    public void setCustomerDAO(CustomerDAO customerDAO)
+    {
+        this.customerDAO = customerDAO;
+    }
+
+    /**
+     * @return the stafferVSCustomerDAO
+     */
+    public StafferVSCustomerDAO getStafferVSCustomerDAO()
+    {
+        return stafferVSCustomerDAO;
+    }
+
+    /**
+     * @param stafferVSCustomerDAO
+     *            the stafferVSCustomerDAO to set
+     */
+    public void setStafferVSCustomerDAO(StafferVSCustomerDAO stafferVSCustomerDAO)
+    {
+        this.stafferVSCustomerDAO = stafferVSCustomerDAO;
     }
 
 }

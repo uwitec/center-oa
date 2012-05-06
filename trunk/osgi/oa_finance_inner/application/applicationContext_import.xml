@@ -72,5 +72,9 @@
     <osgi:reference id="billManager" interface="com.china.center.oa.finance.manager.BillManager" />
     
     <osgi:reference id="stockDAO" interface="com.china.center.oa.stock.dao.StockDAO" />
+    
+    <osgi:reference id="customerDAO" interface="com.china.center.oa.customer.dao.CustomerDAO" />
+    
+    <osgi:reference id="stafferVSCustomerDAO" interface="com.china.center.oa.customer.dao.StafferVSCustomerDAO" />
 	
 </beans>

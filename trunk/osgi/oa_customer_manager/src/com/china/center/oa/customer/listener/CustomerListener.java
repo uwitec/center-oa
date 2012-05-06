@@ -10,7 +10,9 @@ package com.china.center.oa.customer.listener;
 
 
 import com.center.china.osgi.publics.ParentListener;
+import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.customer.bean.AssignApplyBean;
 import com.china.center.oa.customer.bean.CustomerBean;
 
 
@@ -39,5 +41,16 @@ public interface CustomerListener extends ParentListener
      * @throws MYException
      */
     void onDelete(CustomerBean bean)
+        throws MYException;
+
+    /**
+     * 变更客户关系
+     * 
+     * @param user
+     * @param apply
+     * @param cus
+     * @throws MYException
+     */
+    void onChangeCustomerRelation(User user, AssignApplyBean apply, CustomerBean cus)
         throws MYException;
 }

@@ -73,6 +73,7 @@ import com.china.center.oa.customer.vo.CustomerApplyVO;
 import com.china.center.oa.customer.vo.CustomerHisVO;
 import com.china.center.oa.customer.vo.CustomerVO;
 import com.china.center.oa.customer.vo.StafferVSCustomerVO;
+import com.china.center.oa.customer.vs.StafferVSCustomerBean;
 import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.CityBean;
 import com.china.center.oa.publics.bean.DutyBean;
@@ -1890,6 +1891,10 @@ public class CustomerAction extends DispatchAction
         }
         else
         {
+            StafferVSCustomerBean vs = stafferVSCustomerDAO.findVOByUnique(id);
+
+            request.setAttribute("vs", vs);
+
             return mapping.findForward("detailCustomer");
         }
     }

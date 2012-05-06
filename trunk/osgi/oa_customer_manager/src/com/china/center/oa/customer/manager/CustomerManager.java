@@ -128,6 +128,15 @@ public interface CustomerManager extends ListenerManager<CustomerListener>
     boolean hasCustomerAuth(String stafferId, String customerId)
         throws MYException;
 
+    /**
+     * 没有异常的
+     * 
+     * @param stafferId
+     * @param customerId
+     * @return
+     */
+    boolean hasCustomerAuth2(String stafferId, String customerId);
+
     void synchronizationAllCustomerLocation();
 
     double sumNoPayBusiness(CustomerBean bean);

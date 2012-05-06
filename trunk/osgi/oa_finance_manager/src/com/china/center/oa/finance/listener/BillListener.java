@@ -15,6 +15,7 @@ import com.center.china.osgi.publics.ParentListener;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
 import com.china.center.oa.finance.bean.InBillBean;
+import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.sail.bean.OutBean;
 
 
@@ -38,4 +39,15 @@ public interface BillListener extends ParentListener
      */
     void onFeeInReceiveToPre(User user, OutBean bean, List<InBillBean> list)
         throws MYException;
+
+    /**
+     * 预收转移的监听
+     * 
+     * @param user
+     * @param inBill
+     * @param target
+     * @throws MYException
+     */
+    void onChageBillToStaffer(User user, List<InBillBean> inBillList, StafferBean target)
+        throws MYException;;
 }

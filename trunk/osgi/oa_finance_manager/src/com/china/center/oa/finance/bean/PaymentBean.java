@@ -27,7 +27,7 @@ import com.china.center.oa.publics.bean.StafferBean;
 
 
 /**
- * PaymentBean
+ * 回款
  * 
  * @author ZHUZHU
  * @version 2010-12-22
