@@ -276,6 +276,12 @@ public interface TaxConstanst
     int FINANCE_CREATETYPE_SAIL_BADMONEY_BACK = 49;
 
     /**
+     * 销售-销售移交
+     */
+    @Defined(key = "financeCreateType", value = "销售-销售移交")
+    int FINANCE_CREATETYPE_SAIL_TRAN = 50;
+
+    /**
      * 资金-回款新增
      */
     @Defined(key = "financeCreateType", value = "资金-回款新增")

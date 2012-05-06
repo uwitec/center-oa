@@ -364,6 +364,18 @@ public class OutListenerTaxGlueImpl implements OutListener
     }
 
     /**
+     * 应收抵消/主营业务收入抵消/主营业务成本抵消
+     */
+    public void onTranOutList(User user, List<OutBean> outList, StafferBean targerStaffer)
+        throws MYException
+    {
+        for (OutBean outBean : outList)
+        {
+            processTranOutCommon(user, outBean, targerStaffer);
+        }
+    }
+
+    /**
      * 是否领样转销售
      * 
      * @param fullId
@@ -613,6 +625,54 @@ public class OutListenerTaxGlueImpl implements OutListener
 
         // 主营业务成本(5401)/库存商品（成本价*数量）
         createOutCommonItem2(user, outBean, financeBean, itemList);
+
+        financeBean.setItemList(itemList);
+
+        financeManager.addFinanceBeanWithoutTransactional(user, financeBean);
+    }
+
+    /**
+     * 销售-销售出库移交(应收抵消/主营业务收入抵消/主营业务成本抵消)
+     * 
+     * @param user
+     * @param outBean
+     * @throws MYException
+     */
+    private void processTranOutCommon(User user, OutBean outBean, StafferBean targerStaffer)
+        throws MYException
+    {
+        // 应收抵消/主营业务收入抵消/主营业务成本抵消
+        FinanceBean financeBean = new FinanceBean();
+
+        String name = "销售移交:" + outBean.getFullId() + ".从:" + outBean.getStafferName() + "到:"
+                      + targerStaffer.getName();
+
+        financeBean.setName(name);
+
+        financeBean.setCreateType(TaxConstanst.FINANCE_CREATETYPE_SAIL_TRAN);
+
+        financeBean.setRefId(outBean.getFullId());
+
+        financeBean.setRefOut(outBean.getFullId());
+
+        financeBean.setDutyId(outBean.getDutyId());
+
+        financeBean.setDescription(financeBean.getName());
+
+        financeBean.setFinanceDate(TimeTools.now_short());
+
+        financeBean.setLogTime(TimeTools.now());
+
+        List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
+
+        // 应收抵消
+        createOutCommonItem11(user, outBean, financeBean, itemList, targerStaffer);
+
+        // 主营业务收入抵消
+        createOutCommonItem12(user, outBean, financeBean, itemList, targerStaffer);
+
+        // 主营业务成本抵消
+        createOutCommonItem13(user, outBean, financeBean, itemList, targerStaffer);
 
         financeBean.setItemList(itemList);
 
@@ -1457,6 +1517,214 @@ public class OutListenerTaxGlueImpl implements OutListener
     }
 
     /**
+     * 应收抵消
+     * 
+     * @param user
+     * @param outBean
+     * @param financeBean
+     * @param itemList
+     * @throws MYException
+     */
+    private void createOutCommonItem11(User user, OutBean outBean, FinanceBean financeBean,
+                                       List<FinanceItemBean> itemList, StafferBean target)
+        throws MYException
+    {
+        String name = "应收抵消:" + outBean.getFullId();
+
+        // 借:库存商品 贷:应付账款-供应商
+        FinanceItemBean itemIn1 = new FinanceItemBean();
+
+        String pareId = commonDAO.getSquenceString();
+
+        itemIn1.setPareId(pareId);
+
+        itemIn1.setName("应收账款:" + name);
+
+        itemIn1.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+        FinanceHelper.copyFinanceItem(financeBean, itemIn1);
+
+        // 应收账款(客户/职员/部门)
+        String itemInTaxId = TaxItemConstanst.REVEIVE_PRODUCT;
+
+        TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
+
+        if (itemInTax == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 科目拷贝
+        FinanceHelper.copyTax(itemInTax, itemIn1);
+
+        // 抵消之前的凭证
+        double money = outBean.getTotal();
+
+        itemIn1.setInmoney(0);
+
+        itemIn1.setOutmoney(FinanceHelper.doubleToLong(money));
+
+        itemIn1.setDescription(itemIn1.getName());
+
+        // 辅助核算 客户，职员，部门
+        copyDepartment(outBean, itemIn1);
+        itemIn1.setStafferId(outBean.getStafferId());
+        itemIn1.setUnitId(outBean.getCustomerId());
+        itemIn1.setUnitType(TaxConstanst.UNIT_TYPE_CUSTOMER);
+
+        itemList.add(itemIn1);
+
+        // 贷方
+        FinanceItemBean itemOut = new FinanceItemBean();
+
+        itemOut.setPareId(pareId);
+
+        itemOut.setName(name);
+
+        itemOut.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+        FinanceHelper.copyFinanceItem(financeBean, itemOut);
+
+        // 应收账款(客户/职员/部门)
+        TaxBean outTax = taxDAO.findByUnique(TaxItemConstanst.REVEIVE_PRODUCT);
+
+        if (outTax == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        // 科目拷贝
+        FinanceHelper.copyTax(outTax, itemOut);
+
+        double outMoney = outBean.getTotal();
+
+        itemOut.setInmoney(FinanceHelper.doubleToLong(outMoney));
+
+        itemOut.setOutmoney(0);
+
+        itemOut.setDescription(itemOut.getName());
+
+        // 辅助核算 客户/职员/部门
+        copyDepartment(outBean, itemOut);
+        itemOut.setStafferId(target.getId());
+        itemOut.setUnitId(outBean.getCustomerId());
+        itemOut.setUnitType(TaxConstanst.UNIT_TYPE_CUSTOMER);
+
+        itemList.add(itemOut);
+    }
+
+    /**
+     * 主营业务收入抵消
+     * 
+     * @param user
+     * @param outBean
+     * @param financeBean
+     * @param itemList
+     * @throws MYException
+     */
+    private void createOutCommonItem12(User user, OutBean outBean, FinanceBean financeBean,
+                                       List<FinanceItemBean> itemList, StafferBean target)
+        throws MYException
+    {
+        String name = "主营业务收入抵消:" + outBean.getFullId();
+
+        String pareId = commonDAO.getSquenceString();
+
+        List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
+
+        // 借原职员主营业务收入
+        for (BaseBean baseBean : baseList)
+        {
+            // 贷方
+            FinanceItemBean itemInEach = new FinanceItemBean();
+
+            itemInEach.setPareId(pareId);
+
+            itemInEach.setName("主营业务收入抵消:" + name + ".产品:" + baseBean.getProductName());
+
+            itemInEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemInEach);
+
+            // 库存商品
+            String itemTaxIdOut1 = TaxItemConstanst.MAIN_RECEIVE;
+
+            TaxBean outTax = taxDAO.findByUnique(itemTaxIdOut1);
+
+            if (outTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(outTax, itemInEach);
+
+            double outMoney = baseBean.getAmount() * baseBean.getPrice();
+
+            itemInEach.setInmoney(FinanceHelper.doubleToLong(outMoney));
+
+            itemInEach.setOutmoney(0);
+
+            itemInEach.setDescription(itemInEach.getName());
+
+            // 辅助核算 部门/职员
+            copyDepartment(outBean, itemInEach);
+            itemInEach.setStafferId(outBean.getStafferId());
+            itemInEach.setProductId(baseBean.getProductId());
+            itemInEach.setDepotId(baseBean.getLocationId());
+            // 数量抵消
+            itemInEach.setProductAmountIn(baseBean.getAmount());
+
+            itemList.add(itemInEach);
+        }
+
+        // 主营业务收入(新职员)
+        for (BaseBean baseBean : baseList)
+        {
+            // 贷方
+            FinanceItemBean itemOutEach = new FinanceItemBean();
+
+            itemOutEach.setPareId(pareId);
+
+            itemOutEach.setName("抵消后,新主营业务收入:" + name + ".产品:" + baseBean.getProductName());
+
+            itemOutEach.setForward(TaxConstanst.TAX_FORWARD_OUT);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
+
+            // 库存商品
+            String itemTaxIdOut1 = TaxItemConstanst.MAIN_RECEIVE;
+
+            TaxBean outTax = taxDAO.findByUnique(itemTaxIdOut1);
+
+            if (outTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(outTax, itemOutEach);
+
+            double outMoney = baseBean.getAmount() * baseBean.getPrice();
+
+            itemOutEach.setInmoney(0);
+
+            itemOutEach.setOutmoney(FinanceHelper.doubleToLong(outMoney));
+
+            itemOutEach.setDescription(itemOutEach.getName());
+
+            // 辅助核算 部门/职员
+            itemOutEach.setDepartmentId(target.getPrincipalshipId());
+            itemOutEach.setStafferId(target.getId());
+            itemOutEach.setProductId(baseBean.getProductId());
+            itemOutEach.setDepotId(baseBean.getLocationId());
+            itemOutEach.setProductAmountOut(baseBean.getAmount());
+
+            itemList.add(itemOutEach);
+        }
+    }
+
+    /**
      * 应收账款（销售金额，含税价）/其他应收款-样品(原个人领样转销售)
      * 
      * @param user
@@ -2258,6 +2526,117 @@ public class OutListenerTaxGlueImpl implements OutListener
 
             itemList.add(itemOut1);
         }
+    }
+
+    /**
+     * 主营业务成本抵消
+     * 
+     * @param user
+     * @param outBean
+     * @param financeBean
+     * @param itemList
+     * @throws MYException
+     */
+    private void createOutCommonItem13(User user, OutBean outBean, FinanceBean financeBean,
+                                       List<FinanceItemBean> itemList, StafferBean targerStaffer)
+        throws MYException
+    {
+        String pareId = commonDAO.getSquenceString();
+
+        List<BaseBean> baseList = baseDAO.queryEntityBeansByFK(outBean.getFullId());
+
+        // 老职员抵消
+        for (BaseBean baseBean : baseList)
+        {
+            // 借:库存商品 贷:应付账款-供应商
+            FinanceItemBean itemInEach = new FinanceItemBean();
+
+            itemInEach.setPareId(pareId);
+
+            itemInEach.setName("主营业务成本抵消:" + outBean.getFullId() + ".产品:"
+                               + baseBean.getProductName());
+
+            itemInEach.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemInEach);
+
+            // 主营业务成本(部门/职员)
+            String itemInTaxId = TaxItemConstanst.MAIN_COST;
+
+            TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
+
+            if (itemInTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(itemInTax, itemInEach);
+
+            double money = baseBean.getAmount() * baseBean.getCostPrice();
+
+            itemInEach.setInmoney(0);
+
+            itemInEach.setOutmoney(FinanceHelper.doubleToLong(money));
+
+            itemInEach.setDescription(itemInEach.getName());
+
+            // 辅助核算 客户，职员，部门
+            copyDepartment(outBean, itemInEach);
+            itemInEach.setStafferId(outBean.getStafferId());
+            itemInEach.setProductId(baseBean.getProductId());
+            itemInEach.setDepotId(baseBean.getLocationId());
+            itemInEach.setProductAmountOut(baseBean.getAmount());
+
+            itemList.add(itemInEach);
+        }
+
+        // 新职员
+        for (BaseBean baseBean : baseList)
+        {
+            // 借:库存商品 贷:应付账款-供应商
+            FinanceItemBean itemOutEach = new FinanceItemBean();
+
+            itemOutEach.setPareId(pareId);
+
+            itemOutEach.setName("抵消后,新主营业务成本:" + outBean.getFullId() + ".产品:"
+                                + baseBean.getProductName());
+
+            itemOutEach.setForward(TaxConstanst.TAX_FORWARD_IN);
+
+            FinanceHelper.copyFinanceItem(financeBean, itemOutEach);
+
+            // 主营业务成本(部门/职员)
+            String itemInTaxId = TaxItemConstanst.MAIN_COST;
+
+            TaxBean itemInTax = taxDAO.findByUnique(itemInTaxId);
+
+            if (itemInTax == null)
+            {
+                throw new MYException("数据错误,请确认操作");
+            }
+
+            // 科目拷贝
+            FinanceHelper.copyTax(itemInTax, itemOutEach);
+
+            double money = baseBean.getAmount() * baseBean.getCostPrice();
+
+            itemOutEach.setInmoney(FinanceHelper.doubleToLong(money));
+
+            itemOutEach.setOutmoney(0);
+
+            itemOutEach.setDescription(itemOutEach.getName());
+
+            // 辅助核算 客户，职员，部门
+            itemOutEach.setDepartmentId(targerStaffer.getPrincipalshipId());
+            itemOutEach.setStafferId(targerStaffer.getId());
+            itemOutEach.setProductId(baseBean.getProductId());
+            itemOutEach.setDepotId(baseBean.getLocationId());
+            itemOutEach.setProductAmountIn(baseBean.getAmount());
+
+            itemList.add(itemOutEach);
+        }
+
     }
 
     /**
@@ -4283,4 +4662,5 @@ public class OutListenerTaxGlueImpl implements OutListener
     {
         this.baseBalanceDAO = baseBalanceDAO;
     }
+
 }

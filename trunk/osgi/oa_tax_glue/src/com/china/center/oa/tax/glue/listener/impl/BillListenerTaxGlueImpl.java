@@ -135,9 +135,16 @@ public class BillListenerTaxGlueImpl implements BillListener
                                         BankBean bank)
         throws MYException
     {
+        StafferBean srcStaffer = stafferDAO.find(inBillBean.getOwnerId());
+
+        if (srcStaffer == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
         FinanceBean financeBean = new FinanceBean();
 
-        String name = "预收迁移从:" + user.getStafferName() + "到:" + target.getName() + '.';
+        String name = "预收迁移从:" + srcStaffer.getName() + "到:" + target.getName() + '.';
 
         financeBean.setName(name);
 
@@ -161,7 +168,7 @@ public class BillListenerTaxGlueImpl implements BillListener
         List<FinanceItemBean> itemList = new ArrayList<FinanceItemBean>();
 
         // 贷：张三预收-10000 贷：李四预收10000
-        createAddItem2(user, bank, target, inBillBean, financeBean, itemList);
+        createAddItem2(user, bank, target, srcStaffer, inBillBean, financeBean, itemList);
 
         financeBean.setItemList(itemList);
 
@@ -313,7 +320,7 @@ public class BillListenerTaxGlueImpl implements BillListener
     }
 
     /**
-     * 贷：张三预收-10000 贷：李四预收10000
+     * 借：张三预收10000 贷：李四预收10000
      * 
      * @param user
      * @param bank
@@ -324,18 +331,10 @@ public class BillListenerTaxGlueImpl implements BillListener
      * @throws MYException
      */
     private void createAddItem2(User user, BankBean bank, StafferBean target,
-                                InBillBean inBillBean, FinanceBean financeBean,
-                                List<FinanceItemBean> itemList)
+                                StafferBean srcStaffer, InBillBean inBillBean,
+                                FinanceBean financeBean, List<FinanceItemBean> itemList)
         throws MYException
     {
-        // 原持有人
-        StafferBean staffer = stafferDAO.find(inBillBean.getOwnerId());
-
-        if (staffer == null)
-        {
-            throw new MYException("数据错误,请确认操作");
-        }
-
         String name = financeBean.getName() + inBillBean.getId() + '.';
 
         // 预收账款（负数）/应收账款
@@ -371,8 +370,8 @@ public class BillListenerTaxGlueImpl implements BillListener
         itemIn.setDescription(itemIn.getName());
 
         // 辅助核算 客户/职员/部门
-        itemIn.setDepartmentId(staffer.getPrincipalshipId());
-        itemIn.setStafferId(staffer.getId());
+        itemIn.setDepartmentId(srcStaffer.getPrincipalshipId());
+        itemIn.setStafferId(srcStaffer.getId());
         itemIn.setUnitId(inBillBean.getCustomerId());
         itemIn.setUnitType(TaxConstanst.UNIT_TYPE_CUSTOMER);
 

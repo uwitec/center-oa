@@ -69,11 +69,13 @@ public class CustomerListenerTaxImpl implements CustomerListener
         return 0;
     }
 
+    /**
+     * 通过其他实现
+     */
     public void onChangeCustomerRelation(User user, AssignApplyBean apply, CustomerBean cus)
         throws MYException
     {
-        // TODO Auto-generated method stub
-
+        // NA
     }
 
     /*
