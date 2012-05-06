@@ -24,5 +24,12 @@ import com.china.center.oa.finance.vo.BackPayApplyVO;
  */
 public interface BackPayApplyDAO extends DAO<BackPayApplyBean, BackPayApplyVO>
 {
-
+    /**
+     * updateRefIds 更新ref
+     * 
+     * @param id
+     * @param refIds
+     * @return
+     */
+    boolean updateRefIds(String id, String refIds);
 }

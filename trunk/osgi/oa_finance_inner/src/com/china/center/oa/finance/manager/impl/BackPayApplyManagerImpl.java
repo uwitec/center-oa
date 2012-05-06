@@ -410,6 +410,8 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
         }
         else
         {
+            StringBuffer refBuffer = new StringBuffer();
+
             // 处理预收退款(把部分预收拆分出变成已经收款且锁定,正好和上面的付款抵消掉)
             InBillBean inBill = inBillDAO.find(bean.getBillId());
 
@@ -464,7 +466,14 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
             newInBill.setDescription(newInBill.getDescription() + ";预收退款自动关联退款的付款单:" + outBillId);
 
             inBillDAO.updateEntityBean(newInBill);
+
+            refBuffer.append(newInBill.getId()).append(',');
+
+            bean.setRefIds(bean.getRefIds() + refBuffer.toString());
         }
+
+        // 更新关联
+        backPayApplyDAO.updateRefIds(bean.getId(), bean.getRefIds());
 
         // TAX_ADD 销售退款/预收退款
         Collection<BackPayApplyListener> listenerMapValues = this.listenerMapValues();
@@ -487,6 +496,8 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
     private void handleOut(User user, BackPayApplyBean bean)
         throws MYException
     {
+        StringBuffer refBuffer = new StringBuffer();
+
         if (bean.getChangePayment() > 0)
         {
             // 找出已收,然后自动拆分
@@ -538,6 +549,8 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
 
                     inBillDAO.updateEntityBean(newInBill);
 
+                    refBuffer.append(newInBill.getId()).append(',');
+
                     break;
                 }
                 else
@@ -556,6 +569,8 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
 
                     inBillDAO.updateEntityBean(each);
 
+                    refBuffer.append(each.getId()).append(',');
+
                     if (hasOut == 0.0d)
                     {
                         break;
@@ -573,11 +588,15 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
         {
             outManager.payOutWithoutTransactional2(user, bean.getOutId(), "销售退款后清算");
         }
+
+        bean.setRefIds(bean.getRefIds() + refBuffer.toString());
     }
 
     private String createOutBill(User user, List<OutBillBean> outBillList, BackPayApplyBean apply)
         throws MYException
     {
+        StringBuffer refBuffer = new StringBuffer();
+
         for (OutBillBean outBill : outBillList)
         {
             if (apply.getType() == BackPayApplyConstant.TYPE_OUT)
@@ -620,7 +639,11 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
             outBill.setLock(FinanceConstant.BILL_LOCK_YES);
 
             billManager.addOutBillBeanWithoutTransaction(user, outBill);
+
+            refBuffer.append(outBill.getId()).append(',');
         }
+
+        apply.setRefIds(apply.getRefIds() + refBuffer.toString());
 
         return outBillList.get(0).getId();
     }

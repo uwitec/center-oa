@@ -25,4 +25,8 @@ import com.china.center.oa.finance.vo.BackPayApplyVO;
  */
 public class BackPayApplyDAOImpl extends BaseDAO<BackPayApplyBean, BackPayApplyVO> implements BackPayApplyDAO
 {
+    public boolean updateRefIds(String id, String refIds)
+    {
+        return this.jdbcOperation.updateField("refIds", refIds, id, claz) > 0;
+    }
 }

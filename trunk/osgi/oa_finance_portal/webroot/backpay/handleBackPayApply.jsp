@@ -181,8 +181,14 @@ function load()
                  ${bean.customerName}
             </p:cell>
             
-            <p:cell title="申请人">
+            <p:cell title="申请人" end="true">
                  ${bean.stafferName}
+            </p:cell>
+            
+            <p:cell title="关联收付款" end="true">
+	            <c:forTokens var="item" items="${bean.refIds}" delims="," varStatus="vs">
+	                <a href="../finance/bill.do?method=findBill&id=${item}">${item}</a>&nbsp;
+	            </c:forTokens>
             </p:cell>
             
             <p:cell title="备注" end="true">

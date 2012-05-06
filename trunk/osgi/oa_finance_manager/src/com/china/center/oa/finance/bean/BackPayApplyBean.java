@@ -70,6 +70,11 @@ public class BackPayApplyBean implements Serializable
 
     private String logTime = "";
 
+    /**
+     * 处理关联的收付款单,逗号分隔
+     */
+    private String refIds = "";
+
     private String description = "";
 
     /**
@@ -267,6 +272,40 @@ public class BackPayApplyBean implements Serializable
     }
 
     /**
+     * @return the locationId
+     */
+    public String getLocationId()
+    {
+        return locationId;
+    }
+
+    /**
+     * @param locationId
+     *            the locationId to set
+     */
+    public void setLocationId(String locationId)
+    {
+        this.locationId = locationId;
+    }
+
+    /**
+     * @return the refIds
+     */
+    public String getRefIds()
+    {
+        return refIds;
+    }
+
+    /**
+     * @param refIds
+     *            the refIds to set
+     */
+    public void setRefIds(String refIds)
+    {
+        this.refIds = refIds;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -290,6 +329,9 @@ public class BackPayApplyBean implements Serializable
             .append("billId = ")
             .append(this.billId)
             .append(TAB)
+            .append("locationId = ")
+            .append(this.locationId)
+            .append(TAB)
             .append("status = ")
             .append(this.status)
             .append(TAB)
@@ -311,29 +353,15 @@ public class BackPayApplyBean implements Serializable
             .append("logTime = ")
             .append(this.logTime)
             .append(TAB)
+            .append("refIds = ")
+            .append(this.refIds)
+            .append(TAB)
             .append("description = ")
             .append(this.description)
             .append(TAB)
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the locationId
-     */
-    public String getLocationId()
-    {
-        return locationId;
-    }
-
-    /**
-     * @param locationId
-     *            the locationId to set
-     */
-    public void setLocationId(String locationId)
-    {
-        this.locationId = locationId;
     }
 
 }
