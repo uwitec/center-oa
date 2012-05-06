@@ -2893,6 +2893,62 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         return true;
     }
 
+    public boolean tranCompleteOutListNT(User user, List<OutBean> outList, StafferBean staffer)
+        throws MYException
+    {
+        JudgeTools.judgeParameterIsNull(user, outList, staffer);
+
+        for (OutBean outBean : outList)
+        {
+            if (outBean.getOutType() != OutConstant.OUTTYPE_OUT_COMMON)
+            {
+                throw new MYException("只能销售出库的单据可以移交,请确认操作");
+            }
+
+            if (outBean.getPay() == OutConstant.PAY_YES)
+            {
+                throw new MYException("单据已经完全付款,请确认操作");
+            }
+        }
+
+        // TAX_ADD 未付款的销售单移交
+        Collection<OutListener> listenerMapValues = this.listenerMapValues();
+
+        for (OutListener outListener : listenerMapValues)
+        {
+            outListener.onTranOutList(user, outList, staffer);
+        }
+
+        for (OutBean out : outList)
+        {
+            String oldName = out.getStafferName();
+
+            out.setStafferId(staffer.getId());
+            out.setStafferName(staffer.getName());
+
+            // 更新责任人
+            outDAO.updateEntityBean(out);
+
+            FlowLogBean log = new FlowLogBean();
+
+            log.setActor(user.getStafferName());
+
+            log.setDescription("变更单据提交人,从:" + oldName + "到:" + staffer.getName());
+            log.setFullId(out.getFullId());
+            log.setOprMode(PublicConstant.OPRMODE_PASS);
+            log.setLogTime(TimeTools.now());
+
+            log.setPreStatus(out.getStatus());
+
+            log.setAfterStatus(out.getStatus());
+
+            // 销售单日志
+            flowLogDAO.saveEntityBean(log);
+        }
+
+        return true;
+    }
+
     @Transactional(rollbackFor = MYException.class)
     public boolean rejectTranApply(User user, String id, String reason)
         throws MYException
@@ -2964,6 +3020,11 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         if (out.getPay() != OutConstant.PAY_YES)
         {
             throw new MYException("单据没有完全付款,请确认操作");
+        }
+
+        if (out.getOutType() != OutConstant.OUTTYPE_OUT_COMMON)
+        {
+            throw new MYException("只能销售出库的单据可以移交,请确认操作");
         }
 
         if ( !customerManager.hasCustomerAuth2(user.getStafferId(), out.getCustomerId()))
@@ -5565,5 +5626,4 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
     {
         this.customerManager = customerManager;
     }
-
 }

@@ -9,9 +9,12 @@
 package com.china.center.oa.sail.listener;
 
 
+import java.util.List;
+
 import com.center.china.osgi.publics.ParentListener;
 import com.center.china.osgi.publics.User;
 import com.china.center.common.MYException;
+import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.wrap.ResultBean;
 import com.china.center.oa.sail.bean.OutBalanceBean;
 import com.china.center.oa.sail.bean.OutBean;
@@ -100,6 +103,16 @@ public interface OutListener extends ParentListener
      * @throws MYException
      */
     void onConfirmBadDebts(User user, OutBean bean)
+        throws MYException;
+
+    /**
+     * 销售单移交
+     * 
+     * @param user
+     * @param bean
+     * @throws MYException
+     */
+    void onTranOutList(User user, List<OutBean> outList, StafferBean targerStaffer)
         throws MYException;
 
     /**

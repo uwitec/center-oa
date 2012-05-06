@@ -376,4 +376,16 @@ public interface OutManager extends ListenerManager<OutListener>
 
     boolean passTranApply(User user, String id)
         throws MYException;
+
+    /**
+     * 销售出库的完全移交(无事务)
+     * 
+     * @param user
+     * @param outList
+     * @param staffer
+     * @return
+     * @throws MYException
+     */
+    boolean tranCompleteOutListNT(User user, List<OutBean> outList, StafferBean staffer)
+        throws MYException;
 }
