@@ -216,6 +216,18 @@
             <datatype>3</datatype>
             <inner></inner>
         </condtion>
+        <condtion name="alogTime1" filed="changeTime" caption="库管开始" pfix="OutBean">
+            <opr>&gt;=</opr>
+            <type>date</type>
+            <datatype>2</datatype>
+            <inner></inner>
+        </condtion>
+        <condtion name="blogTime1" filed="changeTime" caption="库管结束" pfix="OutBean">
+            <opr>&lt;=</opr>
+            <type>date</type>
+            <datatype>3</datatype>
+            <inner></inner>
+        </condtion>
         <condtion name="stafferName" filed="name" caption="所属职员" pfix="SB2">
             <opr>like</opr>
             <type>text</type>

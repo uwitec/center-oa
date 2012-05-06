@@ -43,6 +43,9 @@ public class InBillVO extends InBillBean
     @Relationship(relationField = "bankId", tagField = "dutyId")
     private String dutyId = "";
 
+    @Relationship(relationField = "outId", tagField = "changeTime")
+    private String changeTime = "";
+
     /**
      * default constructor
      */
@@ -153,6 +156,23 @@ public class InBillVO extends InBillBean
     }
 
     /**
+     * @return the changeTime
+     */
+    public String getChangeTime()
+    {
+        return changeTime;
+    }
+
+    /**
+     * @param changeTime
+     *            the changeTime to set
+     */
+    public void setChangeTime(String changeTime)
+    {
+        this.changeTime = changeTime;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -184,6 +204,9 @@ public class InBillVO extends InBillBean
             .append(TAB)
             .append("dutyId = ")
             .append(this.dutyId)
+            .append(TAB)
+            .append("changeTime = ")
+            .append(this.changeTime)
             .append(TAB)
             .append(" )");
 

@@ -986,7 +986,7 @@ public class BillAction extends DispatchAction
 
             write.openFile(out);
 
-            write.writeLine("日期,标识,帐户,类型,状态,关联单据,关联总部核对,核对状态,金额,原始金额,客户,职员,经手人,备注,核对");
+            write.writeLine("日期,标识,帐户,类型,状态,关联单据,关联总部核对,关联库管时间,核对状态,金额,原始金额,客户,职员,经手人,备注,核对");
 
             ConditionParse condtion = JSONPageSeparateTools.getCondition(request, QUERYINBILL);
 
@@ -1008,6 +1008,7 @@ public class BillAction extends DispatchAction
                         .getCheckStatus());
 
                     String refCheck = "";
+                    String refTime = "";
 
                     if ( !StringTools.isNullOrNone(each.getOutId()))
                     {
@@ -1016,15 +1017,16 @@ public class BillAction extends DispatchAction
                         if (outBean != null)
                         {
                             refCheck = outBean.getChecks();
+                            refTime = "[" + outBean.getChangeTime() + "]";
                         }
                     }
 
                     write.writeLine("[" + each.getLogTime() + "]" + ',' + each.getId() + ','
                                     + each.getBankName() + ',' + typeName + ',' + statusName + ','
                                     + each.getOutId() + ',' + StringTools.getExportString(refCheck)
-                                    + ',' + pubCheckName + ','
-                                    + MathTools.formatNum(each.getMoneys()) + ','
-                                    + MathTools.formatNum(each.getSrcMoneys()) + ','
+                                    + ',' + StringTools.getExportString(refTime) + ','
+                                    + pubCheckName + ',' + MathTools.formatNum(each.getMoneys())
+                                    + ',' + MathTools.formatNum(each.getSrcMoneys()) + ','
                                     + each.getCustomerName() + ',' + each.getOwnerName() + ","
                                     + each.getStafferName() + ','
                                     + StringTools.getExportString(each.getDescription()) + ','

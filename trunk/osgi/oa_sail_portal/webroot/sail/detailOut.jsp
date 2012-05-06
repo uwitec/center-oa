@@ -245,6 +245,14 @@ function checkBean()
 					</tr>
 					
 					<tr class="content1">
+                        <td align="right">结算中心时间：</td>
+                        <td colspan="1">${bean.managerTime}</td>
+
+                        <td align="right">库管通过时间：</td>
+                        <td>${bean.changeTime}</td>
+                    </tr>
+					
+					<tr class="content2">
                         <td align="right">付款方式：</td>
                         <td colspan="1">
                         <select name="reserve3" class="select_class" oncheck="notNone;" head="付款方式" style="width: 240px" values="${bean.reserve3}">
@@ -263,7 +271,7 @@ function checkBean()
                         <font color="#FF0000">*</font></td>
                     </tr>
                     
-                    <tr class="content2">
+                    <tr class="content1">
                         <td align="right">发票类型：</td>
                         <td colspan="1">
                         <select name="invoiceId" class="select_class" head="发票类型" style="width: 400px" values="${bean.invoiceId}">
@@ -279,7 +287,7 @@ function checkBean()
                        </td>
                     </tr>
                     
-                    <tr class="content1">
+                    <tr class="content2">
                         <td align="right">已支付：</td>
                         <td colspan="1">
                         ${my:formatNum(bean.hadPay)}
@@ -290,7 +298,7 @@ function checkBean()
                         </td>
                     </tr>
                     
-                    <tr class="content2">
+                    <tr class="content1">
                         <td align="right">开票金额：</td>
                         <td colspan="1">
                         ${my:formatNum(bean.invoiceMoney)}
@@ -301,7 +309,7 @@ function checkBean()
                         </td>
                     </tr>
                     
-                     <tr class="content1">
+                     <tr class="content2">
                         <td align="right">状态：</td>
                         <td colspan="1">
                         <select name="status" class="select_class"  values="${bean.status}">

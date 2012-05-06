@@ -24,6 +24,7 @@ import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.finance.constant.FinanceConstant;
 import com.china.center.oa.publics.bean.StafferBean;
 import com.china.center.oa.publics.constant.PublicConstant;
+import com.china.center.oa.sail.bean.OutBean;
 import com.china.center.oa.sail.bean.UnitViewBean;
 
 
@@ -74,6 +75,7 @@ public class InBillBean implements Serializable
      * outId
      */
     @FK
+    @Join(tagClass = OutBean.class, type = JoinType.LEFT)
     private String outId = "";
 
     /**
