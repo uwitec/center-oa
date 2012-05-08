@@ -34,10 +34,14 @@
         
     <osgi:reference id="integrationAuthManager" 
         interface="org.china.center.spring.iaop.annotation.IntegrationAuthManager" />
-		
+	
+	<osgi:reference id="alarmDAO" interface="com.china.center.oa.publics.dao.AlarmDAO" />
+	
 	<osgi:reference id="parameterDAO" interface="com.china.center.oa.publics.dao.ParameterDAO" />
 	
 	<osgi:reference id="commonDAO" interface="com.china.center.oa.publics.dao.CommonDAO" />
+	
+	<osgi:reference id="commonManager" interface="com.china.center.oa.publics.manager.CommonManager" />
 	
 	<osgi:reference id="userManager" interface="com.china.center.oa.publics.manager.UserManager" />
 	

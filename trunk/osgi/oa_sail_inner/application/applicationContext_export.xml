@@ -39,4 +39,6 @@
 
 	<osgi:service ref="sailTranApplyDAO" interface="com.china.center.oa.sail.dao.SailTranApplyDAO" />
 
+	<osgi:service ref="outStatManager" interface="com.china.center.oa.sail.manager.OutStatManager" />
+
 </beans>

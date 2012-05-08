@@ -41,4 +41,6 @@
 
 	<bean id="sailTranApplyDAO" class="com.china.center.oa.sail.dao.impl.SailTranApplyDAOImpl" />
 
+	<bean id="outStatManager" class="com.china.center.oa.sail.manager.impl.OutStatManagerImpl" />
+
 </beans>
