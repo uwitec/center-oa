@@ -102,20 +102,21 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         return true;
     }
 
-    public boolean modifyPay(String fullId, int pay)
+    public boolean updatePay(String fullId, int pay)
     {
+        if (pay == OutConstant.PAY_NOT)
+        {
+            String sql = "update t_center_out set pay = ? where fullid = ?";
+
+            int i = jdbcOperation.update(sql, pay, fullId);
+
+            return i != 0;
+        }
+
+        // 付款的
         String sql = "update t_center_out set pay = ?, redate = ? where fullid = ?";
 
         int i = jdbcOperation.update(sql, pay, TimeTools.now_short(), fullId);
-
-        return i != 0;
-    }
-
-    public boolean updatePay(String fullId, int pay)
-    {
-        String sql = "update t_center_out set pay = ? where fullid = ?";
-
-        int i = jdbcOperation.update(sql, pay, fullId);
 
         return i != 0;
     }

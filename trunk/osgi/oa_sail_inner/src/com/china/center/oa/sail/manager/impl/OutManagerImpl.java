@@ -271,6 +271,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         outBean.setStatus(OutConstant.STATUS_SAVE);
 
+        outBean.setPay(OutConstant.PAY_NOT);
+
         outBean.setInway(OutConstant.IN_WAY_NO);
 
         // 获得baseList
@@ -3219,6 +3221,8 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
         out.setStatus(oldBean.getStatus());
 
+        out.setPay(oldBean.getPay());
+
         setInvoiceId(out);
 
         // 入库操作在数据库事务中完成
@@ -3303,12 +3307,12 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
         }
 
-        addOutLog(fullId, user, out, reason, SailConstant.OPR_OUT_PASS, out.getStatus());
+        addOutLog(fullId, user, out, reason + "[强制回款]", SailConstant.OPR_OUT_PASS, out.getStatus());
 
         notifyOut(out, user, 2);
 
         // 修改付款标识
-        return outDAO.modifyPay(fullId, OutConstant.PAY_YES);
+        return outDAO.updatePay(fullId, OutConstant.PAY_YES);
     }
 
     public boolean payOutWithoutTransactional(final User user, String fullId, String reason)
@@ -3352,12 +3356,13 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             throw new MYException(result.getMessage());
         }
 
-        addOutLog(fullId, user, out, reason, SailConstant.OPR_OUT_PASS, out.getStatus());
+        addOutLog(fullId, user, out, reason + ";" + result.getMessage(), SailConstant.OPR_OUT_PASS,
+            out.getStatus());
 
         notifyOut(out, user, 2);
 
         // 修改付款标识
-        return outDAO.modifyPay(fullId, OutConstant.PAY_YES);
+        return outDAO.updatePay(fullId, OutConstant.PAY_YES);
     }
 
     public boolean payOutWithoutTransactional2(final User user, String fullId, String reason)
@@ -3386,7 +3391,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                 .getStatus());
 
             // 不能完全回款
-            return outDAO.modifyPay(fullId, OutConstant.PAY_NOT);
+            return outDAO.updatePay(fullId, OutConstant.PAY_NOT);
         }
 
         // 如果getRedate为空说明已经超前回款了
@@ -3404,12 +3409,13 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
             }
         }
 
-        addOutLog(fullId, user, out, reason, SailConstant.OPR_OUT_PASS, out.getStatus());
+        addOutLog(fullId, user, out, reason + ";" + result.getMessage(), SailConstant.OPR_OUT_PASS,
+            out.getStatus());
 
         notifyOut(out, user, 2);
 
         // 修改付款标识
-        return outDAO.modifyPay(fullId, OutConstant.PAY_YES);
+        return outDAO.updatePay(fullId, OutConstant.PAY_YES);
     }
 
     public ResultBean checkOutPayStatus(User user, OutBean out)
@@ -3552,7 +3558,7 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         }
 
         // 修改付款标识
-        return outDAO.modifyPay(fullId, OutConstant.PAY_NOT);
+        return outDAO.updatePay(fullId, OutConstant.PAY_NOT);
     }
 
     @Transactional(rollbackFor = {MYException.class})

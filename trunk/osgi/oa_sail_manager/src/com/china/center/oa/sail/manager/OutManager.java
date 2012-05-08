@@ -144,6 +144,13 @@ public interface OutManager extends ListenerManager<OutListener>
     boolean delOut(User user, final String fullId)
         throws MYException;
 
+    /**
+     * 转调处理(仅仅用于)
+     * 
+     * @param out
+     * @return
+     * @throws MYException
+     */
     boolean updateOut(final OutBean out)
         throws MYException;
 

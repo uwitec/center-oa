@@ -100,8 +100,13 @@ public interface OutDAO extends DAO<OutBean, OutVO>
 
     boolean modifyReDate(String fullId, String reDate);
 
-    boolean modifyPay(String fullId, int pay);
-
+    /**
+     * 修改付款状态
+     * 
+     * @param fullId
+     * @param pay
+     * @return
+     */
     boolean updatePay(String fullId, int pay);
 
     boolean updatePmtype(String fullId, int pmtype);
