@@ -137,6 +137,15 @@ public class OutListenerFinanceImpl extends AbstractListenerManager<BillListener
         // 已经收到客户的金额
         double hasPay = inBillDAO.sumByOutId(bean.getFullId());
 
+        List<InBillBean> inList = inBillDAO.queryEntityBeansByFK(bean.getFullId());
+
+        StringBuffer inBuffer = new StringBuffer();
+
+        for (InBillBean inBillBean : inList)
+        {
+            inBuffer.append(inBillBean.getId()).append(';');
+        }
+
         // 已经退货付款的金额
         double hasdOut = outBillDAO.sumByRefId(bean.getFullId());
 
@@ -202,25 +211,28 @@ public class OutListenerFinanceImpl extends AbstractListenerManager<BillListener
         {
             if (bean.getOutType() == OutConstant.OUTTYPE_OUT_CONSIGN)
             {
-                message = formatter
-                    .format(
-                        "销售单总金额[%.2f],当前已经收到的付款金额[%.2f],委托退货金额[%.2f],坏账金额[%.2f],退货金额[%.2f],没有完全结算",
-                        bean.getTotal(), hasPay, balancePay, bean.getBadDebts(), refInOutTotal)
-                    .toString();
+                message = formatter.format(
+                    "销售单总金额[%.2f],当前已经收到的付款金额[%.2f](%s),委托退货金额[%.2f],坏账金额[%.2f],退货金额[%.2f],没有完全结算",
+                    bean.getTotal(), hasPay, inBuffer.toString(), balancePay, bean.getBadDebts(),
+                    refInOutTotal).toString();
             }
             else
             {
-                message = formatter.format(
-                    "销售单总金额[%.2f],当前已经收到的付款金额[%.2f],坏账金额[%.2f],退货实物价值[%.2f],退货返还金额[%.2f],没有完全结算",
-                    bean.getTotal(), hasPay, bean.getBadDebts(), refInOutTotal, hasdOut).toString();
+                message = formatter
+                    .format(
+                        "销售单总金额[%.2f],当前已经收到的付款金额[%.2f](%s),坏账金额[%.2f],退货实物价值[%.2f],退货返还金额[%.2f],没有完全结算",
+                        bean.getTotal(), hasPay, inBuffer.toString(), bean.getBadDebts(),
+                        refInOutTotal, hasdOut)
+                    .toString();
             }
         }
         else
         {
             message = formatter
                 .format(
-                    "【销售单总金额[%.2f],退货返还金额[%.2f]】,当前已经收到的付款金额[%.2f],坏账金额[%.2f],退货实物价值[%.2f],委托退货金额[%.2f],全部结算",
-                    bean.getTotal(), hasdOut, hasPay, bean.getBadDebts(), refInOutTotal, balancePay)
+                    "【销售单总金额[%.2f],退货返还金额[%.2f]】,当前已经收到的付款金额[%.2f](%s),坏账金额[%.2f],退货实物价值[%.2f],委托退货金额[%.2f],全部结算",
+                    bean.getTotal(), hasdOut, hasPay, inBuffer.toString(), bean.getBadDebts(),
+                    refInOutTotal, balancePay)
                 .toString();
         }
 

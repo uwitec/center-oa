@@ -759,17 +759,20 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
                     if ( !StringTools.isNullOrNone(outBean.getChecks()))
                     {
                         bill.setDescription(bill.getDescription() + "<br>销售单核对信息:"
-                                            + outBean.getChecks() + "<br>审批意见:" + reason);
+                                            + outBean.getChecks() + "<br>审批意见(" + item.getOutId()
+                                            + "):" + reason);
                     }
 
                     if (bill.getCheckStatus() == PublicConstant.CHECK_STATUS_END)
                     {
                         bill.setDescription(bill.getDescription() + "<br>与销售单关联付款所以重置核对状态,原核对信息:"
-                                            + bill.getChecks() + "<br>审批意见:" + reason);
+                                            + bill.getChecks() + "<br>审批意见(" + item.getOutId()
+                                            + "):" + reason);
                     }
                     else
                     {
-                        bill.setDescription(bill.getDescription() + "<br>审批意见:" + reason);
+                        bill.setDescription(bill.getDescription() + "<br>审批意见(" + item.getOutId()
+                                            + "):" + reason);
                     }
 
                     if (BillHelper.isPreInBill(bill))
