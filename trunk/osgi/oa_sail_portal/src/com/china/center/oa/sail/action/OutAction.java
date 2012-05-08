@@ -2171,13 +2171,12 @@ public class OutAction extends ParentOutAction
             return mapping.findForward("applyBackPay");
         }
 
+        // 是否可以看到真实的成本
+        boolean containAuth = userManager.containAuth(user.getId(), AuthConstant.SAIL_QUERY_COST);
+
         if (OATools.isChangeToV5())
         {
             List<BaseBean> baseList = bean.getBaseList();
-
-            // 是否可以看到真实的成本
-            boolean containAuth = userManager.containAuth(user.getId(),
-                AuthConstant.SAIL_QUERY_COST);
 
             if ( !containAuth)
             {
@@ -2301,6 +2300,24 @@ public class OutAction extends ParentOutAction
         List<InvoiceBean> invoiceList = invoiceDAO.listEntityBeans();
 
         request.setAttribute("invoiceList", invoiceList);
+
+        // 入库单也需要控制显示
+        if ( !containAuth)
+        {
+            if (bean.getOutType() == OutConstant.OUTTYPE_IN_SWATCH
+                || bean.getOutType() == OutConstant.OUTTYPE_IN_OUTBACK)
+            {
+                List<BaseBean> baseList = bean.getBaseList();
+
+                for (BaseBean baseBean : baseList)
+                {
+                    // 显示成本(输入成本)
+                    baseBean.setCostPrice(baseBean.getInputPrice());
+
+                    baseBean.setDescription(MathTools.formatNum(baseBean.getInputPrice()));
+                }
+            }
+        }
 
         return mapping.findForward("detailBuy");
     }
