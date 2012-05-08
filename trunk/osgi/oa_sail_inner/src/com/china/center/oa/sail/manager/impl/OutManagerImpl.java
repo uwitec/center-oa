@@ -146,8 +146,6 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
     private final Log triggerLog = LogFactory.getLog("trigger");
 
-    private final Log fatalLog = LogFactory.getLog("fatal");
-
     private LocationDAO locationDAO = null;
 
     private CommonDAO commonDAO = null;
@@ -597,8 +595,6 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                                 // 发现一些异常,这里保护一下
                                 if (base.getInputPrice() == 0)
                                 {
-                                    fatalLog.fatal("error price in sail:" + base);
-
                                     throw new RuntimeException("业务员结算价不能为0");
                                 }
                             }
