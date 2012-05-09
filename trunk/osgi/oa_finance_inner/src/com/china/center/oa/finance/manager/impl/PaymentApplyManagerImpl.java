@@ -1043,6 +1043,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
         if (MathTools.compare(hasUsed, payment.getMoney()) >= 0)
         {
             payment.setUseall(FinanceConstant.PAYMENT_USEALL_END);
+            payment.setUpdateTime(TimeTools.now());
         }
         else
         {
@@ -1185,6 +1186,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
                 pay.setCustomerId("");
 
                 pay.setStatus(FinanceConstant.PAYMENT_STATUS_INIT);
+
+                pay.setUpdateTime("");
 
                 paymentDAO.updateEntityBean(pay);
             }

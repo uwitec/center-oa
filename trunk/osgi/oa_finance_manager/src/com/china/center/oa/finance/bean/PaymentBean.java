@@ -102,6 +102,30 @@ public class PaymentBean implements Serializable
      */
     private String logTime = "";
 
+    /**
+     * 认领时间
+     */
+    @Html(title = "认领时间")
+    private String updateTime = "";
+
+    /**
+     * 回款凭证号
+     */
+    @Html(title = "回款凭证号")
+    private String checks1 = "";
+
+    /**
+     * 认款凭证号
+     */
+    @Html(title = "认款凭证号")
+    private String checks2 = "";
+
+    /**
+     * 核对状态
+     */
+    @Html(title = "核对状态", type = Element.SELECT, must = true)
+    private int checkStatus = FinanceConstant.PAYMENTY_CHECKSTATUS_INIT;
+
     @Html(title = "备注", type = Element.TEXTAREA, maxLength = 200)
     private String description = "";
 
@@ -402,6 +426,91 @@ public class PaymentBean implements Serializable
     }
 
     /**
+     * @return the destStafferId
+     */
+    public String getDestStafferId()
+    {
+        return destStafferId;
+    }
+
+    /**
+     * @param destStafferId
+     *            the destStafferId to set
+     */
+    public void setDestStafferId(String destStafferId)
+    {
+        this.destStafferId = destStafferId;
+    }
+
+    /**
+     * @return the updateTime
+     */
+    public String getUpdateTime()
+    {
+        return updateTime;
+    }
+
+    /**
+     * @param updateTime
+     *            the updateTime to set
+     */
+    public void setUpdateTime(String updateTime)
+    {
+        this.updateTime = updateTime;
+    }
+
+    /**
+     * @return the checks1
+     */
+    public String getChecks1()
+    {
+        return checks1;
+    }
+
+    /**
+     * @param checks1
+     *            the checks1 to set
+     */
+    public void setChecks1(String checks1)
+    {
+        this.checks1 = checks1;
+    }
+
+    /**
+     * @return the checks2
+     */
+    public String getChecks2()
+    {
+        return checks2;
+    }
+
+    /**
+     * @param checks2
+     *            the checks2 to set
+     */
+    public void setChecks2(String checks2)
+    {
+        this.checks2 = checks2;
+    }
+
+    /**
+     * @return the checkStatus
+     */
+    public int getCheckStatus()
+    {
+        return checkStatus;
+    }
+
+    /**
+     * @param checkStatus
+     *            the checkStatus to set
+     */
+    public void setCheckStatus(int checkStatus)
+    {
+        this.checkStatus = checkStatus;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -430,6 +539,9 @@ public class PaymentBean implements Serializable
             .append(TAB)
             .append("stafferId = ")
             .append(this.stafferId)
+            .append(TAB)
+            .append("destStafferId = ")
+            .append(this.destStafferId)
             .append(TAB)
             .append("customerId = ")
             .append(this.customerId)
@@ -464,29 +576,24 @@ public class PaymentBean implements Serializable
             .append("logTime = ")
             .append(this.logTime)
             .append(TAB)
+            .append("updateTime = ")
+            .append(this.updateTime)
+            .append(TAB)
+            .append("checks1 = ")
+            .append(this.checks1)
+            .append(TAB)
+            .append("checks2 = ")
+            .append(this.checks2)
+            .append(TAB)
+            .append("checkStatus = ")
+            .append(this.checkStatus)
+            .append(TAB)
             .append("description = ")
             .append(this.description)
             .append(TAB)
             .append(" )");
 
         return retValue.toString();
-    }
-
-    /**
-     * @return the destStafferId
-     */
-    public String getDestStafferId()
-    {
-        return destStafferId;
-    }
-
-    /**
-     * @param destStafferId
-     *            the destStafferId to set
-     */
-    public void setDestStafferId(String destStafferId)
-    {
-        this.destStafferId = destStafferId;
     }
 
 }

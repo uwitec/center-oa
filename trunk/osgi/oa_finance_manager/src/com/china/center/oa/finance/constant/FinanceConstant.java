@@ -411,4 +411,22 @@ public interface FinanceConstant
     @Defined(key = "invoiceinssType", value = "A2-A1")
     int INVOICEINS_STYPE_A2A1 = 4;
 
+    /**
+     * 初始
+     */
+    @Defined(key = "paymentChechStatus", value = "初始")
+    int PAYMENTY_CHECKSTATUS_INIT = 0;
+
+    /**
+     * 回款核对
+     */
+    @Defined(key = "paymentChechStatus", value = "回款核对")
+    int PAYMENTY_CHECKSTATUS_CHECK1 = 1;
+
+    /**
+     * 认款核对
+     */
+    @Defined(key = "paymentChechStatus", value = "认款核对")
+    int PAYMENTY_CHECKSTATUS_CHECK2 = 2;
+
 }

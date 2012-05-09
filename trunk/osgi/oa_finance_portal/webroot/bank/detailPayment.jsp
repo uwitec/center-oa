@@ -93,6 +93,15 @@ function clearValues()
                 ${bean.logTime}
             </p:cell>
 
+			<p:pro field="updateTime" />
+			
+			<p:pro field="checkStatus">
+                <p:option type="paymentChechStatus" />
+            </p:pro>
+            
+			<p:pro field="checks1" />
+			<p:pro field="checks2" />
+			
 			<p:pro field="fromer" innerString="size=60" />
 
 			<p:pro field="type">

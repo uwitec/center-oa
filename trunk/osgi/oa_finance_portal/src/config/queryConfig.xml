@@ -33,6 +33,18 @@
             <datatype>3</datatype>
             <inner></inner>
         </condtion>
+        <condtion name="aupdateTime" filed="updateTime" caption="认领时间从">
+            <opr>&gt;=</opr>
+            <type>date</type>
+            <datatype>2</datatype>
+            <inner></inner>
+        </condtion>
+        <condtion name="bupdateTime" filed="updateTime" caption="到">
+            <opr>&lt;=</opr>
+            <type>date</type>
+            <datatype>3</datatype>
+            <inner></inner>
+        </condtion>
         <condtion name="bankId" caption="帐户" inner="style='width:400px'">
             <opr>=</opr>
             <datatype>0</datatype>
@@ -58,6 +70,12 @@
             <datatype>1</datatype>
             <type>select</type>
             <option>$paymentStatus</option>
+        </condtion>
+         <condtion name="checkStatus" caption="核对状态">
+            <opr>=</opr>
+            <datatype>1</datatype>
+            <type>select</type>
+            <option>$paymentChechStatus</option>
         </condtion>
         <condtion name="stafferName" filed="name" caption="认领人" pfix="StafferBean">
             <opr>like</opr>
