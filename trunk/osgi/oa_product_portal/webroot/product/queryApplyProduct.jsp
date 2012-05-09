@@ -38,7 +38,7 @@ function load()
              name : {begin : '<a href=' + gurl + 'find' + ukey + '&id={id}>', end : '</a>'}
          },
          buttons : [
-             //{id: 'add', bclass: 'add', caption: '申请虚拟产品', onpress : addBean, auth: 'true'},
+             {id: 'add', bclass: 'add', caption: '申请虚拟产品', onpress : addBean, auth: 'true'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: 'true'},
              {id: 'search', bclass: 'search', onpress : doSearch}
              ],

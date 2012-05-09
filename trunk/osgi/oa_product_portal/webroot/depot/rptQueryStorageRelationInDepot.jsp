@@ -140,12 +140,10 @@ function queryAbs()
 
 			<tr class="content1">
 				<td colspan="4" align="right">
-				<c:if test="${showAbs == 9999}">
 				<input type="button"
                     onclick="queryAbs()" class="button_class"
                     value="&nbsp;&nbsp;虚拟产品&nbsp;&nbsp;">
                 &nbsp;&nbsp;
-				</c:if>
 				<input type="button"
                     onclick="querys()" class="button_class"
                     value="&nbsp;&nbsp;查 询&nbsp;&nbsp;">
