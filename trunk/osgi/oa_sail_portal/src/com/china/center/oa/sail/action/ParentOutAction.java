@@ -5457,13 +5457,10 @@ public class ParentOutAction extends DispatchAction
                     {
                         if ( !containAuth)
                         {
-                            if (bean.getType() == OutConstant.OUT_TYPE_OUTBILL)
+                            for (BaseBean baseBean : baseList)
                             {
-                                for (BaseBean baseBean : baseList)
-                                {
-                                    // 显示成本
-                                    baseBean.setCostPrice(baseBean.getInputPrice());
-                                }
+                                // 显示成本
+                                baseBean.setCostPrice(baseBean.getInputPrice());
                             }
                         }
                     }
