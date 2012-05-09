@@ -539,8 +539,6 @@ public class CurOutManagerImpl implements CurOutManager
                         throw new RuntimeException(e.getErrorContent());
                     }
 
-                    triggerLog.info("handle single max stat[" + cid + "]:" + maxBusinessAmount);
-
                     // 记入日志
                     saveCore(cid, maxBusinessAmount, true);
 
