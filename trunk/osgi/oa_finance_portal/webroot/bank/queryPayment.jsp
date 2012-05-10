@@ -35,8 +35,9 @@ function load()
              {display: '客户', name : 'customerName', width : '10%'},
              {display: '回款/手续费', name : 'money', content: '{money}/{handling}',  width : '10%', toFixed: 2},
              {display: '回款时间', name : 'receiveTime', width : '8%', sortable : true},
-             {display: '标识', name : 'refId', sortable : true, width : '12%'},
-             {display: '认领状态', name : 'checkStatus', cc: 'paymentChechStatus', width : 'auto'}
+             {display: '认领时间', name : 'updateTime', width : '12%'},
+             {display: '核对状态', name : 'checkStatus', cc: 'paymentChechStatus', width : 'auto'},
+             {display: '标识', name : 'refId', sortable : true, width : '12%'}
              ],
          extAtt: {
              id : {begin : '<a href=' + gurl + 'find' + ukey + '&mode=2&id={id}>', end : '</a>'}
