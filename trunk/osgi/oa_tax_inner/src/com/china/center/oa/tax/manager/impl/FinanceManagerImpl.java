@@ -295,7 +295,6 @@ public class FinanceManagerImpl implements FinanceManager
 
             financeDAO.saveEntityBean(bean);
 
-            // 先放在这里利用数据库的同步阻塞一下
             financeItemDAO.saveAllEntityBeans(itemList);
         }
         else
