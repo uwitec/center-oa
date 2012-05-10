@@ -64,6 +64,7 @@ import com.china.center.oa.finance.dao.StatBankDAO;
 import com.china.center.oa.finance.facade.FinanceFacade;
 import com.china.center.oa.finance.manager.BankManager;
 import com.china.center.oa.finance.manager.BillManager;
+import com.china.center.oa.finance.manager.PaymentManager;
 import com.china.center.oa.finance.manager.StatBankManager;
 import com.china.center.oa.finance.vo.BankVO;
 import com.china.center.oa.finance.vo.InBillVO;
@@ -148,6 +149,8 @@ public class FinanceAction extends DispatchAction
     private ParameterDAO parameterDAO = null;
 
     private BankManager bankManager = null;
+
+    private PaymentManager paymentManager = null;
 
     private static final String QUERYBANK = "queryBank";
 
@@ -719,6 +722,82 @@ public class FinanceAction extends DispatchAction
             _logger.warn(e, e);
 
             ajax.setError("删除失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * checpPayment1
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward checpPayment1(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            String reason = request.getParameter("reason");
+
+            User user = Helper.getUser(request);
+
+            paymentManager.checkBean1(user, id, reason);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
+     * checpPayment2
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward checpPayment2(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            String reason = request.getParameter("reason");
+
+            User user = Helper.getUser(request);
+
+            paymentManager.checkBean2(user, id, reason);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
         }
 
         return JSONTools.writeResponse(response, ajax);
@@ -1748,7 +1827,8 @@ public class FinanceAction extends DispatchAction
 
             write.openFile(out);
 
-            write.writeLine("日期,系统标识,导入标识,导入批次,帐户,类型,状态,认领人,回款来源,绑定客户,回款金额,手续费,回款时间,备注");
+            write
+                .writeLine("日期,系统标识,导入标识,导入批次,帐户,类型,状态,核对状态,回款凭证号,认款凭证号,认领时间,认领人,回款来源,绑定客户,回款金额,手续费,回款时间,备注");
 
             ConditionParse condtion = JSONPageSeparateTools.getCondition(request, QUERYPAYMENT);
 
@@ -1765,12 +1845,19 @@ public class FinanceAction extends DispatchAction
                 {
                     String typeName = DefinedCommon.getValue("paymentType", each.getType());
                     String statusName = DefinedCommon.getValue("paymentStatus", each.getStatus());
+                    String checkStatusName = DefinedCommon.getValue("paymentChechStatus", each
+                        .getCheckStatus());
 
                     write.writeLine("[" + each.getLogTime() + "]" + ',' + each.getId() + ',' + "M"
                                     + each.getRefId() + ',' + "M" + each.getBatchId() + ','
                                     + each.getBankName() + ',' + typeName + ',' + statusName + ','
-                                    + each.getStafferName() + ',' + each.getFromer() + ','
-                                    + each.getCustomerName() + ","
+                                    + checkStatusName + ','
+                                    + StringTools.getExportString(each.getChecks1()) + ','
+                                    + StringTools.getExportString(each.getChecks2()) + ','
+                                    + StringTools.getExportString(each.getUpdateTime()) + ','
+                                    + StringTools.getExportString(each.getStafferName()) + ','
+                                    + StringTools.getExportString(each.getFromer()) + ','
+                                    + StringTools.getExportString(each.getCustomerName()) + ","
                                     + MathTools.formatNum(each.getMoney()) + ','
                                     + MathTools.formatNum(each.getHandling()) + ','
                                     + each.getReceiveTime() + ','
@@ -2495,6 +2582,23 @@ public class FinanceAction extends DispatchAction
     public void setBillManager(BillManager billManager)
     {
         this.billManager = billManager;
+    }
+
+    /**
+     * @return the paymentManager
+     */
+    public PaymentManager getPaymentManager()
+    {
+        return paymentManager;
+    }
+
+    /**
+     * @param paymentManager
+     *            the paymentManager to set
+     */
+    public void setPaymentManager(PaymentManager paymentManager)
+    {
+        this.paymentManager = paymentManager;
     }
 
 }

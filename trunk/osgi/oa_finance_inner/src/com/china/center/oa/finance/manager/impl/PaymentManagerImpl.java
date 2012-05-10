@@ -12,7 +12,9 @@ package com.china.center.oa.finance.manager.impl;
 import java.util.Collection;
 import java.util.List;
 
-import org.china.center.spring.ex.annotation.Exceptional;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.china.center.spring.iaop.annotation.IntegrationAOP;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.center.china.osgi.publics.AbstractListenerManager;
@@ -33,6 +35,7 @@ import com.china.center.oa.finance.listener.PaymentListener;
 import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.manager.PaymentManager;
 import com.china.center.oa.finance.manager.StatBankManager;
+import com.china.center.oa.publics.constant.AuthConstant;
 import com.china.center.oa.publics.constant.IDPrefixConstant;
 import com.china.center.oa.publics.constant.PublicConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
@@ -50,9 +53,11 @@ import com.china.center.tools.TimeTools;
  * @see PaymentManagerImpl
  * @since 3.0
  */
-@Exceptional
+@IntegrationAOP
 public class PaymentManagerImpl extends AbstractListenerManager<PaymentListener> implements PaymentManager
 {
+    private final Log operationLog = LogFactory.getLog("opr");
+
     private PaymentDAO paymentDAO = null;
 
     private InBillDAO inBillDAO = null;
@@ -132,6 +137,55 @@ public class PaymentManagerImpl extends AbstractListenerManager<PaymentListener>
         return true;
     }
 
+    @IntegrationAOP(auth = AuthConstant.PAYMENT_OPR)
+    @Transactional(rollbackFor = MYException.class)
+    public boolean checkBean1(User user, String id, String reason)
+        throws MYException
+    {
+        PaymentBean pay = paymentDAO.find(id);
+
+        if (pay == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (pay.getCheckStatus() != FinanceConstant.PAYMENTY_CHECKSTATUS_INIT)
+        {
+            throw new MYException("状态错误,不能删除");
+        }
+
+        pay.setCheckStatus(FinanceConstant.PAYMENTY_CHECKSTATUS_CHECK1);
+
+        pay.setChecks1(reason);
+
+        return paymentDAO.updateEntityBean(pay);
+    }
+
+    @IntegrationAOP(auth = AuthConstant.PAYMENT_OPR)
+    @Transactional(rollbackFor = MYException.class)
+    public boolean checkBean2(User user, String id, String reason)
+        throws MYException
+    {
+        PaymentBean pay = paymentDAO.find(id);
+
+        if (pay == null)
+        {
+            throw new MYException("数据错误,请确认操作");
+        }
+
+        if (pay.getCheckStatus() != FinanceConstant.PAYMENTY_CHECKSTATUS_CHECK1
+            || pay.getStatus() != FinanceConstant.PAYMENT_STATUS_END)
+        {
+            throw new MYException("状态错误,不能删除");
+        }
+
+        pay.setCheckStatus(FinanceConstant.PAYMENTY_CHECKSTATUS_CHECK2);
+
+        pay.setChecks2(reason);
+
+        return paymentDAO.updateEntityBean(pay);
+    }
+
     @Transactional(rollbackFor = MYException.class)
     public boolean deleteBean(User user, String id)
         throws MYException
@@ -164,6 +218,8 @@ public class PaymentManagerImpl extends AbstractListenerManager<PaymentListener>
         {
             listener.onDeleteBean(user, pay);
         }
+
+        operationLog.info(user.getStafferName() + "删除了回款:" + pay);
 
         return true;
     }

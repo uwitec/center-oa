@@ -25,7 +25,7 @@ function load()
          title: '回款列表',
          url: gurl + 'query' + ukey,
          colModel : [
-             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lstatus={status} lstafferId={stafferId}>', width : 40, align: 'center'},
+             {display: '选择', name : 'check', content : '<input type=radio name=checkb value={id} lcheckstatus={checkStatus} lstatus={status} lstafferId={stafferId}>', width : 40, align: 'center'},
              {display: '系统标识', name : 'id', width : '14%'},
              {display: '帐户', name : 'bankName', width : '12%'},
              {display: '类型', name : 'type', cc: 'paymentType', width : '5%'},
@@ -36,13 +36,15 @@ function load()
              {display: '回款/手续费', name : 'money', content: '{money}/{handling}',  width : '10%', toFixed: 2},
              {display: '回款时间', name : 'receiveTime', width : '8%', sortable : true},
              {display: '标识', name : 'refId', sortable : true, width : '12%'},
-             {display: '备注', name : 'description', width : 'auto'}
+             {display: '认领状态', name : 'checkStatus', cc: 'paymentChechStatus', width : 'auto'}
              ],
          extAtt: {
              id : {begin : '<a href=' + gurl + 'find' + ukey + '&mode=2&id={id}>', end : '</a>'}
          },
          buttons : [
              {id: 'add', bclass: 'add',  onpress : addBean, auth: '1602'},
+             {id: 'pass1', bclass: 'pass', caption: '回款核对', onpress : checkBean1, auth: '1602'},
+             {id: 'pass2', bclass: 'pass', caption: '认领核对', onpress : checkBean2, auth: '1602'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1602'},
              {id: 'del1', bclass: 'del',  caption: '删除批次', onpress : delBean1, auth: '1602'},
              {id: 'export', bclass: 'replied',  caption: '导出查询结果', onpress : exports},
@@ -58,7 +60,7 @@ function $callBack()
 {
     loadForm();
     
-    highlights($("#mainTable").get(0), ['对私', '未认领'], 'red');
+    highlights($("#mainTable").get(0), ['对私', '未认领', '初始'], 'red');
 }
 
 function addBean(opr, grid)
@@ -84,6 +86,40 @@ function delBean(opr, grid)
     {    
         if(window.confirm('确定删除?'))    
         $ajax(gurl + 'delete' + ukey + '&id=' + getRadioValue('checkb'), callBackFun);
+    }
+    else
+    $error('不能操作');
+}
+
+function checkBean1(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lcheckstatus == 0)
+    {    
+        $.messager.prompt('回款核对', '请输入回款凭证号', '',
+            function(value, isOk)
+            {
+                if (isOk)
+                {
+                    $ajax2('../finance/bank.do?method=checpPayment1&id=' + $$('checkb'), {'reason': value}, callBackFun);
+                }
+            }, 2);
+    }
+    else
+    $error('不能操作');
+}
+
+function checkBean2(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lcheckstatus == 1 && getRadio('checkb').lstatus == 1)
+    {    
+        $.messager.prompt('认领核对', '请输入认款凭证号', '',
+            function(value, isOk)
+            {
+                if (isOk)
+                {
+                    $ajax2('../finance/bank.do?method=checpPayment2&id=' + $$('checkb'), {'reason': value}, callBackFun);
+                }
+            }, 2);
     }
     else
     $error('不能操作');
