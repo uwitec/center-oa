@@ -98,7 +98,15 @@ function pagePrint()
             </p:cell>
             
             <p:cell title="关联回款">
-                ${bean.paymentId}
+                <a href="../finance/bank.do?method=findPayment&mode=2&id=${bean.paymentId}">${bean.paymentId}</a>
+            </p:cell>
+            
+            <p:cell title="回款金额">
+               ${my:formatNum(bean.payMoney)}
+            </p:cell>
+            
+            <p:cell title="回款时间">
+               ${bean.payLogTime}
             </p:cell>
             
             <p:cell title="会计">
