@@ -47,6 +47,12 @@ public interface FinanceConstant
     int PAYMENT_STATUS_END = 1;
 
     /**
+     * 回款单状态--已删除
+     */
+    @Defined(key = "paymentStatus", value = "已删除")
+    int PAYMENT_STATUS_DELETE = 2;
+
+    /**
      * 对公
      */
     @Defined(key = "paymentType", value = "对公")
@@ -428,5 +434,11 @@ public interface FinanceConstant
      */
     @Defined(key = "paymentChechStatus", value = "认款核对")
     int PAYMENTY_CHECKSTATUS_CHECK2 = 2;
+
+    /**
+     * 删除核对
+     */
+    @Defined(key = "paymentChechStatus", value = "删除核对")
+    int PAYMENTY_CHECKSTATUS_CHECK3 = 3;
 
 }

@@ -65,6 +65,18 @@ public interface PaymentManager extends ListenerManager<PaymentListener>
         throws MYException;
 
     /**
+     * 删除核对
+     * 
+     * @param user
+     * @param id
+     * @param reason
+     * @return
+     * @throws MYException
+     */
+    boolean checkBean3(User user, String id, String reason)
+        throws MYException;
+
+    /**
      * batchDeleteBean
      * 
      * @param user
