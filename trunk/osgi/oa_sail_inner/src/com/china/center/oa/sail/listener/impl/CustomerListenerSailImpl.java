@@ -82,7 +82,7 @@ public class CustomerListenerSailImpl implements CustomerListener
             throw new MYException("数据错误,请确认操作");
         }
 
-        // 查询此客户下所有的未付款的销售单(2011-01-01之后)
+        // 查询此客户下所有的未付款的销售单(2012-04-01之后)
         ConditionParse con = new ConditionParse();
         con.addWhereStr();
 
@@ -90,7 +90,9 @@ public class CustomerListenerSailImpl implements CustomerListener
         con.addIntCondition("pay", "=", OutConstant.PAY_NOT);
         con.addIntCondition("outType", "=", OutConstant.OUTTYPE_OUT_COMMON);
         con.addIntCondition("type", "=", OutConstant.OUT_TYPE_OUTBILL);
-        con.addCondition("outTime", ">=", "2011-01-01");
+
+        // 四月数据
+        con.addCondition("outTime", ">=", "2012-04-01");
 
         // 处理回款或者结束
         con.addCondition("and status in (3, 4)");
