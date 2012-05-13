@@ -46,14 +46,17 @@ import com.china.center.oa.finance.manager.BillManager;
 import com.china.center.oa.finance.vo.InBillVO;
 import com.china.center.oa.finance.vo.OutBillVO;
 import com.china.center.oa.publics.Helper;
+import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.InvoiceBean;
 import com.china.center.oa.publics.constant.AuthConstant;
+import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.dao.InvoiceDAO;
 import com.china.center.oa.publics.dao.ParameterDAO;
 import com.china.center.oa.publics.dao.StafferTransferDAO;
 import com.china.center.oa.publics.manager.AuthManager;
 import com.china.center.oa.publics.manager.UserManager;
 import com.china.center.oa.sail.bean.OutBean;
+import com.china.center.oa.sail.constanst.OutConstant;
 import com.china.center.oa.sail.dao.OutDAO;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.dao.FinanceDAO;
@@ -77,6 +80,8 @@ public class BillAction extends DispatchAction
     private final Log _logger = LogFactory.getLog(getClass());
 
     private InBillDAO inBillDAO = null;
+
+    private FlowLogDAO flowLogDAO = null;
 
     private BankDAO bankDAO = null;
 
@@ -986,7 +991,8 @@ public class BillAction extends DispatchAction
 
             write.openFile(out);
 
-            write.writeLine("日期,标识,帐户,类型,状态,关联单据,关联总部核对,关联库管时间,核对状态,金额,原始金额,客户,职员,经手人,备注,核对");
+            write
+                .writeLine("日期,标识,帐户,类型,状态,关联单据,关联总部核对,关联库管时间,关联结束时间,核对状态,金额,原始金额,客户,职员,经手人,备注,核对");
 
             ConditionParse condtion = JSONPageSeparateTools.getCondition(request, QUERYINBILL);
 
@@ -1009,6 +1015,7 @@ public class BillAction extends DispatchAction
 
                     String refCheck = "";
                     String refTime = "";
+                    String refEndTime = "";
 
                     if ( !StringTools.isNullOrNone(each.getOutId()))
                     {
@@ -1019,14 +1026,27 @@ public class BillAction extends DispatchAction
                             refCheck = outBean.getChecks();
                             refTime = "[" + outBean.getChangeTime() + "]";
                         }
+
+                        List<FlowLogBean> logList = flowLogDAO
+                            .queryEntityBeansByFK(each.getOutId());
+
+                        for (FlowLogBean flowLogBean : logList)
+                        {
+                            if (flowLogBean.getAfterStatus() == OutConstant.STATUS_SEC_PASS)
+                            {
+                                refEndTime = "[" + flowLogBean.getLogTime() + "]";
+                                break;
+                            }
+                        }
                     }
 
                     write.writeLine("[" + each.getLogTime() + "]" + ',' + each.getId() + ','
                                     + each.getBankName() + ',' + typeName + ',' + statusName + ','
                                     + each.getOutId() + ',' + StringTools.getExportString(refCheck)
                                     + ',' + StringTools.getExportString(refTime) + ','
-                                    + pubCheckName + ',' + MathTools.formatNum(each.getMoneys())
-                                    + ',' + MathTools.formatNum(each.getSrcMoneys()) + ','
+                                    + StringTools.getExportString(refEndTime) + ',' + pubCheckName
+                                    + ',' + MathTools.formatNum(each.getMoneys()) + ','
+                                    + MathTools.formatNum(each.getSrcMoneys()) + ','
                                     + each.getCustomerName() + ',' + each.getOwnerName() + ","
                                     + each.getStafferName() + ','
                                     + StringTools.getExportString(each.getDescription()) + ','
@@ -1410,5 +1430,22 @@ public class BillAction extends DispatchAction
     public void setStafferTransferDAO(StafferTransferDAO stafferTransferDAO)
     {
         this.stafferTransferDAO = stafferTransferDAO;
+    }
+
+    /**
+     * @return the flowLogDAO
+     */
+    public FlowLogDAO getFlowLogDAO()
+    {
+        return flowLogDAO;
+    }
+
+    /**
+     * @param flowLogDAO
+     *            the flowLogDAO to set
+     */
+    public void setFlowLogDAO(FlowLogDAO flowLogDAO)
+    {
+        this.flowLogDAO = flowLogDAO;
     }
 }
