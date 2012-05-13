@@ -29,6 +29,9 @@ public class TcpShareVO extends TcpShareBean
     @Relationship(relationField = "approverId")
     private String approverName = "";
 
+    @Relationship(relationField = "bearId")
+    private String bearName = "";
+
     @Relationship(relationField = "departmentId")
     private String departmentName = "";
 
@@ -114,6 +117,23 @@ public class TcpShareVO extends TcpShareBean
     }
 
     /**
+     * @return the bearName
+     */
+    public String getBearName()
+    {
+        return bearName;
+    }
+
+    /**
+     * @param bearName
+     *            the bearName to set
+     */
+    public void setBearName(String bearName)
+    {
+        this.bearName = bearName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -130,6 +150,9 @@ public class TcpShareVO extends TcpShareBean
             .append(TAB)
             .append("approverName = ")
             .append(this.approverName)
+            .append(TAB)
+            .append("bearName = ")
+            .append(this.bearName)
             .append(TAB)
             .append("departmentName = ")
             .append(this.departmentName)

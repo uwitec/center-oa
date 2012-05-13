@@ -324,13 +324,13 @@ function selectNext(type, value)
     }	
 }
 
-function getStaffers(oo)
+function getStaffers(oos)
 {
 	if (sflag == 1)
 	{
-	    if (oo.length > 0)
+	    if (oos.length > 0)
 	    {
-	        var item = oo[0];
+	        var item = oos[0];
 	        $("input[name='borrowStafferName']").val(item.pname);
 	        $("input[name='borrowStafferId']").val(item.value);
 	    }
@@ -338,12 +338,22 @@ function getStaffers(oo)
     
     if (sflag == 0)
     {
-	    if (oo.length > 0)
+	    if (oos.length > 0)
 	    {
-	        var item = oo[0];
+	        var item = oos[0];
 	        $("input[name='processer']").val(item.pname);
 	        $("input[name='processId']").val(item.value);
 	    }
+    }
+    
+    if (sflag == 2)
+    {
+        var oo = oos[0];
+    
+	    var tr = getTrObject(stafferObj);
+	    
+	    setInputValueInTr(tr, 's_bearName', oo.pname);
+	    setInputValueInTr(tr, 's_bearId', oo.value);
     }
 }
 
@@ -406,4 +416,14 @@ function selectBank(obj)
     window.common.modal('../finance/bank.do?method=rptQueryBank&load=1&dutyread=1&dutyId=' + $$('dutyId'));
 }
 
+var stafferObj;
+
+function selectStaffer2(obj)
+{
+	//stafferObj = obj;
+	
+	//sflag = 2;
+	
+    //window.common.modal('../admin/pop.do?method=rptQueryStaffer&load=1&selectMode=1');
+}
 

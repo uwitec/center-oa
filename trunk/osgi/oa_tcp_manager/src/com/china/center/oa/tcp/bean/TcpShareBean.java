@@ -8,6 +8,7 @@ import com.china.center.jdbc.annotation.FK;
 import com.china.center.jdbc.annotation.Id;
 import com.china.center.jdbc.annotation.Join;
 import com.china.center.jdbc.annotation.Table;
+import com.china.center.jdbc.annotation.enums.JoinType;
 import com.china.center.oa.budget.bean.BudgetBean;
 import com.china.center.oa.publics.bean.PrincipalshipBean;
 import com.china.center.oa.publics.bean.StafferBean;
@@ -40,8 +41,14 @@ public class TcpShareBean implements Serializable
     /**
      * 权签人
      */
-    @Join(tagClass = StafferBean.class)
+    @Join(tagClass = StafferBean.class, alias = "SB1")
     private String approverId = "";
+
+    /**
+     * 费用承担人(不强制出现)
+     */
+    @Join(tagClass = StafferBean.class, type = JoinType.LEFT, alias = "SB2")
+    private String bearId = "";
 
     private int ratio = 0;
 
@@ -177,6 +184,23 @@ public class TcpShareBean implements Serializable
     }
 
     /**
+     * @return the bearId
+     */
+    public String getBearId()
+    {
+        return bearId;
+    }
+
+    /**
+     * @param bearId
+     *            the bearId to set
+     */
+    public void setBearId(String bearId)
+    {
+        this.bearId = bearId;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -205,6 +229,9 @@ public class TcpShareBean implements Serializable
             .append(TAB)
             .append("approverId = ")
             .append(this.approverId)
+            .append(TAB)
+            .append("bearId = ")
+            .append(this.bearId)
             .append(TAB)
             .append("ratio = ")
             .append(this.ratio)

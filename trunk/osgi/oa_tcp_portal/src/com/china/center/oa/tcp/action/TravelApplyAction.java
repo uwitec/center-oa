@@ -1586,6 +1586,7 @@ public class TravelApplyAction extends DispatchAction
         List<String> budgetIdeList = rds.getParameters("s_budgetId");
         List<String> departmentIdList = rds.getParameters("s_departmentId");
         List<String> approverIdList = rds.getParameters("s_approverId");
+        List<String> bearIdList = rds.getParameters("s_bearId");
         List<String> ratioList = rds.getParameters("s_ratio");
 
         int rtotal = 0;
@@ -1616,6 +1617,16 @@ public class TravelApplyAction extends DispatchAction
             share.setBudgetId(budgetIdeList.get(i));
             share.setDepartmentId(departmentIdList.get(i));
             share.setApproverId(approverIdList.get(i));
+
+            if (bearIdList == null || bearIdList.size() < i
+                || StringTools.isNullOrNone(bearIdList.get(i)))
+            {
+                share.setBearId(bean.getStafferId());
+            }
+            else
+            {
+                share.setBearId(bearIdList.get(i));
+            }
 
             // 自动识别是分担还是金额
             if (shareType == 0)

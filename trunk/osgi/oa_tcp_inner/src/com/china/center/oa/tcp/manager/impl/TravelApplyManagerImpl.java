@@ -899,6 +899,11 @@ public class TravelApplyManagerImpl extends AbstractListenerManager<TcpPayListen
             {
                 TravelApplyItemVO travelApplyItemVO = (TravelApplyItemVO)ite.next();
 
+                if (travelApplyItemVO.getMoneys() == 0)
+                {
+                    continue;
+                }
+
                 // 预算鉴权()
                 BudgetLogBean log = new BudgetLogBean();
 

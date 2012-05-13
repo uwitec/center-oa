@@ -227,10 +227,11 @@ function getTravelApply(oos)
                 <td>
                 <table width="100%" border="0" cellspacing='1' id="tables_share">
                     <tr align="center" class="content0">
-                        <td width="35%" align="center">月度预算</td>
-                        <td width="35%" align="center">部门</td>
+                        <td width="30%" align="center">月度预算</td>
+                        <td width="30%" align="center">部门</td>
                         <td width="15%" align="center">权签人</td>
-                        <td width="10%" align="center">分担比例(%)/金额</td>
+                        <td width="15%" align="center">承担人</td>
+                        <td width="15%" align="center">分担比例(%)/金额</td>
                         <td width="5%" align="left"><input type="button" accesskey="B"
                             value="增加" class="button_class" onclick="addShareTr()"></td>
                     </tr>
@@ -359,32 +360,8 @@ function getTravelApply(oos)
             value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
     </tr>
     
-    <tr class="content1" id="trCopy_share" style="display: none;">
-         <td align="left"><input type="text" style="width: 100%;cursor: pointer;"
-                    name="s_budgetName" value="" oncheck="notNone;" readonly="readonly" onclick="selectBudget(this)">
-         <input type="hidden" name="s_budgetId" value=""> 
-         </td>
-         
-         <td align="left">
-         <input type="text" style="width: 100%"
-                    name="s_departmentName" value="" oncheck="notNone;" readonly="readonly">
-         <input type="hidden" name="s_departmentId" value=""> 
-         </td>
-         
-         <td align="left">
-         <input type="text" style="width: 100%"
-                    name="s_approverName" value="" oncheck="notNone;" readonly="readonly">
-         <input type="hidden" name="s_approverId" value=""> 
-         </td>
-         
-         <td align="left">
-         <input type="text" style="width: 100%"
-                    name="s_ratio" value="" oncheck="notNone;isFloat2">
-         </td>
-         
-        <td width="5%" align="center"><input type=button
-            value="&nbsp;删 除&nbsp;" class=button_class onclick="removeTr(this)"></td>
-    </tr>
+    <%@include file="share_tr.jsp"%>
+    
 </table>
 </body>
 </html>

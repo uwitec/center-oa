@@ -1,3 +1,5 @@
+var sflag = 0;
+
 function addTr()
 {
     for (var i = 0; i < 1; i++)
@@ -301,19 +303,34 @@ function getRunDepartmentBudgets(oos)
 
 function selectNext(type, value)
 {
+	sflag = 0;
+	
     if (type == 'group')
     {
     	window.common.modal('../group/group.do?method=rptQueryGroupMember&selectMode=1&load=1&pid=' + value);
     }	
 }
 
-function getStaffers(oo)
+function getStaffers(oos)
 {
-    if (oo.length > 0)
+	if (sflag == 0)
+	{
+	    if (oos.length > 0)
+	    {
+	        var item = oos[0];
+	        $("input[name='processer']").val(item.pname);
+	        $("input[name='processId']").val(item.value);
+	    }
+	}
+	
+	if (sflag == 2)
     {
-        var item = oo[0];
-        $("input[name='processer']").val(item.pname);
-        $("input[name='processId']").val(item.value);
+        var oo = oos[0];
+    
+        var tr = getTrObject(stafferObj);
+        
+        setInputValueInTr(tr, 's_bearName', oo.pname);
+        setInputValueInTr(tr, 's_bearId', oo.value);
     }
 }
 
@@ -380,4 +397,16 @@ function pagePrint()
 {
     window.print();
 }
+
+var stafferObj;
+
+function selectStaffer2(obj)
+{
+    //stafferObj = obj;
+    
+    //sflag = 2;
+    
+    //window.common.modal('../admin/pop.do?method=rptQueryStaffer&load=1&selectMode=1');
+}
+
 

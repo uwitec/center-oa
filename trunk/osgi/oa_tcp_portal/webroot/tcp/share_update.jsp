@@ -18,9 +18,10 @@
                 <td>
                 <table width="100%" border="0" cellspacing='1' id="tables_share">
                     <tr align="center" class="content0">
-                        <td width="35%" align="center">月度预算</td>
-                        <td width="35%" align="center">部门</td>
+                        <td width="30%" align="center">月度预算</td>
+                        <td width="30%" align="center">部门</td>
                         <td width="15%" align="center">权签人</td>
+                        <td width="15%" align="center">承担人</td>
                         <td width="10%" align="center">分担比例(%)/金额</td>
                         <td width="5%" align="left"><input type="button" accesskey="B"
                             value="增加" class="button_class" onclick="addShareTr()"></td>
@@ -43,6 +44,12 @@
                      <input type="text" style="width: 100%"
                                 name="s_approverName" value="${itemEach.approverName}" oncheck="notNone;" readonly="readonly">
                      <input type="hidden" name="s_approverId" value="${itemEach.approverId}"> 
+                     </td>
+                     
+                     <td align="left">
+                     <input type="text" style="width: 100%;cursor: pointer;"
+                                name="s_bearName" value="${itemEach.bearName}" oncheck="notNone;" readonly="readonly" onclick="selectStaffer2(this)">
+                     <input type="hidden" name="s_bearId" value="${itemEach.bearId}"> 
                      </td>
                      
                      <td align="left">
