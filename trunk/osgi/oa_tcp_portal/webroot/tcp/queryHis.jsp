@@ -30,6 +30,8 @@ function load()
              {display: '目的', name : 'name', width : '15%'},
              {display: '申请人', name : 'applyName', width : '10%'},
              {display: '类型', name : 'type', cc: 'tcpType', sortable: true, width : '20%'},
+             {display: '费用', name : 'moneyStr1', width : '8%'},
+             {display: '借款', name : 'moneyStr2', width : '8%'},
              {display: '时间', name : 'logTime', sortable: true, width : 'auto'}
              ],
          extAtt: {

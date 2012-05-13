@@ -203,6 +203,11 @@ public abstract class TCPHelper
         return Math.round(MathTools.parseDouble(formatNum2(value)) * 100);
     }
 
+    public static String longToDouble2(long value)
+    {
+        return TCPHelper.formatNum2(value / 100.0d);
+    }
+
     public static void chageVO(TravelApplyVO vo)
     {
         vo.setShowTotal(formatNum2(vo.getTotal() / 100.0d));

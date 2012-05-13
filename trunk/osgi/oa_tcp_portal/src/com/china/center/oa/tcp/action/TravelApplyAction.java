@@ -62,6 +62,7 @@ import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.vo.FlowLogVO;
 import com.china.center.oa.tax.bean.FinanceBean;
 import com.china.center.oa.tax.dao.FinanceDAO;
+import com.china.center.oa.tcp.bean.ExpenseApplyBean;
 import com.china.center.oa.tcp.bean.TcpApproveBean;
 import com.china.center.oa.tcp.bean.TcpFlowBean;
 import com.china.center.oa.tcp.bean.TcpShareBean;
@@ -366,6 +367,27 @@ public class TravelApplyAction extends DispatchAction
                 public void handle(TcpHandleHisVO vo)
                 {
                     TCPHelper.getTcpHandleHisVO(vo);
+
+                    if (vo.getType() <= 10)
+                    {
+                        TravelApplyBean bean = travelApplyDAO.find(vo.getRefId());
+
+                        if (bean != null)
+                        {
+                            vo.setMoneyStr1(TCPHelper.longToDouble2(bean.getTotal()));
+                            vo.setMoneyStr2(TCPHelper.longToDouble2(bean.getBorrowTotal()));
+                        }
+                    }
+                    else
+                    {
+                        ExpenseApplyBean bean = expenseApplyDAO.find(vo.getRefId());
+
+                        if (bean != null)
+                        {
+                            vo.setMoneyStr1(TCPHelper.longToDouble2(bean.getTotal()));
+                            vo.setMoneyStr2(TCPHelper.longToDouble2(bean.getRefMoney()));
+                        }
+                    }
                 }
             });
 

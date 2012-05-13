@@ -36,6 +36,18 @@ public class TcpHandleHisVO extends TcpHandleHisBean
     private String url = "";
 
     /**
+     * 总金额
+     */
+    @Ignore
+    private String moneyStr1 = "";
+
+    /**
+     * 借款金额
+     */
+    @Ignore
+    private String moneyStr2 = "";
+
+    /**
      * default constructor
      */
     public TcpHandleHisVO()
@@ -94,6 +106,40 @@ public class TcpHandleHisVO extends TcpHandleHisBean
     }
 
     /**
+     * @return the moneyStr1
+     */
+    public String getMoneyStr1()
+    {
+        return moneyStr1;
+    }
+
+    /**
+     * @param moneyStr1
+     *            the moneyStr1 to set
+     */
+    public void setMoneyStr1(String moneyStr1)
+    {
+        this.moneyStr1 = moneyStr1;
+    }
+
+    /**
+     * @return the moneyStr2
+     */
+    public String getMoneyStr2()
+    {
+        return moneyStr2;
+    }
+
+    /**
+     * @param moneyStr2
+     *            the moneyStr2 to set
+     */
+    public void setMoneyStr2(String moneyStr2)
+    {
+        this.moneyStr2 = moneyStr2;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -106,7 +152,9 @@ public class TcpHandleHisVO extends TcpHandleHisBean
 
         retValue.append("TcpHandleHisVO ( ").append(super.toString()).append(TAB).append(
             "stafferName = ").append(this.stafferName).append(TAB).append("applyName = ").append(
-            this.applyName).append(TAB).append("url = ").append(this.url).append(TAB).append(" )");
+            this.applyName).append(TAB).append("url = ").append(this.url).append(TAB).append(
+            "moneyStr1 = ").append(this.moneyStr1).append(TAB).append("moneyStr2 = ").append(
+            this.moneyStr2).append(TAB).append(" )");
 
         return retValue.toString();
     }
