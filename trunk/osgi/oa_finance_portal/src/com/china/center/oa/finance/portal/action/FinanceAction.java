@@ -804,6 +804,44 @@ public class FinanceAction extends DispatchAction
     }
 
     /**
+     * 删除核对
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param response
+     * @return
+     * @throws ServletException
+     */
+    public ActionForward checpPayment3(ActionMapping mapping, ActionForm form,
+                                       HttpServletRequest request, HttpServletResponse response)
+        throws ServletException
+    {
+        AjaxResult ajax = new AjaxResult();
+
+        try
+        {
+            String id = request.getParameter("id");
+
+            String reason = request.getParameter("reason");
+
+            User user = Helper.getUser(request);
+
+            paymentManager.checkBean3(user, id, reason);
+
+            ajax.setSuccess("成功操作");
+        }
+        catch (MYException e)
+        {
+            _logger.warn(e, e);
+
+            ajax.setError("操作失败:" + e.getMessage());
+        }
+
+        return JSONTools.writeResponse(response, ajax);
+    }
+
+    /**
      * 核对
      * 
      * @param mapping
@@ -1828,7 +1866,7 @@ public class FinanceAction extends DispatchAction
             write.openFile(out);
 
             write
-                .writeLine("日期,系统标识,导入标识,导入批次,帐户,类型,状态,核对状态,回款凭证号,认款凭证号,认领时间,认领人,回款来源,绑定客户,回款金额,手续费,回款时间,备注");
+                .writeLine("日期,系统标识,导入标识,导入批次,帐户,类型,状态,核对状态,回款凭证号,认款凭证号,删除凭证号,认领时间,认领人,回款来源,绑定客户,回款金额,手续费,回款时间,备注");
 
             ConditionParse condtion = JSONPageSeparateTools.getCondition(request, QUERYPAYMENT);
 
@@ -1854,11 +1892,12 @@ public class FinanceAction extends DispatchAction
                                     + checkStatusName + ','
                                     + StringTools.getExportString(each.getChecks1()) + ','
                                     + StringTools.getExportString(each.getChecks2()) + ','
+                                    + StringTools.getExportString(each.getChecks3()) + ','
                                     + StringTools.getExportString(each.getUpdateTime()) + ','
                                     + StringTools.getExportString(each.getStafferName()) + ','
                                     + StringTools.getExportString(each.getFromer()) + ','
                                     + StringTools.getExportString(each.getCustomerName()) + ","
-                                    + MathTools.formatNum(each.getMoney()) + ','
+                                    + MathTools.formatNum(each.getBakmoney()) + ','
                                     + MathTools.formatNum(each.getHandling()) + ','
                                     + each.getReceiveTime() + ','
                                     + StringTools.getExportString(each.getDescription()));

@@ -46,6 +46,7 @@ function load()
              {id: 'add', bclass: 'add',  onpress : addBean, auth: '1602'},
              {id: 'pass1', bclass: 'pass', caption: '回款核对', onpress : checkBean1, auth: '1602'},
              {id: 'pass2', bclass: 'pass', caption: '认领核对', onpress : checkBean2, auth: '1602'},
+             {id: 'pass3', bclass: 'pass', caption: '删除核对', onpress : checkBean3, auth: '1602'},
              {id: 'del', bclass: 'del',  onpress : delBean, auth: '1602'},
              {id: 'del1', bclass: 'del',  caption: '删除批次', onpress : delBean1, auth: '1602'},
              {id: 'export', bclass: 'replied',  caption: '导出查询结果', onpress : exports},
@@ -62,6 +63,7 @@ function $callBack()
     loadForm();
     
     highlights($("#mainTable").get(0), ['对私', '未认领', '初始'], 'red');
+    highlights($("#mainTable").get(0), ['已删除'], 'blue');
 }
 
 function addBean(opr, grid)
@@ -125,6 +127,24 @@ function checkBean2(opr, grid)
     else
     $error('不能操作');
 }
+
+function checkBean3(opr, grid)
+{
+    if (getRadio('checkb') && getRadioValue('checkb') && getRadio('checkb').lstatus == 2)
+    {    
+        $.messager.prompt('删除核对', '请输入删除凭证号', '',
+            function(value, isOk)
+            {
+                if (isOk)
+                {
+                    $ajax2('../finance/bank.do?method=checpPayment3&id=' + $$('checkb'), {'reason': value}, callBackFun);
+                }
+            }, 2);
+    }
+    else
+    $error('不能操作');
+}
+
 
 function updateBean()
 {

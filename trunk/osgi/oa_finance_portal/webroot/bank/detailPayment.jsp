@@ -92,7 +92,13 @@ function clearValues()
             <p:cell title="导入时间">
                 ${bean.logTime}
             </p:cell>
-
+            
+            <p:cell title="状态">
+                ${my:get('paymentStatus', bean.status)}
+            </p:cell>
+            
+            <p:pro field="bakmoney" />
+            
 			<p:pro field="updateTime" />
 			
 			<p:pro field="checkStatus">
@@ -101,6 +107,8 @@ function clearValues()
             
 			<p:pro field="checks1" />
 			<p:pro field="checks2" />
+			
+			<p:pro field="checks3" cell="0"/>
 			
 			<p:pro field="fromer" innerString="size=60" />
 
@@ -123,10 +131,10 @@ function clearValues()
 			<p:pro field="description" cell="2" />
 			
 			<p:cells celspan="2" title="关联凭证">
-            <c:forEach items="${financeBeanList}" var="item">
-                <a href="../finance/finance.do?method=findFinance&id=${item.id}">${item.id}</a>
-                &nbsp;
-            </c:forEach>
+	            <c:forEach items="${financeBeanList}" var="item">
+	                <a href="../finance/finance.do?method=findFinance&id=${item.id}">${item.id}</a>
+	                &nbsp;
+	            </c:forEach>
             </p:cells>
 
 		</p:table>
