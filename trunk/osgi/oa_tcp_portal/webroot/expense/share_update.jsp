@@ -48,7 +48,7 @@
                      
                      <td align="left">
                      <input type="text" style="width: 100%;cursor: pointer;"
-                                name="s_bearName" value="${itemEach.bearName}" oncheck="notNone;" readonly="readonly" onclick="selectStaffer2(this)">
+                                name="s_bearName" value="${itemEach.bearName}" readonly="readonly" onclick="selectStaffer2(this)">
                      <input type="hidden" name="s_bearId" value="${itemEach.bearId}"> 
                      </td>
                      
