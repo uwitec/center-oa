@@ -37,6 +37,9 @@ public class OutBalanceVO extends OutBalanceBean
     @Relationship(relationField = "outId", tagField = "outTime")
     private String outTime = "";
 
+    @Relationship(relationField = "outId", tagField = "changeTime")
+    private String changeTime = "";
+
     /**
      * default constructor
      */
@@ -113,6 +116,23 @@ public class OutBalanceVO extends OutBalanceBean
     }
 
     /**
+     * @return the changeTime
+     */
+    public String getChangeTime()
+    {
+        return changeTime;
+    }
+
+    /**
+     * @param changeTime
+     *            the changeTime to set
+     */
+    public void setChangeTime(String changeTime)
+    {
+        this.changeTime = changeTime;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -121,12 +141,28 @@ public class OutBalanceVO extends OutBalanceBean
     {
         final String TAB = ",";
 
-        StringBuffer retValue = new StringBuffer();
+        StringBuilder retValue = new StringBuilder();
 
-        retValue.append("OutBalanceVO ( ").append(super.toString()).append(TAB).append("stafferName = ").append(
-            this.stafferName).append(TAB).append("customerName = ").append(this.customerName).append(TAB).append(
-            "dirDepotName = ").append(this.dirDepotName).append(TAB).append("outTime = ").append(this.outTime).append(
-            TAB).append(" )");
+        retValue
+            .append("OutBalanceVO ( ")
+            .append(super.toString())
+            .append(TAB)
+            .append("stafferName = ")
+            .append(this.stafferName)
+            .append(TAB)
+            .append("customerName = ")
+            .append(this.customerName)
+            .append(TAB)
+            .append("dirDepotName = ")
+            .append(this.dirDepotName)
+            .append(TAB)
+            .append("outTime = ")
+            .append(this.outTime)
+            .append(TAB)
+            .append("changeTime = ")
+            .append(this.changeTime)
+            .append(TAB)
+            .append(" )");
 
         return retValue.toString();
     }

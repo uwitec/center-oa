@@ -275,14 +275,22 @@ function centerCheck()
 				<td>
 				<table width="100%" border="0" cellspacing='1'>
 					<tr class="content1">
-						<td width="15%" align="center">开始时间</td>
+						<td width="15%" align="center">结算时间从</td>
 						<td align="center" width="35%"><p:plugin name="outTime" size="20" value="${outTime}"/></td>
-						<td width="15%" align="center">结束时间</td>
+						<td width="15%" align="center">到</td>
 						<td align="center"><p:plugin name="outTime1" size="20" value="${outTime1}"/>
 						</td>
 					</tr>
-
+					
 					<tr class="content2">
+                        <td width="15%" align="center">发货时间从</td>
+                        <td align="center" width="35%"><p:plugin name="changeTime" size="20" value="${changeTime}"/></td>
+                        <td width="15%" align="center">到</td>
+                        <td align="center"><p:plugin name="changeTime1" size="20" value="${changeTime1}"/>
+                        </td>
+                    </tr>
+
+					<tr class="content1">
 						<td width="15%" align="center">状态</td>
 						<td align="center">
 						<select name="status" class="select_class" values="${status}">
@@ -295,7 +303,7 @@ function centerCheck()
                         <td align="center"><input type="text" name="outId" value="${outId}"></td>
 					</tr>
 					
-					<tr class="content1">
+					<tr class="content2">
                         <td width="15%" align="center">类型</td>
                         <td align="center">
                         <select name="type" class="select_class" values="${type}">
@@ -308,7 +316,7 @@ function centerCheck()
                         <td align="center"><input type="text" name="qid" value="${qid}"></td>
                     </tr>
 
-					<tr class="content2">
+					<tr class="content1">
 						<td colspan="4" align="right"><input type="button" id="query_b"
 							onclick="query()" class="button_class"
 							value="&nbsp;&nbsp;查 询&nbsp;&nbsp;">&nbsp;&nbsp;

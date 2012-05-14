@@ -4063,6 +4063,20 @@ public class ParentOutAction extends DispatchAction
             request.setAttribute("outTime1", TimeTools.now_short(1));
         }
 
+        String changeTime = request.getParameter("changeTime");
+
+        String changeTime1 = request.getParameter("changeTime1");
+
+        if ( !StringTools.isNullOrNone(changeTime))
+        {
+            condtion.addCondition("OutBean.changeTime", ">=", changeTime + " 00:00:00");
+        }
+
+        if ( !StringTools.isNullOrNone(changeTime1))
+        {
+            condtion.addCondition("OutBean.changeTime", "<=", changeTime1 + " 23:59:59");
+        }
+
         String outId = request.getParameter("outId");
 
         if ( !StringTools.isNullOrNone(outId))
