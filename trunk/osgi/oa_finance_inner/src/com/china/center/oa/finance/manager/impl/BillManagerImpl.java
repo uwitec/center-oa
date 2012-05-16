@@ -762,7 +762,7 @@ public class BillManagerImpl extends AbstractListenerManager<BillListener> imple
 
         if (destStaffer == null)
         {
-            throw new MYException("数据错误,请确认操作");
+            throw new MYException("客户当前没有正确关联职员,请确认操作");
         }
 
         ConditionParse con = new ConditionParse();
