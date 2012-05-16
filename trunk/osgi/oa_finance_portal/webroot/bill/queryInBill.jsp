@@ -42,10 +42,12 @@ function load()
              {display: '客户', name : 'customerName', width : '12%'},
              {display: '创建', name : 'createType', cc: 'billCreateType', width : '5%'},
              {display: '职员/更新', name : 'ownerName', content: '{ownerName}/{updateId}', sortable : true, cname: 'updateId', width : '8%'},
-             {display: '时间', name : 'logTime', sortable : true, width : 'auto'}
+             {display: '销售单', name : 'outId', width : '12%'},
+             {display: '时间', name : 'logTime', sortable : true, width : '15%'}
              ],
          extAtt: {
-             id : {begin : '<a title=点击查看明细 href=' + gurl + 'find' + ukey + '&id={id}' + checkStr + '>', end : '</a>'}
+             id : {begin : '<a title=点击查看明细 href=' + gurl + 'find' + ukey + '&id={id}' + checkStr + '>', end : '</a>'},
+             outId : {begin : '<a href=../sail/out.do?method=findOut&fow=99&outId={outId}>', end : '</a>'}
          },
          buttons : [
              {id: 'add', bclass: 'add', onpress : addBean, auth: '1603'},
