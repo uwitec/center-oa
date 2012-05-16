@@ -20,6 +20,7 @@ import com.china.center.oa.finance.dao.BankDAO;
 import com.china.center.oa.finance.listener.BillListener;
 import com.china.center.oa.product.dao.ProviderDAO;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.StafferConstant;
 import com.china.center.oa.publics.dao.CommonDAO;
 import com.china.center.oa.publics.dao.DepartmentDAO;
 import com.china.center.oa.publics.dao.DutyDAO;
@@ -136,6 +137,12 @@ public class BillListenerTaxGlueImpl implements BillListener
         throws MYException
     {
         StafferBean srcStaffer = stafferDAO.find(inBillBean.getOwnerId());
+
+        if (srcStaffer == null)
+        {
+            // 全部从系统管理员
+            srcStaffer = stafferDAO.find(StafferConstant.SUPER_STAFFER);
+        }
 
         if (srcStaffer == null)
         {
