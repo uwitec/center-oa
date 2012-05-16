@@ -123,6 +123,8 @@ public class PaymentManagerImpl extends AbstractListenerManager<PaymentListener>
             paymentBean.setId(commonDAO.getSquenceString20(IDPrefixConstant.ID_PAYMENT_PREFIX));
 
             paymentBean.setLogTime(TimeTools.now());
+
+            paymentBean.setBakmoney(paymentBean.getMoney());
         }
 
         paymentDAO.saveAllEntityBeans(beanList);
