@@ -1223,6 +1223,12 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
 
             OutBean moveOut = outDAO.find(outBean.getRefOutFullId());
 
+            // 调出驳回检查
+            if (OutHelper.isMoveOut(moveOut) && moveOut.getInway() == OutConstant.IN_WAY_OVER)
+            {
+                throw new MYException("调出单据状态错误，请重新操作");
+            }
+
             // 结束调出的单据
             changeMoveOutToEnd(user, moveOut, "调拨驳回");
         }
@@ -1927,15 +1933,16 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
                     // 如果是调出的驳回需要回滚
                     if (OutHelper.isMoveOut(outBean))
                     {
+                        // 这个里面修改了在途状态
                         handlerMoveOutBack(fullId, user, outBean);
 
                         if (outBean.getCheckStatus() == PublicConstant.CHECK_STATUS_INIT)
                         {
                             outDAO.modifyChecks(outBean.getFullId(), "调拨回滚后原单据还未核对,系统自动核对原调拨单");
-
-                            outDAO
-                                .modifyOutStatus(outBean.getFullId(), OutConstant.STATUS_SEC_PASS);
                         }
+
+                        // 直接结束
+                        outDAO.modifyOutStatus(outBean.getFullId(), OutConstant.STATUS_SEC_PASS);
 
                         // 操作日志
                         addOutLog(fullId, user, outBean, reason, SailConstant.OPR_OUT_REJECT,
@@ -2005,6 +2012,12 @@ public class OutManagerImpl extends AbstractListenerManager<OutListener> impleme
         if ( !OutHelper.canReject(outBean))
         {
             throw new MYException("状态不可以驳回!");
+        }
+
+        // 调出驳回检查
+        if (OutHelper.isMoveOut(outBean) && outBean.getInway() == OutConstant.IN_WAY_OVER)
+        {
+            throw new MYException("状态错误，请重新操作");
         }
     }
 
