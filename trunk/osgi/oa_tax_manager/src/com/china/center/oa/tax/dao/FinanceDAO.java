@@ -28,6 +28,8 @@ public interface FinanceDAO extends DAO<FinanceBean, FinanceVO>
 {
     boolean updateCheck(String id, String reason);
 
+    boolean updateMonthIndex(String id, int monthIndex);
+
     /**
      * updateLockToEnd
      * 
@@ -50,4 +52,6 @@ public interface FinanceDAO extends DAO<FinanceBean, FinanceVO>
     int findMaxMonthIndexByOut(String beginDate, String endDate);
 
     int findMaxMonthIndexByInner(String beginDate, String endDate);
+
+    List<String> queryDuplicateMonthIndex(String date);
 }

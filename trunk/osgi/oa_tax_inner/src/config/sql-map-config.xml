@@ -8,4 +8,5 @@
 		maxSessions="150" maxTransactions="60" useStatementNamespaces="true" />
 
 	<sqlMap resource="ibatisSqlConf/FinanceItemDAOImpl.xml" />
+	<sqlMap resource="ibatisSqlConf/FinanceDAOImpl.xml" />
 </sqlMapConfig>

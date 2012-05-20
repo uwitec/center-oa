@@ -145,4 +145,9 @@ public interface FinanceManager
      * @return
      */
     boolean updateRefCheckByRefIdWithoutTransactional(String refId, String check);
+
+    /**
+     * fixMonthIndex
+     */
+    void fixMonthIndex();
 }

@@ -57,6 +57,7 @@ import com.china.center.oa.tax.manager.FinanceManager;
 import com.china.center.oa.tax.vo.FinanceTurnVO;
 import com.china.center.tools.BeanUtil;
 import com.china.center.tools.JudgeTools;
+import com.china.center.tools.ListTools;
 import com.china.center.tools.StringTools;
 import com.china.center.tools.TimeTools;
 
@@ -73,6 +74,8 @@ import com.china.center.tools.TimeTools;
 public class FinanceManagerImpl implements FinanceManager
 {
     private final Log operationLog = LogFactory.getLog("opr");
+
+    private final Log triggerLog = LogFactory.getLog("trigger");
 
     private FinanceDAO financeDAO = null;
 
@@ -101,7 +104,7 @@ public class FinanceManagerImpl implements FinanceManager
      */
     private static boolean LOCK_FINANCE = false;
 
-    private static Object FINANCE_ADD_LOCK = new Object();
+    // private static Object FINANCE_ADD_LOCK = new Object();
 
     /**
      * default constructor
@@ -113,11 +116,7 @@ public class FinanceManagerImpl implements FinanceManager
     public boolean addFinanceBeanWithoutTransactional(User user, FinanceBean bean)
         throws MYException
     {
-        // 全局控制
-        synchronized (FINANCE_ADD_LOCK)
-        {
-            return addInner(user, bean, true);
-        }
+        return addInner(user, bean, true);
     }
 
     /**
@@ -272,9 +271,6 @@ public class FinanceManagerImpl implements FinanceManager
 
         if (mainTable)
         {
-            // 利用update的数据库锁(事务锁)
-            commonDAO.updatePublicLock();
-
             String financeDate = bean.getFinanceDate();
 
             // 外层conn获取最大索引
@@ -290,7 +286,7 @@ public class FinanceManagerImpl implements FinanceManager
                 .substring(0, 8)
                                                                                  + "31");
 
-            // 设置MonthIndex
+            // 设置MonthIndex(高并发会重复)
             bean.setMonthIndex(Math.max(findMaxMonthIndex1, findMaxMonthIndex2) + 1);
 
             financeDAO.saveEntityBean(bean);
@@ -325,6 +321,61 @@ public class FinanceManagerImpl implements FinanceManager
         }
 
         return true;
+    }
+
+    @Transactional(rollbackFor = MYException.class)
+    public void fixMonthIndex()
+    {
+        triggerLog.info("begin fixMonthIndex...");
+
+        String date = TimeTools.now_short( -1);
+
+        // 更新昨天重复的
+        List<String> duplicateMonthIndex = financeDAO.queryDuplicateMonthIndex(date);
+
+        if (ListTools.isEmptyOrNull(duplicateMonthIndex))
+        {
+            triggerLog.info("fixMonthIndex empty");
+
+            triggerLog.info("end fixMonthIndex...");
+
+            return;
+        }
+
+        for (String eachId : duplicateMonthIndex)
+        {
+            FinanceBean bean = financeDAO.find(eachId);
+
+            if (bean == null)
+            {
+                continue;
+            }
+
+            String financeDate = bean.getFinanceDate();
+
+            // 外层conn获取最大索引
+            int findMaxMonthIndex1 = financeDAO.findMaxMonthIndexByOut(financeDate.substring(0, 8)
+                                                                       + "01", financeDate
+                .substring(0, 8)
+                                                                               + "31");
+
+            // 当前事务内获取最大索引
+            int findMaxMonthIndex2 = financeDAO.findMaxMonthIndexByInner(financeDate
+                .substring(0, 8)
+                                                                         + "01", financeDate
+                .substring(0, 8)
+                                                                                 + "31");
+
+            int newMaxMonthIndex = Math.max(findMaxMonthIndex1, findMaxMonthIndex2) + 1;
+
+            triggerLog.info("fix MonthIndex from:" + eachId + ".Old MonthIndex is:"
+                            + bean.getMonthIndex() + ",and new MonthIndex is:" + newMaxMonthIndex);
+
+            // 更新
+            financeDAO.updateMonthIndex(eachId, newMaxMonthIndex);
+        }
+
+        triggerLog.info("end fixMonthIndex...");
     }
 
     @IntegrationAOP(auth = AuthConstant.FINANCE_TURN, lock = TaxConstanst.FINANCETURN_OPR_LOCK)

@@ -13,12 +13,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.china.center.jdbc.annosql.tools.BeanTools;
+import com.china.center.jdbc.inter.IbatisDaoSupport;
 import com.china.center.jdbc.inter.impl.BaseDAO;
 import com.china.center.jdbc.util.ConditionParse;
 import com.china.center.oa.tax.bean.FinanceBean;
@@ -39,11 +42,22 @@ public class FinanceDAOImpl extends BaseDAO<FinanceBean, FinanceVO> implements F
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
+    private IbatisDaoSupport ibatisDaoSupport = null;
+
     public boolean updateCheck(String id, String reason)
     {
         String sql = BeanTools.getUpdateHead(claz) + "set status = ?, checks = ? where id = ?";
 
         this.jdbcOperation.update(sql, TaxConstanst.FINANCE_STATUS_CHECK, reason, id);
+
+        return true;
+    }
+
+    public boolean updateMonthIndex(String id, int monthIndex)
+    {
+        String sql = BeanTools.getUpdateHead(claz) + "set monthIndex = ? where id = ?";
+
+        this.jdbcOperation.update(sql, monthIndex, id);
 
         return true;
     }
@@ -216,6 +230,37 @@ public class FinanceDAOImpl extends BaseDAO<FinanceBean, FinanceVO> implements F
                      + " where financeDate >= ? and financeDate <= ?";
 
         return this.jdbcOperation.queryForInt(sql, beginDate, endDate);
+    }
+
+    public List<String> queryDuplicateMonthIndex(String date)
+    {
+        Map<String, String> paramterMap = new HashMap();
+
+        paramterMap.put("beginTime", date + " 00:00:00");
+
+        paramterMap.put("endTime", date + " 23:59:59");
+
+        List<String> result = getIbatisDaoSupport().queryForList(
+            "FinanceDAOImpl.queryDuplicateMonthIndex", paramterMap);
+
+        return result;
+    }
+
+    /**
+     * @return the ibatisDaoSupport
+     */
+    public IbatisDaoSupport getIbatisDaoSupport()
+    {
+        return ibatisDaoSupport;
+    }
+
+    /**
+     * @param ibatisDaoSupport
+     *            the ibatisDaoSupport to set
+     */
+    public void setIbatisDaoSupport(IbatisDaoSupport ibatisDaoSupport)
+    {
+        this.ibatisDaoSupport = ibatisDaoSupport;
     }
 
 }
