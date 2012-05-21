@@ -219,7 +219,7 @@ function check()
             return false;
         }
         
-        if (parseFloat(trim(desList[i].value)) == 0)
+        if ($$('outType') != 1 && parseFloat(trim(desList[i].value)) == 0)
         {
             alert('入库成本价格不能为0!');
             desList[i].focus();
