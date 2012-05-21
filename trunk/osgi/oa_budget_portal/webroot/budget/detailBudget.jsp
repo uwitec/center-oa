@@ -141,7 +141,13 @@ function load()
                     <td align="center" onclick="hrefAndSelect(this)">${item.subDescription}</td>
                     </c:if>
                     
+                    
+                    <c:if test="${bean.status == 99}">
+                    <td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.budget)}/${my:formatNum(item.realMonery)}</td>
+                    </c:if>
+                    <c:if test="${bean.status != 99}">
                     <td align="center" onclick="hrefAndSelect(this)">${my:formatNum(item.budget)}</td>
+                    </c:if>
                     
                     <c:if test="${!unit}">
                     <td align="center" onclick="hrefAndSelect(this)">${item.snoAssignMonery}</td>
