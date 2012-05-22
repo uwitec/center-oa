@@ -1825,6 +1825,13 @@ public class OutAction extends ParentOutAction
 
             List<BaseBean> list = baseDAO.queryEntityBeansByFK(outId);
 
+            if (ListTools.isEmptyOrNull(list))
+            {
+                request.setAttribute(KeyConstant.ERROR_MESSAGE, "库单不存在子项,请重新操作");
+
+                return mapping.findForward("error");
+            }
+
             bean.setBaseList(list);
 
             List<FlowLogBean> logs = flowLogDAO.queryEntityBeansByFK(outId);
