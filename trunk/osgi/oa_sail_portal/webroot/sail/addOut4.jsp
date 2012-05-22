@@ -125,9 +125,9 @@ function changePrice()
 								<td width="5">&nbsp;</td>
 								<td width="6"><img src="../images/dot_r.gif" width="6"
 									height="6"></td>
-								<td class="caption"><strong>销售单:<font color=red>${hasOver}</font> 您信用还剩:${credit}</strong>
+								<td class="caption"><strong><font color=red>${hasOver}</font> 您信用还剩:${credit}</strong>
 								<font color="blue">产品仓库：</font>
-								<select name="location" class="select_class" oncheck="notNone" onchange="clearsAll()">
+								<select name="location" class="select_class" oncheck="notNone" onchange="clearsAll()" style="width: 200px">
 								    <option value="">--</option>
 									<c:forEach items='${locationList}' var="item">
 										<option value="${item.id}">${item.name}</option>
