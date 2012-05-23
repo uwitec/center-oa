@@ -752,8 +752,6 @@ public class FinaAction extends ParentQueryFinaAction
             request.setAttribute(KeyConstant.ERROR_MESSAGE, "操作失败:" + e.getMessage());
         }
 
-        CommonTools.removeParamers(request);
-
         return preForAddFinance(mapping, form, request, response);
     }
 
@@ -1621,6 +1619,8 @@ public class FinaAction extends ParentQueryFinaAction
         String tempFlag = request.getParameter("tempFlag");
 
         request.setAttribute("tempFlag", tempFlag);
+
+        CommonTools.removeParamers(request);
 
         return mapping.findForward("addFinance");
     }

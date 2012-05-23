@@ -15,9 +15,11 @@
 <script language="JavaScript" src="../tax_js/addFinance.js"></script>
 <script language="javascript">
 
+<c:set var="showName" value="${tempFlag == '1' ? '临时' : ''}"></c:set>
+
 function addBean()
 {
-    submit('确定增加凭证?', null, checks);
+    submit('确定增加${showName}凭证?', null, checks);
 }
 
 var taxList = JSON.parse('${taxListStr}');
@@ -107,10 +109,7 @@ function load()
 <body class="body_class" onload="load()">
 <form name="formEntry" action="../finance/finance.do" method="post">
 <input type="hidden" name="method" value="addFinance"> 
-<input type="hidden" name="refId" value="${refId}"> 
 <input type="hidden" name="tempFlag" value="${tempFlag}">
-
-<c:set var="showName" value="${tempFlag == '1' ? '临时' : ''}"></c:set>
 
 <p:navigation height="22">
 	<td width="550" class="navigation"><span style="cursor: pointer;"
@@ -134,11 +133,15 @@ function load()
 			凭证日期：
 			<p:plugin name="financeDate" size="20" type="0" oncheck="cnow(12)" value="${bean.financeDate}"/>
 			凭证归属：
-			<select name="dutyId" class="select_class" style="width: 15%;" oncheck="notNone" values="${bean.dutyId}">
+			<select name="dutyId" class="select_class" style="width: 30%;" oncheck="notNone" values="${bean.dutyId}">
 		         <option value="">--</option>
 		         <p:option type="dutyList"></p:option>
 	         </select>
 			</p:tr>
+			
+			<p:tr align="left">
+                关联单据：<input name="refId" value="${refId}" style="width: 240px">
+            </p:tr>
 			
 			<p:tr align="left">
 			描述：<textarea  name="description" rows="3" cols="80" oncheck="maxLength(200)"></textarea>
@@ -195,7 +198,7 @@ function load()
 		<input type="button" accesskey="A"
                             value="追加凭证项" class="button_class" onclick="addTr()">&nbsp;&nbsp;
 		  <input type="button" class="button_class" id="sub_b"
-            value="&nbsp;&nbsp;提 交&nbsp;&nbsp;" onclick="addBean()">&nbsp;&nbsp;
+            value="&nbsp;&nbsp;提交${showName}凭证&nbsp;&nbsp;" onclick="addBean()">&nbsp;&nbsp;
         </div>
 	</p:button>
 	
