@@ -251,8 +251,14 @@ public class PaymentManagerImpl extends AbstractListenerManager<PaymentListener>
         // 统计上不会造成收入
         pay.setMoney(0.0);
 
-        // 状态上删除
-        paymentDAO.updateEntityBean(pay);
+        if (pay.getCheckStatus() == FinanceConstant.PAYMENTY_CHECKSTATUS_INIT)
+        {
+            paymentDAO.deleteEntityBean(id);
+        }
+        else
+        {
+            paymentDAO.updateEntityBean(pay);
+        }
 
         // TAX_ADD 回款删除
         Collection<PaymentListener> listenerMapValues = listenerMapValues();
