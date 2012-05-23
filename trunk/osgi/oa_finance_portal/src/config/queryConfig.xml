@@ -246,6 +246,18 @@
             <datatype>3</datatype>
             <inner></inner>
         </condtion>
+        <condtion name="clogTime1" filed="payTime" caption="付款时间" pfix="OutBean">
+            <opr>&gt;=</opr>
+            <type>date</type>
+            <datatype>2</datatype>
+            <inner></inner>
+        </condtion>
+        <condtion name="dlogTime1" filed="payTime" caption="付款时间" pfix="OutBean">
+            <opr>&lt;=</opr>
+            <type>date</type>
+            <datatype>3</datatype>
+            <inner></inner>
+        </condtion>
         <condtion name="stafferName" filed="name" caption="所属职员" pfix="SB2">
             <opr>like</opr>
             <type>text</type>

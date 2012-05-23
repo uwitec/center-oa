@@ -46,6 +46,9 @@ public class InBillVO extends InBillBean
     @Relationship(relationField = "outId", tagField = "changeTime")
     private String changeTime = "";
 
+    @Relationship(relationField = "outId", tagField = "payTime")
+    private String payTime = "";
+
     @Relationship(relationField = "paymentId", tagField = "money")
     private double payMoney = 0.0d;
 
@@ -213,6 +216,23 @@ public class InBillVO extends InBillBean
     }
 
     /**
+     * @return the payTime
+     */
+    public String getPayTime()
+    {
+        return payTime;
+    }
+
+    /**
+     * @param payTime
+     *            the payTime to set
+     */
+    public void setPayTime(String payTime)
+    {
+        this.payTime = payTime;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -247,6 +267,9 @@ public class InBillVO extends InBillBean
             .append(TAB)
             .append("changeTime = ")
             .append(this.changeTime)
+            .append(TAB)
+            .append("payTime = ")
+            .append(this.payTime)
             .append(TAB)
             .append("payMoney = ")
             .append(this.payMoney)
