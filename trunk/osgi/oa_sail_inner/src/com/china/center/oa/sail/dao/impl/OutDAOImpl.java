@@ -114,9 +114,9 @@ public class OutDAOImpl extends BaseDAO<OutBean, OutVO> implements OutDAO
         }
 
         // 付款的
-        String sql = "update t_center_out set pay = ?, redate = ? where fullid = ?";
+        String sql = "update t_center_out set pay = ?, redate = ?, payTime = ? where fullid = ?";
 
-        int i = jdbcOperation.update(sql, pay, TimeTools.now_short(), fullId);
+        int i = jdbcOperation.update(sql, pay, TimeTools.now_short(), TimeTools.now(), fullId);
 
         return i != 0;
     }
