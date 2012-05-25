@@ -137,7 +137,7 @@ public class BillAction extends DispatchAction
 
         Map<String, String> initMap = initLogTime(request, condtion, "InBillBean");
 
-        ActionTools.processJSONQueryCondition(QUERYINBILL, request, condtion, initMap);
+        ActionTools.processJSONDataQueryCondition(QUERYINBILL, request, condtion, initMap);
 
         if ( !userManager.containAuth(user.getId(), AuthConstant.BILL_QUERY_ALL))
         {
@@ -204,7 +204,7 @@ public class BillAction extends DispatchAction
 
         Map<String, String> initMap = initLogTime(request, condtion, "OutBillBean");
 
-        ActionTools.processJSONQueryCondition(QUERYOUTBILL, request, condtion, initMap);
+        ActionTools.processJSONDataQueryCondition(QUERYOUTBILL, request, condtion, initMap);
 
         if ( !userManager.containAuth(user.getId(), AuthConstant.BILL_QUERY_ALL))
         {

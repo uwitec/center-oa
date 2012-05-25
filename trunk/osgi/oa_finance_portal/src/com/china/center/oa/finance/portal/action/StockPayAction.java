@@ -99,7 +99,7 @@ public class StockPayAction extends DispatchAction
 
         Map<String, String> initMap = initLogTime(request, condtion);
 
-        ActionTools.processJSONQueryCondition(QUERYSTOCKPAYAPPLY, request, condtion, initMap);
+        ActionTools.processJSONDataQueryCondition(QUERYSTOCKPAYAPPLY, request, condtion, initMap);
 
         condtion.addCondition("order by StockPayApplyBean.payDate desc");
 

@@ -381,7 +381,7 @@ public class FinanceAction extends DispatchAction
 
         Map<String, String> changeMap = initLogTime(request, condtion, false);
 
-        ActionTools.processJSONQueryCondition(QUERYPAYMENT, request, condtion, changeMap);
+        ActionTools.processJSONDataQueryCondition(QUERYPAYMENT, request, condtion, changeMap);
 
         condtion.addCondition("order by PaymentBean.id desc");
 
@@ -405,7 +405,7 @@ public class FinanceAction extends DispatchAction
         condtion.addCondition("and PaymentBean.destStafferId in ('0', '"
                               + Helper.getUser(request).getStafferId() + "')");
 
-        ActionTools.processJSONQueryCondition(QUERYSELFPAYMENT, request, condtion, initMap);
+        ActionTools.processJSONDataQueryCondition(QUERYSELFPAYMENT, request, condtion, initMap);
 
         condtion.addCondition("order by PaymentBean.id desc");
 

@@ -131,7 +131,7 @@ public class FinaAction extends ParentQueryFinaAction
 
         Map<String, String> initMap = initLogTime(request, condtion);
 
-        ActionTools.processJSONQueryCondition(QUERYFINANCE, request, condtion, initMap);
+        ActionTools.processJSONDataQueryCondition(QUERYFINANCE, request, condtion, initMap);
 
         condtion.addCondition("order by FinanceBean.financeDate desc, FinanceBean.logTime desc");
 
@@ -168,7 +168,7 @@ public class FinaAction extends ParentQueryFinaAction
 
         Map<String, String> initMap = initTempLogTime(request, condtion);
 
-        ActionTools.processJSONQueryCondition(QUERYTEMPFINANCE, request, condtion, initMap);
+        ActionTools.processJSONDataQueryCondition(QUERYTEMPFINANCE, request, condtion, initMap);
 
         condtion
             .addIntCondition("FinanceTempBean.status", "<>", TaxConstanst.FINANCE_STATUS_HIDDEN);
@@ -276,7 +276,7 @@ public class FinaAction extends ParentQueryFinaAction
 
         Map<String, String> initMap = initItemLogTime(request, condtion);
 
-        ActionTools.processJSONQueryCondition(QUERYFINANCEITEM, request, condtion, initMap);
+        ActionTools.processJSONDataQueryCondition(QUERYFINANCEITEM, request, condtion, initMap);
 
         condtion.addCondition("order by FinanceItemBean.logTime desc");
 
@@ -596,7 +596,7 @@ public class FinaAction extends ParentQueryFinaAction
 
         Map<String, String> initMap = initCheck(request, condtion);
 
-        ActionTools.processJSONQueryCondition(QUERYCHECKVIEW, request, condtion, initMap);
+        ActionTools.processJSONDataQueryCondition(QUERYCHECKVIEW, request, condtion, initMap);
 
         condtion.addCondition("order by CheckViewBean.logTime desc");
 
