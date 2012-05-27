@@ -1678,7 +1678,7 @@ public class FinaAction extends ParentQueryFinaAction
                 mapping, request);
         }
 
-        List<TaxBean> taxList = taxDAO.listEntityBeans("order by id");
+        List<TaxBean> taxList = taxDAO.listEntityBeansByOrder("order by id");
 
         List<FinanceMonthVO> monthList = new ArrayList<FinanceMonthVO>();
 
@@ -1739,7 +1739,7 @@ public class FinaAction extends ParentQueryFinaAction
             return;
         }
 
-        List<TaxBean> taxList = taxDAO.listEntityBeans("order by TaxBean.code asc");
+        List<TaxBean> taxList = taxDAO.listEntityBeansByOrder("order by TaxBean.code asc");
 
         for (Iterator iterator = taxList.iterator(); iterator.hasNext();)
         {

@@ -30,7 +30,7 @@ public class FinanceTurnDAOImpl extends BaseDAO<FinanceTurnBean, FinanceTurnVO> 
 {
     public FinanceTurnVO findLastVO()
     {
-        List<FinanceTurnVO> list = this.listEntityVOs("order by monthKey desc");
+        List<FinanceTurnVO> list = this.listEntityVOsByOrder("order by monthKey desc");
 
         if (ListTools.isEmptyOrNull(list))
         {

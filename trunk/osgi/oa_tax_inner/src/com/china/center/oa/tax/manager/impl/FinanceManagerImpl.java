@@ -554,7 +554,7 @@ public class FinanceManagerImpl implements FinanceManager
     private void createMonthData(User user, FinanceTurnBean bean, String changeFormat,
                                  List<FinanceItemBean> itemList)
     {
-        List<TaxBean> taxList = taxDAO.listEntityBeans("order by id");
+        List<TaxBean> taxList = taxDAO.listEntityBeansByOrder("order by id");
 
         for (TaxBean taxBean : taxList)
         {
@@ -1486,7 +1486,7 @@ public class FinanceManagerImpl implements FinanceManager
         String monthKey = TimeTools.changeFormat(bean.getFinanceDate(), TimeTools.SHORT_FORMAT,
             "yyyyMM");
 
-        List<FinanceTurnBean> turnList = financeTurnDAO.listEntityBeans("order by monthKey desc");
+        List<FinanceTurnBean> turnList = financeTurnDAO.listEntityBeansByOrder("order by monthKey desc");
 
         if (turnList.size() > 0)
         {

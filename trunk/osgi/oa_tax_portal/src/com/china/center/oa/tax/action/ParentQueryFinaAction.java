@@ -1907,7 +1907,7 @@ public class ParentQueryFinaAction extends DispatchAction
             }
             else
             {
-                taxList = taxDAO.listEntityBeans("order by id");
+                taxList = taxDAO.listEntityBeansByOrder("order by id");
             }
         }
         else

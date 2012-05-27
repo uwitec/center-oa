@@ -34,7 +34,7 @@ public class QueryListenerBankImpl implements QueryListener
      */
     public List<?> getBeanList()
     {
-        return bankDAO.listEntityBeans("order by name");
+        return bankDAO.listEntityBeansByOrder("order by name");
     }
 
     /*

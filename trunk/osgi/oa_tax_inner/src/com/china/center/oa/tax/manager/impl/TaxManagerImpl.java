@@ -177,7 +177,7 @@ public class TaxManagerImpl implements TaxManager
     @Transactional(rollbackFor = MYException.class)
     public void init2()
     {
-        List<TaxBean> listEntityBeans = taxDAO.listEntityBeans("order by code");
+        List<TaxBean> listEntityBeans = taxDAO.listEntityBeansByOrder("order by code");
 
         Map<String, TaxBean> map = new HashMap();
 

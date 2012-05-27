@@ -266,7 +266,7 @@ public class BillAction extends DispatchAction
                                          HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
-        List<BankBean> banlList = bankDAO.listEntityBeans("order by BankBean.name");
+        List<BankBean> banlList = bankDAO.listEntityBeansByOrder("order by BankBean.name");
 
         request.setAttribute("bankList", banlList);
 
@@ -287,7 +287,7 @@ public class BillAction extends DispatchAction
                                           HttpServletRequest request, HttpServletResponse response)
         throws ServletException
     {
-        List<BankBean> banlList = bankDAO.listEntityBeans("order by BankBean.name");
+        List<BankBean> banlList = bankDAO.listEntityBeansByOrder("order by BankBean.name");
 
         request.setAttribute("bankList", banlList);
 

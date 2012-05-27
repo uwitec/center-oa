@@ -213,7 +213,7 @@ public class TaxAction extends DispatchAction
 
         request.setAttribute("taxTypeList", taxTypeList);
 
-        List<BankBean> bankList = bankDAO.listEntityBeans("order by name");
+        List<BankBean> bankList = bankDAO.listEntityBeansByOrder("order by name");
 
         request.setAttribute("bankList", bankList);
 
@@ -296,7 +296,7 @@ public class TaxAction extends DispatchAction
 
         request.setAttribute("taxTypeList", taxTypeList);
 
-        List<BankBean> bankList = bankDAO.listEntityBeans("order by name");
+        List<BankBean> bankList = bankDAO.listEntityBeansByOrder("order by name");
 
         request.setAttribute("bankList", bankList);
 
@@ -411,7 +411,7 @@ public class TaxAction extends DispatchAction
 
             write.writeLine("编码,名称,分类,借贷,类型,级别,辅助核算");
 
-            List<TaxVO> voList = this.taxDAO.listEntityVOs("order by id");
+            List<TaxVO> voList = this.taxDAO.listEntityVOsByOrder("order by id");
 
             for (TaxVO each : voList)
             {
