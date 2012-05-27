@@ -33,7 +33,7 @@ public class Activator implements BundleActivator
         // 加载jsp资源到webapp下面
         ResourceLoad.init(context, "");
 
-        FilterLoad.loadIgnoreFilterMatch(ignoreFilterMatchList);
+        FilterLoad.putIgnoreFilterMatch(ignoreFilterMatchList);
 
     }
 
@@ -46,7 +46,7 @@ public class Activator implements BundleActivator
             ResourceLoad.destory(context, each);
         }
 
-        FilterLoad.loadIgnoreFilterMatch(ignoreFilterMatchList);
+        FilterLoad.removeIgnoreFilterMatch(ignoreFilterMatchList);
     }
 
 }
