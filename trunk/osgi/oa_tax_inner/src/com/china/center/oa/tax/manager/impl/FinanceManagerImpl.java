@@ -104,7 +104,7 @@ public class FinanceManagerImpl implements FinanceManager
      */
     private static boolean LOCK_FINANCE = false;
 
-    // private static Object FINANCE_ADD_LOCK = new Object();
+    private static Object FINANCE_ADD_LOCK = new Object();
 
     /**
      * default constructor
@@ -116,7 +116,10 @@ public class FinanceManagerImpl implements FinanceManager
     public boolean addFinanceBeanWithoutTransactional(User user, FinanceBean bean)
         throws MYException
     {
-        return addInner(user, bean, true);
+        synchronized (FINANCE_ADD_LOCK)
+        {
+            return addInner(user, bean, true);
+        }
     }
 
     /**
@@ -271,6 +274,9 @@ public class FinanceManagerImpl implements FinanceManager
 
         if (mainTable)
         {
+            // 核心锁
+            commonDAO.updatePublicLock();
+
             String financeDate = bean.getFinanceDate();
 
             // 外层conn获取最大索引

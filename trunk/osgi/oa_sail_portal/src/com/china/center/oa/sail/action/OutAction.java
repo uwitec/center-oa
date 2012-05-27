@@ -1881,13 +1881,7 @@ public class OutAction extends ParentOutAction
             request.setAttribute("flag", "1");
         }
 
-        // 优化查询
         boolean deepQuery = true;
-
-        if ("99".equals(fow))
-        {
-            deepQuery = false;
-        }
 
         try
         {
