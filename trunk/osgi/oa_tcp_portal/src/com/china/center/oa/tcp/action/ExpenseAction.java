@@ -701,6 +701,11 @@ public class ExpenseAction extends DispatchAction
                             continue;
                         }
 
+                        if (templateExpense)
+                        {
+                            approverBean = stafferDAO.find(travelApplyItemVO.getFeeStafferId());
+                        }
+
                         AddFinWrap wrap = new AddFinWrap();
 
                         if (approverBean.getOtype() == StafferConstant.OTYPE_SAIL)
@@ -730,17 +735,8 @@ public class ExpenseAction extends DispatchAction
                             taxAll = 0;
                         }
 
-                        // 模板
-                        if (templateExpense)
-                        {
-                            wrap.setStafferId(travelApplyItemVO.getFeeStafferId());
-                            wrap.setStafferName(travelApplyItemVO.getFeeStafferName());
-                        }
-                        else
-                        {
-                            wrap.setStafferId(tcpShareVO.getApproverId());
-                            wrap.setStafferName(tcpShareVO.getApproverName());
-                        }
+                        wrap.setStafferId(approverBean.getId());
+                        wrap.setStafferName(approverBean.getName());
 
                         wapList.add(wrap);
 
