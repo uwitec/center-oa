@@ -63,6 +63,7 @@ import com.china.center.oa.publics.Helper;
 import com.china.center.oa.publics.bean.AttachmentBean;
 import com.china.center.oa.publics.bean.FlowLogBean;
 import com.china.center.oa.publics.bean.StafferBean;
+import com.china.center.oa.publics.constant.StafferConstant;
 import com.china.center.oa.publics.dao.AttachmentDAO;
 import com.china.center.oa.publics.dao.FlowLogDAO;
 import com.china.center.oa.publics.dao.StafferDAO;
@@ -93,6 +94,7 @@ import com.china.center.oa.tcp.manager.TcpFlowManager;
 import com.china.center.oa.tcp.vo.ExpenseApplyVO;
 import com.china.center.oa.tcp.vo.TcpApproveVO;
 import com.china.center.oa.tcp.vo.TcpHandleHisVO;
+import com.china.center.oa.tcp.vo.TcpShareVO;
 import com.china.center.oa.tcp.vo.TravelApplyItemVO;
 import com.china.center.oa.tcp.wrap.AddFinWrap;
 import com.china.center.oa.tcp.wrap.TcpParamWrap;
@@ -677,52 +679,93 @@ public class ExpenseAction extends DispatchAction
 
                 boolean templateExpense = TCPHelper.isTemplateExpense(bean);
 
-                for (Iterator iterator = itemVOList.iterator(); iterator.hasNext();)
+                // 这里根据分担比例
+                List<TcpShareVO> shareVOList = bean.getShareVOList();
+
+                TCPHelper.ratioShare(shareVOList);
+
+                for (TcpShareVO tcpShareVO : shareVOList)
                 {
-                    TravelApplyItemVO travelApplyItemVO = (TravelApplyItemVO)iterator.next();
+                    String approverId = tcpShareVO.getApproverId();
 
-                    FeeItemVO feeItem = feeItemDAO.findVO(travelApplyItemVO.getFeeItemId());
+                    StafferBean approverBean = stafferDAO.find(approverId);
 
-                    if (feeItem == null)
+                    for (Iterator iterator = itemVOList.iterator(); iterator.hasNext();)
                     {
-                        continue;
-                    }
+                        TravelApplyItemVO travelApplyItemVO = (TravelApplyItemVO)iterator.next();
 
-                    AddFinWrap wrap = new AddFinWrap();
+                        FeeItemVO feeItem = feeItemDAO.findVO(travelApplyItemVO.getFeeItemId());
 
-                    if (bean.getStype() == TcpConstanst.TCP_STYPE_SAIL)
-                    {
-                        wrap.setTaxId(feeItem.getTaxId());
-                        wrap.setTaxName(feeItem.getTaxName());
-                    }
-                    else
-                    {
-                        wrap.setTaxId(feeItem.getTaxId2());
-                        wrap.setTaxName(feeItem.getTaxName2());
-                    }
+                        if (feeItem == null)
+                        {
+                            continue;
+                        }
 
-                    if (iterator.hasNext())
-                    {
-                        wrap.setShowMoney(TCPHelper
-                            .formatNum2(travelApplyItemVO.getMoneys() / 100.0d));
+                        AddFinWrap wrap = new AddFinWrap();
 
-                        taxAll = taxAll - travelApplyItemVO.getMoneys();
-                    }
-                    else
-                    {
-                        wrap.setShowMoney(TCPHelper.formatNum2(taxAll / 100.0d));
-                    }
+                        if (approverBean.getOtype() == StafferConstant.OTYPE_SAIL)
+                        {
+                            wrap.setTaxId(feeItem.getTaxId());
+                            wrap.setTaxName(feeItem.getTaxName());
+                        }
+                        else
+                        {
+                            wrap.setTaxId(feeItem.getTaxId2());
+                            wrap.setTaxName(feeItem.getTaxName2());
+                        }
 
-                    if (templateExpense)
-                    {
-                        wrap.setStafferId(travelApplyItemVO.getFeeStafferId());
-                    }
-                    else
-                    {
-                        wrap.setStafferId(bean.getStafferId());
-                    }
+                        long val = TCPHelper.ratioValue(travelApplyItemVO.getMoneys(), tcpShareVO
+                            .getRatio());
 
-                    wapList.add(wrap);
+                        taxAll = taxAll - val;
+
+                        if (taxAll >= 0)
+                        {
+                            wrap.setShowMoney(TCPHelper.formatNum2(val / 100.0d));
+                        }
+                        else
+                        {
+                            wrap.setShowMoney(TCPHelper.formatNum2(taxAll / 100.0d));
+
+                            taxAll = 0;
+                        }
+
+                        // 模板
+                        if (templateExpense)
+                        {
+                            wrap.setStafferId(travelApplyItemVO.getFeeStafferId());
+                            wrap.setStafferName(travelApplyItemVO.getFeeStafferName());
+                        }
+                        else
+                        {
+                            wrap.setStafferId(tcpShareVO.getApproverId());
+                            wrap.setStafferName(tcpShareVO.getApproverName());
+                        }
+
+                        wapList.add(wrap);
+
+                        // 退出
+                        if (taxAll <= 0)
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                if (taxAll < 0)
+                {
+                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "存在尾差请联系管理员修复");
+
+                    return mapping.findForward("error");
+                }
+
+                if (taxAll > 0)
+                {
+                    String showMoney = wapList.get(0).getShowMoney();
+
+                    long newVal = TCPHelper.doubleToLong2(showMoney) + taxAll;
+
+                    wapList.get(0).setShowMoney(TCPHelper.formatNum2(newVal / 100.0d));
                 }
 
                 request.setAttribute("wapList", wapList);
@@ -1267,7 +1310,7 @@ public class ExpenseAction extends DispatchAction
         if (taxIds != null && taxIds.length > 0)
         {
             String[] moneys = request.getParameterValues("t_money");
-            String[] stafferIds = request.getParameterValues("tax_stafferId");
+            String[] stafferIds = request.getParameterValues("taxStafferId");
 
             // FinanceItemBean
             List<String> taxList = new ArrayList<String>();

@@ -355,6 +355,16 @@ function getStaffers(oos)
 	    setInputValueInTr(tr, 's_bearName', oo.pname);
 	    setInputValueInTr(tr, 's_bearId', oo.value);
     }
+    
+    if (sflag == 3)
+    {
+        var oo = oos[0];
+    
+        var tr = getTrObject(taxStafferObj);
+        
+        setInputValueInTr(tr, 'taxStafferName', oo.pname);
+        setInputValueInTr(tr, 'taxStafferId', oo.value);
+    }
 }
 
 function pagePrint()
@@ -427,3 +437,13 @@ function selectStaffer2(obj)
     //window.common.modal('../admin/pop.do?method=rptQueryStaffer&load=1&selectMode=1');
 }
 
+var taxStafferObj;
+
+function selectTaxStaffer(obj)
+{
+	taxStafferObj = obj;
+	
+	sflag = 3;
+	
+	window.common.modal('../admin/pop.do?method=rptQueryStaffer&load=1&selectMode=1');
+}

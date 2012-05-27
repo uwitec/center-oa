@@ -30,6 +30,8 @@ public class AddFinWrap implements Serializable
 
     private String stafferId = "";
 
+    private String stafferName = "";
+
     /**
      * default constructor
      */
@@ -106,6 +108,23 @@ public class AddFinWrap implements Serializable
     }
 
     /**
+     * @return the stafferName
+     */
+    public String getStafferName()
+    {
+        return stafferName;
+    }
+
+    /**
+     * @param stafferName
+     *            the stafferName to set
+     */
+    public void setStafferName(String stafferName)
+    {
+        this.stafferName = stafferName;
+    }
+
+    /**
      * Constructs a <code>String</code> with all attributes in name = value format.
      * 
      * @return a <code>String</code> representation of this object.
@@ -131,6 +150,9 @@ public class AddFinWrap implements Serializable
             .append(TAB)
             .append("stafferId = ")
             .append(this.stafferId)
+            .append(TAB)
+            .append("stafferName = ")
+            .append(this.stafferName)
             .append(TAB)
             .append(" )");
 
