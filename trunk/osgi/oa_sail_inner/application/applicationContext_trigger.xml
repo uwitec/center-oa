@@ -38,26 +38,12 @@
         <property name="cronExpression" value="0 58 23 * * ?" />
     </bean>
     
-    <bean id="outStatAlarmJob"
-        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-        <property name="targetObject" ref="outStatManager" />
-        <property name="targetMethod" value="statOutPay" />
-        <property name="concurrent" value="false" />
-    </bean>
-    
-    <bean id="outStatAlarmTrigger"
-        class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail" ref="outStatAlarmJob" />
-        <property name="cronExpression" value="0 55 02 * * ?" />
-    </bean>
-    
     <bean
         class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
                 <ref bean="synTrigger" />
                 <ref bean="exportAllStafferCreditTrigger" />
-                <ref bean="outStatAlarmTrigger" />
             </list>
         </property>
     </bean>

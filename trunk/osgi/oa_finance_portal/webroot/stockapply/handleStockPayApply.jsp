@@ -4,7 +4,7 @@
 <html>
 <head>
 <p:link title="付款申请" />
-<script language="JavaScript" src="../js/JCheck_debug.js"></script>
+<script language="JavaScript" src="../js/JCheck.js"></script>
 <script language="JavaScript" src="../js/common.js"></script>
 <script language="JavaScript" src="../js/compatible.js"></script>
 <script language="JavaScript" src="../js/public.js"></script>
