@@ -324,7 +324,7 @@ public class FinaAction extends ParentQueryFinaAction
 
         int count = financeItemDAO.countVOByCondition(condtion.toString());
 
-        if (count > 65535)
+        if (count >= 65535)
         {
             return ActionTools.toError("导出数量大于65535,请重新选择时间段导出", mapping, request);
         }
@@ -346,6 +346,8 @@ public class FinaAction extends ParentQueryFinaAction
 
             WriteFileBuffer line = new WriteFileBuffer(write);
 
+            int item = 0;
+
             while (page.nextPage())
             {
                 List<FinanceItemVO> voList = financeItemDAO.queryEntityVOsByCondition(condtion,
@@ -353,6 +355,8 @@ public class FinaAction extends ParentQueryFinaAction
 
                 for (FinanceItemVO financeItemVO : voList)
                 {
+                    item++ ;
+
                     fillItemVO(financeItemVO);
 
                     FinanceBean finance = financeDAO.find(financeItemVO.getPid());
@@ -395,6 +399,8 @@ public class FinaAction extends ParentQueryFinaAction
                     line.writeLine();
                 }
             }
+
+            write.writeLine("导出结束,凭证项:" + item);
 
             write.close();
         }
@@ -461,9 +467,9 @@ public class FinaAction extends ParentQueryFinaAction
 
         int count = financeDAO.countVOByCondition(condtion.toString());
 
-        if (count > 20000)
+        if (count > 150000)
         {
-            return ActionTools.toError("导出数量大于20000,请重新选择时间段导出", mapping, request);
+            return ActionTools.toError("导出数量大于150000,请重新选择时间段导出", mapping, request);
         }
 
         try
@@ -483,6 +489,9 @@ public class FinaAction extends ParentQueryFinaAction
 
             WriteFileBuffer line = new WriteFileBuffer(write);
 
+            int parent = 0;
+            int item = 0;
+
             while (page.nextPage())
             {
                 List<FinanceVO> voFList = financeDAO.queryEntityVOsByCondition(condtion, page);
@@ -492,8 +501,12 @@ public class FinaAction extends ParentQueryFinaAction
                     List<FinanceItemVO> voList = financeItemDAO.queryEntityVOsByFK(financeVO
                         .getId());
 
+                    parent++ ;
+
                     for (FinanceItemVO financeItemVO : voList)
                     {
+                        item++ ;
+
                         fillItemVO(financeItemVO);
 
                         line.reset();
@@ -511,9 +524,8 @@ public class FinaAction extends ParentQueryFinaAction
                         line.writeColumn(financeVO.getRefBill());
                         line.writeColumn(financeVO.getRefStock());
 
-                        line.writeColumn(StringTools.getExportString(financeVO.getRefChecks()));
-                        line.writeColumn(StringTools
-                            .getExportString(financeItemVO.getDescription()));
+                        line.writeColumn(financeVO.getRefChecks());
+                        line.writeColumn(financeItemVO.getDescription());
                         line.writeColumn(financeItemVO.getTaxId() + " "
                                          + financeItemVO.getTaxName());
 
@@ -533,6 +545,8 @@ public class FinaAction extends ParentQueryFinaAction
                     }
                 }
             }
+
+            write.writeLine("导出结束,凭证:" + parent + ",凭证项:" + item);
 
             write.close();
         }
