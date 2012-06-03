@@ -314,7 +314,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
-    public boolean passInvoiceinsBean(String userId, String id)
+    public boolean passInvoiceinsBean(String userId, String id, String reason)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(userId, id);
@@ -327,7 +327,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         {
             if (containAuth(user, AuthConstant.INVOICEINS_OPR))
             {
-                return invoiceinsManager.passInvoiceinsBean(user, id);
+                return invoiceinsManager.passInvoiceinsBean(user, id, reason);
             }
             else
             {
@@ -336,7 +336,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         }
     }
 
-    public boolean checkInvoiceinsBean(String userId, String id)
+    public boolean checkInvoiceinsBean(String userId, String id, String reason)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(userId, id);
@@ -349,7 +349,7 @@ public class FinanceFacadeImpl extends AbstarctFacade implements FinanceFacade
         {
             if (containAuth(user, AuthConstant.INVOICEINS_CHECK))
             {
-                return invoiceinsManager.checkInvoiceinsBean(user, id);
+                return invoiceinsManager.checkInvoiceinsBean(user, id, reason);
             }
             else
             {

@@ -298,10 +298,10 @@ public interface FinanceFacade
     boolean rejectTransferOutBillBean(String userId, String id)
         throws MYException;
 
-    boolean passInvoiceinsBean(String userId, String id)
+    boolean passInvoiceinsBean(String userId, String id, String reason)
         throws MYException;
 
-    boolean checkInvoiceinsBean(String userId, String id)
+    boolean checkInvoiceinsBean(String userId, String id, String reason)
         throws MYException;
 
     boolean rejectInvoiceinsBean(String userId, String id, String reason)

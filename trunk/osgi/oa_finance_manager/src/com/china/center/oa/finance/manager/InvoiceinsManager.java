@@ -28,10 +28,10 @@ public interface InvoiceinsManager
     boolean addInvoiceinsBean(User user, InvoiceinsBean bean)
         throws MYException;
 
-    boolean passInvoiceinsBean(User user, String id)
+    boolean passInvoiceinsBean(User user, String id, String reason)
         throws MYException;
 
-    boolean checkInvoiceinsBean(User user, String id)
+    boolean checkInvoiceinsBean(User user, String id, String reason)
         throws MYException;
 
     boolean rejectInvoiceinsBean(User user, String id, String reason)

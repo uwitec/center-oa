@@ -633,7 +633,7 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
     }
 
     @Transactional(rollbackFor = MYException.class)
-    public boolean passInvoiceinsBean(User user, String id)
+    public boolean passInvoiceinsBean(User user, String id, String reason)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, id);
@@ -681,7 +681,7 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
         log.setActor(user.getStafferName());
         log.setActorId(user.getStafferId());
         log.setFullId(id);
-        log.setDescription("OK");
+        log.setDescription(reason);
         log.setLogTime(TimeTools.now());
         log.setPreStatus(status);
         log.setAfterStatus(FinanceConstant.INVOICEINS_STATUS_END);
@@ -693,7 +693,7 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
     }
 
     @Transactional(rollbackFor = MYException.class)
-    public boolean checkInvoiceinsBean(User user, String id)
+    public boolean checkInvoiceinsBean(User user, String id, String reason)
         throws MYException
     {
         JudgeTools.judgeParameterIsNull(user, id);
@@ -722,7 +722,7 @@ public class InvoiceinsManagerImpl implements InvoiceinsManager
         log.setActor(user.getStafferName());
         log.setActorId(user.getStafferId());
         log.setFullId(id);
-        log.setDescription("OK");
+        log.setDescription(reason);
         log.setLogTime(TimeTools.now());
         log.setPreStatus(status);
         log.setAfterStatus(bean.getStatus());

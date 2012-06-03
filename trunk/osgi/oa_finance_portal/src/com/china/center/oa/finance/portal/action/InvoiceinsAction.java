@@ -1290,6 +1290,8 @@ public class InvoiceinsAction extends DispatchAction
 
         String mode = request.getParameter("mode");
 
+        String reason = request.getParameter("reason");
+
         try
         {
             User user = Helper.getUser(request);
@@ -1298,12 +1300,12 @@ public class InvoiceinsAction extends DispatchAction
 
             if (invoiceinsBean.getStatus() == FinanceConstant.INVOICEINS_STATUS_SUBMIT)
             {
-                financeFacade.passInvoiceinsBean(user.getId(), id);
+                financeFacade.passInvoiceinsBean(user.getId(), id, reason);
             }
 
             if (invoiceinsBean.getStatus() == FinanceConstant.INVOICEINS_STATUS_CHECK)
             {
-                financeFacade.checkInvoiceinsBean(user.getId(), id);
+                financeFacade.checkInvoiceinsBean(user.getId(), id, reason);
             }
 
             request.setAttribute(KeyConstant.MESSAGE, "成功操作");
