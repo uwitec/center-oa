@@ -482,6 +482,10 @@ public class ExpenseManagerImpl extends AbstractListenerManager<TcpPayListener> 
                         newBrrow += travelApplyPayBean.getCmoneys();
                     }
                 }
+                else
+                {
+                    throw new MYException("公司付款给员工下缺少付款申请");
+                }
 
                 // 重新计算付款金额(这里可能存在金额不一致的情况)
                 bean.setBorrowTotal(newBrrow);
