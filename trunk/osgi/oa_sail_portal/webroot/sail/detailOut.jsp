@@ -846,7 +846,7 @@ function checkBean()
 
                     <c:forEach items="${insList}" var="item" varStatus="vs">
                         <tr class='${vs.index % 2 == 0 ? "content1" : "content2"}'>
-                            <td align="center"><a href="../finance/invoiceins.do?method=findInvoiceins&id=${item.insId}">${item.id}</a></td>
+                            <td align="center"><a href="../finance/invoiceins.do?method=findInvoiceins&id=${item.insId}">${item.insId}</a></td>
                             <td align="center">${my:formatNum(item.moneys)}</td>
                         </tr>
                     </c:forEach>
