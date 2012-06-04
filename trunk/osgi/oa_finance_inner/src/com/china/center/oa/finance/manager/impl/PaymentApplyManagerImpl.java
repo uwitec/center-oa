@@ -1179,7 +1179,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
         {
             PaymentBean pay = paymentDAO.find(apply.getPaymentId());
 
-            if (pay != null)
+            if (pay != null && pay.getUseall() == FinanceConstant.PAYMENT_USEALL_INIT)
             {
                 pay.setStafferId("");
 

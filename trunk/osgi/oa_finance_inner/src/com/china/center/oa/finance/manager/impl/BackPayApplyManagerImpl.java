@@ -582,6 +582,16 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
 
             // 这里不更新单子的状态,只更新付款金额
             outDAO.updateHadPay(bean.getOutId(), newPay);
+
+            OutBean out = outDAO.find(bean.getOutId());
+
+            if (out != null)
+            {
+                outDAO.updateDescription(bean.getOutId(), StringTools.truncate2(bean
+                    .getDescription()
+                                                                                + ";退货转预收:"
+                                                                                + refBuffer, 500));
+            }
         }
 
         if ( !StringTools.isNullOrNone(bean.getOutId()))

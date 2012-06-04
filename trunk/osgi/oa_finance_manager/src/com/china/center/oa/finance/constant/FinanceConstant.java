@@ -119,7 +119,7 @@ public interface FinanceConstant
     int INBILL_TYPE_OTHER = 99;
 
     /**
-     * 可使用
+     * 未使用
      */
     @Defined(key = "paymentUseall", value = "未使用")
     int PAYMENT_USEALL_INIT = 0;
