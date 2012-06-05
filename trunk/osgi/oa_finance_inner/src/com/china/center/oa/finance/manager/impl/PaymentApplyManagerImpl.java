@@ -76,6 +76,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 {
     private final Log _logger = LogFactory.getLog(getClass());
 
+    private final Log operationLog = LogFactory.getLog("opr");
+
     private PaymentApplyDAO paymentApplyDAO = null;
 
     private PaymentVSOutDAO paymentVSOutDAO = null;
@@ -609,6 +611,8 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
 
         flowLogDAO.deleteEntityBeansByFK(id);
 
+        operationLog.info(user.getName() + "删除了PaymentApply:" + payment);
+
         return true;
     }
 
@@ -1063,7 +1067,7 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
             throw new MYException("数据错误,请确认操作");
         }
 
-        if (apply.getStatus() != FinanceConstant.PAYAPPLY_STATUS_INIT)
+        if (apply.getStatus() == FinanceConstant.PAYAPPLY_STATUS_PASS)
         {
             throw new MYException("状态不正确,请确认操作");
         }
@@ -1168,6 +1172,9 @@ public class PaymentApplyManagerImpl extends AbstractListenerManager<PaymentAppl
                     bill.setOutId("");
 
                     bill.setStatus(FinanceConstant.INBILL_STATUS_NOREF);
+
+                    bill.setDescription(bill.getDescription() + "<br>驳回[" + apply.getId()
+                                        + "]状态重置到预收");
 
                     inBillDAO.updateEntityBean(bill);
                 }

@@ -325,6 +325,8 @@ public class BackPayApplyManagerImpl extends AbstractListenerManager<BackPayAppl
             {
                 bill.setStatus(FinanceConstant.INBILL_STATUS_NOREF);
 
+                bill.setDescription(bill.getDescription() + "<br>驳回[" + id + "]状态重置到预收");
+
                 inBillDAO.updateEntityBean(bill);
             }
         }

@@ -439,6 +439,11 @@ public class OutListenerFinanceImpl extends AbstractListenerManager<BillListener
 
                     BillHelper.initInBillCheckStatus(inBillBean);
                 }
+                else
+                {
+                    inBillBean.setDescription(inBillBean.getDescription()
+                                              + "<br>驳回receiveToPre状态重置到预收");
+                }
             }
 
             inBillDAO.updateAllEntityBeans(list);
