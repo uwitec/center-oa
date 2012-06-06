@@ -1053,12 +1053,13 @@ public class StorageRelationManagerImpl extends AbstractListenerManager<StorageR
                         String typeName = DefinedCommon.getValue("depotpartType", each
                             .getDepotpartType());
 
-                        write.writeLine(now + ','
-                                        + StringTools.getLineString(locationBean.getIndustryName())
-                                        + ',' + locationBean.getName() + ','
-                                        + each.getDepotpartName() + ',' + typeName + ','
+                        write.writeLine(now
+                                        + ','
+                                        + StringTools.getExportString2(locationBean
+                                            .getIndustryName()) + ',' + locationBean.getName()
+                                        + ',' + each.getDepotpartName() + ',' + typeName + ','
                                         + each.getStorageName() + ','
-                                        + StringTools.getLineString(each.getProductName()) + ','
+                                        + StringTools.getExportString2(each.getProductName()) + ','
                                         + each.getProductCode() + ','
                                         + String.valueOf(each.getAmount()) + ','
                                         + MathTools.formatNum(each.getPrice()));
