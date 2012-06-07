@@ -1297,7 +1297,8 @@ public class ParentOutAction extends DispatchAction
             line.writeColumn("相关退库");
 
             line.writeColumn("库管通过日期");
-            line.writeColumn("状态");
+            line.writeColumn("单据状态");
+            line.writeColumn("开票状态");
             line.writeColumn("是否回款");
             line.writeColumn("回款金额");
             line.writeColumn("总金额");
@@ -1452,6 +1453,8 @@ public class ParentOutAction extends DispatchAction
 
                     line.writeColumn(changeTime);
                     line.writeColumn(OutHelper.getOutStatus(element));
+                    line.writeColumn(DefinedCommon.getValue("invoiceStatus", element
+                        .getInvoiceStatus()));
                     line.writeColumn(DefinedCommon.getValue("outPay", element.getPay()));
                     line.writeColumn(MathTools.formatNum(element.getHadPay()));
                     line.writeColumn(MathTools.formatNum(element.getTotal()));
