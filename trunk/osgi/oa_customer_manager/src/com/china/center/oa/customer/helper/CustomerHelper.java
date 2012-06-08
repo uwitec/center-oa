@@ -78,6 +78,8 @@ public abstract class CustomerHelper
      */
     public static void handleCustomer(AbstractBean bean)
     {
+        bean.setConnector("保密");
+
         bean.setAddress("保密");
 
         bean.setHandphone("保密");
