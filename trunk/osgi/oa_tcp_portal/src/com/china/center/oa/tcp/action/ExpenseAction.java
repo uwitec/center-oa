@@ -679,17 +679,8 @@ public class ExpenseAction extends DispatchAction
 
                 boolean templateExpense = TCPHelper.isTemplateExpense(bean);
 
-                // 这里根据分担比例
-                List<TcpShareVO> shareVOList = bean.getShareVOList();
-
-                TCPHelper.ratioShare(shareVOList);
-
-                for (TcpShareVO tcpShareVO : shareVOList)
+                if (templateExpense)
                 {
-                    String approverId = tcpShareVO.getApproverId();
-
-                    StafferBean approverBean = stafferDAO.find(approverId);
-
                     for (Iterator iterator = itemVOList.iterator(); iterator.hasNext();)
                     {
                         TravelApplyItemVO travelApplyItemVO = (TravelApplyItemVO)iterator.next();
@@ -701,14 +692,9 @@ public class ExpenseAction extends DispatchAction
                             continue;
                         }
 
-                        if (templateExpense)
-                        {
-                            approverBean = stafferDAO.find(travelApplyItemVO.getFeeStafferId());
-                        }
-
                         AddFinWrap wrap = new AddFinWrap();
 
-                        if (approverBean.getOtype() == StafferConstant.OTYPE_SAIL)
+                        if (bean.getStype() == TcpConstanst.TCP_STYPE_SAIL)
                         {
                             wrap.setTaxId(feeItem.getTaxId());
                             wrap.setTaxName(feeItem.getTaxName());
@@ -719,49 +705,118 @@ public class ExpenseAction extends DispatchAction
                             wrap.setTaxName(feeItem.getTaxName2());
                         }
 
-                        long val = TCPHelper.ratioValue(travelApplyItemVO.getMoneys(), tcpShareVO
-                            .getRatio());
-
-                        taxAll = taxAll - val;
-
-                        if (taxAll >= 0)
+                        if (iterator.hasNext())
                         {
-                            wrap.setShowMoney(TCPHelper.formatNum2(val / 100.0d));
+                            wrap.setShowMoney(TCPHelper
+                                .formatNum2(travelApplyItemVO.getMoneys() / 100.0d));
+
+                            taxAll = taxAll - travelApplyItemVO.getMoneys();
                         }
                         else
                         {
                             wrap.setShowMoney(TCPHelper.formatNum2(taxAll / 100.0d));
-
-                            taxAll = 0;
                         }
+
+                        if (templateExpense)
+                        {
+                            wrap.setStafferId(travelApplyItemVO.getFeeStafferId());
+                        }
+                        else
+                        {
+                            wrap.setStafferId(bean.getStafferId());
+                        }
+
+                        StafferBean approverBean = stafferDAO.find(travelApplyItemVO
+                            .getFeeStafferId());
 
                         wrap.setStafferId(approverBean.getId());
                         wrap.setStafferName(approverBean.getName());
 
                         wapList.add(wrap);
-
-                        // 退出
-                        if (taxAll <= 0)
-                        {
-                            break;
-                        }
                     }
                 }
-
-                if (taxAll < 0)
+                else
                 {
-                    request.setAttribute(KeyConstant.ERROR_MESSAGE, "存在尾差请联系管理员修复");
+                    // 这里根据分担比例
+                    List<TcpShareVO> shareVOList = bean.getShareVOList();
 
-                    return mapping.findForward("error");
-                }
+                    TCPHelper.ratioShare(shareVOList);
 
-                if (taxAll > 0)
-                {
-                    String showMoney = wapList.get(0).getShowMoney();
+                    for (TcpShareVO tcpShareVO : shareVOList)
+                    {
+                        String approverId = tcpShareVO.getApproverId();
 
-                    long newVal = TCPHelper.doubleToLong2(showMoney) + taxAll;
+                        StafferBean approverBean = stafferDAO.find(approverId);
 
-                    wapList.get(0).setShowMoney(TCPHelper.formatNum2(newVal / 100.0d));
+                        for (Iterator iterator = itemVOList.iterator(); iterator.hasNext();)
+                        {
+                            TravelApplyItemVO travelApplyItemVO = (TravelApplyItemVO)iterator
+                                .next();
+
+                            FeeItemVO feeItem = feeItemDAO.findVO(travelApplyItemVO.getFeeItemId());
+
+                            if (feeItem == null)
+                            {
+                                continue;
+                            }
+
+                            AddFinWrap wrap = new AddFinWrap();
+
+                            if (approverBean.getOtype() == StafferConstant.OTYPE_SAIL)
+                            {
+                                wrap.setTaxId(feeItem.getTaxId());
+                                wrap.setTaxName(feeItem.getTaxName());
+                            }
+                            else
+                            {
+                                wrap.setTaxId(feeItem.getTaxId2());
+                                wrap.setTaxName(feeItem.getTaxName2());
+                            }
+
+                            long val = TCPHelper.ratioValue(travelApplyItemVO.getMoneys(),
+                                tcpShareVO.getRatio());
+
+                            taxAll = taxAll - val;
+
+                            if (taxAll >= 0)
+                            {
+                                wrap.setShowMoney(TCPHelper.formatNum2(val / 100.0d));
+                            }
+                            else
+                            {
+                                wrap.setShowMoney(TCPHelper.formatNum2(taxAll / 100.0d));
+
+                                taxAll = 0;
+                            }
+
+                            wrap.setStafferId(approverBean.getId());
+                            wrap.setStafferName(approverBean.getName());
+
+                            wapList.add(wrap);
+
+                            // 退出
+                            if (taxAll <= 0)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (taxAll < 0)
+                    {
+                        request.setAttribute(KeyConstant.ERROR_MESSAGE, "存在尾差请联系管理员修复");
+
+                        return mapping.findForward("error");
+                    }
+
+                    if (taxAll > 0)
+                    {
+                        String showMoney = wapList.get(0).getShowMoney();
+
+                        long newVal = TCPHelper.doubleToLong2(showMoney) + taxAll;
+
+                        wapList.get(0).setShowMoney(TCPHelper.formatNum2(newVal / 100.0d));
+                    }
                 }
 
                 request.setAttribute("wapList", wapList);
